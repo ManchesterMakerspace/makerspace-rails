@@ -1,0 +1,15 @@
+<%= form_for @member do |f| %>
+	<div class="form-group">
+		<%= f.label 'Full Name' %>
+		<%= f.text_field :fullname, class: "form-control" %>
+	</div>
+	<div class="form-group">
+		<%= f.label 'Card ID' %>
+		<%= f.text_field :cardID, class: "form-control" %>
+	</div>
+	<div class="form-group">
+		<%= f.label :status %>
+		<%= f.text_field :status, class: "form-control" %>
+	</div>
+	<%= f.submit class: "btn btn-primary" %>
+<% end %>

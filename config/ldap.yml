@@ -1,0 +1,18 @@
+development:
+  host: 10.0.0.168
+  base: dc=makerspace,dc=org
+  bind_dn: cn=admin,dc=makerspace,dc=org
+  password: makerspace
+
+test:
+  host: 10.0.0.168
+  base: dc=makerspace,dc=org
+  bind_dn: cn=admin,dc=makerspace,dc=org
+  password: makerspace
+
+production:
+  host: 127.0.0.1
+  method: :tls
+  base: dc=production,dc=local,dc=net
+  bind_dn: cn=admin,dc=local,dc=net
+  password: secret
