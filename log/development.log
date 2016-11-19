@@ -2522,3 +2522,10 @@ Processing by MembersController#edit as HTML
 Completed 200 OK in 52ms (Views: 48.3ms | ActiveRecord: 0.0ms)
 
 
+Started GET "/" for 127.0.0.1 at 2016-11-19 11:20:34 -0500
+Processing by MembersController#index as HTML
+  Rendering members/index.html.erb within layouts/application
+  Rendered members/index.html.erb within layouts/application (20.8ms)
+Completed 200 OK in 172ms (Views: 162.3ms | ActiveRecord: 0.0ms)
+
+
