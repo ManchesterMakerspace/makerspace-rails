@@ -2447,3 +2447,78 @@ Processing by MembersController#index as HTML
 Completed 200 OK in 52ms (Views: 49.5ms | ActiveRecord: 0.0ms)
 
 
+Started GET "/" for 127.0.0.1 at 2016-11-18 12:33:26 -0500
+Processing by MembersController#index as HTML
+  Rendering members/index.html.erb within layouts/application
+Started GET "/" for 127.0.0.1 at 2016-11-18 12:33:41 -0500
+Processing by MembersController#index as HTML
+  Rendering members/index.html.erb within layouts/application
+  Rendered members/index.html.erb within layouts/application (30019.5ms)
+Completed 500 Internal Server Error in 30047ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (No server is available matching preference: #<Mongo::ServerSelector::Primary:0x42715520 tag_sets=[]> using server_selection_timeout=30 and local_threshold=0.015):
+    18: 		</tr>
+    19: 	</thead>
+    20: 	<tbody>
+    21: 		<% if @members.size == 0 %>
+    22: 			<tr>
+    23: 				<td colspan="6">No members found.</td>
+    24: 			</tr>
+  
+app/views/members/index.html.erb:21:in `_app_views_members_index_html_erb___2051899531556698362_38318120'
+  Rendering /var/lib/gems/2.3.0/gems/actionpack-5.0.0.1/lib/action_dispatch/middleware/templates/rescues/template_error.html.erb within rescues/layout
+  Rendering /var/lib/gems/2.3.0/gems/actionpack-5.0.0.1/lib/action_dispatch/middleware/templates/rescues/_source.html.erb
+  Rendered /var/lib/gems/2.3.0/gems/actionpack-5.0.0.1/lib/action_dispatch/middleware/templates/rescues/_source.html.erb (5.9ms)
+  Rendering /var/lib/gems/2.3.0/gems/actionpack-5.0.0.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb
+  Rendered /var/lib/gems/2.3.0/gems/actionpack-5.0.0.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (1.3ms)
+  Rendering /var/lib/gems/2.3.0/gems/actionpack-5.0.0.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb
+  Rendered /var/lib/gems/2.3.0/gems/actionpack-5.0.0.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.5ms)
+  Rendered /var/lib/gems/2.3.0/gems/actionpack-5.0.0.1/lib/action_dispatch/middleware/templates/rescues/template_error.html.erb within rescues/layout (19.6ms)
+  Rendered members/index.html.erb within layouts/application (30095.0ms)
+Completed 500 Internal Server Error in 30097ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (No server is available matching preference: #<Mongo::ServerSelector::Primary:0x28668560 tag_sets=[]> using server_selection_timeout=30 and local_threshold=0.015):
+    18: 		</tr>
+    19: 	</thead>
+    20: 	<tbody>
+    21: 		<% if @members.size == 0 %>
+    22: 			<tr>
+    23: 				<td colspan="6">No members found.</td>
+    24: 			</tr>
+  
+app/views/members/index.html.erb:21:in `_app_views_members_index_html_erb___2051899531556698362_29308860'
+  Rendering /var/lib/gems/2.3.0/gems/actionpack-5.0.0.1/lib/action_dispatch/middleware/templates/rescues/template_error.html.erb within rescues/layout
+  Rendering /var/lib/gems/2.3.0/gems/actionpack-5.0.0.1/lib/action_dispatch/middleware/templates/rescues/_source.html.erb
+  Rendered /var/lib/gems/2.3.0/gems/actionpack-5.0.0.1/lib/action_dispatch/middleware/templates/rescues/_source.html.erb (2.8ms)
+  Rendering /var/lib/gems/2.3.0/gems/actionpack-5.0.0.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb
+  Rendered /var/lib/gems/2.3.0/gems/actionpack-5.0.0.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (1.3ms)
+  Rendering /var/lib/gems/2.3.0/gems/actionpack-5.0.0.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb
+  Rendered /var/lib/gems/2.3.0/gems/actionpack-5.0.0.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.6ms)
+  Rendered /var/lib/gems/2.3.0/gems/actionpack-5.0.0.1/lib/action_dispatch/middleware/templates/rescues/template_error.html.erb within rescues/layout (14.7ms)
+Started GET "/" for 127.0.0.1 at 2016-11-18 14:18:48 -0500
+Processing by MembersController#index as HTML
+  Rendering members/index.html.erb within layouts/application
+  Rendered members/index.html.erb within layouts/application (5.8ms)
+Completed 200 OK in 361ms (Views: 343.2ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2016-11-18 14:25:31 -0500
+Processing by MembersController#index as HTML
+  Rendering members/index.html.erb within layouts/application
+  Rendered members/index.html.erb within layouts/application (47.5ms)
+Completed 200 OK in 74ms (Views: 72.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/members/57684f6649197f2208b38e6f/edit" for 127.0.0.1 at 2016-11-18 14:25:37 -0500
+Processing by MembersController#edit as HTML
+  Parameters: {"id"=>"57684f6649197f2208b38e6f"}
+  Rendering members/edit.html.erb within layouts/application
+  Rendered members/_form.html.erb (29.3ms)
+  Rendered members/edit.html.erb within layouts/application (31.6ms)
+Completed 200 OK in 52ms (Views: 48.3ms | ActiveRecord: 0.0ms)
+
+
