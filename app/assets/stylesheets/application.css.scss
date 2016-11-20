@@ -13,6 +13,18 @@
  *= require_tree .
  *= require_self
  */
+ @import "bootstrap";
+ /* Some Style from the Bootstrap Default Theme */
+
+ .card {
+   background-color: #EEE;
+   border-radius: 5px;
+   padding: 10px;
+   margin: 10px;
+   display: inline-block;
+   vertical-align: middle;
+ }
+
 .expired {
   color: red;
 }

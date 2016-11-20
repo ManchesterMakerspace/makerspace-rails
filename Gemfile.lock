@@ -44,6 +44,8 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     arel (7.1.4)
+    bootstrap-sass (3.1.1.1)
+      sass (~> 3.2)
     bson (4.1.1)
     builder (3.2.2)
     byebug (9.0.6)
@@ -180,6 +182,7 @@ PLATFORMS
 
 DEPENDENCIES
   activeldap
+  bootstrap-sass (~> 3.1.1)
   byebug
   coffee-rails (~> 4.2)
   jbuilder (~> 2.5)
@@ -200,4 +203,4 @@ DEPENDENCIES
   web-console
 
 BUNDLED WITH
-   1.12.5
+   1.13.6

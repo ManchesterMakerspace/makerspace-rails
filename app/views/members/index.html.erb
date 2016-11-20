@@ -44,7 +44,7 @@
 				<tr class='<%=member.membership_status%>'>
 						<td><%= link_to "#{member.fullname}", member_path(member) %></td>
 						<td><%= member.status %></td>
-	          <td><%= member.expTime %></td>
+	          <td><%= "#{member.expirationTime.mon}/#{member.expirationTime.day}/#{member.expirationTime.year}" %></td>
 						<!--<td>
 							<%= link_to "Edit", edit_member_path(member), class: "btn btn-default" %>
 						</td>

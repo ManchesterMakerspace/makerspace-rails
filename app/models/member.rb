@@ -9,25 +9,16 @@ class Member
     field :cardID # user card id
     field :status # type of account, admin, mod, ect
     field :accesspoints, type: Array #points of access member (door, machine, etc)
-    field :expirationTime #pre-calcualted time of expiration
+    field :expirationTime, type: Integer #pre-calcualted time of expiration
     field :groupName #potentially member is in a group/partner membership
     field :groupKeystone, type: Boolean #holds expiration date for group
     field :groupSize, type: Integer #how many memebrs in group
     field :password #admin cards only
 
-    def expTime
-        ms = self.expirationTime.to_i.to_s[0,10]
-        t = Time.at(ms.to_i)
-        "#{t.mon}/#{t.day}/#{t.year}"
-    end
-
     def membership_status
-      now = Time.now
-      ms = self.expirationTime.to_i.to_s[0,10]
-      expiration = Time.at(ms.to_i)
-      if expiration < now
+      if duration <= 0
         'expired'
-      elsif (expiration - 1.week.to_i) < now
+      elsif duration < 1.week
         'expiring'
       else
         'current'
@@ -42,5 +33,13 @@ class Member
           MemberMailer.expiring_member_notification(self).deliver_now
         end
       end
+    end
+
+    def expirationTime
+        Time.at(read_attribute(:expirationTime).to_s[0,10].to_i)
+    end
+
+    def duration
+      expirationTime - Time.now
     end
 end

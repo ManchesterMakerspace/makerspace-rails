@@ -31,7 +31,6 @@ class MembersController < ApplicationController
         if @member.update_attributes(member_params)
             redirect_to member_path, notice: "#{@member.fullname} was updated" and return
         end
-
         render 'show'
     end
 
