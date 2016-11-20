@@ -13,3 +13,14 @@
  *= require_tree .
  *= require_self
  */
+.expired {
+  color: red;
+}
+
+.expiring {
+  color: yellow;
+}
+
+.current {
+  color: green;
+}

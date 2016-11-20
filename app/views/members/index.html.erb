@@ -27,7 +27,12 @@
 				<tr>
 					<td><%= member.fullname %></td>
 					<td><%= member.status %></td>
-                    <td><%= member.expTime %></td>
+          <td>
+						<div class='<%=member.membership%>'>
+
+						<%= member.expTime %>
+						</div>
+					</td>
 					<td>
 						<%= link_to "Edit", edit_member_path(member), class: "btn btn-default" %>
 					</td>
