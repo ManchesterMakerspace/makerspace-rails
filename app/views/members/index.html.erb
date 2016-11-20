@@ -3,6 +3,20 @@
 	<%= link_to "New Member", new_member_path, class: "btn btn-primary" %>
 </div>
 
+<form method='POST' action='/members/search_by'>
+	<label>Search Members:</label>
+	 <select name='field'>
+		 <% Member.attribute_names.each do |attr| %>
+				<% if attr == 'fullname' %>
+					<option value='fullname' selected='selected'> Full Name </option>
+				<% else %>
+					<option value='<%=attr%>'><%=attr%></option>
+				<% end %>
+		<%end%>
+		Value: <input type='text' name='value'>
+		<input type='submit' name='Search'>
+</form>
+<br>
 <% if flash[:notice] %>
 	<div class="alert alert-success"><%= flash[:notice] %></div>
 <% end %>
@@ -12,9 +26,7 @@
 		<tr>
 			<th>Full Name</th>
 			<th>Status</th>
-            <th>Expiration Time</th>
-			<th>&nbsp;</th>
-			<th>&nbsp;</th>
+      <th>Expiration Time</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -30,12 +42,12 @@
 	          <td>
 							<%= member.expTime %>
 						</td>
-						<td>
+						<!--<td>
 							<%= link_to "Edit", edit_member_path(member), class: "btn btn-default" %>
 						</td>
 						<td>
 							<%= button_to "Delete", member, method: :delete, data: { confirm: "Are you sure you wish to delete #{member.fullname}?" }, class: "btn btn-danger" %>
-						</td>
+						</td>-->
 			   	</tr>
 			<% end %>
 		<% end %>
