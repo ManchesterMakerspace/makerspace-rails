@@ -24,22 +24,19 @@
 			</tr>
 		<% else %>
 			<% @members.each do |member| %>
-				<tr>
-					<td><%= member.fullname %></td>
-					<td><%= member.status %></td>
-          <td>
-						<div class='<%=member.membership%>'>
-
-						<%= member.expTime %>
-						</div>
-					</td>
-					<td>
-						<%= link_to "Edit", edit_member_path(member), class: "btn btn-default" %>
-					</td>
-					<td>
-						<%= button_to "Delete", member, method: :delete, data: { confirm: "Are you sure you wish to delete #{member.fullname}?" }, class: "btn btn-danger" %>
-					</td>
-				</tr>
+				<tr class='<%=member.membership%>'>
+						<td><%= member.fullname %></td>
+						<td><%= member.status %></td>
+	          <td>
+							<%= member.expTime %>
+						</td>
+						<td>
+							<%= link_to "Edit", edit_member_path(member), class: "btn btn-default" %>
+						</td>
+						<td>
+							<%= button_to "Delete", member, method: :delete, data: { confirm: "Are you sure you wish to delete #{member.fullname}?" }, class: "btn btn-danger" %>
+						</td>
+			   	</tr>
 			<% end %>
 		<% end %>
 	</tbody>
