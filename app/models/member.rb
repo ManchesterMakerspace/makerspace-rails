@@ -28,12 +28,19 @@ class Member
       if expiration < now
         'expired'
       elsif (expiration - 1.week.to_i) < now
-        MemberMailer.expired_member_notification(self).deliver_now
         'expiring'
       else
         'current'
       end
     end
 
-
+    def membership_mailer
+      if status != 'Group' #Group membership expiration  dates are not accurate and should not be parsed
+        if membership_status == 'expired'
+          MemberMailer.expired_member_notification(self).deliver_now
+        elsif membership_status == 'expiring'
+          MemberMailer.expiring_member_notification(self).deliver_now
+        end
+      end
+    end
 end

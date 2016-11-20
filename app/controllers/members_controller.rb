@@ -50,6 +50,12 @@ class MembersController < ApplicationController
         render 'index'
     end
 
+    def mailer
+        @members = Member.all
+        @members.each { |member| member.membership_mailer }
+        redirect_to 'index'
+    end
+
     private
     def member_params
       params.require(:member).permit(:fullname, :cardID, :status)

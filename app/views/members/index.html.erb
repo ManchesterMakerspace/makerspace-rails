@@ -3,6 +3,11 @@
 	<%= link_to "New Member", new_member_path, class: "btn btn-primary" %>
 </div>
 
+<div class="well">
+	<%=link_to 'Run Membership Mailer', members_mailer_path, class: 'btn btn-primary' %>
+	Please don't run this without changing mail to: value in /app/mailers/members_mailer.rb
+</div>
+
 <form method='POST' action='/members/search_by'>
 	<label>Search Members:</label>
 	 <select name='field'>
@@ -37,7 +42,7 @@
 		<% else %>
 			<% @members.each do |member| %>
 				<tr class='<%=member.membership_status%>'>
-						<td><%= member.fullname %></td>
+						<td><%= link_to "#{member.fullname}", member_path(member) %></td>
 						<td><%= member.status %></td>
 	          <td><%= member.expTime %></td>
 						<!--<td>

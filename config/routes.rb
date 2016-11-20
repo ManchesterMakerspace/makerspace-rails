@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   resources :members, except: [:show]
   root to: "members#index"
 
+  get '/members/mailer', to: 'members#mailer'
   get '/members/:id', to: 'members#show'
 
   post '/members/search_by', to: 'members#search_by'
