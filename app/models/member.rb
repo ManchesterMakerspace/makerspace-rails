@@ -21,16 +21,19 @@ class Member
         "#{t.mon}/#{t.day}/#{t.year}"
     end
 
-    def membership
+    def membership_status
       now = Time.now
       ms = self.expirationTime.to_i.to_s[0,10]
       expiration = Time.at(ms.to_i)
       if expiration < now
         'expired'
-      elsif expiration + 5 < now
+      elsif (expiration - 1.week.to_i) < now
+        MemberMailer.expired_member_notification(self).deliver_now
         'expiring'
       else
         'current'
       end
     end
+
+
 end

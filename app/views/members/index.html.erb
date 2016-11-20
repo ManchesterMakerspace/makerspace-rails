@@ -36,12 +36,10 @@
 			</tr>
 		<% else %>
 			<% @members.each do |member| %>
-				<tr class='<%=member.membership%>'>
+				<tr class='<%=member.membership_status%>'>
 						<td><%= member.fullname %></td>
 						<td><%= member.status %></td>
-	          <td>
-							<%= member.expTime %>
-						</td>
+	          <td><%= member.expTime %></td>
 						<!--<td>
 							<%= link_to "Edit", edit_member_path(member), class: "btn btn-default" %>
 						</td>
