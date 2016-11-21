@@ -43,10 +43,12 @@ class MembersController < ApplicationController
 
     def search_by
         @members = []
-        Member.where(params[:field] => params[:value]).each do |member|
-            @members << member
+        if params[:value].empty?
+          redirect_to 'index' and return
+        else
+          Member.where(params[:field] => params[:value]).each { |member| @members << member }
+          render 'index' and return
         end
-        render 'index'
     end
 
     def mailer

@@ -27,7 +27,7 @@ class Member
 
     def membership_mailer
       if status != 'Group' #Group membership expiration  dates are not accurate and should not be parsed
-        if membership_status == 'expired'
+        if duration = 0
           MemberMailer.expired_member_notification(self).deliver_now
         elsif membership_status == 'expiring'
           MemberMailer.expiring_member_notification(self).deliver_now

@@ -1,33 +1,6 @@
-<h1>Members</h1>
-<div class="well">
-	<%= link_to "New Member", new_member_path, class: "btn btn-primary" %>
-</div>
-
-<div class="well">
-	<%=link_to 'Run Membership Mailer', members_mailer_path, class: 'btn btn-primary' %>
-	Please don't run this without changing mail to: value in /app/mailers/members_mailer.rb
-</div>
-
-<form method='POST' action='/members/search_by'>
-	<label>Search Members:</label>
-	 <select name='field'>
-		 <% Member.attribute_names.each do |attr| %>
-				<% if attr == 'fullname' %>
-					<option value='fullname' selected='selected'> Full Name </option>
-				<% else %>
-					<option value='<%=attr%>'><%=attr%></option>
-				<% end %>
-		<%end%>
-		Value: <input type='text' name='value'>
-		<input type='submit' name='Search'>
-</form>
-<br>
-<% if flash[:notice] %>
-	<div class="alert alert-success"><%= flash[:notice] %></div>
-<% end %>
-
 <table class="table table-bordered table-striped">
 	<thead>
+		<caption>Member List</caption>
 		<tr>
 			<th>Full Name</th>
 			<th>Status</th>
