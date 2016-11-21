@@ -11,5 +11,13 @@
 		<%= f.label :status %>
 		<%= f.text_field :status, class: "form-control" %>
 	</div>
+	<div class="form-group">
+		<%= f.label :expirationTime %>
+		<select name='member[expirationTime]'>
+			<option value='1 month' selected='selected'>1 Month</option>
+			<option value='3 months'>3 Months</option>
+			<option value='6 months'>6 Months</option>
+			<option value='12 months'>12 Months</option>
+	</div>
 	<%= f.submit class: "btn btn-primary" %>
 <% end %>

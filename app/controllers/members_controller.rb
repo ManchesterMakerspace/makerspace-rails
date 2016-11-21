@@ -13,9 +13,8 @@ class MembersController < ApplicationController
 
     def create
         @member = Member.new(member_params)
-
         if @member.save
-            redirect_to member_path, notice: "Member created" and return
+            redirect_to member_path(@member), notice: "Member created" and return
         end
 
         render 'new'
@@ -38,13 +37,13 @@ class MembersController < ApplicationController
       @member = Member.find(params[:id])
       @member.destroy
 
-      redirect_to member_path, notice: "#{@member.fullname}  has been deleted!" and return
+      redirect_to members_path, notice: "Record has been deleted!" and return
     end
 
     def search_by
         @members = []
         if params[:value].empty?
-          redirect_to 'index' and return
+          redirect_to members_path and return
         else
           Member.where(params[:field] => params[:value]).each { |member| @members << member }
           render 'index' and return
@@ -54,11 +53,11 @@ class MembersController < ApplicationController
     def mailer
         @members = Member.all
         @members.each { |member| member.membership_mailer }
-        redirect_to 'index'
+        redirect_to members_path
     end
 
     private
     def member_params
-      params.require(:member).permit(:fullname, :cardID, :status)
+      params.require(:member).permit(:fullname, :cardID, :status, :expirationTime)
     end
 end

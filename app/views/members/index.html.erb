@@ -18,12 +18,6 @@
 						<td><%= link_to "#{member.fullname}", member_path(member) %></td>
 						<td><%= member.status %></td>
 	          <td><%= "#{member.expirationTime.mon}/#{member.expirationTime.day}/#{member.expirationTime.year}" %></td>
-						<!--<td>
-							<%= link_to "Edit", edit_member_path(member), class: "btn btn-default" %>
-						</td>
-						<td>
-							<%= button_to "Delete", member, method: :delete, data: { confirm: "Are you sure you wish to delete #{member.fullname}?" }, class: "btn btn-danger" %>
-						</td>-->
 			   	</tr>
 			<% end %>
 		<% end %>

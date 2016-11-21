@@ -36,10 +36,23 @@ class Member
     end
 
     def expirationTime
-        Time.at(read_attribute(:expirationTime).to_s[0,10].to_i)
+        Time.at(read_attribute(:expirationTime).to_i / 1000)
     end
 
     def duration
       expirationTime - Time.now
+    end
+
+    def expirationTime=(membership_type)
+      case membership_type
+      when "1 month"
+        write_attribute(:expirationTime, (Time.now.strftime('%s').to_i * 1000) + (1*30*24*60*60*1000))
+      when "3 months"
+        write_attribute(:expirationTime, (Time.now.strftime('%s').to_i * 1000) + (3*30*24*60*60*1000))
+      when "6 months"
+        write_attribute(:expirationTime, (Time.now.strftime('%s').to_i * 1000) + (6*30*24*60*60*1000))
+      when "12 months"
+        write_attribute(:expirationTime, (Time.now.strftime('%s').to_i * 1000) + (12*30*24*60*60*1000))
+      end
     end
 end

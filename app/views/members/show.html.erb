@@ -1,1 +1,23 @@
-Show Member
+<table class="table table-bordered table-striped">
+	<caption>Member Profile</caption>
+	<tbody>
+			<tr>
+				<td colspan="6">Name: <%=@member.fullname%> </td>
+			</tr>
+      <tr>
+				<td colspan="6">CardID: <%=@member.cardID%> </td>
+			</tr>
+      <tr>
+        <td colspan="6">Status: <%=@member.status%> </td>
+      </tr>
+      <tr>
+        <td colspan="6">Expiration Date: <%="#{@member.expirationTime.mon}/#{@member.expirationTime.day}/#{@member.expirationTime.year}"%> </td>
+      </tr>
+      <tr>
+        <td colspan="6"><%= link_to "Edit", edit_member_path(@member), class: "btn btn-default" %>
+
+        <%= button_to "Delete", @member, method: :delete, data: { confirm: "Are you sure you wish to delete #{@member.fullname}?" }, class: "btn btn-danger" %>
+        </td>
+      </tr>
+	</tbody>
+</table>

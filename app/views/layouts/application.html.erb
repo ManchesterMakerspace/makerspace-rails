@@ -10,8 +10,7 @@
 </head>
 <body>
 	<div class="container">
-    <div class='row'>
-      <br>
+    <div class='row search'>
         <div class="well">
         	<%= link_to "New Member", new_member_path, class: "btn btn-primary" %>
         </div>
@@ -34,7 +33,8 @@
         		Value: <input type='text' name='value'>
         		<input type='submit' name='Search'>
         </form>
-        <br>
+      </div>
+      <div class='row'>
         <% if flash[:notice] %>
         	<div class="alert alert-success"><%= flash[:notice] %></div>
         <% end %>
