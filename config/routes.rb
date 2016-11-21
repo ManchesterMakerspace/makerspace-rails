@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  get 'workshops/index'
+
+  get 'workshops/show'
+
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
   resources :members, except: [:show]
