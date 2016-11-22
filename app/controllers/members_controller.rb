@@ -30,7 +30,7 @@ class MembersController < ApplicationController
         @member = Member.find(params[:id])
 
         if @member.update_attributes(member_params)
-            redirect_to member_path, notice: "#{@member.fullname} was updated" and return
+            redirect_to member_path(@member), notice: "#{@member.fullname} was updated" and return
         end
         render 'show'
     end

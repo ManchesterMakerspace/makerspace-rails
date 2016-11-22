@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
   get 'workshops/index'
-
   get 'workshops/show'
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
@@ -12,4 +11,5 @@ Rails.application.routes.draw do
   get '/members/:id', to: 'members#show'
 
   post '/members/search_by', to: 'members#search_by'
+
 end

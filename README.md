@@ -9,3 +9,9 @@ run: bundle
 run: rails s
 
 Interface will be available on localhost:3000
+
+Admin logins
+Officer logins
+Workshop Index Pages
+Skills Pages
+fix expirationTime= function

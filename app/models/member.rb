@@ -11,7 +11,7 @@ class Member
     field :accesspoints, type: Array #points of access member (door, machine, etc)
     field :expirationTime, type: Integer #pre-calcualted time of expiration
     field :groupName #potentially member is in a group/partner membership
-    field :groupKeystone, type: Boolean #holds expiration date for group
+    field :groupKeystone, type: Boolean
     field :groupSize, type: Integer #how many memebrs in group
     field :password #admin cards only
 
@@ -43,20 +43,11 @@ class Member
       expirationTime - Time.now
     end
 
-    def expirationTime=(membership_type) #need to account for condition of adding more months to a not expired account
-      if membership_type.kind_of?(String)
-        case membership_type
-        when "1 month"
-          write_attribute(:expirationTime, (Time.now.strftime('%s').to_i * 1000) + (1*30*24*60*60*1000))
-        when "3 months"
-          write_attribute(:expirationTime, (Time.now.strftime('%s').to_i * 1000) + (3*30*24*60*60*1000))
-        when "6 months"
-          write_attribute(:expirationTime, (Time.now.strftime('%s').to_i * 1000) + (6*30*24*60*60*1000))
-        when "12 months"
-          write_attribute(:expirationTime, (Time.now.strftime('%s').to_i * 1000) + (12*30*24*60*60*1000))
-        end
+    def expirationTime=(num_months)
+      if expirationTime.to_i > 0
+        write_attribute(:expirationTime, (expirationTime.strftime('%s').to_i * 1000) + (num_months.to_i*30*24*60*60*1000))
       else
-        write_attribute(:expirationTime, membership_type)
+        write_attribute(:expirationTime, (Time.now.strftime('%s').to_i * 1000) + (num_months.to_i*30*24*60*60*1000))
       end
     end
 end

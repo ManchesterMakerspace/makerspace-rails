@@ -3,21 +3,26 @@
 		<%= f.label 'Full Name' %>
 		<%= f.text_field :fullname, class: "form-control" %>
 	</div>
+
+<% if @member.read_attribute(:cardID).nil? %>
 	<div class="form-group">
 		<%= f.label 'Card ID' %>
 		<%= f.text_field :cardID, class: "form-control" %>
 	</div>
+<% end %>
+
 	<div class="form-group">
 		<%= f.label :status %>
 		<%= f.text_field :status, class: "form-control" %>
 	</div>
+
+	<% if !@member.read_attribute(:expirationTime).nil? %>
+		<h4>Extend Membership</h4>
+	<% end %>
 	<div class="form-group">
 		<%= f.label 'Membership Length' %>
-		<select name='member[expirationTime]'>
-			<option value='1 month' selected='selected'>1 Month</option>
-			<option value='3 months'>3 Months</option>
-			<option value='6 months'>6 Months</option>
-			<option value='12 months'>12 Months</option>
+		<input input='text' placeholder='Number of Months' name='member[expirationTime]'>
 	</div>
+
 	<%= f.submit class: "btn btn-primary" %>
 <% end %>
