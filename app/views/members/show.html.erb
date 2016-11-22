@@ -11,10 +11,13 @@
         <td colspan="6">Expiration Date: <%="#{@member.expirationTime.mon}/#{@member.expirationTime.day}/#{@member.expirationTime.year}"%> </td>
       </tr>
       <tr>
-        <td colspan="6"><%= link_to "Edit", edit_member_path(@member), class: "btn btn-default" %>
-
-        <%= button_to "Delete", @member, method: :delete, data: { confirm: "Are you sure you wish to delete #{@member.fullname}?" }, class: "btn btn-danger" %>
-        </td>
+        <td colspan="3"><%= link_to "Edit", edit_member_path(@member), class: "btn btn-default" %>
+					<% if @member.status == 'Revoked' %>
+					  <%= button_to "Restore", restore_path, method: :post, data: { confirm: "Are you sure you wish to restore #{@member.fullname}'s membership'?" }, class: "btn btn-danger" %>
+					<% else %>
+						<%= button_to "Revoke", revoke_path, method: :post, data: { confirm: "Are you sure you wish to revoke #{@member.fullname}'s membership'?" }, class: "btn btn-danger" %>
+					<%end%>
+				</td>
       </tr>
 	</tbody>
 </table>

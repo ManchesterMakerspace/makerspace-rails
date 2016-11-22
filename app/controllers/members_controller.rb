@@ -35,11 +35,16 @@ class MembersController < ApplicationController
         render 'show'
     end
 
-    def destroy
-      @member = Member.find(params[:id])
-      @member.destroy
+    def revoke
+        @member = Member.find(params[:id])
+        @member.revoke
+        redirect_to members_path, notice: "#{@member.fullname}'s membership has been revoked!" and return
+    end
 
-      redirect_to members_path, notice: "Record has been deleted!" and return
+    def restore
+        @member = Member.find(params[:id])
+        @member.restore
+        redirect_to members_path, notice: "#{@member.fullname}'s membership has been restored!" and return
     end
 
     def search_by

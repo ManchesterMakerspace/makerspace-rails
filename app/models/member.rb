@@ -25,6 +25,16 @@ class Member
       end
     end
 
+    def revoke
+      write_attribute(:status, 'Revoked')
+      self.save
+    end
+
+    def restore
+      write_attribute(:status, 'Restored')
+      self.save
+    end
+
     def membership_mailer
       if status != 'Group' #Group membership expiration  dates are not accurate and should not be parsed
         if duration = 0
@@ -49,5 +59,6 @@ class Member
       else
         write_attribute(:expirationTime, (Time.now.strftime('%s').to_i * 1000) + (num_months.to_i*30*24*60*60*1000))
       end
+      self.save
     end
 end
