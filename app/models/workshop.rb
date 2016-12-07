@@ -1,11 +1,10 @@
 class Workshop
   include Mongoid::Document
-  store_in collection: "workshops", database: "makerauth", client: 'default'
+  has_many :skills
+  belongs_to :officer, class_name: 'Member'
 
-  validates :name, presence :true, uniqueness :true
+  validates :name, presence: :true, uniqueness: :true
 
   field :name, type: String
   field :accesspoints
-  field :officer_id, type: Integer #id of officer
-  field :skill_ids, type: Array  #array of _ids pertaining to workshop
 end

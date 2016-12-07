@@ -48,11 +48,10 @@ class MembersController < ApplicationController
     end
 
     def search_by
-        @members = []
         if params[:value].empty?
           redirect_to members_path and return
         else
-          Member.where(params[:field] => params[:value]).each { |member| @members << member }
+          @members = Member.where(params[:field] => params[:value])
           render 'index' and return
         end
     end

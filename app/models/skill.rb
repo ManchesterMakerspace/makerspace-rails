@@ -1,9 +1,9 @@
 class Skill
   include Mongoid::Document
-  store_in collection: "skills", database: "makerauth", client: 'default'
+  belongs_to :workshop
+  has_and_belongs_to_many :allowed_members, class_name: 'Member', inverse_of: :learned_skills
 
-  validates :name, presence :true, uniqueness :true
+  validates :name, presence: :true, uniqueness: :true
 
   field :name, type: String
-  field :workshop_id, type: Integer
 end

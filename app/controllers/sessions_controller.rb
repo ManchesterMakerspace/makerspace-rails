@@ -1,15 +1,17 @@
 class SessionsController < ApplicationController
-  def create
+
+    def new
+    end
+
+    def create
     if params[:fullname].empty?
-      redirect_to '/sessions/new'
+      redirect_to '/sessions/new', notice: "Error: Username required" and return
     else
       session[:name] = params[:name]
       redirect_to '/sessions/show'
     end
   end
 
-  def new
-  end
 
   def show
   end

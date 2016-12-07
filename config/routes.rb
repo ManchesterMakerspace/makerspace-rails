@@ -2,7 +2,7 @@ Rails.application.routes.draw do
 
   root to: "members#index"
 
-  get 'login', to: 'sessions#create'
+  get 'login', to: 'sessions#new'
   get 'logout', to: 'sessions#destroy'
 
   get 'workshops/index'

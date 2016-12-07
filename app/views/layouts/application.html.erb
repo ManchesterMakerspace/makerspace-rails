@@ -23,7 +23,7 @@
         <form method='POST' action='/members/search_by'>
         	<label>Search Members:</label>
         	 <select name='field'>
-        		 <% Member.attribute_names.each do |attr| %>
+        		 <% Member.attribute_names.each do |attr| %>pan
         				<% if attr == 'fullname' %>
         					<option value='fullname' selected='selected'> Full Name </option>
         				<% else %>
