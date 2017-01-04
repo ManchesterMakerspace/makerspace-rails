@@ -18,7 +18,7 @@ class SessionsController < ApplicationController
 
   def destroy
     if logged_in?
-      session[:name] = nil
+      session.clear
     end
     redirect_to login_path
   end

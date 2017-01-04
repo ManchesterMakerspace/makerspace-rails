@@ -1,5 +1,5 @@
 class MembersController < ApplicationController
-    before_action :set_user, only: [:show, :edit, :update, :allowed?]
+    before_action :set_user, only: [:show, :edit, :update, :allowed?, :revoke, :restore]
     before_action :set_workshop, only: [:edit]
     before_action :allowed?, only: [:edit, :update]
 
@@ -19,10 +19,7 @@ class MembersController < ApplicationController
         @member = Member.new(member_params)
         if @member.save
             redirect_to member_path(@member), notice: "Member created" and return
-        else
-          redirect_to new_member_path(@member), notice: "Error" and return
         end
-
         render 'new'
     end
 
@@ -37,13 +34,11 @@ class MembersController < ApplicationController
     end
 
     def revoke
-        @member = Member.find(params[:id])
         @member.revoke
         redirect_to members_path, notice: "#{@member.fullname}'s membership has been revoked!" and return
     end
 
     def restore
-        @member = Member.find(params[:id])
         @member.restore
         redirect_to members_path, notice: "#{@member.fullname}'s membership has been restored!" and return
     end
@@ -78,7 +73,7 @@ class MembersController < ApplicationController
 
     def allowed?
       set_workshop
-      unless is_officer? || is_admin? || @member == current_user
+      unless is_officer? || @member == current_user
         redirect_to root_path, alert: "You are not allowed to access that page."
       end
     end

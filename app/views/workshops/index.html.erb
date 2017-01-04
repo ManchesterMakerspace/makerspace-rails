@@ -20,6 +20,8 @@
         <% workshop.skills.each do |skill| %>
           <% if is_officer?(workshop) %>
             <li><%= link_to skill.name, edit_workshop_skill_path(workshop, skill) %></li>
+          <%else%>
+            <li><%= skill.name%></li>
           <%end%>
         <% end %>
       </div>
