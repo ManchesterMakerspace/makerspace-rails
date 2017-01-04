@@ -2,7 +2,6 @@ class MembersController < ApplicationController
     before_action :set_user, only: [:show, :edit, :update, :allowed?, :revoke, :restore]
     before_action :set_workshop, only: [:edit, :update]
     before_action :allowed?, only: [:edit, :update]
-    before_action :authenticate_member!, except: [:index]
 
     def index
         @members = Member.all.sort_by(&:fullname)

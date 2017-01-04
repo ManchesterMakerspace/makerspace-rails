@@ -2,6 +2,10 @@
   <div class="col-sm-12">
     <h2><%= @member.fullname %> </h2>
     <h3><%= @member.email %> </h3>
+    <h4>Membership Expiration Date:<%= @member.expirationTime.strftime("%m/%d/%Y") %></h4>
+    <% if !@member.officer_of.empty? %>
+      <h4>Officer of: <%=@member.officer_of.join(", ")%></h4>
+    <%end%>
     <% if is_admin? %>
       <%= link_to "Edit", edit_admin_member_path(@member), class: "btn btn-primary card"  %>
     <% end %>
@@ -12,7 +16,7 @@
         <div class="panel-heading" role="tab" id="heading<%=workshop.id%>">
           <h4 class="panel-title <%=@member.allowed_workshops.include?(workshop)%>">
             <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse<%=workshop.id%>" aria-expanded="false" aria-controls="collapse<%=workshop.id%>">
-              <%=workshop.name %>
+              <%=workshop.name %> (Click to view required skills)
               <% if is_officer?(workshop) %>
                 <%= (link_to "Train", edit_workshop_member_path(workshop, @member),  class: "btn btn-info")%>
               <% end %>

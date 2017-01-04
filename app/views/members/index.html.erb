@@ -4,6 +4,9 @@
 		<tr>
 			<th>Name</th>
       <th>Allowed Workshops</th>
+			<% if is_officer? || is_admin?%>
+				<th>Membership Exp. Date</th>
+			<%end%>
 		</tr>
 	</thead>
 	<tbody>
@@ -13,9 +16,17 @@
 			</tr>
 		<% else %>
 			<% @members.each do |member| %>
-						<td><%= link_to "#{member.fullname}", member_path(member) %></td>
-	          <td><%= member.allowed_workshops.pluck(:name).join(", ") %> </td>
-			   	</tr>
+			<tr>
+				<%if member_signed_in? %>
+					<td><%= link_to "#{member.fullname}", member_path(member) %></td>
+				<%else%>
+				<td><%= "#{member.fullname}"%></td>
+				<%end%>
+          <td><%= member.allowed_workshops.pluck(:name).join(", ") %> </td>
+					<% if is_officer? || is_admin? %>
+						<td class="<%=member.membership_status%>"><%=member.expirationTime.strftime("%m/%d/%Y") %></td>
+					<%end%>
+		   	</tr>
 			<% end %>
 		<% end %>
 	</tbody>

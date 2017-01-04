@@ -32,4 +32,5 @@ class WorkshopsController < ApplicationController
   def workshop_params
     params.require(:workshop).permit(:name, :member_id, :skill_ids=> [], :skills_attributes => [:name, :_destroy])
   end
+
 end

@@ -54,7 +54,11 @@ class Member
   end
 
   def password_required?
-    !email.blank?
+    !email.blank? || !persisted?
+  end
+
+  def officer_of
+    Workshop.all.select { |shop| shop.officer == self }.pluck(:name)
   end
 
   def password_match?

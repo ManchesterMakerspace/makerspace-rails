@@ -6,4 +6,8 @@ class Skill
   validates :name, presence: :true, uniqueness: :true
 
   field :name, type: String
+
+  def self.unassigned
+    self.where(workshop_id: nil)
+  end
 end

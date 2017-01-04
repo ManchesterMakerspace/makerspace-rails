@@ -8,7 +8,11 @@
     <div class="panel-heading" role="tab" id="heading<%=workshop.id%>">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapse<%=workshop.id%>">
-          <%=workshop.name %> (Click to view skills) <%= link_to "View Workshop", workshop_path(workshop), class: "btn btn-info"  %>
+          <% if member_signed_in? %>
+            <%=workshop.name %> (Click to view required skills) <%= link_to "View Workshop", workshop_path(workshop), class: "btn btn-info"  %>
+          <%else%>
+            <%=workshop.name %> (Click to view required skills)
+          <%end%>
         </a>
       </h4>
     </div>
