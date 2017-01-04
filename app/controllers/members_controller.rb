@@ -78,7 +78,7 @@ class MembersController < ApplicationController
 
     def allowed?
       set_workshop
-      unless current_user.try(:admin?) || @member == current_user || @workshop.try(:officer) == current_user
+      unless is_officer? || is_admin? || @member == current_user
         redirect_to root_path, alert: "You are not allowed to access that page."
       end
     end
