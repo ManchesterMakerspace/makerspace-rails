@@ -1,17 +1,37 @@
-<table class="table table-bordered table-striped">
-	<caption>Member Profile</caption>
-	<tbody>
-			<tr>
-				<td colspan="6">Name: <%=@member.fullname%> </td>
-			</tr>
-      <tr>
-        <td colspan="6">Status: <%=@member.status%> </td>
-      </tr>
-      <tr>
-        <td colspan="6">Expiration Date: <%="#{@member.expirationTime.mon}/#{@member.expirationTime.day}/#{@member.expirationTime.year}"%> </td>
-      </tr>
-      <tr>
-        <td colspan="3"><%= link_to "Edit", edit_admin_member_path(@member), class: "btn btn-default" %></td>
-      </tr>
-	</tbody>
-</table>
+<div class="row shadow">
+  <div class="col-sm-12">
+    <h2><%= @member.fullname %> </h2>
+    <h3><%= @member.email %> </h3>
+    <% if is_admin? %>
+      <%= link_to "Edit", edit_admin_member_path(@member), class: "btn btn-primary card"  %>
+    <% end %>
+
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+      <% @workshops.each do |workshop| %>
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="heading<%=workshop.id%>">
+          <h4 class="panel-title <%=@member.allowed_workshops.include?(workshop)%>">
+            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse<%=workshop.id%>" aria-expanded="false" aria-controls="collapse<%=workshop.id%>">
+              <%=workshop.name %>
+              <% if is_officer?(workshop) %>
+                <%= (link_to "Train", edit_workshop_member_path(workshop, @member),  class: "btn btn-info")%>
+              <% end %>
+            </a>
+          </h4>
+        </div>
+        <div id="collapse<%=workshop.id%>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%=workshop.id%>">
+          <div class="panel-body">
+            <% if workshop.skills.empty? %>
+              <%= "No skills requried for #{workshop.name}" %>
+            <% else %>
+              <% workshop.skills.each do |skill| %>
+                <li><%= skill.name %></li>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <% end %>
+    </div>
+  </div>
+</div>

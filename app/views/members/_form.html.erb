@@ -1,28 +1,37 @@
-<%= form_for @member do |f| %>
-	<div class="form-group">
-		<%= f.label 'Full Name' %>
-		<%= f.text_field :fullname, class: "form-control" %>
-	</div>
+<div class="form-group">
+<%= form_for [@workshop, @member] do |f| %>
 
-<% if @member.read_attribute(:cardID).nil? %>
-	<div class="form-group">
-		<%= f.label 'Card ID' %>
-		<%= f.text_field :cardID, class: "form-control" %>
-	</div>
+  <% if @member.errors.any? %>
+    <div id="error_explanation">
+      <h2>There were some errors:</h2>
+      <ul>
+        <% @member.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= hidden_field_tag 'workshop_id', @workshop.id %>
+
+  <div class="field">
+    <h4><%= f.label :fullname %>
+    <%= @member.fullname %> </h4>
+  </div>
+
+  <h4><%= f.label 'Skills:' %> </h4>
+  <h5>Workshop: <%= f.label @workshop.name %> </h5>
+  <div class="well">
+    <%= f.collection_check_boxes(:learned_skill_ids, @workshop.skills, :id, :name) do |b| %>
+      <ul>
+				<%=  b.label(:"data-value" => b.value) { b.check_box + b.text } %>
+				
+      </ul>
+    <% end %>
+  </div>
+
+  <br>
+  <%= f.submit "Update User" %>
 <% end %>
 
-	<div class="form-group">
-		<%= f.label :status %>
-		<%= f.text_field :status, class: "form-control" %>
-	</div>
-
-	<% if !@member.read_attribute(:expirationTime).nil? %>
-		<h4>Extend Membership</h4>
-	<% end %>
-	<div class="form-group">
-		<%= f.label 'Membership Length' %>
-		<input input='text' placeholder='Number of Months' name='member[expirationTime]'>
-	</div>
-
-	<%= f.submit class: "btn btn-primary" %>
-<% end %>
+</div>

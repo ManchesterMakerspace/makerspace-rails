@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    session[:fullname]
+    Member.find_by(email: session[:email])
   end
 
   def logged_in?

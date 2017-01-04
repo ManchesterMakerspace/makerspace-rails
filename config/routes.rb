@@ -19,6 +19,7 @@ Rails.application.routes.draw do
 
   get 'login', to: 'sessions#new'
   get 'logout', to: 'sessions#destroy'
+  post '/sessions/create', to: 'sessions#create'
 
   get '/members/mailer', to: 'members#mailer'
   post '/members/search_by', to: 'members#search_by'

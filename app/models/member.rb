@@ -6,17 +6,28 @@ class Member
 
     field :fullname #full name of user
     field :cardID # user card id
-    field :status # type of account, admin, mod, ect
+    field :status # current, revoked
     field :accesspoints, type: Array #points of access member (door, machine, etc)
     field :expirationTime, type: Integer #pre-calcualted time of expiration
     field :groupName #potentially member is in a group/partner membership
     field :groupKeystone, type: Boolean
+    field :role #admin,officer,member
+    field :email #email address
     field :password #admin cards only
-    field :provider #for OAuth integration
-    field :uid #for Oauth integration
 
-    has_and_belongs_to_many :allowed_workshops, class_name: 'Workshop', inverse_of: nil
+
+    has_and_belongs_to_many :workshops, class_name: 'Workshop', inverse_of: nil
     has_and_belongs_to_many :learned_skills, class_name: 'Skill', inverse_of: :allowed_members
+
+    def self.search_terms
+      ['id','name','email']
+    end
+
+    def allowed_workshops
+      allowed = Workshop.all.collect { |workshop| workshop.skills.all? { |skill| self.learned_skills.include?(skill) } ? workshop : nil}.compact.uniq
+      allowed << Workshop.all.select { |shop| shop.officer == self}
+      allowed.flatten.uniq.sort_by(&:name)
+    end
 
     def membership_status
       if duration <= 0
@@ -34,13 +45,13 @@ class Member
     end
 
     def restore
-      write_attribute(:status, 'Restored')
+      write_attribute(:status, 'Current')
       self.save
     end
 
     def membership_mailer
       if status != 'Group' #Group membership expiration  dates are not accurate and should not be parsed
-        if duration = 0
+        if duration == 0
           MemberMailer.expired_member_notification(self).deliver_now
         elsif membership_status == 'expiring'
           MemberMailer.expiring_member_notification(self).deliver_now

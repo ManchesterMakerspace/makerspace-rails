@@ -4,11 +4,11 @@ class MembersController < ApplicationController
     before_action :allowed?, only: [:edit, :update]
 
     def index
-        @members = Member.all
+        @members = Member.all.sort_by(&:fullname)
     end
 
     def show
-        @member = Member.find(params[:id])
+      @workshops = Workshop.all.sort_by(&:name)
     end
 
     def new
@@ -27,12 +27,9 @@ class MembersController < ApplicationController
     end
 
     def edit
-        @member = Member.find(params[:id])
     end
 
     def update
-        @member = Member.find(params[:id])
-
         if @member.update_attributes(member_params)
             redirect_to member_path(@member), notice: "#{@member.fullname} was updated" and return
         end
@@ -68,7 +65,7 @@ class MembersController < ApplicationController
 
     private
     def member_params
-      params.require(:member).permit(:fullname, :cardID, :status, :expirationTime)
+      params.require(:member).permit(:fullname, :cardID, :status, :expirationTime, :learned_skill_ids =>[])
     end
 
     def set_user
@@ -76,7 +73,7 @@ class MembersController < ApplicationController
     end
 
     def set_workshop
-      @workshop = Workshop.find_by(id: params[:workshop_id])
+      @workshop = Workshop.find(params[:workshop_id])
     end
 
     def allowed?

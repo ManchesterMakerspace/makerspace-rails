@@ -4,11 +4,11 @@ class SessionsController < ApplicationController
     end
 
     def create
-    if params[:fullname].empty?
-      redirect_to '/sessions/new', notice: "Error: Username required" and return
+    if params[:email].empty?
+      redirect_to '/sessions/new', notice: "Error: email required" and return
     else
-      session[:name] = params[:name]
-      redirect_to '/sessions/show'
+      session[:email] = params[:email]
+      redirect_to root_path
     end
   end
 
@@ -20,6 +20,6 @@ class SessionsController < ApplicationController
     if logged_in?
       session[:name] = nil
     end
-    redirect_to '/sessions/new'
+    redirect_to login_path
   end
 end

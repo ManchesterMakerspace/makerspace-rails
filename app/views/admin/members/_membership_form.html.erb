@@ -1,0 +1,28 @@
+<%= form_for @member do |f| %>
+	<div class="form-group">
+		<%= f.label 'Full Name' %>
+		<%= f.text_field :fullname, class: "form-control" %>
+	</div>
+
+<% if @member.read_attribute(:cardID).nil? %>
+	<div class="form-group">
+		<%= f.label 'Card ID' %>
+		<%= f.text_field :cardID, class: "form-control" %>
+	</div>
+<% end %>
+
+	<div class="form-group">
+		<%= f.label :status %>
+		<%= f.text_field :status, class: "form-control" %>
+	</div>
+
+	<% if !@member.read_attribute(:expirationTime).nil? %>
+		<h4>Extend Membership</h4>
+	<% end %>
+	<div class="form-group">
+		<%= f.label 'Membership Length' %>
+		<input input='text' placeholder='Number of Months' name='member[expirationTime]'>
+	</div>
+
+	<%= f.submit class: "btn btn-primary" %>
+<% end %>
