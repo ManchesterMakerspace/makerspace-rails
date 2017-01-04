@@ -1,9 +1,10 @@
 Rails.application.routes.draw do
 
+  devise_for :members, :controllers => {:confirmations => 'confirmations'}
   root to: "members#index"
 
   resources :members, only: [:index]
-  get '/workshops/new', to: 'admin/workshops#new'
+
 
   resources :members, only: [:show]
   resources :skills, only: [:edit, :destroy]
@@ -17,9 +18,9 @@ Rails.application.routes.draw do
     resources :workshops, only: [:new, :create, :edit, :update]
   end
 
-  get 'login', to: 'sessions#new'
-  get 'logout', to: 'sessions#destroy'
-  post '/sessions/create', to: 'sessions#create'
+  # get 'login', to: 'sessions#new'
+  # get 'logout', to: 'sessions#destroy'
+  # post '/sessions/create', to: 'sessions#create'
 
   get '/members/mailer', to: 'members#mailer'
   post '/members/search_by', to: 'members#search_by'

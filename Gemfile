@@ -49,6 +49,7 @@ gem 'sass-rails', '~> 5.0'
 gem 'bootstrap-sass', '~> 3.3', '>=3.3.6'
 gem 'bootstrap-datepicker-rails', '~> 1.6', '>= 1.6.1.1'
 
+gem 'devise'
 
 gem 'nested_form_fields'
 

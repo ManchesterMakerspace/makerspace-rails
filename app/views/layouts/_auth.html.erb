@@ -1,9 +1,9 @@
 
 
-<% if logged_in? %>
-Signed in as <%= current_user.fullname %>.
-<%= link_to "Sign out", logout_path, class: "btn btn-primary"  %>
+<% if member_signed_in? %>
+Signed in as <%= current_member.fullname %>.
+<%= link_to "Sign out", destroy_member_session_path, method: :delete, class: "btn btn-primary"  %>
 <% else %>
-<%= link_to "Sign in", login_path, class: "btn btn-primary"  %>
+<%= link_to "Sign in", new_member_session_path, class: "btn btn-primary"  %>
 <% end %>
 <br>

@@ -1,7 +1,8 @@
 class MembersController < ApplicationController
     before_action :set_user, only: [:show, :edit, :update, :allowed?, :revoke, :restore]
-    before_action :set_workshop, only: [:edit]
+    before_action :set_workshop, only: [:edit, :update]
     before_action :allowed?, only: [:edit, :update]
+    before_action :authenticate_member!, except: [:index]
 
     def index
         @members = Member.all.sort_by(&:fullname)
@@ -16,6 +17,7 @@ class MembersController < ApplicationController
     end
 
     def create
+      binding.pry
         @member = Member.new(member_params)
         if @member.save
             redirect_to member_path(@member), notice: "Member created" and return
@@ -27,10 +29,11 @@ class MembersController < ApplicationController
     end
 
     def update
-        if @member.update_attributes(member_params)
+        if @member.update(member_params)
             redirect_to member_path(@member), notice: "#{@member.fullname} was updated" and return
+        else
+          render action: 'edit', alert: "Update failed:  #{@member.errors.full_messages}"
         end
-        render 'show'
     end
 
     def revoke
@@ -60,7 +63,7 @@ class MembersController < ApplicationController
 
     private
     def member_params
-      params.require(:member).permit(:fullname, :cardID, :status, :expirationTime, :learned_skill_ids =>[])
+      params.require(:member).permit(:fullname, :email, :learned_skill_ids =>[])
     end
 
     def set_user
@@ -73,7 +76,7 @@ class MembersController < ApplicationController
 
     def allowed?
       set_workshop
-      unless is_officer? || @member == current_user
+      unless is_officer? || @member == current_member
         redirect_to root_path, alert: "You are not allowed to access that page."
       end
     end

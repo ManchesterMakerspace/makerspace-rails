@@ -25,7 +25,6 @@
     <%= f.collection_check_boxes(:learned_skill_ids, @workshop.skills, :id, :name) do |b| %>
       <ul>
 				<%=  b.label(:"data-value" => b.value) { b.check_box + b.text } %>
-				
       </ul>
     <% end %>
   </div>

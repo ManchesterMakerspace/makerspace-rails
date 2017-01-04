@@ -5,8 +5,7 @@
 <% if is_officer? && !is_admin? %>
   <%= link_to "Add New Skill", new_workshop_skill_path(@workshop), class: "btn btn-primary"  %>
   <%= link_to "Edit Workshop", edit_workshop_path(@workshop), class: "btn btn-primary"  %>
-<% end %>
-<% if is_admin? %>
+<% elsif is_admin? %>
   <%= link_to "Add New Skill", new_workshop_skill_path(@workshop), class: "btn btn-primary"  %>
   <%= link_to "Edit Workshop", edit_admin_workshop_path(@workshop), class: "btn btn-primary"  %>
 <% end %>
