@@ -20,9 +20,6 @@ Rails.application.routes.draw do
   get 'login', to: 'sessions#new'
   get 'logout', to: 'sessions#destroy'
 
-  get 'workshops/index'
-  get 'workshops/show'
-
   get '/members/mailer', to: 'members#mailer'
   post '/members/search_by', to: 'members#search_by'
 

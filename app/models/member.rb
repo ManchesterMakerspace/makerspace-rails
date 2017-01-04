@@ -18,25 +18,6 @@ class Member
     has_and_belongs_to_many :allowed_workshops, class_name: 'Workshop', inverse_of: nil
     has_and_belongs_to_many :learned_skills, class_name: 'Skill', inverse_of: :allowed_members
 
-    def self.find_for_slack(access_token, signed_in_resource=nil)
-      data = access_token.info
-      user = Member.where(:provider => access_token.provider, :uid => access_token.uid ).first
-      if user
-        return user
-      else
-        registered_user = User.where(:email => access_token.info.email).first
-        if registered_user
-          return registered_user
-        else
-          user = User.create(name: data["name"],
-            provider:access_token.provider,
-            email: data["email"],
-            uid: access_token.uid ,
-          )
-        end
-      end
-    end
-
     def membership_status
       if duration <= 0
         'expired'

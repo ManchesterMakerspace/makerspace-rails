@@ -44,8 +44,13 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     arel (7.1.4)
-    bootstrap-sass (3.1.1.1)
-      sass (~> 3.2)
+    autoprefixer-rails (6.5.3)
+      execjs
+    bootstrap-datepicker-rails (1.6.4.1)
+      railties (>= 3.0)
+    bootstrap-sass (3.3.7)
+      autoprefixer-rails (>= 5.2.1)
+      sass (>= 3.3.4)
     bson (4.1.1)
     builder (3.2.2)
     byebug (9.0.6)
@@ -106,6 +111,10 @@ GEM
     multi_json (1.12.1)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
+    nested_form_fields (0.8)
+      coffee-rails (>= 3.2.1)
+      jquery-rails
+      rails (>= 3.2.0)
     net-ldap (0.15.0)
     nio4r (1.2.1)
     nokogiri (1.6.8.1)
@@ -207,13 +216,15 @@ PLATFORMS
 
 DEPENDENCIES
   activeldap
-  bootstrap-sass (~> 3.1.1)
+  bootstrap-datepicker-rails (~> 1.6, >= 1.6.1.1)
+  bootstrap-sass (~> 3.3, >= 3.3.6)
   byebug
   coffee-rails (~> 4.2)
   jbuilder (~> 2.5)
   jquery-rails
   listen (~> 3.0.5)
   mongoid (~> 6.0.0)
+  nested_form_fields
   net-ldap
   omniauth
   omniauth-slack (~> 2.3.0)

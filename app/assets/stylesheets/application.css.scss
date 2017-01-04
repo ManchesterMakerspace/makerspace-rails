@@ -14,9 +14,54 @@
  *= require_self
  */
  @import "bootstrap";
+ .field_with_errors {
+  padding: 2px;
+  background-color: red;
+  display: table;
+}
+
+ #auth {
+   padding-top: 5px;
+ }
+
+ .checkbox-list input[type="radio"] {
+   display: inline-block;
+   width: 10%;
+ }
+
+ .checkbox-list input[type="radio"] + label {
+   display: inline-block;
+   margin-left: 10%;
+   width: 80%;
+ }
+
+ .checkbox-list input[type="checkbox"] {
+   display: inline-block;
+   width: 10%;
+ }
+
+ .checkbox-list input[type="checkbox"] + label {
+   display: inline-block;
+   margin-left: 10%;
+   width: 80%;
+ }
+
+ .novice, .pro {
+   color: green;
+ }
+
+ .expert {
+   color: green;
+   font-weight: bold;
+ }
+
+ .unskilled {
+   color: red;
+ }
 
  .card {
    background-color: #EEE;
+   color: #333;
    border-radius: 5px;
    padding: 10px;
    margin: 10px;
@@ -37,9 +82,76 @@
 }
 
 .well {
-  display: inline-block;;
+  display: block;
+}
+/* ///// GLOBAL //////*/
+.block_links h3+p a {
+    display: block;
+}
+.shadow{
+    box-shadow: 0 3px 10px #333;
 }
 
-.search {
-  padding: 20px;
+footer {
+    text-align: center;
+    font-size: .75em;
+    padding: 10px;
+    background: #eee;
+    border-top: 1px solid;
+}
+
+/* //////// BACKGROUND ///// */
+.background {
+    background: url(../images/shiplap.jpg) no-repeat center top;
+    background-size: cover;
+}
+
+.grey-gradient {
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#b5bdc8+0,828c95+36,28343b+100&0.25+0,1+100;Grey+Black+3D */
+    background: -moz-linear-gradient(top,  rgba(181,189,200,0.25) 0%, rgba(130,140,149,0.52) 36%, rgba(40,52,59,1) 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  rgba(181,189,200,0.25) 0%,rgba(130,140,149,0.52) 36%,rgba(40,52,59,1) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  rgba(181,189,200,0.25) 0%,rgba(130,140,149,0.52) 36%,rgba(40,52,59,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#40b5bdc8', endColorstr='#28343b',GradientType=0 ); /* IE6-9 */
+}
+.light-grey {
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,e5e5e5+100;White+3D */
+    background: rgb(255,255,255); /* Old browsers */
+    background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(229,229,229,1) 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(229,229,229,1) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(229,229,229,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e5e5e5',GradientType=0 ); /* IE6-9 */
+}
+.yellow {
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#fefcea+0,f1da36+98&1+1,0.3+100 */
+    background: -moz-linear-gradient(top,  rgba(254,252,234,1) 0%, rgba(254,252,232,1) 1%, rgba(241,218,54,0.31) 98%, rgba(241,218,54,0.3) 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  rgba(254,252,234,1) 0%,rgba(254,252,232,1) 1%,rgba(241,218,54,0.31) 98%,rgba(241,218,54,0.3) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  rgba(254,252,234,1) 0%,rgba(254,252,232,1) 1%,rgba(241,218,54,0.31) 98%,rgba(241,218,54,0.3) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', endColorstr='#4df1da36',GradientType=0 ); /* IE6-9 */
+}
+
+/*/////// MEDIA ////////*/
+
+img, video, audio, iframe, table, form {
+  max-width: 100%; /* FF, Safari, Chrome */
+}
+
+/* /////// FIXES /////// */
+
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.clearfix:after {
+  content: ".";
+  display: block;
+  clear: both;
+  visibility: hidden;
+  height: 0;
+  line-height: 0;
+}
+
+.clear {
+  clear:both;
 }
