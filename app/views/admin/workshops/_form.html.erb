@@ -1,0 +1,44 @@
+<%= form_for [:admin, @workshop] do |f| %>
+  <% if @workshop.errors.any? %>
+    <div id="error_explanation">
+    <h2>There were some errors:</h2>
+    <ul>
+      <% @workshop.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+  <div class="field">
+    <%= f.label :name %>
+    <%= f.text_field :name, class: "form-control" %>
+  </div>
+
+  <br>
+  <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    <div class="panel panel-default">
+      <div class="panel-heading" role="tab" id="headingOfficer">
+        <h4 class="panel-title">
+          <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOfficer" aria-expanded="false" aria-controls="collapseOfficer">
+            <%="Select Officer: "%> (Click to view list)
+          </a>
+        </h4>
+      </div>
+      <div id="collapseOfficer" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOfficer">
+        <div class="panel-body">
+          <div class="field checkbox-list well">
+            <%= f.collection_radio_buttons :member_id, Member.all, :id, :fullname %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%= render partial: '/layouts/select_or_create_skills_form', locals: {f:f}  %>
+
+  <div class="actions">
+   <%= f.submit %>
+ </div>
+
+<% end %>

@@ -1,2 +1,46 @@
-<h1>Workshops#show</h1>
-<p>Find me in app/views/workshops/show.html.erb</p>
+<h1><%= @workshop.name %> </h2>
+<% if !@workshop.officer.nil? %>
+  <h3><%= "Officer: #{@workshop.officer.fullname}"%></h3>
+<%end%>
+<% if is_officer? && !is_admin? %>
+  <%= link_to "Add New Skill", new_workshop_skill_path(@workshop), class: "btn btn-primary"  %>
+  <%= link_to "Edit Workshop", edit_workshop_path(@workshop), class: "btn btn-primary"  %>
+<% end %>
+<% if is_admin? %>
+  <%= link_to "Add New Skill", new_workshop_skill_path(@workshop), class: "btn btn-primary"  %>
+  <%= link_to "Edit Workshop", edit_admin_workshop_path(@workshop), class: "btn btn-primary"  %>
+<% end %>
+<table class="table table-bordered table-striped">
+  <thead>
+    <caption>Required Skills</caption>
+    <tr>
+      <th>Title</th>
+      <th>Experts</th>
+      <% if is_officer? || is_admin? %>
+        <th>Edit</th>
+        <th>Delete</th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <% if @workshop.skills.size == 0 %>
+      <tr>
+        <td colspan="6">No skills found.
+          <% if is_officer? || is_admin? %>
+            <%= link_to "Create New Skill", new_workshop_skill_path(@workshop), class: "btn btn-primary"%>
+          <%end%>
+        </td>
+      </tr>
+    <% else %>
+      <%@workshop.skills.each do |skill|%>
+      <tr>
+        <td><%=skill.name%> </td>
+        <% if is_officer? || is_admin? %>
+          <td><%= link_to "Edit Skill", edit_workshop_skill_path(@workshop, skill), class: "btn btn-warning"  %> </td>
+          <td><%= link_to "Remove Skill", workshop_skill_path(@workshop, skill), :method => :delete, class: "btn btn-danger"  %> </td>
+        <% end %>
+      </tr>
+      <%end%>
+    <% end %>
+  </tbody>
+</table>

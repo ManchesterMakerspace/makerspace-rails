@@ -1,4 +1,53 @@
-<h1>Workshops#index</h1>
-<%@workshops.each do |workshop|%>
-  <%=workshop.name%>
-<%end%>
+<% if is_admin? %>
+  <%= link_to "Create New Workshop", new_admin_workshop_path, class: "btn btn-primary" %>
+<% end %>
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <% @workshops.each do |workshop| %>
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="heading<%=workshop.id%>">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse<%=workshop.id%>" aria-expanded="false" aria-controls="collapse<%=workshop.id%>">
+          <%=workshop.name %> (Click to view skills) <%= link_to "View Workshop", workshop_path(workshop), class: "btn btn-info"  %>
+        </a>
+      </h4>
+    </div>
+    <div id="collapse<%=workshop.id%>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%=workshop.id%>">
+      <div class="panel-body">
+        <% if workshop.skills.size == 0 %>
+            No skills for this workshop
+        <% end %>
+        <% workshop.skills.each do |skill| %>
+          <% if is_officer?(workshop) %>
+            <li><%= link_to skill.name, edit_workshop_skill_path(workshop, skill) %></li>
+          <% else %>
+            <li  class= "<%=current_user.skill_level(skill)%>" ><%= skill.name %></li>
+          <%end%>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <% end %>
+
+  <% if is_admin? %>
+    <% if !Skill.unassigned.empty? %>
+    <div class="panel panel-default">
+      <div class="panel-heading" role="tab" id="headingOther">
+        <h4 class="panel-title">
+          <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOther" aria-expanded="false" aria-controls="collapseOther">
+            Unassigned Skills (Click to view skills)
+          </a>
+        </h4>
+      </div>
+      <div id="collapseOther" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOther">
+        <div class="panel-body">
+          <% Skill.unassigned.each do |skill| %>
+              <li><%= link_to skill.name, edit_skill_path(skill), class: "#{current_user.skill_level(skill)}"  %></li>
+            <%end%>
+        </div>
+      </div>
+    </div>
+    <% end %>
+  <% end %>
+
+</div>

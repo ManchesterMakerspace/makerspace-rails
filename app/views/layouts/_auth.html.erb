@@ -1,0 +1,9 @@
+
+
+<% if logged_in? %>
+Signed in as <%= current_user.name %>.
+<%= link_to "Sign out", logout_path,:method => :delete, class: "btn btn-primary"  %>
+<% else %>
+<%= link_to "Sign in", login_path, class: "btn btn-primary"  %>
+<% end %>
+<br>

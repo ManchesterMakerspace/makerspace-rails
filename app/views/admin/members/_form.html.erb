@@ -1,0 +1,45 @@
+<div class="form-group">
+
+<%= form_for [:admin, @member] do |f| %>
+
+  <% if @member.errors.any? %>
+    <div id="error_explanation">
+      <h2>There were some errors:</h2>
+      <ul>
+        <% @user.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <h4><%= f.label :fullname %>
+    <%= f.text_field :fullname %> </h4>
+  </div>
+
+  <h4><%= f.label 'Skills:' %> </h4>
+  <% Workshop.all.each do |workshop| %>
+    <h5>Workshop: <%= f.label workshop.name %> </h5>
+
+    <div class="well">
+      <%= f.collection_check_boxes(:skill_ids, workshop.skills, :id, :title) do |b| %>
+        <ul>
+        <%=  b.label(:"data-value" => b.value) { b.check_box + b.text } %>
+
+        <% if f.object.skills.include?(b.object) %>
+          <%= f.fields_for :user_skills do |ff| %>
+              <% if ff.object.skill == b.object %>
+                <%= ff.select(:skill_level, [:novice, :pro, :expert]) %>
+              <% end %>
+          <% end %>
+        <%end %>
+        </ul>
+      <% end %>
+    </div>
+  <% end %>
+  <br>
+  <%= f.submit "Update User", url: admin_user_path(@member), :method => :put  %>
+<% end %>
+
+</div>

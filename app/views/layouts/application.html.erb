@@ -5,42 +5,26 @@
   <%= stylesheet_link_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css' %>
   <%= javascript_include_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js' %>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= stylesheet_link_tag    'custom', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 </head>
 <body>
-	<div class="container">
-    <div class='row search'>
-        <div class="well">
-        	<%= link_to "New Member", new_member_path, class: "btn btn-primary" %>
-        </div>
+  <div class="container">
 
-        <div class="well">
-        	<%=link_to 'Run Membership Mailer', members_mailer_path, class: 'btn btn-primary' %>
-        	Please don't run this without changing mail to: value in /app/mailers/members_mailer.rb
-        </div>
+    <div class="row">
+      <%= render 'layouts/navigation' %>
+    </div> <!--navbar row-->
 
-        <form method='POST' action='/members/search_by'>
-        	<label>Search Members:</label>
-        	 <select name='field'>
-        		 <% Member.attribute_names.each do |attr| %>pan
-        				<% if attr == 'fullname' %>
-        					<option value='fullname' selected='selected'> Full Name </option>
-        				<% else %>
-        					<option value='<%=attr%>'><%=attr%></option>
-        				<% end %>
-        		<%end%>
-        		Value: <input type='text' name='value'>
-        		<input type='submit' name='Search'>
-        </form>
-      </div>
-      <div class='row'>
-        <% if flash[:notice] %>
-        	<div class="alert alert-success"><%= flash[:notice] %></div>
-        <% end %>
-
-		    <%= yield %>
-	   </div>
+    <div class='row'>
+      <% if notice %>
+        <p class="alert alert-success"><%= notice %></p>
+      <% end %>
+      <% if alert %>
+        <p class="alert alert-danger"><%= alert %></p>
+      <% end %>
+    </div>
+      <%= yield %>
   </div>
 </body>
 </html>

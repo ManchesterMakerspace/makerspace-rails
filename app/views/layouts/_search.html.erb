@@ -1,0 +1,14 @@
+<form method='POST' action='/users/search_by'>
+   <%= token_tag nil %>
+	<label>Search Members:</label>
+	 <select name='field'>
+		 <% Member.search_terms.each do |attr| %>
+				<% if attr == 'name' %>
+					<option value='name' selected='selected'> Name </option>
+				<% else %>
+					<option value='<%=attr%>'><%=attr%></option>
+				<% end %>
+		<%end%>
+		Value: <input type='text' name='value'>
+		<input type='submit' name='Search'>
+</form>

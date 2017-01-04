@@ -1,4 +1,8 @@
 class MembersController < ApplicationController
+    before_action :set_user, only: [:show, :edit, :update, :allowed?]
+    before_action :set_workshop, only: [:edit]
+    before_action :allowed?, only: [:edit, :update]
+
     def index
         @members = Member.all
     end
@@ -65,5 +69,20 @@ class MembersController < ApplicationController
     private
     def member_params
       params.require(:member).permit(:fullname, :cardID, :status, :expirationTime)
+    end
+
+    def set_user
+      @member = Member.find(params[:id])
+    end
+
+    def set_workshop
+      @workshop = Workshop.find_by(id: params[:workshop_id])
+    end
+
+    def allowed?
+      set_workshop
+      unless current_user.try(:admin?) || @member == current_user || @workshop.try(:officer) == current_user
+        redirect_to root_path, alert: "You are not allowed to access that page."
+      end
     end
 end
