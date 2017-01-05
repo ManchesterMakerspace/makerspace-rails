@@ -13,7 +13,7 @@ Rails.application.routes.draw do
       resources :members, only: [:show, :edit, :update]
     end
     namespace :admin  do
-      resources :members, only: [:new, :show, :edit, :update]
+      resources :members, only: [:new, :create, :show, :edit, :update]
       resources :workshops, only: [:new, :create, :edit, :update]
     end
   end

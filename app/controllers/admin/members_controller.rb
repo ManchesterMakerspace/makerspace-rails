@@ -1,5 +1,5 @@
 class Admin::MembersController < AdminController
-  before_action :set_member, only: [:show, :edit, :update, :renew, :allowed?]
+  before_action :set_member, only: [:show, :edit, :update, :allowed?]
   before_action :set_workshop, only: [:edit]
 
   def new
@@ -23,6 +23,7 @@ class Admin::MembersController < AdminController
   end
 
   def renew
+    @member = Member.new
   end
 
   def update
@@ -39,7 +40,7 @@ class Admin::MembersController < AdminController
   end
 
   def set_member
-    @member = current_member
+    @member = Member.find_by(id: params[:id]) || Member.find_by(id: params[:member][:id])
   end
 
   def set_workshop

@@ -1,5 +1,6 @@
 $(document).ready(function(){
   role();
+  member_id();
 });
 
 function role() {
@@ -12,3 +13,10 @@ function role() {
     }
   })
 };
+
+function member_id() {
+  $('.member').on('change', function(){
+    var member_id = $('#member_id').val();
+    $('.renew').attr("action", "/admin/members/" + member_id);
+  })
+}
