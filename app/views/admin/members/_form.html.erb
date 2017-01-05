@@ -6,7 +6,7 @@
     <div id="error_explanation">
       <h2>There were some errors:</h2>
       <ul>
-        <% @user.errors.full_messages.each do |message| %>
+        <% @member.errors.full_messages.each do |message| %>
           <li><%= message %></li>
         <% end %>
       </ul>
@@ -18,28 +18,36 @@
     <%= f.text_field :fullname %> </h4>
   </div>
 
+  <div class="field">
+    <h4><%= f.label :email %>
+    <%= f.email_field :email %> </h4>
+  </div>
+
+  <div class="form-group">
+		<%= f.label :role %>
+		<%= f.select :role, ['member', 'officer', 'admin'], class: "form-control" %>
+	</div>
+
+
+	<div class="form-group">
+		<%= f.label 'Renew Membership' %>
+		<input input='text' placeholder='Number of Months' name='member[expirationTime]'>
+	</div>
+
   <h4><%= f.label 'Skills:' %> </h4>
   <% Workshop.all.each do |workshop| %>
-    <h5>Workshop: <%= f.label workshop.name %> </h5>
+    <h4>Workshop: <%= f.label workshop.name %> </h4>
 
     <div class="well">
-      <%= f.collection_check_boxes(:skill_ids, workshop.skills, :id, :title) do |b| %>
+      <%= f.collection_check_boxes(:learned_skill_ids, workshop.skills, :id, :name) do |b| %>
         <ul>
         <%=  b.label(:"data-value" => b.value) { b.check_box + b.text } %>
-
-        <% if f.object.skills.include?(b.object) %>
-          <%= f.fields_for :user_skills do |ff| %>
-              <% if ff.object.skill == b.object %>
-                <%= ff.select(:skill_level, [:novice, :pro, :expert]) %>
-              <% end %>
-          <% end %>
-        <%end %>
         </ul>
       <% end %>
     </div>
   <% end %>
   <br>
-  <%= f.submit "Update User", url: admin_user_path(@member), :method => :put  %>
+  <%= f.submit "Update User", url: admin_member_path(@member), :method => :put  %>
 <% end %>
 
 </div>

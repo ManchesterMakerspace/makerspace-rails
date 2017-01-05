@@ -12,7 +12,7 @@ class Member
  field :expirationTime, type: Integer #pre-calcualted time of expiration
  field :groupName #potentially member is in a group/partner membership
  field :groupKeystone, type: Boolean
- field :role #admin,officer,member
+ field :role, default: "member" #admin,officer,member
 
   ## Database authenticatable
   field :email,              type: String, default: ""
@@ -44,7 +44,7 @@ class Member
   # field :locked_at,       type: Time
 
   validates :fullname, presence: true, uniqueness: true
-  # validates :status, presence: true
+  validates :status, presence: true
 
   has_and_belongs_to_many :workshops, class_name: 'Workshop', inverse_of: nil
   has_and_belongs_to_many :learned_skills, class_name: 'Skill', inverse_of: :allowed_members
@@ -54,7 +54,7 @@ class Member
   end
 
   def password_required?
-    !email.blank? || !persisted?
+    !email.blank? && !persisted?
   end
 
   def officer_of

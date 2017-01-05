@@ -12,13 +12,10 @@
 <% end %>
 
 	<div class="form-group">
-		<%= f.label :status %>
-		<%= f.text_field :status, class: "form-control" %>
+		<%= f.label :role %>
+		<%= f.select :role, ['member', 'officer', 'admin'], class: "form-control" %>
 	</div>
 
-	<% if !@member.read_attribute(:expirationTime).nil? %>
-		<h4>Extend Membership</h4>
-	<% end %>
 	<div class="form-group">
 		<%= f.label 'Membership Length' %>
 		<input input='text' placeholder='Number of Months' name='member[expirationTime]'>

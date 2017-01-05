@@ -19,6 +19,7 @@
           <li><%= link_to "Workshops", workshops_path, :class => 'navbar-link'  %> </li>
           <% if is_admin? %>
             <li><%= link_to"New Member", new_admin_member_path, class: 'navbar-link' %></li>
+            <li><%= link_to"Renew a Member", admin_renew_path, class: 'navbar-link' %></li>
           <% end %>
         </ul>
         <ul class="nav navbar-nav navbar-right" id="auth">

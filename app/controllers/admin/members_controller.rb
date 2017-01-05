@@ -1,5 +1,5 @@
 class Admin::MembersController < AdminController
-  before_action :set_member, only: [:show, :edit, :update, :allowed?]
+  before_action :set_member, only: [:show, :edit, :update, :renew, :allowed?]
   before_action :set_workshop, only: [:edit]
 
   def new
@@ -22,6 +22,9 @@ class Admin::MembersController < AdminController
   def edit
   end
 
+  def renew
+  end
+
   def update
     if @member.update(user_params)
       redirect_to @member, notice: 'Member updated'
@@ -32,11 +35,11 @@ class Admin::MembersController < AdminController
 
   private
   def user_params
-    params.require(:member).permit(:fullname, :email, :skill_ids =>[])
+    params.require(:member).permit(:fullname, :email, :status, :expirationTime, :skill_ids =>[])
   end
 
   def set_member
-    @member = current_user
+    @member = current_member
   end
 
   def set_workshop

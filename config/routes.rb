@@ -17,7 +17,9 @@ Rails.application.routes.draw do
       resources :workshops, only: [:new, :create, :edit, :update]
     end
   end
-  
+
+  get '/admin/renew', to: 'admin/members#renew'
+
   get '/members/mailer', to: 'members#mailer'
   post '/members/search_by', to: 'members#search_by'
 

@@ -1,0 +1,13 @@
+<%= form_for @member do |f| %>
+	<div class="form-group">
+		<%= f.label 'Select Member' %>
+		<%= f.collection_select :id, Member.all.sort_by(&:fullname), :id, :fullname%>
+	</div>
+
+	<div class="form-group">
+		<%= f.label 'Renew Membership' %>
+		<input input='text' placeholder='Number of Months' name='member[expirationTime]'>
+	</div>
+
+	<%= f.submit class: "btn btn-primary" %>
+<% end %>
