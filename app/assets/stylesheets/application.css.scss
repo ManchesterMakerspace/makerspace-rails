@@ -13,7 +13,13 @@
  *= require_tree .
  *= require_self
  */
+ @import "bootstrap-sprockets";
  @import "bootstrap";
+
+ .login {
+   display: none;
+ }
+
  .field_with_errors {
   padding: 2px;
   background-color: red;
