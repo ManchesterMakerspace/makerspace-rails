@@ -24,6 +24,7 @@ class Admin::MembersController < AdminController
 
   def renew
     @member = Member.new
+    @members = Member.all.distinct(:fullname).sort
   end
 
   def update
@@ -36,11 +37,12 @@ class Admin::MembersController < AdminController
 
   private
   def user_params
+    binding.pry
     params.require(:member).permit(:fullname, :email, :status, :expirationTime, :skill_ids =>[])
   end
 
   def set_member
-    @member = Member.find_by(id: params[:id]) || Member.find_by(id: params[:member][:id])
+    @member = Member.find_by(id: params[:id]) || Member.find_by(id: params[:member][:id]) || Member.find_by(fullname: params[:member][:fullname])
   end
 
   def set_workshop

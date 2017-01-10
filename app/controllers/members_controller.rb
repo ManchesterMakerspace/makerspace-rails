@@ -16,7 +16,6 @@ class MembersController < ApplicationController
     end
 
     def create
-      binding.pry
         @member = Member.new(member_params)
         if @member.save
             redirect_to member_path(@member), notice: "Member created" and return

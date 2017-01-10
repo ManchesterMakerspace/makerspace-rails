@@ -1,7 +1,7 @@
 <%= form_for [:admin, @member], method: :patch, html: {class: 'renew'}  do |f| %>
 	<div class="form-group member">
 		<%= f.label 'Select Member' %>
-		<%= f.collection_select :id, Member.all.sort_by(&:fullname), :id, :fullname, {include_blank: 'Select member..'} %>
+		<%= f.select :fullname, @members,  {include_blank: 'Select member..'} %>
 	</div>
 
 	<div class="form-group">
