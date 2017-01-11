@@ -34,10 +34,16 @@ class MembersController < ApplicationController
 
     def search_by
         if params[:value].empty?
-          redirect_to members_path and return
+          respond_to do |format|
+            format.html { render :index }
+            format.json { render :json, alert: 'Value missing' }
+          end
         else
           @members = Member.where(params[:field] => params[:value])
-          render json: @members
+          respond_to do |format|
+            format.html { render index: @members }
+            format.json { render json: @members }
+          end
         end
     end
 

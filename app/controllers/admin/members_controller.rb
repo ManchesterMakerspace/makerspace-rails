@@ -39,9 +39,15 @@ class Admin::MembersController < AdminController
 
   def update
     if @member.update(user_params)
-      redirect_to @member, notice: 'Member updated'
+      respond_to do |format|
+        format.html { render show: @member, notice: 'Member updated' }
+        format.json { render json: @member, alert: 'Member udpated' }
+      end
     else
-      render action: 'edit', alert: "Update failed:  #{@member.errors.full_messages}"
+      respond_to do |format|
+        format.html { render edit: @member, alert: "Update failed:  #{@member.errors.full_messages}" }
+        format.json { render json: @member, alert: "Update failed:  #{@member.errors.full_messages}" }
+      end
     end
   end
 

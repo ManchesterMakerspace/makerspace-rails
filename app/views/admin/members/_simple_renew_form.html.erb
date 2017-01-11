@@ -25,9 +25,8 @@ $(document).ready(function() {
   $('.member').on('change', function(){
     var member_fullname = $('#member_fullname').val();
     token = $('input[name=authenticity_token]').val();
-    $.post('/members/search_by', { field: 'fullname', value: member_fullname, authenticity_token: token }, function(data){
+    $.post('/members/search_by.json', { field: 'fullname', value: member_fullname, authenticity_token: token }, function(data){
       if (data.length === 1){
-				console.log(data);
 				foundMemberId = data[0]["_id"]["$oid"];
         member1.fullname = data[0]["fullname"];
 				member1.expirationTime = data[0]["expirationTime"];
@@ -41,18 +40,21 @@ $(document).ready(function() {
   });
 
 	$('.renew').submit(function(event){
-		console.log(foundMemberId);
 		if (typeof foundMemberId != 'undefined'){
 			var months = $('input[name="member[expirationTime]"]').val();
 			$.ajax({
-				url: '/admin/members/' + foundMemberId,
+				url: '/admin/members/' + foundMemberId + '.json',
 				type: 'PUT',
 				data: {member: {expirationTime: months}, authenticity_token: token },
 				success: function(data) {
-					console.log(data);
+					member1.expirationTime = data["expirationTime"]
+					alert(member1.fullname + ' updated. New expiration: ' + member1.formatExpTime());
 				}
 			});
 			event.preventDefault();
+			clearForm(this);
+			$('.member-name').text('');
+			$('.member-expTime').text('');
 		}
 	})
 });
