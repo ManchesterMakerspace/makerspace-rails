@@ -1,0 +1,93 @@
+require 'al-test-utils'
+
+class TestObjectClass < Test::Unit::TestCase
+  include AlTestUtils
+
+  priority :must
+  def test_pass_nil_to_set_classes
+    make_temporary_group do |group|
+      assert_raises(ActiveLdap::RequiredObjectClassMissed) do
+        group.classes = nil
+      end
+    end
+  end
+
+  priority :normal
+  def test_pass_nil_to_replace_class
+    make_temporary_group do |group|
+      assert_raises(ActiveLdap::RequiredObjectClassMissed) do
+        group.replace_class(nil)
+      end
+    end
+  end
+
+  def test_case_insensitive_match
+    assert_nothing_raised do
+      @group_class.send(:instantiate,
+                        [
+                         "cn=test-group,#{@group_class.base}",
+                         {
+                           :cn => "test-group",
+                           :objectClass => ["TOP", "posixgroup"],
+                         }
+                        ])
+    end
+  end
+
+  def test_ensure_recommended_classes
+    make_temporary_group do |group|
+      added_class = "labeledURIObject"
+
+      assert_equal([], group.class.recommended_classes)
+      group.class.recommended_classes += [added_class]
+      assert_equal([added_class], group.class.recommended_classes)
+
+      assert_equal([added_class],
+                   group.class.recommended_classes - group.classes)
+      group.ensure_recommended_classes
+      assert_equal([],
+                   group.class.recommended_classes - group.classes)
+    end
+  end
+
+  def test_unknown_object_class
+    make_temporary_group do |group|
+      assert_raises(ActiveLdap::ObjectClassError) do
+        group.add_class("unknownObjectClass")
+      end
+    end
+  end
+
+  def test_remove_required_class
+    make_temporary_group do |group|
+      assert_raises(ActiveLdap::RequiredObjectClassMissed) do
+        group.remove_class("posixGroup")
+      end
+    end
+  end
+
+  def test_invalid_object_class_value
+    make_temporary_group do |group|
+      assert_raises(TypeError) {group.add_class(:posixAccount)}
+    end
+  end
+
+  class TestRemoveClass < self
+    def test_clear_existing_attributes
+      make_temporary_user(:simple => true) do |user, password|
+        user.add_class("inetOrgPerson")
+        user.given_name = "new given name"
+
+        original_attributes = user.attributes
+        user.remove_class("inetOrgPerson")
+        new_attributes = user.attributes
+        original_attributes.delete("objectClass")
+        removed_attributes = original_attributes.reject do |key, value|
+          value == new_attributes[key]
+        end
+        assert_equal({"givenName" => "new given name"},
+                     removed_attributes)
+      end
+    end
+  end
+end

@@ -1,0 +1,48 @@
+#!/usr/bin/ruby
+
+base = File.expand_path(File.join(File.dirname(__FILE__), ".."))
+$LOAD_PATH << File.join(base, "lib")
+$LOAD_PATH << File.join(base, "examples")
+
+require 'active_ldap'
+require 'objects/user'
+require 'objects/group'
+
+argv, opts, options = ActiveLdap::Command.parse_options do |opts, options|
+  opts.banner += " USER_NAME CN UID"
+end
+
+if argv.size == 3
+  name, cn, uid = argv
+else
+  $stderr.puts opts
+  exit 1
+end
+
+pwb = Proc.new do |user|
+  ActiveLdap::Command.read_password("[#{user}] Password: ")
+end
+
+ActiveLdap::Base.setup_connection(:password_block => pwb,
+                                  :allow_anonymous => false)
+
+unless User.exists?(name)
+  $stderr.puts("User #{name} doesn't exist.")
+  exit 1
+end
+
+user = User.find(name)
+user.cn = cn
+user.uid_number = uid
+user.gid_number = uid
+
+if user.classes.include?('strongAuthenticationUser')
+  user.user_certificate = nil
+  user.remove_class('strongAuthenticationUser')
+end
+
+unless user.save
+  puts "failed"
+  puts user.errors.full_messages
+  exit 1
+end

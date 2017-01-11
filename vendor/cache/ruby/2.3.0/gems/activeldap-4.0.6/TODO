@@ -1,0 +1,32 @@
+- [1.1.x] add :readonly option to :has_many.
+- Work as framework on Rails.
+- How to support dSCorePropagationData? ignore it?
+  all systemOnly == "TRUE" attribute can be ignored?
+- Add parsing position to DistinguishedNameInvalid error like
+  <NAME=VALUE,INVALID_HERE>@<REST=INPUT>.
+- Support TLS optioins (e.g. CA certification file and so on)
+- Provide FormHelper for LDAP entry's attribute to handle multiple values
+  (["foo", "bar", ...]) and option value ({"binary" => "..."},
+  {"lang-en-us" => "..."})
+- Test SASL bind.
+- Add result pagination via LDAP::Controls
+- serialize & serialized_attributes
+- schema mgmt - how does AR handle it?
+- columns() -- ?
+http://api.rubyonrails.com/classes/ActiveRecord/Base.html#M000865
+- provide full documentation for new API.
+- handle all exception raised from Ruby/LDAP and wrap as
+  ActiveLdap exception. I think we need to develop an
+  application using ActiveLdap.
+- Add locking around Timeout.alarm() to ensure a multithreaded ruby
+  app doesn't hit any race conditions
+- Add AR matching exceptions:
+* ActiveRecordError -- ActiveLdapError as base
+* AssociationTypeMismatch
+* SerializationTypeMismatch
+* ConnectionNotEstablished
+* RecordNotFound
+* LdapActionInvalid - like StatementInvalid
+* MultiparameterAssignmentErrors
+* AttributeAssignmentError
+* RecordNotSaved

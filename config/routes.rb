@@ -10,7 +10,7 @@ Rails.application.routes.draw do
     resources :skills, only: [:edit, :destroy]
     resources :workshops, except: [:new, :create] do
       resources :skills, only: [:new, :create, :edit, :update, :destroy]
-      resources :members, only: [:show, :edit, :update]
+      resources :members, only: [:edit, :update]
     end
     namespace :admin  do
       resources :members, only: [:new, :create, :show, :edit, :update]

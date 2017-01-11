@@ -1,5 +1,5 @@
 class MembersController < ApplicationController
-    before_action :set_user, only: [:show, :edit, :update, :allowed?, :revoke, :restore]
+    before_action :set_member, only: [:show, :edit, :update, :allowed?, :revoke, :restore]
     before_action :set_workshop, only: [:edit, :update]
     before_action :allowed?, only: [:edit, :update]
 
@@ -9,18 +9,6 @@ class MembersController < ApplicationController
 
     def show
       @workshops = Workshop.all.sort_by(&:name)
-    end
-
-    def new
-        @member = Member.new
-    end
-
-    def create
-        @member = Member.new(member_params)
-        if @member.save
-            redirect_to member_path(@member), notice: "Member created" and return
-        end
-        render 'new'
     end
 
     def edit
@@ -49,7 +37,7 @@ class MembersController < ApplicationController
           redirect_to members_path and return
         else
           @members = Member.where(params[:field] => params[:value])
-          render 'index' and return
+          render json: @members
         end
     end
 
@@ -64,7 +52,7 @@ class MembersController < ApplicationController
       params.require(:member).permit(:fullname, :email, :learned_skill_ids =>[])
     end
 
-    def set_user
+    def set_member
       @member = Member.find(params[:id])
     end
 

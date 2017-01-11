@@ -4,6 +4,11 @@
 		<%= f.select :fullname, @members,  {include_blank: 'Select member..'} %>
 	</div>
 
+	<div class="member_details">
+		<div class="member-name"></div>
+		<div class="member-expTime"></div>
+	</div> </br>
+
 	<div class="form-group">
 		<%= f.label 'Renew Membership' %>
 		<input input='text' placeholder='Number of Months' name='member[expirationTime]'>
@@ -11,3 +16,44 @@
 
 	<%= f.submit "Update User" %>
 <% end %>
+
+<script type="text/javascript" charset="utf-8">
+var foundMemberId, token;
+var member1 = new Member;
+
+$(document).ready(function() {
+  $('.member').on('change', function(){
+    var member_fullname = $('#member_fullname').val();
+    token = $('input[name=authenticity_token]').val();
+    $.post('/members/search_by', { field: 'fullname', value: member_fullname, authenticity_token: token }, function(data){
+      if (data.length === 1){
+				console.log(data);
+				foundMemberId = data[0]["_id"]["$oid"];
+        member1.fullname = data[0]["fullname"];
+				member1.expirationTime = data[0]["expirationTime"];
+        $('.member-name').text('Member Name: ' + member1.fullname);
+        $('.member-expTime').text('Membership expires on ' + member1.formatExpTime());
+      }
+      else if (data.length > 1){
+        alert('Multiple members found')
+      }
+    });
+  });
+
+	$('.renew').submit(function(event){
+		console.log(foundMemberId);
+		if (typeof foundMemberId != 'undefined'){
+			var months = $('input[name="member[expirationTime]"]').val();
+			$.ajax({
+				url: '/admin/members/' + foundMemberId,
+				type: 'PUT',
+				data: {member: {expirationTime: months}, authenticity_token: token },
+				success: function(data) {
+					console.log(data);
+				}
+			});
+			event.preventDefault();
+		}
+	})
+});
+</script>

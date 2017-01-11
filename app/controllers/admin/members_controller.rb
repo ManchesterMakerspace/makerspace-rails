@@ -9,14 +9,24 @@ class Admin::MembersController < AdminController
   def create
     @member = Member.new(user_params)
     if @member.save
-      redirect_to @member, notice: 'Member created successfully'
+      respond_to do |format|
+        format.html { render show: @member, notice: 'Member created successfully'}
+        format.json { render json: @member, notice: 'Member created successfully' }
+      end
     else
-      render action: 'new', alert: "Creation failed:  #{@member.errors.full_messages}"
+      respond_to do |format|
+        format.html { render new: @member, alert: "Creation failed:  #{@member.errors.full_messages}" }
+        format.json { render json: @member, alert: "Creation failed:  #{@member.errors.full_messages}"}
+      end
     end
   end
 
   def show
     @workshops = Workshop.all.sort_by(&:name)
+    respond_to do |format|
+      format.html { render show: @member }
+      format.json { render json: @member }
+    end
   end
 
   def edit
@@ -37,7 +47,6 @@ class Admin::MembersController < AdminController
 
   private
   def user_params
-    binding.pry
     params.require(:member).permit(:fullname, :email, :status, :expirationTime, :skill_ids =>[])
   end
 

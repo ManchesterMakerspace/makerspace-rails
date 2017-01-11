@@ -1,0 +1,50 @@
+/usr/bin/ruby2.3 -r ./siteconf20170111-4560-1p4t37t.rb extconf.rb
+checking for unistd.h... yes
+checking for rb_thread_blocking_region()... no
+checking for rb_thread_call_without_gvl()... yes
+checking for sys/select.h... yes
+checking for poll.h... yes
+checking for sys/epoll.h... yes
+checking for sys/event.h... no
+checking for port.h... no
+checking for sys/resource.h... yes
+creating Makefile
+
+make "DESTDIR=" clean
+
+make "DESTDIR="
+compiling monitor.c
+compiling nio4r_ext.c
+In file included from nio4r_ext.c:7:0:
+../libev/ev.c:1829:31: warning: ‘ev_default_loop_ptr’ initialized and declared ‘extern’
+   EV_API_DECL struct ev_loop *ev_default_loop_ptr = 0; /* needs to be initialised to make it a definition despite extern */
+                               ^
+In file included from nio4r_ext.c:7:0:
+../libev/ev.c: In function ‘ev_run’:
+../libev/ev.c:3737:9: warning: implicit declaration of function ‘rb_thread_call_without_gvl’ [-Wimplicit-function-declaration]
+         rb_thread_call_without_gvl(ev_backend_poll, (void *)&poll_args, RUBY_UBF_IO, 0);
+         ^
+In file included from nio4r_ext.c:7:0:
+../libev/ev.c: In function ‘evpipe_write’:
+../libev/ev.c:2458:11: warning: ignoring return value of ‘write’, declared with attribute warn_unused_result [-Wunused-result]
+           write (evpipe [1], &counter, sizeof (uint64_t));
+           ^
+../libev/ev.c:2470:11: warning: ignoring return value of ‘write’, declared with attribute warn_unused_result [-Wunused-result]
+           write (evpipe [1], &(evpipe [1]), 1);
+           ^
+../libev/ev.c: In function ‘pipecb’:
+../libev/ev.c:2491:11: warning: ignoring return value of ‘read’, declared with attribute warn_unused_result [-Wunused-result]
+           read (evpipe [1], &counter, sizeof (uint64_t));
+           ^
+../libev/ev.c:2505:11: warning: ignoring return value of ‘read’, declared with attribute warn_unused_result [-Wunused-result]
+           read (evpipe [0], &dummy, sizeof (dummy));
+           ^
+compiling selector.c
+selector.c: In function ‘NIO_Selector_wakeup’:
+selector.c:398:5: warning: ignoring return value of ‘write’, declared with attribute warn_unused_result [-Wunused-result]
+     write(selector->wakeup_writer, "\0", 1);
+     ^
+linking shared-object nio4r_ext.so
+
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 nio4r_ext.so ./.gem.20170111-4560-193ktij

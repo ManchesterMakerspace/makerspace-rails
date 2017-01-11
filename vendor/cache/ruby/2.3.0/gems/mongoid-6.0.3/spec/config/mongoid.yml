@@ -1,0 +1,25 @@
+test:
+  clients:
+    default:
+      database: mongoid_test
+      hosts:
+        - <%=ENV["MONGOID_SPEC_HOST"]%>:<%=ENV["MONGOID_SPEC_PORT"]%>
+      options:
+        user: "mongoid-user"
+        password: "password"
+        auth_source: "admin"
+        read:
+          mode: :primary_preferred
+          tag_sets:
+            - use: web
+        max_pool_size: 1
+  options:
+    include_root_in_json: false
+    include_type_for_serialization: false
+    preload_models: false
+    scope_overwrite_exception: false
+    raise_not_found_error: true
+    use_activesupport_time_zone: true
+    use_utc: false
+    log_level: :warn
+    belongs_to_required_by_default: false

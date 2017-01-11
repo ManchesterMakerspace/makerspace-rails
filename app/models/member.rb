@@ -109,19 +109,20 @@ class Member
     end
   end
 
-  def expirationTime
-    Time.at(read_attribute(:expirationTime).to_i / 1000)
+  def prettyTime
+    Time.at(expirationTime/1000)
   end
 
   def duration
-    expirationTime - Time.now
+    prettyTime - Time.now
   end
 
   def expirationTime=(num_months)
-    if expirationTime.to_i > 0
-      write_attribute(:expirationTime, (expirationTime.strftime('%s').to_i * 1000) + (num_months.to_i*30*24*60*60*1000))
+    now_in_ms = (Time.now.strftime('%s').to_i * 1000)
+    if expirationTime > now_in_ms
+      write_attribute(:expirationTime, (expirationTime + (num_months.to_i*30*24*60*60*1000)) )
     else
-      write_attribute(:expirationTime, (Time.now.strftime('%s').to_i * 1000) + (num_months.to_i*30*24*60*60*1000))
+      write_attribute(:expirationTime,  (now_in_ms + (num_months.to_i*30*24*60*60*1000)) )
     end
     self.save
   end

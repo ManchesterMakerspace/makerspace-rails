@@ -1,0 +1,4029 @@
+# English translations for ActiveLdap package.
+# Copyright (C) 2007-2009 Kouhei Sutou
+# This file is distributed under the same license as the ActiveLdap package.
+# Kouhei Sutou <kou@cozmixng.org>, 2007.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Ruby/ActiveLdap 1.1.1\n"
+"POT-Creation-Date: 2009-08-04 23:26+0900\n"
+"PO-Revision-Date: 2009-02-25 08:40+0900\n"
+"Last-Translator: Kouhei Sutou <kou@cozmixng.org>\n"
+"Language-Team: English\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: -:-
+msgid "LDAP|Attribute|aRecord"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|aliasedEntryName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|aliasedObjectName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|altServer"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|associatedDomain"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|associatedName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|attributeTypes"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|audio"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|authorityRevocationList"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|bootFile"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|bootParameter"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|buildingName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|businessCategory"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|c"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|cACertificate"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|cNAMERecord"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|carLicense"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|certificateRevocationList"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|cn"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|co"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|commonName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|countryName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|createTimestamp"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|creatorsName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|crossCertificatePair"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|dITRedirect"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|dSAQuality"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|dc"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|deltaRevocationList"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|departmentNumber"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|description"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|destinationIndicator"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|displayName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|distinguishedName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|dmdName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|dnQualifier"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|documentAuthor"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|documentIdentifier"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|documentLocation"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|documentPublisher"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|documentTitle"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|documentVersion"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|domainComponent"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|drink"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|dynamicSubtrees"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|email"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|emailAddress"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|employeeNumber"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|employeeType"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|enhancedSearchGuide"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|entryDN"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|entryTtl"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|entryUUID"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|facsimileTelephoneNumber"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|favouriteDrink"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|fax"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|friendlyCountryName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|gecos"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|generationQualifier"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|gidNumber"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|givenName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|gn"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|hasSubordinates"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|homeDirectory"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|homePhone"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|homePostalAddress"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|homeTelephoneNumber"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|host"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|houseIdentifier"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|info"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|initials"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|internationaliSDNNumber"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|ipHostNumber"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|ipNetmaskNumber"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|ipNetworkNumber"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|ipProtocolNumber"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|ipServicePort"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|ipServiceProtocol"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|janetMailbox"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|jpegPhoto"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|knowledgeInformation"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|l"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|labeledURI"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|ldapSyntaxes"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|localityName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|loginShell"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|mDRecord"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|mXRecord"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|macAddress"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|mail"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|mailPreferenceOption"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|manager"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|matchingRuleUse"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|matchingRules"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|member"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|memberNisNetgroup"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|memberUid"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|mobile"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|mobileTelephoneNumber"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|modifiersName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|modifyTimestamp"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|nSRecord"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|name"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|namingContexts"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|nisMapEntry"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|nisMapName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|nisNetgroupTriple"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|o"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|objectClass"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|objectClasses"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcAccess"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcAddContentAcl"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcAllows"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcArgsFile"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcAttributeOptions"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcAttributeTypes"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcAuthIDRewrite"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcAuthzPolicy"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcAuthzRegexp"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcBackend"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcConcurrency"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcConfigDir"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcConfigFile"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcConnMaxPending"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcConnMaxPendingAuth"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDatabase"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDbCacheFree"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDbCacheSize"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDbCheckpoint"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDbChecksum"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDbConfig"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDbCryptFile"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDbCryptKey"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDbDNcacheSize"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDbDirectory"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDbDirtyRead"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDbIDLcacheSize"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDbIndex"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDbLinearIndex"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDbLockDetect"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDbMode"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDbNoSync"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDbPageSize"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDbSearchStack"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDbShmKey"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDefaultSearchBase"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDisallows"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcDitContentRules"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcGentleHUP"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcHidden"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcIdleTimeout"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcInclude"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcIndexIntLen"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcIndexSubstrAnyLen"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcIndexSubstrAnyStep"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcIndexSubstrIfMaxLen"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcIndexSubstrIfMinLen"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcLastMod"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcLdapSyntaxes"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcLimits"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcLocalSSF"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcLogFile"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcLogLevel"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcMaxDerefDepth"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcMirrorMode"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcModuleLoad"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcModulePath"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcMonitoring"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcObjectClasses"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcObjectIdentifier"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcOverlay"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcPasswordCryptSaltFormat"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcPasswordHash"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcPidFile"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcPlugin"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcPluginLogFile"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcReadOnly"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcReferral"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcReplica"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcReplicaArgsFile"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcReplicaPidFile"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcReplicationInterval"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcReplogFile"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcRequires"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcRestrict"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcReverseLookup"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcRootDN"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcRootDSE"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcRootPW"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcSaslAuxprops"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcSaslHost"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcSaslRealm"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcSaslSecProps"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcSchemaDN"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcSecurity"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcServerID"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcSizeLimit"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcSockbufMaxIncoming"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcSockbufMaxIncomingAuth"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcSortVals"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcSubordinate"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcSuffix"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcSyncrepl"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcTLSCACertificateFile"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcTLSCACertificatePath"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcTLSCRLCheck"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcTLSCRLFile"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcTLSCertificateFile"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcTLSCertificateKeyFile"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcTLSCipherSuite"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcTLSDHParamFile"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcTLSProtocolMin"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcTLSRandFile"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcTLSVerifyClient"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcThreads"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcTimeLimit"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcToolThreads"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcUpdateDN"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcUpdateRef"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|olcWriteTimeout"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|oncRpcNumber"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|organizationName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|organizationalStatus"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|organizationalUnitName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|otherMailbox"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|ou"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|owner"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|pager"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|pagerTelephoneNumber"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|personalSignature"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|personalTitle"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|photo"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|physicalDeliveryOfficeName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|pkcs9email"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|postOfficeBox"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|postalAddress"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|postalCode"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|preferredDeliveryMethod"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|preferredLanguage"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|presentationAddress"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|protocolInformation"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|pseudonym"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|ref"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|registeredAddress"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|rfc822Mailbox"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|roleOccupant"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|roomNumber"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sOARecord"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaAcctFlags"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaAlgorithmicRidBase"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaBadPasswordCount"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaBadPasswordTime"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaBoolOption"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaDomainName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaForceLogoff"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaGroupType"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaHomeDrive"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaHomePath"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaIntegerOption"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaKickoffTime"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaLMPassword"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaLockoutDuration"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaLockoutObservationWindow"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaLockoutThreshold"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaLogoffTime"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaLogonHours"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaLogonScript"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaLogonTime"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaLogonToChgPwd"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaMaxPwdAge"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaMinPwdAge"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaMinPwdLength"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaMungedDial"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaNTPassword"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaNextGroupRid"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaNextRid"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaNextUserRid"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaOptionName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaPasswordHistory"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaPrimaryGroupSID"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaProfilePath"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaPwdCanChange"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaPwdHistoryLength"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaPwdLastSet"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaPwdMustChange"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaRefuseMachinePwdChange"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaSID"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaSIDList"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaShareName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaStringListOption"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaStringOption"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaTrustFlags"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sambaUserWorkstations"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|searchGuide"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|secretary"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|seeAlso"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|serialNumber"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|shadowExpire"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|shadowFlag"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|shadowInactive"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|shadowLastChange"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|shadowMax"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|shadowMin"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|shadowWarning"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|singleLevelQuality"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|sn"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|st"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|stateOrProvinceName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|street"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|streetAddress"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|structuralObjectClass"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|subschemaSubentry"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|subtreeMaximumQuality"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|subtreeMinimumQuality"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|supportedAlgorithms"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|supportedApplicationContext"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|supportedControl"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|supportedExtension"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|supportedFeatures"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|supportedLDAPVersion"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|supportedSASLMechanisms"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|surname"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|telephoneNumber"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|teletexTerminalIdentifier"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|telexNumber"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|textEncodedORAddress"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|title"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|uid"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|uidNumber"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|uniqueIdentifier"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|uniqueMember"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|userCertificate"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|userClass"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|userPKCS12"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|userPassword"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|userSMIMECertificate"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|userid"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|vendorName"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|vendorVersion"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|x121Address"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Attribute|x500UniqueIdentifier"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|aliasedObjectName|RFC4512: name of aliased object"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|altServer|RFC4512: alternative servers"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|associatedDomain|RFC1274: domain associated with "
+"object"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|associatedName|RFC1274: DN of entry associated "
+"with domain"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|attributeTypes|RFC4512: attribute types"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|audio|RFC1274: audio (u-law)"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|authorityRevocationList|RFC2256: X.509 authority "
+"revocation list, use ;binary"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|bootFile|Boot image name"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|bootParameter|rpc.bootparamd parameter"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|buildingName|RFC1274: name of building"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|businessCategory|RFC2256: business category"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|cACertificate|RFC2256: X.509 CA certificate, use ;"
+"binary"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|carLicense|RFC2798: vehicle license or "
+"registration plate"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|certificateRevocationList|RFC2256: X.509 "
+"certificate revocation list, use ;binary"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|cn|RFC4519: common name(s) for which the entity "
+"is known by"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|co|RFC1274: friendly country name"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|createTimestamp|RFC4512: time which object was "
+"created"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|creatorsName|RFC4512: name of creator"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|crossCertificatePair|RFC2256: X.509 cross "
+"certificate pair, use ;binary"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|c|RFC2256: ISO-3166 country 2-letter code"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|dITRedirect|RFC1274: DIT Redirect"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|dSAQuality|RFC1274: DSA Quality"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|dc|RFC1274/2247: domain component"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|deltaRevocationList|RFC2256: delta revocation "
+"list; use ;binary"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|departmentNumber|RFC2798: identifies a department "
+"within an organization"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|description|RFC4519: descriptive information"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|destinationIndicator|RFC2256: destination "
+"indicator"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|displayName|RFC2798: preferred name to be used "
+"when displaying entries"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|distinguishedName|RFC4519: common supertype of DN "
+"attributes"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|dmdName|RFC2256: name of DMD"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|dnQualifier|RFC2256: DN qualifier"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|documentAuthor|RFC1274: DN of author of document"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|documentIdentifier|RFC1274: unique identifier of "
+"document"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|documentLocation|RFC1274: location of document "
+"original"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|documentPublisher|RFC1274: publisher of document"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|documentTitle|RFC1274: title of document"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|documentVersion|RFC1274: version of document"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|drink|RFC1274: favorite drink"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|dynamicSubtrees|RFC2589: dynamic subtrees"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|email|RFC3280: legacy attribute for email "
+"addresses in DNs"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|employeeNumber|RFC2798: numerically identifies an "
+"employee within an organization"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|employeeType|RFC2798: type of employment for a "
+"person"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|enhancedSearchGuide|RFC2256: enhanced search guide"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|entryDN|DN of the entry"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|entryTtl|RFC2589: entry time-to-live"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|entryUUID|UUID of the entry"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|facsimileTelephoneNumber|RFC2256: Facsimile (Fax) "
+"Telephone Number"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|gecos|The GECOS field; the common name"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|generationQualifier|RFC2256: name qualifier "
+"indicating a generation"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|gidNumber|RFC2307: An integer uniquely "
+"identifying a group in an administrative domain"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|givenName|RFC2256: first name(s) for which the "
+"entity is known by"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|hasSubordinates|X.501: entry has children"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|homeDirectory|The absolute path to the home "
+"directory"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|homePhone|RFC1274: home telephone number"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|homePostalAddress|RFC1274: home postal address"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|host|RFC1274: host computer"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|houseIdentifier|RFC2256: house identifier"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|info|RFC1274: general information"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|initials|RFC2256: initials of some or all of "
+"names, but not the surname(s)."
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|internationaliSDNNumber|RFC2256: international "
+"ISDN number"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|ipHostNumber|IP address"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|ipNetmaskNumber|IP netmask"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|ipNetworkNumber|IP network"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|janetMailbox|RFC1274: Janet mailbox"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|jpegPhoto|RFC2798: a JPEG image"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|knowledgeInformation|RFC2256: knowledge "
+"information"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|labeledURI|RFC2079: Uniform Resource Identifier "
+"with optional label"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|ldapSyntaxes|RFC4512: LDAP syntaxes"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|loginShell|The path to the login shell"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|l|RFC2256: locality which this object resides in"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|macAddress|MAC address"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|mailPreferenceOption|RFC1274: mail preference "
+"option"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|mail|RFC1274: RFC822 Mailbox"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|manager|RFC1274: DN of manager"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|matchingRuleUse|RFC4512: matching rule uses"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|matchingRules|RFC4512: matching rules"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|member|RFC2256: member of a group"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|mobile|RFC1274: mobile telephone number"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|modifiersName|RFC4512: name of last modifier"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|modifyTimestamp|RFC4512: time which object was "
+"last modified"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|name|RFC4519: common supertype of name attributes"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|namingContexts|RFC4512: naming contexts"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|nisNetgroupTriple|Netgroup triple"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|objectClasses|RFC4512: object classes"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|objectClass|RFC4512: object classes of the entity"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|olcAccess|Access Control List"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|olcAddContentAcl|Check ACLs against content of "
+"Add ops"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|olcAllows|Allowed set of deprecated features"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|olcArgsFile|File for slapd command line options"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|olcAttributeTypes|OpenLDAP attributeTypes"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|olcBackend|A type of backend"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|olcConfigDir|Directory for slapd configuration "
+"backend"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|olcConfigFile|File for slapd configuration "
+"directives"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|olcDatabase|The backend type for a database "
+"instance"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|olcDbCacheFree|Number of extra entries to free "
+"when max is reached"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|olcDbCacheSize|Entry cache size in entries"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|olcDbCheckpoint|Database checkpoint interval in "
+"kbytes and minutes"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|olcDbChecksum|Enable database checksum validation"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|olcDbConfig|BerkeleyDB DB_CONFIG configuration "
+"directives"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|olcDbCryptFile|Pathname of file containing the DB "
+"encryption key"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|olcDbCryptKey|DB encryption key"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|olcDbDNcacheSize|DN cache size"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|olcDbDirectory|Directory for database content"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|olcDbDirtyRead|Allow reads of uncommitted data"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|olcDbIDLcacheSize|IDL cache size in IDLs"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|olcDbIndex|Attribute index parameters"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|olcDbLinearIndex|Index attributes one at a time"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|olcDbLockDetect|Deadlock detection algorithm"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|olcDbMode|Unix permissions of database files"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|olcDbNoSync|Disable synchronous database writes"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|olcDbPageSize|Page size of specified DB, in Kbytes"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|olcDbSearchStack|Depth of search stack in IDLs"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|olcDbShmKey|Key for shared memory region"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|olcDitContentRules|OpenLDAP DIT content rules"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|olcLdapSyntaxes|OpenLDAP ldapSyntax"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|olcObjectClasses|OpenLDAP object classes"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|olcSortVals|Attributes whose values will always "
+"be sorted"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|organizationalStatus|RFC1274: organizational "
+"status"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|ou|RFC2256: organizational unit this object "
+"belongs to"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|owner|RFC2256: owner (of the object)"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|o|RFC2256: organization this object belongs to"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|pager|RFC1274: pager telephone number"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|personalSignature|RFC1274: Personal Signature (G3 "
+"fax)"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|personalTitle|RFC1274: personal title"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|photo|RFC1274: photo (G3 fax)"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|physicalDeliveryOfficeName|RFC2256: Physical "
+"Delivery Office Name"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|postOfficeBox|RFC2256: Post Office Box"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|postalAddress|RFC2256: postal address"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|postalCode|RFC2256: postal code"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|preferredDeliveryMethod|RFC2256: preferred "
+"delivery method"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|preferredLanguage|RFC2798: preferred written or "
+"spoken language for a person"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|presentationAddress|RFC2256: presentation address"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|protocolInformation|RFC2256: protocol information"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|pseudonym|X.520(4th): pseudonym for the object"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|ref|RFC3296: subordinate referral URL"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|registeredAddress|RFC2256: registered postal "
+"address"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|roleOccupant|RFC2256: occupant of role"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|roomNumber|RFC1274: room number"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|sambaAcctFlags|Account Flags"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaAlgorithmicRidBase|Base at which the samba "
+"RID generation algorithm should operate"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaBadPasswordCount|Bad password attempt count"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaBadPasswordTime|Time of the last bad "
+"password attempt"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|sambaBoolOption|A boolean option"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaDomainName|Windows NT domain to which the "
+"user belongs"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaForceLogoff|Disconnect Users outside logon "
+"hours (default: -1 => off, 0 => on)"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|sambaGroupType|NT Group Type"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaHomeDrive|Driver letter of home directory "
+"mapping"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|sambaHomePath|Home directory UNC path"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|sambaIntegerOption|An integer option"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaKickoffTime|Timestamp of when the user will "
+"be logged off automatically"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|sambaLMPassword|LanManager Password"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaLockoutDuration|Lockout duration in minutes "
+"(default: 30, -1 => forever)"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaLockoutObservationWindow|Reset time after "
+"lockout in minutes (default: 30)"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaLockoutThreshold|Lockout users after bad "
+"logon attempts (default: 0 => off)"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|sambaLogoffTime|Timestamp of last logoff"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|sambaLogonHours|Logon Hours"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|sambaLogonScript|Logon script path"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|sambaLogonTime|Timestamp of last logon"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaLogonToChgPwd|Force Users to logon for "
+"password change (default: 0 => off, 2 => on)"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaMaxPwdAge|Maximum password age, in seconds "
+"(default: -1 => never expire passwords)"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaMinPwdAge|Minimum password age, in seconds "
+"(default: 0 => allow immediate password change)"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaMinPwdLength|Minimal password length "
+"(default: 5)"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaMungedDial|Base64 encoded user parameter "
+"string"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaNTPassword|MD4 hash of the unicode password"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaNextGroupRid|Next NT rid to give out for "
+"groups"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaNextRid|Next NT rid to give out for anything"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaNextUserRid|Next NT rid to give our for users"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|sambaOptionName|Option Name"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaPasswordHistory|Concatenated MD4 hashes of "
+"the unicode passwords used on this account"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaPrimaryGroupSID|Primary Group Security ID"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|sambaProfilePath|Roaming profile path"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaPwdCanChange|Timestamp of when the user is "
+"allowed to update the password"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaPwdHistoryLength|Length of Password History "
+"Entries (default: 0 => off)"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaPwdLastSet|Timestamp of the last password "
+"update"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaPwdMustChange|Timestamp of when the password "
+"will expire"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaRefuseMachinePwdChange|Allow Machine "
+"Password changes (default: 0 => off)"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|sambaSIDList|Security ID List"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|sambaSID|Security ID"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|sambaShareName|Share Name"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|sambaStringListOption|A string list option"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|sambaStringOption|A string option"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|sambaTrustFlags|Trust Password Flags"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sambaUserWorkstations|List of user workstations "
+"the user is allowed to logon to"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|searchGuide|RFC2256: search guide, deprecated by "
+"enhancedSearchGuide"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|secretary|RFC1274: DN of secretary"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|seeAlso|RFC4519: DN of related object"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|serialNumber|RFC2256: serial number of the entity"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|singleLevelQuality|RFC1274: Single Level Quality"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|sn|RFC2256: last (family) name(s) for which the "
+"entity is known by"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|street|RFC2256: street address of this object"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|structuralObjectClass|RFC4512: structural object "
+"class of entry"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|st|RFC2256: state or province which this object "
+"resides in"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|subschemaSubentry|RFC4512: name of controlling "
+"subschema entry"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|subtreeMaximumQuality|RFC1274: Subtree Maximun "
+"Quality"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|subtreeMinimumQuality|RFC1274: Subtree Mininum "
+"Quality"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|supportedAlgorithms|RFC2256: supported algorithms"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|supportedApplicationContext|RFC2256: supported "
+"application context"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|supportedControl|RFC4512: supported controls"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|supportedExtension|RFC4512: supported extended "
+"operations"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|supportedFeatures|RFC4512: features supported by "
+"the server"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|supportedLDAPVersion|RFC4512: supported LDAP "
+"versions"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|supportedSASLMechanisms|RFC4512: supported SASL "
+"mechanisms"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|telephoneNumber|RFC2256: Telephone Number"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|teletexTerminalIdentifier|RFC2256: Teletex "
+"Terminal Identifier"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|telexNumber|RFC2256: Telex Number"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|title|RFC2256: title associated with the entity"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|uidNumber|RFC2307: An integer uniquely "
+"identifying a user in an administrative domain"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|uid|RFC4519: user identifier"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|uniqueIdentifier|RFC1274: unique identifer"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|uniqueMember|RFC2256: unique member of a group"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|userCertificate|RFC2256: X.509 user certificate, "
+"use ;binary"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|userClass|RFC1274: category of user"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|userPKCS12|RFC2798: personal identity "
+"information, a PKCS #12 PFX"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|userPassword|RFC4519/2307: password of user"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|userSMIMECertificate|RFC2798: PKCS#7 SignedData "
+"used to support S/MIME"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|vendorName|RFC3045: name of implementation vendor"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|vendorVersion|RFC3045: version of implementation"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Attribute|x121Address|RFC2256: X.121 Address"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Attribute|x500UniqueIdentifier|RFC2256: X.500 unique "
+"identifier"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|OpenLDAPdisplayableObject|OpenLDAP Displayable "
+"Object"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|OpenLDAPorg|OpenLDAP Organizational Object"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|OpenLDAPou|OpenLDAP Organizational Unit Object"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|OpenLDAPperson|OpenLDAP Person"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|OpenLDAProotDSE|OpenLDAP Root DSE object"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|alias|RFC4512: an alias"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|applicationEntity|RFC2256: an application entity"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|applicationProcess|RFC2256: an application "
+"process"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|bootableDevice|A device with boot parameters"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|certificationAuthority|RFC2256: a certificate "
+"authority"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|country|RFC2256: a country"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|dSA|RFC2256: a directory system agent (a server)"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|dcObject|RFC2247: domain component object"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|deltaCRL|RFC2587: PKI user"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|device|RFC2256: a device"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|domainRelatedObject|RFC1274: an object related "
+"to an domain"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|dynamicObject|RFC2589: Dynamic Object"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|extensibleObject|RFC4512: extensible object"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|groupOfNames|RFC2256: a group of names (DNs)"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|groupOfUniqueNames|RFC2256: a group of unique "
+"names (DN and Unique Identifier)"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|ieee802Device|A device with a MAC address"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|inetOrgPerson|RFC2798: Internet Organizational "
+"Person"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|ipHost|Abstraction of a host, an IP device"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|ipNetwork|Abstraction of an IP network"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|ipProtocol|Abstraction of an IP protocol"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|ipService|Abstraction an Internet Protocol "
+"service"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|labeledURIObject|RFC2079: object that contains "
+"the URI attribute type"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|locality|RFC2256: a locality"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|nisMap|A generic abstraction of a NIS map"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|nisNetgroup|Abstraction of a netgroup"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|nisObject|An entry in a NIS map"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|olcBackendConfig|OpenLDAP Backend-specific "
+"options"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|olcBdbConfig|BDB backend configuration"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|olcConfig|OpenLDAP configuration object"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|olcDatabaseConfig|OpenLDAP Database-specific "
+"options"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|olcFrontendConfig|OpenLDAP frontend "
+"configuration"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|olcGlobal|OpenLDAP Global configuration options"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|olcIncludeFile|OpenLDAP configuration include "
+"file"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|olcLdifConfig|LDIF backend configuration"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|olcModuleList|OpenLDAP dynamic module info"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|olcOverlayConfig|OpenLDAP Overlay-specific "
+"options"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|olcSchemaConfig|OpenLDAP schema object"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|oncRpc|Abstraction of an ONC/RPC binding"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|organizationalPerson|RFC2256: an organizational "
+"person"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|organizationalRole|RFC2256: an organizational "
+"role"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|organizationalUnit|RFC2256: an organizational "
+"unit"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|organization|RFC2256: an organization"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|person|RFC2256: a person"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|pkiCA|RFC2587: PKI certificate authority"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|pkiUser|RFC2587: a PKI user"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|posixAccount|Abstraction of an account with "
+"POSIX attributes"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|posixGroup|Abstraction of a group of accounts"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|referral|namedref: named subordinate referral"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|residentialPerson|RFC2256: an residential person"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|sambaConfigOption|Samba Configuration Option"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|sambaConfig|Samba Configuration Section"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|sambaDomain|Samba Domain Information"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|sambaGroupMapping|Samba Group Mapping"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|sambaIdmapEntry|Mapping from a SID to an ID"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|sambaSamAccount|Samba 3.0 Auxilary SAM Account"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|sambaShare|Samba Share Section"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|sambaSidEntry|Structural Class for a SID"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|sambaTrustPassword|Samba Trust Password"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|sambaUnixIdPool|Pool for allocating UNIX uids/"
+"gids"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|shadowAccount|Additional attributes for shadow "
+"passwords"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|simpleSecurityObject|RFC1274: simple security "
+"object"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|strongAuthenticationUser|RFC2256: a strong "
+"authentication user"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|subentry|RFC3672: subentry"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|subschema|RFC4512: controlling subschema (sub)"
+"entry"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|top|top of the superclass chain"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|ObjectClass|uidObject|RFC2377: uid object"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|ObjectClass|userSecurityInformation|RFC2256: a user "
+"security information"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.2.36.79672281.1.5.0|RDN"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.1.1.0.0|RFC2307 NIS Netgroup Triple"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.1.1.0.1|RFC2307 Boot Parameter"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.1.16.1|UUID"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.10|Certificate Pair"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.11|Country String"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.12|Distinguished Name"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.14|Delivery Method"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.15|Directory String"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.22|Facsimile Telephone "
+"Number"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.24|Generalized Time"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.26|IA5 String"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.27|Integer"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.28|JPEG"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.34|Name And Optional UID"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.36|Numeric String"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.38|OID"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.39|Other Mailbox"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.40|Octet String"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.41|Postal Address"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.44|Printable String"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.45|SubtreeSpecification"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.49|Supported Algorithm"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.4|Audio"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.50|Telephone Number"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.52|Telex Number"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.5|Binary"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.6|Bit String"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.7|Boolean"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.8|Certificate"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Description|Syntax|1.3.6.1.4.1.1466.115.121.1.9|Certificate List"
+msgstr ""
+
+#: -:-
+msgid ""
+"LDAP|Description|Syntax|1.3.6.1.4.1.4203.666.11.10.2.1|X.509 "
+"AttributeCertificate"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|LDAProotDSE"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|OpenLDAPdisplayableObject"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|OpenLDAPorg"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|OpenLDAPou"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|OpenLDAPperson"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|OpenLDAProotDSE"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|RFC822localPart"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|account"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|alias"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|applicationEntity"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|applicationProcess"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|bootableDevice"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|cRLDistributionPoint"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|certificationAuthority"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|certificationAuthority-V2"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|country"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|dNSDomain"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|dSA"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|dcObject"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|deltaCRL"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|device"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|dmd"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|document"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|documentSeries"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|domain"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|domainRelatedObject"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|dynamicObject"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|extensibleObject"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|friendlyCountry"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|groupOfNames"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|groupOfUniqueNames"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|ieee802Device"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|inetOrgPerson"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|ipHost"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|ipNetwork"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|ipProtocol"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|ipService"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|labeledURIObject"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|locality"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|newPilotPerson"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|nisMap"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|nisNetgroup"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|nisObject"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|olcBackendConfig"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|olcBdbConfig"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|olcConfig"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|olcDatabaseConfig"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|olcFrontendConfig"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|olcGlobal"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|olcIncludeFile"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|olcLdifConfig"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|olcModuleList"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|olcOverlayConfig"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|olcSchemaConfig"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|oncRpc"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|organization"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|organizationalPerson"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|organizationalRole"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|organizationalUnit"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|person"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|pilotDSA"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|pilotOrganization"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|pilotPerson"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|pkiCA"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|pkiUser"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|posixAccount"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|posixGroup"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|qualityLabelledData"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|referral"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|residentialPerson"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|room"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|sambaConfig"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|sambaConfigOption"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|sambaDomain"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|sambaGroupMapping"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|sambaIdmapEntry"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|sambaSamAccount"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|sambaShare"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|sambaSidEntry"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|sambaTrustPassword"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|sambaUnixIdPool"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|shadowAccount"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|simpleSecurityObject"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|strongAuthenticationUser"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|subentry"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|subschema"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|top"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|uidObject"
+msgstr ""
+
+#: -:-
+msgid "LDAP|ObjectClass|userSecurityInformation"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.2.36.79672281.1.5.0"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.1.1.0.0"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.1.1.0.1"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.1.16.1"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.10"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.11"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.12"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.14"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.15"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.22"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.24"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.26"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.27"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.28"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.34"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.36"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.38"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.39"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.4"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.40"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.41"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.44"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.45"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.49"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.5"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.50"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.52"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.6"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.7"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.8"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.1466.115.121.1.9"
+msgstr ""
+
+#: -:-
+msgid "LDAP|Syntax|1.3.6.1.4.1.4203.666.11.10.2.1"
+msgstr ""
+
+#: lib/active_ldap/object_class.rb:53
+msgid "Value in objectClass array is not a String: %s"
+msgstr ""
+
+#: lib/active_ldap/object_class.rb:67
+msgid "unknown objectClass in LDAP server: %s"
+msgstr ""
+
+#: lib/active_ldap/object_class.rb:85
+msgid "Can't remove required objectClass: %s"
+msgstr ""
+
+#: lib/active_ldap/adapter/jndi.rb:105 lib/active_ldap/adapter/ldap.rb:203
+#: lib/active_ldap/adapter/net_ldap.rb:155
+msgid "%s is not one of the available connect methods: %s"
+msgstr ""
+
+#: lib/active_ldap/adapter/jndi.rb:118 lib/active_ldap/adapter/ldap.rb:216
+#: lib/active_ldap/adapter/net_ldap.rb:168
+msgid "%s is not one of the available LDAP scope: %s"
+msgstr ""
+
+#: lib/active_ldap/adapter/jndi.rb:176 lib/active_ldap/adapter/ldap.rb:280
+#: lib/active_ldap/adapter/net_ldap.rb:290
+msgid "unknown type: %s"
+msgstr ""
+
+#: lib/active_ldap/adapter/ldap.rb:108
+msgid "No matches: filter: %s: attributes: %s"
+msgstr ""
+
+#: lib/active_ldap/adapter/ldap.rb:162
+msgid "modify RDN with new superior"
+msgstr ""
+
+#: lib/active_ldap/adapter/net_ldap.rb:211
+msgid "unsupported qops: %s"
+msgstr ""
+
+#: lib/active_ldap/adapter/base.rb:84
+msgid "Bound to %s by SASL as %s"
+msgstr ""
+
+#: lib/active_ldap/adapter/base.rb:86
+msgid "Bound to %s by simple as %s"
+msgstr ""
+
+#: lib/active_ldap/adapter/base.rb:88
+msgid "Bound to %s as anonymous"
+msgstr ""
+
+#: lib/active_ldap/adapter/base.rb:91
+msgid "All authentication methods for %s exhausted."
+msgstr ""
+
+#: lib/active_ldap/adapter/base.rb:171
+msgid "Ignore error %s(%s): filter %s: attributes: %s"
+msgstr ""
+
+#: lib/active_ldap/adapter/base.rb:187 lib/active_ldap/adapter/base.rb:206
+#: lib/active_ldap/adapter/base.rb:208 lib/active_ldap/adapter/base.rb:210
+#: lib/active_ldap/adapter/base.rb:212 lib/active_ldap/adapter/base.rb:222
+#: lib/active_ldap/adapter/base.rb:228
+msgid "%s: %s"
+msgstr ""
+
+#: lib/active_ldap/adapter/base.rb:192 lib/active_ldap/adapter/base.rb:202
+msgid "No such entry: %s"
+msgstr ""
+
+#: lib/active_ldap/adapter/base.rb:293
+msgid "password_block not nil or Proc object. Ignoring."
+msgstr ""
+
+#: lib/active_ldap/adapter/base.rb:314
+msgid "Requested action timed out."
+msgstr ""
+
+#: lib/active_ldap/adapter/base.rb:355
+msgid "Skip simple bind with empty password."
+msgstr ""
+
+#: lib/active_ldap/adapter/base.rb:359
+msgid "Can't use empty password for simple bind."
+msgstr ""
+
+#: lib/active_ldap/adapter/base.rb:551
+msgid "invalid logical operator: %s: available operators: %s"
+msgstr ""
+
+#: lib/active_ldap/adapter/base.rb:566
+msgid "Attempting to reconnect"
+msgstr ""
+
+#: lib/active_ldap/adapter/base.rb:579
+msgid ""
+"Reconnect to server failed: %s\n"
+"Reconnect to server failed backtrace:\n"
+"%s"
+msgstr ""
+
+#: lib/active_ldap/adapter/base.rb:589
+msgid "Giving up trying to reconnect to LDAP server."
+msgstr ""
+
+#: lib/active_ldap/acts/tree.rb:66
+msgid "parent must be an entry or parent DN: %s"
+msgstr ""
+
+#: lib/active_ldap/operations.rb:49
+msgid ":ldap_scope search option is deprecated. Use :scope instead."
+msgstr ""
+
+#: lib/active_ldap/operations.rb:258
+msgid "Invalid order: %s"
+msgstr ""
+
+#: lib/active_ldap/operations.rb:294
+msgid "Couldn't find %s without a DN"
+msgstr ""
+
+#: lib/active_ldap/operations.rb:316
+msgid "Couldn't find %s: DN: %s: filter: %s"
+msgstr ""
+
+#: lib/active_ldap/operations.rb:319
+msgid "Couldn't find %s: DN: %s"
+msgstr ""
+
+#: lib/active_ldap/operations.rb:346
+msgid "Couldn't find all %s: DNs (%s): filter: %s"
+msgstr ""
+
+#: lib/active_ldap/operations.rb:349
+msgid "Couldn't find all %s: DNs (%s)"
+msgstr ""
+
+#: lib/active_ldap/operations.rb:504
+msgid "Failed to delete LDAP entry: <%s>: %s"
+msgstr ""
+
+#: lib/active_ldap/associations.rb:68
+msgid ""
+":foreign_key belongs_to(:many) option is deprecated since 1.1.0. Use :"
+"primary_key instead."
+msgstr ""
+
+#: lib/active_ldap/associations.rb:136
+msgid ""
+":primary_key and :foreign_key has_many options are inverted their mean since "
+"1.1.0. Please invert them."
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:396
+msgid "version spec is missing"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:400
+msgid "version number is missing"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:404
+msgid "unsupported version: %d"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:408
+msgid "separator is missing"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:412
+msgid "'dn:' is missing"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:416
+msgid "DN is missing"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:420
+msgid "DN is invalid: %s: %s"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:424
+msgid "DN has an invalid character: %s"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:428 lib/active_ldap/distinguished_name.rb:144
+msgid "attribute type is missing"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:432
+msgid "option is missing"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:436
+msgid "':' is missing"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:440
+msgid "URI is invalid: %s: %s"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:444
+msgid "'-' is missing"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:448
+msgid "unknown change type: %s"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:452
+msgid "change type is missing"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:456
+msgid "control type is missing"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:460
+msgid "criticality is missing"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:464
+msgid "change type value is missing"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:468
+msgid "attribute spec is missing"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:472
+msgid "'newrdn:' is missing"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:476
+msgid "new RDN value is missing"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:480
+msgid "'deleteoldrdn:' is missing"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:484
+msgid "delete old RDN value is missing"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:488
+msgid "new superior value is missing"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:492
+msgid "unknown modify type: %s"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:765
+msgid "invalid criticality value: %s"
+msgstr ""
+
+#: lib/active_ldap/ldif.rb:808
+msgid "invalid deleteoldrdn value: %s"
+msgstr ""
+
+#: lib/active_ldap/distinguished_name.rb:136
+msgid "name component is missing"
+msgstr ""
+
+#: lib/active_ldap/distinguished_name.rb:140
+msgid "relative distinguished name (RDN) is missing"
+msgstr ""
+
+#: lib/active_ldap/distinguished_name.rb:148
+msgid "attribute value is missing"
+msgstr ""
+
+#: lib/active_ldap/distinguished_name.rb:152
+msgid "found unmatched quotation"
+msgstr ""
+
+#: lib/active_ldap/distinguished_name.rb:188
+msgid "%s isn't sub DN of %s"
+msgstr ""
+
+#: lib/active_ldap/validations.rb:97
+msgid "is duplicated: %s"
+msgstr ""
+
+#: lib/active_ldap/validations.rb:108
+msgid "is invalid: %s"
+msgstr ""
+
+#: lib/active_ldap/validations.rb:112
+msgid "isn't set: %s"
+msgstr ""
+
+#: lib/active_ldap/validations.rb:134
+msgid "has excluded value: %s"
+msgid_plural "has excluded values: %s"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/active_ldap/validations.rb:169
+msgid "is required attribute by objectClass '%s'"
+msgstr ""
+
+#: lib/active_ldap/validations.rb:171
+msgid "is required attribute by objectClass '%s': aliases: %s"
+msgstr ""
+
+#: lib/active_ldap/validations.rb:195
+msgid "<binary-value>"
+msgstr ""
+
+#: lib/active_ldap/validations.rb:203
+msgid "(%s) has invalid format: %s: required syntax: %s: %s"
+msgstr ""
+
+#: lib/active_ldap/validations.rb:205
+msgid "has invalid format: %s: required syntax: %s: %s"
+msgstr ""
+
+#: lib/active_ldap/command.rb:16
+msgid "Common options:"
+msgstr ""
+
+#: lib/active_ldap/command.rb:19
+msgid "Specify configuration file written as YAML"
+msgstr ""
+
+#: lib/active_ldap/command.rb:26
+msgid "Show this message"
+msgstr ""
+
+#: lib/active_ldap/command.rb:31
+msgid "Show version"
+msgstr ""
+
+#: lib/active_ldap/base.rb:53
+msgid ""
+"ActiveLdap::ConnectionNotEstablished has been deprecated since 1.1.0. Please "
+"use ActiveLdap::ConnectionNotSetup instead."
+msgstr ""
+
+#: lib/active_ldap/base.rb:131
+msgid "invalid distinguished name (DN) to parse: %s"
+msgstr ""
+
+#: lib/active_ldap/base.rb:141
+msgid "%s is invalid distinguished name (DN): %s"
+msgstr ""
+
+#: lib/active_ldap/base.rb:143
+msgid "%s is invalid distinguished name (DN)"
+msgstr ""
+
+#: lib/active_ldap/base.rb:161
+msgid "invalid LDIF: %s:"
+msgstr ""
+
+#: lib/active_ldap/base.rb:163
+msgid "invalid LDIF:"
+msgstr ""
+
+#: lib/active_ldap/base.rb:241
+msgid "LDAP configuration specifies nonexistent %s adapter"
+msgstr ""
+
+#: lib/active_ldap/base.rb:249
+msgid "%s is unknown attribute"
+msgstr ""
+
+#: lib/active_ldap/base.rb:266
+msgid "not implemented: %s"
+msgstr ""
+
+#: lib/active_ldap/base.rb:382
+msgid ""
+"ActiveLdap::Base.establish_connection has been deprecated since 1.1.0. "
+"Please use ActiveLdap::Base.setup_connection instead."
+msgstr ""
+
+#: lib/active_ldap/base.rb:463
+msgid "scope '%s' must be a Symbol"
+msgstr ""
+
+#: lib/active_ldap/base.rb:514
+msgid "%s doesn't belong in a hierarchy descending from ActiveLdap"
+msgstr ""
+
+#: lib/active_ldap/base.rb:669
+msgid ""
+"'%s' must be either nil, DN value as ActiveLdap::DN, String or Array or "
+"attributes as Hash"
+msgstr ""
+
+#: lib/active_ldap/base.rb:799
+msgid "entry %s can't be saved"
+msgstr ""
+
+#: lib/active_ldap/base.rb:832 lib/active_ldap/base.rb:843
+msgid "wrong number of arguments (%d for 1)"
+msgstr ""
+
+#: lib/active_ldap/base.rb:964
+msgid "Can't find DN '%s' to reload"
+msgstr ""
+
+#: lib/active_ldap/base.rb:1369
+msgid "%s's DN attribute (%s) isn't set"
+msgstr ""
+
+#: lib/active_ldap/attributes.rb:80
+msgid "The first argument, name, must not be nil. Please report this as a bug!"
+msgstr ""
+
+#: lib/active_ldap/schema.rb:52
+msgid "Unknown schema group: %s"
+msgstr ""
+
+#: lib/active_ldap/schema.rb:547
+msgid "Attribute %s can only have a single value: %s"
+msgstr ""
+
+#: lib/active_ldap/schema.rb:566
+msgid "Attribute %s: Hash must have one key-value pair only: %s"
+msgstr ""
+
+#: lib/active_ldap/connection.rb:98
+msgid ":ldap_scope connection option is deprecated. Use :scope instead."
+msgstr ""
+
+#: lib/active_ldap/connection.rb:156
+msgid ""
+"ActiveLdap::Connection.establish_connection has been deprecated since 1.1.0. "
+"Please use ActiveLdap::Connection.setup_connection instead."
+msgstr ""
+
+#: lib/active_ldap/connection.rb:236
+msgid "since 1.1.0. "
+msgstr ""
+
+#: lib/active_ldap/user_password.rb:10
+msgid "Invalid hashed password: %s"
+msgstr ""
+
+#: lib/active_ldap/user_password.rb:16
+msgid "Unknown Hash type: %s"
+msgstr ""
+
+#: lib/active_ldap/user_password.rb:23
+msgid "Can't extract salt from hashed password: %s"
+msgstr ""
+
+#: lib/active_ldap/user_password.rb:51 lib/active_ldap/user_password.rb:68
+msgid "salt size must be == 4: %s"
+msgstr ""
+
+#: lib/active_ldap/schema/syntaxes.rb:63
+msgid "%s doesn't have the first \"'\""
+msgstr ""
+
+#: lib/active_ldap/schema/syntaxes.rb:67
+msgid "%s doesn't have the last \"'B\""
+msgstr ""
+
+#: lib/active_ldap/schema/syntaxes.rb:71
+msgid "%s has invalid character '%s'"
+msgstr ""
+
+#: lib/active_ldap/schema/syntaxes.rb:108
+msgid "%s should be TRUE or FALSE"
+msgstr ""
+
+#: lib/active_ldap/schema/syntaxes.rb:121
+msgid "%s should be just 2 printable characters"
+msgstr ""
+
+#: lib/active_ldap/schema/syntaxes.rb:162
+#: lib/active_ldap/schema/syntaxes.rb:381
+msgid "%s has invalid UTF-8 character"
+msgstr ""
+
+#: lib/active_ldap/schema/syntaxes.rb:237
+msgid "%s has missing components: %s"
+msgstr ""
+
+#: lib/active_ldap/schema/syntaxes.rb:240
+msgid "%s is invalid time format"
+msgstr ""
+
+#: lib/active_ldap/schema/syntaxes.rb:270
+msgid "%s is invalid integer format"
+msgstr ""
+
+#: lib/active_ldap/schema/syntaxes.rb:282
+msgid "invalid JPEG format"
+msgstr ""
+
+#: lib/active_ldap/schema/syntaxes.rb:323
+msgid "%s is invalid numeric format"
+msgstr ""
+
+#: lib/active_ldap/schema/syntaxes.rb:338
+msgid "%s is invalid OID format: %s"
+msgstr ""
+
+#: lib/active_ldap/schema/syntaxes.rb:340
+msgid "%s is invalid OID format"
+msgstr ""
+
+#: lib/active_ldap/schema/syntaxes.rb:353
+msgid "%s has no mailbox type"
+msgstr ""
+
+#: lib/active_ldap/schema/syntaxes.rb:357
+msgid "%s has unprintable character in mailbox type: '%s'"
+msgstr ""
+
+#: lib/active_ldap/schema/syntaxes.rb:362
+msgid "%s has no mailbox"
+msgstr ""
+
+#: lib/active_ldap/schema/syntaxes.rb:375
+#: lib/active_ldap/schema/syntaxes.rb:394
+msgid "empty string"
+msgstr ""
+
+#: lib/active_ldap/schema/syntaxes.rb:398
+msgid "%s has unprintable character: '%s'"
+msgstr ""
+
+#: lib/active_ldap/get_text/parser.rb:96
+msgid "Ignored '%{file}'. Solve dependencies first."
+msgstr ""
+
+#: lib/active_ldap/configuration.rb:70
+msgid "%s connection is not configured"
+msgstr ""
+
+#: lib/active_ldap/configuration.rb:110
+msgid ":ldap_scope configuration option is deprecated. Use :scope instead."
+msgstr ""
+
+#: lib/active_ldap/configuration.rb:131
+msgid "invalid URI: %s"
+msgstr ""
+
+#: lib/active_ldap/configuration.rb:134
+msgid "not a LDAP URI: %s"
+msgstr ""
+
+#: rails/init.rb:7
+msgid "You need ActiveLdap %s or later"
+msgstr ""
+
+#: rails/init.rb:19
+msgid "You should run 'script/generator scaffold_active_ldap' to make %s."
+msgstr ""
+
+#: benchmark/bench-al.rb:14
+msgid "Specify prefix for benchmarking"
+msgstr ""
+
+#: benchmark/bench-al.rb:15
+msgid "(default: %s)"
+msgstr ""
+
+#: benchmark/bench-al.rb:186
+msgid "Populating..."
+msgstr ""
+
+#: benchmark/bench-al.rb:243
+msgid "Entries processed by Ruby/ActiveLdap + LDAP: %d"
+msgstr ""
+
+#: benchmark/bench-al.rb:244
+msgid "Entries processed by Ruby/ActiveLdap + Net::LDAP: %d"
+msgstr ""
+
+#: benchmark/bench-al.rb:246
+msgid ""
+"Entries processed by Ruby/ActiveLdap + LDAP: (without object creation): %d"
+msgstr ""
+
+#: benchmark/bench-al.rb:249
+msgid ""
+"Entries processed by Ruby/ActiveLdap + Net::LDAP: (without object creation): "
+"%d"
+msgstr ""
+
+#: benchmark/bench-al.rb:252
+msgid "Entries processed by Ruby/LDAP: %d"
+msgstr ""
+
+#: benchmark/bench-al.rb:253
+msgid "Entries processed by Net::LDAP: %d"
+msgstr ""
+
+#: benchmark/bench-al.rb:257
+msgid "Cleaning..."
+msgstr ""

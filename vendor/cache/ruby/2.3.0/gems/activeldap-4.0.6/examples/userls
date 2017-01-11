@@ -1,0 +1,50 @@
+#!/usr/bin/ruby
+
+base = File.expand_path(File.join(File.dirname(__FILE__), ".."))
+$LOAD_PATH << File.join(base, "lib")
+$LOAD_PATH << File.join(base, "examples")
+
+require 'active_ldap'
+require 'objects/user'
+require 'objects/group'
+
+require 'base64'
+
+argv, opts, options = ActiveLdap::Command.parse_options do |opts, options|
+  opts.banner += " USER_NAME"
+end
+
+if argv.size == 1
+  name = argv.shift
+else
+  $stderr.puts opts
+  exit 1
+end
+
+pwb = Proc.new do |user|
+  ActiveLdap::Command.read_password("[#{user}] Password: ")
+end
+
+ActiveLdap::Base.setup_connection(:password_block => pwb,
+                                  :allow_anonymous => false)
+
+unless User.exists?(name)
+  $stderr.puts("User #{name} doesn't exist.")
+  exit 1
+end
+
+user = User.find(name)
+puts user.to_ldif
+
+groups = []
+primary_group = user.primary_group
+if primary_group.exists?
+  groups << "#{primary_group.cn}[#{primary_group.gid_number}]"
+end
+puts "Groups by name only: #{user.groups(false).join(', ')}"
+user.groups.sort_by do |group|
+  group.id
+end.collect do |group|
+  groups << "#{group.cn}[#{group.gid_number}]"
+end
+puts "Groups: #{groups.join(', ')}"
