@@ -39,7 +39,7 @@ $(document).ready(function() {
     });
   });
 
-	$('.renew').submit(function(event){
+	$('input[name="commit"]').click(function(event){
 		if (typeof foundMemberId != 'undefined'){
 			var months = $('input[name="member[expirationTime]"]').val();
 			$.ajax({
@@ -50,7 +50,7 @@ $(document).ready(function() {
 					member1.expirationTime = data["expirationTime"]
 					alert(member1.fullname + ' updated. New expiration: ' + member1.formatExpTime());
 					$('.renewedMembers').show();
-					$('.renewedMembers').append("<ul><p> Name: <strong>" + member1.fullname + "</strong> </p><p> New Expiration Date: <strong>" + member1.formatExpTime() + "</strong> </p></ul>")
+					$('.renewedMembers').append("<li> Name: <strong>" + member1.fullname + "</strong> <ul>Renewed for: <strong> " + months + " months </strong></ul><ul> New Expiration Date: <strong>" + member1.formatExpTime() + "</strong> </ul></li>")
 				}
 			});
 			event.preventDefault();
