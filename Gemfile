@@ -3,11 +3,14 @@ source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.0.0', '>= 5.0.0.1'
-# Use sqlite3 as the database for Active Record
+# Use sqlite3 as the database for Active Record - Just used for ActiveRecord initializers. Needs to be removed
 gem 'sqlite3'
 # Use Puma as the app server
 gem 'puma', '~> 3.0'
-
+#simple way to set Cron jobs
+gem 'whenever', :require => false
+#Simple Socket IO client
+gem 'socket.io-client-simple'           # for Socket.IO v1.4.x
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .coffee assets and views
