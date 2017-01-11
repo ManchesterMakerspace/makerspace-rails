@@ -49,6 +49,8 @@ $(document).ready(function() {
 				success: function(data) {
 					member1.expirationTime = data["expirationTime"]
 					alert(member1.fullname + ' updated. New expiration: ' + member1.formatExpTime());
+					$('.renewedMembers').show();
+					$('.renewedMembers').append("<ul><p> Name: <strong>" + member1.fullname + "</strong> </p><p> New Expiration Date: <strong>" + member1.formatExpTime() + "</strong> </p></ul>")
 				}
 			});
 			event.preventDefault();
