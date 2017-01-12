@@ -2,7 +2,7 @@
   <div class="col-sm-12">
     <h2><%= @member.fullname %> </h2>
     <h3><%= @member.email %> </h3>
-    <h4>Membership Expiration Date:<%= @member.expirationTime.strftime("%m/%d/%Y") %></h4>
+    <h4>Membership Expiration Date: <%= @member.prettyTime.strftime("%m/%d/%Y") %></h4>
     <% if !@member.officer_of.empty? %>
       <h4>Officer of: <%=@member.officer_of.join(", ")%></h4>
     <%end%>
