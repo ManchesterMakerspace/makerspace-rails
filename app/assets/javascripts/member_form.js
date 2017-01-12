@@ -7,7 +7,18 @@ $(document).ready(function(){
     loadMember();
     showRenewals();
   }
+  if (window.location.pathname === '/admin/members/new'){
+    scan();
+    showNewMembers();
+  }
 });
+
+function scan() {
+  var socket = io.connect('http://localhost:4000');
+  socket.on('regMember', function (data) {
+    $('#member_cardID').val(data.cardID);
+  });
+}
 
 function role() {
   $('.role').on('change', function() {
@@ -60,7 +71,7 @@ function loadMember() {
 
 //update member on submit and append updated member to bottom of page.
 function showRenewals() {
-	$('input[name="commit"]').click(function(event){
+	$('input[type="submit"][value="Renew Member"]').click(function(event){
 		if (typeof foundMemberId != 'undefined'){
 			var months = $('input[name="member[expirationTime]"]').val();
 			$.ajax({
@@ -85,4 +96,16 @@ function showRenewals() {
 			event.preventDefault();
 		}
 	})
+}
+
+function showNewMembers() {
+  var newMember = new Member;
+  $('input[type="submit"][value="Create Member"]').click(function(event){
+    newMember.fullname = $('#member_fullname').val();
+    newMember.cardID = $('#member_cardID').val();
+    newMember.role = $('#member_role').val();
+    newMember.cardID = $('#member_email').val();
+    newMember.cardID = $('#member_password').val();
+    newMember.cardID = $('#member_expirationTime').val();
+  });
 }

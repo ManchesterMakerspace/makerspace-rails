@@ -10,12 +10,12 @@ class Admin::MembersController < AdminController
     @member = Member.new(user_params)
     if @member.save
       respond_to do |format|
-        format.html { render show: @member, notice: 'Member created successfully'}
+        format.html { render :show, notice: 'Member created successfully'}
         format.json { render json: @member, notice: 'Member created successfully' }
       end
     else
       respond_to do |format|
-        format.html { render new: @member, alert: "Creation failed:  #{@member.errors.full_messages}" }
+        format.html { render :new, alert: "Creation failed:  #{@member.errors.full_messages}" }
         format.json { render json: @member, alert: "Creation failed:  #{@member.errors.full_messages}"}
       end
     end
@@ -24,7 +24,7 @@ class Admin::MembersController < AdminController
   def show
     @workshops = Workshop.all.sort_by(&:name)
     respond_to do |format|
-      format.html { render show: @member }
+      format.html { render :show }
       format.json { render json: @member }
     end
   end
@@ -40,12 +40,12 @@ class Admin::MembersController < AdminController
   def update
     if @member.update(user_params)
       respond_to do |format|
-        format.html { render show: @member, notice: 'Member updated' }
+        format.html { render :show, notice: 'Member updated' }
         format.json { render json: @member, alert: 'Member udpated' }
       end
     else
       respond_to do |format|
-        format.html { render edit: @member, alert: "Update failed:  #{@member.errors.full_messages}" }
+        format.html { render :edit, alert: "Update failed:  #{@member.errors.full_messages}" }
         format.json { render json: @member, alert: "Update failed:  #{@member.errors.full_messages}" }
       end
     end

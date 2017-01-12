@@ -41,7 +41,7 @@ class MembersController < ApplicationController
         else
           @members = Member.where(params[:field] => params[:value])
           respond_to do |format|
-            format.html { render index: @members }
+            format.html { render :index}
             format.json { render json: @members }
           end
         end

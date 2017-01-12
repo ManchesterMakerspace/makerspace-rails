@@ -119,7 +119,7 @@ class Member
 
   def expirationTime=(num_months)
     now_in_ms = (Time.now.strftime('%s').to_i * 1000)
-    if expirationTime > now_in_ms
+    if (!!self.expirationTime && self.try(:expirationTime) > now_in_ms)
       write_attribute(:expirationTime, (expirationTime + (num_months.to_i*30*24*60*60*1000)) )
     else
       write_attribute(:expirationTime,  (now_in_ms + (num_months.to_i*30*24*60*60*1000)) )
