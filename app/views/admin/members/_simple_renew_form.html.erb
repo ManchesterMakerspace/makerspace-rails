@@ -25,6 +25,7 @@ $(document).ready(function() {
   $('.member').on('change', function(){
     var member_fullname = $('#member_fullname').val();
     token = $('input[name=authenticity_token]').val();
+		//post to members#search_by to retrieve member info
     $.post('/members/search_by.json', { field: 'fullname', value: member_fullname, authenticity_token: token }, function(data){
       if (data.length === 1){
 				foundMemberId = data[0]["_id"]["$oid"];
@@ -39,6 +40,7 @@ $(document).ready(function() {
     });
   });
 
+	//update member on submit and append updated member to bottom of page.
 	$('input[name="commit"]').click(function(event){
 		if (typeof foundMemberId != 'undefined'){
 			var months = $('input[name="member[expirationTime]"]').val();
@@ -51,12 +53,17 @@ $(document).ready(function() {
 					alert(member1.fullname + ' updated. New expiration: ' + member1.formatExpTime());
 					$('.renewedMembers').show();
 					$('.renewedMembers').append("<li> Name: <strong>" + member1.fullname + "</strong> <ul>Renewed for: <strong> " + months + " months </strong></ul><ul> New Expiration Date: <strong>" + member1.formatExpTime() + "</strong> </ul></li>")
+					//reset form after update
+					clearForm($('.renew'));
+					$('.member-name').text('');
+					$('.member-expTime').text('');
 				}
 			});
 			event.preventDefault();
-			clearForm(this);
-			$('.member-name').text('');
-			$('.member-expTime').text('');
+		}
+		else {
+			alert("You must select a member first")
+			event.preventDefault();
 		}
 	})
 });
