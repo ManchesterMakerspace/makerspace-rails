@@ -5,7 +5,7 @@
 var workshopID, newRow, newSkillName, skill, thisRow;
 
 $(document).ready(function() {
-  workshopID = $('.requiredSkills').attr('id');
+  workshopID = $('.workshopDiv').attr('id');
   attachListeners();
 })
 
@@ -13,6 +13,27 @@ function attachListeners() {
   deleteSkill();
   editSkill();
   newSkill();
+  listSkills();
+}
+
+function listSkills() {
+  $('#getSkillsButton').on("click", function() {
+    var currentButton = $('#getSkillsButton').text();
+    if (currentButton === 'Show Workshop Skills'){
+      $.ajax({
+        url: '/workshops/' + workshopID + '/skills',
+        cache: false,
+        success: function(html){
+          $('#getSkillsButton').text('Hide Workshop Skills');
+          $("#getSkillsList").append(html);
+        }
+      });
+    }
+    else if (currentButton === 'Hide Workshop Skills') {
+      $(".requiredSkills").remove();
+      $('#getSkillsButton').text('Show Workshop Skills');
+    }
+  })
 }
 
 function deleteSkill() {

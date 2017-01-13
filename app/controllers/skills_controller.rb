@@ -1,6 +1,11 @@
 class SkillsController < ApplicationController
   before_action :set_skill, only: [:show, :edit, :update, :destroy]
 
+  def index
+    @workshop = Workshop.find_by(id: params[:workshop_id])
+    render :layout => false
+  end
+
   def new
     @workshop = Workshop.find_by(id: params[:workshop_id])
     @skill = Skill.new(workshop_id: params[:workshop_id])

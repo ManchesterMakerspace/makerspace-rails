@@ -1,0 +1,53 @@
+
+<% if (is_admin? || is_officer?) %>
+  <div class="requiredSkills" id="<%=@workshop.id%>">
+    <table class="table">
+      <thead>
+        <caption>Required Skills</caption>
+      </thead>
+      <tbody class="currentSkills">
+        <% if @workshop.skills.size != 0 %>
+          <%@workshop.skills.each do |skill|%>
+            <tr>
+              <td style="width: 100px"><a href="/skills/<%=skill.id%>" class="deleteSkill"><strong>X</strong></a></td>
+              <td style="width: 100px"><a href="/skills/<%=skill.id%>" class="editSkill"><strong>Edit</strong></a></td>
+              <td class="currentSkill" id="<%=skill.id%>"><%=skill.name%> </td>
+            </tr>
+          <%end%>
+        <% else %>
+          <tr>
+            <td>No skills for this workshop at this time. </td>
+          </tr>
+        <% end %>
+      </tbody>
+      <tfoot>
+          <tr>
+            <td colspan="3" style="width: 200px" class="newSkillName"><a href="/workshops/<%=@workshop.id%>/skills" id="newSkill"><strong>Add New Skill</strong></a></td>
+          </tr>
+        </tfoot>
+    </table>
+  </div>
+
+<% else %>
+
+  <div class="requiredSkills" id="<%=@workshop.id%>">
+    <table class="table">
+      <thead>
+        <caption>Required Skills</caption>
+      </thead>
+      <tbody class="currentSkills">
+        <% if @workshop.skills.size != 0 %>
+          <%@workshop.skills.each do |skill|%>
+          <tr>
+            <td class="currentSkill" id="<%=skill.id%>"><%=skill.name%> </td>
+          </tr>
+          <%end%>
+        <% else %>
+          <tr>
+            <td>No skills for this workshop at this time. </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
