@@ -13,7 +13,6 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
-//= require_tree .
 //= require nested_form_fields
 //= require bootstrap
 //= require bootstrap-sprockets

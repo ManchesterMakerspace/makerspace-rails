@@ -1,5 +1,5 @@
 var foundMemberId,token;
-var member = new Member;
+var member = new Member();
 
 $(document).ready(function(){
   if (window.location.pathname === '/admin/renew'){
