@@ -1,5 +1,6 @@
 class Member {
-  constructor(fullname, expirationTime, cardID, role){
+  constructor(_id, fullname, expirationTime, cardID, role){
+    this.id = _id
     this.fullname = fullname;
     this.expirationTime = expirationTime;
     this.cardID = cardID;

@@ -1,4 +1,5 @@
-var foundMemberId,token;
+var foundMemberId,token, test;
+var renewMember = new Member();
 var member = new Member();
 
 $(document).ready(function(){
@@ -60,11 +61,10 @@ function loadMember() {
 		//post to members#search_by to retrieve member info
     $.post('/members/search_by.json', { field: 'fullname', value: member_fullname, authenticity_token: token }, function(data){
       if (data.length === 1){
-				foundMemberId = data[0]["_id"]["$oid"];
-        member.fullname = data[0]["fullname"];
-				member.expirationTime = data[0]["expirationTime"];
-        $('.member-name').text('Member Name: ' + member.fullname);
-        $('.member-expTime').text('Membership expires on ' + member.formatExpTime());
+        renewMember = new Member(data[0]._id.$oid, data[0].fullname,  data[0].expirationTime)
+				foundMemberId = renewMember.id;
+        $('.member-name').text('Member Name: ' + renewMember.fullname);
+        $('.member-expTime').text('Membership expires on ' + renewMember.formatExpTime());
       }
       else if (data.length > 1){
         alert('Multiple members found')
@@ -85,11 +85,11 @@ function showRenewals() {
 				type: 'PUT',
 				data: {member: {expirationTime: months}, authenticity_token: token },
 				success: function(data) {
-					member.expirationTime = data["expirationTime"]
-					alert(member.fullname + ' updated. New expiration: ' + member.formatExpTime());
+					renewMember.expirationTime = data["expirationTime"]
+					alert(renewMember.fullname + ' updated. New expiration: ' + renewMember.formatExpTime());
 					$('.renewedMembers').show();
-					$('.renewedMembers').append("<li> Name: <strong>" + member.fullname + "</strong> <ul>Renewed for: <strong> " + months + " months </strong></ul><ul> New Expiration Date: <strong>" + member.formatExpTime() + "</strong> </ul></li>")
-					//reset form after update
+					$('.renewedMembers').append("<li> Name: <strong>" + renewMember.fullname + "</strong> <ul>Renewed for: <strong> " + months + " months </strong></ul><ul> New Expiration Date: <strong>" + renewMember.formatExpTime() + "</strong> </ul></li>")
+					//reset form after renewMember
 					clearForm($('.renew'));
 					$('.member-name').text('');
 					$('.member-expTime').text('');
@@ -114,6 +114,7 @@ function showNewMembers() {
       type: 'POST',
       data: {member: member, authenticity_token: token },
       success: function(data){
+        member.expirationTime = data.expirationTime;
         $('.newMembers').show();
         $('.newMembers').append("<li> Name: <strong>" + member.fullname + "</strong><ul> Expiration Date: <strong>" + member.formatExpTime() + "</strong> </ul></li>")
       }

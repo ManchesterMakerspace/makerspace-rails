@@ -1,6 +1,6 @@
 class Member
   include Mongoid::Document
-  include ActiveModel::Serialization
+  include ActiveModel::Serializers::JSON
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
