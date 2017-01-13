@@ -10,11 +10,14 @@ $(document).ready(function() {
 })
 
 function attachListeners() {
-  deleteSkill();
-  editSkill();
-  newSkill();
   listSkills();
-}
+  }
+
+  function reattachListeners() {
+    deleteSkill();
+    editSkill();
+    newSkill();
+  }
 
 function listSkills() {
   $('#getSkillsButton').on("click", function() {
@@ -26,6 +29,9 @@ function listSkills() {
         success: function(html){
           $('#getSkillsButton').text('Hide Workshop Skills');
           $("#getSkillsList").append(html);
+          deleteSkill();
+          editSkill();
+          newSkill();
         }
       });
     }
@@ -88,23 +94,28 @@ function newSkill() {
     $('.newSkillName').html("<input type='text' name='skill[name]'><button type='button' class='createSkill'>Create</button>");
     $('.createSkill').on("click", function(){
       newSkillName = $('.newSkillName input[name="skill[name]"]').val();
-      console.log(workshopID);
-      $.ajax({
-        url: url + '.json',
-        type: 'POST',
-        data: {skill: {name: newSkillName, workshop_id: workshopID}},
-        beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
-        success: function(data) {
-          console.log(data);
-          skill = new Skill(data._id.$oid, data.name);
-          newRow = '<tr><td style="width: 100px"><a href="/skills/' + skill.id + '" class="deleteSkill"><strong>X</strong></a></td>';
-          newRow += '<td style="width: 100px"><a href="/skills/' + skill.id + '" class="editSkill"><strong>Edit</strong></a></td>';
-          newRow += '<td class="currentSkill" id="' + skill.id + '">' + skill.name + ' </td></tr>';
-          $('.currentSkills').append(newRow);
-          $('.newSkillName input[name="skill[name]"]').val("");
-          attachListeners();
-        }
-      });
+      skill = new Skill('noID', newSkillName);
+      if (skill.nameBlank() === false ){
+        $.ajax({
+          url: url + '.json',
+          type: 'POST',
+          data: {skill: {name: newSkillName, workshop_id: workshopID}},
+          beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+          success: function(data) {
+            var newSkill = new Skill(data._id.$oid, data.name);
+            newRow = '<tr><td style="width: 100px"><a href="/skills/' + newSkill.id + '" class="deleteSkill"><strong>X</strong></a></td>';
+            newRow += '<td style="width: 100px"><a href="/skills/' + newSkill.id + '" class="editSkill"><strong>Edit</strong></a></td>';
+            newRow += '<td class="currentSkill" id="' + newSkill.id + '">' + newSkill.name + ' </td></tr>';
+            $('.currentSkills').append(newRow);
+            $('.newSkillName input[name="skill[name]"]').val("");
+            reattachListeners();
+          }
+        });
+      }
+      else {
+        alert('Skill name cannot be blank.');
+        reattachListeners();
+      }
     });
   });
 }

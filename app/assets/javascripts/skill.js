@@ -3,4 +3,8 @@ class Skill {
     this.id = id;
     this.name = name;
   }
+
+  nameBlank(){
+    return (this.name === "");
+  }
 }
