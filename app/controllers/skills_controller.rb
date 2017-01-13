@@ -41,7 +41,7 @@ class SkillsController < ApplicationController
   end
 
   def destroy
-    @workshop = @skill.workshop
+    @workshop = @skill.try(:workshop)
     @skill.destroy
     if !!@workshop
       respond_to do |format|

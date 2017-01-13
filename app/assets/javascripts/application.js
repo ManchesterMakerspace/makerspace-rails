@@ -16,5 +16,7 @@
 //= require nested_form_fields
 //= require bootstrap
 //= require bootstrap-sprockets
-//= require member_form
+//= require member-form
+//= require workshop-form
+//= require workshop-form
 //= require jquery-2.1.1.min

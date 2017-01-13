@@ -76,6 +76,7 @@ function loadMember() {
 //update member on submit and append updated member to bottom of page.
 function showRenewals() {
 	$('input[type="submit"][value="Renew Member"]').click(function(event){
+    event.preventDefault();
 		if (typeof foundMemberId != 'undefined'){
       token = $('input[name=authenticity_token]').val();
 			var months = $('input[name="member[expirationTime]"]').val();
@@ -94,11 +95,9 @@ function showRenewals() {
 					$('.member-expTime').text('');
 				}
 			});
-			event.preventDefault();
 		}
 		else {
 			alert("You must select a member first")
-			event.preventDefault();
 		}
 	});
 }

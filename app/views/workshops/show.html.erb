@@ -2,43 +2,30 @@
 <% if !@workshop.officer.nil? %>
   <h3><%= "Officer: #{@workshop.officer.fullname}"%></h3>
 <%end%>
-<% if is_officer? && !is_admin? %>
-  <%= link_to "Add New Skill", new_workshop_skill_path(@workshop), class: "btn btn-primary"  %>
-  <%= link_to "Edit Workshop", edit_workshop_path(@workshop), class: "btn btn-primary"  %>
-<% elsif is_admin? %>
-  <%= link_to "Add New Skill", new_workshop_skill_path(@workshop), class: "btn btn-primary"  %>
+<% if is_admin? %>
   <%= link_to "Edit Workshop", edit_admin_workshop_path(@workshop), class: "btn btn-primary"  %>
 <% end %>
-<table class="table table-bordered table-striped">
-  <thead>
-    <caption>Required Skills</caption>
-    <tr>
-      <th>Title</th>
-      <% if is_officer? || is_admin? %>
-        <th>Edit</th>
-        <th>Delete</th>
+
+<div class="requiredSkills" id="<%=@workshop.id%>">
+  <table class="table">
+    <thead>
+      <caption>Required Skills</caption>
+    </thead>
+    <tbody class="currentSkills">
+      <% if @workshop.skills.size != 0 %>
+        <%@workshop.skills.each do |skill|%>
+        <tr>
+          <td style="width: 100px"><a href="/skills/<%=skill.id%>" class="deleteSkill"><strong>X</strong></a></td>
+          <td style="width: 100px"><a href="/skills/<%=skill.id%>" class="editSkill"><strong>Edit</strong></a></td>
+          <td class="currentSkill" id="<%=skill.id%>"><%=skill.name%> </td>
+        </tr>
+        <%end%>
       <% end %>
-    </tr>
-  </thead>
-  <tbody>
-    <% if @workshop.skills.size == 0 %>
-      <tr>
-        <td colspan="6">No skills found.
-          <% if is_officer? || is_admin? %>
-            <%= link_to "Create New Skill", new_workshop_skill_path(@workshop), class: "btn btn-primary"%>
-          <%end%>
-        </td>
-      </tr>
-    <% else %>
-      <%@workshop.skills.each do |skill|%>
-      <tr>
-        <td><%=skill.name%> </td>
-        <% if is_officer? || is_admin? %>
-          <td><%= link_to "Edit Skill", edit_workshop_skill_path(@workshop, skill), class: "btn btn-warning"  %> </td>
-          <td><%= link_to "Remove Skill", workshop_skill_path(@workshop, skill), :method => :delete, class: "btn btn-danger"  %> </td>
-        <% end %>
-      </tr>
-      <%end%>
-    <% end %>
-  </tbody>
-</table>
+    </tbody>
+    <tfoot>
+        <tr>
+          <td colspan="3" style="width: 200px" class="newSkillName"><a href="#" id="newSkill"><strong>Add New Skill</strong></a></td>
+        </tr>
+      </tfoot>
+  </table>
+</div>
