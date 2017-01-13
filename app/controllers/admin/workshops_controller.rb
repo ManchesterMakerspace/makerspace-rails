@@ -7,9 +7,15 @@ class Admin::WorkshopsController < AdminController
   def create
     @workshop = Workshop.new(workshop_params)
     if @workshop.save
-      redirect_to @workshop, notice: 'Workshop created successfully'
+      respond_to do |format|
+        format.html { redirect_to @workshop, notice: 'Workshop created successfully' }
+        format.json { render json: @workshop }
+      end
     else
-      render action: 'new', alert: "Creation failed:  #{@workshop.errors.full_messages}"
+      respond_to do |format|
+        format.html { render :new, alert: "Creation failed:  #{@workshop.errors.full_messages}" }
+        format.json { render json: @workshop }
+      end
     end
   end
 
@@ -19,9 +25,15 @@ class Admin::WorkshopsController < AdminController
 
   def update
     if @workshop.update(workshop_params)
-      redirect_to @workshop, notice: 'Workshop updated'
+      respond_to do |format|
+        format.html { redirect_to @workshop, notice: 'Workshop updated' }
+        format.json { render json: @workshop }
+      end
     else
-      render action: 'edit', alert: "Update failed:  #{@workshop.errors.full_messages}"
+      respond_to do |format|
+        format.html { render :edit, alert: "Update failed:  #{@workshop.errors.full_messages}" }
+        format.json { render json: @workshop }
+      end
     end
   end
 

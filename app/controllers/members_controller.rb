@@ -25,7 +25,7 @@ class MembersController < ApplicationController
     def update
         if @member.update(member_params)
           respond_to do |format|
-            format.html { render :show, notice: "#{@member.fullname} was updated"}
+            format.html { redirect_to @member, notice: "#{@member.fullname} was updated"}
             format.json { render json: @member }
           end
         else

@@ -31,7 +31,7 @@ class WorkshopsController < ApplicationController
   def update
     if @workshop.update(workshop_params)
       respond_to do |format|
-        format.html { render :show, notice: 'Workshop updated' }
+        format.html { redirect_to @workshop, notice: 'Workshop updated' }
         format.json { render json: @workshop }
       end
     else

@@ -10,7 +10,7 @@ class Admin::MembersController < AdminController
     @member = Member.new(user_params)
     if @member.save
       respond_to do |format|
-        format.html { render :show, notice: 'Member created successfully' }
+        format.html { redirect_to @member, notice: 'Member created successfully' }
         format.json { render json: @member}
       end
     else
