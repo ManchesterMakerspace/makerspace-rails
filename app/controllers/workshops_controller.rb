@@ -1,16 +1,28 @@
 class WorkshopsController < ApplicationController
-  before_action :set_workshop, only: [:show, :edit, :update, :is_officer?]
+  before_action :set_workshop, only: [:show, :edit, :update]
   before_action :is_officer?, only: [:edit, :new, :update, :create]
 
   def index
-    if params[:user_id]
+    if params[:member_id]
       @workshops = Member.find_by(id: params[:member_id]).workshops
+      respond_to do |format|
+        format.html { render :index }
+        format.json { render json: @workshops }
+      end
     else
       @workshops = Workshop.all
+      respond_to do |format|
+        format.html { render :index }
+        format.json { render json: @workshops }
+      end
     end
   end
 
   def show
+    respond_to do |format|
+      format.html { render :show }
+      format.json { render json: @workshop }
+    end
   end
 
   def edit
@@ -18,9 +30,15 @@ class WorkshopsController < ApplicationController
 
   def update
     if @workshop.update(workshop_params)
-      redirect_to @workshop, notice: 'Workshop updated'
+      respond_to do |format|
+        format.html { render :show, notice: 'Workshop updated' }
+        format.json { render json: @workshop }
+      end
     else
-      render action: 'edit', alert: "Update failed:  #{@workshop.errors.full_messages}"
+      respond_to do |format|
+        format.html { render :edit, alert: "Update failed:  #{@workshop.errors.full_messages}" }
+        format.json { render json: @workshop }
+      end
     end
   end
 

@@ -5,10 +5,18 @@ class MembersController < ApplicationController
 
     def index
         @members = Member.all.sort_by(&:fullname)
+        respond_to do |format|
+          format.html { render :index }
+          format.json { render json: @members }
+        end
     end
 
     def show
       @workshops = Workshop.all.sort_by(&:name)
+      respond_to do |format|
+        format.html { render :show }
+        format.json { render json: @member }
+      end
     end
 
     def edit
@@ -16,9 +24,15 @@ class MembersController < ApplicationController
 
     def update
         if @member.update(member_params)
-            redirect_to member_path(@member), notice: "#{@member.fullname} was updated" and return
+          respond_to do |format|
+            format.html { render :show, notice: "#{@member.fullname} was updated"}
+            format.json { render json: @member }
+          end
         else
-          render action: 'edit', alert: "Update failed:  #{@member.errors.full_messages}"
+          respond_to do |format|
+            format.html { render :edit, alert: "Update failed:  #{@member.errors.full_messages}" }
+            format.json { render json: @member, alert: "Update failed" }
+          end
         end
     end
 

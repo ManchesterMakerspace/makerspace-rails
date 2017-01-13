@@ -9,10 +9,16 @@ class SkillsController < ApplicationController
   def create
     @skill = Skill.new(skill_params)
     if @skill.save
-      redirect_to workshop_path(@skill.workshop_id), notice: 'New skill created successfully'
+      respond_to do |format|
+        format.html { redirect_to workshop_path(@skill.workshop_id), notice: 'New skill created successfully' }
+        format.json { render json: @skill }
+      end
     else
       @workshop = Workshop.find_by(id: params[:workshop_id])
-      render action: 'new', alert: "Creation failed:  #{@skill.errors.full_messages}"
+      respond_to do |format|
+        format.html { render :new, alert: "Creation failed:  #{@skill.errors.full_messages}" }
+        format.json { render json: @skill, alert: 'Failure' }
+      end
     end
   end
 
@@ -22,9 +28,15 @@ class SkillsController < ApplicationController
 
   def update
     if @skill.update(skill_params)
-      redirect_to workshop_path(@skill.workshop_id), notice: 'Skill updated'
+      respond_to do |format|
+        format.html { redirect_to workshop_path(@skill.workshop_id), notice: 'Skill updated' }
+        format.json { render json: @skill }
+      end
     else
-      render action: 'edit', alert: "Update failed: #{@skill.errors.full_messages}"
+      respond_to do |format|
+        format.html { render :edit, alert: "Update failed:  #{@skill.errors.full_messages}" }
+        format.json { render json: @skill, alert: 'Failure' }
+      end
     end
   end
 
@@ -32,7 +44,10 @@ class SkillsController < ApplicationController
     @workshop = @skill.workshop
     @skill.destroy
     if !!@workshop
-      redirect_to workshop_path(@workshop), notice: 'Skill deleted'
+      respond_to do |format|
+        format.html { redirect_to workshop_path(@workshop), notice: 'Skill deleted' }
+        format.json { render json: @workshop }
+      end
     else
       redirect_to workshops_path
     end

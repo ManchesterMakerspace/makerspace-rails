@@ -1,5 +1,5 @@
 class Admin::MembersController < AdminController
-  before_action :set_member, only: [:show, :edit, :update, :allowed?]
+  before_action :set_member, only: [:show, :edit, :update]
   before_action :set_workshop, only: [:edit]
 
   def new
