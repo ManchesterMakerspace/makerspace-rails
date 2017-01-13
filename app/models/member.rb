@@ -8,7 +8,7 @@ class Member
 
  field :fullname #full name of user
  field :cardID # user card id
- field :status # current, revoked
+ field :status,                         default: "current" # current, revoked
  field :accesspoints, type: Array #points of access member (door, machine, etc)
  field :expirationTime, type: Integer #pre-calcualted time of expiration
  field :groupName #potentially member is in a group/partner membership
@@ -45,7 +45,6 @@ class Member
   # field :locked_at,       type: Time
 
   validates :fullname, presence: true, uniqueness: true
-  validates :status, presence: true
 
   has_and_belongs_to_many :workshops, class_name: 'Workshop', inverse_of: nil
   has_and_belongs_to_many :learned_skills, class_name: 'Skill', inverse_of: :allowed_members

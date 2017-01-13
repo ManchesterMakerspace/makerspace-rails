@@ -1,15 +1,24 @@
-<%= form_for [:admin, @member], html: {class: 'new'}  do |f| %>
-<div class="field">
-	<%= f.label :fullname %><br />
-	<%= f.text_field :fullname, autofocus: true %>
-</div>
+<%= form_for [:admin, @member], html: {class: 'new', style: 'display: none'}  do |f| %>
+	<% if @member.errors.any? %>
+		<div id="error_explanation">
+			<h2>There were some errors:</h2>
+			<ul>
+				<% @member.errors.full_messages.each do |message| %>
+					<li><%= message %></li>
+				<% end %>
+			</ul>
+		</div>
+	<% end %>
 
-<% if @member.read_attribute(:cardID).nil? %>
+	<div class="field">
+		<%= f.label :fullname %><br />
+		<%= f.text_field :fullname, autofocus: true %>
+	</div>
+
 	<div class="form-group">
-		<%= f.label 'Card ID' %>
+		<%= f.label :cardID %>
 		<%= f.text_field :cardID, class: "form-control" %>
 	</div>
-<% end %>
 
 	<div class="form-group role">
 		<%= f.label :role %>
@@ -41,7 +50,7 @@
 		<input input='text' placeholder='Number of Months' name='member[expirationTime]' id="member_expirationTime">
 	</div>
 
-	<%= f.submit class: "btn btn-primary" %>
+	<%= f.submit %>
 <% end %>
 
 <%= render 'scan' %>

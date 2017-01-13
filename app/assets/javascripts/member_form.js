@@ -1,23 +1,27 @@
-var foundMemberId, token;
+var foundMemberId,token;
 var member = new Member;
 
 $(document).ready(function(){
-  role();
   if (window.location.pathname === '/admin/renew'){
+    $('.renew').show();
     loadMember();
     showRenewals();
   }
-  if (window.location.pathname === '/admin/members/new'){
-    scan();
+  else if (window.location.pathname === '/admin/members/new'){
+    $('.new').show();
+    role();
     showNewMembers();
+    scan();
   }
 });
 
 function scan() {
-  var socket = io.connect('http://localhost:4000');
-  socket.on('regMember', function (data) {
-    $('#member_cardID').val(data.cardID);
-  });
+  if (typeof io != 'undefined'){
+    var socket = io.connect('http://localhost:4000');
+    socket.on('regMember', function (data) {
+      $('#member_cardID').val(data.cardID);
+    });
+  }
 }
 
 function role() {
@@ -52,7 +56,7 @@ function clearForm(form) {
 function loadMember() {
   $('.member').on('change', function(){
     var member_fullname = $('#member_fullname').val();
-    token = $('input[name=authenticity_token]').val();
+    var token = $('input[name=authenticity_token]').val();
 		//post to members#search_by to retrieve member info
     $.post('/members/search_by.json', { field: 'fullname', value: member_fullname, authenticity_token: token }, function(data){
       if (data.length === 1){
@@ -73,6 +77,7 @@ function loadMember() {
 function showRenewals() {
 	$('input[type="submit"][value="Renew Member"]').click(function(event){
 		if (typeof foundMemberId != 'undefined'){
+      token = $('input[name=authenticity_token]').val();
 			var months = $('input[name="member[expirationTime]"]').val();
 			$.ajax({
 				url: '/admin/members/' + foundMemberId + '.json',
@@ -95,17 +100,25 @@ function showRenewals() {
 			alert("You must select a member first")
 			event.preventDefault();
 		}
-	})
+	});
 }
 
 function showNewMembers() {
-  var newMember = new Member;
-  $('input[type="submit"][value="Create Member"]').click(function(event){
-    newMember.fullname = $('#member_fullname').val();
-    newMember.cardID = $('#member_cardID').val();
-    newMember.role = $('#member_role').val();
-    newMember.cardID = $('#member_email').val();
-    newMember.cardID = $('#member_password').val();
-    newMember.cardID = $('#member_expirationTime').val();
+  $('input[type="submit"][value="Create Member"]').click(function(event) {
+    member.fullname = $('#member_fullname').val();
+    member.cardID = $('#member_cardID').val();
+    member.role = $('#member_role').val();
+    member.expirationTime = $('#member_expirationTime').val();
+    token = $('input[name=authenticity_token]').val();
+    $.ajax({
+      url: '/admin/members.json',
+      type: 'POST',
+      data: {member: member, authenticity_token: token },
+      success: function(data){
+        $('.newMembers').show();
+        $('.newMembers').append("<li> Name: <strong>" + member.fullname + "</strong><ul> Expiration Date: <strong>" + member.formatExpTime() + "</strong> </ul></li>")
+      }
+    });
+    event.preventDefault();
   });
 }
