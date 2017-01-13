@@ -42,14 +42,19 @@ class SkillsController < ApplicationController
 
   def destroy
     @workshop = @skill.try(:workshop)
-    @skill.destroy
-    if !!@workshop
-      respond_to do |format|
-        format.html { redirect_to workshop_path(@workshop), notice: 'Skill deleted' }
-        format.json { render json: @workshop }
+    if (!!@skill)
+      @skill.destroy
+      if !!@workshop
+        respond_to do |format|
+          format.html { redirect_to workshop_path(@workshop), notice: 'Skill deleted' }
+          format.json { render json: @workshop }
+        end
+      else
+        respond_to do |format|
+          format.html { redirect_to workshops_path, notice: 'Skill deleted' }
+          format.json { render json: @workshop }
+        end
       end
-    else
-      redirect_to workshops_path
     end
   end
 

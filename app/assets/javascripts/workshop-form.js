@@ -27,8 +27,8 @@ function deleteSkill() {
       success: function(data){
         removeRow(thisRow);
       }
-    })
-  })
+    });
+  });
 }
 
 function removeRow(row) {
@@ -41,7 +41,7 @@ function editSkill() {
     var url = $(this).attr('href');
     var skillID = url.replace(/^(\/skills\/)/, "");
     var currentName = $('.currentSkill#' + skillID).html();
-    $('.currentSkill#' + skillID).html("<input type='text' name='skill[name]'> <button type='button' class='saveName'>Save</button> <button type='button' class='cancel'>Cancel</button>");
+    $('.currentSkill#' + skillID).html("<input type='text' name='skill[name]' value='" + currentName + "'> <button type='button' class='saveName'>Save</button> <button type='button' class='cancel'>Cancel</button>");
     $('.currentSkill#' + skillID + ' .saveName').on('click', function() {
       var newName = $('.currentSkill#' + skillID + ' input[name="skill[name]"]').val();
       $.ajax({
@@ -57,21 +57,24 @@ function editSkill() {
     $('.currentSkill#' + skillID + ' .cancel').on('click', function() {
       $('.currentSkill#' + skillID).html(currentName);
     });
-  })
+  });
 }
 
 function newSkill() {
   $('#newSkill').on("click", function(event) {
-    $('.newSkillName').html("<input type='text' name='skill[name]'><button type='button' class='createSkill'>Create</button>");
     event.preventDefault();
+    var url = $(this).attr('href');
+    $('.newSkillName').html("<input type='text' name='skill[name]'><button type='button' class='createSkill'>Create</button>");
     $('.createSkill').on("click", function(){
       newSkillName = $('.newSkillName input[name="skill[name]"]').val();
+      console.log(workshopID);
       $.ajax({
-        url: '/workshops/' + workshopID + '/skills.json',
+        url: url + '.json',
         type: 'POST',
         data: {skill: {name: newSkillName, workshop_id: workshopID}},
         beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
         success: function(data) {
+          console.log(data);
           skill = new Skill(data._id.$oid, data.name);
           newRow = '<tr><td style="width: 100px"><a href="/skills/' + skill.id + '" class="deleteSkill"><strong>X</strong></a></td>';
           newRow += '<td style="width: 100px"><a href="/skills/' + skill.id + '" class="editSkill"><strong>Edit</strong></a></td>';
@@ -80,7 +83,7 @@ function newSkill() {
           $('.newSkillName input[name="skill[name]"]').val("");
           attachListeners();
         }
-      })
-    })
-  })
+      });
+    });
+  });
 }
