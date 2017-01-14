@@ -15,7 +15,7 @@ class MembersController < ApplicationController
       @workshops = Workshop.all.sort_by(&:name)
       respond_to do |format|
         format.html { render :show }
-        format.json { render json: @member, include: [:fullname, :expirationTime, workshops: [:name]] }
+        format.json { render json: @member }
       end
     end
 
@@ -56,7 +56,7 @@ class MembersController < ApplicationController
           @members = Member.where(params[:field] => params[:value])
           respond_to do |format|
             format.html { render :index}
-            format.json { render json: @members.as_json(only: [:_id, :fullname, :expirationTime])  }
+            format.json { render json: @members  }
           end
         end
     end

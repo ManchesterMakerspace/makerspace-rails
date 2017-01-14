@@ -11,7 +11,7 @@ class Admin::MembersController < AdminController
     if @member.save
       respond_to do |format|
         format.html { redirect_to @member, notice: 'Member created successfully' }
-        format.json { render json: @member}
+        format.json { render json: @member }
       end
     else
       respond_to do |format|
@@ -41,7 +41,7 @@ class Admin::MembersController < AdminController
     if @member.update(user_params)
       respond_to do |format|
         format.html { redirect_to @member, notice: 'Member updated' }
-        format.json { render json: @member, alert: 'Member udpated' }
+        format.json { render json: @member }
       end
     else
       respond_to do |format|
