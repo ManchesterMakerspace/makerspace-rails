@@ -26,7 +26,6 @@ function listSkills() {
     if (currentButton === 'Show Workshop Skills'){
       $.ajax({
         url: '/workshops/' + workshopID + '/skills',
-        cache: false,
         success: function(html){
           $('#getSkillsButton').text('Hide Workshop Skills');
           $("#getSkillsList").html(html);
@@ -122,14 +121,18 @@ function newSkill() {
 }
 
 function showWorkshop() {
+  var count = 0; //this count is used to prevent duplicate ajax requests from firing.
   $('.showWorkshop').on("click", function(event) {
+    count++;
+    if (count > 1){
+      return;
+    }
     event.preventDefault();
     workshopID = $(this).attr('id');
     var url = $(this).attr('href');
     $.ajax({
       url: url + '.js',
       type: 'GET',
-      beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
       success: function(data){
       }
     })

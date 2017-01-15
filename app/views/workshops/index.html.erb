@@ -13,7 +13,7 @@
         <div class="panel-body">
           <% @workshops.each do |workshop| %>
             <li>
-              <%= link_to workshop.name, workshop_path(workshop), id: workshop.id, class: 'showWorkshop', remote: true %>
+              <%= link_to workshop.name, workshop_path(workshop), id: workshop.id, class: 'showWorkshop' %>
             </li>
           <% end %>
         </div>
