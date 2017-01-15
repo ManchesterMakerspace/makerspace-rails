@@ -131,9 +131,10 @@ function showWorkshop() {
     workshopID = $(this).attr('id');
     var url = $(this).attr('href');
     $.ajax({
-      url: url + '.js',
-      type: 'GET',
-      success: function(data){
+      url: url,
+      success: function(html){
+        $('#currentWorkshop').html(html);
+        attachListeners();
       }
     })
   })

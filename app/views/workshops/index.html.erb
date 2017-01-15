@@ -2,26 +2,26 @@
   <%= link_to "Create New Workshop", new_admin_workshop_path, class: "btn btn-primary" %>
 <% end %>
 
-  <div class="row">
-    <div class="col col-sm-4">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class"panel-title">
-            <strong>Workshops</strong>
-          </h3>
-        </div>
-        <div class="panel-body">
-          <% @workshops.each do |workshop| %>
-            <li>
-              <%= link_to workshop.name, workshop_path(workshop), id: workshop.id, class: 'showWorkshop' %>
-            </li>
-          <% end %>
-        </div>
+<p></p>
+<div class="row">
+  <div class="col col-sm-4">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class"panel-title">
+          <strong>Workshops</strong>
+        </h3>
       </div>
-    </div> <!--index panel -->
+      <div class="panel-body">
+        <% @workshops.each do |workshop| %>
+          <li>
+            <%= link_to workshop.name, workshop_path(workshop), id: workshop.id, class: 'showWorkshop' %>
+          </li>
+        <% end %>
+      </div>
+    </div>
+  </div> <!--index panel -->
 
-    <div class="col col-sm-8" id="currentWorkshop">
-      <%= render partial: "workshop", locals: {workshop: @workshops.first}%>
-    </div> <!--show panel -->
-
-  </div>
+  <div class="col col-sm-8" id="currentWorkshop">
+    <%= render partial: "workshop", locals: {workshop: @workshops.first}%>
+  </div> <!--show panel -->
+</div>

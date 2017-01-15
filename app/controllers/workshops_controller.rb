@@ -20,9 +20,8 @@ class WorkshopsController < ApplicationController
 
   def show
     respond_to do |format|
-      format.html { render :show }
+      format.html { render :layout => false }
       format.json { render json: @workshop }
-      format.js
     end
   end
 
