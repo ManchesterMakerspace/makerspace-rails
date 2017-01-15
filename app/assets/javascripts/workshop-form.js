@@ -25,9 +25,14 @@ function listSkills() {
     var currentButton = $('#getSkillsButton').text();
     if (currentButton === 'Show Workshop Skills'){
       $.ajax({
-        url: '/workshops/' + workshopID + '/skills',
-        success: function(html){
+        url: '/workshops/' + workshopID + '/skills.json', //better to call this as html and just render the html directly.
+        success: function(data){
           $('#getSkillsButton').text('Hide Workshop Skills');
+          var html = "<div class='requiredSkills' id='" + workshopID + "'><table class='table'><thead><caption>Required Skills</caption></thead><tbody class='currentSkills'>";
+          data.forEach( function(skill){
+            html += "<tr><td style='width: 100px'><a href='/skills/" + skill.id + "' class='deleteSkill'><strong>X</strong></a></td><td style='width: 100px'><a href='/skills/" + skill.id + "' class='editSkill'><strong>Edit</strong></a></td><td class='currentSkill' id='" + skill.id + "'>" + skill.name + "</td></tr>";
+          });
+          html += "</tbody><tfoot><tr><td colspan='3' style='width: 200px' class='newSkillName'><a href='/workshops/" +  workshopID + "/skill' id='newSkill'><strong>Add New Skill</strong></a></td></tr></tfoot></table></div>"
           $("#getSkillsList").html(html);
           deleteSkill();
           editSkill();
