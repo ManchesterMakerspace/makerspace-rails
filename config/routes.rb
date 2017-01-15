@@ -19,9 +19,6 @@ Rails.application.routes.draw do
   end
 
   get '/admin/renew', to: 'admin/members#renew'
-
-  get '/admin/backup', to: 'admin#backup'
-
   get '/members/mailer', to: 'members#mailer'
   post '/members/search_by', to: 'members#search_by'
 
