@@ -1,0 +1,19 @@
+<div class="workshopDiv" id="<%=workshop.id%>">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title"><strong> <%= workshop.name %></strong></h3>
+    </div>
+    <div class="panel-body">
+     <% if !workshop.officer.nil? %>
+        <h3><%= "Officer: #{workshop.officer.fullname}"%></h3>
+      <%end%>
+      <% if is_admin? %>
+        <%= link_to "Edit Workshop", edit_admin_workshop_path(workshop), class: "btn btn-primary"  %>
+      <% end %>
+
+      <p></p>
+
+      <div id="getSkillsList"><button type='button' id="getSkillsButton">Show Workshop Skills</button></div>
+    </div>
+  </div>
+</div>

@@ -1,13 +1,1 @@
-<div class="workshopDiv" id="<%=@workshop.id%>">
-  <h1><%= @workshop.name %> </h2>
-  <% if !@workshop.officer.nil? %>
-    <h3><%= "Officer: #{@workshop.officer.fullname}"%></h3>
-  <%end%>
-  <% if is_admin? %>
-    <%= link_to "Edit Workshop", edit_admin_workshop_path(@workshop), class: "btn btn-primary"  %>
-  <% end %>
-
-  <p></p>
-
-  <div id="getSkillsList"><button type='button' id="getSkillsButton">Show Workshop Skills</button></div>
-</div>
+<%= render partial: 'workshop', locals: {workshop: @workshop} %>
