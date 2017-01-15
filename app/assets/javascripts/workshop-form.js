@@ -21,7 +21,12 @@ function attachListeners() {
   }
 
 function listSkills() {
+  var count = 0; //this count is used to prevent duplicate ajax requests from firing.
   $('#getSkillsButton').on("click", function() {
+    count++;
+    if (count > 1){
+      return;
+    }
     var currentButton = $('#getSkillsButton').text();
     if (currentButton === 'Show Workshop Skills'){
       $.ajax({
@@ -32,8 +37,9 @@ function listSkills() {
           data.forEach( function(skill){
             html += "<tr><td style='width: 100px'><a href='/skills/" + skill.id + "' class='deleteSkill'><strong>X</strong></a></td><td style='width: 100px'><a href='/skills/" + skill.id + "' class='editSkill'><strong>Edit</strong></a></td><td class='currentSkill' id='" + skill.id + "'>" + skill.name + "</td></tr>";
           });
-          html += "</tbody><tfoot><tr><td colspan='3' style='width: 200px' class='newSkillName'><a href='/workshops/" +  workshopID + "/skill' id='newSkill'><strong>Add New Skill</strong></a></td></tr></tfoot></table></div>"
+          html += "</tbody><tfoot><tr><td colspan='3' style='width: 200px' class='newSkillName'><a href='/workshops/" +  workshopID + "/skills' id='newSkill'><strong>Add New Skill</strong></a></td></tr></tfoot></table></div>"
           $("#getSkillsList").html(html);
+          $("#getSkillsButton").hide();
           deleteSkill();
           editSkill();
           newSkill();
@@ -136,9 +142,16 @@ function showWorkshop() {
     workshopID = $(this).attr('id');
     var url = $(this).attr('href');
     $.ajax({
-      url: url,
-      success: function(html){
-        $('#currentWorkshop').html(html);
+      url: url + '.json',
+      success: function(data){
+        workshopID = (data._id.$oid);
+        $('.workshopDiv').attr('id', workshopID);
+        $('#editWorkshopID').attr('href', '/admin/workshops/' + workshopID + '/edit');
+        $('#workshop-name').text(data.name);
+        $('#workshop-officer').text(data.officer.fullname);
+        $(".requiredSkills").remove();
+        $('#getSkillsButton').text('Show Workshop Skills');
+        $("#getSkillsButton").show();
         attachListeners();
       }
     })

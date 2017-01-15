@@ -1,14 +1,14 @@
 <div class="workshopDiv" id="<%=workshop.id%>">
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h3 class="panel-title"><strong> <%= workshop.name %></strong></h3>
+      <h3 class="panel-title" id="workshop-name"><strong> <%= workshop.name %></strong></h3>
     </div>
     <div class="panel-body">
      <% if !workshop.officer.nil? %>
-        <h4><%= "Officer: #{workshop.officer.fullname}"%></h4>
+        <h4 id="workshop-officer"><%= "Officer: #{workshop.officer.fullname}"%></h4>
       <%end%>
       <% if is_admin? %>
-        <%= link_to "Edit Workshop", edit_admin_workshop_path(workshop), class: "btn btn-primary"  %>
+        <%= link_to "Edit Workshop", edit_admin_workshop_path(workshop), class: "btn btn-primary", id: 'editWorkshopID'  %>
       <% end %>
 
       <p></p>

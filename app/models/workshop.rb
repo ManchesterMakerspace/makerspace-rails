@@ -1,5 +1,7 @@
 class Workshop
   include Mongoid::Document
+  include ActiveModel::Serializers::JSON
+  
   has_many :skills
   belongs_to :officer, class_name: 'Member'
 
