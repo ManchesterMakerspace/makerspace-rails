@@ -20,5 +20,7 @@
 # Learn more: http://github.com/javan/whenever
 
 every 2.minutes do
-  rake "db:backup"
+  rake "db:backupMembers"
+  rake "db:backupWorkshops"
+  rake "db:backupSkills"
 end
