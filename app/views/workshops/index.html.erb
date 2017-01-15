@@ -13,14 +13,14 @@
         <div class="panel-body">
           <% @workshops.each do |workshop| %>
             <li>
-              <%= link_to workshop.name, workshop_path(workshop) %>
+              <%= link_to workshop.name, workshop_path(workshop), id: workshop.id, class: 'showWorkshop', remote: true %>
             </li>
           <% end %>
         </div>
       </div>
     </div> <!--index panel -->
 
-    <div class="col col-sm-8">
+    <div class="col col-sm-8" id="currentWorkshop">
       <%= render partial: "workshop", locals: {workshop: @workshops.first}%>
     </div> <!--show panel -->
 

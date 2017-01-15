@@ -22,6 +22,7 @@ class WorkshopsController < ApplicationController
     respond_to do |format|
       format.html { render :show }
       format.json { render json: @workshop }
+      format.js
     end
   end
 

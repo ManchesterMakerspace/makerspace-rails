@@ -11,6 +11,7 @@ $(document).ready(function() {
 
 function attachListeners() {
   listSkills();
+  showWorkshop();
   }
 
   function reattachListeners() {
@@ -28,7 +29,7 @@ function listSkills() {
         cache: false,
         success: function(html){
           $('#getSkillsButton').text('Hide Workshop Skills');
-          $("#getSkillsList").append(html);
+          $("#getSkillsList").html(html);
           deleteSkill();
           editSkill();
           newSkill();
@@ -118,4 +119,19 @@ function newSkill() {
       }
     });
   });
+}
+
+function showWorkshop() {
+  $('.showWorkshop').on("click", function(event) {
+    event.preventDefault();
+    workshopID = $(this).attr('id');
+    var url = $(this).attr('href');
+    $.ajax({
+      url: url + '.js',
+      type: 'GET',
+      beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+      success: function(data){
+      }
+    })
+  })
 }
