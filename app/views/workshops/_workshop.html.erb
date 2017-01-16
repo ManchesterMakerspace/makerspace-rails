@@ -9,9 +9,13 @@
       <%end%>
       <% if is_admin? %>
         <%= link_to "Edit Workshop", edit_admin_workshop_path(workshop), class: "btn btn-primary", id: 'editWorkshopID'  %>
+      <% elsif is_officer? %>
+        <%= link_to "Edit Workshop", edit_workshop_path(workshop), class: "btn btn-primary", id: 'editWorkshopID'  %>
       <% end %>
 
       <p></p>
+
+      <% if is_admin? || is_officer? %>
 
       <button type='button' id="getSkillsButton">Show Workshop Skills</button>
       <div id="getSkillsList">
@@ -21,7 +25,7 @@
               <caption>Required Skills</caption>
             </thead>
             <tbody class="currentSkills">
-              <!--This is where the jQuery loads list of skills -->
+                <!--This is where the jQuery loads list of skills -->
             </tbody>
             <tfoot>
                 <tr>
@@ -31,6 +35,26 @@
           </table>
         </div>
       </div>
+
+      <% else %>
+
+      <div id="getSkillsList">
+        <div class="requiredSkills" style="display: none;">
+          <table class="table">
+            <thead>
+              <caption>Required Skills</caption>
+            </thead>
+            <tbody class="currentSkills">
+              <%workshop.skills.each do |skill| %>
+                <tr>
+                  <td colspan="3" style="width: 200px"> <%= skill.name %> </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <%end%>
     </div>
   </div>
 </div>
