@@ -53,7 +53,7 @@ class Admin::MembersController < AdminController
 
   private
   def user_params
-    params.require(:member).permit(:fullname, :cardID, :role, :email, :password, :password_confirmation, :status, :expirationTime, :skill_ids =>[])
+    params.require(:member).permit(:fullname, :cardID, :role, :email, :password, :password_confirmation, :status, :expirationTime, :skill_ids =>[], :learned_skill_ids => [])
   end
 
   def set_member

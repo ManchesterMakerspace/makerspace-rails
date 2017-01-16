@@ -1,5 +1,5 @@
 class SkillsController < ApplicationController
-  before_action :set_skill, only: [:show, :edit, :update, :destroy]
+  before_action :set_skill, only: [:edit, :update, :destroy]
 
   def index
     @workshop = Workshop.find_by(id: params[:workshop_id])

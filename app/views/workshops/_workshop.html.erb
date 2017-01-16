@@ -1,7 +1,7 @@
 <div class="workshopDiv" id="<%=workshop.id%>">
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h3 class="panel-title" id="workshop-name"><strong> <%= workshop.name %></strong></h3>
+      <h3 class="panel-title" id="workshop-name"> <%= workshop.name %></h3>
     </div>
     <div class="panel-body">
      <% if !workshop.officer.nil? %>
@@ -14,7 +14,23 @@
       <p></p>
 
       <button type='button' id="getSkillsButton">Show Workshop Skills</button>
-      <div id="getSkillsList"></div>
+      <div id="getSkillsList">
+        <div class="requiredSkills" style="display: none;">
+          <table class="table">
+            <thead>
+              <caption>Required Skills</caption>
+            </thead>
+            <tbody class="currentSkills">
+              <!--This is where the jQuery loads list of skills -->
+            </tbody>
+            <tfoot>
+                <tr>
+                  <td colspan="3" style="width: 200px" class="newSkillName"><a href="/workshops/<%=workshop.id%>/skills" id="newSkill"><strong>Add New Skill</strong></a></td>
+                </tr>
+              </tfoot>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>
