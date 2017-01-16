@@ -14,7 +14,40 @@ $(document).ready(function(){
     showNewMembers();
     scan();
   }
+  else{
+    trainMember();
+  }
 });
+
+function trainMember(){
+  $('.train').confirm({
+    text: "Would you like to fully approve this member to use this workshop?",
+    title: "Confirmation required",
+    confirm: function(button){
+      var shopID = $('.train').attr('id');
+      var memberID = $('.memberPage').attr('id');
+      $.ajax({
+        url: '/workshops/' + shopID + '/train.json',
+        type: 'POST',
+        data: { member_id: memberID },
+        beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+        success: function(data){
+          console.log(data);
+        }
+      })
+    },
+    cancel: function(button){
+      var url = $('.train').attr('href');
+      var memberID = $('.memberPage').attr('id');
+      window.location.href = url;
+    },
+    confirmButton: "Yes",
+    cancelButton: "No - Select certain skills",
+    confirmButtonClass: "btn-danger",
+    cancelButtonClass: "btn-default",
+    dialogClass: "modal-dialog modal-lg" // Bootstrap classes for large modal
+  })
+}
 
 function scan() {
   if (typeof io != 'undefined'){

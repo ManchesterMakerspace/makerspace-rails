@@ -1,5 +1,5 @@
 class WorkshopsController < ApplicationController
-  before_action :set_workshop, only: [:show, :edit, :update]
+  before_action :set_workshop, only: [:show, :edit, :update, :train]
   before_action :is_officer?, only: [:edit, :new, :update, :create]
 
   def index
@@ -39,6 +39,14 @@ class WorkshopsController < ApplicationController
         format.html { render :edit, alert: "Update failed:  #{@workshop.errors.full_messages}" }
         format.json { render json: @workshop }
       end
+    end
+  end
+
+  def train
+    member = Member.find_by(id: params[:member_id])
+    @workshop.train_fully(member)
+    respond_to do |format|
+      format.json { render json: member }
     end
   end
 

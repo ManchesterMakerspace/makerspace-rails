@@ -17,11 +17,7 @@ class Workshop
     officer = Member.find_by(id: officer_id)
     self.officer = officer
     make_expert(officer)
-    self.skills.each do |skill|
-      if !officer.skills.include?(skill)
-        officer.skills << skill
-      end
-    end
+    train_fully(officer)
     officer
   end
 
@@ -31,5 +27,11 @@ class Workshop
 
   def list_experts
     experts.collect { |e| e.fullname }.join(", ")
+  end
+
+  def train_fully(member)
+    self.skills.each do |skill|
+      !member.learned_skills.include?(skill) ? (member.learned_skills << skill) : nil
+    end
   end
 end
