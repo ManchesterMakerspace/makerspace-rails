@@ -33,8 +33,11 @@ function trainMember(){
         beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
         success: function(data){
           console.log(data);
+          $('.train').attr('href', '/workshops/' + shopID + '/members/' + memberID);
+          $('.train').text("MAKE EXPERT");
+          $('.train').attr('class', 'btn btn-info expert');
         }
-      })
+      });
     },
     cancel: function(button){
       var url = $('.train').attr('href');
