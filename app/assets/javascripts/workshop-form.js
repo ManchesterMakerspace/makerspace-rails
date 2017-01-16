@@ -145,11 +145,13 @@ function showWorkshop() {
     $.ajax({
       url: url + '.json', //it is cleaner to use an html request and just replace the html in the other pane.
       success: function(data){
-        workshopID = (data._id.$oid);
-        $('.workshopDiv').attr('id', workshopID);
-        $('#editWorkshopID').attr('href', '/admin/workshops/' + workshopID + '/edit');
-        $('#workshop-name').text(data.name);
-        $('#workshop-officer').text('Officer: ' + data.officer.fullname);
+        var shop = new Workshop(data._id.$oid, data.name, data.experts, data.officer.fullname);
+        workshopID = shop.id
+        $('.workshopDiv').attr('id', shop.id);
+        $('#editWorkshopID').attr('href', '/admin/workshops/' + shop.id + '/edit');
+        $('#workshop-name').text(shop.name);
+        $('#workshop-experts').text('Experts: ' + shop.listExperts() );
+        $('#workshop-officer').text('Officer: ' + shop.officer);
         $(".requiredSkills").hide();
         $('#getSkillsButton').text('Show Workshop Skills');
         $("#getSkillsButton").show();

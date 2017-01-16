@@ -18,7 +18,7 @@
             <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse<%=workshop.id%>" aria-expanded="false" aria-controls="collapse<%=workshop.id%>">
               <%=workshop.name %> (Click to view required skills)
               <% if is_officer?(workshop) %>
-                <%= (link_to "Train", edit_workshop_member_path(workshop, @member),  class: "btn btn-info")%>
+                <%= (link_to "TRAIN", edit_workshop_member_path(workshop, @member),  class: "btn btn-success train")%>
               <% end %>
             </a>
           </h4>

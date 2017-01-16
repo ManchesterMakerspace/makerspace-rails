@@ -47,6 +47,7 @@ class Member
   validates :fullname, presence: true, uniqueness: true
 
   has_and_belongs_to_many :learned_skills, class_name: 'Skill', inverse_of: :allowed_members
+  has_and_belongs_to_many :expertises, class_name: 'Workshop', inverse_of: :experts
 
   def email_required?
     false

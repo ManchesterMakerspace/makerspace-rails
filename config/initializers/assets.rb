@@ -7,6 +7,8 @@ Rails.application.config.assets.precompile += %w( application.css )
 Rails.application.config.assets.precompile += %w( application.js )
 Rails.application.config.assets.precompile += %w( member.js )
 Rails.application.config.assets.precompile += %w( skill.js )
+Rails.application.config.assets.precompile += %w( workshop.js )
+
 
 # Add additional assets to the asset load path
 # Rails.application.config.assets.paths << Emoji.images_path
