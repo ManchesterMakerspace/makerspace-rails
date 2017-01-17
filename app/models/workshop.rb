@@ -23,6 +23,7 @@ class Workshop
 
   def make_expert(expert)
     experts << expert
+    expert.expertises << self
   end
 
   def list_experts

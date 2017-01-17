@@ -16,6 +16,7 @@ $(document).ready(function(){
   }
   else{
     trainMember();
+    makeExpert();
   }
 });
 
@@ -32,10 +33,10 @@ function trainMember(){
         data: { member_id: memberID },
         beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
         success: function(data){
-          console.log(data);
           $('.train').attr('href', '/workshops/' + shopID + '/members/' + memberID);
           $('.train').text("MAKE EXPERT");
           $('.train').attr('class', 'btn btn-info expert');
+          makeExpert();
         }
       });
     },
@@ -46,6 +47,41 @@ function trainMember(){
     },
     confirmButton: "Yes",
     cancelButton: "No - Select certain skills",
+    confirmButtonClass: "btn-danger",
+    cancelButtonClass: "btn-default",
+    dialogClass: "modal-dialog modal-lg" // Bootstrap classes for large modal
+  })
+}
+
+function makeExpert(){
+  var count = 0;
+  $('.expert').confirm({
+    text: "Make this member an expert in this shop? This will give full training permissions to this member.",
+    title: "Confirmation required",
+    confirm: function(button){
+      count++;
+      if (count > 1){
+        return;
+      }
+      var shopID = $('.expert').attr('id');
+      var memberID = $('.memberPage').attr('id');
+      $.ajax({
+        url: '/workshops/' + shopID + '/expert.json',
+        type: 'POST',
+        data: { member_id: memberID },
+        beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+        success: function(data){
+          $('.expert').hide();
+        }
+      });
+    },
+    cancel: function(button){
+      var url = $('.expert').attr('href');
+      var memberID = $('.memberPage').attr('id');
+      window.location.href = url;
+    },
+    confirmButton: "Yes",
+    cancelButton: "No",
     confirmButtonClass: "btn-danger",
     cancelButtonClass: "btn-default",
     dialogClass: "modal-dialog modal-lg" // Bootstrap classes for large modal

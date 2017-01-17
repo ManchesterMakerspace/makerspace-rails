@@ -1,5 +1,5 @@
 class WorkshopsController < ApplicationController
-  before_action :set_workshop, only: [:show, :edit, :update, :train]
+  before_action :set_workshop, only: [:show, :edit, :update, :train, :make_expert]
   before_action :is_officer?, only: [:edit, :new, :update, :create]
 
   def index
@@ -45,6 +45,14 @@ class WorkshopsController < ApplicationController
   def train
     member = Member.find_by(id: params[:member_id])
     @workshop.train_fully(member)
+    respond_to do |format|
+      format.json { render json: member }
+    end
+  end
+
+  def make_expert
+    member = Member.find_by(id: params[:member_id])
+    @workshop.make_expert(member)
     respond_to do |format|
       format.json { render json: member }
     end

@@ -18,8 +18,10 @@
           <h4 class"panel-title">
             <%=workshop.name %> (Click to view required skills)
             <% if is_officer?(workshop) %>
-              <% if @member.allowed_workshops.include?(workshop) %>
-                <%= (link_to "MAKE EXPERT", workshop_member_path(workshop, @member),  class: "btn btn-info expert") %>
+              <% if workshop.experts.include?(@member) %>
+            
+              <% elsif @member.allowed_workshops.include?(workshop) %>
+                <%= (link_to "MAKE EXPERT", workshop_member_path(workshop, @member),  class: "btn btn-info expert", id: "#{workshop.id}") %>
               <% else %>
                 <%= (link_to "TRAIN", edit_workshop_member_path(workshop, @member),  class: "btn btn-success train", id: "#{workshop.id}")%>
               <% end %>

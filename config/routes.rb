@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     end
     get '/admin/renew', to: 'admin/members#renew'
     post '/workshops/:id/train', to: 'workshops#train'
+    post '/workshops/:id/expert', to: 'workshops#make_expert'
   end
 
   get '/members/mailer', to: 'members#mailer'
