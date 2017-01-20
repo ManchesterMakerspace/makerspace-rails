@@ -34,8 +34,9 @@ function listSkills() {
         success: function(data){
           $('#getSkillsButton').text('Hide Workshop Skills');
           $(".requiredSkills").show();
-          var html = "";
-          data.forEach( function(skill){
+          var html;
+          data.forEach( function(s){
+            skill = new Skill(s._id.$oid, s.name)
             html += "<tr><td style='width: 100px'><a href='/skills/" + skill.id + "' class='deleteSkill'><strong>X</strong></a></td><td style='width: 100px'><a href='/skills/" + skill.id + "' class='editSkill'><strong>Edit</strong></a></td><td class='currentSkill' id='" + skill.id + "'>" + skill.name + "</td></tr>";
           });
           $("#newSkill").attr('href', '/workshops/' + workshopID + '/skills')

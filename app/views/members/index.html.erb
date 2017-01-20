@@ -22,7 +22,7 @@
 				<%else%>
 				<td><%= "#{member.fullname}"%></td>
 				<%end%>
-          <td><%= member.allowed_workshops.pluck(:name).join(", ") %> </td>
+          <td><%= member.list_allowed_workshops %> </td>
 					<% if is_officer? || is_admin? %>
 						<td class="<%=member.membership_status%>"><%=member.prettyTime.strftime("%m/%d/%Y") %></td>
 					<%end%>

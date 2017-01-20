@@ -189,6 +189,7 @@ function showNewMembers() {
         member.expirationTime = data.expirationTime;
         $('.newMembers').show();
         $('.newMembers').append("<li> Name: <strong>" + member.fullname + "</strong><ul> Expiration Date: <strong>" + member.formatExpTime() + "</strong> </ul></li>")
+        clearForm($('.new'));
       }
     });
     event.preventDefault();

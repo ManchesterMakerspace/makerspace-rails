@@ -45,9 +45,12 @@ class Member
   # field :locked_at,       type: Time
 
   validates :fullname, presence: true, uniqueness: true
+  before_save :update_allowed_workshops
 
-  has_and_belongs_to_many :learned_skills, class_name: 'Skill', inverse_of: :allowed_members
+  has_many :offices, class_name: 'Workshop', inverse_of: :officer
+  has_and_belongs_to_many :learned_skills, class_name: 'Skill', inverse_of: :trained_members
   has_and_belongs_to_many :expertises, class_name: 'Workshop', inverse_of: :experts
+  has_and_belongs_to_many :allowed_workshops, class_name: 'Workshop', inverse_of: :allowed_members
 
   def email_required?
     false
@@ -72,10 +75,16 @@ class Member
     ['id','name','email']
   end
 
-  def allowed_workshops
+  def update_allowed_workshops #can probably change this to update accesspoints
     allowed = Workshop.all.collect { |workshop| workshop.skills.all? { |skill| self.learned_skills.include?(skill) } ? workshop : nil}.compact.uniq
     allowed << Workshop.all.select { |shop| shop.officer == self}
-    allowed.flatten.uniq.sort_by(&:name)
+    allowed.flatten.uniq.each do |shop|
+      allowed_workshops << shop
+    end
+  end
+
+  def list_allowed_workshops
+    allowed_workshops.pluck(:name).sort.join(", ")
   end
 
   def membership_status
