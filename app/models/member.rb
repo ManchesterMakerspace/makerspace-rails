@@ -71,11 +71,10 @@ class Member
     ['id','name','email']
   end
 
-  def update_allowed_workshops #can probably change this to update accesspoints
+  def update_allowed_workshops #this checks to see if they have learned all the skills in a workshop one at a time
     allowed = Workshop.all.collect { |workshop| workshop.skills.all? { |skill| self.learned_skills.include?(skill) } ? workshop : nil}.compact.uniq
-    allowed << Workshop.all.select { |shop| shop.officer == self}
     allowed.flatten.uniq.each do |shop|
-      allowed_workshops << shop
+      allowed_workshops.include?(shop) ?  nil : (allowed_workshops << shop)
     end
   end
 

@@ -14,21 +14,16 @@ class Workshop
 
   validates :name, presence: :true, uniqueness: :true
 
-  def member_id=(officer_id)
+  def member_id=(officer_id) #make officer
     officer = Member.find_by(id: officer_id)
     self.officer = officer
-    make_expert(officer)
     train_fully(officer)
+    make_expert(officer)
     officer
   end
 
   def make_expert(expert)
-    unless (allowed_members.include?(expert))
-      allowed_members << expert
-      expert.allowed_workshops << self
-    end
     experts << expert
-    expert.expertises << self
   end
 
   def list_experts
@@ -40,5 +35,11 @@ class Workshop
       !member.learned_skills.include?(skill) ? (member.learned_skills << skill) : nil
     end
     !member.allowed_workshops.include?(self) ? (member.allowed_workshops << self) : nil
+  end
+
+  def retrain_all
+    allowed_members.clear
+    experts.each { |e| allowed_members << e }
+    allowed_members << officer
   end
 end

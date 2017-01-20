@@ -13,7 +13,7 @@
       <% if is_admin? %>
         <%= link_to "Edit Workshop", edit_admin_workshop_path(workshop), class: "btn btn-primary", id: 'editWorkshopID'  %>
       <% elsif is_officer? %>
-        <%= link_to "Edit Workshop", edit_workshop_path(workshop), class: "btn btn-primary", id: 'editWorkshopID'  %>
+        <%= link_to "Retrain", retrain_workshop_path(workshop), class: "btn btn-danger", id: 'retrainAll'  %>
       <% end %>
 
       <p></p>
