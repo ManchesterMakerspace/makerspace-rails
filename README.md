@@ -13,3 +13,11 @@ Clone to local, cd into repo.
 run: bundle install  #Bundler is Ruby library that will install and load all required libraries for this app.
 
 run: rails s or rails server #Ruby on Rails server defaults to port 3000. Application will be immediately viewable at localhost:3000.
+
+# CONTRIBUTIONS
+
+Bug reports and pull requests are welcome on GitHub at https://github.com/ManchesterMakerspace/makerspace-interface. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the Contributor Covenant code of conduct.
+
+#LICENSE
+
+The app is available as open source under the terms of the MIT License.
