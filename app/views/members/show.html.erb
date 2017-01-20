@@ -3,8 +3,8 @@
     <h2><%= @member.fullname %> </h2>
     <h3><%= @member.email %> </h3>
     <h4>Membership Expiration Date: <%= @member.prettyTime.strftime("%m/%d/%Y") %></h4>
-    <% if !@member.officer_of.empty? %>
-      <h4>Officer of: <%=@member.officer_of.join(", ")%></h4>
+    <% if !@member.offices.empty? %>
+      <h4>Officer of: <%=@member.offices.pluck(:name).join(", ")%></h4>
     <%end%>
     <% if is_admin? %>
       <%= link_to "Edit", edit_admin_member_path(@member), class: "btn btn-primary card"  %>
@@ -19,7 +19,7 @@
             <%=workshop.name %> (Click to view required skills)
             <% if is_officer?(workshop) %>
               <% if workshop.experts.include?(@member) %>
-            
+
               <% elsif @member.allowed_workshops.include?(workshop) %>
                 <%= (link_to "MAKE EXPERT", workshop_member_path(workshop, @member),  class: "btn btn-info expert", id: "#{workshop.id}") %>
               <% else %>

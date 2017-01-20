@@ -8,7 +8,7 @@ class Member
 
  field :fullname #full name of user
  field :cardID # user card id
- field :status,                         default: "current" # current, revoked
+ field :status,                         default: "gs" # gs, revoked, restored
  field :accesspoints, type: Array #points of access member (door, machine, etc)
  field :expirationTime, type: Integer #pre-calcualted time of expiration
  field :groupName #potentially member is in a group/partner membership
@@ -60,10 +60,6 @@ class Member
     !email.blank? && !persisted?
   end
 
-  def officer_of
-    Workshop.all.select { |shop| shop.officer == self }.pluck(:name)
-  end
-
   def password_match?
     self.errors[:password] << "can't be blank" if password.blank?
     self.errors[:password_confirmation] << "can't be blank" if password_confirmation.blank?
@@ -98,12 +94,12 @@ class Member
   end
 
   def revoke
-    write_attribute(:status, 'Revoked')
+    write_attribute(:status, 'revoked')
     self.save
   end
 
   def restore
-    write_attribute(:status, 'Current')
+    write_attribute(:status, 'restored')
     self.save
   end
 
