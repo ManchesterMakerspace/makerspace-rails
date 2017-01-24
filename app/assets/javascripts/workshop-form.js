@@ -158,6 +158,6 @@ function showWorkshop() {
         $("#getSkillsButton").show();
         attachListeners();
       }
-    })
-  })
+    });
+  });
 }
