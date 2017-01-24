@@ -20,11 +20,11 @@ $(document).ready(function(){
   }
 });
 
-function trainMember(){
-  $('.train').confirm({
-    text: "Would you like to fully approve this member to use this workshop?",
-    title: "Confirmation required",
-    confirm: function(button){
+function trainMember() {
+  $('a.train').on('click', function(event){
+    event.preventDefault();
+    var c = confirm("Would you like to fully approve this member to use this workshop?");
+    if (c == true) {
       var shopID = $('.train').attr('id');
       var memberID = $('.memberPage').attr('id');
       $.ajax({
@@ -32,60 +32,39 @@ function trainMember(){
         type: 'POST',
         data: { member_id: memberID },
         beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
-        success: function(data){
-          $('.train').attr('href', '/workshops/' + shopID + '/members/' + memberID);
+        success: function(){
           $('.train').text("MAKE EXPERT");
-          $('.train').attr('class', 'btn btn-info expert');
+          $('.train').off('click');
+          $('.train').removeClass('train').addClass('expert')
           makeExpert();
-        }
-      });
-    },
-    cancel: function(button){
-      var url = $('.train').attr('href');
-      var memberID = $('.memberPage').attr('id');
-      window.location.href = url;
-    },
-    confirmButton: "Yes",
-    cancelButton: "No - Select certain skills",
-    confirmButtonClass: "btn-danger",
-    cancelButtonClass: "btn-default",
-    dialogClass: "modal-dialog modal-lg" // Bootstrap classes for large modal
-  })
+         }
+       });
+     } else {
+       var url = $('.train').attr('href');
+       var memberID = $('.memberPage').attr('id');
+       window.location.href = url;
+     }
+  });
 }
 
-function makeExpert(){
-  var count = 0;
-  $('.expert').confirm({
-    text: "Make this member an expert in this shop? This will give full training permissions to this member.",
-    title: "Confirmation required",
-    confirm: function(button){
-      count++;
-      if (count > 1){
-        return;
-      }
+function makeExpert() {
+  $('a.expert').on('click', function(event){
+    event.preventDefault();
+    var c = confirm("Make this member an expert in this shop? This will give full training permissions to this member.");
+    if (c == true) {
       var shopID = $('.expert').attr('id');
-      var memberID = $('.memberPage').attr('id');
-      $.ajax({
-        url: '/workshops/' + shopID + '/expert.json',
-        type: 'POST',
-        data: { member_id: memberID },
-        beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
-        success: function(data){
-          $('.expert').hide();
-        }
-      });
-    },
-    cancel: function(button){
-      var url = $('.expert').attr('href');
-      var memberID = $('.memberPage').attr('id');
-      window.location.href = url;
-    },
-    confirmButton: "Yes",
-    cancelButton: "No",
-    confirmButtonClass: "btn-danger",
-    cancelButtonClass: "btn-default",
-    dialogClass: "modal-dialog modal-lg" // Bootstrap classes for large modal
-  })
+       var memberID = $('.memberPage').attr('id');
+       $.ajax({
+         url: '/workshops/' + shopID + '/expert.json',
+         type: 'POST',
+         data: { member_id: memberID },
+         beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+         success: function(data){
+           $('.expert').hide();
+         }
+       });
+     }
+  });
 }
 
 function scan() {

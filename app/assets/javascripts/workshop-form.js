@@ -2,7 +2,7 @@
 // editSkill
 // addSkill
 // newSkillName
-var workshopID, newRow, newSkillName, skill, thisRow;
+var workshopID, newSkillName, thisRow;
 
 $(document).ready(function() {
   workshopID = $('.workshopDiv').attr('id');
@@ -12,46 +12,33 @@ $(document).ready(function() {
 function attachListeners() {
   listSkills();
   showWorkshop();
-  }
+}
 
-  function reattachListeners() {
-    deleteSkill();
-    editSkill();
-    newSkill();
-  }
+function reattachListeners() {
+  deleteSkill();
+  editSkill();
+  newSkill();
+}
 
 function listSkills() {
-  var count = 0; //this count is used to prevent duplicate ajax requests from firing.
-  $('#getSkillsButton').on("click", function() {
-    count++;
-    if (count > 1){
-      return;
-    }
-    var currentButton = $('#getSkillsButton').text();
-    if (currentButton === 'Show Workshop Skills'){
+  $('#getSkillsButton').on("click", function(event) {
       $.ajax({
-        url: '/workshops/' + workshopID + '/skills.json', //better to call this as html and just render the html directly.
+        url: '/workshops/' + workshopID + '/skills.json', 
         success: function(data){
-          $('#getSkillsButton').text('Hide Workshop Skills');
           $(".requiredSkills").show();
           var html;
-          data.forEach( function(s){
-            skill = new Skill(s._id.$oid, s.name)
-            html += "<tr><td style='width: 100px'><a href='/skills/" + skill.id + "' class='deleteSkill'><strong>X</strong></a></td><td style='width: 100px'><a href='/skills/" + skill.id + "' class='editSkill'><strong>Edit</strong></a></td><td class='currentSkill' id='" + skill.id + "'>" + skill.name + "</td></tr>";
-          });
+          const dataLength = data.length;
+          for (let i = 0; i < dataLength; i++){
+            var skill = new Skill(data[i])
+            html += skill.newTableRow();
+          }
           $("#newSkill").attr('href', '/workshops/' + workshopID + '/skills')
           $(".currentSkills").html(html);
           $("#getSkillsButton").hide();
-          deleteSkill();
-          editSkill();
-          newSkill();
+          reattachListeners();
         }
       });
-    }
-    else if (currentButton === 'Hide Workshop Skills') {
-      $(".requiredSkills").hide();
-      $('#getSkillsButton').text('Show Workshop Skills');
-    }
+      event.preventDefault();
   })
 }
 
@@ -106,20 +93,16 @@ function newSkill() {
     var url = $(this).attr('href');
     $('.newSkillName').html("<input type='text' name='skill[name]'><button type='button' class='createSkill'>Create</button>");
     $('.createSkill').on("click", function(){
-      newSkillName = $('.newSkillName input[name="skill[name]"]').val();
-      skill = new Skill('noID', newSkillName);
-      if (skill.nameBlank() === false ){
+      const newSkillName = $('.newSkillName input[name="skill[name]"]').val();
+      if (newSkillName !== '') {
         $.ajax({
           url: url + '.json',
           type: 'POST',
-          data: {skill: {name: newSkillName, workshop_id: workshopID}},
+          data: { skill: { name: newSkillName, workshop_id: workshopID } },
           beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
           success: function(data) {
-            var newSkill = new Skill(data._id.$oid, data.name);
-            newRow = '<tr><td style="width: 100px"><a href="/skills/' + newSkill.id + '" class="deleteSkill"><strong>X</strong></a></td>';
-            newRow += '<td style="width: 100px"><a href="/skills/' + newSkill.id + '" class="editSkill"><strong>Edit</strong></a></td>';
-            newRow += '<td class="currentSkill" id="' + newSkill.id + '">' + newSkill.name + ' </td></tr>';
-            $('.currentSkills').append(newRow);
+            var skill = new Skill(data);
+            $('.currentSkills').append(skill.newTableRow());
             $('.newSkillName input[name="skill[name]"]').val("");
             reattachListeners();
           }
@@ -134,12 +117,7 @@ function newSkill() {
 }
 
 function showWorkshop() {
-  var count = 0; //this count is used to prevent duplicate ajax requests from firing.
   $('.showWorkshop').on("click", function(event) {
-    count++;
-    if (count > 1){
-      return;
-    }
     event.preventDefault();
     workshopID = $(this).attr('id');
     var url = $(this).attr('href');
@@ -156,7 +134,6 @@ function showWorkshop() {
         $(".requiredSkills").hide();
         $('#getSkillsButton').text('Show Workshop Skills');
         $("#getSkillsButton").show();
-        attachListeners();
       }
     });
   });

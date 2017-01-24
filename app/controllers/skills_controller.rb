@@ -3,11 +3,7 @@ class SkillsController < ApplicationController
 
   def index
     @workshop = Workshop.find_by(id: params[:workshop_id])
-    @skills = @workshop.skills
-    respond_to do |format|
-      format.html{ render :layout => false }
-      format.json { render json: @skills }
-    end
+    render json: @workshop.skills
   end
 
   def new
@@ -18,16 +14,9 @@ class SkillsController < ApplicationController
   def create
     @skill = Skill.new(skill_params)
     if @skill.save
-      respond_to do |format|
-        format.html { redirect_to workshop_path(@skill.workshop_id), notice: 'New skill created successfully' }
-        format.json { render json: @skill }
-      end
+      format.json { render json: @skill }
     else
-      @workshop = Workshop.find_by(id: params[:workshop_id])
-      respond_to do |format|
-        format.html { render :new, alert: "Creation failed:  #{@skill.errors.full_messages}" }
-        format.json { render json: @skill, alert: 'Failure' }
-      end
+      format.json { render json: @skill, alert: 'Failure' }
     end
   end
 
@@ -37,15 +26,9 @@ class SkillsController < ApplicationController
 
   def update
     if @skill.update(skill_params)
-      respond_to do |format|
-        format.html { redirect_to workshop_path(@skill.workshop_id), notice: 'Skill updated' }
-        format.json { render json: @skill }
-      end
+      format.json { render json: @skill }
     else
-      respond_to do |format|
-        format.html { render :edit, alert: "Update failed:  #{@skill.errors.full_messages}" }
-        format.json { render json: @skill, alert: 'Failure' }
-      end
+      format.json { render json: @skill, alert: 'Failure' }
     end
   end
 
@@ -54,15 +37,9 @@ class SkillsController < ApplicationController
     if (!!@skill)
       @skill.destroy
       if !!@workshop
-        respond_to do |format|
-          format.html { redirect_to workshop_path(@workshop), notice: 'Skill deleted' }
-          format.json { render json: @workshop }
-        end
+        format.json { render json: @workshop }
       else
-        respond_to do |format|
-          format.html { redirect_to workshops_path, notice: 'Skill deleted' }
-          format.json { render json: @workshop }
-        end
+        format.json { render json: @workshop }
       end
     end
   end
