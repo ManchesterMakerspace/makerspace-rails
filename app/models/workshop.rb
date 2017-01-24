@@ -14,7 +14,7 @@ class Workshop
 
   validates :name, presence: :true, uniqueness: :true
 
-  def member_id=(officer_id) #make officer
+  def officer_id=(officer_id) #make officer
     officer = Member.find_by(id: officer_id)
     self.officer = officer
     train_fully(officer)

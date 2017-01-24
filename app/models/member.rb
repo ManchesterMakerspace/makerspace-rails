@@ -9,11 +9,11 @@ class Member
  field :fullname #full name of user
  field :cardID # user card id
  field :status,                         default: "gs" # gs, revoked, restored
- field :accesspoints, type: Array #points of access member (door, machine, etc)
- field :expirationTime, type: Integer #pre-calcualted time of expiration
+ field :accesspoints,     type: Array #points of access member (door, machine, etc)
+ field :expirationTime,   type: Integer #pre-calcualted time of expiration
  field :groupName #potentially member is in a group/partner membership
- field :groupKeystone, type: Boolean
- field :role, default: "member" #admin,officer,member
+ field :groupKeystone,    type: Boolean
+ field :role,                           default: "member" #admin,officer,member
 
   ## Database authenticatable
   field :email,              type: String, default: ""
@@ -44,6 +44,7 @@ class Member
   # field :unlock_token,    type: String # Only if unlock strategy is :email or :both
   # field :locked_at,       type: Time
 
+  # before_validation :normalize_attributes
   validates :fullname, presence: true, uniqueness: true
   before_save :update_allowed_workshops
 
@@ -92,6 +93,24 @@ class Member
     end
   end
 
+  def prettyTime
+    Time.at(expirationTime/1000)
+  end
+
+  def duration
+    prettyTime - Time.now
+  end
+
+  def expirationTime=(num_months)
+    now_in_ms = (Time.now.strftime('%s').to_i * 1000)
+    if (!!self.expirationTime && self.try(:expirationTime) > now_in_ms)
+      write_attribute(:expirationTime, (expirationTime + (num_months.to_i*30*24*60*60*1000)) )
+    else
+      write_attribute(:expirationTime,  (now_in_ms + (num_months.to_i*30*24*60*60*1000)) )
+    end
+    self.save
+  end
+
   def revoke
     write_attribute(:status, 'revoked')
     self.save
@@ -112,21 +131,8 @@ class Member
     end
   end
 
-  def prettyTime
-    Time.at(expirationTime/1000)
-  end
-
-  def duration
-    prettyTime - Time.now
-  end
-
-  def expirationTime=(num_months)
-    now_in_ms = (Time.now.strftime('%s').to_i * 1000)
-    if (!!self.expirationTime && self.try(:expirationTime) > now_in_ms)
-      write_attribute(:expirationTime, (expirationTime + (num_months.to_i*30*24*60*60*1000)) )
-    else
-      write_attribute(:expirationTime,  (now_in_ms + (num_months.to_i*30*24*60*60*1000)) )
-    end
-    self.save
+  private
+  def normalize_attributes
+    self.fullname = self.fullname.strip unless self.fullname.nil?
   end
 end

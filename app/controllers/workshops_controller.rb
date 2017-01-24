@@ -20,7 +20,7 @@ class WorkshopsController < ApplicationController
 
   def show
     respond_to do |format|
-      format.html { render :layout => false }
+      format.html { render }
       format.json { render json: @workshop }
     end
   end
@@ -71,7 +71,7 @@ class WorkshopsController < ApplicationController
   end
 
   def workshop_params
-    params.require(:workshop).permit(:name, :member_id, :skill_ids=> [], :skills_attributes => [:name, :_destroy])
+    params.require(:workshop).permit(:name, :member_id, :skills_attributes => [:name, :_destroy])
   end
 
 end
