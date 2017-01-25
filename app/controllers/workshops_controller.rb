@@ -68,7 +68,7 @@ class WorkshopsController < ApplicationController
   end
 
   def workshop_params
-    params.require(:workshop).permit(:name, :member_id, :skills_attributes => [:name, :_destroy])
+    params.require(:workshop).permit(:name, :skills_attributes => [:name, :_destroy])
   end
 
 end

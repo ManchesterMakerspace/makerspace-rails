@@ -14,12 +14,11 @@ class Workshop
 
   validates :name, presence: :true, uniqueness: :true
 
-  def member_id=(officer_id)
-    officer = Member.find_by(id: officer_id)
-    self.officer = officer
-    train_fully(officer)
-    make_expert(officer)
-    officer
+  def officer=(officer_id)
+    self.write_attribute(:officer, Member.find_by(id: officer_id))
+    train_fully(self.officer)
+    make_expert(self.officer)
+    self.officer
   end
 
   def make_expert(expert)
