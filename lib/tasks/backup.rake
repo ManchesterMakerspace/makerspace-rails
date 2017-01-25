@@ -1,7 +1,7 @@
 namespace :db do
   desc "This task backs up the Mongo DB to local dump as compressed gzip."
   task :backupMembers do
-    sh("mongodump --db makerauth --collection members --out - | gzip > /home/will/Desktop/dev/makerspace_interface/dump/members/memberBackup_#{Time.now.strftime('%m-%d-%Y')}.gzip")
+    sh("mongodump --db makerauth --collection members --out - | gzip > /home/will/Desktop/dev/makerspace_interface/dump/members/memberBackup_#{Time.now.strftime('%m-%d-%Y')}.gz")
     GoogleDrive::Session.from_config("config.json").upload_from_file("/home/will/Desktop/dev/makerspace_interface/dump/members/memberBackup_#{Time.now.strftime('%m-%d-%Y')}.gzip", "memberBackup_#{Time.now.strftime('%m-%d-%Y')}.gzip", convert: false)
   end
 

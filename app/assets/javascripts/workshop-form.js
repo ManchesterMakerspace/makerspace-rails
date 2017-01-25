@@ -1,8 +1,4 @@
-// deleteSkill
-// editSkill
-// addSkill
-// newSkillName
-var workshopID, newSkillName, thisRow;
+var workshopID;
 
 $(document).ready(function() {
   workshopID = $('.workshopDiv').attr('id');
@@ -23,7 +19,7 @@ function reattachListeners() {
 function listSkills() {
   $('#getSkillsButton').on("click", function(event) {
       $.ajax({
-        url: '/workshops/' + workshopID + '/skills.json', 
+        url: '/workshops/' + workshopID + '/skills.json',
         success: function(data){
           $(".requiredSkills").show();
           var html;
