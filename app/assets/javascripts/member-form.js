@@ -20,6 +20,7 @@ $(document).ready(function(){
 function trainMember() {
   $('a.train').on('click', function(event){
     event.preventDefault();
+    var trainButton = $(this);
     var c = confirm("Would you like to fully approve this member to use this workshop?");
     if (c == true) {
       var shopID = $('.train').attr('id');
@@ -30,14 +31,14 @@ function trainMember() {
         data: { member_id: memberID },
         beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
         success: function(){
-          $('.train').text("MAKE EXPERT");
-          $('.train').off('click');
-          $('.train').removeClass('train').addClass('expert')
+          trainButton.text("MAKE EXPERT");
+          trainButton.off('click');
+          trainButton.removeClass('train').addClass('expert')
           makeExpert();
          }
        });
      } else {
-       var url = $('.train').attr('href');
+       var url = trainButton.attr('href');
        var memberID = $('.memberPage').attr('id');
        window.location.href = url;
      }
@@ -47,9 +48,10 @@ function trainMember() {
 function makeExpert() {
   $('a.expert').on('click', function(event){
     event.preventDefault();
+    var expertButton = $(this);
     var c = confirm("Make this member an expert in this shop? This will give full training permissions to this member.");
     if (c == true) {
-       const shopID = $('.expert').attr('id');
+       const shopID = expertButton.attr('id');
        const memberID = $('.memberPage').attr('id');
        $.ajax({
          url: '/workshops/' + shopID + '/expert.json',
@@ -57,7 +59,7 @@ function makeExpert() {
          data: { member_id: memberID },
          beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
          success: function(data){
-           $('.expert').hide();
+           expertButton.hide();
          }
        });
      }
@@ -104,8 +106,8 @@ function clearForm(form) {
 
 function loadMember() {
   $('.member').on('change', function(){
-    const member_fullname = $('#member_fullname').val();
-    const token = $('input[name=authenticity_token]').val();
+    var member_fullname = $('#member_fullname').val();
+    var token = $('input[name=authenticity_token]').val();
 		//post to members#search_by to retrieve member info
     $.post('/members/search_by.json', { field: 'fullname', value: member_fullname, authenticity_token: token }, function(data){
       if (data.length === 1){
@@ -152,14 +154,15 @@ function showRenewals(member) {
 }
 
 function showNewMembers() {
-  var attributes = {};
   $('input[type="submit"][value="Create Member"]').click(function(event) {
     event.preventDefault();
-    attributes._id = {$oid: 'noID' };
-    attributes.fullname = $('#member_fullname').val();
-    attributes.cardID = $('#member_cardID').val();
-    attributes.role = $('#member_role').val();
-    attributes.expirationTime = $('#member_expirationTime').val();
+    var attributes = {
+        _id: {$oid: 'noID' },
+        fullname: $('#member_fullname').val(),
+        cardID: $('#member_cardID').val(),
+        role: $('#member_role').val(),
+        expirationTime: $('#member_expirationTime').val()
+      };
     token = $('input[name=authenticity_token]').val();
     var member = new Member(attributes);
     $.ajax({

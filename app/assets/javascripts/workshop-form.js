@@ -58,31 +58,27 @@ function removeRow(row) {
   row.remove();
 }
 
-
 function editSkill() {
   $('.editSkill').on("click", function(event) {
     event.preventDefault();
     var url = $(this).attr('href');
-    var skillID = $(this).parent('td').siblings(".currentSkill").attr('id')
-    var currentName = $('.currentSkill#' + skillID).html(); //saves current name before edit
-
-    $('.currentSkill#' + skillID).html("<input type='text' name='skill[name]' value='" + currentName + "'> <button type='button' class='saveName'>Save</button> <button type='button' class='cancel'>Cancel</button>"); //change current name into input field
-
-    $('.currentSkill#' + skillID + ' .saveName').on('click', function() { //submit ajax when save button is clicked.
-      var newName = $('.currentSkill#' + skillID + ' input[name="skill[name]"]').val();
+    var currentSkill = $(this).parent('td').siblings(".currentSkill")
+    var currentName = currentSkill.html(); //saves current name before edit
+    currentSkill.html("<input type='text' name='skill[name]' value='" + currentName + "'> <button type='button' class='saveName'>Save</button> <button type='button' class='cancel'>Cancel</button>"); //change current name into input field
+    currentSkill.children('.saveName').on('click', function() { //submit ajax when save button is clicked.
+      var newName = currentSkill.children('input').val();
       $.ajax({
         url: url + '.json',
         type: 'PATCH',
         data: {skill: {name: newName}},
         beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
         success: function(data){
-          $('.currentSkill#' + skillID).text(data.name);
+          currentSkill.text(data.name);
         }
       });
     });
-
-    $('.currentSkill#' + skillID + ' .cancel').on('click', function() { //revert to prior name if cancelled
-      $('.currentSkill#' + skillID).html(currentName);
+    currentSkill.children('.cancel').on('click', function() { //revert to prior name if cancelled
+      currentSkill.html(currentName);
     });
   });
 }
