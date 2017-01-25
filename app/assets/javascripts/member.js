@@ -31,5 +31,11 @@ class Member {
     }
   }
 
-
+  newMemberTableRow(){
+    return `
+      <li> Name: <strong>${this.fullname}</strong>
+        <ul> Expiration Date: <strong>${this.formatExpTime()}</strong>  </ul>
+      </li>
+    `
+  }
 }

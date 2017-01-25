@@ -173,7 +173,7 @@ function showNewMembers() {
         member.id = data._id.$oid;
         member.expirationTime = data.expirationTime;
         $('.newMembers').show();
-        $('.newMembers').append("<li> Name: <strong>" + member.fullname + "</strong><ul> Expiration Date: <strong>" + member.formatExpTime() + "</strong> </ul></li>")
+        $('.newMembers').append(member.newMemberTableRow())
         clearForm($('.new'));
       }
     });
