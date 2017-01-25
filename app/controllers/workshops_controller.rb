@@ -19,10 +19,7 @@ class WorkshopsController < ApplicationController
   end
 
   def show
-    respond_to do |format|
-      format.html { render }
-      format.json { render json: @workshop }
-    end
+      render json: @workshop
   end
 
   def edit

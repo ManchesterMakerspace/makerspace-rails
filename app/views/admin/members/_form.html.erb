@@ -18,16 +18,30 @@
     <%= f.text_field :fullname %> </h4>
   </div>
 
-  <div class="field">
-    <h4><%= f.label :email %>
-    <%= f.email_field :email %> </h4>
-  </div>
-
-  <div class="form-group">
+  <div class="form-group role">
 		<%= f.label :role %>
 		<%= f.select :role, ['member', 'officer', 'admin'], class: "form-control" %>
 	</div>
 
+  <div class="login">
+    <div class="field">
+      <%= f.label :email %><br />
+      <%= f.email_field :email, autofocus: true %>
+    </div>
+
+    <div class="field">
+      <%= f.label :password %>
+      <% if @minimum_password_length %>
+      <em>(<%= @minimum_password_length %> characters minimum)</em>
+      <% end %><br />
+      <%= f.password_field :password, autocomplete: "off" %>
+    </div>
+
+    <div class="field">
+      <%= f.label :password_confirmation %><br />
+      <%= f.password_field :password_confirmation, autocomplete: "off" %>
+    </div>
+  </div>
 
 	<div class="form-group">
 		<%= f.label 'Renew Membership' %>

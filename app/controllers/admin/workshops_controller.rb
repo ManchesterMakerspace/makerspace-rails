@@ -26,7 +26,7 @@ class Admin::WorkshopsController < AdminController
   def update
     if @workshop.update(workshop_params)
       respond_to do |format|
-        format.html { redirect_to @workshop, notice: 'Workshop updated' }
+        format.html { redirect_to workshops_path, notice: 'Workshop updated' }
         format.json { render json: @workshop }
       end
     else
@@ -39,7 +39,7 @@ class Admin::WorkshopsController < AdminController
 
   private
   def workshop_params
-    params.require(:workshop).permit(:name, :officer_id, :skill_ids => [], :skills_attributes => [:name, :_destroy])
+    params.require(:workshop).permit(:name, :member_id, :skill_ids => [], :skills_attributes => [:name, :_destroy])
   end
 
   def set_workshop

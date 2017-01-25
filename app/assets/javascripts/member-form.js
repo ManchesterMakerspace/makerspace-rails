@@ -1,13 +1,13 @@
 var foundMemberId,token, test;
 
 $(document).ready(function(){
+  role();
   if (window.location.pathname === '/admin/renew'){
     $('.renew').show();
     loadMember();
   }
   else if (window.location.pathname === '/admin/members/new'){
     $('.new').show();
-    role();
     showNewMembers();
     scan();
   }
