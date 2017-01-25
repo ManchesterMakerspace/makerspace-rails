@@ -1,5 +1,5 @@
 class MembersController < ApplicationController
-    before_action :set_member, only: [:show, :edit, :update, :allowed?, :revoke, :restore]
+    before_action :set_member, only: [:show, :edit, :update, :allowed?]
     before_action :set_workshop, only: [:edit, :update]
     before_action :allowed?, only: [:edit, :update]
 
@@ -34,16 +34,6 @@ class MembersController < ApplicationController
             format.json { render json: @member, alert: "Update failed" }
           end
         end
-    end
-
-    def revoke
-        @member.revoke
-        redirect_to members_path, notice: "#{@member.fullname}'s membership has been revoked!" and return
-    end
-
-    def restore
-        @member.restore
-        redirect_to members_path, notice: "#{@member.fullname}'s membership has been restored!" and return
     end
 
     def search_by

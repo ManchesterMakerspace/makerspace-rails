@@ -1,5 +1,5 @@
 class Admin::MembersController < AdminController
-  before_action :set_member, only: [:show, :edit, :update]
+  before_action :set_member, only: [:edit, :update]
   before_action :set_workshop, only: [:edit]
 
   def new
@@ -18,14 +18,6 @@ class Admin::MembersController < AdminController
         format.html { render :new, alert: "Creation failed:  #{@member.errors.full_messages}" }
         format.json { render json: @member }
       end
-    end
-  end
-
-  def show
-    @workshops = Workshop.all.sort_by(&:name)
-    respond_to do |format|
-      format.html { render :show }
-      format.json { render json: @member }
     end
   end
 

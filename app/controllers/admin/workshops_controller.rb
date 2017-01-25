@@ -1,5 +1,5 @@
 class Admin::WorkshopsController < AdminController
-  before_action :set_workshop, only: [:edit, :update]
+  before_action :set_workshop, only: [:edit, :update, :destroy]
   def new
     @workshop = Workshop.new
   end
@@ -37,9 +37,14 @@ class Admin::WorkshopsController < AdminController
     end
   end
 
+  def destroy
+    @workshop.destroy
+    redirect_to workshops_path, alert: 'Workshop deleted.'
+  end
+
   private
   def workshop_params
-    params.require(:workshop).permit(:name, :officer, :skill_ids => [], :skills_attributes => [:name, :_destroy])
+    params.require(:workshop).permit(:name, :officer)
   end
 
   def set_workshop

@@ -6,29 +6,20 @@ class SkillsController < ApplicationController
     render json: @workshop.skills
   end
 
-  def new
-    @workshop = Workshop.find_by(id: params[:workshop_id])
-    @skill = Skill.new(workshop_id: params[:workshop_id])
-  end
-
   def create
     @skill = Skill.new(skill_params)
     if @skill.save
-      format.json { render json: @skill }
+      render json: @skill
     else
-      format.json { render json: @skill, alert: 'Failure' }
+      render json: @skill, alert: 'Failure'
     end
-  end
-
-  def edit
-    @workshop = Workshop.find_by(id: params[:workshop_id])
   end
 
   def update
     if @skill.update(skill_params)
-      format.json { render json: @skill }
+      render json: @skill
     else
-      format.json { render json: @skill, alert: 'Failure' }
+      render json: @skill, alert: 'Failure'
     end
   end
 
@@ -37,9 +28,9 @@ class SkillsController < ApplicationController
     if (!!@skill)
       @skill.destroy
       if !!@workshop
-        format.json { render json: @workshop }
+        render json: @workshop
       else
-        format.json { render json: @workshop }
+        render json: @workshop 
       end
     end
   end

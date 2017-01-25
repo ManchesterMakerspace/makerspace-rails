@@ -13,8 +13,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
-//= require nested_form_fields
-//= require bootstrap
+//= require bootstrap.min
 //= require bootstrap-sprockets
 //= require member-form
 //= require workshop-form

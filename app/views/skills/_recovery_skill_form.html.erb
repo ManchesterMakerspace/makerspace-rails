@@ -1,6 +1,0 @@
-<%= form_for @skill do |f| %>
-  <%= render partial: 'skill_form', locals: {f:f}  %>
-
-  <%= f.submit "Update Skill", url: workshop_skill_path(:workshop_id, @skill)  %>
-  <%= link_to "Remove Skill", skill_path(@skill), :method => :delete, class: "btn btn-danger"  %>
-<%end%>

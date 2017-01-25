@@ -58,17 +58,20 @@ function removeRow(row) {
   row.remove();
 }
 
+
 function editSkill() {
   $('.editSkill').on("click", function(event) {
     event.preventDefault();
     var url = $(this).attr('href');
-    var skillID = url.replace(/^(\/skills\/)/, "");
-    var currentName = $('.currentSkill#' + skillID).html();
-    $('.currentSkill#' + skillID).html("<input type='text' name='skill[name]' value='" + currentName + "'> <button type='button' class='saveName'>Save</button> <button type='button' class='cancel'>Cancel</button>");
-    $('.currentSkill#' + skillID + ' .saveName').on('click', function() {
+    var skillID = $(this).parent('td').siblings(".currentSkill").attr('id')
+    var currentName = $('.currentSkill#' + skillID).html(); //saves current name before edit
+
+    $('.currentSkill#' + skillID).html("<input type='text' name='skill[name]' value='" + currentName + "'> <button type='button' class='saveName'>Save</button> <button type='button' class='cancel'>Cancel</button>"); //change current name into input field
+
+    $('.currentSkill#' + skillID + ' .saveName').on('click', function() { //submit ajax when save button is clicked.
       var newName = $('.currentSkill#' + skillID + ' input[name="skill[name]"]').val();
       $.ajax({
-        url: '/workshops/' + workshopID + '/' + url + '.json',
+        url: url + '.json',
         type: 'PATCH',
         data: {skill: {name: newName}},
         beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
@@ -77,7 +80,8 @@ function editSkill() {
         }
       });
     });
-    $('.currentSkill#' + skillID + ' .cancel').on('click', function() {
+
+    $('.currentSkill#' + skillID + ' .cancel').on('click', function() { //revert to prior name if cancelled
       $('.currentSkill#' + skillID).html(currentName);
     });
   });
