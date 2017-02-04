@@ -124,15 +124,15 @@ class Member
     self.save
   end
 
-  def membership_mailer
-    if status != 'Group' #Group membership expiration  dates are not accurate and should not be parsed
-      if duration == 0
-        MemberMailer.expired_member_notification(self).deliver_now
-      elsif membership_status == 'expiring'
-        MemberMailer.expiring_member_notification(self).deliver_now
-      end
-    end
-  end
+  # def membership_mailer
+  #   if status != 'Group' #Group membership expiration  dates are not accurate and should not be parsed
+  #     if duration == 0
+  #       MemberMailer.expired_member_notification(self).deliver_now
+  #     elsif membership_status == 'expiring'
+  #       MemberMailer.expiring_member_notification(self).deliver_now
+  #     end
+  #   end
+  # end
 
   private
   def normalize_attributes
