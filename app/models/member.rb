@@ -106,10 +106,10 @@ class Member
     now_in_ms = (Time.now.strftime('%s').to_i * 1000)
     if (!!self.expirationTime && self.try(:expirationTime) > now_in_ms)
       newExpTime = prettyTime + num_months.months
-      write_attribute(:expirationTime, (newExpTime) )
+      write_attribute(:expirationTime, (newExpTime.to_i * 1000) )
     else
       newExpTime = Time.now + num_months.months
-      write_attribute(:expirationTime,  (newExpTime) )
+      write_attribute(:expirationTime,  (newExpTime.to_i * 1000) )
     end
     self.save
   end
