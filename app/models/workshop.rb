@@ -16,6 +16,7 @@ class Workshop
 
   def officer=(officer_id)
     self.write_attribute(:officer, Member.find_by(id: officer_id))
+    self.save
     train_fully(self.officer)
     make_expert(self.officer)
     self.officer
