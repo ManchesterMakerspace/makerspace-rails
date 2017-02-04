@@ -13,7 +13,8 @@ class Member
  field :expirationTime,   type: Integer #pre-calcualted time of expiration
  field :groupName #potentially member is in a group/partner membership
  field :groupKeystone,    type: Boolean
- field :role,                           default: "member" #admin,officer,member
+ field :role,                          default: "member" #admin,officer,member
+ field :memberContractOnFile, type:Boolean
 
   ## Database authenticatable
   field :email,              type: String, default: ""
@@ -102,11 +103,13 @@ class Member
   end
 
   def expirationTime=(num_months)
-    now_in_ms = (Time.now.strftime('%s').to_i * 1000)
+    # now_in_ms = (Time.now.strftime('%s').to_i * 1000)
     if (!!self.expirationTime && self.try(:expirationTime) > now_in_ms)
-      write_attribute(:expirationTime, (expirationTime + (num_months.to_i*30*24*60*60*1000)) )
+      newExpTime = prettyTime + num_months.months
+      write_attribute(:expirationTime, (newExpTime) )
     else
-      write_attribute(:expirationTime,  (now_in_ms + (num_months.to_i*30*24*60*60*1000)) )
+      newExpTime = Time.now + num_month.months
+      write_attribute(:expirationTime,  (newExpTime) )
     end
     self.save
   end
