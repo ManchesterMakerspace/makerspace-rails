@@ -73,6 +73,9 @@ function scan() {
       $('#member_cardID').val(data.cardID);
     });
   }
+  else {
+  console.log('error');
+}
 }
 
 function role() {
