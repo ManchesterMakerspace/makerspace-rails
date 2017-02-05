@@ -13,7 +13,7 @@ if (ENV["RAILS_ENV"] == 'production')
   port        ENV.fetch("PORT") { 3002 }
 else
   port        ENV.fetch("PORT") { 3002 }
-
+end
 # Specifies the `environment` that Puma will run in.
 #
 environment ENV.fetch("RAILS_ENV") { "development" }
