@@ -68,11 +68,14 @@ function makeExpert() {
 
 function scan() {
   if (typeof io != 'undefined'){
-    var socket = io.connect('http://localhost:4000');
+    var socket = io.connect('http://localhost:3000');
     socket.on('regMember', function (data) {
       $('#member_cardID').val(data.cardID);
     });
   }
+  else {
+  console.log('error');
+}
 }
 
 function role() {

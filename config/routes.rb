@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  get '/members/sign_up', to: 'members#index'
+  
   devise_for :members, :controllers => {:confirmations => 'confirmations'}
   root to: "members#index"
 

@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+gem 'thin'
+
 #Used to push db backups to Google Drive
 gem 'google_drive'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'

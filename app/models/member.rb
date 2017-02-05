@@ -103,13 +103,13 @@ class Member
   end
 
   def expirationTime=(num_months)
-    # now_in_ms = (Time.now.strftime('%s').to_i * 1000)
+    now_in_ms = (Time.now.strftime('%s').to_i * 1000)
     if (!!self.expirationTime && self.try(:expirationTime) > now_in_ms)
-      newExpTime = prettyTime + num_months.months
-      write_attribute(:expirationTime, (newExpTime) )
+      newExpTime = prettyTime + num_months.to_i.months
+      write_attribute(:expirationTime, (newExpTime.to_i * 1000) )
     else
-      newExpTime = Time.now + num_month.months
-      write_attribute(:expirationTime,  (newExpTime) )
+      newExpTime = Time.now + num_months.to_i.months
+      write_attribute(:expirationTime,  (newExpTime.to_i * 1000) )
     end
     self.save
   end
@@ -124,15 +124,15 @@ class Member
     self.save
   end
 
-  def membership_mailer
-    if status != 'Group' #Group membership expiration  dates are not accurate and should not be parsed
-      if duration == 0
-        MemberMailer.expired_member_notification(self).deliver_now
-      elsif membership_status == 'expiring'
-        MemberMailer.expiring_member_notification(self).deliver_now
-      end
-    end
-  end
+  # def membership_mailer
+  #   if status != 'Group' #Group membership expiration  dates are not accurate and should not be parsed
+  #     if duration == 0
+  #       MemberMailer.expired_member_notification(self).deliver_now
+  #     elsif membership_status == 'expiring'
+  #       MemberMailer.expiring_member_notification(self).deliver_now
+  #     end
+  #   end
+  # end
 
   private
   def normalize_attributes
