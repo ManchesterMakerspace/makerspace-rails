@@ -68,7 +68,7 @@ function makeExpert() {
 
 function scan() {
   if (typeof io != 'undefined'){
-    var socket = io.connect('http://localhost:3000');
+    var socket = io.connect('http://192.168.1.3:3000');
     socket.on('regMember', function (data) {
       $('#member_cardID').val(data.cardID);
     });

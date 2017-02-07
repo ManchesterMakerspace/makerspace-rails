@@ -18,3 +18,4 @@
 //= require member-form
 //= require workshop-form
 //= require jquery-2.1.1.min
+//= require socket.io
