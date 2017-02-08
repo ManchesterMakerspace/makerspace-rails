@@ -20,6 +20,8 @@
 		<%= f.text_field :cardID, class: "form-control" %>
 	</div>
 
+	<%= hidden_field :member, :accesspoints %>
+
 	<div class="form-group">
 		<%= f.label "Start Date" %>
 		<input input='text' placeholder='mm/dd/yyyy' name='member[startDate]' id="member_startDate" class: "form-control" >

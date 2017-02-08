@@ -9,7 +9,7 @@ class Member
  field :fullname #full name of user
  field :cardID # user card id
  field :status,                         default: "gs" # gs, revoked, restored
- field :accesspoints,     type: Array #points of access member (door, machine, etc)
+ field :accesspoints,     type: Array,  default: [] #points of access member (door, machine, etc)
  field :expirationTime,   type: Integer #pre-calcualted time of expiration
  field :groupName #potentially member is in a group/partner membership
  field :groupKeystone,    type: Boolean
@@ -120,6 +120,14 @@ class Member
       write_attribute(:expirationTime,  (newExpTime.to_i * 1000) )
     end
     self.save
+  end
+
+  def accesspoints=(point)
+    binding.pry
+    if !self.accesspoints.include?(point)
+      self.accesspoints.push(point)
+      # self.save
+    end
   end
 
   def revoke

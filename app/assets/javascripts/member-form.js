@@ -7,6 +7,7 @@ $(document).ready(function(){
     loadMember();
   }
   else if (window.location.pathname === '/admin/members/new'){
+    $('#member_startDate').datepicker();
     $('.new').show();
     showNewMembers();
     scan();
@@ -68,9 +69,10 @@ function makeExpert() {
 
 function scan() {
   if (typeof io != 'undefined'){
-    var socket = io.connect('http://192.168.1.3:3000');
+    var socket = io.connect('http://localhost:3000');
     socket.on('regMember', function (data) {
       $('#member_cardID').val(data.cardID);
+      $('#member_accesspoints').val(data.machine);
     });
   }
   else {
@@ -165,7 +167,8 @@ function showNewMembers() {
         cardID: $('#member_cardID').val(),
         role: $('#member_role').val(),
         expirationTime: $('#member_expirationTime').val(),
-        startDate: $('#member_startDate').val()
+        startDate: $('#member_startDate').val(),
+        accesspoints: $('#member_accesspoints').val()
       };
     token = $('input[name=authenticity_token]').val();
     var member = new Member(attributes);
@@ -175,7 +178,7 @@ function showNewMembers() {
       data: {member: member, authenticity_token: token },
       success: function(data){
         member.id = data._id.$oid;
-        member.expirationTime = data.expirationTime;
+        member.expirationTime.expTime = data.expirationTime;
         $('.newMembers').show();
         $('.newMembers').append(member.newMemberTableRow())
         clearForm($('.new'));

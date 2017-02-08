@@ -9,6 +9,7 @@ class Member {
       this.expirationTime = {expTime: attributes.expirationTime, startDate: attributes.startDate};
     }
     this.cardID = attributes.cardID;
+    this.accesspoints = attributes.accesspoints;
     this.role = attributes.role;
   }
 
