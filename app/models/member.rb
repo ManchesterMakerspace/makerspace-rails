@@ -59,7 +59,7 @@ class Member
   end
 
   def password_required?
-    !email.blank? && !persisted?
+    false
   end
 
   def password_match?
@@ -102,13 +102,21 @@ class Member
     prettyTime - Time.now
   end
 
-  def expirationTime=(num_months)
+  def expirationTime=(time)
+    num_months = time[:expTime]
     now_in_ms = (Time.now.strftime('%s').to_i * 1000)
-    if (!!self.expirationTime && self.try(:expirationTime) > now_in_ms)
+    if (!!time[:startDate]) #check if startDate was passed to function.
+      d = time[:startDate].split("/");
+      start_date = (Time.new(d[2], d[0], d[1]))
+    else #if not, use today.
+      start_date = Time.now
+    end
+
+    if (!!self.expirationTime && self.try(:expirationTime) > now_in_ms && self.persisted?) #if renewing
       newExpTime = prettyTime + num_months.to_i.months
       write_attribute(:expirationTime, (newExpTime.to_i * 1000) )
     else
-      newExpTime = Time.now + num_months.to_i.months
+      newExpTime = start_date + num_months.to_i.months
       write_attribute(:expirationTime,  (newExpTime.to_i * 1000) )
     end
     self.save

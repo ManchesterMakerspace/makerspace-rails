@@ -76,14 +76,18 @@
  }
 
 .expired {
+  display: none;
+}
+
+.expiredColor {
   color: red;
 }
 
-.expiring {
+.expiringColor {
   color: orange;
 }
 
-.current {
+.currentColor {
   color: green;
 }
 

@@ -8,6 +8,8 @@ class Admin::MembersController < AdminController
 
   def create
     @member = Member.new(user_params)
+    @member.expirationTime = params["member"]["expirationTime"]
+    @member.save
     if @member.save
       respond_to do |format|
         format.html { redirect_to @member, notice: 'Member created successfully' }
@@ -31,6 +33,8 @@ class Admin::MembersController < AdminController
 
   def update
     if @member.update(user_params)
+      @member.expirationTime = params["member"]["expirationTime"]
+      @member.save
       respond_to do |format|
         format.html { redirect_to @member, notice: 'Member updated' }
         format.json { render json: @member }
@@ -45,7 +49,7 @@ class Admin::MembersController < AdminController
 
   private
   def user_params
-    params.require(:member).permit(:fullname, :cardID, :role, :email, :password, :password_confirmation, :status, :expirationTime, :skill_ids =>[], :learned_skill_ids => [])
+    params.require(:member).permit(:fullname, :cardID, :startDate, :role, :email, :password, :password_confirmation, :status, :skill_ids =>[], :learned_skill_ids => [])
   end
 
   def set_member

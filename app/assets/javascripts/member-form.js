@@ -68,10 +68,10 @@ function makeExpert() {
 
 function scan() {
   if (typeof io != 'undefined'){
-    var socket = io.connect('http://localhost:3000');
-    socket.on('regMember', function (data) {
-      $('#member_cardID').val(data.cardID);
-    });
+    // var socket = io.connect('http://localhost:3000');
+    // socket.on('regMember', function (data) {
+    //   $('#member_cardID').val(data.cardID);
+    // });
   }
   else {
   console.log('error');
@@ -137,9 +137,9 @@ function showRenewals(member) {
 			$.ajax({
 				url: '/admin/members/' + renewMember.id + '.json',
 				type: 'PUT',
-				data: {member: {expirationTime: months}, authenticity_token: token },
+				data: {member: {expirationTime: {expTime: months}}, authenticity_token: token },
 				success: function(data) {
-					renewMember.expirationTime = data["expirationTime"]
+					renewMember.expirationTime.expTime = data["expirationTime"]
 					alert(renewMember.fullname + ' updated. New expiration: ' + renewMember.formatExpTime());
 					$('.renewedMembers').show();
           $('.renewedMembers').append(renewMember.newTableRow(months));
@@ -164,7 +164,8 @@ function showNewMembers() {
         fullname: $('#member_fullname').val(),
         cardID: $('#member_cardID').val(),
         role: $('#member_role').val(),
-        expirationTime: $('#member_expirationTime').val()
+        expirationTime: $('#member_expirationTime').val(),
+        startDate: $('#member_startDate').val()
       };
     token = $('input[name=authenticity_token]').val();
     var member = new Member(attributes);

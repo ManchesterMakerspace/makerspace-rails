@@ -16,15 +16,16 @@
 			</tr>
 		<% else %>
 			<% @members.each do |member| %>
-			<tr>
-				<%if member_signed_in? %>
+				<%if is_officer? || is_admin? %>
+				<tr>
 					<td><%= link_to "#{member.fullname}", member_path(member) %></td>
 				<%else%>
-				<td><%= "#{member.fullname}"%></td>
+				<tr class="<%=member.membership_status%>">
+					<td><%= "#{member.fullname}"%></td>
 				<%end%>
-          <td><%= member.list_allowed_workshops %> </td>
+	        <td><%= member.list_allowed_workshops %> </td>
 					<% if is_officer? || is_admin? %>
-						<td class="<%=member.membership_status%>"><%=member.prettyTime.strftime("%m/%d/%Y") %></td>
+						<td class="<%=member.membership_status%>Color"><%=member.prettyTime.strftime("%m/%d/%Y") %></td>
 					<%end%>
 		   	</tr>
 			<% end %>
