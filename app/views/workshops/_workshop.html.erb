@@ -5,20 +5,20 @@
     </div>
     <div class="panel-body">
        <% if !workshop.officer.nil? %>
-        <h4 id="workshop-officer"><%= "Officer: #{workshop.officer.fullname}"%></h4>
+        <h4 class="workshop-officer" id=<%= "#{workshop.officer.id}"%> ><%= "Officer: #{workshop.officer.fullname}"%></h4>
       <%end%>
 
       <h4 id="workshop-experts"><%= "Experts: #{workshop.list_experts}"%></h4>
 
       <% if is_admin? %>
         <%= link_to "Edit Workshop", edit_admin_workshop_path(workshop), class: "btn btn-primary", id: 'editWorkshopID'  %>
-      <% elsif is_officer? %>
-        <%= link_to "Retrain", retrain_workshop_path(workshop), class: "btn btn-danger", id: 'retrainAll'  %>
+      <% elsif is_officer?(workshop) %> <!--this retrain button should be replaced with JS -->
+        <%= link_to "Retrain Everyone", retrain_workshop_path(workshop), class: "btn btn-danger", id: 'retrainAll'  %>
       <% end %>
 
       <p></p>
 
-      <% if is_admin? || is_officer? %>
+      <% if is_admin? || is_officer?(workshop) %>
 
       <button type='button' id="getSkillsButton">Show Workshop Skills</button>
       <div id="getSkillsList">
@@ -41,21 +41,19 @@
 
       <% else %>
 
-      <div id="getSkillsList">
-        <div class="requiredSkills" style="display: none;">
-          <table class="table">
-            <thead>
-              <caption>Required Skills</caption>
-            </thead>
-            <tbody class="currentSkills">
-              <%workshop.skills.each do |skill| %>
-                <tr>
-                  <td colspan="3" style="width: 200px"> <%= skill.name %> </td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
+      <div class="requiredSkills">
+        <table class="table">
+          <thead>
+            <caption>Required Skills</caption>
+          </thead>
+          <tbody class="currentSkills" id="staticSkills">
+            <%workshop.skills.each do |skill| %>
+              <tr>
+                <td colspan="3" style="width: 200px"> <%= skill.name %> </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
       </div>
       <%end%>
     </div>

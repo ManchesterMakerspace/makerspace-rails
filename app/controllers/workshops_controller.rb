@@ -1,5 +1,5 @@
 class WorkshopsController < ApplicationController
-  before_action :set_workshop, only: [:show, :train, :make_expert, :retrain_all]
+  before_action :set_workshop, only: [:show, :train, :make_expert, :retrain_all, :check_officer]
 
   def index
     if params[:member_id]
@@ -30,6 +30,14 @@ class WorkshopsController < ApplicationController
     member = Member.find_by(id: params[:member_id])
     @workshop.train_fully(member)
     render json: member
+  end
+
+  def check_officer
+    if current_member != @workshop.officer
+      render json: {'status': 'declined'}
+    else
+      render json: {'status': 'officer'}
+    end
   end
 
   def make_expert

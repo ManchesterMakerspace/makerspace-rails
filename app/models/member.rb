@@ -123,11 +123,11 @@ class Member
   end
 
   def accesspoints=(point)
-    binding.pry
-    if !self.accesspoints.include?(point)
-      self.accesspoints.push(point)
-      # self.save
-    end
+    !self.accesspoints.include?(point) ? self.accesspoints.push(point) : nil
+    # if !self.accesspoints.include?(point)
+    #   self.accesspoints.push(point)
+    #   self.save
+    # end
   end
 
   def revoke

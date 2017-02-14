@@ -76,8 +76,8 @@ function scan() {
     });
   }
   else {
-  console.log('error');
-}
+    console.log('Error connecting to Doorboto');
+  }
 }
 
 function role() {

@@ -1,4 +1,4 @@
-var workshopID;
+;var workshopID;
 
 $(document).ready(function() {
   workshopID = $('.workshopDiv').attr('id');
@@ -6,6 +6,7 @@ $(document).ready(function() {
 })
 
 function attachListeners() {
+  checkOfficer();
   listSkills();
   showWorkshop();
 }
@@ -14,6 +15,22 @@ function reattachListeners() {
   deleteSkill();
   editSkill();
   newSkill();
+}
+
+function checkOfficer(){
+  $.ajax({
+    url: '/workshops/' + workshopID + '/check_officer.json',
+    success: function(data){
+      if (data.status === "declined"){
+        $('#getSkillsButton').hide();
+        $("#retrainAll").hide();
+      }
+      else if (data.status === "officer"){
+        $('#getSkillsButton').show();
+        $("#retrainAll").show();
+      }
+    }
+  })
 }
 
 function listSkills() {
@@ -26,7 +43,7 @@ function listSkills() {
           const dataLength = data.length;
           for (let i = 0; i < dataLength; i++){
             var skill = new Skill(data[i])
-            html += skill.newTableRow();
+            html += skill.newOfficerTableRow();
           }
           $("#newSkill").attr('href', '/workshops/' + workshopID + '/skills')
           $(".currentSkills").html(html);
@@ -98,7 +115,7 @@ function newSkill() {
           beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
           success: function(data) {
             var skill = new Skill(data);
-            $('.currentSkills').append(skill.newTableRow());
+            $('.currentSkills').append(skill.newOfficerTableRow());
             $('.newSkillName input[name="skill[name]"]').val("");
             reattachListeners();
           }
@@ -120,7 +137,7 @@ function showWorkshop() {
     $.ajax({
       url: url + '.json', //it is cleaner to use an html request and just replace the html in the other pane.
       success: function(data){
-        var shop = new Workshop(data._id.$oid, data.name, data.experts, data.officer.fullname);
+        var shop = new Workshop(data);
         workshopID = shop.id
         $('.workshopDiv').attr('id', shop.id);
         $('#editWorkshopID').attr('href', '/admin/workshops/' + shop.id + '/edit');
@@ -130,6 +147,9 @@ function showWorkshop() {
         $(".requiredSkills").hide();
         $('#getSkillsButton').text('Show Workshop Skills');
         $("#getSkillsButton").show();
+        $("#retrainAll").attr('href', "/workshops/" + shop.id + "/retrain_all");
+        $('#staticSkills').text(shop.newSkillsTable());
+        checkOfficer();
       }
     });
   });

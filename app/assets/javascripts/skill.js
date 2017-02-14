@@ -5,7 +5,7 @@ class Skill {
     this.workshop_id = attributes.workshop._id.$oid;
   }
 
-  newTableRow(){
+  newOfficerTableRow(){
     return `
       <tr>
         <td style='width: 100px'>
