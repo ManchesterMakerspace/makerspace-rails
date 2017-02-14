@@ -26,6 +26,8 @@ class WorkshopsController < ApplicationController
     if current_member == @workshop.officer
       @workshop.retrain_all
       render json: @workshop
+    else
+      redirect_to root_path, alert: "You are not allowed to access that page."
     end
   end
 

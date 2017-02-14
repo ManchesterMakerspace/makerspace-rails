@@ -1,4 +1,4 @@
-var foundMemberId,token, test;
+renewervar foundMemberId,token, test;
 
 $(document).ready(function(){
   role();
@@ -9,7 +9,7 @@ $(document).ready(function(){
   else if (window.location.pathname === '/admin/members/new'){
     $('#member_startDate').datepicker();
     $('.new').show();
-    showNewMembers();
+    createNewMember();
     scan();
   }
   else{
@@ -80,6 +80,14 @@ function scan() {
   }
 }
 
+function slackInvite(){
+  var socket = io.connect("https://hopethisisnotarealservertolinkto.herokuapp.com/");
+  socket.on('connect', function(data){
+    // authenticate
+    // then send email via 'invite' emit.
+  })
+}
+
 function role() {
   $('.role').on('change', function() {
     var role = $('#member_role').val();
@@ -116,10 +124,10 @@ function loadMember() {
 		//post to members#search_by to retrieve member info
     $.post('/members/search_by.json', { field: 'fullname', value: member_fullname, authenticity_token: token }, function(data){
       if (data.length === 1){
-        var renewMember = new Member(data[0])
-        $('.member-name').text('Member Name: ' + renewMember.fullname);
-        $('.member-expTime').text('Membership expires on ' + renewMember.formatExpTime());
-        showRenewals(renewMember);
+        var renewer = new Member(data[0])
+        $('.member-name').text('Member Name: ' + renewer.fullname);
+        $('.member-expTime').text('Membership expires on ' + renewer.formatExpTime());
+        renewMember(renewer);
       }
       else if (data.length > 1){
         alert('Multiple members found')
@@ -129,22 +137,22 @@ function loadMember() {
 }
 
 //update member on submit and append updated member to bottom of page.
-function showRenewals(member) {
-  var renewMember = member;
+function renewMember(member) {
+  var renewer = member;
 	$('input[type="submit"][value="Renew Member"]').click(function(event){
     event.preventDefault();
-		if (typeof renewMember.id != 'undefined'){
+		if (typeof renewer.id != 'undefined'){
       const token = $('input[name=authenticity_token]').val();
 			const months = $('input[name="member[expirationTime]"]').val();
 			$.ajax({
-				url: '/admin/members/' + renewMember.id + '.json',
+				url: '/admin/members/' + renewer.id + '.json',
 				type: 'PUT',
 				data: {member: {expirationTime: {expTime: months}}, authenticity_token: token },
 				success: function(data) {
-					renewMember.expirationTime.expTime = data["expirationTime"]
-					alert(renewMember.fullname + ' updated. New expiration: ' + renewMember.formatExpTime());
+					renewer.expirationTime.expTime = data["expirationTime"]
+					alert(renewer.fullname + ' updated. New expiration: ' + renewer.formatExpTime());
 					$('.renewedMembers').show();
-          $('.renewedMembers').append(renewMember.newTableRow(months));
+          $('.renewedMembers').append(renewer.newTableRow(months));
 					//reset form after renewMember
 					clearForm($('.renew'));
 					$('.member-name').text('');
@@ -158,7 +166,7 @@ function showRenewals(member) {
 	});
 }
 
-function showNewMembers() {
+function createNewMember() {
   $('input[type="submit"][value="Create Member"]').click(function(event) {
     event.preventDefault();
     var attributes = {
