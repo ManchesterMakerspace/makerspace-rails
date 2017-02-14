@@ -1,4 +1,5 @@
 class WorkshopsController < ApplicationController
+  include ApplicationHelper
   before_action :set_workshop, only: [:show, :train, :make_expert, :retrain_all, :check_officer]
 
   def index
@@ -22,8 +23,10 @@ class WorkshopsController < ApplicationController
   end
 
   def retrain_all
-    @workshop.retrain_all
-    render json: @workshop
+    if current_member == @workshop.officer
+      @workshop.retrain_all
+      render json: @workshop
+    end
   end
 
   def train
@@ -33,10 +36,12 @@ class WorkshopsController < ApplicationController
   end
 
   def check_officer
-    if current_member != @workshop.officer
-      render json: {'status': 'declined'}
-    else
+    if current_member == @workshop.officer
       render json: {'status': 'officer'}
+    elsif is_admin? == true
+      render json: {'status': 'admin'}
+    else
+      render json: {'status': 'declined'}
     end
   end
 

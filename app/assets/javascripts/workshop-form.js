@@ -1,12 +1,15 @@
 ;var workshopID;
 
 $(document).ready(function() {
-  workshopID = $('.workshopDiv').attr('id');
-  attachListeners();
+  if (window.location.pathname === '/workshops'){
+    workshopID = $('.workshopDiv').attr('id');
+    attachListeners();
+  }
 })
 
 function attachListeners() {
   checkOfficer();
+  retrainAll();
   listSkills();
   showWorkshop();
 }
@@ -28,6 +31,9 @@ function checkOfficer(){
       else if (data.status === "officer"){
         $('#getSkillsButton').show();
         $("#retrainAll").show();
+      }
+      else if (data.status === "admin"){
+        $('#getSkillsButton').show();
       }
     }
   })
@@ -127,6 +133,20 @@ function newSkill() {
       }
     });
   });
+}
+
+function retrainAll(){
+  $('#retrainAll').on("click", function(event){
+    event.preventDefault();
+    workshopID = $(this).attr('id');
+    var url = $(this).attr('href');
+    $.ajax({
+      url: url + '.json',
+      success: function(shop){
+        alert('Everyone except Officers and Experts have been reset.')
+      }
+    })
+  })
 }
 
 function showWorkshop() {
