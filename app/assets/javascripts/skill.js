@@ -22,4 +22,12 @@ class Skill {
       </tr>
     `;
   }
+
+  newTableRow(){
+    return `
+      <tr>
+        <td class='currentSkill' id='${this.id}'>${this.name}</td>
+      </tr>
+    `;
+  }
 }

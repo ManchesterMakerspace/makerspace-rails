@@ -8,7 +8,6 @@ $(document).ready(function() {
 })
 
 function attachListeners() {
-  checkOfficer();
   retrainAll();
   listSkills();
   showWorkshop();
@@ -25,21 +24,22 @@ function checkOfficer(){
     url: '/workshops/' + workshopID + '/check_officer.json',
     success: function(data){
       if (data.status === "declined"){
-        $('#getSkillsButton').hide();
-        $("#retrainAll").hide();
+        return false;
       }
       else if (data.status === "officer"){
-        $('#getSkillsButton').show();
-        $("#retrainAll").show();
+        return true;
       }
       else if (data.status === "admin"){
-        $('#getSkillsButton').show();
+        return true;
       }
     }
   })
 }
 
 function listSkills() {
+  if (checkOfficer() === true) {
+    var officer? = true;
+  }
   $('#getSkillsButton').on("click", function(event) {
       $.ajax({
         url: '/workshops/' + workshopID + '/skills.json',
@@ -47,9 +47,16 @@ function listSkills() {
           $(".requiredSkills").show();
           var html;
           const dataLength = data.length;
-          for (let i = 0; i < dataLength; i++){
-            var skill = new Skill(data[i])
-            html += skill.newOfficerTableRow();
+          if (officer? === true) { 
+            for (let i = 0; i < dataLength; i++){
+              var skill = new Skill(data[i])
+              html += skill.newOfficerTableRow();
+            }
+          }
+          else {
+            for (let i = 0; i < dataLength; i++){
+              var skill = new Skill(data[i])
+              html += skill.newTableRow();
           }
           $("#newSkill").attr('href', '/workshops/' + workshopID + '/skills')
           $(".currentSkills").html(html);
@@ -136,17 +143,25 @@ function newSkill() {
 }
 
 function retrainAll(){
-  $('#retrainAll').on("click", function(event){
-    event.preventDefault();
-    workshopID = $(this).attr('id');
-    var url = $(this).attr('href');
-    $.ajax({
-      url: url + '.json',
-      success: function(shop){
-        alert('Everyone except Officers and Experts have been reset.')
+  if (checkOfficer() === false) {
+    $('#retrainAll').hide();
+  }
+  else {
+    $('#retrainAll').on("click", function(event){
+      event.preventDefault();
+      var c = confirm("Requrie all members except Officers and Experts to be re-trained?")
+      if (c === true) {
+        workshopID = $(this).attr('id');
+        var url = $(this).attr('href');
+        $.ajax({
+          url: url + '.json',
+          success: function(shop){
+            alert('Everyone except Officers and Experts have been reset.')
+          }
+        })
       }
     })
-  })
+  }
 }
 
 function showWorkshop() {
