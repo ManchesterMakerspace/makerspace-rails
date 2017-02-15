@@ -18,12 +18,11 @@ class Workshop {
   }
 
   newSkillsTable(){
-    var table =  ['<tr>']
+    var table =  []
     var l = this.skills.length
     for(let i = 0; i < i; i++){
-      table.push(`<td>${this.name}</td>`)
+      table.push(`<tr><td>${this.name}</td></tr>`)
     }
-    table.push('</tr>');
     return table.join("");
   }
 }

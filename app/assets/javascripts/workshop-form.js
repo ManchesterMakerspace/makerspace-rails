@@ -168,7 +168,6 @@ function showWorkshop() {
         $('#getSkillsButton').text('Show Workshop Skills');
         $("#getSkillsButton").show();
         $("#retrainAll").attr('href', "/workshops/" + shop.id + "/retrain_all");
-        $('#staticSkills').text(shop.newSkillsTable());
         checkOfficer();
       }
     });

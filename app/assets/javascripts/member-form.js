@@ -80,10 +80,19 @@ function scan() {
   }
 }
 
-function slackInvite(){
+function slackInvite(email){
+  var authObj = {
+    token: ENV['SLACK_TOKEN'], //placeholder var
+    goodBye: '',
+    slack: {
+      username: '',
+      channel: '',
+      iconEmoji: ''
+    }
+  }
   var socket = io.connect("https://hopethisisnotarealservertolinkto.herokuapp.com/");
   socket.on('connect', function(data){
-    // authenticate
+    socket.emit('authenticate', )
     // then send email via 'invite' emit.
   })
 }
