@@ -9,12 +9,12 @@ class Admin::WorkshopsController < AdminController
     if @workshop.save
       respond_to do |format|
         format.html { redirect_to @workshop, notice: 'Workshop created successfully' }
-        format.json { render json: @workshop }
+        format.json { redirect_to workshops_path }
       end
     else
       respond_to do |format|
         format.html { render :new, alert: "Creation failed:  #{@workshop.errors.full_messages}" }
-        format.json { render json: @workshop }
+        format.json { redirect_to workshops_path }
       end
     end
   end

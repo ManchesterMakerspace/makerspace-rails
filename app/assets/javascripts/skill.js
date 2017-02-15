@@ -5,7 +5,7 @@ class Skill {
     this.workshop_id = attributes.workshop._id.$oid;
   }
 
-  newTableRow(){
+  newOfficerTableRow(){
     return `
       <tr>
         <td style='width: 100px'>
@@ -18,6 +18,14 @@ class Skill {
             <strong>Edit</strong>
           </a>
         </td>
+        <td class='currentSkill' id='${this.id}'>${this.name}</td>
+      </tr>
+    `;
+  }
+
+  newStaticTableRow(){
+    return `
+      <tr>
         <td class='currentSkill' id='${this.id}'>${this.name}</td>
       </tr>
     `;

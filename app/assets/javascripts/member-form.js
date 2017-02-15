@@ -1,4 +1,4 @@
-var foundMemberId,token, test;
+var foundMemberId,token;
 
 $(document).ready(function(){
   role();
@@ -7,8 +7,9 @@ $(document).ready(function(){
     loadMember();
   }
   else if (window.location.pathname === '/admin/members/new'){
+    $('#member_startDate').datepicker();
     $('.new').show();
-    showNewMembers();
+    createNewMember();
     scan();
   }
   else{
@@ -71,11 +72,31 @@ function scan() {
     var socket = io.connect('http://192.168.1.3:3000');
     socket.on('regMember', function (data) {
       $('#member_cardID').val(data.cardID);
+      $('#member_accesspoints').val(data.machine);
     });
   }
   else {
-  console.log('error');
+    console.log('Error connecting to Doorboto');
+  }
 }
+
+function slackInvite(email){
+  var authObj = {
+    token: ENV['SLACK_TOKEN'], //placeholder var
+    goodBye: '',
+    slack: {
+      username: '',
+      channel: '',
+      iconEmoji: ''
+    }
+  }
+  var socket = io.connect("https://hopethisisnotarealservertolinkto.herokuapp.com/");
+  socket.on('connect', function(data){
+    socket.emit('authenticate', function(){
+      
+    })
+    // then send email via 'invite' emit.
+  })
 }
 
 function role() {
@@ -114,10 +135,10 @@ function loadMember() {
 		//post to members#search_by to retrieve member info
     $.post('/members/search_by.json', { field: 'fullname', value: member_fullname, authenticity_token: token }, function(data){
       if (data.length === 1){
-        var renewMember = new Member(data[0])
-        $('.member-name').text('Member Name: ' + renewMember.fullname);
-        $('.member-expTime').text('Membership expires on ' + renewMember.formatExpTime());
-        showRenewals(renewMember);
+        var renewer = new Member(data[0])
+        $('.member-name').text('Member Name: ' + renewer.fullname);
+        $('.member-expTime').text('Membership expires on ' + renewer.formatExpTime());
+        renewMember(renewer);
       }
       else if (data.length > 1){
         alert('Multiple members found')
@@ -127,22 +148,22 @@ function loadMember() {
 }
 
 //update member on submit and append updated member to bottom of page.
-function showRenewals(member) {
-  var renewMember = member;
+function renewMember(member) {
+  var renewer = member;
 	$('input[type="submit"][value="Renew Member"]').click(function(event){
     event.preventDefault();
-		if (typeof renewMember.id != 'undefined'){
+		if (typeof renewer.id != 'undefined'){
       const token = $('input[name=authenticity_token]').val();
 			const months = $('input[name="member[expirationTime]"]').val();
 			$.ajax({
-				url: '/admin/members/' + renewMember.id + '.json',
+				url: '/admin/members/' + renewer.id + '.json',
 				type: 'PUT',
-				data: {member: {expirationTime: months}, authenticity_token: token },
+				data: {member: {expirationTime: {expTime: months}}, authenticity_token: token },
 				success: function(data) {
-					renewMember.expirationTime = data["expirationTime"]
-					alert(renewMember.fullname + ' updated. New expiration: ' + renewMember.formatExpTime());
+					renewer.expirationTime.expTime = data["expirationTime"]
+					alert(renewer.fullname + ' updated. New expiration: ' + renewer.formatExpTime());
 					$('.renewedMembers').show();
-          $('.renewedMembers').append(renewMember.newTableRow(months));
+          $('.renewedMembers').append(renewer.newTableRow(months));
 					//reset form after renewMember
 					clearForm($('.renew'));
 					$('.member-name').text('');
@@ -156,7 +177,7 @@ function showRenewals(member) {
 	});
 }
 
-function showNewMembers() {
+function createNewMember() {
   $('input[type="submit"][value="Create Member"]').click(function(event) {
     event.preventDefault();
     var attributes = {
@@ -164,7 +185,9 @@ function showNewMembers() {
         fullname: $('#member_fullname').val(),
         cardID: $('#member_cardID').val(),
         role: $('#member_role').val(),
-        expirationTime: $('#member_expirationTime').val()
+        expirationTime: $('#member_expirationTime').val(),
+        startDate: $('#member_startDate').val(),
+        accesspoints: $('#member_accesspoints').val()
       };
     token = $('input[name=authenticity_token]').val();
     var member = new Member(attributes);
@@ -174,7 +197,7 @@ function showNewMembers() {
       data: {member: member, authenticity_token: token },
       success: function(data){
         member.id = data._id.$oid;
-        member.expirationTime = data.expirationTime;
+        member.expirationTime.expTime = data.expirationTime;
         $('.newMembers').show();
         $('.newMembers').append(member.newMemberTableRow())
         clearForm($('.new'));

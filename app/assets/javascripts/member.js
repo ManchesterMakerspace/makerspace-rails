@@ -2,13 +2,19 @@ class Member {
   constructor(attributes){
     this.id = attributes._id.$oid;
     this.fullname = attributes.fullname;
-    this.expirationTime = attributes.expirationTime;
+    if (attributes.startDate === ''){
+      this.expirationTime = {expTime: attributes.expirationTime};
+    }
+    else{
+      this.expirationTime = {expTime: attributes.expirationTime, startDate: attributes.startDate};
+    }
     this.cardID = attributes.cardID;
+    this.accesspoints = attributes.accesspoints;
     this.role = attributes.role;
   }
 
   formatExpTime(){
-    var d = new Date(this.expirationTime).toDateString();
+    var d = new Date(this.expirationTime.expTime).toDateString();
     return d;
   }
 

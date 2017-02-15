@@ -9,7 +9,7 @@ class Member
  field :fullname #full name of user
  field :cardID # user card id
  field :status,                         default: "gs" # gs, revoked, restored
- field :accesspoints,     type: Array #points of access member (door, machine, etc)
+ field :accesspoints,     type: Array,  default: [] #points of access member (door, machine, etc)
  field :expirationTime,   type: Integer #pre-calcualted time of expiration
  field :groupName #potentially member is in a group/partner membership
  field :groupKeystone,    type: Boolean
@@ -59,7 +59,7 @@ class Member
   end
 
   def password_required?
-    !email.blank? && !persisted?
+    false
   end
 
   def password_match?
@@ -102,16 +102,32 @@ class Member
     prettyTime - Time.now
   end
 
-  def expirationTime=(num_months)
+  def expirationTime=(time)
+    num_months = time[:expTime]
     now_in_ms = (Time.now.strftime('%s').to_i * 1000)
-    if (!!self.expirationTime && self.try(:expirationTime) > now_in_ms)
+    if (!!time[:startDate]) #check if startDate was passed to function.
+      d = time[:startDate].split("/");
+      start_date = (Time.new(d[2], d[0], d[1]))
+    else #if not, use today.
+      start_date = Time.now
+    end
+
+    if (!!self.expirationTime && self.try(:expirationTime) > now_in_ms && self.persisted?) #if renewing
       newExpTime = prettyTime + num_months.to_i.months
       write_attribute(:expirationTime, (newExpTime.to_i * 1000) )
     else
-      newExpTime = Time.now + num_months.to_i.months
+      newExpTime = start_date + num_months.to_i.months
       write_attribute(:expirationTime,  (newExpTime.to_i * 1000) )
     end
     self.save
+  end
+
+  def accesspoints=(point)
+    !self.accesspoints.include?(point) ? self.accesspoints.push(point) : nil
+    # if !self.accesspoints.include?(point)
+    #   self.accesspoints.push(point)
+    #   self.save
+    # end
   end
 
   def revoke
