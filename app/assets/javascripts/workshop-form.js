@@ -1,4 +1,4 @@
-;var workshopID;
+var workshopID, userRole;
 
 $(document).ready(function() {
   if (window.location.pathname === '/workshops'){
@@ -8,6 +8,7 @@ $(document).ready(function() {
 })
 
 function attachListeners() {
+  checkUserRole();
   retrainAll();
   listSkills();
   showWorkshop();
@@ -19,52 +20,61 @@ function reattachListeners() {
   newSkill();
 }
 
-function checkOfficer(){
+function checkUserRole(){
   $.ajax({
-    url: '/workshops/' + workshopID + '/check_officer.json',
+    url: '/workshops/' + workshopID + '/check_role.json',
     success: function(data){
-      if (data.status === "declined"){
-        return false;
-      }
-      else if (data.status === "officer"){
-        return true;
-      }
-      else if (data.status === "admin"){
-        return true;
-      }
+      configureButtons(data.role);
+      userRole = data.role;
     }
-  })
+  });
+}
+
+function configureButtons(role){
+  if (role === 'officer'){
+    $('#getSkillsButton').show();
+    $('.newSkillName').show();
+    $('#retrainAllButton').show();
+  }
+  // else if (userStatus === 'admin'){
+  //   $('#getSkillsButton').show();
+  //   $('#retrainAllButton').hide();
+  // }
+  else{
+    $('#getSkillsButton').show();
+    $('.newSkillName').hide();
+    $('#retrainAllButton').hide();
+  }
 }
 
 function listSkills() {
-  if (checkOfficer() === true) {
-    var officer? = true;
-  }
   $('#getSkillsButton').on("click", function(event) {
-      $.ajax({
-        url: '/workshops/' + workshopID + '/skills.json',
-        success: function(data){
-          $(".requiredSkills").show();
-          var html;
-          const dataLength = data.length;
-          if (officer? === true) { 
-            for (let i = 0; i < dataLength; i++){
-              var skill = new Skill(data[i])
-              html += skill.newOfficerTableRow();
-            }
+    event.preventDefault();
+    $.ajax({
+      url: '/workshops/' + workshopID + '/skills.json',
+      success: function(data){
+        $(".requiredSkills").show();
+        var html;
+        const dataLength = data.length;
+        if (userRole === 'officer') {
+          for (let i = 0; i < dataLength; i++){
+            var skill = new Skill(data[i])
+            html += skill.newOfficerTableRow();
           }
-          else {
-            for (let i = 0; i < dataLength; i++){
-              var skill = new Skill(data[i])
-              html += skill.newTableRow();
-          }
+          $('#newSkill').show();
           $("#newSkill").attr('href', '/workshops/' + workshopID + '/skills')
-          $(".currentSkills").html(html);
-          $("#getSkillsButton").hide();
-          reattachListeners();
         }
-      });
-      event.preventDefault();
+        else {
+          for (let i = 0; i < dataLength; i++){
+            var skill = new Skill(data[i])
+            html += skill.newStaticTableRow();
+          }
+        }
+        $(".currentSkills").html(html);
+        $("#getSkillsButton").hide();
+        reattachListeners();
+      }
+    });
   })
 }
 
@@ -117,7 +127,7 @@ function newSkill() {
   $('#newSkill').on("click", function(event) {
     event.preventDefault();
     var url = $(this).attr('href');
-    $('.newSkillName').html("<input type='text' name='skill[name]'><button type='button' class='createSkill'>Create</button>");
+    $('.newSkillName').html("<input type='text' name='skill[name]'><button type='button' class='createSkill'>Create New Skill</button>");
     $('.createSkill').on("click", function(){
       const newSkillName = $('.newSkillName input[name="skill[name]"]').val();
       if (newSkillName !== '') {
@@ -143,25 +153,20 @@ function newSkill() {
 }
 
 function retrainAll(){
-  if (checkOfficer() === false) {
-    $('#retrainAll').hide();
-  }
-  else {
-    $('#retrainAll').on("click", function(event){
-      event.preventDefault();
-      var c = confirm("Requrie all members except Officers and Experts to be re-trained?")
-      if (c === true) {
-        workshopID = $(this).attr('id');
-        var url = $(this).attr('href');
-        $.ajax({
-          url: url + '.json',
-          success: function(shop){
-            alert('Everyone except Officers and Experts have been reset.')
-          }
-        })
-      }
-    })
-  }
+  $('#retrainAllButton').on("click", function(event){
+    event.preventDefault();
+    var c = confirm("Requrie all members except Officers and Experts to be re-trained?")
+    if (c === true) {
+      workshopID = $(this).attr('id');
+      var url = $(this).attr('href');
+      $.ajax({
+        url: url + '.json',
+        success: function(shop){
+          alert('Everyone except Officers and Experts have been reset.')
+        }
+      })
+    }
+  })
 }
 
 function showWorkshop() {
@@ -183,7 +188,7 @@ function showWorkshop() {
         $('#getSkillsButton').text('Show Workshop Skills');
         $("#getSkillsButton").show();
         $("#retrainAll").attr('href', "/workshops/" + shop.id + "/retrain_all");
-        checkOfficer();
+        checkUserRole();
       }
     });
   });

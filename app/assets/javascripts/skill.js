@@ -23,7 +23,7 @@ class Skill {
     `;
   }
 
-  newTableRow(){
+  newStaticTableRow(){
     return `
       <tr>
         <td class='currentSkill' id='${this.id}'>${this.name}</td>

@@ -18,7 +18,7 @@ Rails.application.routes.draw do
       resources :workshops, only: [:new, :create, :edit, :update, :destroy]
     end
     get '/admin/renew', to: 'admin/members#renew'
-    get '/workshops/:id/check_officer', to: 'workshops#check_officer'
+    get '/workshops/:id/check_role', to: 'workshops#check_role'
     post '/workshops/:id/train', to: 'workshops#train'
     get '/workshops/:id/retrain_all', to: 'workshops#retrain_all', as: :retrain_workshop
     post '/workshops/:id/expert', to: 'workshops#make_expert'

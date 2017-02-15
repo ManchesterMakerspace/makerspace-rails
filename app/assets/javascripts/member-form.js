@@ -1,4 +1,4 @@
-renewervar foundMemberId,token, test;
+var foundMemberId,token;
 
 $(document).ready(function(){
   role();
@@ -92,7 +92,9 @@ function slackInvite(email){
   }
   var socket = io.connect("https://hopethisisnotarealservertolinkto.herokuapp.com/");
   socket.on('connect', function(data){
-    socket.emit('authenticate', )
+    socket.emit('authenticate', function(){
+      
+    })
     // then send email via 'invite' emit.
   })
 }
