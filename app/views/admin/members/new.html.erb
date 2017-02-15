@@ -54,7 +54,7 @@
 
 	<div class="form-group">
 		<%= f.label 'Membership Length' %>
-		<input input='text' placeholder='Number of Months' name='member[expirationTime]' id="member_expirationTime">
+		<%= f.select :expirationTime, (1..12) %>
 	</div>
 
 	<%= f.submit %>

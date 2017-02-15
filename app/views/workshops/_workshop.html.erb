@@ -12,7 +12,8 @@
 
       <% if is_admin? %>
         <%= link_to "Edit Workshop", edit_admin_workshop_path(workshop), class: "btn btn-primary", id: 'editWorkshopID'  %>
-      <% elsif is_officer?(workshop) %>
+      <% end %>
+      <% if is_officer?(workshop) %>
         <%= link_to "Retrain Everyone", retrain_workshop_path(workshop), class: "btn btn-danger", id: 'retrainAllButton'  %>
       <% end %>
 
