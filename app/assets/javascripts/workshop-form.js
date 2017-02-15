@@ -54,7 +54,7 @@ function listSkills() {
       url: '/workshops/' + workshopID + '/skills.json',
       success: function(data){
         $(".requiredSkills").show();
-        var html;
+        var html = '';
         const dataLength = data.length;
         if (userRole === 'officer') {
           for (let i = 0; i < dataLength; i++){
