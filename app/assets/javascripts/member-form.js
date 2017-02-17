@@ -94,7 +94,7 @@ function slackInvite(email, fullname){
   socket.on('connect', function(){
     socket.emit('authenticate', authObj); //authenticate
     socket.emit('invite', email);    // then pass email address via invite event
-    socket.emit('msg', 'New member ' + fullname + 'invited to Slack!'); //then let everyone know
+    socket.emit('msg', 'New member ' + fullname + ' invited to Slack!'); //then let everyone know
   })
 }
 
