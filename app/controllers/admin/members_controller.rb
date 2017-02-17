@@ -7,7 +7,7 @@ class Admin::MembersController < AdminController
   end
 
   def create
-    @member = Member.new(user_params)
+    @member = Member.new(member_params)
     @member.expirationTime = params["member"]["expirationTime"]
     @member.save
     if @member.save
@@ -32,7 +32,7 @@ class Admin::MembersController < AdminController
   end
 
   def update
-    if @member.update(user_params)
+    if @member.update(member_params)
       @member.expirationTime = params["member"]["expirationTime"]
       @member.save
       respond_to do |format|
@@ -48,8 +48,8 @@ class Admin::MembersController < AdminController
   end
 
   private
-  def user_params
-    params.require(:member).permit(:fullname, :cardID, :accesspoints, :startDate, :role, :email, :password, :password_confirmation, :status, :skill_ids =>[], :learned_skill_ids => [])
+  def member_params
+    params.require(:member).permit(:fullname, :cardID, :groupName, :accesspoints, :startDate, :role, :email, :password, :password_confirmation, :status, :skill_ids =>[], :learned_skill_ids => [])
   end
 
   def set_member

@@ -20,6 +20,11 @@
 		<%= f.text_field :cardID, class: "form-control" %>
 	</div>
 
+	<div class="form-group">
+		<%= f.label 'Group Name' %>
+		<%= f.text_field :groupName, placeholder: 'n/a', class: "form-control" %>
+	</div>
+
 	<%= hidden_field :member, :accesspoints %>
 
 	<div class="form-group">
