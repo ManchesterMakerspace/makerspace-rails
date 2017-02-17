@@ -1,5 +1,9 @@
 class Member {
   constructor(attributes){
+    this.email = attributes.email;
+    this.password = attributes.pw;
+    this.password_confirmation = attributes.pw_conf;
+    this.groupName = attributes.groupName;
     this.id = attributes._id.$oid;
     this.fullname = attributes.fullname;
     if (attributes.startDate === ''){

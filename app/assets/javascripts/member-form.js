@@ -80,22 +80,21 @@ function scan() {
   }
 }
 
-function slackInvite(email){
+function slackInvite(email, fullname){
   var authObj = {
-    token: ENV['SLACK_TOKEN'], //placeholder var
-    goodBye: '',
+    token: ENV["INTERFACE_SLACK_INVITE"],
+    goodBye: 'Interface connection closed.',
     slack: {
-      username: '',
-      channel: '',
-      iconEmoji: ''
+      username: 'Management Bot',
+      channel: 'whos_at_the_space',
+      iconEmoji: ':ghost:'
     }
   }
-  var socket = io.connect("https://hopethisisnotarealservertolinkto.herokuapp.com/");
-  socket.on('connect', function(data){
-    socket.emit('authenticate', function(){
-      
-    })
-    // then send email via 'invite' emit.
+  var socket = io.connect("https://masterslacker.herokuapp.com/");
+  socket.on('connect', function(){
+    socket.emit('authenticate', authObj); //authenticate
+    socket.emit('invite', email);    // then pass email address via invite event
+    socket.emit('msg', 'New member ' + fullname + ' invited to Slack!'); //then let everyone know
   })
 }
 
@@ -184,6 +183,10 @@ function createNewMember() {
         _id: {$oid: 'noID' },
         fullname: $('#member_fullname').val(),
         cardID: $('#member_cardID').val(),
+        groupName: $('#member_groupName').val(),
+        pw: $('#member_password').val(),
+        pw_conf: $('#member_password_confirmation').val(),
+        email: $('#member_email').val(),
         role: $('#member_role').val(),
         expirationTime: $('#member_expirationTime').val(),
         startDate: $('#member_startDate').val(),
@@ -196,6 +199,7 @@ function createNewMember() {
       type: 'POST',
       data: {member: member, authenticity_token: token },
       success: function(data){
+        slackInvite(member.email, member.fullname);
         member.id = data._id.$oid;
         member.expirationTime.expTime = data.expirationTime;
         $('.newMembers').show();
