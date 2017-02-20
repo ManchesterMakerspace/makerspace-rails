@@ -1,10 +1,11 @@
-var foundMemberId,token;
+var foundMemberId,token, renewer;
 
 $(document).ready(function(){
   role();
   if (window.location.pathname === '/admin/renew'){
     $('.renew').show();
     loadMember();
+    renewMember();
   }
   else if (window.location.pathname === '/admin/members/new'){
     $('#member_startDate').datepicker();
@@ -134,10 +135,9 @@ function loadMember() {
 		//post to members#search_by to retrieve member info
     $.post('/members/search_by.json', { field: 'fullname', value: member_fullname, authenticity_token: token }, function(data){
       if (data.length === 1){
-        var renewer = new Member(data[0])
+        renewer = new Member(data[0])
         $('.member-name').text('Member Name: ' + renewer.fullname);
         $('.member-expTime').text('Membership expires on ' + renewer.formatExpTime());
-        renewMember(renewer);
       }
       else if (data.length > 1){
         alert('Multiple members found')
@@ -147,8 +147,7 @@ function loadMember() {
 }
 
 //update member on submit and append updated member to bottom of page.
-function renewMember(member) {
-  var renewer = member;
+function renewMember() {
 	$('input[type="submit"][value="Renew Member"]').click(function(event){
     event.preventDefault();
 		if (typeof renewer.id != 'undefined'){
