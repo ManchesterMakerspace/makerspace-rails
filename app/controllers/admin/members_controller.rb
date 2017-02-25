@@ -33,7 +33,9 @@ class Admin::MembersController < AdminController
 
   def update
     if @member.update(member_params)
-      @member.expirationTime = params["member"]["expirationTime"]
+      if(!!params["member"]["expirationTime"])
+        @member.expirationTime = params["member"]["expirationTime"]
+      end
       @member.save
       respond_to do |format|
         format.html { redirect_to @member, notice: 'Member updated' }
