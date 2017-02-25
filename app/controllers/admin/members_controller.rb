@@ -8,7 +8,9 @@ class Admin::MembersController < AdminController
 
   def create
     @member = Member.new(member_params)
-    @member.expirationTime = params["member"]["expirationTime"]
+    if(!!params["member"]["expirationTime"])
+      @member.expirationTime = params["member"]["expirationTime"]
+    end
     @member.save
     if @member.save
       respond_to do |format|
