@@ -12,11 +12,11 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery-2.1.1.min
+//= require jquery-ui.min
 //= require turbolinks
 //= require bootstrap.min
 //= require bootstrap-sprockets
 //= require member-form
 //= require workshop-form
-//= require jquery-2.1.1.min
-//= require jquery-ui.min
 //= require socket.io
