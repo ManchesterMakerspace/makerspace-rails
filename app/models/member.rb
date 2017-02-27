@@ -15,6 +15,7 @@ class Member
  field :groupKeystone,    type: Boolean
  field :role,                          default: "member" #admin,officer,member
  field :memberContractOnFile, type:Boolean
+ field :slackHandle
 
   ## Database authenticatable
   field :email,              type: String, default: ""
