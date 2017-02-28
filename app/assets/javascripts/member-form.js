@@ -84,7 +84,7 @@ function scan() {
 function slackInvite(email, fullname){
   var authObj = {
     token: ENV["INTERFACE_SLACK_INVITE"],
-    goodBye: 'Interface connection closed.',
+    goodBye: '',
     slack: {
       username: 'Management Bot',
       channel: 'whos_at_the_space',
