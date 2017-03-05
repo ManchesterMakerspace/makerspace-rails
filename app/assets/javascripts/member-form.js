@@ -30,11 +30,11 @@ function trainMember() {
         url: '/workshops/' + shopID + '/train.json',
         type: 'POST',
         data: { member_id: memberID },
-        beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+        beforeSend: function(xhr){xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));},
         success: function(){
           trainButton.text("MAKE EXPERT");
           trainButton.off('click');
-          trainButton.removeClass('train').addClass('expert')
+          trainButton.removeClass('train').addClass('expert');
           makeExpert();
          }
        });
@@ -58,7 +58,7 @@ function makeExpert() {
         url: '/workshops/' + shopID + '/expert.json',
         type: 'POST',
         data: { member_id: memberID },
-        beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+        beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));},
         success: function(data){
           expertButton.hide();
         }
@@ -97,6 +97,9 @@ var slack = {
   invite: function(email, fullname){
     socket.emit('invite', email);                                        // then pass email address via invite event
     socket.emit('msg', 'New member ' + fullname + ' invited to Slack!'); // then let everyone know
+  },
+  renew: function(msg){
+    socket.emit('channelMsg', {channel: 'renewals', msg: msg});
   }
 };
 
@@ -161,7 +164,9 @@ function renewMember() {
         data: {member: {expirationTime: {expTime: months}}, authenticity_token: token },
         success: function(data) {
           renewer.expirationTime.expTime = data["expirationTime"];
-          alert(renewer.fullname + ' updated. New expiration: ' + renewer.formatExpTime());
+          var succesMsg = renewer.fullname + ' updated. New expiration: ' + renewer.formatExpTime();
+          alert(succesMsg);       // confirm renewal success in browser
+          slack.renew(succesMsg); // confirm renewal success on slack in renwals channel
           $('.renewedMembers').show();
           $('.renewedMembers').append(renewer.newTableRow(months)); //reset form after renewMember
           clearForm($('.renew'));
