@@ -1,4 +1,4 @@
-var foundMemberId,token, renewer;
+var foundMemberId, token, renewer;
 
 $(document).ready(function(){
   slack.connect(); // connect to our slack intergration server to notify of new membership, invite to slack and so on
@@ -52,18 +52,18 @@ function makeExpert() {
     var expertButton = $(this);
     var c = confirm("Make this member an expert in this shop? This will give full training permissions to this member.");
     if (c === true) {
-       const shopID = expertButton.attr('id');
-       const memberID = $('.memberPage').attr('id');
-       $.ajax({
-         url: '/workshops/' + shopID + '/expert.json',
-         type: 'POST',
-         data: { member_id: memberID },
-         beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
-         success: function(data){
-           expertButton.hide();
-         }
-       });
-     }
+      const shopID = expertButton.attr('id');
+      const memberID = $('.memberPage').attr('id');
+      $.ajax({
+        url: '/workshops/' + shopID + '/expert.json',
+        type: 'POST',
+        data: { member_id: memberID },
+        beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+        success: function(data){
+          expertButton.hide();
+        }
+      });
+    }
   });
 }
 
@@ -179,18 +179,18 @@ function createNewMember() {
   $('input[type="submit"][value="Create Member"]').click(function(event) {
     event.preventDefault();
     var attributes = {
-        _id: {$oid: 'noID' },
-        fullname: $('#member_fullname').val(),
-        cardID: $('#member_cardID').val(),
-        groupName: $('#member_groupName').val(),
-        pw: $('#member_password').val(),
-        pw_conf: $('#member_password_confirmation').val(),
-        email: $('#member_email').val(),
-        role: $('#member_role').val(),
-        expirationTime: $('#member_expirationTime').val(),
-        startDate: $('#member_startDate').val(),
-        accesspoints: $('#member_accesspoints').val()
-      };
+      _id: {$oid: 'noID' },
+      fullname: $('#member_fullname').val(),
+      cardID: $('#member_cardID').val(),
+      groupName: $('#member_groupName').val(),
+      pw: $('#member_password').val(),
+      pw_conf: $('#member_password_confirmation').val(),
+      email: $('#member_email').val(),
+      role: $('#member_role').val(),
+      expirationTime: $('#member_expirationTime').val(),
+      startDate: $('#member_startDate').val(),
+      accesspoints: $('#member_accesspoints').val()
+    };
     token = $('input[name=authenticity_token]').val();
     var member = new Member(attributes);
     $.ajax({
