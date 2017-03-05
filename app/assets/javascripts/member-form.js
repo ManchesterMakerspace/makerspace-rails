@@ -1,6 +1,7 @@
 var foundMemberId,token, renewer;
 
 $(document).ready(function(){
+  slack.connect(); // connect to our slack intergration server to notify of new membership, invite to slack and so on
   role();
   if (window.location.pathname === '/admin/renew'){
     $('.renew').show();
@@ -78,23 +79,26 @@ function scan() {
   }
 }
 
-function slackInvite(email, fullname){
-  var authObj = {
-    token: ENV["INTERFACE_SLACK_INVITE"],
-    goodBye: 'Interface connection closed.',
-    slack: {
-      username: 'Management Bot',
-      channel: 'whos_at_the_space',
-      iconEmoji: ':ghost:'
-    }
-  };
-  var socket = io.connect("https://masterslacker.herokuapp.com/");
-  socket.on('connect', function(){
-    socket.emit('authenticate', authObj); //authenticate
-    socket.emit('invite', email);    // then pass email address via invite event
-    socket.emit('msg', 'New member ' + fullname + ' invited to Slack!'); //then let everyone know
-  });
-}
+var slack = {
+  connect: function(){
+    slack.socket = io.connect("https://masterslacker.herokuapp.com/");
+    slack.socket.on('connect', function(){
+      socket.emit('authenticate', {                                     // authenticate with server whenever we connect
+        token: ENV["INTERFACE_SLACK_INVITE"],
+        goodBye: 'Interface connection closed.',
+        slack: {
+          username: 'Management Bot',
+          channel: 'whos_at_the_space',
+          iconEmoji: ':ghost:'
+        }
+      });
+    });
+  },
+  invite: function(email, fullname){
+    socket.emit('invite', email);                                        // then pass email address via invite event
+    socket.emit('msg', 'New member ' + fullname + ' invited to Slack!'); // then let everyone know
+  }
+};
 
 function role() {
   $('.role').on('change', function() {
@@ -147,8 +151,8 @@ function loadMember() {
 //update member on submit and append updated member to bottom of page.
 function renewMember() {
   $('input[type="submit"][value="Renew Member"]').click(function(event){
-  event.preventDefault();
-    if (typeof renewer.id != 'undefined'){
+    event.preventDefault();
+    if (typeof renewer.id != 'undefined'){ // given a member is selected
       const token = $('input[name=authenticity_token]').val();
       const months = $('input[name="member[expirationTime]"]').val();
       $.ajax({
@@ -194,7 +198,7 @@ function createNewMember() {
       type: 'POST',
       data: {member: member, authenticity_token: token },
       success: function(data){
-        slackInvite(member.email, member.fullname);
+        slack.invite(member.email, member.fullname);
         member.id = data._id.$oid;
         member.expirationTime.expTime = data.expirationTime;
         $('.newMembers').show();
