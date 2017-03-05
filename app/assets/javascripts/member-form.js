@@ -6,14 +6,12 @@ $(document).ready(function(){
     $('.renew').show();
     loadMember();
     renewMember();
-  }
-  else if (window.location.pathname === '/admin/members/new'){
+  } else if (window.location.pathname === '/admin/members/new'){
     $('#member_startDate').datepicker();
     $('.new').show();
     createNewMember();
     scan();
-  }
-  else{
+  } else {
     trainMember();
     makeExpert();
   }
@@ -24,7 +22,7 @@ function trainMember() {
     event.preventDefault();
     var trainButton = $(this);
     var c = confirm("Would you like to fully approve this member to use this workshop?");
-    if (c == true) {
+    if (c === true) {
       var shopID = $('.train').attr('id');
       var memberID = $('.memberPage').attr('id');
       $.ajax({
@@ -52,7 +50,7 @@ function makeExpert() {
     event.preventDefault();
     var expertButton = $(this);
     var c = confirm("Make this member an expert in this shop? This will give full training permissions to this member.");
-    if (c == true) {
+    if (c === true) {
        const shopID = expertButton.attr('id');
        const memberID = $('.memberPage').attr('id');
        $.ajax({
@@ -75,8 +73,7 @@ function scan() {
       $('#member_cardID').val(data.cardID);
       $('#member_accesspoints').val(data.machine);
     });
-  }
-  else {
+  } else {
     console.log('Error connecting to Doorboto');
   }
 }
@@ -90,13 +87,13 @@ function slackInvite(email, fullname){
       channel: 'whos_at_the_space',
       iconEmoji: ':ghost:'
     }
-  }
+  };
   var socket = io.connect("https://masterslacker.herokuapp.com/");
   socket.on('connect', function(){
     socket.emit('authenticate', authObj); //authenticate
     socket.emit('invite', email);    // then pass email address via invite event
     socket.emit('msg', 'New member ' + fullname + ' invited to Slack!'); //then let everyone know
-  })
+  });
 }
 
 function role() {
@@ -108,8 +105,8 @@ function role() {
     } else {
       $('.login').hide();
     }
-  })
-};
+  });
+}
 
 function clearForm(form) {
   // iterate over all of the inputs for the form element that was passed in
@@ -117,16 +114,17 @@ function clearForm(form) {
     var type = this.type;
     var tag = this.tagName.toLowerCase(); // normalize case
     // it's ok to reset the value attr of text inputs, password inputs, and textareas
-    if (type == 'text' || type == 'password' || tag == 'textarea')
+    if (type == 'text' || type == 'password' || tag == 'textarea'){
       this.value = "";
-    // checkboxes and radios need to have their checked state cleared but should *not* have their 'value' changed
-    else if (type == 'checkbox' || type == 'radio')
+      // checkboxes and radios need to have their checked state cleared but should *not* have their 'value' changed
+    } else if (type == 'checkbox' || type == 'radio') {
       this.checked = false;
-    // select elements need to have their 'selectedIndex' property set to 0
-    else if (tag == 'select')
+      // select elements need to have their 'selectedIndex' property set to 0
+    } else if (tag == 'select') {
       this.selectedIndex = 0;
+    }
   });
-};
+}
 
 function loadMember() {
   $('.member').on('change', function(){
@@ -135,12 +133,12 @@ function loadMember() {
 		//post to members#search_by to retrieve member info
     $.post('/members/search_by.json', { field: 'fullname', value: member_fullname, authenticity_token: token }, function(data){
       if (data.length === 1){
-        renewer = new Member(data[0])
+        renewer = new Member(data[0]);
         $('.member-name').text('Member Name: ' + renewer.fullname);
         $('.member-expTime').text('Membership expires on ' + renewer.formatExpTime());
       }
       else if (data.length > 1){
-        alert('Multiple members found')
+        alert('Multiple members found');
       }
     });
   });
@@ -148,31 +146,29 @@ function loadMember() {
 
 //update member on submit and append updated member to bottom of page.
 function renewMember() {
-	$('input[type="submit"][value="Renew Member"]').click(function(event){
-    event.preventDefault();
-		if (typeof renewer.id != 'undefined'){
+  $('input[type="submit"][value="Renew Member"]').click(function(event){
+  event.preventDefault();
+    if (typeof renewer.id != 'undefined'){
       const token = $('input[name=authenticity_token]').val();
-			const months = $('input[name="member[expirationTime]"]').val();
-			$.ajax({
-				url: '/admin/members/' + renewer.id + '.json',
-				type: 'PUT',
-				data: {member: {expirationTime: {expTime: months}}, authenticity_token: token },
-				success: function(data) {
-					renewer.expirationTime.expTime = data["expirationTime"]
-					alert(renewer.fullname + ' updated. New expiration: ' + renewer.formatExpTime());
-					$('.renewedMembers').show();
-          $('.renewedMembers').append(renewer.newTableRow(months));
-					//reset form after renewMember
-					clearForm($('.renew'));
-					$('.member-name').text('');
-					$('.member-expTime').text('');
-				}
-			});
-		}
-		else {
-			alert("You must select a member first")
-		}
-	});
+      const months = $('input[name="member[expirationTime]"]').val();
+      $.ajax({
+        url: '/admin/members/' + renewer.id + '.json',
+        type: 'PUT',
+        data: {member: {expirationTime: {expTime: months}}, authenticity_token: token },
+        success: function(data) {
+          renewer.expirationTime.expTime = data["expirationTime"];
+          alert(renewer.fullname + ' updated. New expiration: ' + renewer.formatExpTime());
+          $('.renewedMembers').show();
+          $('.renewedMembers').append(renewer.newTableRow(months)); //reset form after renewMember
+          clearForm($('.renew'));
+          $('.member-name').text('');
+          $('.member-expTime').text('');
+        }
+      });
+    } else {
+      alert("You must select a member first");
+    }
+  });
 }
 
 function createNewMember() {
@@ -202,7 +198,7 @@ function createNewMember() {
         member.id = data._id.$oid;
         member.expirationTime.expTime = data.expirationTime;
         $('.newMembers').show();
-        $('.newMembers').append(member.newMemberTableRow())
+        $('.newMembers').append(member.newMemberTableRow());
         clearForm($('.new'));
       }
     });
