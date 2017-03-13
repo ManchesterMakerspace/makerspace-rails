@@ -83,7 +83,7 @@ function scan() {
 
 function slackInvite(email, fullname){
   var authObj = {
-    token: ENV["INTERFACE_SLACK_INVITE"],
+    token: slack_variable,
     goodBye: '',
     slack: {
       username: 'Management Bot',
