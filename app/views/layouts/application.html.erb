@@ -28,6 +28,9 @@
       <%= yield %>
   </div>
 
+  <%= javascript_tag do %>
+    slack_variable = "<%=ENV['INTERFACE_SLACK_INVITE']%>"
+  <% end %>
   <%= javascript_include_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js' %>
 

@@ -84,7 +84,7 @@ var slack = {
     slack.socket = io.connect("https://masterslacker.herokuapp.com/");
     slack.socket.on('connect', function(){
       socket.emit('authenticate', {                                     // authenticate with server whenever we connect
-        token: ENV["INTERFACE_SLACK_INVITE"],
+        token: slack_variable,
         goodBye: 'Interface connection closed.',
         slack: {
           username: 'Management Bot',
