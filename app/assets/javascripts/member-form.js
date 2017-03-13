@@ -83,8 +83,8 @@ var slack = {
   connect: function(){
     slack.socket = io.connect("https://masterslacker.herokuapp.com/");
     slack.socket.on('connect', function(){
-      socket.emit('authenticate', {                                     // authenticate with server whenever we connect
-        token: slack_variable,
+      slack.socket.emit('authenticate', {                                     // authenticate with server whenever we connect
+        token: '<%= Rails.application.secrets.slack_variable %>',
         goodBye: 'Interface connection closed.',
         slack: {
           username: 'Management Bot',
@@ -95,11 +95,11 @@ var slack = {
     });
   },
   invite: function(email, fullname){
-    socket.emit('invite', email);                                        // then pass email address via invite event
-    socket.emit('msg', 'New member ' + fullname + ' invited to Slack!'); // then let everyone know
+    slack.socket.emit('invite', email);                                        // then pass email address via invite event
+    slack.socket.emit('msg', 'New member ' + fullname + ' invited to Slack!'); // then let everyone know
   },
   renew: function(msg){
-    socket.emit('channelMsg', {channel: 'renewals', msg: msg});
+    slack.socket.emit('channelMsg', {channel: 'renewals', msg: msg});
   }
 };
 
