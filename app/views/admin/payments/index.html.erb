@@ -1,0 +1,28 @@
+<table class="table table-bordered table-striped">
+	<thead>
+		<tr>
+			<th>Product Name</th>
+      <th>Member</th>
+			<th>Allocated</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% if @payments.size == 0 %>
+			<tr>
+				<td colspan="6">No payments found.</td>
+			</tr>
+		<% else %>
+			<% @payments.each do |payment| %>
+				<tr>
+					<td><%= payment.product%></td>
+					<% if !!payment.member %>
+						<td><%= payment.member.fullname%></td>
+					<% else %>
+						<td>No member found</td>
+					<% end %>
+	        <td><%= payment.allocated %> </td>
+		   	</tr>
+			<% end %>
+		<% end %>
+	</tbody>
+</table>

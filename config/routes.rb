@@ -6,8 +6,7 @@ Rails.application.routes.draw do
   root to: "members#index"
 
   resources :members, only: [:index]
-  resources :payments
-  
+
   authenticate :member do
     resources :rentals, only: [:index]
     resources :members, only: [:show]
@@ -16,6 +15,7 @@ Rails.application.routes.draw do
       resources :members, only: [:edit, :update]
     end
     namespace :admin  do
+      resources :payments
       resources :rentals, only: [:new, :create, :edit, :update]
       resources :members, only: [:new, :create, :edit, :update]
       resources :workshops, only: [:new, :create, :edit, :update, :destroy]

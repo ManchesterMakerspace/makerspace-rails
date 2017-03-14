@@ -2,6 +2,8 @@ class Payment
   include Mongoid::Document
   store_in collection: 'generals', database: 'makerspacepayments', client: 'payments'
 
+  belongs_to :member, optional: true
+
   field :product
   field :firstname
   field :lastname
@@ -12,5 +14,53 @@ class Payment
   field :address
   field :txn_id
   field :txn_type
-  field :test
+  field :test, type: Boolean
+  field :allocated, type: Boolean, default: false
+
+  def self.update_members
+    unless self.new_payments.size == 0
+      self.new_payments.each do |payment|
+        renewObj = {expTime: payment.calculate_months}
+        member = payment.find_member
+        if !!member && member.expirationTime = renewObj #if member found & update succeeds
+          payment.allocated = true #change boolean
+          payment.save
+        end
+      end
+    end
+  end
+
+  def self.prepare_updates
+    unless self.new_payments.size == 0
+      self.new_payments.collect do |payment|
+        renewObj = {expTime: payment.calculate_months}
+        member = payment.find_member
+        if !!member
+          payment.member = member
+          payment.allocated = true
+          payment.save
+        end
+        payment
+      end
+    end
+  end
+
+  def self.new_payments
+    self.where(allocated: false)
+  end
+
+  def find_member
+    fullname = self.firstname + ' ' + self.lastname
+    member = Member.where(fullname: fullname).first
+    unless !!member
+      member = Member.where(email: self.payer_email).first
+      unless !!member
+        member = Member.includes(fullname: self.lastname).first
+      end
+    end
+    return member
+  end
+
+  def calculate_months
+  end
 end

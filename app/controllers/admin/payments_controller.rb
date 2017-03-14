@@ -1,7 +1,7 @@
-class PaymentsController < ApplicationController
+class Admin::PaymentsController < ApplicationController
 
   def index
-    @payments = Payment.all
+    @payments = Payment.prepare_updates
   end
 
   def new

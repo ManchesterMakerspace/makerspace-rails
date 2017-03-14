@@ -23,4 +23,6 @@ every :day, at: '2am' do
   rake "db:backupMembers"
   rake "db:backupWorkshops"
   rake "db:backupSkills"
+  rake "db:backupPayments"
+  runner "Payment.update_members"
 end
