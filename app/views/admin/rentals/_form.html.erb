@@ -1,0 +1,32 @@
+<%= form_for [:admin, @rental] do |f| %>
+  <% if @rental.errors.any? %>
+    <div id="error_explanation">
+    <h2>There were some errors:</h2>
+    <ul>
+      <% @rentals.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label 'Locker Number' %>
+    <%= f.text_field :number %>
+  </div>
+
+  <div class="form-group member">
+    <%= f.label 'Select Member' %>
+    <%= f.select :member_id, Member.all.collect {|m| [m.fullname, m.id]},  {include_blank: 'Select member..'} %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label "Expiration Date" %>
+    <input input='text' placeholder='mm/dd/yyyy' name='rental[expiration]' id="rental_expiration" class: "form-control" >
+  </div>
+
+  <div class="actions">
+   <%= f.submit %>
+ </div>
+
+<% end %>

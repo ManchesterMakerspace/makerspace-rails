@@ -1,0 +1,25 @@
+
+<table class="table table-bordered table-striped">
+	<thead>
+		<tr>
+			<th>Number</th>
+      <th>Member</th>
+			<th>Exp. Date</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% if @rentals.size == 0 %>
+			<tr>
+				<td colspan="6">No rentals found.</td>
+			</tr>
+		<% else %>
+			<% @rentals.each do |rental| %>
+				<tr>
+					<td><%= rental.number%></td>
+					<td><%= rental.member.fullname%></td>
+	        <td><%= rental.expiration %> </td>
+		   	</tr>
+			<% end %>
+		<% end %>
+	</tbody>
+</table>

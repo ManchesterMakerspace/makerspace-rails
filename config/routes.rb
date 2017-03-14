@@ -8,12 +8,14 @@ Rails.application.routes.draw do
   resources :members, only: [:index]
 
   authenticate :member do
+    resources :rentals
     resources :members, only: [:show]
     resources :workshops, only: [:show, :index] do
       resources :skills, only: [:index, :create, :update, :destroy]
       resources :members, only: [:edit, :update]
     end
     namespace :admin  do
+      resources :rentals
       resources :members, only: [:new, :create, :edit, :update]
       resources :workshops, only: [:new, :create, :edit, :update, :destroy]
     end

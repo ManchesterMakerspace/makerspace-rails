@@ -20,3 +20,4 @@
 //= require member-form
 //= require workshop-form
 //= require socket.io
+//= require rental-form
