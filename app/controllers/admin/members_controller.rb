@@ -11,7 +11,6 @@ class Admin::MembersController < AdminController
     if(!!params["member"]["expirationTime"])
       @member.expirationTime = params["member"]["expirationTime"]
     end
-    @member.save
     if @member.save
       respond_to do |format|
         format.html { redirect_to @member, notice: 'Member created successfully' }
@@ -34,11 +33,11 @@ class Admin::MembersController < AdminController
   end
 
   def update
-    if @member.update(member_params)
-      if(!!params["member"]["expirationTime"])
-        @member.expirationTime = params["member"]["expirationTime"]
-      end
-      @member.save
+    @member.update(member_params)
+    if(!!params["member"]["expirationTime"])
+      @member.expirationTime = params["member"]["expirationTime"]
+    end
+    if @member.save
       respond_to do |format|
         format.html { redirect_to @member, notice: 'Member updated' }
         format.json { render json: @member }

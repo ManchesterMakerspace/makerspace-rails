@@ -7,10 +7,9 @@ class Admin::RentalsController < ApplicationController
 
   def create
     @rental = Rental.new(rental_params)
-    @rental.save
-    if !!@rental
+    if @rental.save
       respond_to do |format|
-        format.html { redirect_to @rental, notice: 'Rental created successfully' }
+        format.html { redirect_to rentals_path, notice: 'Rental created successfully' }
         format.json { render json: @rental }
       end
     else
@@ -25,10 +24,10 @@ class Admin::RentalsController < ApplicationController
   end
 
   def update
-    if @rental.update(member_params)
-      @rental.save
+    @rental.update(rental_params)
+    if @rental.save
       respond_to do |format|
-        format.html { redirect_to @rental, notice: 'Rental updated' }
+        format.html { redirect_to rentals_path, notice: 'Rental updated' }
         format.json { render json: @rental }
       end
     else

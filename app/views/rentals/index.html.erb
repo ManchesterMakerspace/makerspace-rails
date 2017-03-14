@@ -1,10 +1,17 @@
+<% if is_admin? %>
+  <%= link_to "Create New Rental", new_admin_rental_path, class: "btn btn-primary" %>
+<% end %>
 
+<br>
 <table class="table table-bordered table-striped">
 	<thead>
 		<tr>
 			<th>Number</th>
       <th>Member</th>
 			<th>Exp. Date</th>
+			<% if is_admin? %>
+				<th></th>
+			<% end %>
 		</tr>
 	</thead>
 	<tbody>
@@ -16,8 +23,15 @@
 			<% @rentals.each do |rental| %>
 				<tr>
 					<td><%= rental.number%></td>
-					<td><%= rental.member.fullname%></td>
+					<% if !!rental.member %>
+						<td><%= rental.member.fullname%></td>
+					<% else %>
+						<td>Available for Rent</td>
+					<% end %>
 	        <td><%= rental.expiration %> </td>
+					<% if is_admin? %>
+						<td><%= link_to 'Edit/Renew', edit_admin_rental_path(rental) %> </td>
+					<% end %>
 		   	</tr>
 			<% end %>
 		<% end %>
