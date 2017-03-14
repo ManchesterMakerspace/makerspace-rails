@@ -45,7 +45,7 @@ class Payment
   end
 
   def self.new_payments
-    self.where(allocated: false)
+    self.where(processed: false)
   end
 
   def find_member
