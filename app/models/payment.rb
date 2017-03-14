@@ -15,7 +15,7 @@ class Payment
   field :txn_id
   field :txn_type
   field :test, type: Boolean
-  field :allocated, type: Boolean, default: false
+  field :processed, type: Boolean, default: false
 
   def self.update_members
     unless self.new_payments.size == 0
@@ -23,7 +23,7 @@ class Payment
         renewObj = {expTime: payment.calculate_months}
         member = payment.find_member
         if !!member && member.expirationTime = renewObj #if member found & update succeeds
-          payment.allocated = true #change boolean
+          payment.processed = true #change boolean
           payment.save
         end
       end
@@ -37,7 +37,6 @@ class Payment
         member = payment.find_member
         if !!member
           payment.member = member
-          payment.allocated = true
           payment.save
         end
         payment
