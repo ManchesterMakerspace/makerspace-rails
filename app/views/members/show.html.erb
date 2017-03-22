@@ -11,7 +11,7 @@
     <% end %>
 
     <p></p>
-    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    
       <% @workshops.each do |workshop| %>
       <div class="panel panel-default">
         <div class="panel-heading">
@@ -28,7 +28,7 @@
             <% end%>
         </h4>
       </div>
-        <div class="panel-body">
+        <div class="panel-body" style='display: none;'>
           <% if workshop.skills.empty? %>
             <%= "No skills requried for #{workshop.name}" %>
           <% else %>
@@ -39,6 +39,5 @@
         </div>
       </div>
       <% end %>
-    </div>
   </div>
 </div>

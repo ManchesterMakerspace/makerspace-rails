@@ -8,8 +8,6 @@
         <h4 id="workshop-officer" ><%= "Officer: #{workshop.officer.fullname}"%></h4>
       <%end%>
 
-      <h4 id="workshop-experts"><%= "Experts: #{workshop.list_experts}"%></h4>
-
       <% if is_admin? %>
         <%= link_to "Edit Workshop", edit_admin_workshop_path(workshop), class: "btn btn-primary", id: 'editWorkshopID'  %>
       <% end %>
@@ -17,6 +15,11 @@
         <%= link_to "Retrain Everyone", retrain_workshop_path(workshop), class: "btn btn-danger", id: 'retrainAllButton'  %>
       <% end %>
 
+      <p></p>
+
+      <button id="show-experts">Show Experts</button>
+      <h4 id="workshop-experts" style='display: none;'><%= "Experts: #{workshop.list_experts}"%></h4>
+      
       <p></p>
 
       <button type='button' id="getSkillsButton">Show Workshop Skills</button>

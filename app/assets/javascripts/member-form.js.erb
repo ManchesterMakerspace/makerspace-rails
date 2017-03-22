@@ -3,6 +3,7 @@ var foundMemberId, token, renewer;
 $(document).ready(function(){
   slack.connect(); // connect to our slack intergration server to notify of new membership, invite to slack and so on
   role();
+  showSkills();
   if (window.location.pathname === '/admin/renew'){
     $('.renew').show();
     loadMember();
@@ -17,6 +18,18 @@ $(document).ready(function(){
     makeExpert();
   }
 });
+
+function showSkills() {
+  $('.panel-heading').on('click', function(){
+    var panelBody  = $(this).nextAll('.panel-body:first')
+    if (panelBody.attr('style') === 'display: none;'){
+      panelBody.show();
+    }
+    else {
+      panelBody.hide();
+    }
+  })
+}
 
 function trainMember() {
   $('a.train').on('click', function(event){
