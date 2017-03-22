@@ -40,7 +40,6 @@ class Admin::RentalsController < ApplicationController
 
   private
   def rental_params
-    binding.pry
     params.require(:rental).permit(:number, :member_id, :expiration)
   end
 

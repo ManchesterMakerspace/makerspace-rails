@@ -11,6 +11,7 @@ function attachListeners() {
   checkUserRole();
   retrainAll();
   listSkills();
+  listExperts();
   showWorkshop();
 }
 
@@ -45,6 +46,13 @@ function configureButtons(role){
     $('.newSkillName').hide();
     $('#retrainAllButton').hide();
   }
+}
+
+function listExperts() {
+  $('#show-experts').on('click', function(){
+    $('#workshop-experts').show();
+    $('#show-experts').hide();
+  })
 }
 
 function listSkills() {
@@ -169,7 +177,7 @@ function retrainAll(){
   })
 }
 
-function showWorkshop() {
+function showWorkshop() { //load new workshop
   $('.showWorkshop').on("click", function(event) {
     event.preventDefault();
     workshopID = $(this).attr('id');
@@ -179,9 +187,11 @@ function showWorkshop() {
       success: function(data){
         var shop = new Workshop(data);
         workshopID = shop.id
-        $('.workshopDiv').attr('id', shop.id);
-        $('#editWorkshopID').attr('href', '/admin/workshops/' + shop.id + '/edit');
+        $('.workshopDiv').attr('id', shop.id); //set shop id
+        $('#editWorkshopID').attr('href', '/admin/workshops/' + shop.id + '/edit'); //change edit path
         $('#workshop-name').text(shop.name);
+        $('#show-experts').show();
+        $('#workshop-experts').hide();
         $('#workshop-experts').text('Experts: ' + shop.listExperts() );
         $('#workshop-officer').text('Officer: ' + shop.officer);
         $(".requiredSkills").hide();

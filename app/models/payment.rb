@@ -22,9 +22,12 @@ class Payment
       self.new_payments.each do |payment|
         renewObj = {expTime: payment.calculate_months}
         member = payment.find_member
-        if !!member && member.expirationTime = renewObj #if member found & update succeeds
-          payment.processed = true #change boolean
-          payment.save
+        if !!member
+          payment.member = member #set member if found
+          if payment.member.update({expirationTime: renewObj}) #if update succeeds
+            payment.processed = true #mark processed
+            payment.save
+          end
         end
       end
     end
@@ -32,7 +35,7 @@ class Payment
 
   def self.prepare_updates
     unless self.new_payments.size == 0
-      self.new_payments.collect do |payment|
+      self.new_payments.collect do |payment| #return array of modified payments
         renewObj = {expTime: payment.calculate_months}
         member = payment.find_member
         if !!member
