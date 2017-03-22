@@ -248,6 +248,8 @@ GEM
       httparty
       json
       websocket-client-simple (~> 0.3.0)
+    socket.io-rails (1.7.3)
+      railties (>= 3.1)
     spring (2.0.0)
       activesupport (>= 4.2)
     spring-watcher-listen (2.0.1)
@@ -316,6 +318,7 @@ DEPENDENCIES
   rails (~> 5.0.0, >= 5.0.0.1)
   sass-rails (~> 5.0)
   socket.io-client-simple
+  socket.io-rails
   spring
   spring-watcher-listen (~> 2.0.0)
   sqlite3
