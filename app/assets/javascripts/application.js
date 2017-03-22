@@ -17,7 +17,7 @@
 //= require turbolinks
 //= require bootstrap.min
 //= require bootstrap-sprockets
+//= require socket.io
 //= require member-form
 //= require workshop-form
-//= require socket.io
 //= require rental-form

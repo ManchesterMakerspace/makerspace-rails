@@ -1,14 +1,15 @@
 var foundMemberId, token, renewer;
 
 $(document).ready(function(){
-  slack.connect(); // connect to our slack intergration server to notify of new membership, invite to slack and so on
   role();
   showSkills();
   if (window.location.pathname === '/admin/renew'){
+    slack.connect(); // connect to our slack intergration server to notify of new membership, invite to slack and so on
     $('.renew').show();
     loadMember();
     renewMember();
   } else if (window.location.pathname === '/admin/members/new'){
+    slack.connect(); // connect to our slack intergration server to notify of new membership, invite to slack and so on
     $('#member_startDate').datepicker();
     $('.new').show();
     createNewMember();
@@ -101,19 +102,22 @@ var slack = {
         goodBye: 'Interface connection closed.',
         slack: {
           username: 'Management Bot',
-          channel: 'whos_at_the_space',
+          channel: 'renewlas',
           iconEmoji: ':ghost:'
         }
       });
     });
   },
   invite: function(email, fullname){
-    slack.socket.emit('invite', email);                                        // then pass email address via invite event
-    slack.socket.emit('msg', 'New member ' + fullname + ' invited to Slack!'); // then let everyone know
-  },
-  renew: function(msg){
-    slack.socket.emit('channelMsg', {channel: 'renewals', msg: msg});
-  }
+     slack.socket.emit('invite', email);                                        // then pass email address via invite event
+     slack.socket.emit('msg', 'New member ' + fullname + ' invited to Slack!'); // then let everyone know
+     var msg = 'New member ' + fullname + ' invited to Slack!';
+     slack.socket.emit('channelMsg', {channel: 'whos_at_the_space', msg: msg}); // then let everyone know
+   },
+   renew: function(msg){
+     slack.socket.emit('channelMsg', {channel: 'renewals', msg: msg});
+     slack.socket.emit('msg', msg);
+   }
 };
 
 function role() {
