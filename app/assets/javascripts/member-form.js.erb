@@ -107,7 +107,7 @@ function scan() {
 
 var slack = {
   connect: function(){
-    if (<%=Rails.env%> === 'production'){
+    if ("<%=Rails.env%>" === 'production'){
       slack.socket = io.connect("https://masterslacker.herokuapp.com/");
       slack.socket.on('connect', function(){
         slack.socket.emit('authenticate', {  // authenticate with server whenever we connect
