@@ -21,6 +21,11 @@ $(document).ready(function(){
     $('.new').show();
     createNewMember();
     scan();
+  } else if (window.location.pathname === '/members'){
+    $("button.show_workshops").click(function(){
+    	$(this).next('div').show();
+    	$(this).hide();
+    });
   } else {
     trainMember();
     makeExpert();

@@ -23,7 +23,12 @@
 				<tr class="<%=member.membership_status%>">
 					<td><%= "#{member.fullname}"%></td>
 				<%end%>
-	        <td><%= member.list_allowed_workshops %> </td>
+	        <td>
+						<button id="<%=member.id%>" class='show_workshops'>Show Allowed Workshops</button>
+						<div style="display:none;">
+							<%= member.list_allowed_workshops %>
+						</div>
+					</td>
 					<% if is_officer? || is_admin? %>
 						<td class="<%=member.membership_status%>Color"><%=member.prettyTime.strftime("%m/%d/%Y") %></td>
 					<%end%>
