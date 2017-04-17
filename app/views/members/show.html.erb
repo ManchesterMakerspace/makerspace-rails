@@ -1,7 +1,8 @@
 <div class="row shadow memberPage" id="<%= @member._id%>">
   <div class="col-sm-12">
     <h2><%= @member.fullname %> </h2>
-    <h3><%= @member.email %> </h3>
+    <h3>Slack Handle: <%= @member.slackHandle || 'Needs Slack Handle added to db' %></h3>
+    <h3>Email: <%= @member.email || 'Needs email added to db' %> </h3>
     <h4>Membership Expiration Date: <%= @member.prettyTime.strftime("%m/%d/%Y") %></h4>
     <% if !@member.offices.empty? %>
       <h4>Officer of: <%=@member.offices.pluck(:name).join(", ")%></h4>
@@ -11,7 +12,7 @@
     <% end %>
 
     <p></p>
-    
+
       <% @workshops.each do |workshop| %>
       <div class="panel panel-default">
         <div class="panel-heading">
