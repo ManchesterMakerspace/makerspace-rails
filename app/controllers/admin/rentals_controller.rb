@@ -3,6 +3,7 @@ class Admin::RentalsController < ApplicationController
 
   def new
     @rental = Rental.new
+    @members = Member.all
   end
 
   def create
