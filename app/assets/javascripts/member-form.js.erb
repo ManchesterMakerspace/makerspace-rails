@@ -1,8 +1,15 @@
-var foundMemberId, token, renewer;
+var token, renewer, debug = false;
 
 $(document).ready(function(){
   role();
   showSkills();
+
+  window.addEventListener('turbolinks:before-render', function(){ //Rails uses turbolinks for page navigationrather than traditional window.beforeunload
+    if (typeof slack.socket !== "undefined"){
+      slack.disconnect();
+    }
+  });
+
   if (window.location.pathname === '/admin/renew'){
     slack.connect(); // connect to our slack intergration server to notify of new membership, invite to slack and so on
     $('.renew').show();
@@ -95,18 +102,20 @@ function scan() {
 
 var slack = {
   connect: function(){
-    slack.socket = io.connect("https://masterslacker.herokuapp.com/");
-    slack.socket.on('connect', function(){
-      slack.socket.emit('authenticate', {                                     // authenticate with server whenever we connect
-        token: '<%= Rails.application.secrets.slack_variable %>',
-        goodBye: 'Interface connection closed.',
-        slack: {
-          username: 'Management Bot',
-          channel: 'renewals',
-          iconEmoji: ':ghost:'
-        }
+    if (debug !== true){
+      slack.socket = io.connect("https://masterslacker.herokuapp.com/");
+      slack.socket.on('connect', function(){
+        slack.socket.emit('authenticate', {  // authenticate with server whenever we connect
+          token: '<%= Rails.application.secrets.slack_variable %>',
+          goodBye: 'Interface connection closed.',
+          slack: {
+            username: 'Management Bot',
+            channel: 'renewals',
+            iconEmoji: ':ghost:'
+          }
+        });
       });
-    });
+    }
   },
   invite: function(email, fullname){
      slack.socket.emit('invite', email);                                        // then pass email address via invite event
@@ -117,6 +126,9 @@ var slack = {
    renew: function(msg){
      slack.socket.emit('channelMsg', {channel: 'renewals', msg: msg});
      slack.socket.emit('msg', msg);
+   },
+   disconnect: function(){
+     slack.socket.disconnect();
    }
 };
 
@@ -153,7 +165,7 @@ function clearForm(form) {
 function loadMember() {
   $('.member').on('change', function(){
     var member_fullname = $('#member_fullname').val();
-    var token = $('input[name=authenticity_token]').val();
+    token = $('input[name=authenticity_token]').val();
 		//post to members#search_by to retrieve member info
     $.post('/members/search_by.json', { field: 'fullname', value: member_fullname, authenticity_token: token }, function(data){
       if (data.length === 1){
