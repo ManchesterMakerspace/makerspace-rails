@@ -52,7 +52,7 @@ class Admin::MembersController < AdminController
 
   private
   def member_params
-    params.require(:member).permit(:fullname, :cardID, :groupName, :accesspoints, :startDate, :role, :email, :password, :password_confirmation, :status, :skill_ids =>[], :learned_skill_ids => [])
+    params.require(:member).permit(:fullname, :cardID, :groupName, :notificationAck, :accesspoints, :startDate, :role, :email, :password, :password_confirmation, :status, :skill_ids =>[], :learned_skill_ids => [])
   end
 
   def set_member

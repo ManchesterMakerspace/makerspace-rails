@@ -14,8 +14,9 @@ class Member
  field :groupName #potentially member is in a group/partner membership
  field :groupKeystone,    type: Boolean
  field :role,                          default: "member" #admin,officer,member
- field :memberContractOnFile, type:Boolean
+ field :memberContractOnFile, type: Boolean
  field :slackHandle
+ field :notificationAck, type: Boolean
 
   ## Database authenticatable
   field :email,              type: String, default: ""
