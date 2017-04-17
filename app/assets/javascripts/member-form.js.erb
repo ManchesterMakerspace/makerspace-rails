@@ -21,7 +21,7 @@ $(document).ready(function(){
     $('.new').show();
     createNewMember();
     scan();
-  } else if (window.location.pathname === '/members'){
+  } else if ((window.location.pathname === '/members') || (window.location.pathname === '/')){
     $("button.show_workshops").click(function(){
     	$(this).next('div').show();
     	$(this).hide();
