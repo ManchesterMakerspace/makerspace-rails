@@ -17,7 +17,7 @@
 
   <div class="form-group member">
 		<%= f.label 'Select Member' %>
-		<%= f.select :member_id, @members.collect {|m| [m.fullname, m.id]}.sort,  {include_blank: 'Select member..'} %>
+		<%= f.select :member_id, Member.all.collect {|m| [m.fullname, m.id]}.sort,  {include_blank: 'Select member..'} %>
 	</div>
 
   <div class="form-group">
