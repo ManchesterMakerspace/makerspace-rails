@@ -2,6 +2,7 @@ class RentalsController < ApplicationController
 
   def index
     @rentals = Rental.all
+    @members = Member.all
   end
 
   private
