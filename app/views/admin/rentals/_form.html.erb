@@ -22,7 +22,7 @@
 
   <div class="form-group">
     <%= f.label "Expiration Date" %>
-    <input input='text' placeholder='mm/dd/yyyy' name='rental[expiration]' id="rental_expiration" class: "form-control" >
+    <input input='text' placeholder='mm/dd/yyyy' name='rental[expiration]' id="rental_expiration" class: "form-control" value="<%=@rental.expiration%>">
   </div>
 
   <div class="actions">
