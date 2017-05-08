@@ -124,13 +124,11 @@ var slack = {
   },
   invite: function(email, fullname){
      slack.socket.emit('invite', email);                                        // then pass email address via invite event
-     slack.socket.emit('msg', 'New member ' + fullname + ' invited to Slack!'); // then let everyone know
      var msg = 'New member ' + fullname + ' invited to Slack!';
      slack.socket.emit('channelMsg', {channel: 'whos_at_the_space', msg: msg}); // then let everyone know
    },
    renew: function(msg){
      slack.socket.emit('channelMsg', {channel: 'renewals', msg: msg});
-     slack.socket.emit('msg', msg);
    },
    disconnect: function(){
      slack.socket.disconnect();

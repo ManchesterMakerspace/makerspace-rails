@@ -52,6 +52,8 @@ class Member
   before_save :update_allowed_workshops
 
   has_many :offices, class_name: 'Workshop', inverse_of: :officer
+  has_many :cards
+  has_many :groups
   has_and_belongs_to_many :learned_skills, class_name: 'Skill', inverse_of: :trained_members
   has_and_belongs_to_many :expertises, class_name: 'Workshop', inverse_of: :experts
   has_and_belongs_to_many :allowed_workshops, class_name: 'Workshop', inverse_of: :allowed_members
