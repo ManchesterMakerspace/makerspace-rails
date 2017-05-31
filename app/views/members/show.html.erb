@@ -7,6 +7,7 @@
     <% if !@member.offices.empty? %>
       <h4>Officer of: <%=@member.offices.pluck(:name).join(", ")%></h4>
     <%end%>
+    <h4>Status: <%=@member.status%></h4>
     <% if is_admin? %>
       <%= link_to "Edit", edit_admin_member_path(@member), class: "btn btn-primary card"  %>
     <% end %>

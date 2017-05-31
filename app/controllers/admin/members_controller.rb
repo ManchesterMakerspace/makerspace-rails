@@ -4,10 +4,12 @@ class Admin::MembersController < AdminController
 
   def new
     @member = Member.new
+    @member.cardID = RejectionCard.where(holder: nil).last.uid
   end
 
   def create
     @member = Member.new(member_params)
+    byebug
     if(!!params["member"]["expirationTime"])
       @member.expirationTime = params["member"]["expirationTime"]
     end
@@ -33,6 +35,7 @@ class Admin::MembersController < AdminController
   end
 
   def update
+    byebug
     @member.update(member_params)
     if(!!params["member"]["expirationTime"])
       @member.expirationTime = params["member"]["expirationTime"]
@@ -52,7 +55,7 @@ class Admin::MembersController < AdminController
 
   private
   def member_params
-    params.require(:member).permit(:fullname, :cardID, :groupName, :notificationAck, :accesspoints, :startDate, :role, :email, :password, :password_confirmation, :status, :skill_ids =>[], :learned_skill_ids => [])
+    params.require(:member).permit(:fullname, :cardID, :groupName, :notificationAck, :accesspoints, :startDate, :role, :email, :slackHandle, :password, :password_confirmation, :status, :skill_ids =>[], :learned_skill_ids => [], :cards_attributes => [:id, :card_location])
   end
 
   def set_member
