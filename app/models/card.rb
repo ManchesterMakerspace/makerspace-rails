@@ -2,7 +2,6 @@ class Card
   include Mongoid::Document
   field :uid #Member's CardID
   field :holder, type: String #Member's name
-  field :memberID, type: String #Member's UID
   field :expiry, type: Integer #Member's expirationTime
   field :validity, type: String #
   attr_accessor :card_location
