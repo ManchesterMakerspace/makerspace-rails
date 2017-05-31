@@ -6,9 +6,9 @@ Rails.application.routes.draw do
   root to: "members#index"
 
   resources :members, only: [:index]
+  resources :rentals, only: [:index]
 
   authenticate :member do
-    resources :rentals, only: [:index]
     resources :members, only: [:show]
     resources :workshops, only: [:show, :index] do
       resources :skills, only: [:index, :create, :update, :destroy]

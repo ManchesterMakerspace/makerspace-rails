@@ -37,10 +37,6 @@ function configureButtons(role){
     $('.newSkillName').show();
     $('#retrainAllButton').show();
   }
-  // else if (userStatus === 'admin'){
-  //   $('#getSkillsButton').show();
-  //   $('#retrainAllButton').hide();
-  // }
   else{
     $('#getSkillsButton').show();
     $('.newSkillName').hide();

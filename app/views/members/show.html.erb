@@ -21,7 +21,7 @@
             <%=workshop.name %> (Click to view required skills)
             <% if is_officer?(workshop) %>
               <% if workshop.experts.include?(@member) %>
-
+              <!--do nothing -->
               <% elsif @member.allowed_workshops.include?(workshop) %>
                 <%= (link_to "MAKE EXPERT", workshop_member_path(workshop, @member),  class: "btn btn-info expert", id: "#{workshop.id}") %>
               <% else %>

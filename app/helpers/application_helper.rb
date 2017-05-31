@@ -5,6 +5,10 @@ module ApplicationHelper
         return true
       elsif workshop.nil?
         return current_member.role == "officer"
+      elsif !!workshop.experts
+        if workshop.experts.include?(@member)
+          return true
+        end
       end
     end
   end
