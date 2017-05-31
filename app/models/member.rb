@@ -122,9 +122,4 @@ class Member
   def accesspoints=(point)
     !self.accesspoints.include?(point) ? self.accesspoints.push(point) : nil
   end
-
-  def revoke
-    write_attribute(:status, 'revoked')
-    self.save
-  end
 end
