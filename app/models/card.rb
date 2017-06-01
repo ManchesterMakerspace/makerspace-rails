@@ -3,7 +3,7 @@ class Card
   field :uid #Member's CardID
   field :holder, type: String #Member's name
   field :expiry, type: Integer #Member's expirationTime
-  field :validity, type: String #
+  field :validity, type: String #Member's Status
   attr_accessor :card_location
 
   before_save :load_member_attribtues
