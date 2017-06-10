@@ -4,7 +4,12 @@ class Admin::MembersController < AdminController
 
   def new
     @member = Member.new
-    @member.cardID = RejectionCard.where(holder: nil).last.uid
+    reject = RejectionCard.where(holder: nil).last
+    if( !!reject )
+      @member.cardID = reject.uid || 'RejectionCard has no ID'
+    else
+      @member.cardID = 'Not Found'
+    end
   end
 
   def create

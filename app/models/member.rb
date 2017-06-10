@@ -50,6 +50,7 @@ class Member
 
   def create_card
     Card.create(uid: self.cardID, member: self)
+    RejectionCard.find_by(uid: self.cardID).update(holder: self.fullname)
   end
 
   def update_card
