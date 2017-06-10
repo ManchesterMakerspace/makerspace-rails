@@ -9,7 +9,6 @@ class Admin::MembersController < AdminController
 
   def create
     @member = Member.new(member_params)
-    byebug
     if(!!params["member"]["expirationTime"])
       @member.expirationTime = params["member"]["expirationTime"]
     end
@@ -35,7 +34,6 @@ class Admin::MembersController < AdminController
   end
 
   def update
-    byebug
     @member.update(member_params)
     if(!!params["member"]["expirationTime"])
       @member.expirationTime = params["member"]["expirationTime"]

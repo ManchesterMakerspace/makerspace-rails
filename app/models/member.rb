@@ -28,6 +28,7 @@ class Member
 
   validates :fullname, presence: true, uniqueness: true
   before_save :update_allowed_workshops
+  after_update :update_card
   after_create :create_card
 
   has_many :offices, class_name: 'Workshop', inverse_of: :officer
@@ -49,6 +50,12 @@ class Member
 
   def create_card
     Card.create(uid: self.cardID, member: self)
+  end
+
+  def update_card
+    self.cards.each do |c|
+      c.update(member: self)
+    end
   end
 
   def update_allowed_workshops #this checks to see if they have learned all the skills in a workshop one at a time

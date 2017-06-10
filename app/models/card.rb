@@ -12,7 +12,7 @@ class Card
 
   def load_member_attribtues
     self.holder = self.member.fullname
-    self.memberID = self.member.id.to_s
+    self.member_id = self.member.id.to_s
     self.expiry = self.member.expirationTime
     self.validity = self.check_validity
   end
