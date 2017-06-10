@@ -38,6 +38,10 @@
 		<%= f.select :role, ['member', 'officer', 'admin'], class: "form-control" %>
 	</div>
 
+  <% if !!@member.cards %>
+    <h6>Member Cards</h6>
+  <%end%>
+  
   <div class="form-group cards">
     <%= f.fields_for :cards do |builder| %>
     <br>
