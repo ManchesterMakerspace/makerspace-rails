@@ -40,9 +40,12 @@
 
   <div class="form-group cards">
     <%= f.fields_for :cards do |builder| %>
-      <%= builder.label 'Report Card as' %>
-      <%= builder.radio_button(:card_location, 'lost') %> Lost
-      <%= builder.radio_button(:card_location, 'stolen') %> Stolen
+    <br>
+      <%= builder.label "Card ID: #{builder.object.id.to_str.slice(-5, 5)}"%> <br>
+      <%= builder.label "Current Card Status: #{builder.object.validity}"%> <br>
+      <%= builder.label "Report card as: "%>
+      <%= builder.radio_button :card_location, 'lost' %> Lost
+      <%= builder.radio_button :card_location, 'stolen' %> Stolen
     <% end %>
   </div>
 
