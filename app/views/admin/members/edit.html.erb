@@ -38,13 +38,22 @@
 		<%= f.select :role, ['member', 'officer', 'admin'], class: "form-control" %>
 	</div>
 
+  <% if !!@member.cards %>
+    <h6>Member Cards</h6>
+
   <div class="form-group cards">
     <%= f.fields_for :cards do |builder| %>
-      <%= builder.label 'Report Card as' %>
-      <%= builder.radio_button(:card_location, 'lost') %> Lost
-      <%= builder.radio_button(:card_location, 'stolen') %> Stolen
+    <br>
+      <%= "Card ID: #{builder.object.id.to_str.slice(-5, 5)}"%> <br>
+      <%= "Current Card Status: #{builder.object.validity}"%> <br>
+      <%= builder.label "Report card as: "%>
+      <%= builder.radio_button :card_location, 'lost' %> Lost
+      <%= builder.radio_button :card_location, 'stolen' %> Stolen
     <% end %>
   </div>
+  <%end%>
+
+  <%= link_to "New Card", new_admin_card_path(member_id: @member.id) %></td>
 
   <input style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
 	<input type="password" style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
