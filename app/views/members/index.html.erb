@@ -16,15 +16,21 @@
 			</tr>
 		<% else %>
 			<% @members.each do |member| %>
-			<tr>
-				<%if member_signed_in? %>
-					<td><%= link_to "#{member.fullname}", member_path(member) %></td>
+				<%if is_officer? || is_admin? %>
+				<tr>
+					<td width=33%><%= link_to "#{member.fullname}", member_path(member) %></td>
 				<%else%>
-				<td><%= "#{member.fullname}"%></td>
+				<tr class="<%=member.membership_status%>">
+					<td width=33%><%= "#{member.fullname}"%></td>
 				<%end%>
-          <td><%= member.list_allowed_workshops %> </td>
+	        <td width=33%>
+						<button id="<%=member.id%>" class='show_workshops'>Show Allowed Workshops</button>
+						<div style="display:none; height: 5em; overflow: scroll;">
+							<%= member.list_allowed_workshops %>
+						</div>
+					</td width=34%>
 					<% if is_officer? || is_admin? %>
-						<td class="<%=member.membership_status%>"><%=member.prettyTime.strftime("%m/%d/%Y") %></td>
+						<td class="<%=member.membership_status%>Color"><%=member.prettyTime.strftime("%m/%d/%Y") %></td>
 					<%end%>
 		   	</tr>
 			<% end %>

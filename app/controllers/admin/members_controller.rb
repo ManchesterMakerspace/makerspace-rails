@@ -4,10 +4,19 @@ class Admin::MembersController < AdminController
 
   def new
     @member = Member.new
+    reject = RejectionCard.where(holder: nil).last
+    if( !!reject )
+      @member.cardID = reject.uid || 'RejectionCard has no ID'
+    else
+      @member.cardID = 'Not Found'
+    end
   end
 
   def create
-    @member = Member.new(user_params)
+    @member = Member.new(member_params)
+    if(!!params["member"]["expirationTime"])
+      @member.expirationTime = params["member"]["expirationTime"]
+    end
     if @member.save
       respond_to do |format|
         format.html { redirect_to @member, notice: 'Member created successfully' }
@@ -30,7 +39,11 @@ class Admin::MembersController < AdminController
   end
 
   def update
-    if @member.update(user_params)
+    @member.update(member_params)
+    if(!!params["member"]["expirationTime"])
+      @member.expirationTime = params["member"]["expirationTime"]
+    end
+    if @member.save
       respond_to do |format|
         format.html { redirect_to @member, notice: 'Member updated' }
         format.json { render json: @member }
@@ -44,8 +57,8 @@ class Admin::MembersController < AdminController
   end
 
   private
-  def user_params
-    params.require(:member).permit(:fullname, :cardID, :role, :email, :password, :password_confirmation, :status, :expirationTime, :skill_ids =>[], :learned_skill_ids => [])
+  def member_params
+    params.require(:member).permit(:fullname, :cardID, :groupName, :notificationAck, :accesspoints, :startDate, :role, :email, :slackHandle, :password, :password_confirmation, :status, :skill_ids =>[], :learned_skill_ids => [], :cards_attributes => [:id, :card_location])
   end
 
   def set_member

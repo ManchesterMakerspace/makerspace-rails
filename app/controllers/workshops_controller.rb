@@ -1,5 +1,6 @@
 class WorkshopsController < ApplicationController
-  before_action :set_workshop, only: [:show, :train, :make_expert, :retrain_all]
+  include ApplicationHelper
+  before_action :set_workshop, only: [:show, :train, :make_expert, :retrain_all, :check_role]
 
   def index
     if params[:member_id]
@@ -22,14 +23,28 @@ class WorkshopsController < ApplicationController
   end
 
   def retrain_all
-    @workshop.retrain_all
-    render json: @workshop
+    if current_member == @workshop.officer
+      @workshop.retrain_all
+      render json: @workshop
+    else
+      redirect_to root_path, alert: "You are not allowed to access that page."
+    end
   end
 
   def train
     member = Member.find_by(id: params[:member_id])
     @workshop.train_fully(member)
     render json: member
+  end
+
+  def check_role
+    if current_member == @workshop.officer
+      render json: {'role': 'officer'}
+    elsif is_admin? == true
+      render json: {'role': 'admin'}
+    else
+      render json: {'role': 'declined'}
+    end
   end
 
   def make_expert

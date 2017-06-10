@@ -1,17 +1,19 @@
 <div class="row shadow memberPage" id="<%= @member._id%>">
   <div class="col-sm-12">
     <h2><%= @member.fullname %> </h2>
-    <h3><%= @member.email %> </h3>
+    <h3>Slack Handle: <%= @member.slackHandle || 'Needs Slack Handle added to db' %></h3>
+    <h3>Email: <%= @member.email || 'Needs email added to db' %> </h3>
     <h4>Membership Expiration Date: <%= @member.prettyTime.strftime("%m/%d/%Y") %></h4>
     <% if !@member.offices.empty? %>
       <h4>Officer of: <%=@member.offices.pluck(:name).join(", ")%></h4>
     <%end%>
+    <h4>Status: <%=@member.status%></h4>
     <% if is_admin? %>
       <%= link_to "Edit", edit_admin_member_path(@member), class: "btn btn-primary card"  %>
     <% end %>
 
     <p></p>
-    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
       <% @workshops.each do |workshop| %>
       <div class="panel panel-default">
         <div class="panel-heading">
@@ -19,7 +21,7 @@
             <%=workshop.name %> (Click to view required skills)
             <% if is_officer?(workshop) %>
               <% if workshop.experts.include?(@member) %>
-
+              <!--do nothing -->
               <% elsif @member.allowed_workshops.include?(workshop) %>
                 <%= (link_to "MAKE EXPERT", workshop_member_path(workshop, @member),  class: "btn btn-info expert", id: "#{workshop.id}") %>
               <% else %>
@@ -28,7 +30,7 @@
             <% end%>
         </h4>
       </div>
-        <div class="panel-body">
+        <div class="panel-body" style='display: none;'>
           <% if workshop.skills.empty? %>
             <%= "No skills requried for #{workshop.name}" %>
           <% else %>
@@ -39,6 +41,5 @@
         </div>
       </div>
       <% end %>
-    </div>
   </div>
 </div>

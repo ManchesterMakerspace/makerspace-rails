@@ -1,7 +1,15 @@
 module ApplicationHelper
   def is_officer?(workshop = nil)
     unless current_member.nil?
-      @workshop.try(:officer) == current_member || workshop.try(:officer) == current_member
+      if @workshop.try(:officer) == current_member || workshop.try(:officer) == current_member
+        return true
+      elsif workshop.nil?
+        return current_member.role == "officer"
+      elsif !!workshop.experts
+        if workshop.experts.include?(@member)
+          return true
+        end
+      end
     end
   end
 
