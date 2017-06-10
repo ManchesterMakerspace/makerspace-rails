@@ -1,0 +1,29 @@
+<%= form_for [:admin, @card] do |f| %>
+  <% if @card.errors.any? %>
+    <div id="error_explanation">
+    <h2>There were some errors:</h2>
+    <ul>
+      <% @card.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label 'Card ID' %>
+    <%= f.text_field :uid, readonly: true %>
+  </div>
+
+  <%= f.hidden_field :member_id, value: @member.id %>
+
+  <div class="form-group">
+    <%= f.label 'Member Name:' %>
+    <%= f.label @member.fullname %>
+  </div>
+
+  <div class="actions">
+   <%= f.submit %>
+ </div>
+
+<% end %>
