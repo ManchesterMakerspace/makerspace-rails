@@ -6,7 +6,7 @@ class Member
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-  attr_accessor :cardID
+  field :cardID
   field :fullname #full name of user
   field :status,                         default: "activeMember" # activeMember, nonMember, revoked
   field :accesspoints,     type: Array,  default: [] #points of access member (door, machine, etc)
