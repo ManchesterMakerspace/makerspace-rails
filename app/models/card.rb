@@ -7,8 +7,8 @@ class Card
   attr_accessor :card_location
 
   before_create :load_member_attribtues
-  before_update :update_member_attributes
-  after_save :check_validity, if: :card_location
+  before_update :load_member_attribtues
+  after_save :check_validity
 
   belongs_to :member
 
@@ -16,26 +16,20 @@ class Card
     self.holder = self.member.fullname
     self.member_id = self.member.id.to_s
     self.expiry = self.member.expirationTime
-    self.validity = self.check_validity;
-  end
-
-  def update_member_attributes
-    self.holder = self.member.fullname
-    self.member_id = self.member.id.to_s
-    self.expiry = self.member.expirationTime
   end
 
   def check_validity
+    Card.skip_callback(:save, :after, :check_validity)
     if (!!self.card_location)
       self.validity = self.card_location
-      self.card_location = nil
-      self.save
-    else (self.member.status == 'activeMember' || self.member.status == 'nonMember' || self.member.status == 'revoked')
+    elsif (self.validity != 'lost' && self.validity != 'stolen')
       if (self.member.membership_status != 'expired')
         self.validity = self.member.status
       else
         self.validity = 'expired'
       end
     end
+    self.save
+    Card.set_callback(:save, :after, :check_validity)
   end
 end
