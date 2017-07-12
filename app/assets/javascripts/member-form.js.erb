@@ -234,7 +234,9 @@ function createNewMember() {
       type: 'POST',
       data: {member: member, authenticity_token: token },
       success: function(data){
-        slack.invite(member.email, member.fullname);
+        if ("<%=Rails.env%>" === 'production') {
+          slack.invite(member.email, member.fullname);
+        }
         member.id = data._id.$oid;
         member.expirationTime.expTime = data.expirationTime;
         $('.newMembers').show();
