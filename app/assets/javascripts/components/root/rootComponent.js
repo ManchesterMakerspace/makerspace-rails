@@ -1,5 +1,5 @@
 app.component('rootComponent', {
-  templateUrl: 'root/_root.html',
+  templateUrl: 'components/root/_root.html',
   controller: rootController,
   controllerAs: "rootCtrl"
 });

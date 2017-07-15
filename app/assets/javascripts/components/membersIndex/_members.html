@@ -1,0 +1,16 @@
+<table class="table table-bordered table-striped">
+	<thead>
+		<tr>
+			<th>Name</th>
+      <th>Allowed Workshops</th>
+			<th>Membership Exp. Date</th>
+		</tr>
+	</thead>
+	<tbody>
+    <tr ng-repeat="member in membersCtrl.members">
+      <td ng-bind="member.fullname"></td>
+      <td ng-bind="member.allowedWorkshops"></td>
+      <td ng-bind="member.expirationTime | date: shortDate: EST"></td>
+    </tr>
+	</tbody>
+</table>
