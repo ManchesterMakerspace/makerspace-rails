@@ -1,4 +1,6 @@
 app.factory('membersService', function($http){
+  var member = {};
+
   var getAllMembers = function(){
     return $http.get('/api/members').then(function(response){
       var members = response.data.map(function(member){
@@ -13,7 +15,12 @@ app.factory('membersService', function($http){
     });
   };
 
+  var setMember = function(mbr){
+    angular.copy(mbr, member);
+  };
+
   return {
-    getAllMembers: getAllMembers
+    getAllMembers: getAllMembers,
+    setMember: setMember
   };
 });

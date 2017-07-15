@@ -1,6 +1,8 @@
 class ConfirmationsController < Devise::ConfirmationsController
 
   def show
+    byebug
+
     if params[:confirmation_token].present?
       @original_token = params[:confirmation_token]
     elsif params[resource_name].try(:[], :confirmation_token).present?
@@ -14,6 +16,8 @@ class ConfirmationsController < Devise::ConfirmationsController
   end
 
   def confirm
+    byebug
+
     @original_token = params[resource_name].try(:[], :confirmation_token)
     digested_token = Devise.token_generator.digest(self, :confirmation_token, @original_token)
     self.resource = resource_class.find_by_confirmation_token! digested_token
@@ -30,6 +34,7 @@ class ConfirmationsController < Devise::ConfirmationsController
 
  private
    def permitted_params
+     byebug
      params.require(resource_name).permit(:confirmation_token, :password, :password_confirmation)
    end
 end

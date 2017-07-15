@@ -10,8 +10,7 @@
     "angular-bootstrap": "=2.5.0",
     "angular-material": "^1.1.4",
     "angular-messages": "latest",
-    "angular-cookie": "latest",
-    "ng-token-auth": "latest"
+    "angular-devise": "latest"
   },
   "resolutions": {
     "angular": "1.6.4"

@@ -15,6 +15,5 @@
 //= require angular
 //= require angular-ui-router
 //= require angular-rails-templates
-//= require ng-token-auth
-//= require angular-cookie
+//= require angular-devise
 //= require_tree .

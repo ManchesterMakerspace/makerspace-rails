@@ -2,10 +2,11 @@ Rails.application.routes.draw do
 
   # get '/members/sign_up', to: 'members#index'
   # get '/members/password', to: 'members#index'
-  # devise_for :members, :controllers => {:confirmations => 'confirmations'}
+
   root to: "application#angular"
 
   scope :api do
+    devise_for :members, :controllers => {:sessions => 'sessions'}
     resources :members, only: [:index]
   end
 

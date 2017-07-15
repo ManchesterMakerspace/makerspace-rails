@@ -4,16 +4,18 @@ app.component('loginComponent', {
   controllerAs: "loginCtrl"
 });
 
-function loginController($auth) {
+function loginController(Auth, $state, membersService) {
   var loginCtrl = this;
-  loginCtrl.$onInit = function() {
-    console.log('init')
-  };
+  loginCtrl.$onInit = function() {};
 
   loginCtrl.submitLogin = function(form){
-    console.log(form)
     if(!form){return;}
-    console.log(loginCtrl.loginForm)
-    $auth.submitLogin(loginCtrl.loginForm);
+    Auth.login(loginCtrl.loginForm).then(function(user) {
+      membersService.setMember(user);
+      return $state.go('root.members');
+    }, function(error) {
+      console.log(error);
+        // Authentication failed...
+    });
   };
 }
