@@ -4,17 +4,32 @@
   <title>Makerspace Authorization</title>
   <%= stylesheet_link_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css' %>
   <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'member', 'data-turbolinks-track' => true %>
+   <%= javascript_include_tag 'skill', 'data-turbolinks-track' => true %>
+   <%= javascript_include_tag 'workshop', 'data-turbolinks-track' => true %>
   <%= stylesheet_link_tag    'jquery-ui.min', media: 'all', 'data-turbolinks-track' => true %>
-  <%= javascript_include_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
-  <%= javascript_include_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js' %>
   <%= csrf_meta_tags %>
   </head>
 <body>
-  <div class="container-fluid" ng-app="app">
-    <div class="">
+  <div class="container">
+
+    <div class="row">
+      <%= render 'layouts/navigation' %>
+    </div> <!--navbar row-->
+
+    <div class='row'>
+      <% if notice %>
+        <p class="alert alert-success"><%= notice %></p>
+      <% end %>
+      <% if alert %>
+        <p class="alert alert-danger"><%= alert %></p>
+      <% end %>
     </div>
-    <ui-view></ui-view>
-  </div>
+
+    <%= yield %>
+
+    <%= javascript_include_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
+	  <%= javascript_include_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js' %>
 </div>
 </body>
 </html>

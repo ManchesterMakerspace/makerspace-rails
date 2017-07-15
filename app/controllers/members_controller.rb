@@ -3,13 +3,16 @@ class MembersController < ApplicationController
 
     def index
         @members = Member.all.sort_by(&:fullname)
-        render json: @members
+        respond_to do |format|
+          format.html { render :index }
+          format.json { render json: @members }
+        end
     end
 
     def show
       @workshops = Workshop.all.sort_by(&:name)
       respond_to do |format|
-        # format.html { render :show }
+        format.html { render :show }
         format.json { render json: @member }
       end
     end

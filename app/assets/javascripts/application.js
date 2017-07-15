@@ -12,8 +12,12 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require angular
-//= require angular-ui-router
-//= require angular-rails-templates
-//= require angular-devise
-//= require_tree .
+//= require jquery-2.1.1.min
+//= require jquery-ui.min
+//= require turbolinks
+//= require bootstrap.min
+//= require bootstrap-sprockets
+//= require socket.io
+//= require member-form
+//= require workshop-form
+//= require rental-form
