@@ -1,4 +1,4 @@
-app.factory('membersService', function($http){
+app.factory('memberService', function($http){
   var member = {};
 
   var getAllMembers = function(){
@@ -19,8 +19,23 @@ app.factory('membersService', function($http){
     angular.copy(mbr, member);
   };
 
+  var getById = function(id){
+    return $http.get('/api/members/' + id);
+  };
+
+  var createMember = function(formData){
+    return $http.post('/api/admin/members', formData);
+  };
+
+  var renewMember = function(formData){
+    return $http.put('/api/admin/members/' + formData.memberId, formData);
+  };
+
   return {
     getAllMembers: getAllMembers,
-    setMember: setMember
+    setMember: setMember,
+    getById: getById,
+    createMember: createMember,
+    renewMember: renewMember
   };
 });

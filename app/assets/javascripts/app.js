@@ -5,7 +5,7 @@ var app = angular.module('app', [
 ]).run(function ($transitions, $state, Auth, membersService) {
     $transitions.onBefore({}, function () {
         return Auth.currentUser().then(function(data){
-            membersService.setMember(data);
+            memberService.setMember(data);
         }).catch(function(){
         });
     });
@@ -50,7 +50,7 @@ var app = angular.module('app', [
       component: 'membersIndexComponent',
       resolve: {
         members: function(membersService){
-          return membersService.getAllMembers();
+          return memberService.getAllMembers();
         }
       }
     });

@@ -11,7 +11,7 @@ function loginController(Auth, $state, membersService) {
   loginCtrl.submitLogin = function(form){
     if(!form){return;}
     Auth.login(loginCtrl.loginForm).then(function(user) {
-      membersService.setMember(user);
+      memberService.setMember(user);
       return $state.go('root.members');
     }, function(error) {
       console.log(error);
