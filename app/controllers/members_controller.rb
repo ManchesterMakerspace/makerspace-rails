@@ -8,10 +8,7 @@ class MembersController < ApplicationController
 
     def show
       @workshops = Workshop.all.sort_by(&:name)
-      respond_to do |format|
-        # format.html { render :show }
-        format.json { render json: @member }
-      end
+      render json: {members: @members, workshops: @workshops}
     end
 
     def search_by

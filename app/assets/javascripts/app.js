@@ -2,7 +2,7 @@ var app = angular.module('app', [
   'ui.router',
   'templates',
   'Devise'
-]).run(function ($transitions, $state, Auth, membersService) {
+]).run(function ($transitions, $state, Auth, memberService) {
     $transitions.onBefore({}, function () {
         return Auth.currentUser().then(function(data){
             memberService.setMember(data);
@@ -26,7 +26,6 @@ var app = angular.module('app', [
     });
 }).config(function($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, AuthProvider){
   $locationProvider.hashPrefix('');
-  $urlRouterProvider.otherwise('/members');
   $httpProvider.defaults.headers.common['X-CSRF-Token'] = angular.element('meta[name=csrf-token]').attr('content');
 
   AuthProvider.loginPath('api/members/sign_in.json');
@@ -35,6 +34,7 @@ var app = angular.module('app', [
   AuthProvider.logoutPath('api/members/sign_out.json');
   AuthProvider.logoutMethod('DELETE');
 
+  $urlRouterProvider.otherwise('/members');
   $stateProvider
     .state('login', {
       url: '/login',
@@ -49,7 +49,34 @@ var app = angular.module('app', [
       url: '/members',
       component: 'membersIndexComponent',
       resolve: {
-        members: function(membersService){
+        members: function(memberService){
+          return memberService.getAllMembers();
+        }
+      }
+    })
+    .state('root.memberships', {
+      url: '/memberships',
+      component: 'membershipsComponent',
+      resolve: {
+        members: function(memberService){
+          return memberService.getAllMembers();
+        }
+      }
+    })
+    .state('root.memberships.new', {
+      url: '/new',
+      component: 'newMemberComponent',
+      resolve: {
+        card: function(cardService){
+          return cardService.getLatestRejection();
+        }
+      }
+    })
+    .state('root.memberships.renew', {
+      url: '/renew',
+      component: 'renewMemberComponent',
+      resolve: {
+        members: function(memberService){
           return memberService.getAllMembers();
         }
       }
