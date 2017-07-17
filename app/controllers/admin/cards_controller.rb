@@ -1,5 +1,5 @@
 class Admin::CardsController < ApplicationController
-  before_action :set_member, only: [:new, :create]
+  before_action :set_member, only: [:create]
   before_action :set_card, only: [:new, :create]
 
   def new
@@ -9,6 +9,7 @@ class Admin::CardsController < ApplicationController
     else
       @card.uid = 'Not Found'
     end
+    render json: @card
   end
 
   def create
