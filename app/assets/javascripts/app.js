@@ -2,10 +2,10 @@ var app = angular.module('app', [
   'ui.router',
   'templates',
   'Devise'
-]).run(function ($transitions, $state, Auth, memberService) {
+]).run(function ($transitions, $state, Auth, memberService, $http) {
     $transitions.onBefore({}, function () {
         return Auth.currentUser().then(function(data){
-            memberService.setMember(data);
+            return memberService.setMember(data);
         }).catch(function(){
         });
     });
@@ -26,13 +26,10 @@ var app = angular.module('app', [
     });
 }).config(function($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, AuthProvider){
   $locationProvider.hashPrefix('');
-  $httpProvider.defaults.headers.common['X-CSRF-Token'] = angular.element('meta[name=csrf-token]').attr('content');
 
   AuthProvider.loginPath('api/members/sign_in.json');
-  AuthProvider.loginMethod('POST');
   AuthProvider.resourceName('member');
   AuthProvider.logoutPath('api/members/sign_out.json');
-  AuthProvider.logoutMethod('DELETE');
 
   $urlRouterProvider.otherwise('/members');
   $stateProvider
@@ -43,7 +40,12 @@ var app = angular.module('app', [
     .state('root', {
       url: '',
       abstract: true,
-      component: 'rootComponent'
+      component: 'rootComponent',
+      resolve: {
+        currentUser: function(Auth){
+          return Auth.currentUser();
+        }
+      }
     })
     .state('root.members', {
       url: '/members',

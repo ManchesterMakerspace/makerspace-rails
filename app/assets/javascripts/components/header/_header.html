@@ -1,0 +1,35 @@
+<div class="col-lg-12" id="navigation">
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">Manchester Makerspace</a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li><a class='navbar-link' ui-sref="root.members">Members</a></li>
+          <li><a class='navbar-link' ui-sref="root.workhops">Workshops</a></li>
+          <li><a class='navbar-link' ui-sref="root.rentals">Rentals</a></li>
+          <li><a class='navbar-link' ui-sref="root.memberships"  ng-if="headerCtrl.isAdmin()">Memberships</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right" id="auth">
+          <div class="navbar-link" ng-if="headerCtrl.currentUser">
+            <span>Signed in as {{headerCtrl.currentUser.fullname}}</span>
+            <button type="button" class="btn btn-primary" ng-click="headerCtrl.logout()">Sign Out</button>
+          </div>
+          <div class="navbar-link" ng-if="!headerCtrl.currentUser">
+            <button type="button" class="btn btn-primary" ui-sref="login">Sign In</button>
+          </div>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+</div>

@@ -4,12 +4,13 @@ app.component('loginComponent', {
   controllerAs: "loginCtrl"
 });
 
-function loginController(Auth, $state, membersService) {
+function loginController(Auth, $state, memberService) {
   var loginCtrl = this;
   loginCtrl.$onInit = function() {};
 
   loginCtrl.submitLogin = function(form){
     if(!form){return;}
+    console.log('sub')
     Auth.login(loginCtrl.loginForm).then(function(user) {
       memberService.setMember(user);
       return $state.go('root.members');
