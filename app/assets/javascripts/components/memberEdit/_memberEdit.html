@@ -1,1 +1,126 @@
-Edit
+<div class="col-xs-8 col-xs-offset-2">
+  <div class="row">
+    <div class="member-edit-header col-xs-6">
+      Edit Member Info
+    </div>
+  </div>
+  <form class="member-edit-form row" name="editForm"
+    ng-submit="memberEditCtrl.updateMember(editForm.$valid)" novalidate>
+
+    <md-input-container class="md-block">
+      <label for="fullname">Name</label>
+      <input type="text" name="editForm.fullname"
+        ng-model="memberEditCtrl.editForm.fullname"
+        required/>
+    </md-input-container>
+
+    <md-input-container class="md-block">
+      <label for="email">Email</label>
+      <input type="email" name="editForm.email"
+        ng-model="memberEditCtrl.editForm.email"/>
+    </md-input-container>
+
+    <md-input-container class="md-block">
+      <label for="slackHandle">Slack Handle</label>
+      <input type="text" name="editForm.slackHandle"
+        ng-model="memberEditCtrl.editForm.slackHandle"/>
+    </md-input-container>
+
+    <md-input-container class="md-block">
+      <label for="groupName">Group Name</label>
+      <input type="text" name="editForm.groupName"
+        ng-model="memberEditCtrl.editForm.groupName"/>
+    </md-input-container>
+
+    <md-input-container class="md-block">
+      <label for="status">Member Status</label>
+      <md-select ng-model="memberEditCtrl.editForm.status"
+        name="status"
+        md-no-asterisk
+        required>
+        <md-option ng-repeat="status in memberEditCtrl.statuses" ng-value="status">
+          {{status}}
+        </md-option>
+      </md-select>
+    </md-input-container>
+
+    <md-input-container class="md-block">
+      <label for="role">Member Role</label>
+      <md-select ng-model="memberEditCtrl.editForm.role"
+        name="role"
+        md-no-asterisk
+        required>
+        <md-option ng-repeat="role in memberEditCtrl.roles" ng-value="role">
+          {{role}}
+        </md-option>
+      </md-select>
+    </md-input-container>
+
+    <div ng-if="!memberEditCtrl.showDetails">
+      <button type="button" class="btn btn-primary"
+        ng-click="memberEditCtrl.showDetails = !memberEditCtrl.showDetails">Show Details</button>
+    </div>
+
+    <div class="details" ng-if="memberEditCtrl.showDetails">
+      <div class="current-cards">
+        <h5>Cards</h5>
+        <div ng-if="!memberEditCtrl.member.cards || memberEditCtrl.member.cards.length === 0">
+          No Cards Found!
+        </div>
+        <div class="card" ng-if="memberEditCtrl.member.cards.length > 0" ng-repeat="card in memberEditCtrl.member.cards">
+          <p>Card ID: <span ng-bind="card.id.substr(card.id.length - 5)"></span></p>
+          <p>Card Status: <span ng-bind="card.validity"></span></p>
+          <p>Report as:
+            <button type="button"
+              class="btn btn-danger"
+              ng-click="memberEditCtrl.reportCard('lost')">Lost</button>
+            <button type="button"
+              class="btn btn-danger"
+              ng-click="memberEditCtrl.reportCard('lost')">Stolen</button>
+          </p>
+        </div>
+      </div>
+
+      <div class="new-card">
+        <button type="button"
+          class="btn btn-warning"
+          ng-click="memberEditCtrl.createCard()">New Card</button>
+      </div>
+
+      <input style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
+      <input type="password" style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
+
+      <md-input-container class="md-block" ng-if="memberEditCtrl.editForm.role !== 'member'">
+        <label for="password">Password</label>
+        <input ng-model="memberEditCtrl.editForm.password"
+          name="password"
+          match="editForm.passwordConfirmation"
+          md-no-asterisk
+          ng-minlength="8"
+          ng-required="memberEditCtrl.editForm.passwordConfirmation"/>
+          <div ng-messages="editForm.passwordConfirmation.$error">
+            <div ng-message="required">Must match new password.</div>
+            <div ng-message="minlength">Must be at least 8 characters.</div>
+            <div ng-message="match">Passwords must match</div>
+          </div>
+      </md-input-container>
+
+      <md-input-container class="md-block" ng-if="memberEditCtrl.editForm.role !== 'member'">
+        <label for="passwordConfirmation">Password Confirmation</label>
+        <input ng-model="memberEditCtrl.editForm.passwordConfirmation"
+          name="passwordConfirmation"
+          md-no-asterisk
+          ng-minlength="8"
+          match="editForm.password"
+          ng-required="memberEditCtrl.editForm.password"/>
+          <div ng-messages="editForm.password.$error">
+            <div ng-message="required">Must match new password.</div>
+            <div ng-message="minlength">Must be at least 8 characters.</div>
+            <div ng-message="match">Passwords must match</div>
+          </div>
+      </md-input-container>
+    </div>
+
+    <button type="submit" class="btn" ng-class="editForm.$valid ? 'btn-success': 'btn-disabled'">Update Member</button>
+  </form>
+</div>

@@ -20,7 +20,10 @@ app.factory('memberService', function($http){
   };
 
   var getById = function(id){
-    return $http.get('/api/members/' + id);
+    return $http.get('/api/members/' + id).then(function(response){
+      console.log(response);
+      return response.data;
+    });
   };
 
   var createMember = function(memberData){

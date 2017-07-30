@@ -10,5 +10,8 @@ app.component('memberEditComponent', {
 function memberEditController() {
   var memberEditCtrl = this;
   memberEditCtrl.$onInit = function() {
+    memberEditCtrl.editForm = memberEditCtrl.member;
+    memberEditCtrl.statuses = ["activeMember", "nonMember", "revoked"];
+    memberEditCtrl.roles = ["member", "officer", "admin"];
   };
 }

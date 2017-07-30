@@ -58,12 +58,15 @@
         </md-input-container>
       </div>
       <div class="col-xs-6">
-        <md-input-container>
-          <label for="months">Initial Membership Length</label>
-          <input type="text" name="renewal[months]"
-            ng-model="newMemberCtrl.newMember.renewal.months"
-            required
-            md-no-asterisk/>
+        <md-input-container class="md-block">
+          <label for="months">Intial Membership Length</label>
+          <md-select ng-model="newMemberCtrl.newMember.renewal.months"
+            name="renewal[months]"
+            required>
+              <md-option ng-repeat="n in [1,2,3,4,5,6,7,8,9,10,11,12]" ng-value="{{n}}">
+                {{n}}
+              </md-option>
+          </md-select>
         </md-input-container>
       </div>
     </div>

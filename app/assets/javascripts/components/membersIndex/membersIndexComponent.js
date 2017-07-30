@@ -24,7 +24,7 @@ function membersIndexController($state) {
 
   membersCtrl.viewMember = function(member){
     if(!!membersCtrl.isUserAdmin()){
-      $state.go('root.admin.memberEdit', {member: member});
+      $state.go('root.admin.memberEdit', {id: member.id});
     } else {
       $state.go('root.memberProfile');
     }

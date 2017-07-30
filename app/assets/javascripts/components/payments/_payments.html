@@ -14,8 +14,8 @@
     </div>
   </div>
   <div class="payments-header row">
-    <div class=" col-xs-1">
-      Bulk
+    <div class=" col-xs-2">
+      Bulk Process
     </div>
     <div class=" col-xs-3">
       Product Name
@@ -29,12 +29,12 @@
     <div class=" col-xs-1">
       Intro
     </div>
-    <div class=" col-xs-2"></div>
+    <div class=" col-xs-1"></div>
   </div>
   <div class="payment row"
     ng-class="payment.danger ? 'danger' : 'success'"
     ng-repeat="payment in paymentsCtrl.payments">
-    <div class="col-xs-1 ">
+    <div class="col-xs-2">
       <input type="checkbox" name="renew" ng-model="payment.selected"/>
     </div>
     <div class="col-xs-3">
@@ -57,7 +57,7 @@
         <span ng-bind="payment.payer_email"></span>
       </p>
     </div>
-    <div class="col-xs-1 ">
+    <div class="col-xs-1">
       <input type="checkbox" name="renew" ng-model="payment.renew"/>
       <select name="months"
         ng-model="payment.months"
@@ -65,10 +65,10 @@
         <option ng-repeat="n in [1,2,3,4,5,6,7,8,9,10]" value="{{n}}">{{n}}</option>
       </select>
     </div>
-    <div class="col-xs-1 ">
+    <div class="col-xs-1">
       <input type="checkbox" name="intro" ng-model="payment.intro"/>
     </div>
-    <div class="col-xs-2 ">
+    <div class="col-xs-1">
       <button type="button"
         class="btn btn-primary"
         ng-click="paymentsCtrl.processPayment(payment)">Send</button>
