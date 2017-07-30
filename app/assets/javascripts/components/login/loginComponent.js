@@ -10,10 +10,9 @@ function loginController(Auth, $state, memberService) {
 
   loginCtrl.submitLogin = function(form){
     if(!form){return;}
-    console.log('sub')
     Auth.login(loginCtrl.loginForm).then(function(user) {
       memberService.setMember(user);
-      return $state.go('root.members');
+      return $state.go('members');
     }, function(error) {
       console.log(error);
         // Authentication failed...

@@ -2,8 +2,13 @@ class MembersController < ApplicationController
     before_action :set_member, only: [:show]
 
     def index
-        @members = Member.all.sort_by(&:fullname)
-        render json: @members
+      @members = Member.all.sort_by(&:fullname)
+      if current_member.try(:role) != 'admin'
+        @members = @members.select do |m|
+          Time.at(m.expirationTime/1000) - Time.now > 0
+        end
+      end
+      render json: @members
     end
 
     def show

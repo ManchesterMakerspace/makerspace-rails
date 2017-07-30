@@ -6,9 +6,9 @@ Rails.application.routes.draw do
   root to: "application#angular"
 
   scope :api do
-    devise_for :members, :controllers => {:sessions => 'sessions'}
     resources :members, only: [:index]
     resources :rentals, only: [:index]
+    devise_for :members, :controllers => {:sessions => 'sessions'}
 
     authenticate :member do
       resources :members, only: [:show]

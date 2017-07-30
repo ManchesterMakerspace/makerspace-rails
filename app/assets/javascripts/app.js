@@ -17,7 +17,9 @@ var app = angular.module('app', [
         var toState = trans.to();
 
         if (!Auth.isAuthenticated()) {
-          if(/root/.test(toState.name)) {
+          if(toState.name === "members"){
+            return;
+          } else if(/root/.test(toState.name)) {
             $state.go('login');
           }
         } else {
@@ -63,7 +65,7 @@ var app = angular.module('app', [
       url: '/admin',
       abstract: true
     })
-    .state('root.members', {
+    .state('members', {
       url: '/members',
       component: 'membersIndexComponent',
       resolve: {

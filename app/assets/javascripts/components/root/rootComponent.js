@@ -13,6 +13,6 @@ function rootController() {
   };
 
   rootCtrl.isUserAdmin = function(){
-    return rootCtrl.currentUser.role === 'admin';
+    return !!rootCtrl.currentUser && rootCtrl.currentUser.role === 'admin';
   };
 }

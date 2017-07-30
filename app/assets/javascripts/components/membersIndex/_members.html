@@ -1,3 +1,4 @@
+<header-component></header-component>
 <div class="col-xs-12">
 	<table class="table members-table table-bordered table-striped">
 		<thead>
@@ -20,7 +21,7 @@
 						ng-dblclick="membersCtrl.toggleShowShop(member)"
 						ng-bind="member.allowedWorkshops"></span>
 				</td>
-				<td class="col-xs-4" ng-bind="member.expirationTime | date: shortDate: EST"></td>
+				<td class="col-xs-4" ng-class="membersCtrl.expStatus(member.expirationTime)" ng-bind="member.expirationTime | date: shortDate: EST"></td>
 			</tr>
 		</tbody>
 	</table>

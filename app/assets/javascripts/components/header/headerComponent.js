@@ -19,6 +19,6 @@ function headerController(Auth, $state) {
   };
 
   headerCtrl.isAdmin = function(){
-    return headerCtrl.currentUser.role === 'admin';
+    return !!headerCtrl.currentUser && headerCtrl.currentUser.role === 'admin';
   };
 }
