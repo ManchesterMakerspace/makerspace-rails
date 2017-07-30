@@ -9,7 +9,7 @@
 		</thead>
 		<tbody>
 			<tr ng-repeat="member in membersCtrl.members">
-				<td class="col-xs-4" ng-bind="member.fullname"></td>
+				<td class="col-xs-4 member-name" ng-click="membersCtrl.viewMember(member)" ng-bind="member.fullname"></td>
 				<td class="allowed-workershops col-xs-4">
 					<button type="button"
 						ng-if="!member.showShops"

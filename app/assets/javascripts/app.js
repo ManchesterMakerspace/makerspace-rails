@@ -21,9 +21,18 @@ var app = angular.module('app', [
             $state.go('login');
           }
         } else {
-          console.log('logged in');
           if(/login/.test(toState.name) || (/register/.test(toState.name))){
             $state.go("root.members");
+          } else if (/root.admin/.test(toState.name)) {
+            return Auth.currentUser().then(function(user){
+              if(user.role === 'admin') {
+                return;
+              } else {
+                $state.go("root.members");
+                console.log('error');
+                //send error notification
+              }
+            })
           }
         }
     });
@@ -50,12 +59,25 @@ var app = angular.module('app', [
         }
       }
     })
+    .state('root.admin', {
+      url: '/admin',
+      abstract: true
+    })
     .state('root.members', {
       url: '/members',
       component: 'membersIndexComponent',
       resolve: {
         members: function(memberService){
           return memberService.getAllMembers();
+        }
+      }
+    })
+    .state('root.admin.memberEdit', {
+      url: '/members/:id',
+      component: 'memberEditComponent',
+      resolve: {
+        member: function($stateParams, memberService) {
+          return memberService.getById($stateParams.id);
         }
       }
     })

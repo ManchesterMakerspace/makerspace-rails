@@ -14,3 +14,12 @@
   border-radius: 0 4px 4px 4px;
   padding: 1em;
 }
+
+.members-table {
+  .member-name {
+    &:hover {
+      font-weight: bold;
+      cursor: pointer;
+    }
+  }
+}

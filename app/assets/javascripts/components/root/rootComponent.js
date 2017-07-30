@@ -11,4 +11,8 @@ function rootController() {
   var rootCtrl = this;
   rootCtrl.$onInit = function() {
   };
+
+  rootCtrl.isUserAdmin = function(){
+    return rootCtrl.currentUser.role === 'admin';
+  };
 }

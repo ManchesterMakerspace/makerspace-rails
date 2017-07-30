@@ -3,11 +3,12 @@ app.component('membersIndexComponent', {
   controller: membersIndexController,
   controllerAs: "membersCtrl",
   bindings: {
-    members: '<'
+    members: '<',
+    isUserAdmin: '<'
   }
 });
 
-function membersIndexController() {
+function membersIndexController($state) {
   var membersCtrl = this;
   membersCtrl.$onInit = function() {
     console.log(membersCtrl.members)
@@ -18,6 +19,14 @@ function membersIndexController() {
       member.showShops = true;
     } else {
       member.showShops = false;
+    }
+  };
+
+  membersCtrl.viewMember = function(member){
+    if(!!membersCtrl.isUserAdmin()){
+      $state.go('root.admin.memberEdit', {member: member});
+    } else {
+      $state.go('root.memberProfile');
     }
   };
 }
