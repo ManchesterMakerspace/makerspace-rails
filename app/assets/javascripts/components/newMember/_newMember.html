@@ -1,1 +1,117 @@
 New Member Form
+<form class="new-member-form" name="newMember" ng-submit="newMemberCtrl.submitMember(newMember.$valid)" novalidate>
+  <input style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
+  <input type="password" style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
+  <md-input-container>
+    <label for="fullname">Name</label>
+    <input type="text" name="fullname"
+      ng-model="newMemberCtrl.newMember.fullname"
+      required
+      ng-minlength="2"/>
+    <div ng-messages="newMember.fullname.$error">
+      <div ng-message="required">Cannot be blank.</div>
+      <div ng-message="minlength">Must be at least 2 characters.</div>
+    </div>
+  </md-input-container>
+  <md-input-container>
+    <label for="cardID">Card ID</label>
+    <input type="text" name="cardID"
+      ng-model="newMemberCtrl.newMember.cardID"
+      required
+      md-no-asterisk/>
+    <div ng-messages="newMember.cardID.$error" ng-if="newMember.cardID.$dirty">
+      <div ng-message="required">Cannot be blank.</div>
+    </div>
+  </md-input-container>
+  <button type="button" class="btn btn-default" ng-click="newMemberCtrl.refreshCardID()">Refresh Card ID</button>
+  <md-input-container>
+    <label for="groupName">Group Name</label>
+    <input type="text" name="groupName"
+      ng-model="newMemberCtrl.newMember.groupName"
+      ng-minlength="2"/>
+    <div ng-messages="newMember.groupName.$error" ng-if="newMember.groupName.$dirty">
+      <div ng-message="minlength">Must be at least 2 characters.</div>
+    </div>
+  </md-input-container>
+  <md-input-container>
+    <label for="startDate">Start Date</label>
+    <input type="text" name="startDate"
+      ng-model="newMemberCtrl.newMember.renewal.startDate"/>
+  </md-input-container>
+
+  <md-input-container>
+    <label for="months">Initial Membership Length</label>
+    <input type="text" name="months"
+      ng-model="newMemberCtrl.newMember.renewal.months"
+      required
+      md-no-asterisk/>
+  </md-input-container>
+
+  <button type="submit" class="btn" ng-class="newMember.$valid ? 'btn-success': 'btn-disabled'">Create New Member</button>
+
+</form>
+<%= form_for [:admin, @member], html: {class: 'new', style: 'display: none'}  do |f| %>
+
+	<div class="field">
+		<%= f.label :fullname %><br />
+		<%= f.text_field :fullname, autofocus: true %>
+	</div>
+
+	<div class="form-group">
+		<%= f.label :cardID %>
+		<%= f.text_field :cardID, readonly: true, class: "form-control" %>
+	</div>
+
+	<div class="form-group">
+		<%= f.label 'Group Name' %>
+		<%= f.text_field :groupName, placeholder: 'n/a', class: "form-control" %>
+	</div>
+
+	<%= hidden_field :member, :accesspoints %>
+
+	<div class="form-group">
+		<%= f.label "Start Date" %>
+		<input input='text' placeholder='mm/dd/yyyy' name='member[startDate]' id="member_startDate" class: "form-control" >
+	</div>
+
+	<div class="form-group role">
+		<%= f.label :role %>
+		<%= f.select :role, ['member', 'officer', 'admin'], class: "form-control" %>
+	</div>
+
+	<input style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
+	<input type="password" style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
+
+	<div class="field">
+		<%= f.label :email %><br />
+		<%= f.email_field :email %>
+	</div>
+
+	<div class="login">
+		<div class="field">
+			<%= f.label :password %>
+			<% if @minimum_password_length %>
+			<em>(<%= @minimum_password_length %> characters minimum)</em>
+			<% end %><br />
+			<%= f.password_field :password, autocomplete: "off" %>
+		</div>
+
+		<div class="field">
+			<%= f.label :password_confirmation %><br />
+			<%= f.password_field :password_confirmation, autocomplete: "off" %>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<%= f.label 'Membership Length' %>
+		<%= f.select :expirationTime, (1..12) %>
+	</div>
+
+	<%= f.submit %>
+<% end %>
+
+<%= render 'scan' %>
+
+<div class="newMembers" style="display:none">
+<h4> New Members: </h4>
+</div>

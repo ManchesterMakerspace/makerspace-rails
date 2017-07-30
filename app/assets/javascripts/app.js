@@ -1,7 +1,10 @@
 var app = angular.module('app', [
   'ui.router',
   'templates',
-  'Devise'
+  'Devise',
+  'ngAnimate',
+  'ngMaterial',
+  'ngMessages'
 ]).run(function ($transitions, $state, Auth, memberService) {
     $transitions.onBefore({}, function () {
         return Auth.currentUser().then(function(data){
