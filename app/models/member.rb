@@ -108,8 +108,11 @@ class Member
     prettyTime - Time.now
   end
 
-  def expirationTime=(time)
-    num_months = time[:expTime]
+  def renewal=(time)
+    if(!time.is_a? Object)
+      return
+    end
+    num_months = time[:months]
     now_in_ms = (Time.now.strftime('%s').to_i * 1000)
     if (!!time[:startDate]) #check if startDate was passed to function.
       d = time[:startDate].split("/");

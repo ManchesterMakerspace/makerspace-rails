@@ -27,8 +27,16 @@ app.factory('memberService', function($http){
     return $http.post('/api/admin/members', formData);
   };
 
-  var renewMember = function(formData){
-    return $http.put('/api/admin/members/' + formData.memberId, formData);
+  var renewMember = function(paymentData){
+    var member = paymentData.member;
+    member.renewal = {
+      months: paymentData.months
+    };
+    return $http.put('/api/admin/members/' + paymentData.member.id, {member: member});
+  };
+
+  var introMember = function(formData){
+    return $http.post('/api/admin/members/intro', formData);
   };
 
   return {
@@ -36,6 +44,7 @@ app.factory('memberService', function($http){
     setMember: setMember,
     getById: getById,
     createMember: createMember,
-    renewMember: renewMember
+    renewMember: renewMember,
+    introMember: introMember
   };
 });

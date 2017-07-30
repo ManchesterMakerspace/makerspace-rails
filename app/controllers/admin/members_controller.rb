@@ -33,32 +33,17 @@ class Admin::MembersController < AdminController
   def edit
   end
 
-  def renew
-    @member = Member.new
-    @members = Member.all.distinct(:fullname).sort
-  end
-
   def update
-    @member.update(member_params)
-    if(!!params["member"]["expirationTime"])
-      @member.expirationTime = params["member"]["expirationTime"]
-    end
-    if @member.save
-      respond_to do |format|
-        format.html { redirect_to @member, notice: 'Member updated' }
-        format.json { render json: @member }
-      end
+    if @member.update(member_params)
+      render json: @member
     else
-      respond_to do |format|
-        format.html { render :edit, alert: "Update failed:  #{@member.errors.full_messages}" }
-        format.json { render json: @member, alert: "Update failed:  #{@member.errors.full_messages}" }
-      end
+      render status: 500
     end
   end
 
   private
   def member_params
-    params.require(:member).permit(:fullname, :cardID, :groupName, :notificationAck, :accesspoints, :startDate, :role, :email, :slackHandle, :password, :password_confirmation, :status, :skill_ids =>[], :learned_skill_ids => [], :cards_attributes => [:id, :card_location])
+    params.require(:member).permit(:fullname, :cardID, :groupName, :notificationAck, :accesspoints, :startDate, :role, :email, :slackHandle, :password, :password_confirmation, :status, :renewal => [:months, :start_date], :skill_ids =>[], :learned_skill_ids => [], :cards_attributes => [:id, :card_location])
   end
 
   def set_member

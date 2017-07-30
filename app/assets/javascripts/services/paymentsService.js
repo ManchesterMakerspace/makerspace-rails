@@ -1,4 +1,4 @@
-app.factory('paymentsService', function($http){
+app.factory('paymentsService', function($http, $filter){
 
   var getAllPayments = function(){
     return $http.get('/api/admin/payments').then(function(response){
@@ -6,7 +6,13 @@ app.factory('paymentsService', function($http){
     });
   };
 
+  var processPayment = function(paymentData) {
+    console.log(paymentData);
+    return $http.put('/api/admin/payments/' + paymentData.txn_id, {payment: paymentData});
+  };
+
   return {
-    getAllPayments: getAllPayments
+    getAllPayments: getAllPayments,
+    processPayment: processPayment
   };
 });
