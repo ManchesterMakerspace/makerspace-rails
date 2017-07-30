@@ -23,8 +23,8 @@ app.factory('memberService', function($http){
     return $http.get('/api/members/' + id);
   };
 
-  var createMember = function(formData){
-    return $http.post('/api/admin/members', formData);
+  var createMember = function(memberData){
+    return $http.post('/api/admin/members', {member: memberData});
   };
 
   var renewMember = function(paymentData){
