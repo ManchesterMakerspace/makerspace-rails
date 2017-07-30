@@ -14,19 +14,10 @@ class Admin::MembersController < AdminController
 
   def create
     @member = Member.new(member_params)
-    if(!!params["member"]["expirationTime"])
-      @member.expirationTime = params["member"]["expirationTime"]
-    end
     if @member.save
-      respond_to do |format|
-        format.html { redirect_to @member, notice: 'Member created successfully' }
-        format.json { render json: @member }
-      end
+      render json: @member
     else
-      respond_to do |format|
-        format.html { render :new, alert: "Creation failed:  #{@member.errors.full_messages}" }
-        format.json { render json: @member }
-      end
+      render status: 500
     end
   end
 

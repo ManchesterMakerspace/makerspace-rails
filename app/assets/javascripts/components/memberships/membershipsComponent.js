@@ -10,6 +10,6 @@ app.component('membershipsComponent', {
 function membershipsController() {
   var membershipCtrl = this;
   membershipCtrl.$onInit = function() {
-    console.log(membershipCtrl.members)
+    membershipCtrl.updatedMembers = [];
   };
 }

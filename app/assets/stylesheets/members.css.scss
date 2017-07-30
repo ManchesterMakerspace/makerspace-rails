@@ -1,0 +1,16 @@
+.new-member-header {
+  border: 1px solid black;
+  border-radius: 4px 4px 0 0;
+  font-size: 1.2em;
+  padding: 1em;
+  cursor: pointer;
+  &.active {
+    background-color: grey;
+  }
+}
+
+.new-member-form, .renew-member-form {
+  border: 1px solid black;
+  border-radius: 0 4px 4px 4px;
+  padding: 1em;
+}

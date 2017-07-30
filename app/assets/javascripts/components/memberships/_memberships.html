@@ -1,4 +1,26 @@
-<a ui-sref="root.memberships.new">New Member</a>
-<a ui-sref="root.memberships.renew">Renew Member</a>
+<div class="col-xs-12">
+  <div class="row">
+    <div class="col-xs-6 col-xs-offset-3">
+      <div class="row">
+        <div class="col-xs-6 text-center new-member-header" ui-sref-active="active" ui-sref="root.memberships.new">
+          Register New Member
+        </div>
+        <div class="col-xs-6 text-center new-member-header" ui-sref-active="active" ui-sref="root.memberships.renew">
+          Renew A Member
+        </div>
+      </div>
+      <ui-view updated-members=membershipCtrl.updatedMembers></ui-view>
+    </div>
+  </div>
 
-<ui-view></ui-view>
+  <div class="row new-members">
+    <div class="col-xs-12">
+      <h4 ng-if="membershipCtrl.updatedMembers.length > 0">Member Updates</h4>
+    </div>
+    <div class="col-xs-4 member-record"
+      ng-repeat="member in membershipCtrl.updatedMembers track by $index">
+      <p>Member Name: <span ng-bind="member.fullname"></span></p>
+      <p>Expiration Date: <span ng-bind="member.expirationTime | date: shortDate: EST"></span></p>
+    </div>
+  </div>
+</div>

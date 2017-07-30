@@ -3,13 +3,21 @@ app.component('renewMemberComponent', {
   controller: renewMemberController,
   controllerAs: "renewMemberCtrl",
   bindings: {
-    member: '<'
+    members: '<',
+    updatedMembers: '='
   }
 });
 
-function renewMemberController() {
+function renewMemberController(memberService) {
   var renewMemberCtrl = this;
   renewMemberCtrl.$onInit = function() {
-    console.log(renewMemberCtrl.member)
+  };
+
+  renewMemberCtrl.renewMember = function(form){
+    if(!form) {return;}
+    // console.log(renewMemberCtrl.renewalMember)
+    return memberService.renewMember(renewMemberCtrl.renewalForm.member).then(function(member){
+      renewMemberCtrl.updatedMembers.push(member);
+    });
   };
 }

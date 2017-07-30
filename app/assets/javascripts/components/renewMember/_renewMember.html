@@ -1,1 +1,41 @@
-Renew Member Form & update member info form
+<form class="renew-member-form row" name="renewalForm"
+  ng-submit="renewMemberCtrl.renewMember(renewalForm.$valid)" novalidate>
+  <input style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
+  <input type="password" style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
+
+  <div class="col-xs-6">
+    <md-input-container class="md-block">
+      <label for="member">Select a Member</label>
+      <md-select ng-model="renewMemberCtrl.renewalForm.member"
+        name="member"
+        required>
+        <md-option ng-repeat="member in renewMemberCtrl.members track by $index"
+          ng-value="member">
+          {{member.fullname}}
+        </md-option>
+      </md-select>
+    </md-input-container>
+  </div>
+  <div class="col-xs-6">
+    <md-input-container class="md-block">
+      <label for="months">Renewal Length</label>
+      <md-select ng-model="renewMemberCtrl.renewalForm.member.renewal.months"
+        name="renewal[months]"
+        required>
+          <md-option ng-repeat="n in [1,2,3,4,5,6,7,8,9,10,11,12]" ng-value="{{n}}">
+            {{n}}
+          </md-option>
+      </md-select>
+    </md-input-container>
+  </div>
+
+  <div class="selected-member col-xs-12">
+    <h4>Selected Member</h4>
+    <p>Name: <span ng-bind="renewMemberCtrl.renewalForm.member.fullname"></span></p>
+    <p>Current Expiration: <span ng-bind="renewMemberCtrl.renewalForm.member.expirationTime | date: shortDate: EST"></span></p>
+  </div>
+
+  <div class="col-xs-12 text-center">
+      <button type="submit" class="btn" ng-class="renewalForm.$valid ? 'btn-success': 'btn-disabled'">Renew {{renewMemberCtrl.renewalForm.member.fullname}}</button>
+  </div>
+</form>

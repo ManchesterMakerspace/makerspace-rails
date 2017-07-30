@@ -62,6 +62,7 @@ var app = angular.module('app', [
     .state('root.memberships', {
       url: '/memberships',
       component: 'membershipsComponent',
+      abstract: true,
       resolve: {
         members: function(memberService){
           return memberService.getAllMembers();
@@ -79,12 +80,7 @@ var app = angular.module('app', [
     })
     .state('root.memberships.renew', {
       url: '/renew',
-      component: 'renewMemberComponent',
-      resolve: {
-        members: function(memberService){
-          return memberService.getAllMembers();
-        }
-      }
+      component: 'renewMemberComponent'
     })
     .state('root.payments', {
       url: '/payments',

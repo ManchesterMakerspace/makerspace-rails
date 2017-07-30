@@ -42,7 +42,7 @@ function paymentsController(memberService, paymentsService, $q) {
   paymentsCtrl.processPayment = function(payment) {
     if(!payment.member) {return;}
     if(!!payment.renew) {
-      return memberService.renewMember(payment).then(function(){
+      return memberService.renewMemberByPayment(payment).then(function(){
         return paymentsService.processPayment(payment);
       }).catch(function(err){
         console.log(err);

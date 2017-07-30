@@ -3,13 +3,29 @@ app.component('newMemberComponent', {
   controller: newMemberController,
   controllerAs: "newMemberCtrl",
   bindings: {
-    card: '<'
+    card: '<',
+    updatedMembers: '='
   }
 });
 
-function newMemberController() {
+function newMemberController(memberService, cardService) {
   var newMemberCtrl = this;
   newMemberCtrl.$onInit = function() {
-    console.log(newMemberCtrl.card)
+    newMemberCtrl.newMember = {
+      cardID: newMemberCtrl.card.uid
+    };
+  };
+
+  newMemberCtrl.submitMember = function(form){
+    if(!form) {return;}
+    return memberService.createMember(newMemberCtrl.newMember).then(function(member){
+      newMemberCtrl.updatedMembers.push(member);
+    });
+  };
+
+  newMemberCtrl.refreshCardID = function() {
+    cardService.getLatestRejection().then(function(card){
+      newMemberCtrl.newMember.cardID = card.uid;
+    });
   };
 }
