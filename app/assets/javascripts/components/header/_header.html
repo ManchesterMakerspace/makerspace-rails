@@ -16,11 +16,11 @@
           <li><a class='navbar-link' ui-sref="root.payments"  ng-if="headerCtrl.isAdmin()">Payments</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right" id="auth">
-          <div class="navbar-link" ng-if="headerCtrl.currentUser">
+          <div class="navbar-link" ng-if="headerCtrl.currentUser.id">
             <span>Signed in as {{headerCtrl.currentUser.fullname}}</span>
             <button type="button" class="btn btn-primary" ng-click="headerCtrl.logout()">Sign Out</button>
           </div>
-          <div class="navbar-link" ng-if="!headerCtrl.currentUser">
+          <div class="navbar-link" ng-if="!headerCtrl.currentUser.id">
             <button type="button" class="btn btn-primary" ui-sref="login">Sign In</button>
           </div>
         </ul>

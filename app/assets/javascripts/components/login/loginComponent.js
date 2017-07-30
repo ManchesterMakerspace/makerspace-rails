@@ -12,7 +12,7 @@ function loginController(Auth, $state, memberService) {
     if(!form){return;}
     Auth.login(loginCtrl.loginForm).then(function(user) {
       memberService.setMember(user);
-      return $state.go('members');
+      return $state.go('root.members');
     }, function(error) {
       console.log(error);
         // Authentication failed...

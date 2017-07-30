@@ -10,9 +10,9 @@
   padding: .5em;
   border: 1px solid black;
   &.success {
-    background-color:  rgba(0, 255, 0, 0.2);
+    background-color:  rgba(0, 255, 0, 0.1);
   }
   &.danger {
-    background-color: rgba(255, 0, 0, 0.2);
+    background-color: rgba(255, 0, 0, 0.1);
   }
 }

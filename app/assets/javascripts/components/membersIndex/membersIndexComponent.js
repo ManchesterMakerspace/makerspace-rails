@@ -3,14 +3,15 @@ app.component('membersIndexComponent', {
   controller: membersIndexController,
   controllerAs: "membersCtrl",
   bindings: {
-    members: '<'
+    members: '<',
+    currentUser: '<'
   }
 });
 
 function membersIndexController($state, Auth) {
   var membersCtrl = this;
   membersCtrl.$onInit = function() {
-    membersCtrl.currentUser = Auth.currentUser();
+    // membersCtrl.currentUser = Auth.currentUser();
   };
 
   membersCtrl.toggleShowShop = function(member) {

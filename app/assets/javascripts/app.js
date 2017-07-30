@@ -17,7 +17,7 @@ var app = angular.module('app', [
         var toState = trans.to();
 
         if (!Auth.isAuthenticated()) {
-          if(toState.name === "members"){
+          if(toState.name === "root.members"){
             return;
           } else if(/root/.test(toState.name)) {
             $state.go('login');
@@ -57,7 +57,12 @@ var app = angular.module('app', [
       component: 'rootComponent',
       resolve: {
         currentUser: function(Auth){
-          return Auth.currentUser();
+          return Auth.currentUser().then(function(response){
+            return response;
+          }).catch(function(err){
+            console.log(err);
+            return {};
+          });
         }
       }
     })
@@ -65,7 +70,7 @@ var app = angular.module('app', [
       url: '/admin',
       abstract: true
     })
-    .state('members', {
+    .state('root.members', {
       url: '/members',
       component: 'membersIndexComponent',
       resolve: {
