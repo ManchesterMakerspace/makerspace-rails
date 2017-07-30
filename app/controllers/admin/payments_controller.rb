@@ -5,6 +5,7 @@ class Admin::PaymentsController < ApplicationController
       payment.member ||= payment.find_member
       payment
     end
+    render json: @payments
   end
 
   # def new

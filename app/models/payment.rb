@@ -1,6 +1,7 @@
 class Payment
   include Mongoid::Document
-  store_in collection: 'generals', database: 'makerspacepayments', client: 'payments'
+  include ActiveModel::Serializers::JSON
+  store_in collection: 'general', database: 'heroku_pvjp3t1v', client: 'payments'
 
   belongs_to :member, optional: true
 
@@ -15,7 +16,7 @@ class Payment
   field :txn_id
   field :txn_type
   field :test, type: Boolean
-  field :processed, type: Boolean, default: false
+  # field :processed, type: Boolean, default: false
 
   def self.update_members
     unless self.new_payments.size == 0
@@ -57,7 +58,7 @@ class Payment
     unless !!member
       member = Member.where(email: self.payer_email).first
       unless !!member
-        member = Member.includes(fullname: self.lastname).first
+        member = Member.where(fullname: Regexp.new(self.lastname)).first
       end
     end
     return member

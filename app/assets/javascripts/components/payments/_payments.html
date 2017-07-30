@@ -1,0 +1,38 @@
+<div class="col-xs-12">
+	<table class="table payments-table table-bordered table-striped">
+		<thead>
+			<tr>
+				<th class="col-xs-3">Product</th>
+				<th class="col-xs-3">Member Info</th>
+        <th class="col-xs-3">Renew</th>
+				<th class="col-xs-3">Intro</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="payment in paymentsCtrl.payments">
+				<td class="col-xs-3" ng-bind="payment.product"></td>
+				<td class="col-xs-4">
+          <p>
+            <select name="member"
+              ng-options="member.fullname for member in paymentsCtrl.members track by member._id.$oid"
+              ng-model="payment.member"
+              placeholder="Select Member...">
+            </select>
+          </p>
+          <p>
+            <span ng-bind="payment.firstname"></span>
+            <span ng-bind="payment.lastname"></span>
+            @
+            <span ng-bind="payment.payer_email"></span>
+          </p>
+        </td>
+				<td class="col-xs-2">
+          <button type="button">Renew</button>
+        </td>
+				<td class="col-xs-2">
+          <button type="button">Intro</button>
+        </td>
+			</tr>
+		</tbody>
+	</table>
+</div>
