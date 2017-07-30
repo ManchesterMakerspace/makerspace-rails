@@ -1,16 +1,27 @@
-<table class="table table-bordered table-striped">
-	<thead>
-		<tr>
-			<th>Name</th>
-      <th>Allowed Workshops</th>
-			<th>Membership Exp. Date</th>
-		</tr>
-	</thead>
-	<tbody>
-    <tr ng-repeat="member in membersCtrl.members">
-      <td ng-bind="member.fullname"></td>
-      <td ng-bind="member.allowedWorkshops"></td>
-      <td ng-bind="member.expirationTime | date: shortDate: EST"></td>
-    </tr>
-	</tbody>
-</table>
+<div class="col-xs-12">
+	<table class="table members-table table-bordered table-striped">
+		<thead>
+			<tr>
+				<th class="col-xs-4">Name</th>
+				<th class="col-xs-4">Allowed Workshops</th>
+				<th class="col-xs-4">Membership Exp. Date</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="member in membersCtrl.members">
+				<td class="col-xs-4" ng-bind="member.fullname"></td>
+				<td class="allowed-workershops col-xs-4">
+					<button type="button"
+						ng-if="!member.showShops"
+						ng-click="membersCtrl.toggleShowShop(member)">
+							Show Allowed Shops
+					</button>
+					<span ng-if="member.showShops"
+						ng-dblclick="membersCtrl.toggleShowShop(member)"
+						ng-bind="member.allowedWorkshops"></span>
+				</td>
+				<td class="col-xs-4" ng-bind="member.expirationTime | date: shortDate: EST"></td>
+			</tr>
+		</tbody>
+	</table>
+</div>

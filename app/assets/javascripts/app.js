@@ -2,7 +2,7 @@ var app = angular.module('app', [
   'ui.router',
   'templates',
   'Devise'
-]).run(function ($transitions, $state, Auth, memberService, $http) {
+]).run(function ($transitions, $state, Auth, memberService) {
     $transitions.onBefore({}, function () {
         return Auth.currentUser().then(function(data){
             return memberService.setMember(data);
@@ -80,6 +80,18 @@ var app = angular.module('app', [
       resolve: {
         members: function(memberService){
           return memberService.getAllMembers();
+        }
+      }
+    })
+    .state('root.payments', {
+      url: '/payments',
+      component: 'paymentsComponent',
+      resolve: {
+        members: function(memberService){
+          return memberService.getAllMembers();
+        },
+        payments: function(paymentsService){
+          return paymentsService.getAllPayments();
         }
       }
     });
