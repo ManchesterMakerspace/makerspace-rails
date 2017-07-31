@@ -131,5 +131,18 @@ var app = angular.module('app', [
           return rentalsService.getAllRentals();
         }
       }
+    })
+    .state('root.rentalEdit', {
+      url: '/rentals/:id/edit',
+      component: 'rentalEditController',
+      resolve: {
+        rental: function(rentalsService, $stateParams) {
+          return rentalsService.getById($stateParams.id);
+        }
+      }
+    })
+    .state('root.rentalNew', {
+      url: '/rentals/new',
+      component: 'rentalNewComponent'
     });
 });
