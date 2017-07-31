@@ -81,30 +81,8 @@ class Member
     password == password_confirmation && !password.blank?
   end
 
-  def self.search_terms
-    ['id','name','email']
-  end
-
-  def list_allowed_workshops
-    allowed_workshops.pluck(:name).sort.join(", ")
-  end
-
-  def membership_status
-    if duration <= 0
-      'expired'
-    elsif duration < 1.week
-      'expiring'
-    else
-      'current'
-    end
-  end
-
   def prettyTime
     Time.at(expirationTime/1000)
-  end
-
-  def duration
-    prettyTime - Time.now
   end
 
   def renewal=(time)
