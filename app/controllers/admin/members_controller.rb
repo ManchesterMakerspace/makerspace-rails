@@ -34,7 +34,7 @@ class Admin::MembersController < AdminController
 
   private
   def member_params
-    params.require(:member).permit(:fullname, :cardID, :groupName, :notificationAck, :accesspoints, :startDate, :role, :email, :slackHandle, :password, :password_confirmation, :status, :renewal => [:months, :start_date], :skill_ids =>[], :learned_skill_ids => [], :cards_attributes => [:id, :card_location])
+    params.require(:member).permit(:fullname, :cardID, :groupName, :notificationAck, :accesspoints, :startDate, :role, :email, :slackHandle, :password, :password_confirmation, :status, :renewal => [:months, :start_date], :skill_ids =>[], :learned_skill_ids => [])
   end
 
   def set_member

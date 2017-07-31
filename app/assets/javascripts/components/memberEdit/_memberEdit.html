@@ -14,6 +14,10 @@
         required/>
     </md-input-container>
 
+    <div>
+      <span>Expiration: </span><span ng-bind="memberEditCtrl.member.expirationTime | date: shortDate: EST"></span>
+    </div>
+
     <md-input-container class="md-block">
       <label for="email">Email</label>
       <input type="email" name="editForm.email"
@@ -73,10 +77,10 @@
           <p>Report as:
             <button type="button"
               class="btn btn-danger"
-              ng-click="memberEditCtrl.reportCard('lost')">Lost</button>
+              ng-click="memberEditCtrl.reportCard(card, 'lost')">Lost</button>
             <button type="button"
               class="btn btn-danger"
-              ng-click="memberEditCtrl.reportCard('lost')">Stolen</button>
+              ng-click="memberEditCtrl.reportCard(card, 'stolen')">Stolen</button>
           </p>
         </div>
       </div>
@@ -84,7 +88,34 @@
       <div class="new-card">
         <button type="button"
           class="btn btn-warning"
-          ng-click="memberEditCtrl.createCard()">New Card</button>
+          ng-if="!memberEditCtrl.newCard"
+          ng-click="memberEditCtrl.newCardForm()">New Card</button>
+
+          <div class="col-xs-12" ng-if="memberEditCtrl.newCard">
+            <div class="row">
+              <div class="col-xs-4">
+                <md-input-container>
+                  <label for="cardID">Card ID</label>
+                  <input type="text" name="newCard[uid]"
+                    ng-model="memberEditCtrl.newCard.uid"
+                    disabled
+                    required
+                    md-no-asterisk/>
+                  <div ng-messages="newCard.uid.$error" ng-if="newCard.uid.$dirty">
+                    <div ng-message="required">Cannot be blank.</div>
+                  </div>
+                </md-input-container>
+              </div>
+              <div class="col-xs-4">
+                <button type="button" class="btn btn-default btn-block"
+                 ng-click="memberEditCtrl.refreshCardID()">Refresh Card ID</button>
+              </div>
+              <div class="col-xs-4">
+                <button type="button" class="btn btn-warning btn-block"
+                 ng-click="memberEditCtrl.createCard()">Create New Card</button>
+              </div>
+            </div>
+          </div>
       </div>
 
       <input style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
@@ -93,6 +124,7 @@
       <md-input-container class="md-block" ng-if="memberEditCtrl.editForm.role !== 'member'">
         <label for="password">Password</label>
         <input ng-model="memberEditCtrl.editForm.password"
+          type="password"
           name="password"
           match="editForm.passwordConfirmation"
           md-no-asterisk
@@ -108,6 +140,7 @@
       <md-input-container class="md-block" ng-if="memberEditCtrl.editForm.role !== 'member'">
         <label for="passwordConfirmation">Password Confirmation</label>
         <input ng-model="memberEditCtrl.editForm.passwordConfirmation"
+          type="password"
           name="passwordConfirmation"
           md-no-asterisk
           ng-minlength="8"

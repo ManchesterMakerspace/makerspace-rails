@@ -18,7 +18,7 @@ Rails.application.routes.draw do
       end
       namespace :admin  do
         resources :payments, only: [:index, :update]
-        resources :cards, only: [:new, :create]
+        resources :cards, only: [:new, :create, :update]
         resources :rentals, only: [:new, :create, :edit, :update]
         resources :members, only: [:new, :create, :edit, :update]
         resources :workshops, only: [:new, :create, :edit, :update, :destroy]

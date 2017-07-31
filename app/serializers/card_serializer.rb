@@ -1,4 +1,4 @@
 class CardSerializer < ActiveModel::Serializer
-  attributes :holder, :expiry, :validity
+  attributes :id, :holder, :expiry, :validity, :uid
   belongs_to :member
 end

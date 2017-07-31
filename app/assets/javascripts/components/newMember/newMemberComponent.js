@@ -24,8 +24,9 @@ function newMemberController(memberService, cardService) {
   };
 
   newMemberCtrl.refreshCardID = function() {
-    cardService.getLatestRejection().then(function(card){
+    return cardService.getLatestRejection().then(function(card){
       newMemberCtrl.newMember.cardID = card.uid;
+      return newMemberCtrl.newMember.cardID;
     });
   };
 }

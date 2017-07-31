@@ -1,8 +1,8 @@
 class Admin::CardsController < ApplicationController
   before_action :set_member, only: [:create]
-  before_action :set_card, only: [:new, :create]
 
   def new
+    @card = Card.new()
     reject = RejectionCard.where(holder: nil).last
     if( !!reject )
       @card.uid = reject.uid || 'RejectionCard has no ID'
@@ -13,21 +13,30 @@ class Admin::CardsController < ApplicationController
   end
 
   def create
-    @card.uid = params["card"]["uid"]
+    @card = Card.new(card_params)
     if @card.save
       RejectionCard.find_by(uid: @card.uid).update(holder: @card.holder)
-      redirect_to member_path(@card.member), notice: 'Success'
+      render json: @card
     else
-      render :new, alert: 'Failure'
+      render status: 500
+    end
+  end
+
+  def update
+    @card = Card.find_by(id: params[:id])
+    if @card.update(card_params)
+      render json: @card
+    else
+      render status: 500
     end
   end
 
   private
-  def set_member
-    @member = Member.find_by(id: params["member_id"]) || Member.find_by(id: params["card"]["member_id"])
+  def card_params
+    params.require(:card).permit(:member_id, :uid, :card_location)
   end
 
-  def set_card
-    @card = Card.new(member: @member)
+  def set_member
+    @member = Member.find_by(id: params["member_id"]) || Member.find_by(id: params["card"]["member_id"])
   end
 end

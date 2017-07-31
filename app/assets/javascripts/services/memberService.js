@@ -40,7 +40,7 @@ app.factory('memberService', function($http){
     return $http.put('/api/admin/members/' + paymentData.member.id, {member: member});
   };
 
-  var renewMember = function(memberData) {
+  var updateMember = function(memberData) {
     return $http.put('/api/admin/members/' + memberData.id, {member: memberData}).then(function(response){
       return response.data;
     });
@@ -56,7 +56,7 @@ app.factory('memberService', function($http){
     getById: getById,
     createMember: createMember,
     renewMemberByPayment: renewMemberByPayment,
-    renewMember: renewMember,
+    updateMember: updateMember,
     introMember: introMember
   };
 });
