@@ -1,6 +1,5 @@
 class Admin::MembersController < AdminController
   before_action :set_member, only: [:edit, :update]
-  before_action :set_workshop, only: [:edit]
 
   def new
     @member = Member.new
@@ -21,9 +20,6 @@ class Admin::MembersController < AdminController
     end
   end
 
-  def edit
-  end
-
   def update
     if @member.update(member_params)
       render json: @member
@@ -39,9 +35,5 @@ class Admin::MembersController < AdminController
 
   def set_member
     @member = Member.find_by(id: params[:id]) || Member.find_by(id: params[:member][:id]) || Member.find_by(fullname: params[:member][:fullname])
-  end
-
-  def set_workshop
-    @workshop = Workshop.find_by(id: params[:workshop_id])
   end
 end

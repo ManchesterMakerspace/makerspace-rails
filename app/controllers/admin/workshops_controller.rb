@@ -1,45 +1,29 @@
 class Admin::WorkshopsController < AdminController
-  before_action :set_workshop, only: [:edit, :update, :destroy]
-  def new
-    @workshop = Workshop.new
-  end
+  before_action :set_workshop, only: [:update, :destroy]
 
   def create
     @workshop = Workshop.new(workshop_params)
     if @workshop.save
-      respond_to do |format|
-        format.html { redirect_to workshops_path, notice: 'Workshop created successfully' }
-        format.json { redirect_to workshops_path }
-      end
+      render json: @workshop
     else
-      respond_to do |format|
-        format.html { render :new, alert: "Creation failed:  #{@workshop.errors.full_messages}" }
-        format.json { redirect_to 'workshops_path' }
-      end
+      render status: 500
     end
-  end
-
-  def edit
-    @workshop = Workshop.find_by(id: params[:id])
   end
 
   def update
     if @workshop.update(workshop_params)
-      respond_to do |format|
-        format.html { redirect_to workshops_path, notice: 'Workshop updated' }
-        format.json { render json: @workshop }
-      end
+      render json: @workshop
     else
-      respond_to do |format|
-        format.html { render :edit, alert: "Update failed:  #{@workshop.errors.full_messages}" }
-        format.json { render json: @workshop }
-      end
+      render status: 500
     end
   end
 
   def destroy
-    @workshop.destroy
-    redirect_to workshops_path, alert: 'Workshop deleted.'
+    if @workshop.destroy
+      render status: 200
+    else
+      render status: 500
+    end
   end
 
   private
