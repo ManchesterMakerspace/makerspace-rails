@@ -122,5 +122,14 @@ var app = angular.module('app', [
           return paymentsService.getAllPayments();
         }
       }
+    })
+    .state('root.rentals', {
+      url: '/rentals',
+      component: 'rentalsComponent',
+      resolve: {
+        rentals: function(rentalsService) {
+          return rentalsService.getAllRentals();
+        }
+      }
     });
 });
