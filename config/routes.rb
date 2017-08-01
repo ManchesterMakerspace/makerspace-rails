@@ -12,6 +12,7 @@ Rails.application.routes.draw do
 
     authenticate :member do
       resources :members, only: [:show]
+      resources :rentals, only: [:show]
       resources :workshops, only: [:show, :index] do
         resources :skills, only: [:index, :create, :update, :destroy]
         resources :members, only: [:edit, :update]
@@ -19,7 +20,7 @@ Rails.application.routes.draw do
       namespace :admin  do
         resources :payments, only: [:index, :update]
         resources :cards, only: [:new, :create, :update]
-        resources :rentals, only: [:new, :create, :edit, :update]
+        resources :rentals, only: [:create, :update]
         resources :members, only: [:new, :create, :edit, :update]
         resources :workshops, only: [:new, :create, :edit, :update, :destroy]
       end

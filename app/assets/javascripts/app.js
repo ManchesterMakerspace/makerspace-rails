@@ -129,20 +129,27 @@ var app = angular.module('app', [
       resolve: {
         rentals: function(rentalsService) {
           return rentalsService.getAllRentals();
+        },
+        members: function(memberService){
+          return memberService.getAllMembers();
         }
       }
     })
-    .state('root.rentalEdit', {
-      url: '/rentals/:id/edit',
-      component: 'rentalEditController',
+    .state('root.rentals.edit', {
+      url: '/:id',
+      component: 'rentalFormComponent',
       resolve: {
         rental: function(rentalsService, $stateParams) {
-          return rentalsService.getById($stateParams.id);
+          return rentalsService.getByID($stateParams.id).then(function(response){
+            return response;
+          }).catch(function(err){
+            return err; //return error so state doesn't drop
+          });
         }
       }
     })
-    .state('root.rentalNew', {
-      url: '/rentals/new',
-      component: 'rentalNewComponent'
+    .state('root.rentals.new', {
+      url: '/new',
+      component: 'rentalFormComponent'
     });
 });
