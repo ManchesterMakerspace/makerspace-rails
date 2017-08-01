@@ -5,16 +5,10 @@ class WorkshopsController < ApplicationController
   def index
     if params[:member_id]
       @workshops = Member.find_by(id: params[:member_id]).workshops
-      respond_to do |format|
-        format.html { render :index }
-        format.json { render json: @workshops }
-      end
+      render json: @workshops
     else
       @workshops = Workshop.all
-      respond_to do |format|
-        format.html { render :index }
-        format.json { render json: @workshops }
-      end
+      render json: @workshops
     end
   end
 
@@ -27,7 +21,7 @@ class WorkshopsController < ApplicationController
       @workshop.retrain_all
       render json: @workshop
     else
-      redirect_to root_path, alert: "You are not allowed to access that page."
+      render status: 401
     end
   end
 
@@ -35,16 +29,6 @@ class WorkshopsController < ApplicationController
     member = Member.find_by(id: params[:member_id])
     @workshop.train_fully(member)
     render json: member
-  end
-
-  def check_role
-    if current_member == @workshop.officer
-      render json: {'role': 'officer'}
-    elsif is_admin? == true
-      render json: {'role': 'admin'}
-    else
-      render json: {'role': 'declined'}
-    end
   end
 
   def make_expert

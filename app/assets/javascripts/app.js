@@ -151,5 +151,14 @@ var app = angular.module('app', [
     .state('root.rentals.new', {
       url: '/new',
       component: 'rentalFormComponent'
+    })
+    .state('root.workshops', {
+      url: '/workshops',
+      component: 'workshopsComponent',
+      resolve: {
+        workshops: function(workshopService){
+          return workshopService.getAllWorkshops();
+        }
+      }
     });
 });
