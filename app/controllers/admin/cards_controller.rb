@@ -5,9 +5,9 @@ class Admin::CardsController < ApplicationController
     @card = Card.new()
     reject = RejectionCard.where(holder: nil).last
     if( !!reject )
-      @card.uid = reject.uid || 'RejectionCard has no ID'
+      @card.uid = reject.uid || nil
     else
-      @card.uid = 'Not Found'
+      @card.uid = nil
     end
     render json: @card
   end

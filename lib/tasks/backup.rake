@@ -15,8 +15,8 @@ namespace :db do
     GoogleDrive::Session.from_config("config.json").upload_from_file("/home/putter/server/makerspace-interface/dump/skills/skillBackup_#{Time.now.strftime('%m-%d-%Y')}.gz", "skillBackup#{Time.now.strftime('%m-%d-%Y')}.gz", convert: false)
   end
 
-  task :backupPayments do
-    sh("mongodump --db makerspacepayments --collection generals --out - | gzip > /home/putter/server/makerspace-interface/dump/payments/paymentBackup_#{Time.now.strftime('%m-%d-%Y')}.gz")
-    GoogleDrive::Session.from_config("config.json").upload_from_file("/home/putter/server/makerspace-interface/dump/payments/paymentBackup_#{Time.now.strftime('%m-%d-%Y')}.gz", "paymentBackup#{Time.now.strftime('%m-%d-%Y')}.gz", convert: false)
+  task :backupCards do
+    sh("mongodump --db makerauth --collection cards --out - | gzip > /home/putter/server/makerspace-interface/dump/cards/cardBackup#{Time.now.strftime('%m-%d-%Y')}.gz")
+    GoogleDrive::Session.from_config("config.json").upload_from_file("/home/putter/server/makerspace-interface/dump/cards/cardBackup#{Time.now.strftime('%m-%d-%Y')}.gz", "cardBackup#{Time.now.strftime('%m-%d-%Y')}.gz", convert: false)
   end
 end

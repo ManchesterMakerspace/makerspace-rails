@@ -1,5 +1,5 @@
 class Admin::MembersController < AdminController
-  before_action :set_member, only: [:edit, :update]
+  before_action :set_member, only: [:update]
 
   def new
     @member = Member.new

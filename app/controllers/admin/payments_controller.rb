@@ -2,7 +2,7 @@ class Admin::PaymentsController < ApplicationController
   before_action :find_payment, only: [:update]
 
   def index
-    @payments = Payment.all.collect do |payment|
+    @payments = Payment.where(member: nil).collect do |payment|
       payment.member ||= payment.find_member
       payment
     end
