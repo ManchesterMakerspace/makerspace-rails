@@ -1,5 +1,4 @@
 app.factory('memberService', function($http){
-  var member = {};
 
   var getAllMembers = function(){
     return $http.get('/api/members').then(function(response){
@@ -13,10 +12,6 @@ app.factory('memberService', function($http){
       });
       return members;
     });
-  };
-
-  var setMember = function(mbr){
-    angular.copy(mbr, member);
   };
 
   var getById = function(id){
@@ -52,7 +47,6 @@ app.factory('memberService', function($http){
 
   return {
     getAllMembers: getAllMembers,
-    setMember: setMember,
     getById: getById,
     createMember: createMember,
     renewMemberByPayment: renewMemberByPayment,

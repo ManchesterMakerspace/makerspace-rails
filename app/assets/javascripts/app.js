@@ -5,14 +5,7 @@ var app = angular.module('app', [
   'ngAnimate',
   'ngMaterial',
   'ngMessages'
-]).run(function ($transitions, $state, Auth, memberService) {
-    $transitions.onBefore({}, function () {
-        return Auth.currentUser().then(function(data){
-            return memberService.setMember(data);
-        }).catch(function(){
-        });
-    });
-
+]).run(function ($transitions, $state, Auth) {
     $transitions.onStart({}, function(trans){
         var toState = trans.to();
 
