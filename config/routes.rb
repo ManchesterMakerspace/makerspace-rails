@@ -18,11 +18,13 @@ Rails.application.routes.draw do
         resources :members, only: [:edit, :update]
       end
       namespace :admin  do
+        post '/members/intro', to: 'members#intro'
+        get '/members/welcome_email', to: 'members#welcome_email'
         resources :payments, only: [:index, :update]
         resources :cards, only: [:new, :create, :update]
         resources :rentals, only: [:create, :update]
-        resources :members, only: [:new, :create, :edit, :update]
-        resources :workshops, only: [:new, :create, :edit, :update, :destroy]
+        resources :members, only: [:new, :create, :update, :intro]
+        resources :workshops, only: [:create, :update, :destroy]
       end
       # get '/admin/renew', to: 'admin/members#renew'
       # get '/workshops/:id/check_role', to: 'workshops#check_role'

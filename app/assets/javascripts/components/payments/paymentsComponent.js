@@ -40,8 +40,7 @@ function paymentsController(memberService, paymentsService, $q) {
   };
 
   paymentsCtrl.processPayment = function(payment) {
-    if(!payment.member) {return;}
-    if(!!payment.renew) {
+    if(!!payment.renew && !!payment.member) {
       return memberService.renewMemberByPayment(payment).then(function(){
         return paymentsService.processPayment(payment);
       }).catch(function(err){
