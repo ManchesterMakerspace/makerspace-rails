@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+gem 'angular-rails-templates'
 gem 'socket.io-rails'
 #Used to push db backups to Google Drive
 gem 'google_drive'

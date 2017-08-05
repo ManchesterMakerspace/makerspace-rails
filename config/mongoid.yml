@@ -100,10 +100,7 @@ development:
         # used to validate certs passed from the other end of the connection.
         # ssl_ca_cert: /path/to/ca.cert
     payments:
-      database: makerspacepayments
-      hosts:
-        - localhost:27017
-      options:
+      uri: <%=ENV['MLAB_URI']%>
 
   # Configure Mongoid specific options. (optional)
   options:
