@@ -1,6 +1,0 @@
-Description:
-  Creates an initializer under config/initializers
-
-Example:
-  rails g paypal:initializer
-
