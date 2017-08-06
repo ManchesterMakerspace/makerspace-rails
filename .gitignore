@@ -12,7 +12,6 @@ capybara-*.html
 rerun.txt
 pickle-email-*.html
 /dump
-/vendor/cache
 config.json
 /node_modules
 /public
