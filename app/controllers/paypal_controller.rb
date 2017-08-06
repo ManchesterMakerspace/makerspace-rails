@@ -5,4 +5,5 @@ protect_from_forgery except: [:notify]
     if @api.ipn_valid?(request.raw_post)
       byebug
     end
+  end
 end
