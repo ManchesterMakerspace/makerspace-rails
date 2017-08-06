@@ -1,6 +1,6 @@
 class Admin::MembersController < AdminController
   before_action :set_member, only: [:update]
-  before_action :open_slack, only: [:update, :intro]
+  before_action :slack_connect, only: [:update, :intro]
 
   def new
     @member = Member.new
@@ -59,7 +59,7 @@ class Admin::MembersController < AdminController
     @member = Member.find_by(id: params[:id]) || Member.find_by(id: params[:member][:id]) || Member.find_by(fullname: params[:member][:fullname])
   end
 
-  def open_slack
+  def slack_connect
     @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
             channel: 'test_channel',
             icon_emoji: ':ghost:'
