@@ -70,8 +70,51 @@
         </md-input-container>
       </div>
     </div>
-  </div>
+    <div class="col-xs-12">
+      <md-input-container class="md-block">
+        <label for="role">Role</label>
+        <md-select ng-model="newMemberCtrl.newMember.role"
+          name="role"
+          required>
+          <md-option ng-repeat="r in ['member', 'officer', 'admin']" ng-value="{{r}}">
+            {{r}}
+          </md-option>
+        </md-select>
+      </md-input-container>
+    </div>
 
+    <div class="col-xs-12" ng-if="newMemberCtrl.newMember.role !== 'member'">
+      <div class="row">
+        <div class="col-xs-6">
+        <md-input-container>
+          <label for="password">Password</label>
+          <input type="password" name="password"
+            ng-required="newMemberCtrl.newMember.passwordConf"
+            ng-model="newMemberCtrl.newMember.password"
+            match="newMember.passwordConf"
+            minlength="8">
+            <div ng-messages="newMember.password.$error">
+  						<div ng-message="required">Must enter current password in order to change passwords.</div>
+  						<div ng-message="minlength">Must be at least 8 characters.</div>
+  					</div>
+          </md-input-container>
+      </div>
+      <div class="col-xs-6">
+        <md-input-container>
+          <label for="passwordConf">Password Confirmation</label>
+          <input type="password" name="passwordConf"
+          ng-required="newMemberCtrl.newMember.password"
+          ng-model="newMemberCtrl.newMember.passwordConf"
+          match="newMember.password"
+          minlength="8">
+          <div ng-messages="newMember.passwordConf.$error">
+						<div ng-message="required">Must enter current password in order to change passwords.</div>
+						<div ng-message="minlength">Must be at least 8 characters.</div>
+					</div>
+        </md-input-container>
+      </div>
+    </div>
+  </div>
   <div class="col-xs-12 text-center">
       <button type="submit" class="btn" ng-class="newMember.$valid ? 'btn-success': 'btn-disabled'">Create New Member</button>
   </div>

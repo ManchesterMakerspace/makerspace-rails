@@ -5,7 +5,7 @@ Rails.application.routes.draw do
 
   root to: "application#angular"
 
-  post '/ipnlistener', to: 'paypal#notify' 
+  post '/ipnlistener', to: 'paypal#notify'
 
   scope :api do
     resources :members, only: [:index]

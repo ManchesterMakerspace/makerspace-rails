@@ -5,32 +5,35 @@ var app = angular.module('app', [
   'ngAnimate',
   'ngMaterial',
   'ngMessages'
-]).run(function ($transitions, $state, Auth) {
-    $transitions.onStart({}, function(trans){
-        var toState = trans.to();
+]).run(function ($transitions, $state, Auth, $trace) {
+  $trace.enable('TRANSITION');
 
-        if (!Auth.isAuthenticated()) {
-          if(toState.name === "root.members"){
-            return;
-          } else if(/root/.test(toState.name)) {
-            $state.go('login');
-          }
-        } else {
-          if(/login/.test(toState.name) || (/register/.test(toState.name))){
-            $state.go("root.members");
-          } else if (/root.admin/.test(toState.name)) {
-            return Auth.currentUser().then(function(user){
-              if(user.role === 'admin') {
-                return;
-              } else {
-                $state.go("root.members");
-                console.log('error');
-                //send error notification
-              }
-            })
-          }
-        }
-    });
+    // $transitions.onStart({}, function(trans){
+    //     var toState = trans.to();
+    //
+    //     if (!Auth.isAuthenticated()) {
+    //       if(toState.name === "root.members"){
+    //         return;
+    //       } else if(/root/.test(toState.name)) {
+    //         console.log('unAuthed?');
+    //         $state.go('login');
+    //       }
+    //     } else {
+    //       if(/login/.test(toState.name) || (/register/.test(toState.name))){
+    //         $state.go("root.members");
+    //       } else if (/root.admin/.test(toState.name)) {
+    //         return Auth.currentUser().then(function(user){
+    //           if(user.role === 'admin') {
+    //             return;
+    //           } else {
+    //             $state.go("root.members");
+    //             console.log('error');
+    //             //send error notification
+    //           }
+    //         })
+    //       }
+    //     }
+    // });
 }).config(function($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, AuthProvider){
   $locationProvider.hashPrefix('');
 
