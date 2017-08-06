@@ -1,5 +1,6 @@
 class Admin::MembersController < AdminController
   before_action :set_member, only: [:update]
+  before_action :open_slack, only: [:update, :intro]
 
   def new
     @member = Member.new
@@ -21,7 +22,12 @@ class Admin::MembersController < AdminController
   end
 
   def update
+    date = @member.expirationTime
     if @member.update(member_params)
+      byebug
+      if @member.expirationTime > date
+        @notifier.ping "#{@member.fullname} renewed. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
+      end
       render json: @member
     else
       render status: 500
@@ -37,6 +43,7 @@ class Admin::MembersController < AdminController
     @member = Member.new(member_params)
     email = MemberMailer.welcome_email(@member)
     if email.deliver_now
+      @notifier.ping "Intro email sent to #{@member.email}"
       render json: @member
     else
       render status: 500
@@ -50,5 +57,11 @@ class Admin::MembersController < AdminController
 
   def set_member
     @member = Member.find_by(id: params[:id]) || Member.find_by(id: params[:member][:id]) || Member.find_by(fullname: params[:member][:fullname])
+  end
+
+  def open_slack
+    @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
+            channel: 'test_channel',
+            icon_emoji: ':ghost:'
   end
 end

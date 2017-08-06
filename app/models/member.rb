@@ -85,6 +85,20 @@ class Member
     Time.at(expirationTime/1000)
   end
 
+  def duration
+    prettyTime - Time.now
+  end
+
+  def membership_status
+     if duration <= 0
+       'expired'
+     elsif duration < 1.week
+       'expiring'
+     else
+       'current'
+     end
+   end
+
   def renewal=(time)
     if(!time.is_a? Object)
       return
