@@ -1,5 +1,6 @@
 require_relative 'boot'
 
+
 # Pick the frameworks you want:
 # require "active_record/railtie"
 require "action_controller/railtie"
@@ -10,6 +11,13 @@ require "action_cable/engine"
 require "action_mailer/railtie"
 require "sprockets/railtie"
 require "rails/test_unit/railtie"
+
+require 'dotenv'
+if (ENV["RAILS_ENV"] == 'production')
+  Dotenv.load('production.env')
+else
+  Dotenv.load('development.env')
+end
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
