@@ -15,7 +15,6 @@ pickle-email-*.html
 config.json
 /node_modules
 /public
-/vendor
 start.sh
 
 # TODO Comment out this rule if you are OK with secrets being uploaded to the repo
