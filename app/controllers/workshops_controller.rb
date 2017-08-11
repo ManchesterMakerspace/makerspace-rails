@@ -21,7 +21,7 @@ class WorkshopsController < ApplicationController
       @workshop.retrain_all
       render json: @workshop
     else
-      render status: 401
+      render :json, status: 401
     end
   end
 

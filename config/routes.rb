@@ -4,13 +4,13 @@ Rails.application.routes.draw do
   # get '/members/password', to: 'members#index'
 
   root to: "application#angular"
-
   post '/ipnlistener', to: 'paypal#notify'
 
   scope :api do
     resources :members, only: [:index]
+    resources :token, only: [:new]
     resources :rentals, only: [:index]
-    devise_for :members, :controllers => {:sessions => 'sessions'}
+    devise_for :members, :controllers => {:sessions => 'sessions', :registrations => 'registrations'}
 
     authenticate :member do
       resources :members, only: [:show]

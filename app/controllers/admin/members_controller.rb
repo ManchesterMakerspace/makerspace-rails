@@ -34,21 +34,21 @@ class Admin::MembersController < AdminController
     end
   end
 
-  def welcome_email
-    @member = Member.new({fullname: 'Will', email: 'email'})
-    render "member_mailer/welcome_email.html.erb"
-  end
+  # def welcome_email
+  #   @member = Member.new({fullname: 'Will', email: 'email'})
+  #   render "member_mailer/welcome_email.html.erb"
+  # end
 
-  def intro
-    @member = Member.new(member_params)
-    email = MemberMailer.welcome_email(@member)
-    if email.deliver_now
-      @notifier.ping "Intro email sent to #{@member.email}"
-      render json: @member
-    else
-      render status: 500
-    end
-  end
+  # def intro
+  #   @member = Member.new(member_params)
+  #   email = MemberMailer.welcome_email(@member)
+  #   if email.deliver_now
+  #     @notifier.ping "Intro email sent to #{@member.email}"
+  #     render json: @member
+  #   else
+  #     render status: 500
+  #   end
+  # end
 
   private
   def member_params

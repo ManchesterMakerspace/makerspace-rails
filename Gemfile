@@ -12,6 +12,7 @@ gem 'dotenv-rails'
 
 #authentication
 gem 'devise'
+gem 'bcrypt'
 #Use Mongo DB
 gem 'mongoid', '~> 6.0.0'
 #Paypal IPN

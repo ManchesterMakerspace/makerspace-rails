@@ -234,6 +234,7 @@ PLATFORMS
 DEPENDENCIES
   active_model_serializers
   angular-rails-templates
+  bcrypt
   byebug
   devise
   dotenv-rails
