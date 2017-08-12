@@ -1,7 +1,10 @@
 app.component('registerComponent', {
   templateUrl: 'components/register/_register.html',
   controller: registerController,
-  controllerAs: "registerCtrl"
+  controllerAs: "registerCtrl",
+  bindings: {
+    groups: '<'
+  }
 });
 
 function registerController() {

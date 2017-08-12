@@ -19,6 +19,15 @@ var app = angular.module('app', [
       url: '/login',
       component: 'loginComponent'
     })
+    .state('register', {
+      url: '/register',
+      component: 'registerComponent',
+      resolve: {
+        groups: function(groupService){
+          return groupService.getAllGroups();
+        }
+      }
+    })
     .state('root', {
       url: '',
       abstract: true,
