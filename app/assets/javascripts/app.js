@@ -20,11 +20,20 @@ var app = angular.module('app', [
       component: 'loginComponent'
     })
     .state('register', {
-      url: '/register',
+      url: '/register/:id/:token',
       component: 'registerComponent',
+      params: {
+        token: null
+      },
       resolve: {
         groups: function(groupService){
           return groupService.getAllGroups();
+        },
+        token: function(tokenService, $stateParams, $q, $state){
+          return tokenService.validate($stateParams.id, $stateParams.token).catch(function(){
+            $state.go('login');
+            return $q.reject();
+          });
         }
       }
     })

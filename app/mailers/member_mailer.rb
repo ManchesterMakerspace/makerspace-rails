@@ -18,6 +18,7 @@ class MemberMailer < ApplicationMailer
   end
 
   def welcome_email(email, url)
+    @url = url
     mail to: email, subject: "Welcome to Manchester Makerspace!"
   end
 end

@@ -16,6 +16,7 @@ class RegistrationToken
     base_token = SecureRandom.urlsafe_base64(nil, false)
     self.token = BCrypt::Password.create(base_token)
     MemberMailer.welcome_email(email, create_link(self.id, base_token)).deliver_now
+    self.save
   end
 
   def create_link(id, token)
