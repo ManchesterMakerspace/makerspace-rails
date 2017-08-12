@@ -3,7 +3,11 @@
     <div class="container-fluid">
       <!-- Brand and toggle get grouped for better mobile display -->
       <div class="navbar-header">
-        <a class="navbar-brand" href="/">Manchester Makerspace</a>
+        <a ui-sref="root.members">
+          <img src="assets/FilledLaserableLogo.svg"
+            alt="Manchester Makerspace"
+            height="50px">
+        </a>
       </div>
 
       <!-- Collect the nav links, forms, and other content for toggling -->
@@ -17,7 +21,6 @@
         </ul>
         <ul class="nav navbar-nav navbar-right" id="auth">
           <div class="navbar-link" ng-if="headerCtrl.currentUser.id">
-            <span>Signed in as {{headerCtrl.currentUser.fullname}}</span>
             <button type="button" class="btn btn-primary" ng-click="headerCtrl.logout()">Sign Out</button>
           </div>
           <div class="navbar-link" ng-if="!headerCtrl.currentUser.id">
