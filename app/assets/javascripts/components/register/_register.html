@@ -23,7 +23,7 @@
     <div ng-if="registerCtrl.group">
       <md-input-container class="md-block">
         <md-select ng-model="registerCtrl.registerForm.groupName" placeholder="Select a Group">
-          <md-option ng-value="group.name" ng-repeat="group in registerCtrl.groups">{{group.name}}</md-option>
+          <md-option ng-value="group.groupRep" ng-repeat="group in registerCtrl.groups">{{group.groupName}}</md-option>
         </md-select>
       </md-input-container>
     </div>
