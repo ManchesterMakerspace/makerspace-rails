@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   scope :api do
     resources :members, only: [:index]
     resources :groups, only: [:index]
-    resources :token, only: [:new]
+    resources :token, only: [:create]
     post '/token/:id/:token', to: 'token#validate'
     resources :rentals, only: [:index]
     devise_for :members, :controllers => {:sessions => 'sessions', :registrations => 'registrations'}

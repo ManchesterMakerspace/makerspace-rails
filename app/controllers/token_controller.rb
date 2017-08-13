@@ -1,6 +1,6 @@
 class TokenController < ApplicationController
 
-  def new
+  def create
     @member = Member.find_by(email: params[:email])
     if !!@member
       redirect_to '/#/login', member: @member, msg: 'already registered'
