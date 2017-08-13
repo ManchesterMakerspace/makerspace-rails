@@ -18,6 +18,7 @@ class PaypalController < ApplicationController
         else
           render json: {msg: 'Email already taken'}, status: 400
         end
+      end
     end
   end
 
