@@ -30,7 +30,7 @@ class Member
   validates :fullname, presence: true, uniqueness: true
   before_save :update_allowed_workshops
   after_update :update_card
-  after_create :create_card
+  # after_create :create_card
 
   has_many :offices, class_name: 'Workshop', inverse_of: :officer
   has_many :cards
@@ -48,10 +48,10 @@ class Member
     end
   end
 
-  def create_card
-    Card.create(uid: self.cardID, member: self)
-    RejectionCard.find_by(uid: self.cardID).update(holder: self.fullname)
-  end
+  # def create_card
+  #   Card.create(uid: self.cardID, member: self)
+  #   RejectionCard.find_by(uid: self.cardID).update(holder: self.fullname)
+  # end
 
   def update_card
     self.cards.each do |c|
@@ -82,7 +82,11 @@ class Member
   end
 
   def prettyTime
-    Time.at(expirationTime/1000)
+    if self.expirationTime
+      return Time.at(self.expirationTime/1000)
+    else
+      return Time.at(0)
+    end
   end
 
   def duration

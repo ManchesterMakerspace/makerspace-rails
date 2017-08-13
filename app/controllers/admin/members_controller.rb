@@ -14,6 +14,7 @@ class Admin::MembersController < AdminController
 
   def create
     @member = Member.new(member_params)
+    byebug
     if @member.save
       render json: @member
     else
@@ -24,7 +25,6 @@ class Admin::MembersController < AdminController
   def update
     date = @member.expirationTime
     if @member.update(member_params)
-      byebug
       if @member.expirationTime > date
         @notifier.ping "#{@member.fullname} renewed. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
       end

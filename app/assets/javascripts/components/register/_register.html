@@ -5,20 +5,21 @@
     </div>
   </div>
   <form class="member-edit-form row" name="registerForm"
-    ng-submit="registerCtrl.updateMember(registerForm.$valid)" novalidate>
+    ng-submit="registerCtrl.registerMember(registerForm.$valid)" novalidate>
 
     <md-input-container class="md-block">
       <label for="fullname">Name</label>
       <input type="text" name="fullname"
         ng-model="registerCtrl.registerForm.fullname"
         required/>
+        <div ng-messages="registerForm.fullname.$error">
+          <div ng-message="required">Please complete this field.</div>
+        </div>
     </md-input-container>
 
-    <div>
       <md-checkbox ng-model="registerCtrl.group">
         Are you part of a registerd group?
-      </md-checkbox
-    </div>
+      </md-checkbox>
 
     <div ng-if="registerCtrl.group">
       <md-input-container class="md-block">
@@ -31,44 +32,49 @@
     <md-input-container class="md-block">
       <label for="email">Email</label>
       <input type="email" name="email"
-      ng-model="registerCtrl.registerForm.email"/>
+      ng-model="registerCtrl.registerForm.email" required/>
+      <div ng-messages="registerForm.email.$error">
+        <div ng-message="required">Please complete this field.</div>
+        <div ng-message="email">Please use a valid email addreess.</div>
+      </div>
     </md-input-container>
 
-      <input style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
-      <input type="password" style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
+    <input style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
+    <input type="password" style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
 
-      <md-input-container class="md-block" ng-if="registerCtrl.registerForm.role !== 'member'">
-        <label for="password">Password</label>
-        <input ng-model="registerCtrl.registerForm.password"
-          type="password"
-          name="password"
-          match="registerForm.passwordConfirmation"
-          md-no-asterisk
-          ng-minlength="8"
-          ng-required="registerCtrl.registerForm.passwordConfirmation"/>
-          <div ng-messages="registerForm.passwordConfirmation.$error">
-            <div ng-message="required">Must match new password.</div>
-            <div ng-message="minlength">Must be at least 8 characters.</div>
-            <div ng-message="match">Passwords must match</div>
-          </div>
-      </md-input-container>
+    <md-input-container class="md-block" ng-if="registerCtrl.registerForm.role !== 'member'">
+      <label for="password">Password</label>
+      <input ng-model="registerCtrl.registerForm.password"
+        type="password"
+        name="password"
+        match="registerForm.passwordConfirmation"
+        md-no-asterisk
+        ng-minlength="8"
+        required
+        ng-required="registerCtrl.registerForm.password_confirmation"/>
+        <div ng-messages="registerForm.password.$error">
+          <div ng-message="required">Must match new password.</div>
+          <div ng-message="minlength">Must be at least 8 characters.</div>
+          <div ng-message="match">Passwords must match</div>
+        </div>
+    </md-input-container>
 
-      <md-input-container class="md-block" ng-if="registerCtrl.registerForm.role !== 'member'">
-        <label for="passwordConfirmation">Password Confirmation</label>
-        <input ng-model="registerCtrl.registerForm.passwordConfirmation"
-          type="password"
-          name="passwordConfirmation"
-          md-no-asterisk
-          ng-minlength="8"
-          match="registerForm.password"
-          ng-required="registerCtrl.registerForm.password"/>
-          <div ng-messages="registerForm.password.$error">
-            <div ng-message="required">Must match new password.</div>
-            <div ng-message="minlength">Must be at least 8 characters.</div>
-            <div ng-message="match">Passwords must match</div>
-          </div>
+    <md-input-container class="md-block" ng-if="registerCtrl.registerForm.role !== 'member'">
+      <label for="passwordConfirmation">Password Confirmation</label>
+      <input ng-model="registerCtrl.registerForm.password_confirmation"
+        type="password"
+        name="passwordConfirmation"
+        md-no-asterisk
+        ng-minlength="8"
+        required
+        match="registerForm.password"
+        ng-required="registerCtrl.registerForm.password"/>
+        <div ng-messages="registerForm.password_confirmation.$error">
+          <div ng-message="required">Must match new password.</div>
+          <div ng-message="minlength">Must be at least 8 characters.</div>
+          <div ng-message="match">Passwords must match</div>
+        </div>
       </md-input-container>
-    </div>
 
     <button type="submit" class="btn" ng-class="registerForm.$valid ? 'btn-success': 'btn-disabled'">Register</button>
   </form>

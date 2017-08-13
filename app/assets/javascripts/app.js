@@ -9,8 +9,9 @@ var app = angular.module('app', [
 }).config(function($stateProvider, $urlRouterProvider, $locationProvider, AuthProvider){
   $locationProvider.hashPrefix('');
 
-  AuthProvider.loginPath('api/members/sign_in.json');
   AuthProvider.resourceName('member');
+  AuthProvider.loginPath('api/members/sign_in.json');
+  AuthProvider.registerPath('api/members.json');
   AuthProvider.logoutPath('api/members/sign_out.json');
 
   $urlRouterProvider.otherwise('/members');

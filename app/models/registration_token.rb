@@ -5,6 +5,7 @@ class RegistrationToken
   validates :email, presence: :true, uniqueness: :true
 
   field :token, type: String
+  field :months, type: Integer
   field :email, type: String
   field :role, type: String, default: "member"
   field :used, type: Boolean, default: false
