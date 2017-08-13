@@ -5,10 +5,16 @@ class PaypalController < ApplicationController
 
   def notify
     @api = PayPal::SDK::Merchant.new
-
-    @notifier.ping("$#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email:#{@payment.payer_email} <- contact them for card access if they are new")
     if @api.ipn_valid?(request.raw_post)
-      #do something
+      @notifier.ping("$#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
+      
+      token = RegistrationToken.new(email: @payment.payer_email)
+      if token.save
+        @notifier.ping("Registration email sent to #{@payment.payer_email}.")
+        render json: {status: 200}, status: 200
+      else
+        render json: {msg: 'Email already taken'}, status: 400
+      end
     end
   end
 

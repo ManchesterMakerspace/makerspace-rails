@@ -21,6 +21,6 @@ class RegistrationToken
   end
 
   def create_link(id, token)
-    return "http://localhost:3002/#/register/#{id}/#{token}"
+    return "https://makerspace-interface.herokuapp.com/#/register/#{id}/#{token}"
   end
 end
