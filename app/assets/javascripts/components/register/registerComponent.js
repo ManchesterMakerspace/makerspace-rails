@@ -11,6 +11,7 @@ app.component('registerComponent', {
 function registerController(Auth, $state) {
   var registerCtrl = this;
   registerCtrl.$onInit = function() {
+    registerCtrl.signedContact = false;
     console.log(registerCtrl.token);
   };
 
@@ -27,5 +28,10 @@ function registerController(Auth, $state) {
     }).catch(function(err){
       console.log(err);
     });
+  };
+
+  registerCtrl.signContract = function(signature){
+    console.log(signature.dataUrl);
+    registerCtrl.signedContact = true;
   };
 }

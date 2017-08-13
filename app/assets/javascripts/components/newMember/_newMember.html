@@ -3,6 +3,12 @@
   <input style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
   <input type="password" style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
   <div class="col-xs-12">
+    <md-input-container class="md-block"
+      <md-checkbox ng-model="registerCtrl.newMember.memberContractOnFile">
+        Member Contract Signed?
+      </md-checkbox>
+    </md-input-container>
+
     <md-input-container class="md-block">
       <label for="fullname">Name</label>
       <input type="text" name="fullname"

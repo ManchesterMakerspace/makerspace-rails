@@ -1,4 +1,6 @@
-<div class="col-xs-6 col-xs-offset-3">
+<e-sign-component ng-if="!registerCtrl.signedContact" sign-contact="registerCtrl.signContract(signature)"><e-sign-component>
+
+<div ng-if="registerCtrl.signedContact" class="col-xs-6 col-xs-offset-3">
   <div class="row">
     <div class="col-xs-6 col-xs-offset-3">
       <h2 class="text-center">Registration</h2>
@@ -17,9 +19,11 @@
         </div>
     </md-input-container>
 
+    <md-input-container class="md-block"
       <md-checkbox ng-model="registerCtrl.group">
         Are you part of a registerd group?
       </md-checkbox>
+    </md-input-container>
 
     <div ng-if="registerCtrl.group">
       <md-input-container class="md-block">

@@ -19,4 +19,6 @@
 //= require angular-material
 //= require angular-animate
 //= require angular-aria
+//= require angular-signature
+//= require signature_pad
 //= require_tree .

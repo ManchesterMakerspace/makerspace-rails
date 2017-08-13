@@ -4,7 +4,8 @@ var app = angular.module('app', [
   'Devise',
   'ngAnimate',
   'ngMaterial',
-  'ngMessages'
+  'ngMessages',
+  'signature'
 ]).run(function (){
 }).config(function($stateProvider, $urlRouterProvider, $locationProvider, AuthProvider){
   $locationProvider.hashPrefix('');
