@@ -3,13 +3,13 @@ class TokenController < ApplicationController
   def create
     @member = Member.find_by(email: params[:email])
     if !!@member
-      redirect_to '/#/login', member: @member, msg: 'already registered'
+      render json: {msg: 'Email already taken'}, status: 400
     end
     token = RegistrationToken.new(email: params[:email])
     if token.save
       render json: {status: 200}, status: 200
     else
-      render json: {msg: 'Email already taken'}, status: 400
+      render json: {msg: 'Token generation error'}, status: 400
     end
   end
 
@@ -20,7 +20,7 @@ class TokenController < ApplicationController
     hash = BCrypt::Engine.hash_secret(challenge_token, salt)
     valid = Rack::Utils.secure_compare(@token.token, hash)
     if !valid || @token.used
-      render json: {status: 400}, status: 400
+      redirect_to "/#/login", msg: 'Email already exists. Please login.'
     else
       render json: @token
     end
