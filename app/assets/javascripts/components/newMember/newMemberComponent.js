@@ -4,13 +4,16 @@ app.component('newMemberComponent', {
   controllerAs: "newMemberCtrl",
   bindings: {
     card: '<',
-    updatedMembers: '='
+    updatedMembers: '=',
+    groups: '<'
   }
 });
 
 function newMemberController(memberService, cardService) {
   var newMemberCtrl = this;
   newMemberCtrl.$onInit = function() {
+    console.log(newMemberCtrl.groups);
+    // newMemberCtrl.roles = ['member', 'officer', 'admin'];
     newMemberCtrl.newMember = {
       cardID: newMemberCtrl.card.uid
     };

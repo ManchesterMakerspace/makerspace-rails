@@ -6,11 +6,17 @@ class Card
   field :validity, type: String #Member's Status
   attr_accessor :card_location
 
-  before_create :set_expiration
+  before_create :set_expiration, :set_holder
   before_update :set_expiration
   # after_save :check_validity
 
-  belongs_to :member, primary_key: "fullname", foreign_key: "holder"
+  validates :uid, presence: true, uniqueness: true
+
+  belongs_to :member, class_name: 'Member', inverse_of: :access_cards
+
+  def set_holder
+    self.holder = self.member.fullname
+  end
 
   def set_expiration
     self.expiry = self.member.expirationTime

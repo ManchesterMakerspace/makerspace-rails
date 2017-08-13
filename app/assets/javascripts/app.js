@@ -92,6 +92,9 @@ var app = angular.module('app', [
       resolve: {
         card: function(cardService){
           return cardService.getLatestRejection();
+        },
+        groups: function(groupService){
+          return groupService.getAllGroups();
         }
       }
     })

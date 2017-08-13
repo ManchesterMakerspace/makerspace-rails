@@ -25,9 +25,9 @@ class Payment
       unless !!member
         member = Member.where(fullname: Regexp.new(self.lastname)).first
         unless !!member
-          payments = Payment.where(payer_email: self.payer_email)
+          payments = Payment.where(member: !nil, payer_email: self.payer_email)
           if payments.size > 0
-            member = payments.sort_by { |p| p[:payer_email]}.first
+            member = payments.sort_by { |p| p[:payment_date]}.first.member
           else
             member = nil
           end

@@ -28,36 +28,37 @@ class Member
   field :remember_created_at, type: Time
 
   validates :fullname, presence: true, uniqueness: true
+  validates :email, uniqueness: true
   before_save :update_allowed_workshops
   after_update :update_card
-  after_create :create_card
+  # after_create :create_card
 
   has_many :offices, class_name: 'Workshop', inverse_of: :officer
-  has_many :cards
+  has_many :access_cards, class_name: "Card", inverse_of: :member
   has_many :groups
   has_and_belongs_to_many :learned_skills, class_name: 'Skill', inverse_of: :trained_members
   has_and_belongs_to_many :expertises, class_name: 'Workshop', inverse_of: :experts
   has_and_belongs_to_many :allowed_workshops, class_name: 'Workshop', inverse_of: :allowed_members
 
-  def cards_attributes=(cards_attributes)
-    cards_attributes.values.each do |card_attribute| #controller sends array of cards
-      card = Card.find_by(id: BSON::ObjectId.from_string(card_attribute["id"])) #convert id attribute to BSON::ObjectId class before query
-      if (!!card_attribute["card_location"])
-        card.update(card_location: card_attribute["card_location"])
-      end
-    end
-  end
+  # def cards_attributes=(cards_attributes)
+  #   cards_attributes.values.each do |card_attribute| #controller sends array of cards
+  #     card = Card.find_by(id: BSON::ObjectId.from_string(card_attribute["id"])) #convert id attribute to BSON::ObjectId class before query
+  #     if (!!card_attribute["card_location"])
+  #       card.update(card_location: card_attribute["card_location"])
+  #     end
+  #   end
+  # end
 
-  def create_card
-    if self.cardID
-      Card.create(uid: self.cardID, member: self)
-      RejectionCard.find_by(uid: self.cardID).update(holder: self.fullname)
-    end
-  end
+  # def create_card
+  #   if self.cardID
+  #     Card.create(uid: self.cardID, member: self)
+  #     RejectionCard.find_by(uid: self.cardID).update(holder: self.fullname)
+  #   end
+  # end
 
   def update_card
-    self.cards.each do |c|
-      c.update(member: self)
+    self.access_cards.each do |c|
+      c.update(expiry: self.expirationTime)
     end
   end
 
