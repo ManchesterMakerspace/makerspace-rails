@@ -13,9 +13,13 @@ app.factory('cardService', function($http){
   };
 
   var updateCard = function(cardData) {
-    console.log(cardData);
     return $http.put('/api/admin/cards/' + cardData.id, {card: cardData}).then(function(response){
-      console.log(response);
+      return response.data;
+    });
+  };
+
+  var getMemberCards = function(memberID) {
+    return $http.get('/api/admin/cards/' + memberID).then(function(response){
       return response.data;
     });
   };
@@ -23,6 +27,7 @@ app.factory('cardService', function($http){
   return {
     getLatestRejection: getLatestRejection,
     createCard: createCard,
-    updateCard: updateCard
+    updateCard: updateCard,
+    getMemberCards: getMemberCards
   };
 });

@@ -3,7 +3,7 @@ class Admin::CardsController < ApplicationController
 
   def new
     @card = Card.new()
-    reject = RejectionCard.where({'holder' => nil, 'timeOf' => {'$gt' => (Date.today - 1.day)}})
+    reject = RejectionCard.where({'holder' => nil, 'timeOf' => {'$gt' => (Date.today - 1.day)}}).last
     if( !!reject )
       @card.uid = reject.uid || nil
     else
@@ -18,8 +18,13 @@ class Admin::CardsController < ApplicationController
       RejectionCard.find_by(uid: @card.uid).update(holder: @card.holder)
       render json: @card
     else
-      render status: 500
+      render json: {status: 500}, status: 500
     end
+  end
+
+  def show
+    @cards = Card.where(member: Member.find(params[:id]))
+    render json: @cards
   end
 
   def update
@@ -27,7 +32,7 @@ class Admin::CardsController < ApplicationController
     if @card.update(card_params)
       render json: @card
     else
-      render status: 500
+      render json: {status: 500}, status: 500
     end
   end
 

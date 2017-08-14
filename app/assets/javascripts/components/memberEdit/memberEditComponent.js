@@ -3,11 +3,12 @@ app.component('memberEditComponent', {
   controller: memberEditController,
   controllerAs: "memberEditCtrl",
   bindings: {
-    member: '<'
+    member: '<',
+    cards: '<'
   }
 });
 
-function memberEditController(cardService, memberService, $state) {
+function memberEditController(cardService, memberService, $state, $filter) {
   var memberEditCtrl = this;
   memberEditCtrl.$onInit = function() {
     memberEditCtrl.editForm = memberEditCtrl.member;
@@ -19,7 +20,6 @@ function memberEditController(cardService, memberService, $state) {
     memberEditCtrl.newCard = {
       member_id: memberEditCtrl.member.id
     };
-    console.log(memberEditCtrl.newCard);
     return memberEditCtrl.refreshCardID();
   };
 
@@ -44,8 +44,9 @@ function memberEditController(cardService, memberService, $state) {
   memberEditCtrl.createCard = function(){
     if(!memberEditCtrl.newCard) {return;}
     return cardService.createCard(memberEditCtrl.newCard).then(function(card){
-      memberEditCtrl.member.cards.push(card);
-      return memberEditCtrl.refreshCardID();
+      memberEditCtrl.cards.push(card);
+      memberEditCtrl.newCard = null;
+      // return memberEditCtrl.refreshCardID();
     });
   };
 
@@ -59,5 +60,12 @@ function memberEditController(cardService, memberService, $state) {
     return memberService.updateMember(memberEditCtrl.member).then(function(){
       $state.go('root.members');
     });
+  };
+
+  memberEditCtrl.noActiveCards = function(){
+    return $filter('filter')(memberEditCtrl.cards, function(card){
+      console.log(card.validity !== 'lost' && card.validity !== 'stolen');
+      return card.validity !== 'lost' && card.validity !== 'stolen';
+    }).length === 0;
   };
 }

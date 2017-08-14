@@ -73,6 +73,9 @@ var app = angular.module('app', [
       resolve: {
         member: function($stateParams, memberService) {
           return memberService.getById($stateParams.id);
+        },
+        cards: function(member, cardService) {
+          return cardService.getMemberCards(member.id);
         }
       }
     })

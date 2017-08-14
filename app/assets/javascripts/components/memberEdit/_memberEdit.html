@@ -14,7 +14,7 @@
         required/>
     </md-input-container>
 
-    <div>
+    <div class="text-center">
       <span>Expiration: </span><span ng-bind="memberEditCtrl.member.expirationTime | date: shortDate: EST"></span>
     </div>
 
@@ -66,29 +66,31 @@
     </div>
 
     <div class="details" ng-if="memberEditCtrl.showDetails">
-      <div class="current-cards">
-        <h5>Cards</h5>
-        <div ng-if="!memberEditCtrl.member.cards || memberEditCtrl.member.cards.length === 0">
+      <div class="current-cards row">
+        <h5 class="text-center">Cards</h5>
+        <div ng-if="!memberEditCtrl.cards || memberEditCtrl.cards.length === 0">
           No Cards Found!
         </div>
-        <div class="card" ng-if="memberEditCtrl.member.cards.length > 0" ng-repeat="card in memberEditCtrl.member.cards">
-          <p>Card ID: <span ng-bind="card.id.substr(card.id.length - 5)"></span></p>
-          <p>Card Status: <span ng-bind="card.validity"></span></p>
-          <p>Report as:
-            <button type="button"
-              class="btn btn-danger"
-              ng-click="memberEditCtrl.reportCard(card, 'lost')">Lost</button>
-            <button type="button"
-              class="btn btn-danger"
-              ng-click="memberEditCtrl.reportCard(card, 'stolen')">Stolen</button>
-          </p>
+        <div class="member-card-wrapper text-center col-xs-12 col-sm-6" ng-if="memberEditCtrl.cards.length > 0" ng-repeat="card in memberEditCtrl.cards">
+          <div class="member-card">
+            <p>Card ID: <span ng-bind="card.id.substr(card.id.length - 5)"></span></p>
+            <p>Card Status: <span ng-bind="card.validity"></span></p>
+            <p>Report as:
+              <button type="button"
+                class="btn btn-danger"
+                ng-click="memberEditCtrl.reportCard(card, 'lost')">Lost</button>
+              <button type="button"
+                class="btn btn-danger"
+                ng-click="memberEditCtrl.reportCard(card, 'stolen')">Stolen</button>
+            </p>
+          </div>
         </div>
       </div>
 
-      <div class="new-card">
+      <div class="new-card text-center row">
         <button type="button"
           class="btn btn-warning"
-          ng-if="!memberEditCtrl.newCard"
+          ng-if="memberEditCtrl.noActiveCards() && !memberEditCtrl.newCard"
           ng-click="memberEditCtrl.newCardForm()">New Card</button>
 
           <div class="col-xs-12" ng-if="memberEditCtrl.newCard">
@@ -117,6 +119,7 @@
             </div>
           </div>
       </div>
+    </div>
 
       <input style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
       <input type="password" style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
@@ -152,8 +155,8 @@
             <div ng-message="match">Passwords must match</div>
           </div>
       </md-input-container>
-    </div>
 
-    <button type="submit" class="btn" ng-class="editForm.$valid ? 'btn-success': 'btn-disabled'">Update Member</button>
-  </form>
+      <button type="submit" class="btn" ng-class="editForm.$valid ? 'btn-success': 'btn-disabled'">Update Member</button>
+    </form>
+  </div>
 </div>

@@ -22,10 +22,10 @@ Rails.application.routes.draw do
         resources :members, only: [:edit, :update]
       end
       namespace :admin  do
-        post '/members/intro', to: 'members#intro'
-        get '/members/welcome_email', to: 'members#welcome_email'
+        # post '/members/intro', to: 'members#intro'
+        # get '/members/welcome_email', to: 'members#welcome_email'
         resources :payments, only: [:index, :update]
-        resources :cards, only: [:new, :create, :update]
+        resources :cards, only: [:new, :create, :show, :update]
         resources :rentals, only: [:create, :update]
         resources :members, only: [:new, :create, :update, :intro]
         resources :workshops, only: [:create, :update, :destroy]
