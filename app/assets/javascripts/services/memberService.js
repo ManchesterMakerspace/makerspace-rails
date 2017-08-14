@@ -1,4 +1,4 @@
-app.factory('memberService', function($http){
+app.factory('memberService', function($http, slackService){
 
   var getAllMembers = function(){
     return $http.get('/api/members').then(function(response){
@@ -16,13 +16,15 @@ app.factory('memberService', function($http){
 
   var getById = function(id){
     return $http.get('/api/members/' + id).then(function(response){
-      console.log(response);
       return response.data;
     });
   };
 
   var createMember = function(memberData){
     return $http.post('/api/admin/members', {member: memberData}).then(function(response){
+      slackService.connect();
+      slackService.invite(response.data.email, response.data.fullname);
+      slackService.disconnect();
       return response.data;
     });
   };

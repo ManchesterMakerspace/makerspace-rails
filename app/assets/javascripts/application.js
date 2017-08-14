@@ -21,4 +21,5 @@
 //= require angular-aria
 //= require angular-signature
 //= require signature_pad
+// = require socket.io
 //= require_tree .

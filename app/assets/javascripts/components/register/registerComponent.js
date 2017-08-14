@@ -8,7 +8,7 @@ app.component('registerComponent', {
   }
 });
 
-function registerController(Auth, $state) {
+function registerController(Auth, $state, slackService) {
   var registerCtrl = this;
   registerCtrl.$onInit = function() {
     registerCtrl.signedContact = false;
@@ -24,6 +24,9 @@ function registerController(Auth, $state) {
       start_date: new Date()
     };
     Auth.register(registerCtrl.registerForm). then(function(){
+      slackService.connect();
+      slackService.invite(registerCtrl.registerForm.email, registerCtrl.registerForm.fullname);
+      slackService.disconnect();
       $state.go('root.members');
     }).catch(function(err){
       console.log(err);

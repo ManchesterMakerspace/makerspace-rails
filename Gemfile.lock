@@ -199,6 +199,8 @@ GEM
       jwt (~> 1.5)
       multi_json (~> 1.10)
     slack-notifier (2.3.0)
+    socket.io-rails (2.0.3)
+      railties (>= 3.1)
     spring (2.0.2)
       activesupport (>= 4.2)
     spring-watcher-listen (2.0.1)
@@ -246,6 +248,7 @@ DEPENDENCIES
   rails_12factor
   sass-rails (~> 5.0)
   slack-notifier
+  socket.io-rails
   spring
   spring-watcher-listen (~> 2.0.0)
   tzinfo-data
