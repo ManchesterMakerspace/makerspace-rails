@@ -14,6 +14,10 @@ class Admin::CardsController < ApplicationController
 
   def create
     @card = Card.new(card_params)
+    cards = @card.member.access_cards.select { |c| return c.validity != 'lost' && c.validity != 'stolen'}
+    if cards.length == 0
+      render json: {msg: 'Member has Active cards'}
+    end
     if @card.save
       RejectionCard.find_by(uid: @card.uid).update(holder: @card.holder)
       render json: @card
