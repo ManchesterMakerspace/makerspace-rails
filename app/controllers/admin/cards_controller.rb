@@ -3,7 +3,7 @@ class Admin::CardsController < ApplicationController
 
   def new
     @card = Card.new()
-    reject = RejectionCard.where(holder: nil).last
+    reject = RejectionCard.where({'holder' => nil, 'timeOf' => {'$gt' => (Date.today - 1.day)}})
     if( !!reject )
       @card.uid = reject.uid || nil
     else

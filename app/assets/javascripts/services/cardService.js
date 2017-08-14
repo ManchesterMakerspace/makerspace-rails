@@ -17,8 +17,8 @@ app.factory('cardService', function($http){
     return $http.put('/api/admin/cards/' + cardData.id, {card: cardData}).then(function(response){
       console.log(response);
       return response.data;
-    })
-  }
+    });
+  };
 
   return {
     getLatestRejection: getLatestRejection,
