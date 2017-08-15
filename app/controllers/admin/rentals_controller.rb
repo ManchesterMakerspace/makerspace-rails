@@ -4,17 +4,17 @@ class Admin::RentalsController < ApplicationController
   def create
     @rental = Rental.new(rental_params)
     if @rental.save
-      render json: @rental
+      render json: @rental and return
     else
-      render status: 500
+      render status: 500 and return
     end
   end
 
   def update
     if @rental.update(rental_params)
-      render json: @rental
+      render json: @rental and return
     else
-      render status: 500
+      render status: 500 and return
     end
   end
 

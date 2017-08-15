@@ -9,15 +9,15 @@ class RegistrationsController < Devise::RegistrationsController
       hash = BCrypt::Engine.hash_secret(challenge_token, salt)
       valid = Rack::Utils.secure_compare(correct_token.token, hash)
       if !valid || correct_token.used
-        render json: {status: 400}, status: 400
+        render json: {status: 400}, status: 400 and return
       else
         @member = Member.new(member_params)
         @member.renewal = {months: correct_token.months}
         if @member.save
           correct_token.update(used: true)
-          render json: @member
+          render json: @member and return
         else
-          render json: {status: 400}, status: 400
+          render json: {status: 400}, status: 400 and return
         end
       end
     end

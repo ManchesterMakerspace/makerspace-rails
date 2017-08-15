@@ -16,27 +16,27 @@ class Admin::CardsController < ApplicationController
     @card = Card.new(card_params)
     cards = @card.member.access_cards.select { |c| return c.validity != 'lost' && c.validity != 'stolen'}
     if cards.length == 0
-      render json: {msg: 'Member has Active cards'}
+      render json: {msg: 'Member has Active cards'} and return
     end
     if @card.save
       RejectionCard.find_by(uid: @card.uid).update(holder: @card.holder)
-      render json: @card
+      render json: @card and return
     else
-      render json: {status: 500}, status: 500
+      render json: {status: 500}, status: 500 and return
     end
   end
 
   def show
     @cards = Card.where(member: Member.find(params[:id]))
-    render json: @cards
+    render json: @cards and return
   end
 
   def update
     @card = Card.find_by(id: params[:id])
     if @card.update(card_params)
-      render json: @card
+      render json: @card and return
     else
-      render json: {status: 500}, status: 500
+      render json: {status: 500}, status: 500 and return
     end
   end
 

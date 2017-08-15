@@ -17,9 +17,9 @@ class Admin::MembersController < AdminController
     if @member.save
       Card.create(uid: @member.cardID, member: @member)
       RejectionCard.find_by(uid: @member.cardID).update(holder: @member.fullname)
-      render json: @member
+      render json: @member and return
     else
-      render json: {status: 500}, status: 500
+      render json: {status: 500}, status: 500 and return
     end
   end
 
@@ -29,9 +29,9 @@ class Admin::MembersController < AdminController
       if @member.expirationTime > date
         @notifier.ping "#{@member.fullname} renewed. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
       end
-      render json: @member
+      render json: @member and return
     else
-      render status: 500
+      render status: 500 and return
     end
   end
 

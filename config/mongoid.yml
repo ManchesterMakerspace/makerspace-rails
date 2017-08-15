@@ -45,6 +45,8 @@ production:
         uri: <%=ENV['REMOTE_URI']%>
       payments:
         uri: <%=ENV['MLAB_URI']%>
+      options:
+        raise_not_found_error: false
 test:
   clients:
     default:

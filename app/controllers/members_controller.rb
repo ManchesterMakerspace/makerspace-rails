@@ -8,12 +8,12 @@ class MembersController < ApplicationController
           Time.at(m.expirationTime/1000) - Time.now > 0
         end
       end
-      render json: @members
+      render json: @members and return
     end
 
     def show
       # @workshops = Workshop.all.sort_by(&:name)
-      render json: @member
+      render json: @member and return
     end
 
     # def mailer

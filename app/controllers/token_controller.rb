@@ -1,15 +1,16 @@
 class TokenController < ApplicationController
+  protect_from_forgery except: [:create]
 
   def create
     @member = Member.find_by(email: params[:email])
     if !!@member
-      render json: {msg: 'Email already taken'}, status: 400
+      render json: {msg: 'Email already taken'}, status: 400 and return
     end
     token = RegistrationToken.new(email: params[:email])
     if token.save
-      render json: {status: 200}, status: 200
+      render json: {status: 200}, status: 200 and return
     else
-      render json: {msg: 'Token generation error'}, status: 400
+      render json: {msg: 'Token generation error'}, status: 400 and return
     end
   end
 

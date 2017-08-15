@@ -14,9 +14,9 @@ class PaypalController < ApplicationController
         token = RegistrationToken.new(email: @payment.payer_email)
         if token.save
           @notifier.ping("Registration email sent to #{@payment.payer_email}.")
-          render json: {status: 200}, status: 200
+          render json: {status: 200}, status: 200 and return
         else
-          render json: {msg: 'Email already taken'}, status: 400
+          render json: {msg: 'Email already taken'}, status: 400 and return
         end
       end
     end

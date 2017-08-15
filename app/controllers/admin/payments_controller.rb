@@ -6,15 +6,15 @@ class Admin::PaymentsController < ApplicationController
       payment.member ||= payment.find_member
       payment
     end
-    render json: @payments
+    render json: @payments and return
   end
 
   def update
     @payment.member = Member.find_by(id: params[:payment][:member][:id])
     if @payment.update(payment_params)
-      render json: @payment
+      render json: @payment and return
     else
-      render status: 500
+      render status: 500 and return
     end
   end
 

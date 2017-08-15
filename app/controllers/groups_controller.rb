@@ -3,11 +3,11 @@ class GroupsController < ApplicationController
 
     def index
       @groups = Group.all.sort_by(&:groupName)
-      render json: @groups
+      render json: @groups and return
     end
 
     def show
-      render json: @group
+      render json: @group and return
     end
 
     private

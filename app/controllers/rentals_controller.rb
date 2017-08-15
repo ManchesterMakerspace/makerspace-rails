@@ -3,13 +3,13 @@ class RentalsController < ApplicationController
 
   def index
     @rentals = Rental.all
-    render json: @rentals
+    render json: @rentals and return
   end
 
   def show
-    render json: @rental
+    render json: @rental and return
   end
-  
+
 private
   def set_rental
     @rental = Rental.find_by(id: params[:id])
