@@ -18,3 +18,32 @@
 .email {
   color: black;
 }
+html,
+body {
+  height: 100%;
+}
+
+[class*='alert-']{
+  &.ng-enter,
+  &.ng-leave,
+  &.ng-enter,
+  &.ng-leave {
+      -webkit-transition: opacity 0.15s linear;
+      -moz-transition: opacity 0.15s linear;
+      -o-transition: opacity 0.15s linear;
+      transition: opacity 0.15s linear;
+  }
+  &.ng-enter {
+      opacity: 0;
+  }
+  &.ng-enter.ng-enter-active {
+      opacity: 1;
+  }
+
+  &.ng-leave {
+    opacity: 1;
+  }
+  &.ng-leave.ng-leave-active{
+    opacity: 0;
+  }
+}

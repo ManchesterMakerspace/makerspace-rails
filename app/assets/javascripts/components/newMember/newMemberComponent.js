@@ -9,7 +9,7 @@ app.component('newMemberComponent', {
   }
 });
 
-function newMemberController(memberService, cardService) {
+function newMemberController(memberService, cardService, alertService) {
   var newMemberCtrl = this;
   newMemberCtrl.$onInit = function() {
     console.log(newMemberCtrl.groups);
@@ -22,6 +22,7 @@ function newMemberController(memberService, cardService) {
   newMemberCtrl.submitMember = function(form){
     if(!form) {return;}
     return memberService.createMember(newMemberCtrl.newMember).then(function(member){
+      alertService.addAlert('Member saved!', 'success');
       newMemberCtrl.updatedMembers.push(member);
     });
   };

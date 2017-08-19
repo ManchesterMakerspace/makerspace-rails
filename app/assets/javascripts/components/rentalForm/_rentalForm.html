@@ -37,6 +37,7 @@
 
   <div class="col-xs-4 col-xs-offset-4">
     <button type="submit" class="btn" ng-class="rentalForm.$valid ? 'btn-success': 'btn-disabled'">Save Rental</button>
+    <button type="button" ng-click="rentalFormCtrl.delete()" class="btn btn-warning" ng-if="rentalFormCtrl.rental.id">Delete Rental</button>
     <button type="button" ng-click="rentalFormCtrl.exitForm()" class="btn btn-danger">Cancel</button>
   </div>
 </form>

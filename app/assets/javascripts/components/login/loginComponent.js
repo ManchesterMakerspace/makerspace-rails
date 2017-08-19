@@ -4,17 +4,23 @@ app.component('loginComponent', {
   controllerAs: "loginCtrl"
 });
 
-function loginController(Auth, $state) {
+function loginController(Auth, $state, alertService) {
   var loginCtrl = this;
   loginCtrl.$onInit = function() {};
 
   loginCtrl.submitLogin = function(form){
     if(!form){return;}
     Auth.login(loginCtrl.loginForm).then(function() {
-      return $state.go('root.members');
-    }, function(error) {
+      alertService.addAlert('Logged In!', 'success')
+      $state.go('root.members');
+    }).catch(function(error) {
+      alertService.addAlert('Invalid credentials. Please try again')
       console.log(error);
         // Authentication failed...
     });
+  };
+
+  loginCtrl.resetPassword = function(){
+    $state.go('passwordReset');
   };
 }

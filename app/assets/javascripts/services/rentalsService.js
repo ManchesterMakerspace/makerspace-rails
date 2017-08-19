@@ -24,9 +24,14 @@ app.factory('rentalsService', function($http){
     }
   };
 
+  var deleteRental = function(rentalData){
+    return $http.delete('/api/admin/rentals/' + rentalData.id);
+  };
+
   return {
     getAllRentals: getAllRentals,
     getByID: getByID,
-    upsertRental: upsertRental
+    upsertRental: upsertRental,
+    deleteRental: deleteRental
   };
 });

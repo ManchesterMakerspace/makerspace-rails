@@ -16,7 +16,7 @@ app.directive('blacklist', function() {
         if(!scope.safeword || value !== scope.safeword.number){
           var valid = blacklist.indexOf(value) === -1;
           ngModel.$setValidity('blacklist', valid);
-          return valid ? valid : undefined;
+          return valid ? value : undefined;
         } else {
           return true;
         }

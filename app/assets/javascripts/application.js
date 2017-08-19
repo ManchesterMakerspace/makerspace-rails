@@ -19,7 +19,9 @@
 //= require angular-material
 //= require angular-animate
 //= require angular-aria
+//= require angular-bootstrap
 //= require angular-signature
 //= require signature_pad
-// = require socket.io
+//= require socket.io
+//= require bootstrap
 //= require_tree .

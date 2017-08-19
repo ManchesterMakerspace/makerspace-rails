@@ -26,7 +26,7 @@ Rails.application.routes.draw do
         # get '/members/welcome_email', to: 'members#welcome_email'
         resources :payments, only: [:index, :update]
         resources :cards, only: [:new, :create, :show, :update]
-        resources :rentals, only: [:create, :update]
+        resources :rentals, only: [:create, :update, :destroy]
         resources :members, only: [:new, :create, :update, :intro]
         resources :workshops, only: [:create, :update, :destroy]
       end

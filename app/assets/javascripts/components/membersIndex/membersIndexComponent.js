@@ -8,9 +8,10 @@ app.component('membersIndexComponent', {
   }
 });
 
-function membersIndexController($state, Auth) {
+function membersIndexController($state) {
   var membersCtrl = this;
   membersCtrl.$onInit = function() {
+    membersCtrl.viewAll = false;
     // membersCtrl.currentUser = Auth.currentUser();
   };
 
@@ -30,7 +31,8 @@ function membersIndexController($state, Auth) {
     if(!!membersCtrl.isUserAdmin()){
       $state.go('root.admin.memberEdit', {id: member.id});
     } else {
-      $state.go('root.memberProfile');
+      return;
+      // $state.go('root.memberProfile');
     }
   };
 

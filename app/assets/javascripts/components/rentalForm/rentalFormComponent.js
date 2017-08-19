@@ -6,11 +6,12 @@ app.component('rentalFormComponent', {
     rental: '<',
     upsertRental: '&',
     rentals: '<',
-    members: '<'
+    members: '<',
+    deleteRental: '&'
   }
 });
 
-function rentalFormController(rentalsService, $state, $filter) {
+function rentalFormController(rentalsService, $state, $filter, alertService) {
   var rentalFormCtrl = this;
   rentalFormCtrl.$onInit = function() {
     if(!!rentalFormCtrl.rental) {
@@ -23,10 +24,22 @@ function rentalFormController(rentalsService, $state, $filter) {
   rentalFormCtrl.submitForm = function(form){
     if(!form){return;}
     return rentalFormCtrl.upsertRental({rental: rentalFormCtrl.rentalForm}).then(function(){
+      alertService.addAlert('Rental saved!', 'success');
       $state.go('root.rentals');
     }).catch(function(err){
       console.log(err);
     });
+  };
+
+  rentalFormCtrl.delete = function(){
+    if(confirm('Are you sure you want to delete this?')) {
+      return rentalFormCtrl.deleteRental({rental: rentalFormCtrl.rental}).then(function(){
+        alertService.addAlert('Rental deleted!', 'info');
+        $state.go('root.rentals');
+      }).catch(function(){
+        alertService.addAlert('Error deleting rental', 'danger');
+      });
+    }
   };
 
   rentalFormCtrl.exitForm = function(){

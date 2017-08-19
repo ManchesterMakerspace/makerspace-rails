@@ -1,5 +1,4 @@
 class TokenController < ApplicationController
-  protect_from_forgery except: [:create]
 
   def create
     @member = Member.find_by(email: params[:email])

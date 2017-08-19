@@ -1,5 +1,5 @@
 class Admin::RentalsController < ApplicationController
-  before_action :set_rental, only: [:update]
+  before_action :set_rental, only: [:update, :destroy]
 
   def create
     @rental = Rental.new(rental_params)
@@ -15,6 +15,15 @@ class Admin::RentalsController < ApplicationController
       render json: @rental and return
     else
       render status: 500 and return
+    end
+  end
+
+  def destroy
+    if !!@rental
+      @rental.delete
+      render json: {status: 200} and return
+    else
+      render json: {status: 422} and return
     end
   end
 

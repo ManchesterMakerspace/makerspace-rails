@@ -1,5 +1,6 @@
 var app = angular.module('app', [
   'ui.router',
+  'ui.bootstrap',
   'templates',
   'Devise',
   'ngAnimate',
@@ -11,9 +12,11 @@ var app = angular.module('app', [
   $locationProvider.hashPrefix('');
 
   AuthProvider.resourceName('member');
-  AuthProvider.loginPath('api/members/sign_in.json');
   AuthProvider.registerPath('api/members.json');
+  AuthProvider.loginPath('api/members/sign_in.json');
   AuthProvider.logoutPath('api/members/sign_out.json');
+  AuthProvider.sendResetPasswordInstructionsPath('api/members/password.json');
+  AuthProvider.resetPasswordPath('api/members/password.json');
 
   $urlRouterProvider.otherwise('/members');
   $stateProvider
@@ -37,6 +40,17 @@ var app = angular.module('app', [
             return $q.reject();
           });
         }
+      }
+    })
+    .state('passwordReset', {
+      url: '/resetPassword',
+      component: 'passwordComponent'
+    })
+    .state('passwordResetConfirm', {
+      url: '/resetPassword/:token',
+      component: 'passwordComponent',
+      params: {
+        token: null
       }
     })
     .state('root', {

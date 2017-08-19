@@ -9,7 +9,7 @@ app.component('rentalsComponent', {
   }
 });
 
-function rentalsController($filter, rentalsService) {
+function rentalsController($filter, rentalsService, $q) {
   var rentalsCtrl = this;
   rentalsCtrl.$onInit = function() {
     console.log(rentalsCtrl.rentals);
@@ -33,5 +33,20 @@ function rentalsController($filter, rentalsService) {
       }
       return response;
     });
+  };
+
+  rentalsCtrl.deleteRental = function(rental){
+    var foundRental = $filter('filter')(rentalsCtrl.rentals, {id: rental.id})[0];
+    var index = rentalsCtrl.rentals.indexOf(foundRental);
+    if(index !== -1){
+      return rentalsService.deleteRental(rental).then(function(response){
+        rentalsCtrl.rentals.splice(index, 1);
+        return response;
+      });
+    } else {
+      var deferred = $q.defer();
+      deferred.reject('Not found');
+      return deferred.promise;
+    }
   };
 }
