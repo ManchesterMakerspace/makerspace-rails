@@ -30,12 +30,13 @@ class Member
   validates :fullname, presence: true, uniqueness: true
   validates :email, uniqueness: true
   before_save :update_allowed_workshops
+  before_update :verify_group_expiry
   after_update :update_card
   # after_create :create_card
 
   has_many :offices, class_name: 'Workshop', inverse_of: :officer
   has_many :access_cards, class_name: "Card", inverse_of: :member
-  has_many :groups
+  belongs_to :group, class_name: "Group", inverse_of: :active_members, optional: true
   has_and_belongs_to_many :learned_skills, class_name: 'Skill', inverse_of: :trained_members
   has_and_belongs_to_many :expertises, class_name: 'Workshop', inverse_of: :experts
   has_and_belongs_to_many :allowed_workshops, class_name: 'Workshop', inverse_of: :allowed_members
@@ -55,6 +56,16 @@ class Member
   #     RejectionCard.find_by(uid: self.cardID).update(holder: self.fullname)
   #   end
   # end
+
+  def verify_group_expiry
+    if self.groupName
+      group = Group.where(groupName: self.groupName).first
+      if group
+        self.group = group
+        self.expirationTime = group.expiry
+      end
+    end
+  end
 
   def update_card
     self.access_cards.each do |c|

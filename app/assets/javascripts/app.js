@@ -90,6 +90,9 @@ var app = angular.module('app', [
         },
         cards: function(member, cardService) {
           return cardService.getMemberCards(member.id);
+        },
+        groups: function(groupService){
+          return groupService.getAllGroups();
         }
       }
     })

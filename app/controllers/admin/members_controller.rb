@@ -31,7 +31,7 @@ class Admin::MembersController < AdminController
       end
       render json: @member and return
     else
-      render status: 500 and return
+      render json: {status: 500}, status: 500 and return
     end
   end
 
@@ -61,7 +61,7 @@ class Admin::MembersController < AdminController
   end
 
   def slack_connect
-    if Rails.env.production
+    if Rails.env.production?
       @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
               channel: 'renewals',
               icon_emoji: ':ghost:'

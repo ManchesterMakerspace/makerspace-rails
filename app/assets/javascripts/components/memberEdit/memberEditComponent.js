@@ -4,7 +4,8 @@ app.component('memberEditComponent', {
   controllerAs: "memberEditCtrl",
   bindings: {
     member: '<',
-    cards: '<'
+    cards: '<',
+    groups: '<'
   }
 });
 
@@ -59,7 +60,8 @@ function memberEditController(cardService, memberService, $state, $filter, alert
     } else if (!!memberEditCtrl.reportedCard && memberEditCtrl.reportedCard.card_location) {
       memberEditCtrl.member.cards_attributes = memberEditCtrl.reportedCard;
     }
-    return memberService.updateMember(memberEditCtrl.member).then(function(){
+    return memberService.updateMember(memberEditCtrl.member).then(function(response){
+      memberEditCtrl.member = response;
       alertService.addAlert('Member updated!', 'success');
       $state.go('root.members');
     });

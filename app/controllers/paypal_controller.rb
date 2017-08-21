@@ -46,7 +46,7 @@ class PaypalController < ApplicationController
   end
 
   def slack_connect
-    if Rails.env.production
+    if Rails.env.production?
       @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
             channel: 'renewals',
             icon_emoji: ':ghost:'
