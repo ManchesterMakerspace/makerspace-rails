@@ -9,11 +9,9 @@ app.component('newMemberComponent', {
   }
 });
 
-function newMemberController(memberService, cardService, alertService) {
+function newMemberController(memberService, cardService, alertService, slackService) {
   var newMemberCtrl = this;
   newMemberCtrl.$onInit = function() {
-    console.log(newMemberCtrl.groups);
-    // newMemberCtrl.roles = ['member', 'officer', 'admin'];
     newMemberCtrl.newMember = {
       cardID: newMemberCtrl.card.uid
     };
@@ -22,6 +20,10 @@ function newMemberController(memberService, cardService, alertService) {
   newMemberCtrl.submitMember = function(form){
     if(!form) {return;}
     return memberService.createMember(newMemberCtrl.newMember).then(function(member){
+      newMemberCtrl.newMember.cardID = null;
+      slackService.connect();
+      slackService.invite(newMemberCtrl.newMember.email, newMemberCtrl.newMember.fullname);
+      slackService.disconnect();
       alertService.addAlert('Member saved!', 'success');
       newMemberCtrl.updatedMembers.push(member);
     });
