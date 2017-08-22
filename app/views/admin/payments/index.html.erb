@@ -2,8 +2,9 @@
 	<thead>
 		<tr>
 			<th>Product Name</th>
-      <th>Member</th>
-			<th>Processed</th>
+			<th>Member</th>
+			<th>Renew</th>
+			<th>Intro</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -16,11 +17,17 @@
 				<tr>
 					<td><%= payment.product%></td>
 					<% if !!payment.member %>
-						<td><%= payment.member.fullname%></td>
+						<td class="success">
+							<%= select_tag :member_id, options_for_select(@members.collect{|m| [m.fullname, m.id]}, selected: payment.member_id) %>
+							<p>Payment Info: <%=payment.firstname%> <%=payment.lastname%> @ <%=payment.payer_email%></p>
+						</td>
 					<% else %>
-						<td>No member found</td>
+						<td class="danger"><%= select_tag :member_id, options_for_select(@members.collect{|m| [m.fullname, m.id]}, selected: payment.member_id), include_blank: 'Select Member...' %>
+							<p>Payment Info: <%=payment.firstname%> <%=payment.lastname%> @ <%=payment.payer_email%></p>
+						</td>
 					<% end %>
-	        <td><%= payment.processed %> </td>
+					<td><button type="button">Renew 1 Month</button></td>
+					<td><button type="button">Send Intro</button></td>
 		   	</tr>
 			<% end %>
 		<% end %>

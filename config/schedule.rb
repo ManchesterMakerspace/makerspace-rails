@@ -20,8 +20,5 @@
 # Learn more: http://github.com/javan/whenever
 
 every :day, at: '2am' do
-  rake "db:backupMembers"
-  rake "db:backupWorkshops"
-  rake "db:backupSkills"
-  rake "db:backupCards"
+  rake "db:backup"
 end
