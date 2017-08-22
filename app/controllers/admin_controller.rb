@@ -4,7 +4,7 @@ class AdminController < ApplicationController
   private
   def authorized?
     unless current_member.try(:role) == 'admin'
-      redirect_to root_path, alert: "You are not allowed to access that page."
+      render json: 401 and return
     end
   end
 end

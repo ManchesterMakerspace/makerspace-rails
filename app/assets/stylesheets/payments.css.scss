@@ -1,0 +1,18 @@
+.payments-header {
+  margin-top: 1em;
+  border: 1px solid black;
+  font-weight: bold;
+  padding: 1em;
+  border-radius: 4px 4px 0 0;
+}
+
+.payment {
+  padding: .5em;
+  border: 1px solid black;
+  &.success {
+    background-color:  rgba(0, 255, 0, 0.1);
+  }
+  &.danger {
+    background-color: rgba(255, 0, 0, 0.1);
+  }
+}

@@ -1,0 +1,50 @@
+
+
+<ui-view rentals="rentalsCtrl.rentals" delete-rental="rentalsCtrl.deleteRental(rental)" upsert-rental="rentalsCtrl.upsertRental(rental)" members="rentalsCtrl.members">
+
+  <div class="row">
+    <div class="col-xs-4">
+      <button type="button"
+        style="margin-bottom: 1em;"
+        class="btn btn-success"
+        ng-if="rentalsCtrl.isUserAdmin()"
+        ui-sref="root.rentals.new">Create New Rental</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 rentals-table">
+      <div class="row rentals-table-header">
+        <div ng-class="rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-4'">
+          Number
+        </div>
+        <div ng-class="rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-4'">
+          Member
+        </div>
+        <div ng-class="rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-4'">
+          Exp. Date
+        </div>
+      </div>
+        <div class="row rental" ng-if="!rentalsCtrl.rentals || rentalsCtrl.rentals.length === 0">
+          <div class="col-xs-12">
+            No rentals found.
+          </div>
+        </div>
+        <div class="row rental" ng-class="rentalsCtrl.checkExp(rental) ? 'success' : 'danger'" ng-repeat="rental in rentalsCtrl.rentals track by $index">
+          <div ng-bind="rental.number" ng-class="rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-4'">
+          </div>
+          <div ng-class="rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-4'">
+            <span ng-if="rental.member" ng-bind="rental.member.fullname"></span>
+            <span ng-if="!rental.member">Available for Rent</span>
+          </div>
+          <div ng-bind="rental.expiration | date: shortDate: EST" ng-class="rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-4'">
+          </div>
+          <div ng-class="rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-4'" ng-if="rentalsCtrl.isUserAdmin()">
+            <button type="button" class="btn btn-primary"
+             ui-sref="root.rentals.edit({id: rental.id})">Edit/Renew</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</ui-view>

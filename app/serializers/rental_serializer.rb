@@ -1,3 +1,4 @@
 class RentalSerializer < ActiveModel::Serializer
-  attributes :id
+  attributes :id, :number, :expiration
+  belongs_to :member
 end

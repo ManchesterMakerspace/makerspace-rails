@@ -6,20 +6,20 @@ class Card
   field :validity, type: String #Member's Status
   attr_accessor :card_location
 
-  before_create :load_member_attribtues
-  before_update :load_member_attribtues
-  after_save :check_validity
+  before_create :set_expiration, :set_holder
+  before_update :set_expiration
+  # after_save :check_validity
 
-  belongs_to :member
+  validates :uid, presence: true, uniqueness: true
 
-  def load_member_attribtues
+  belongs_to :member, class_name: 'Member', inverse_of: :access_cards
+
+  def set_holder
     self.holder = self.member.fullname
-    self.member_id = self.member.id.to_s
-    self.expiry = self.member.expirationTime
   end
 
-  def check_validity
-    Card.skip_callback(:save, :after, :check_validity)
+  def set_expiration
+    self.expiry = self.member.expirationTime
     if (!!self.card_location)
       self.validity = self.card_location
     elsif (self.validity != 'lost' && self.validity != 'stolen')
@@ -29,7 +29,12 @@ class Card
         self.validity = 'expired'
       end
     end
-    self.save
-    Card.set_callback(:save, :after, :check_validity)
   end
+
+  # def check_validity
+  #   Card.skip_callback(:save, :after, :check_validity)
+  #
+  #   self.save
+  #   Card.set_callback(:save, :after, :check_validity)
+  # end
 end

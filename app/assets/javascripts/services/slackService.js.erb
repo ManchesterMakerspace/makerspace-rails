@@ -1,0 +1,34 @@
+app.factory('slackService', function(){
+
+  var socket = io.connect("https://masterslacker.herokuapp.com/");
+
+  var connect = function(){
+    socket.on('connect', function(){
+      socket.emit('authenticate', {
+        token: '<%=Rails.application.secrets.slack_variable%>',
+        goodBye: 'Interface connection closed.',
+        slack: {
+          username: 'Management Bot',
+          channel: 'test_channel',
+          iconEmoji: ':ghost:'
+        }
+      });
+    });
+  };
+
+  var invite = function(email, fullname) {
+    socket.emit('invite', email);
+    var msg = 'New member ' + fullname + 'invited to Slack!';
+    socket.emit('channelMsg', {channel: 'whos_at_the_space', msg: msg});
+  };
+
+  var disconnect = function(){
+    socket.disconnect();
+  };
+
+  return {
+    connect: connect,
+    invite: invite,
+    disconnect: disconnect
+  };
+});

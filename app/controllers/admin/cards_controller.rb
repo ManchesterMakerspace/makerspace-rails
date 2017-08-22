@@ -1,32 +1,51 @@
 class Admin::CardsController < ApplicationController
-  before_action :set_member, only: [:new, :create]
-  before_action :set_card, only: [:new, :create]
+  before_action :set_member, only: [:create]
 
   def new
-    reject = RejectionCard.where(holder: nil).last
+    @card = Card.new()
+    reject = RejectionCard.where({'holder' => nil, 'timeOf' => {'$gt' => (Date.today - 1.day)}}).last
     if( !!reject )
-      @card.uid = reject.uid || 'RejectionCard has no ID'
+      @card.uid = reject.uid || nil
     else
-      @card.uid = 'Not Found'
+      @card.uid = nil
     end
+    render json: @card
   end
 
   def create
-    @card.uid = params["card"]["uid"]
+    @card = Card.new(card_params)
+    cards = @card.member.access_cards.select { |c| return c.validity != 'lost' && c.validity != 'stolen'}
+    if cards.length == 0
+      render json: {msg: 'Member has Active cards'} and return
+    end
     if @card.save
       RejectionCard.find_by(uid: @card.uid).update(holder: @card.holder)
-      redirect_to member_path(@card.member), notice: 'Success'
+      render json: @card and return
     else
-      render :new, alert: 'Failure'
+      render json: {status: 500}, status: 500 and return
+    end
+  end
+
+  def show
+    @cards = Card.where(member: Member.find(params[:id]))
+    render json: @cards and return
+  end
+
+  def update
+    @card = Card.find_by(id: params[:id])
+    if @card.update(card_params)
+      render json: @card and return
+    else
+      render json: {status: 500}, status: 500 and return
     end
   end
 
   private
-  def set_member
-    @member = Member.find_by(id: params["member_id"]) || Member.find_by(id: params["card"]["member_id"])
+  def card_params
+    params.require(:card).permit(:member_id, :uid, :card_location)
   end
 
-  def set_card
-    @card = Card.new(member: @member)
+  def set_member
+    @member = Member.find_by(id: params["member_id"]) || Member.find_by(id: params["card"]["member_id"])
   end
 end

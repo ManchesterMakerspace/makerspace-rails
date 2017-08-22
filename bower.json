@@ -10,7 +10,8 @@
     "angular-bootstrap": "=2.5.0",
     "angular-material": "^1.1.4",
     "angular-messages": "latest",
-    "angular-devise": "latest"
+    "angular-devise": "latest",
+    "angular-signature": "latest"
   },
   "resolutions": {
     "angular": "1.6.4"

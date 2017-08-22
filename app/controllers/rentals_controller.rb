@@ -1,13 +1,17 @@
 class RentalsController < ApplicationController
+  before_action :set_rental, only: [:show]
 
   def index
     @rentals = Rental.all
-    @members = Member.all
+    render json: @rentals and return
   end
 
-  private
-  def rental_params
-    params.require(:rental).permit(:number, :member_id)
+  def show
+    render json: @rental and return
   end
 
+private
+  def set_rental
+    @rental = Rental.find_by(id: params[:id])
+  end
 end

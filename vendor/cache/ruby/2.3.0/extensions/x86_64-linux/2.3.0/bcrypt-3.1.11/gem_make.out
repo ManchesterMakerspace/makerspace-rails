@@ -1,4 +1,4 @@
-/usr/bin/ruby2.3 -r ./siteconf20170111-4560-6uojgt.rb extconf.rb
+/usr/bin/ruby2.3 -r ./siteconf20170805-25055-9h4cx.rb extconf.rb
 creating Makefile
 
 make "DESTDIR=" clean
@@ -12,4 +12,4 @@ compiling wrapper.c
 linking shared-object bcrypt_ext.so
 
 make "DESTDIR=" install
-/usr/bin/install -c -m 0755 bcrypt_ext.so ./.gem.20170111-4560-1c63s50
+/usr/bin/install -c -m 0755 bcrypt_ext.so ./.gem.20170805-25055-1r0bd3g
