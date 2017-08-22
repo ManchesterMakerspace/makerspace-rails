@@ -8,7 +8,7 @@ app.component('renewMemberComponent', {
   }
 });
 
-function renewMemberController(memberService) {
+function renewMemberController(memberService, alertService) {
   var renewMemberCtrl = this;
   renewMemberCtrl.$onInit = function() {
   };
