@@ -9,7 +9,7 @@ app.component('newMemberComponent', {
   }
 });
 
-function newMemberController(memberService, cardService, alertService, slackService) {
+function newMemberController(memberService, cardService, alertService, slackService, $timeout) {
   var newMemberCtrl = this;
   newMemberCtrl.$onInit = function() {
     newMemberCtrl.newMember = {
@@ -22,8 +22,10 @@ function newMemberController(memberService, cardService, alertService, slackServ
     return memberService.createMember(newMemberCtrl.newMember).then(function(member){
       newMemberCtrl.newMember.cardID = null;
       slackService.connect();
-      slackService.invite(newMemberCtrl.newMember.email, newMemberCtrl.newMember.fullname);
-      slackService.disconnect();
+      $timeout(function(){
+        slackService.invite(newMemberCtrl.newMember.email, newMemberCtrl.newMember.fullname);
+        slackService.disconnect();
+      }, 500);
       alertService.addAlert('Member saved!', 'success');
       newMemberCtrl.updatedMembers.push(member);
     });

@@ -1,8 +1,9 @@
 app.factory('slackService', function(){
 
-  var socket = io.connect("https://masterslacker.herokuapp.com/");
+  var socket;
 
   var connect = function(){
+    socket = io.connect("https://masterslacker.herokuapp.com/");
     socket.on('connect', function(){
       socket.emit('authenticate', {
         token: '<%=Rails.application.secrets.slack_variable%>',
