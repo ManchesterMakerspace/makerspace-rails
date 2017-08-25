@@ -6,7 +6,12 @@ app.factory('tokenService', function($http){
     });
   };
 
+  var inviteMember = function(email){
+    return $http.post('/api/token', {email: email});
+  };
+
   return {
-    validate: validate
+    validate: validate,
+    inviteMember: inviteMember
   };
 });

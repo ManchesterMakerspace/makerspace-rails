@@ -6,7 +6,7 @@ class Admin::RentalsController < ApplicationController
     if @rental.save
       render json: @rental and return
     else
-      render status: 500 and return
+      render json: {status: 500}, status: 500 and return
     end
   end
 
@@ -14,7 +14,7 @@ class Admin::RentalsController < ApplicationController
     if @rental.update(rental_params)
       render json: @rental and return
     else
-      render status: 500 and return
+      render json: {status: 500}, status: 500 and return
     end
   end
 

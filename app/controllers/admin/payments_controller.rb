@@ -14,7 +14,7 @@ class Admin::PaymentsController < ApplicationController
     if @payment.update(payment_params)
       render json: @payment and return
     else
-      render status: 500 and return
+      render json: {status: 500}, status: 500 and return
     end
     @members = Member.all
   end

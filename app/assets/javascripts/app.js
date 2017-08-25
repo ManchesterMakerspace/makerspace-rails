@@ -122,6 +122,22 @@ var app = angular.module('app', [
       url: '/renew',
       component: 'renewMemberComponent'
     })
+    .state('root.memberships.renewId', {
+      url: '/renew/:id',
+      component: 'renewMemberComponent',
+      resolve: {
+        member: function(memberService, $stateParams) {
+          return memberService.getByID($stateParams.id);
+        }
+      }
+    })
+    .state('root.memberships.invite', {
+      url: '/invite/:email',
+      component: 'inviteComponent',
+      params: {
+        email: null
+      }
+    })
     .state('root.payments', {
       url: '/payments',
       component: 'paymentsComponent',

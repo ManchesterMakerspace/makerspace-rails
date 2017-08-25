@@ -39,6 +39,7 @@
     <md-input-container class="md-block">
       <label for="groupName">Group</label>
       <md-select ng-model="memberEditCtrl.editForm.groupName" name="groupName">
+        <md-option ng-value="null">None</md-option>
         <md-option ng-repeat="group in memberEditCtrl.groups" ng-value="group.groupName">{{group.groupName}}</md-option>
       </md-select>
     </md-input-container>

@@ -1,3 +1,5 @@
+require 'uri'
+
 class PaypalController < ApplicationController
   protect_from_forgery except: [:notify]
   before_action :slack_connect, only: [:notify]
@@ -7,18 +9,22 @@ class PaypalController < ApplicationController
     @api = PayPal::SDK::Merchant.new
     if @api.ipn_valid?(request.raw_post)
       @notifier.ping("$#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
-
       if @payment.find_member
-        #renew some peeps
+        @notifier.ping("Member found: #{@payment.member.fullname}. Renew member: https://makerspace-interface.herokuapp.com/#/memberships/renew/#{@payment.member.id}")
       else
-        token = RegistrationToken.new(email: @payment.payer_email)
-        if token.save
-          @notifier.ping("Registration email sent to #{@payment.payer_email}.")
-          render json: {status: 200}, status: 200 and return
-        else
-          render json: {msg: 'Email already taken'}, status: 400 and return
-        end
+        @notifier.ping("No member found. Send registration email to #{@payer.payer_email}:   https://makerspace-interface.herokuapp.com/#/memberships/invite/#{@payments.payer_email}")
       end
+      # if @payment.find_member
+      #   #renew some peeps
+      # else
+      #   token = RegistrationToken.new(email: @payment.payer_email)
+      #   if token.save
+      #     @notifier.ping("Registration email sent to #{@payment.payer_email}.")
+      #     render json: {status: 200}, status: 200 and return
+      #   else
+      #     render json: {msg: 'Email already taken'}, status: 400 and return
+      #   end
+      # end
     end
   end
 

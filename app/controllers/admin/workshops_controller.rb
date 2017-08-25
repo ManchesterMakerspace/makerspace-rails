@@ -6,7 +6,7 @@ class Admin::WorkshopsController < AdminController
     if @workshop.save
       render json: @workshop and return
     else
-      render status: 500 and return
+      render json: {status: 500}, status: 500 and return
     end
   end
 
@@ -14,15 +14,15 @@ class Admin::WorkshopsController < AdminController
     if @workshop.update(workshop_params)
       render json: @workshop and return
     else
-      render status: 500 and return
+      render json: {status: 500}, status: 500 and return
     end
   end
 
   def destroy
     if @workshop.destroy
-      render status: 200 and return
+      render json: {status: 200}, status: 200 and return
     else
-      render status: 500 and return
+      render json: {status: 500}, status: 500 and return
     end
   end
 
