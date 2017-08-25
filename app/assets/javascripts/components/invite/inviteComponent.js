@@ -20,6 +20,6 @@ function inviteController($stateParams, tokenService, alertService, $state) {
   };
 
   inviteCtrl.cancel = function() {
-    $state.go('index.memberships.renew');
+    $state.go('root.memberships.renew');
   };
 }

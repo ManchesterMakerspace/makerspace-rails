@@ -34,9 +34,10 @@ var app = angular.module('app', [
         groups: function(groupService){
           return groupService.getAllGroups();
         },
-        token: function(tokenService, $stateParams, $q, $state){
+        token: function(tokenService, $stateParams, $q, $state, alertService){
           return tokenService.validate($stateParams.id, $stateParams.token).catch(function(){
             $state.go('login');
+            alertService.addAlert("Please login");
             return $q.reject();
           });
         }
@@ -58,12 +59,16 @@ var app = angular.module('app', [
       abstract: true,
       component: 'rootComponent',
       resolve: {
-        currentUser: function(Auth){
+        currentUser: function(Auth, $q, $state, alertService){
           return Auth.currentUser().then(function(response){
             return response;
           }).catch(function(err){
             console.log(err);
-            return {};
+            if($state.current.name !== 'root.members') {
+              $state.go('login');
+              alertService.addAlert("Please login");
+              return $q.reject();
+            }
           });
         }
       }
