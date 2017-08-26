@@ -1,4 +1,4 @@
-/usr/bin/ruby2.3 -r ./siteconf20170111-4560-n7k59y.rb extconf.rb
+/usr/bin/ruby2.3 -r ./siteconf20170805-25055-p5vpt5.rb extconf.rb
 checking for ffi.h... no
 checking for ffi.h in /usr/local/include,/usr/include/ffi... no
 checking for rb_thread_blocking_region()... no
@@ -122,6 +122,7 @@ make[3]: Entering directory '/home/will/Desktop/dev/makerspace_interface/vendor/
 make[3]: Nothing to be done for 'all'.
 make[3]: Leaving directory '/home/will/Desktop/dev/makerspace_interface/vendor/cache/ruby/2.3.0/gems/ffi-1.9.14/ext/ffi_c/libffi-x86_64-linux-gnu/man'
 make[3]: Entering directory '/home/will/Desktop/dev/makerspace_interface/vendor/cache/ruby/2.3.0/gems/ffi-1.9.14/ext/ffi_c/libffi-x86_64-linux-gnu'
+make[3]: Nothing to be done for 'all-am'.
 make[3]: Leaving directory '/home/will/Desktop/dev/makerspace_interface/vendor/cache/ruby/2.3.0/gems/ffi-1.9.14/ext/ffi_c/libffi-x86_64-linux-gnu'
 make[2]: Leaving directory '/home/will/Desktop/dev/makerspace_interface/vendor/cache/ruby/2.3.0/gems/ffi-1.9.14/ext/ffi_c/libffi-x86_64-linux-gnu'
 make[1]: Leaving directory '/home/will/Desktop/dev/makerspace_interface/vendor/cache/ruby/2.3.0/gems/ffi-1.9.14/ext/ffi_c/libffi-x86_64-linux-gnu'
@@ -165,4 +166,4 @@ compiling Types.c
 compiling Variadic.c
 compiling ffi.c
 linking shared-object ffi_c.so
-/usr/bin/install -c -m 0755 ffi_c.so ./.gem.20170111-4560-96zvc1
+/usr/bin/install -c -m 0755 ffi_c.so ./.gem.20170805-25055-1nmkkvn

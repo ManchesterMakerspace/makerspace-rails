@@ -1,0 +1,43 @@
+<form class="rental-form" name="rentalForm"  ng-submit="rentalFormCtrl.submitForm(rentalForm.$valid)" novalidate>
+  <div class="col-xs-4 col-xs-offset-4">
+    <md-input-container class="md-block">
+      <label for="number">Locker Number</label>
+      <input type="text" name="number"
+        ng-model="rentalFormCtrl.rentalForm.number"
+        blacklist="rentalFormCtrl.rentals"
+        safeword="rentalFormCtrl.rental"
+        required/>
+      <div ng-messages="rentalForm.number.$error">
+        <div ng-message="required">Cannot be blank.</div>
+        <div ng-message="blacklist">Locker number taken.</div>
+      </div>
+    </md-input-container>
+  </div>
+  <div class="col-xs-4 col-xs-offset-4">
+    <md-input-container class="md-block">
+      <label for="member">Select a Member</label>
+      <md-select ng-model="rentalFormCtrl.rentalForm.member_id"
+        name="member"
+        required>
+        <md-option ng-repeat="member in rentalFormCtrl.members track by $index"
+          ng-value="member.id">
+          {{member.fullname}}
+        </md-option>
+      </md-select>
+    </md-input-container>
+  </div>
+  <div class="col-xs-4 col-xs-offset-4">
+    <md-input-container>
+      <label for="expiration">Expiration Date</label>
+      <md-datepicker name="expiration"
+        md-open-on-focus
+        ng-model="rentalFormCtrl.rentalForm.expiration"/>
+    </md-input-container>
+  </div>
+
+  <div class="col-xs-4 col-xs-offset-4">
+    <button type="submit" class="btn" ng-class="rentalForm.$valid ? 'btn-success': 'btn-disabled'">Save Rental</button>
+    <button type="button" ng-click="rentalFormCtrl.delete()" class="btn btn-warning" ng-if="rentalFormCtrl.rental.id">Delete Rental</button>
+    <button type="button" ng-click="rentalFormCtrl.exitForm()" class="btn btn-danger">Cancel</button>
+  </div>
+</form>

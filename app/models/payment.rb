@@ -1,5 +1,6 @@
 class Payment
   include Mongoid::Document
+  include ActiveModel::Serializers::JSON
   store_in collection: 'general', database: 'heroku_pvjp3t1v', client: 'payments'
 
   belongs_to :member, optional: true
@@ -15,41 +16,6 @@ class Payment
   field :txn_id
   field :txn_type
   field :test, type: Boolean
-  # field :processed, type: Boolean, default: false
-
-  def self.update_members
-    unless self.new_payments.size == 0
-      self.new_payments.each do |payment|
-        renewObj = {expTime: payment.calculate_months}
-        member = payment.find_member
-        if !!member
-          payment.member = member #set member if found
-          if payment.member.update({expirationTime: renewObj}) #if update succeeds
-            payment.processed = true #mark processed
-            payment.save
-          end
-        end
-      end
-    end
-  end
-
-  def self.prepare_updates
-    unless self.new_payments.size == 0
-      self.new_payments.collect do |payment| #return array of modified payments
-        renewObj = {expTime: payment.calculate_months}
-        member = payment.find_member
-        if !!member
-          payment.member = member
-          payment.save
-        end
-        payment
-      end
-    end
-  end
-
-  def self.new_payments
-    self.where(processed: false)
-  end
 
   def find_member
     fullname = self.firstname + ' ' + self.lastname
@@ -57,12 +23,17 @@ class Payment
     unless !!member
       member = Member.where(email: self.payer_email).first
       unless !!member
-        member = Member.where(fullname: Regexp.new(self.lastname, true)).first
+        member = Member.where(fullname: Regexp.new(self.lastname)).first
+        unless !!member
+          payments = Payment.where(member: !nil, payer_email: self.payer_email)
+          if payments.size > 0
+            member = payments.sort_by { |p| p[:payment_date]}.first.member
+          else
+            member = nil
+          end
+        end
       end
     end
     return member
-  end
-
-  def calculate_months
   end
 end

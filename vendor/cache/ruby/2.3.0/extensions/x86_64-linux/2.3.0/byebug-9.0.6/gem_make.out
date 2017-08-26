@@ -1,4 +1,4 @@
-/usr/bin/ruby2.3 -r ./siteconf20170111-4560-so6f2m.rb extconf.rb
+/usr/bin/ruby2.3 -r ./siteconf20170805-25055-8p7u18.rb extconf.rb
 creating Makefile
 
 make "DESTDIR=" clean
@@ -12,4 +12,4 @@ compiling threads.c
 linking shared-object byebug/byebug.so
 
 make "DESTDIR=" install
-/usr/bin/install -c -m 0755 byebug.so ./.gem.20170111-4560-1q59f6u/byebug
+/usr/bin/install -c -m 0755 byebug.so ./.gem.20170805-25055-1h44o7o/byebug

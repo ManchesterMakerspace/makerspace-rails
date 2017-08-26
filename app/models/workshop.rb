@@ -26,9 +26,9 @@ class Workshop
     experts << expert
   end
 
-  def list_experts
-    experts.collect { |e| e.fullname }.join(", ")
-  end
+  # def list_experts
+  #   experts.collect { |e| e.fullname }.join(", ")
+  # end
 
   def train_fully(member)
     self.skills.each do |skill|

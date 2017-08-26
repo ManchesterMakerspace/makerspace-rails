@@ -1,71 +1,74 @@
 class Admin::MembersController < AdminController
-  before_action :set_member, only: [:edit, :update]
-  before_action :set_workshop, only: [:edit]
+  before_action :set_member, only: [:update]
+  before_action :slack_connect, only: [:update]
 
-  def new
-    @member = Member.new
-    reject = RejectionCard.where(holder: nil).last
-    if( !!reject )
-      @member.cardID = reject.uid || 'RejectionCard has no ID'
-    else
-      @member.cardID = 'Not Found'
-    end
-  end
+  # def new
+  #   @member = Member.new
+  #   reject = RejectionCard.where(holder: nil).last
+  #   if( !!reject )
+  #     @member.cardID = reject.uid || 'RejectionCard has no ID'
+  #   else
+  #     @member.cardID = 'Not Found'
+  #   end
+  # end
 
   def create
     @member = Member.new(member_params)
-    if(!!params["member"]["expirationTime"])
-      @member.expirationTime = params["member"]["expirationTime"]
-    end
     if @member.save
-      respond_to do |format|
-        format.html { redirect_to @member, notice: 'Member created successfully' }
-        format.json { render json: @member }
-      end
+      Card.create(uid: @member.cardID, member: @member)
+      RejectionCard.find_by(uid: @member.cardID).update(holder: @member.fullname)
+      render json: @member and return
     else
-      respond_to do |format|
-        format.html { render :new, alert: "Creation failed:  #{@member.errors.full_messages}" }
-        format.json { render json: @member }
-      end
+      render json: {status: 500}, status: 500 and return
     end
-  end
-
-  def edit
-  end
-
-  def renew
-    @member = Member.new
-    @members = Member.all.distinct(:fullname).sort
   end
 
   def update
-    @member.update(member_params)
-    if(!!params["member"]["expirationTime"])
-      @member.expirationTime = params["member"]["expirationTime"]
-    end
-    if @member.save
-      respond_to do |format|
-        format.html { redirect_to @member, notice: 'Member updated' }
-        format.json { render json: @member }
+    date = @member.expirationTime
+    if @member.update(member_params)
+      if @member.expirationTime > date
+        @notifier.ping "#{@member.fullname} renewed. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
       end
+      render json: @member and return
     else
-      respond_to do |format|
-        format.html { render :edit, alert: "Update failed:  #{@member.errors.full_messages}" }
-        format.json { render json: @member, alert: "Update failed:  #{@member.errors.full_messages}" }
-      end
+      render json: {status: 500}, status: 500 and return
     end
   end
 
+  # def welcome_email
+  #   @member = Member.new({fullname: 'Will', email: 'email'})
+  #   render "member_mailer/welcome_email.html.erb"
+  # end
+
+  # def intro
+  #   @member = Member.new(member_params)
+  #   email = MemberMailer.welcome_email(@member)
+  #   if email.deliver_now
+  #     @notifier.ping "Intro email sent to #{@member.email}"
+  #     render json: @member
+  #   else
+  #     render status: 500
+  #   end
+  # end
+
   private
   def member_params
-    params.require(:member).permit(:fullname, :cardID, :groupName, :notificationAck, :accesspoints, :startDate, :role, :email, :slackHandle, :password, :password_confirmation, :status, :skill_ids =>[], :learned_skill_ids => [], :cards_attributes => [:id, :card_location])
+    params.require(:member).permit(:fullname, :cardID, :groupName, :memberContractOnFile, :role, :email, :slackHandle, :password, :password_confirmation, :status, :renewal => [:months, :start_date])
   end
 
   def set_member
     @member = Member.find_by(id: params[:id]) || Member.find_by(id: params[:member][:id]) || Member.find_by(fullname: params[:member][:fullname])
   end
 
-  def set_workshop
-    @workshop = Workshop.find_by(id: params[:workshop_id])
+  def slack_connect
+    if Rails.env.production?
+      @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
+              channel: 'renewals',
+              icon_emoji: ':ghost:'
+    else
+      @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
+            channel: 'test_channel',
+            icon_emoji: ':ghost:'
+    end
   end
 end

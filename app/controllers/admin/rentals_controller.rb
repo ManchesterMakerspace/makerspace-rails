@@ -1,41 +1,29 @@
 class Admin::RentalsController < ApplicationController
-  before_action :set_rental, only: [:edit, :update]
-
-  def new
-    @rental = Rental.new
-    @members = Member.all
-  end
+  before_action :set_rental, only: [:update, :destroy]
 
   def create
     @rental = Rental.new(rental_params)
     if @rental.save
-      respond_to do |format|
-        format.html { redirect_to rentals_path, notice: 'Rental created successfully' }
-        format.json { render json: @rental }
-      end
+      render json: @rental and return
     else
-      respond_to do |format|
-        format.html { render :new, alert: "Creation failed:  #{@rental.errors.full_messages}" }
-        format.json { render json: @rental }
-      end
+      render json: {status: 500}, status: 500 and return
     end
   end
 
-  def edit
+  def update
+    if @rental.update(rental_params)
+      render json: @rental and return
+    else
+      render json: {status: 500}, status: 500 and return
+    end
   end
 
-  def update
-    @rental.update(rental_params)
-    if @rental.save
-      respond_to do |format|
-        format.html { redirect_to rentals_path, notice: 'Rental updated' }
-        format.json { render json: @rental }
-      end
+  def destroy
+    if !!@rental
+      @rental.delete
+      render json: {status: 200} and return
     else
-      respond_to do |format|
-        format.html { render :edit, alert: "Update failed:  #{@rental.errors.full_messages}" }
-        format.json { render json: @rental, alert: "Update failed:  #{@rental.errors.full_messages}" }
-      end
+      render json: {status: 422} and return
     end
   end
 

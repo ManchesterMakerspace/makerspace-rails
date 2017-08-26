@@ -1,4 +1,4 @@
-/usr/bin/ruby2.3 -r ./siteconf20170111-4560-1vc717x.rb extconf.rb
+/usr/bin/ruby2.3 -r ./siteconf20170805-25055-1j50i01.rb extconf.rb
 creating Makefile
 
 make "DESTDIR=" clean
@@ -18,4 +18,4 @@ native-endian.h:196:15: warning: ‘__bson_double_swap_slow’ defined but not u
 linking shared-object bson_native.so
 
 make "DESTDIR=" install
-/usr/bin/install -c -m 0755 bson_native.so ./.gem.20170111-4560-vgluxb
+/usr/bin/install -c -m 0755 bson_native.so ./.gem.20170805-25055-13dc9ug

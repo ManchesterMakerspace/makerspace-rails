@@ -11,13 +11,18 @@
 // about supported directives.
 //
 //= require jquery
-//= require jquery_ujs
-//= require jquery-2.1.1.min
-//= require jquery-ui.min
-//= require turbolinks
-//= require bootstrap.min
-//= require bootstrap-sprockets
+//= require angular
+//= require angular-ui-router
+//= require angular-rails-templates
+//= require angular-devise
+//= require angular-messages
+//= require angular-material
+//= require angular-animate
+//= require angular-aria
+//= require angular-bootstrap
+//= require angular-signature
+//= require angular-cookie
+//= require signature_pad
 //= require socket.io
-//= require member-form
-//= require workshop-form
-//= require rental-form
+//= require bootstrap
+//= require_tree .

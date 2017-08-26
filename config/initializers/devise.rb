@@ -6,14 +6,14 @@ Devise.setup do |config|
   # confirmation, reset password and unlock tokens in the database.
   # Devise will use the `secret_key_base` as its `secret_key`
   # by default. You can change it below and use your own secret key.
-  # config.secret_key = '3cf99acf13af16ea0db06b73024086561a12c3295278505fe2b42738655b87a7383795d29f48fe3fd0e73c4d1790320c1e5ee7b9271ddc391a9a2dae9e54aaca'
+config.secret_key = ENV['DEVISE_SECRET_KEY']
 
   # ==> Mailer Configuration
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
   config.mailer_sender = 'contact@manchestermakerspace.org'
-  config.secret_key = 'bac9f739b45c23a7b3b6bdbb897b2b48249fb98e6b8d437d0fedff898a5d57f7f90add22f22b3a7e10155c296c98641774f5a6587595dd4a16363ab99709e70e'
+  # config.secret_key = 'bac9f739b45c23a7b3b6bdbb897b2b48249fb98e6b8d437d0fedff898a5d57f7f90add22f22b3a7e10155c296c98641774f5a6587595dd4a16363ab99709e70e'
 
   # Configure the class responsible to send e-mails.
   # config.mailer = 'Devise::Mailer'

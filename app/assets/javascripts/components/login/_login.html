@@ -1,23 +1,33 @@
-<form name="loginForm" ng-submit="loginCtrl.submitLogin(loginForm.$valid)" novalidate>
-  <div class="form-group">
-    <label for="email">Email</label>
-    <input type="email"
-           name="email"
-           id="email"
-           ng-model="loginCtrl.loginForm.email"
-           required="required"
-           class="form-control">
-  </div>
+<div class="col-xs-12 login-wrapper">
+  <alert-component></alert-component>
+  
+  <div class="row login-row">
+    <div class="col-xs-8 col-xs-offset-2 login">
+      <form name="loginForm" ng-submit="loginCtrl.submitLogin(loginForm.$valid)" novalidate>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email"
+                 name="email"
+                 id="email"
+                 ng-model="loginCtrl.loginForm.email"
+                 required="required"
+                 class="form-control">
+        </div>
 
-  <div class="form-group">
-    <label for="password">Password</label>
-    <input type="password"
-           name="password"
-           id="password"
-           ng-model="loginCtrl.loginForm.password"
-           required="required"
-           class="form-control">
-  </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password"
+                 name="password"
+                 id="password"
+                 ng-model="loginCtrl.loginForm.password"
+                 required="required"
+                 class="form-control">
+        </div>
 
-  <button type="submit" class="btn btn-primary btn-lg">Sign in</button>
-</form>
+        <button type="submit" class="btn btn-primary btn-lg">Sign in</button>
+        <button type="button" class="btn btn-info btn-lg"
+          ng-click="loginCtrl.resetPassword()">Forgot your password?</button>
+      </form>
+    </div>
+  </div>
+</div>
