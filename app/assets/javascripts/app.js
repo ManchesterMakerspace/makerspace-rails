@@ -6,7 +6,8 @@ var app = angular.module('app', [
   'ngAnimate',
   'ngMaterial',
   'ngMessages',
-  'signature'
+  'signature',
+  'ipCookie'
 ]).run(function (){
 }).config(function($stateProvider, $urlRouterProvider, $locationProvider, AuthProvider){
   $locationProvider.hashPrefix('');
@@ -22,7 +23,17 @@ var app = angular.module('app', [
   $stateProvider
     .state('login', {
       url: '/login',
-      component: 'loginComponent'
+      component: 'loginComponent',
+      resolve: {
+        currentUser: function(Auth, $q, $state){
+          return Auth.currentUser().then(function(response){
+            $state.go('root.members');
+            return response;
+          }).catch(function(){
+              return $q.resolve();
+          });
+        }
+      }
     })
     .state('register', {
       url: '/register/:id/:token',
@@ -31,6 +42,14 @@ var app = angular.module('app', [
         token: null
       },
       resolve: {
+        currentUser: function(Auth, $q, $state){
+          return Auth.currentUser().then(function(response){
+            $state.go('root.members');
+            return response;
+          }).catch(function(){
+              return $q.resolve();
+          });
+        },
         groups: function(groupService){
           return groupService.getAllGroups();
         },

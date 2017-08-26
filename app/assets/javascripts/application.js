@@ -21,6 +21,7 @@
 //= require angular-aria
 //= require angular-bootstrap
 //= require angular-signature
+//= require angular-cookie
 //= require signature_pad
 //= require socket.io
 //= require bootstrap
