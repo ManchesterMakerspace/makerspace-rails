@@ -117,16 +117,12 @@ class Member
      end
    end
 
-   def self.current_membership_count
-     return Member.where({status: 'activeMember', 'expirationTime' => {'$gt' => (Time.now.strftime('%s').to_i * 1000)}}).size
+   def self.active_members
+     return Member.where(status: 'activeMember', :expirationTime.gt => (Time.now.strftime('%s').to_i * 1000))
    end
 
-   def self.expiringSoon
-     return Member.where({status: 'activeMember', 'expirationTime' => {'$gt' => ((Time.now.strftime('%s').to_i * 1000) + (3.days.to_i * 1000)) }})
-   end
-
-   def self.expiringThisWeek
-     return Member.where({status: 'activeMember', 'expirationTime' => {'$gt' => ((Time.now.strftime('%s').to_i * 1000) + (1.week.to_i * 1000)) }})
+   def self.expiring_members
+     return Member.where(status: 'activeMember', :expirationTime.gt => (Time.now.strftime('%s').to_i * 1000), :expirationTime.lte => (Time.now + 1.week).strftime('%s').to_i * 1000)
    end
 
   def renewal=(time)

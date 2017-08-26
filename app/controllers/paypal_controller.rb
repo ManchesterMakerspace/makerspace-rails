@@ -10,9 +10,11 @@ class PaypalController < ApplicationController
     if @api.ipn_valid?(request.raw_post)
       @notifier.ping("$#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
       if @payment.find_member
-        @notifier.ping("Member found: #{@payment.member.fullname}. Renew member: https://makerspace-interface.herokuapp.com/#/memberships/renew/#{@payment.member.id}")
+        msg = "Member found: #{@payment.member.fullname}. <a href='https://makerspace-interface.herokuapp.com/#/memberships/renew/#{@payment.member.id}'>Renew Member</a>"
+        @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
       else
-        @notifier.ping("No member found. Send registration email to #{@payer.payer_email}:   https://makerspace-interface.herokuapp.com/#/memberships/invite/#{@payments.payer_email}")
+        msg = "No member found. <a href='https://makerspace-interface.herokuapp.com/#/memberships/invite/#{@payments.payer_email}'>Send registration email to #{@payer.payer_email}</a>"
+        @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
       end
       # if @payment.find_member
       #   #renew some peeps
