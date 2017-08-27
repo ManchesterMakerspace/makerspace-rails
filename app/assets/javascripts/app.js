@@ -8,8 +8,7 @@ var app = angular.module('app', [
   'ngMessages',
   'signature',
   'ipCookie'
-]).run(function (){
-}).config(function($stateProvider, $urlRouterProvider, $locationProvider, AuthProvider){
+]).config(function($stateProvider, $urlRouterProvider, $locationProvider, AuthProvider){
   $locationProvider.hashPrefix('');
 
   AuthProvider.resourceName('member');
@@ -59,6 +58,9 @@ var app = angular.module('app', [
             alertService.addAlert("Please login");
             return $q.reject();
           });
+        },
+        contract: function(tokenService) {
+          return tokenService.getContract();
         }
       }
     })

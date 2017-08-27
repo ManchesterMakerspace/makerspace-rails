@@ -1,11 +1,16 @@
 desc "This task is called by the Heroku scheduler add-on and backs up the Mongo DB to local dump."
 task :backup => :environment do
-  sh("mongodump --db makerauth --archive=dump/makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive")
-  GoogleDrive::Session.from_config("config.json").upload_from_file("/home/putter/server/makerspace-interface/dump/makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive", "makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive", convert: false)
-  notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
+  if Rails.env.production?
+    sh("mongodump --db makerauth --archive=dump/makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive")
+    GoogleDrive::Session.from_config("config.json").upload_from_file(Rails.root.join("dump/makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive").to_s, "makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive", convert: false)
+    notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
       channel: 'master_slacker',
       icon_emoji: ':ghost:'
-  notifier.ping("Daily backup complete.")
+    notifier.ping("Daily backup complete.")
+  else
+    sh("mongodump --db makerauth --archive=dump/makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive")
+    GoogleDrive::Session.from_config("config.json").upload_from_file(Rails.root.join("dump/makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive").to_s, "makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive", convert: false)
+  end
 end
 
 task :renewal_reminders => :environment do

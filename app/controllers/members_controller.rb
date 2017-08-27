@@ -16,6 +16,11 @@ class MembersController < ApplicationController
       render json: @member and return
     end
 
+    def contract
+      session = GoogleDrive::Session.from_config("config.json")
+      file = session.file_by_title("")
+    end
+
     # def mailer
     #     @members = Member.all
     #     @members.each { |member| member.membership_mailer }

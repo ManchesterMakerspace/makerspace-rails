@@ -5,6 +5,7 @@ Rails.application.routes.draw do
 
   scope :api do
     resources :members, only: [:index]
+    get 'members/contract', to: 'members#contract'
     resources :groups, only: [:index]
     resources :token, only: [:create]
     post '/token/:id/:token', to: 'token#validate'

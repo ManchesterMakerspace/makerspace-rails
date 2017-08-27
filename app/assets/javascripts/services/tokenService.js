@@ -10,8 +10,13 @@ app.factory('tokenService', function($http){
     return $http.post('/api/token', {email: email});
   };
 
+  var getContract = function(){
+    return $http.get('/api/members/contract');
+  };
+
   return {
     validate: validate,
-    inviteMember: inviteMember
+    inviteMember: inviteMember,
+    getContract: getContract
   };
 });
