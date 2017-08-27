@@ -19,8 +19,10 @@ class TokenController < ApplicationController
     salt = BCrypt::Password.new(@token.token).salt
     hash = BCrypt::Engine.hash_secret(challenge_token, salt)
     valid = Rack::Utils.secure_compare(@token.token, hash)
-    if !valid || @token.used
-      redirect_to "/#/login", msg: 'Email already exists. Please login.'
+    if !valid
+      redirect_to "/#/login", msg: 'Invalid registration link.'
+    elsif @token.used
+      redirect_to "/#/login", msg: 'Registeration link already used. Please login.'
     else
       render json: @token
     end

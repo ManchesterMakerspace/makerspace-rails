@@ -22,6 +22,7 @@ function renewMemberController(memberService, alertService) {
     // console.log(renewMemberCtrl.renewalMember)
     return memberService.updateMember(renewMemberCtrl.renewalForm.member).then(function(member){
       alertService.addAlert('Member renewed!', 'success');
+      renewMemberCtrl.renewalForm = {};
       renewMemberCtrl.updatedMembers.push(member);
     });
   };

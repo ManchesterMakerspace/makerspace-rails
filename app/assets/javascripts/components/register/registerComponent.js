@@ -8,11 +8,11 @@ app.component('registerComponent', {
   }
 });
 
-function registerController(Auth, $state, slackService, alertService) {
+function registerController(Auth, $state, slackService, alertService, $timeout) {
   var registerCtrl = this;
   registerCtrl.$onInit = function() {
     registerCtrl.signedContact = false;
-    console.log(registerCtrl.token);
+    registerCtrl.registerForm = {};
   };
 
   registerCtrl.registerMember = function(form){
@@ -25,17 +25,26 @@ function registerController(Auth, $state, slackService, alertService) {
     };
     Auth.register(registerCtrl.registerForm). then(function(){
       slackService.connect();
-      slackService.invite(registerCtrl.registerForm.email, registerCtrl.registerForm.fullname);
-      slackService.disconnect();
-      alertService.addAlert('Registration Complete!', 'success');
-      $state.go('root.members');
+      return $timeout(function(){
+        slackService.invite(registerCtrl.registerForm.email, registerCtrl.registerForm.fullname);
+        slackService.disconnect();
+      }, 500).then(function(){
+        alertService.addAlert('Registration Complete!', 'success');
+        $state.go('root.members');
+      }).catch(function(err){
+        console.log(err);
+        alertService.addAlert("Error inviting to Slack!", "danger");
+      });
     }).catch(function(err){
       console.log(err);
+      alertService.addAlert('Error registering. Please contact board@manchestermakerspace.org!', 'danger');
     });
   };
 
   registerCtrl.signContract = function(signature){
-    console.log(signature.dataUrl);
-    registerCtrl.signedContact = true;
+    if(signature.dataUrl) {
+      registerCtrl.registerForm.signature = signature.dataURL;
+      registerCtrl.signedContact = true;
+    }
   };
 }

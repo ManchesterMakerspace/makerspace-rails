@@ -20,14 +20,21 @@ function newMemberController(memberService, cardService, alertService, slackServ
   newMemberCtrl.submitMember = function(form){
     if(!form) {return;}
     return memberService.createMember(newMemberCtrl.newMember).then(function(member){
-      newMemberCtrl.newMember.cardID = null;
+      newMemberCtrl.newMember = {};
       slackService.connect();
-      $timeout(function(){
+      return $timeout(function(){
         slackService.invite(newMemberCtrl.newMember.email, newMemberCtrl.newMember.fullname);
         slackService.disconnect();
-      }, 500);
-      alertService.addAlert('Member saved!', 'success');
-      newMemberCtrl.updatedMembers.push(member);
+      }, 500).then(function(){
+        alertService.addAlert('Member saved!', 'success');
+        newMemberCtrl.updatedMembers.push(member);
+      }).catch(function(err){
+        console.log(err);
+        alertService.addAlert("Error inviting to Slack!", "danger");
+      });
+    }).catch(function(err){
+      console.log(err);
+      alertService.addAlert("Error creating member!", "danger");
     });
   };
 
