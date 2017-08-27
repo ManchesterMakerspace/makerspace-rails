@@ -20,8 +20,7 @@ gem 'paypal-sdk-merchant'
 gem "slack-notifier"
 gem 'google_drive'
 gem 'socket.io-rails'
-#simple way to set Cron jobs
-gem 'whenever', :require => false
+gem 'mini_magick'
 
 group :development do
   gem 'byebug', platform: :mri

@@ -18,7 +18,16 @@ class MembersController < ApplicationController
 
     def contract
       session = GoogleDrive::Session.from_config("config.json")
-      file = session.file_by_title("")
+      drive_file = session.file_by_id(ENV['CONTRACT_ID'])
+      pdf_file = Tempfile.new(['contract', '.pdf'])
+      drive_file.download_to_file(pdf_file.path)
+      png_file = Tempfile.new(['contract', '.png'])
+      image = MiniMagick::Image.open(pdf_file.path)
+      image.format "png"
+      image.write(png_file.path)
+      pdf_file.unlink
+      data = Base64.encode64(image.to_blob).gsub("\n", '')
+      render json: {contract: "data:image/png;base64,#{data}"} and return
     end
 
     # def mailer
