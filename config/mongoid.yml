@@ -5,8 +5,8 @@ development:
       database: makerauth
       hosts:
         - localhost:27017
-    payments:
-      uri: <%=ENV['MLAB_URI']%>
+    # payments:
+    #   uri: <%=ENV['MLAB_URI']%>
 
   # Configure Mongoid specific options. (optional)
   options:
@@ -43,9 +43,9 @@ production:
   clients:
     # Defines the default client. (required)
       default:
-        uri: <%=ENV['REMOTE_URI']%>
-      payments:
         uri: <%=ENV['MLAB_URI']%>
+      # payments:
+      #   uri: <%=ENV['MLAB_URI']%>
   options:
     raise_not_found_error: false
 test:
