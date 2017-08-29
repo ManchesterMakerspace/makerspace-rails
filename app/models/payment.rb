@@ -1,7 +1,7 @@
 class Payment
   include Mongoid::Document
   include ActiveModel::Serializers::JSON
-  store_in collection: 'general', database: 'heroku_pvjp3t1v', client: 'payments'
+  # store_in collection: 'general', database: 'heroku_pvjp3t1v', client: 'payments'
 
   belongs_to :member, optional: true
 
