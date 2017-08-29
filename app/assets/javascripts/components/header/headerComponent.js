@@ -10,7 +10,6 @@ app.component('headerComponent', {
 function headerController(Auth, $state) {
   var headerCtrl = this;
   headerCtrl.$onInit = function() {
-    console.log(headerCtrl.currentUser);
   };
 
   headerCtrl.logout = function(){

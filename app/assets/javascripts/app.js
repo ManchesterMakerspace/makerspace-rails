@@ -8,7 +8,21 @@ var app = angular.module('app', [
   'ngMessages',
   'signature',
   'ipCookie'
-]).run(function (){
+]).run(function($transitions, $state, Auth, alertService, $q){
+  $transitions.onStart({}, function(trans){
+    var toState = trans.to();
+    Auth.currentUser().then(function(){
+      if (toState.name === 'login' || toState.name === 'register') {
+        alertService.addAlert("Logged In", 'success');
+        return $state.target("root.members");
+      }
+    }).catch(function(){
+      if (toState.name !== 'root.members') {
+        alertService.addAlert("Please log in");
+        return $state.go("login");
+      }
+    });
+  });
 }).config(function($stateProvider, $urlRouterProvider, $locationProvider, AuthProvider){
   $locationProvider.hashPrefix('');
 
@@ -23,17 +37,7 @@ var app = angular.module('app', [
   $stateProvider
     .state('login', {
       url: '/login',
-      component: 'loginComponent',
-      resolve: {
-        currentUser: function(Auth, $q, $state){
-          return Auth.currentUser().then(function(response){
-            $state.go('root.members');
-            return response;
-          }).catch(function(){
-              return $q.resolve();
-          });
-        }
-      }
+      component: 'loginComponent'
     })
     .state('register', {
       url: '/register/:id/:token',
@@ -42,14 +46,6 @@ var app = angular.module('app', [
         token: null
       },
       resolve: {
-        currentUser: function(Auth, $q, $state){
-          return Auth.currentUser().then(function(response){
-            $state.go('root.members');
-            return response;
-          }).catch(function(){
-              return $q.resolve();
-          });
-        },
         groups: function(groupService){
           return groupService.getAllGroups();
         },
@@ -59,6 +55,9 @@ var app = angular.module('app', [
             alertService.addAlert("Please login");
             return $q.reject();
           });
+        },
+        contract: function(tokenService) {
+          return tokenService.getContract();
         }
       }
     })
@@ -78,16 +77,11 @@ var app = angular.module('app', [
       abstract: true,
       component: 'rootComponent',
       resolve: {
-        currentUser: function(Auth, $q, $state, alertService){
+        currentUser: function(Auth, $q){
           return Auth.currentUser().then(function(response){
             return response;
-          }).catch(function(err){
-            console.log(err);
-            if($state.current.name !== 'root.members') {
-              $state.go('login');
-              alertService.addAlert("Please login");
-              return $q.reject();
-            }
+          }).catch(function(){
+            $q.resolve();
           });
         }
       }
