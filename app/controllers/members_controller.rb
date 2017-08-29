@@ -17,7 +17,8 @@ class MembersController < ApplicationController
     end
 
     def contract
-      session = GoogleDrive::Session.from_config("config.json")
+      credentials = Google::Auth::UserRefreshCredentials.new(JSON.parse(ENV['GDRIVE_CREDS']))
+      session = GoogleDrive.login_with_oauth(credentials)
       drive_file = session.file_by_id(ENV['CONTRACT_ID'])
       pdf_file = Tempfile.new(['contract', '.pdf'])
       drive_file.download_to_file(pdf_file.path)
