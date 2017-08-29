@@ -2,7 +2,7 @@ desc "This task is called by the Heroku scheduler add-on and backs up the Mongo 
 task :backup => :environment do
   if Rails.env.production?
     sh("mongodump -h #{ENV['MLAB_BASE_URL']} -d makerauth -u #{ENV['MLAB_USER']} -p #{ENV['MLAB_PASSWORD']} --archive=dump/makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive")
-    GoogleDrive::Session.from_config(ENV['GDRIVE_CREDS']).upload_from_file(Rails.root.join("dump/makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive").to_s, "makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive", convert: false)
+    GoogleDrive::Session.from_config("gdrive.json").upload_from_file(Rails.root.join("dump/makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive").to_s, "makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive", convert: false)
     notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
       channel: 'master_slacker',
       icon_emoji: ':ghost:'
