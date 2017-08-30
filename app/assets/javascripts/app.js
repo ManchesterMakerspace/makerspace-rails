@@ -8,20 +8,24 @@ var app = angular.module('app', [
   'ngMessages',
   'signature',
   'ipCookie'
-]).run(function($transitions, $state, Auth, alertService, $q){
+]).run(function($transitions, $state, Auth, alertService){
   $transitions.onStart({}, function(trans){
     var toState = trans.to();
-    Auth.currentUser().then(function(){
-      if (toState.name === 'login' || toState.name === 'register') {
-        alertService.addAlert("Logged In", 'success');
-        return $state.target("root.members");
-      }
-    }).catch(function(){
-      if (toState.name !== 'root.members') {
-        alertService.addAlert("Please log in");
-        return $state.go("login");
-      }
-    });
+    if (/root/.test(toState.name)) {
+      Auth.currentUser().catch(function(){
+        if (toState.name !== 'root.members') {
+          alertService.addAlert("Please log in");
+          return $state.go("login");
+        }
+      });
+    } else if (toState.name === 'login' || toState.name === 'register') {
+      Auth.currentUser().then(function(){
+          alertService.addAlert("Logged In", 'success');
+          return $state.target("root.members");
+      }).catch(function(){
+          return;
+      });
+    }
   });
 }).config(function($stateProvider, $urlRouterProvider, $locationProvider, AuthProvider){
   $locationProvider.hashPrefix('');
@@ -50,7 +54,13 @@ var app = angular.module('app', [
           return groupService.getAllGroups();
         },
         token: function(tokenService, $stateParams, $q, $state, alertService){
-          return tokenService.validate($stateParams.id, $stateParams.token).catch(function(){
+          return tokenService.validate($stateParams.id, $stateParams.token).then(function(email){
+            return {
+              token: $stateParams.token,
+              id: $stateParams.id,
+              email: email
+            };
+          }).catch(function(){
             $state.go('login');
             alertService.addAlert("Please login");
             return $q.reject();

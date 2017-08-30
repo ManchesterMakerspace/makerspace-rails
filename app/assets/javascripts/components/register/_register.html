@@ -1,13 +1,13 @@
 <alert-component></alert-component>
-<e-sign-component ng-if="!registerCtrl.signedContact" sign-contact="registerCtrl.signContract(signature)"><e-sign-component>
-<div ng-if="registerCtrl.signedContact" class="col-xs-6 col-xs-offset-3">
+
+<div ng-if="!registerCtrl.completedForm" class="col-xs-6 col-xs-offset-3">
   <div class="row">
     <div class="col-xs-6 col-xs-offset-3">
       <h2 class="text-center">Registration</h2>
     </div>
   </div>
   <form class="member-edit-form row" name="registerForm"
-    ng-submit="registerCtrl.registerMember(registerForm.$valid)" novalidate>
+    ng-submit="registerCtrl.submitForm(registerForm.$valid)" novalidate>
 
     <md-input-container class="md-block">
       <label for="fullname">Name</label>
@@ -19,7 +19,7 @@
         </div>
     </md-input-container>
 
-    <md-input-container class="md-block"
+    <md-input-container class="md-block">
       <md-checkbox ng-model="registerCtrl.group">
         Are you part of a registerd group?
       </md-checkbox>
@@ -28,6 +28,7 @@
     <div ng-if="registerCtrl.group">
       <md-input-container class="md-block">
         <md-select ng-model="registerCtrl.registerForm.groupName" placeholder="Select a Group">
+          <md-option ng-value="null">None</md-option>
           <md-option ng-value="group.groupRep" ng-repeat="group in registerCtrl.groups">{{group.groupName}}</md-option>
         </md-select>
       </md-input-container>
@@ -46,7 +47,7 @@
     <input style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
     <input type="password" style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
 
-    <md-input-container class="md-block" ng-if="registerCtrl.registerForm.role !== 'member'">
+    <md-input-container class="md-block">
       <label for="password">Password</label>
       <input ng-model="registerCtrl.registerForm.password"
         type="password"
@@ -54,27 +55,25 @@
         match="registerForm.passwordConfirmation"
         md-no-asterisk
         ng-minlength="8"
-        required
-        ng-required="registerCtrl.registerForm.password_confirmation"/>
+        ng-required="registerCtrl.registerForm.password_confirmation || true"/>
         <div ng-messages="registerForm.password.$error">
-          <div ng-message="required">Must match new password.</div>
+          <div ng-message="required">Please enter a password.</div>
           <div ng-message="minlength">Must be at least 8 characters.</div>
           <div ng-message="match">Passwords must match</div>
         </div>
     </md-input-container>
 
-    <md-input-container class="md-block" ng-if="registerCtrl.registerForm.role !== 'member'">
+    <md-input-container class="md-block">
       <label for="passwordConfirmation">Password Confirmation</label>
       <input ng-model="registerCtrl.registerForm.password_confirmation"
         type="password"
         name="passwordConfirmation"
         md-no-asterisk
         ng-minlength="8"
-        required
         match="registerForm.password"
-        ng-required="registerCtrl.registerForm.password"/>
+        ng-required="registerCtrl.registerForm.password || true"/>
         <div ng-messages="registerForm.password_confirmation.$error">
-          <div ng-message="required">Must match new password.</div>
+          <div ng-message="required">Please confirm your password.</div>
           <div ng-message="minlength">Must be at least 8 characters.</div>
           <div ng-message="match">Passwords must match</div>
         </div>
@@ -83,3 +82,7 @@
     <button type="submit" class="btn" ng-class="registerForm.$valid ? 'btn-success': 'btn-disabled'">Register</button>
   </form>
 </div>
+
+<e-sign-component ng-if="registerCtrl.completedForm" sign-contact="registerCtrl.signContract(signature)"
+contract="registerCtrl.contract"
+name="registerCtrl.registerForm.fullname"><e-sign-component>

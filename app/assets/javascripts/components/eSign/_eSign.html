@@ -1,4 +1,15 @@
-Document Up here
-<signature-pad accept="signCtrl.accept" clear="signCtrl.clear" height="220" width="568" disabled="false" style="border: 1px solid black;"></signature-pad>
-<button ng-click="signCtrl.clear()">Clear signature</button>
-<button ng-click="signCtrl.done()">Sign</button>
+<div class="row contract">
+  <div class="col-xs-12" ng-include src="'contract'"></div>
+</div>
+<div class="row">
+  <div class="col-xs-6 col-xs-offset-3">
+    <signature-pad accept="signCtrl.accept" clear="signCtrl.clear"
+    height="200" width="1000"></signature-pad>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-6 col-xs-offset-3">
+    <button ng-click="signCtrl.clear()">Clear signature</button>
+    <button ng-click="signCtrl.done()">Sign</button>
+  </div>
+</div>

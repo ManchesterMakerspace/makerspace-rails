@@ -17,18 +17,22 @@ class MembersController < ApplicationController
     end
 
     def contract
-      credentials = Google::Auth::UserRefreshCredentials.new(JSON.parse(ENV['GDRIVE_CREDS']))
-      session = GoogleDrive.login_with_oauth(credentials)
+      if Rails.env.production?
+        credentials = Google::Auth::UserRefreshCredentials.new(JSON.parse(ENV['GDRIVE_CREDS']))
+        session = GoogleDrive.login_with_oauth(credentials)
+      else
+        session = GoogleDrive::Session.from_config('config.json')
+      end
       drive_file = session.file_by_id(ENV['CONTRACT_ID'])
-      pdf_file = Tempfile.new(['contract', '.pdf'])
-      drive_file.download_to_file(pdf_file.path)
-      png_file = Tempfile.new(['contract', '.png'])
-      image = MiniMagick::Image.open(pdf_file.path)
-      image.format "png"
-      image.write(png_file.path)
-      pdf_file.unlink
-      data = Base64.encode64(image.to_blob).gsub("\n", '')
-      render json: {contract: "data:image/png;base64,#{data}"} and return
+      html_file = Tempfile.new(['contract', '.html'])
+      drive_file.export_as_file(html_file.path, 'text/html')
+      # png_file = Tempfile.new(['contract', '.png'])
+      # image = MiniMagick::Image.open(pdf_file.path)
+      # image.format "png"
+      # image.write(png_file.path)
+      # pdf_file.unlink
+      # data = Base64.encode64(image.to_blob).gsub("\n", '')
+      render json: {contract: html_file.read}
     end
 
     # def mailer

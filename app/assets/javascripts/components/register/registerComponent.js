@@ -4,7 +4,8 @@ app.component('registerComponent', {
   controllerAs: "registerCtrl",
   bindings: {
     groups: '<',
-    token: '<'
+    token: '<',
+    contract: '<'
   }
 });
 
@@ -12,17 +13,16 @@ function registerController(Auth, $state, slackService, alertService, $timeout) 
   var registerCtrl = this;
   registerCtrl.$onInit = function() {
     registerCtrl.signedContact = false;
-    registerCtrl.registerForm = {};
+    registerCtrl.completedForm = false;
+    registerCtrl.registerForm = {
+      email: registerCtrl.token.email
+    };
   };
 
-  registerCtrl.registerMember = function(form){
-    if(!form){return;}
+  registerCtrl.registerMember = function(){
     registerCtrl.registerForm.token = registerCtrl.token.token;
     registerCtrl.registerForm.token_id = registerCtrl.token.id;
-    registerCtrl.registerForm.renewal = {
-      months: 1,
-      start_date: new Date()
-    };
+    registerCtrl.registerForm.role = registerCtrl.token.role;
     Auth.register(registerCtrl.registerForm). then(function(){
       slackService.connect();
       return $timeout(function(){
@@ -42,9 +42,15 @@ function registerController(Auth, $state, slackService, alertService, $timeout) 
   };
 
   registerCtrl.signContract = function(signature){
+    console.log(signature);
     if(signature.dataUrl) {
       registerCtrl.registerForm.signature = signature.dataURL;
-      registerCtrl.signedContact = true;
+      registerCtrl.registerMember();
     }
+  };
+
+  registerCtrl.submitForm = function(form){
+    if(!form) {return;}
+    registerCtrl.completedForm = true;
   };
 }

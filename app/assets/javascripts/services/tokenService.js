@@ -2,7 +2,7 @@ app.factory('tokenService', function($http){
 
   var validate = function(id, token){
     return $http.post('/api/token/' + id + "/" + token).then(function(response){
-      return response.data;
+      return response.data.email;
     });
   };
 
@@ -11,7 +11,9 @@ app.factory('tokenService', function($http){
   };
 
   var getContract = function(){
-    return $http.get('/api/members/contract');
+    return $http.get('/api/members/contract').then(function(response){
+      return response.data.contract;
+    });
   };
 
   return {

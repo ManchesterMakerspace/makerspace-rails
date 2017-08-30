@@ -2,7 +2,6 @@ class RegistrationsController < Devise::RegistrationsController
     respond_to :json
 
     def create
-      byebug
       correct_token = RegistrationToken.find(params[:member][:token_id])
       challenge_token = params[:member][:token]
       salt = BCrypt::Password.new(correct_token.token).salt
@@ -12,7 +11,7 @@ class RegistrationsController < Devise::RegistrationsController
         render json: {status: 400}, status: 400 and return
       else
         @member = Member.new(member_params)
-        @member.renewal = {months: correct_token.months}
+        @member.renewal = {months: correct_token.months, start_date: Date.today}
         if @member.save
           correct_token.update(used: true)
           render json: @member and return
@@ -24,6 +23,6 @@ class RegistrationsController < Devise::RegistrationsController
 
     private
     def member_params
-      params.require(:member).permit(:fullname, :groupName, :email, :password, :password_confirmation, :renewal => [:months, :start_date])
+      params.require(:member).permit(:fullname, :groupName, :email, :password, :password_confirmation)
     end
 end

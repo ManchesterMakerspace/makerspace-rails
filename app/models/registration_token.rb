@@ -20,7 +20,7 @@ class RegistrationToken
     self.save
   end
 
-  def create_link(id, token)
-    return "https://makerspace-interface.herokuapp.com/#/register/#{id}/#{token}"
+  def create_link(id, base_token)
+    return "https://makerspace-interface.herokuapp.com/#/register/#{id}/#{base_token}"
   end
 end
