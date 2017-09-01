@@ -2,7 +2,8 @@ class RegistrationToken
   include Mongoid::Document
   include ActiveModel::Serializers::JSON
 
-  validates :email, presence: :true, uniqueness: :true
+  validates :email, presence: :true
+  validate :one_active_token_per_email, on: :create
 
   field :token, type: String
   field :months, type: Integer
@@ -11,6 +12,23 @@ class RegistrationToken
   field :used, type: Boolean, default: false
 
   after_create :generate_token
+
+  def one_active_token_per_email
+    priorTokens = self.class.where(email: self.email)
+    if priorTokens.length > 0
+      priorTokens.each do |token|
+        token.used = true
+        token.save
+      end
+    end
+  end
+
+  def validate(challenge_token)
+    salt = BCrypt::Password.new(self.token).salt
+    hash = BCrypt::Engine.hash_secret(challenge_token, salt)
+    valid = Rack::Utils.secure_compare(self.token, hash)
+    valid
+  end
 
   protected
   def generate_token

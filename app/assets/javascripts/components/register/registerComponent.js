@@ -42,9 +42,8 @@ function registerController(Auth, $state, slackService, alertService, $timeout) 
   };
 
   registerCtrl.signContract = function(signature){
-    console.log(signature);
     if(signature.dataUrl) {
-      registerCtrl.registerForm.signature = signature.dataURL;
+      registerCtrl.registerForm.signature = signature.dataUrl;
       registerCtrl.registerMember();
     }
   };

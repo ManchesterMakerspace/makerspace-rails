@@ -20,10 +20,11 @@ class MembersController < ApplicationController
       if Rails.env.production?
         credentials = Google::Auth::UserRefreshCredentials.new(JSON.parse(ENV['GDRIVE_CREDS']))
         session = GoogleDrive.login_with_oauth(credentials)
+        drive_file = session.file_by_id(ENV['CONTRACT_ID'])
       else
         session = GoogleDrive::Session.from_config('config.json')
+        drive_file = session.file_by_id(ENV['TEST_ID'])
       end
-      drive_file = session.file_by_id(ENV['CONTRACT_ID'])
       html_file = Tempfile.new(['contract', '.html'])
       drive_file.export_as_file(html_file.path, 'text/html')
       # png_file = Tempfile.new(['contract', '.png'])
