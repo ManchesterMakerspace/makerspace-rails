@@ -1,15 +1,19 @@
 <div class="row contract">
-  <div class="col-xs-12" ng-include src="'contract'"></div>
+  <div class="col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1" ng-include src="'contract'"></div>
 </div>
+<br>
 <div class="row">
   <div class="col-xs-6 col-xs-offset-3">
     <signature-pad accept="signCtrl.accept" clear="signCtrl.clear"
-    height="200" width="1000"></signature-pad>
+    height="400" width="1000"></signature-pad>
   </div>
 </div>
 <div class="row">
   <div class="col-xs-6 col-xs-offset-3">
-    <button ng-click="signCtrl.clear()">Clear signature</button>
-    <button ng-click="signCtrl.done()">Sign</button>
+    <p>*Sign with touch or click-and-drag mouse</p>
+  </div>
+  <div class="col-xs-6 col-xs-offset-3 text-center" style="margin-bottom: 20px;">
+    <button ng-click="signCtrl.clear()" class="btn btn-default">Clear signature</button>
+    <button ng-click="signCtrl.done()" class="btn btn-primary">Continue to Schedule Orientation</button>
   </div>
 </div>

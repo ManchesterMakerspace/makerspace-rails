@@ -4,7 +4,7 @@ class RegistrationsController < Devise::RegistrationsController
     def create
       @member = Member.new(member_params)
       correct_token = RegistrationToken.find(params[:member][:token_id])
-      if !correct_token.validate(challenge_token) || correct_token.used
+      if !correct_token.validate(params[:member][:token]) || correct_token.used
         render json: {status: 400}, status: 400 and return
       else
         @member.renewal = {months: correct_token.months, start_date: Date.today}

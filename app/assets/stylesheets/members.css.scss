@@ -14,7 +14,30 @@
   }
 }
 
-.new-member-form, .renew-member-form, .member-edit-form {
+.contract {
+  p:not(.subtitle) {
+    line-height: 1.2em !important;
+    margin-bottom: .2em !important;
+  }
+  li {
+    &:before {
+      display: none;
+    }
+    line-height: 1.2em !important;
+    margin-bottom: .2em !important;
+  }
+  ol.lst-kix_list_1-0 {
+    list-style-type: decimal;
+  }
+}
+
+.member-edit-form {
+  border: 1px solid black;
+  border-radius: 4px;
+  padding: 1em;
+}
+
+.new-member-form, .renew-member-form {
   border: 1px solid black;
   border-radius: 0 4px 4px 4px;
   padding: 1em;

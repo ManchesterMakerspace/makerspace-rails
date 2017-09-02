@@ -9,7 +9,7 @@ class TokenController < ApplicationController
     if token.save
       render json: {status: 200}, status: 200 and return
     else
-      render json: {msg: 'Token generation error'}, status: 400 and return
+      render json: {msg: token.errors}, status: 400 and return
     end
   end
 

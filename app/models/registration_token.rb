@@ -14,11 +14,16 @@ class RegistrationToken
   after_create :generate_token
 
   def one_active_token_per_email
-    priorTokens = self.class.where(email: self.email)
-    if priorTokens.length > 0
-      priorTokens.each do |token|
-        token.used = true
-        token.save
+    member = Member.where(email: self.email).first
+    if member
+      errors.add(:email, "Email taken")
+    else
+      priorTokens = self.class.where(email: self.email, used: false)
+      if priorTokens.length > 0
+        priorTokens.each do |token|
+          token.used = true
+          token.save
+        end
       end
     end
   end

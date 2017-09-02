@@ -12,6 +12,7 @@ app.component('registerComponent', {
 function registerController(Auth, $state, slackService, alertService, $timeout) {
   var registerCtrl = this;
   registerCtrl.$onInit = function() {
+    registerCtrl.step = 0;
     registerCtrl.signedContact = false;
     registerCtrl.completedForm = false;
     registerCtrl.registerForm = {
@@ -30,7 +31,8 @@ function registerController(Auth, $state, slackService, alertService, $timeout) 
         slackService.disconnect();
       }, 500).then(function(){
         alertService.addAlert('Registration Complete!', 'success');
-        $state.go('root.members');
+        // $state.go('root.members');
+        registerCtrl.step = 3;
       }).catch(function(err){
         console.log(err);
         alertService.addAlert("Error inviting to Slack!", "danger");
@@ -45,6 +47,8 @@ function registerController(Auth, $state, slackService, alertService, $timeout) 
     if(signature.dataUrl) {
       registerCtrl.registerForm.signature = signature.dataUrl;
       registerCtrl.registerMember();
+    } else {
+      alertService.addAlert("Please sign the Member Contract before proceeding.");
     }
   };
 
