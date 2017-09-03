@@ -44,7 +44,7 @@ function memberEditController(cardService, memberService, $state, $filter, alert
   };
 
   memberEditCtrl.createCard = function(){
-    if(!memberEditCtrl.newCard) {return;}
+    if(!memberEditCtrl.newCard.uid) {return;}
     return cardService.createCard(memberEditCtrl.newCard).then(function(card){
       alertService.addAlert('Card saved!', 'success');
       memberEditCtrl.cards.push(card);
