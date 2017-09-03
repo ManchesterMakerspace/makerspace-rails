@@ -62,7 +62,9 @@ class Member
       group = Group.where(groupName: self.groupName).first
       if group
         self.group = group
-        self.expirationTime = group.expiry
+        if self.group.expiry > (Time.now.strftime('%s').to_i * 1000)
+          self.expirationTime = group.expiry
+        end
       end
     end
   end

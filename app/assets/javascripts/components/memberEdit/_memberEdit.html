@@ -122,7 +122,7 @@
           <div class="member-card">
             <p>Card ID: <span ng-bind="card.id.substr(card.id.length - 5)"></span></p>
             <p>Card Status: <span ng-bind="card.validity"></span></p>
-            <p>Report as:
+            <p ng-if="card.validity !== 'lost' && card.validity !== 'stolen'">Report as:
               <button type="button"
                 class="btn btn-danger"
                 ng-click="memberEditCtrl.reportCard(card, 'lost')">Lost</button>
