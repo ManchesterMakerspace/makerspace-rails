@@ -12,41 +12,29 @@ class MembersController < ApplicationController
     end
 
     def show
-      # @workshops = Workshop.all.sort_by(&:name)
       render json: @member and return
     end
 
     def contract
+      creds = Google::Auth::UserRefreshCredentials.new({
+        client_id: ENV['GCALENDAR_ID'],
+        client_secret: ENV['GCALENDAR_SECRET'],
+        refresh_token: ENV['GCALENDAR_TOKEN'],
+        scope: ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/drive"]
+        })
+        session = GoogleDrive.login_with_oauth(creds)
       if Rails.env.production?
-        credentials = Google::Auth::UserRefreshCredentials.new(JSON.parse(ENV['GDRIVE_CREDS']))
-        session = GoogleDrive.login_with_oauth(credentials)
         drive_file = session.file_by_id(ENV['CONTRACT_ID'])
       else
-        session = GoogleDrive::Session.from_config('config.json')
         drive_file = session.file_by_id(ENV['TEST_ID'])
       end
       html_file = Tempfile.new(['contract', '.html'])
       drive_file.export_as_file(html_file.path, 'text/html')
-      # png_file = Tempfile.new(['contract', '.png'])
-      # image = MiniMagick::Image.open(pdf_file.path)
-      # image.format "png"
-      # image.write(png_file.path)
-      # pdf_file.unlink
-      # data = Base64.encode64(image.to_blob).gsub("\n", '')
       render json: {contract: html_file.read}
     end
 
-    # def mailer
-    #     @members = Member.all
-    #     @members.each { |member| member.membership_mailer }
-    #     redirect_to members_path
-    # end
 
     private
-    # def member_params
-    #   params.require(:member).permit(:fullname, :email, :learned_skill_ids =>[])
-    # end
-
     def set_member
       @member = Member.find(params[:id])
     end

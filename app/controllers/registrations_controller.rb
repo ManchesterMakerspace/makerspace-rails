@@ -12,16 +12,20 @@ class RegistrationsController < Devise::RegistrationsController
         File.open("dump/signature.png", 'wb') do |f|
           f.write(Base64.decode64(encoded_img))
         end
+        creds = Google::Auth::UserRefreshCredentials.new({
+          client_id: ENV['GCALENDAR_ID'],
+          client_secret: ENV['GCALENDAR_SECRET'],
+          refresh_token: ENV['GCALENDAR_TOKEN'],
+          scope: ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/drive"]
+          })
+        session = GoogleDrive.login_with_oauth(creds)
+        session.upload_from_file(Rails.root.join("dump/signature.png").to_s, "#{@member.fullname}_signature.png", convert: false)
         if Rails.env.production?
-          credentials = Google::Auth::UserRefreshCredentials.new(JSON.parse(ENV['GDRIVE_CREDS']))
-          session = GoogleDrive.login_with_oauth(credentials)
-          session.upload_from_file(Rails.root.join("dump/signature.png").to_s, "#{@member.fullname}_signature.png", convert: false)
           notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
             channel: 'master_slacker',
             icon_emoji: ':ghost:'
           notifier.ping("Signature uploaded.")
         else
-          GoogleDrive::Session.from_config("config.json").upload_from_file(Rails.root.join("dump/signature.png").to_s, "#{@member.fullname}_signature.png", convert: false)
           notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
             channel: 'test_channel',
             icon_emoji: ':ghost:'

@@ -20,11 +20,23 @@ class TokenController < ApplicationController
     hash = BCrypt::Engine.hash_secret(challenge_token, salt)
     valid = Rack::Utils.secure_compare(@token.token, hash)
     if !valid
-      redirect_to "/#/login", msg: 'Invalid registration link.'
+      render json: {msg: 'Invalid registration link', status: 400}, status: 400 and return
     elsif @token.used
-      redirect_to "/#/login", msg: 'Registeration link already used. Please login.'
+      render json: {msg: 'Registeration link already used. Please login', status: 400}, status: 400 and return
     else
       render json: @token
     end
+  end
+
+  def calendar
+    service = Google::Apis::CalendarV3::CalendarService.new
+    creds = Google::Auth::UserRefreshCredentials.new({
+      client_id: ENV['GCALENDAR_ID'],
+      client_secret: ENV['GCALENDAR_SECRET'],
+      refresh_token: ENV['GCALENDAR_TOKEN'],
+      scope: ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/drive"]
+    })
+    service.authorization = creds
+    service.list_calendar_lists
   end
 end
