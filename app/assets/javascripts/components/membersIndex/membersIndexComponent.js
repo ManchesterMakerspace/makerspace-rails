@@ -12,6 +12,8 @@ function membersIndexController($state) {
   var membersCtrl = this;
   membersCtrl.$onInit = function() {
     membersCtrl.viewAll = false;
+    membersCtrl.reverseSort = false;
+    membersCtrl.descToggle = "Desc";
     // membersCtrl.currentUser = Auth.currentUser();
   };
 
@@ -20,6 +22,14 @@ function membersIndexController($state) {
       member.showShops = true;
     } else {
       member.showShops = false;
+    }
+  };
+
+  membersCtrl.toggleOrder = function(){
+    if(membersCtrl.descToggle === 'Desc'){
+      membersCtrl.descToggle = 'Asc';
+    } else {
+      membersCtrl.descToggle = 'Desc';
     }
   };
 
