@@ -1,17 +1,31 @@
 desc "This task is called by the Heroku scheduler add-on and backs up the Mongo DB to local dump."
 task :backup => :environment do
   if Rails.env.production?
-    credentials = Google::Auth::UserRefreshCredentials.new(JSON.parse(ENV['GDRIVE_CREDS']))
     sh("mongodump -h #{ENV['MLAB_BASE_URL']} -d makerauth -u #{ENV['MLAB_USER']} -p #{ENV['MLAB_PASSWORD']} --archive=dump/makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive")
-    session = GoogleDrive.login_with_oauth(credentials)
-    session.upload_from_file(Rails.root.join("dump/makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive").to_s, "makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive", convert: false)
+    creds = Google::Auth::UserRefreshCredentials.new({
+      client_id: ENV['GOOGLE_ID'],
+      client_secret: ENV['GOOGLE_SECRET'],
+      refresh_token: ENV['GOOGLE_TOKEN'],
+      scope: ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/drive"]
+    })
+    session = GoogleDrive.login_with_oauth(creds)
+    collection = session.collection_by_title("Backups")
+    collection.upload_from_file(Rails.root.join("dump/makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive").to_s, "makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive", convert: false)
     notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
       channel: 'master_slacker',
       icon_emoji: ':ghost:'
     notifier.ping("Daily backup complete.")
   else
     sh("mongodump --db makerauth --archive=dump/makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive")
-    GoogleDrive::Session.from_config("config.json").upload_from_file(Rails.root.join("dump/makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive").to_s, "makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive", convert: false)
+    creds = Google::Auth::UserRefreshCredentials.new({
+      client_id: ENV['GOOGLE_ID'],
+      client_secret: ENV['GOOGLE_SECRET'],
+      refresh_token: ENV['GOOGLE_TOKEN'],
+      scope: ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/drive"]
+    })
+    session = GoogleDrive.login_with_oauth(creds)
+    collection = session.collection_by_title("Test Backups")
+    collection.upload_from_file(Rails.root.join("dump/makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive").to_s, "makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive", convert: false)
   end
 end
 

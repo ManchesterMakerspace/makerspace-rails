@@ -17,9 +17,9 @@ class MembersController < ApplicationController
 
     def contract
       creds = Google::Auth::UserRefreshCredentials.new({
-        client_id: ENV['GCALENDAR_ID'],
-        client_secret: ENV['GCALENDAR_SECRET'],
-        refresh_token: ENV['GCALENDAR_TOKEN'],
+        client_id: ENV['GOOGLE_ID'],
+        client_secret: ENV['GOOGLE_SECRET'],
+        refresh_token: ENV['GOOGLE_TOKEN'],
         scope: ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/drive"]
         })
         session = GoogleDrive.login_with_oauth(creds)

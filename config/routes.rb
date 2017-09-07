@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     resources :groups, only: [:index]
     resources :token, only: [:create]
     post '/token/:id/:token', to: 'token#validate'
+    resources :calendar, only: [:index]
     resources :rentals, only: [:index]
     devise_for :members, :controllers => {:sessions => 'sessions', :registrations => 'registrations'}
 

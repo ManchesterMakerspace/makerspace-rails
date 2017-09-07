@@ -9,10 +9,18 @@ app.component('registerComponent', {
   }
 });
 
-function registerController(Auth, $state, slackService, alertService, $timeout) {
+function registerController(Auth, $state, slackService, alertService, $timeout, calendarService, $filter) {
   var registerCtrl = this;
   registerCtrl.$onInit = function() {
-    registerCtrl.step = 0;
+    calendarService.getOrientationTimes().then(function(times){
+      registerCtrl.availableTimeSlots = times.items.map(function(time){
+        return {
+          time: $filter('date')(new Date(time.start.dateTime), 'short') + " - " + $filter('date')(new Date(time.end.dateTime), 'short')
+        };
+      });
+      console.log(registerCtrl.availableTimeSlots);
+      registerCtrl.step = 0;
+    });
     registerCtrl.signedContact = false;
     registerCtrl.completedForm = false;
     registerCtrl.registerForm = {
@@ -32,7 +40,13 @@ function registerController(Auth, $state, slackService, alertService, $timeout) 
       }, 500).then(function(){
         alertService.addAlert('Registration Complete!', 'success');
         // $state.go('root.members');
-        registerCtrl.step = 3;
+        return calendarService.getOrientationTimes().then(function(times){
+          registerCtrl.availableTimeSlots = times;
+          registerCtrl.step = 3;
+        }).catch(function(err){
+          console.log(err);
+          alertService.addAlert('No Orientation Times available. Please contact board@manchestermakerspace.org', 'danger');
+        });
       }).catch(function(err){
         console.log(err);
         alertService.addAlert("Error inviting to Slack!", "danger");

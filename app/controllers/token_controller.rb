@@ -27,16 +27,4 @@ class TokenController < ApplicationController
       render json: @token
     end
   end
-
-  def calendar
-    service = Google::Apis::CalendarV3::CalendarService.new
-    creds = Google::Auth::UserRefreshCredentials.new({
-      client_id: ENV['GCALENDAR_ID'],
-      client_secret: ENV['GCALENDAR_SECRET'],
-      refresh_token: ENV['GCALENDAR_TOKEN'],
-      scope: ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/drive"]
-    })
-    service.authorization = creds
-    service.list_calendar_lists
-  end
 end
