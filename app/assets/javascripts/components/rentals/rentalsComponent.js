@@ -12,6 +12,8 @@ app.component('rentalsComponent', {
 function rentalsController($filter, rentalsService, $q) {
   var rentalsCtrl = this;
   rentalsCtrl.$onInit = function() {
+    rentalsCtrl.reverseSort = false;
+    rentalsCtrl.descToggle = "Desc";
     console.log(rentalsCtrl.rentals);
   };
 
@@ -20,6 +22,15 @@ function rentalsController($filter, rentalsService, $q) {
     var expTime = new Date(rental.expiration);
     return expTime - today > 0;
   };
+
+  rentalsCtrl.toggleOrder = function(){
+    if(rentalsCtrl.descToggle === 'Desc'){
+      rentalsCtrl.descToggle = 'Asc';
+    } else {
+      rentalsCtrl.descToggle = 'Desc';
+    }
+  };
+
 
   rentalsCtrl.upsertRental = function(rental){
     rentalsCtrl.rentalUpdate = rental;

@@ -19,7 +19,8 @@ class RegistrationsController < Devise::RegistrationsController
           scope: ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/drive"]
           })
         session = GoogleDrive.login_with_oauth(creds)
-        session.upload_from_file(Rails.root.join("dump/signature.png").to_s, "#{@member.fullname}_signature.png", convert: false)
+        collection = session.file_by_id(ENV['SIGNATURES_FOLDER']);
+        collection.upload_from_file(Rails.root.join("dump/signature.png").to_s, "#{@member.fullname}_signature.png", convert: false)
         if Rails.env.production?
           notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
             channel: 'master_slacker',
@@ -34,9 +35,10 @@ class RegistrationsController < Devise::RegistrationsController
         File.delete("dump/signature.png")
         if @member.save
           correct_token.update(used: true)
+          sign_in(@member)
           render json: @member and return
         else
-          render json: {status: 400}, status: 400 and return
+          render json: {status: 'error saving member'}, status: 400 and return
         end
       end
     end

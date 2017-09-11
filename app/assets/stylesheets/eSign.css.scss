@@ -7,3 +7,20 @@
   //   margin: 0 !important;
   // }
 }
+
+.contract {
+  p:not(.subtitle) {
+    line-height: 1.2em !important;
+    margin-bottom: .2em !important;
+  }
+  li {
+    &:before {
+      display: none;
+    }
+    line-height: 1.2em !important;
+    margin-bottom: .2em !important;
+  }
+  ol {
+    list-style-type: decimal !important;
+  }
+}

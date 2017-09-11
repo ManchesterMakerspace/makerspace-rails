@@ -22,15 +22,18 @@ class MembersController < ApplicationController
         refresh_token: ENV['GOOGLE_TOKEN'],
         scope: ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/drive"]
         })
-        session = GoogleDrive.login_with_oauth(creds)
-      if Rails.env.production?
-        drive_file = session.file_by_id(ENV['CONTRACT_ID'])
-      else
-        drive_file = session.file_by_id(ENV['TEST_ID'])
-      end
-      html_file = Tempfile.new(['contract', '.html'])
-      drive_file.export_as_file(html_file.path, 'text/html')
-      render json: {contract: html_file.read}
+      session = GoogleDrive.login_with_oauth(creds)
+      contract = session.file_by_id(ENV['CONTRACT_ID'])
+      conduct = session.file_by_id(ENV['CODE_CONDUCT_ID'])
+      contract_html = Tempfile.new(['contract', '.html'])
+      conduct_html = Tempfile.new(['conduct', '.html'])
+      contract.export_as_file(contract_html.path, 'text/html')
+      conduct.export_as_file(conduct_html.path, 'text/html')
+      render json: {contract: contract_html.read, conduct: conduct_html.read}
+      contract_html.close
+      contract_html.unlink
+      conduct_html.close
+      conduct_html.unlink
     end
 
 

@@ -12,6 +12,25 @@
     </div>
   </div>
   <div class="row">
+    <div class="col-xs-6">
+      <md-input-container class="md-block">
+        <md-select ng-model="rentalsCtrl.sortBy" placeholder="Sort By">
+          <md-option value="number">Number</md-option>
+          <md-option value="member.fullname">Member Name</md-option>
+          <md-option value="expiration">Expiration Date</md-option>
+      </md-input-container>
+    </div>
+    <div class="col-xs-6">
+      <div class="toggle" ng-class="rentalsCtrl.descToggle">
+        <md-input-container class="md-block">
+          <md-checkbox ng-model="rentalsCtrl.reverseSort" ng-click="rentalsCtrl.toggleOrder()">
+            {{rentalsCtrl.descToggle}}
+          </md-checkbox>
+        </md-input-container>
+      </div>
+    </div>
+  </div>
+  <div class="row">
     <div class="col-xs-12 rentals-table">
       <div class="row rentals-table-header">
         <div ng-class="rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-4'">
@@ -29,7 +48,7 @@
             No rentals found.
           </div>
         </div>
-        <div class="row rental" ng-class="rentalsCtrl.checkExp(rental) ? 'success' : 'danger'" ng-repeat="rental in rentalsCtrl.rentals track by $index">
+        <div class="row rental" ng-class="rentalsCtrl.checkExp(rental) ? 'success' : 'danger'" ng-repeat="rental in rentalsCtrl.rentals | orderBy : rentalsCtrl.sortBy : rentalsCtrl.reverseSort">
           <div ng-bind="rental.number" ng-class="rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-4'">
           </div>
           <div ng-class="rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-4'">

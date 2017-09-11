@@ -99,24 +99,25 @@
   </form>
   <div class="row">
     <div class="col-xs-12">
-      <a href="mailto:board@manchestermakerspace.org">Contact Us for assistance</a>
+      <a href="mailto:amanda.lambert@manchestermakerspace.org">Contact Us for assistance</a>
     </div>
   </div>
 </div>
 
 <e-sign-component ng-if="registerCtrl.completedForm && registerCtrl.step !== 3"
   sign-contact="registerCtrl.signContract(signature)"
-  contract="registerCtrl.contract"
+  documents="registerCtrl.documents"
   name="registerCtrl.registerForm.fullname"></e-sign-component>
 
 <div class="col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1" ng-if="registerCtrl.step === 3">
   <h3>Registration Complete!</h3>
-  <p>Now we just need to set you up with a keyfob and give a brief safety orientation.  The below calendar indicates available orientation times.  Please select a time and complete the following form to register for that time slot.  If there are no time slots that will work for you or should you have any questions, please don't hesitate to <a href="mailto:board@manchestermakerspace.org">Contact Us</a></p>.
+  <p>Now we just need to set you up with a keyfob and give a brief safety orientation.  The below calendar indicates available orientation times.  Please select a time and complete the following form to register for that time slot.  If there are no time slots that will work for you or should you have any questions, please don't hesitate to <a href="mailto:amanda.lambert@manchestermakerspace.org">Contact Us</a></p>.
   <p>
     <span class="col-sm-3 col-xs-12">Time Slot: </span>
     <md-select class="col-sm-6 col-xs-12" ng-model="registerCtrl.timeSlot">
-      <md-option ng-value="event.id" placeholder="Please select a time" ng-repeat="event in registerCtrl.availableTimeSlots track by $index">{{event.time}}</md-option>
+      <md-option ng-value="event" placeholder="Please select a time" ng-repeat="event in registerCtrl.availableTimeSlots track by $index">{{event.start.dateTime | date: 'EEE M/d/yy h:mm a'}}</md-option>
     </md-select>
+    <button type="button" class="btn btn-primary" ng-click="registerCtrl.selectTimeslot()">Confirm</button>
   </p>
   <iframe src="https://calendar.google.com/calendar/embed?showTitle=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;height=600&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=manchestermakerspace.org_4petl5jkvb86437tmbgc404mss%40group.calendar.google.com&amp;color=%235229A3&amp;ctz=America%2FNew_York" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
 </div>

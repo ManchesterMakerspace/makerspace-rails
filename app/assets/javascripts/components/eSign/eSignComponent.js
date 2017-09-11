@@ -5,17 +5,20 @@ app.component('eSignComponent', {
   bindings: {
     name: '<',
     signContact: '&',
-    contract: '<'
+    documents: '<'
   }
 });
 
 function eSignController($templateCache, $filter) {
   var signCtrl = this;
   signCtrl.$onInit = function() {
+    console.log('init');
     var now = $filter('date')(new Date(), 'longDate');
-    signCtrl.contract = signCtrl.contract.replace('[name]', signCtrl.name);
-    signCtrl.contract = signCtrl.contract.replace('[today]', now);
-    $templateCache.put('contract', signCtrl.contract);
+    signCtrl.type = 'conduct';
+    signCtrl.documents.contract = signCtrl.documents.contract.replace('[name]', '<b>' + signCtrl.name + '</b>');
+    signCtrl.documents.contract = signCtrl.documents.contract.replace('[today]', '<b>' + now + '</b>');
+    $templateCache.put('contract', signCtrl.documents.contract);
+    $templateCache.put('conduct', signCtrl.documents.conduct);
   };
 
   signCtrl.done = function(){

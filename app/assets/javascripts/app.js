@@ -21,7 +21,7 @@ var app = angular.module('app', [
     } else if (toState.name === 'login' || toState.name === 'register') {
       Auth.currentUser().then(function(){
           alertService.addAlert("Logged In", 'success');
-          return $state.target("root.members");
+          return $state.go("root.members");
       }).catch(function(){
           return;
       });
@@ -60,14 +60,11 @@ var app = angular.module('app', [
               id: $stateParams.id,
               email: email
             };
-          }).catch(function(){
+          }).catch(function(err){
             $state.go('login');
-            alertService.addAlert("Please login");
+            alertService.addAlert(err.data.msg, "danger");
             return $q.reject();
           });
-        },
-        contract: function(tokenService) {
-          return tokenService.getContract();
         }
       }
     })

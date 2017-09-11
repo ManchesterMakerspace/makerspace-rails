@@ -5,22 +5,19 @@ app.component('registerComponent', {
   bindings: {
     groups: '<',
     token: '<',
-    contract: '<'
   }
 });
 
-function registerController(Auth, $state, slackService, alertService, $timeout, calendarService, $filter) {
+function registerController(Auth, $state, slackService, alertService, $timeout, calendarService, tokenService) {
   var registerCtrl = this;
   registerCtrl.$onInit = function() {
-    calendarService.getOrientationTimes().then(function(times){
-      registerCtrl.availableTimeSlots = times.items.map(function(time){
-        return {
-          time: $filter('date')(new Date(time.start.dateTime), 'short') + " - " + $filter('date')(new Date(time.end.dateTime), 'short')
-        };
-      });
-      console.log(registerCtrl.availableTimeSlots);
-      registerCtrl.step = 0;
+    tokenService.getDocuments().then(function(response){
+      registerCtrl.documents = response;
     });
+    calendarService.getOrientationTimes().then(function(response){
+      registerCtrl.availableTimeSlots = response;
+    });
+    registerCtrl.step = 0;
     registerCtrl.signedContact = false;
     registerCtrl.completedForm = false;
     registerCtrl.registerForm = {
@@ -39,21 +36,32 @@ function registerController(Auth, $state, slackService, alertService, $timeout, 
         slackService.disconnect();
       }, 500).then(function(){
         alertService.addAlert('Registration Complete!', 'success');
-        // $state.go('root.members');
-        return calendarService.getOrientationTimes().then(function(times){
-          registerCtrl.availableTimeSlots = times;
-          registerCtrl.step = 3;
-        }).catch(function(err){
-          console.log(err);
-          alertService.addAlert('No Orientation Times available. Please contact board@manchestermakerspace.org', 'danger');
-        });
+        registerCtrl.step = 3;
       }).catch(function(err){
         console.log(err);
         alertService.addAlert("Error inviting to Slack!", "danger");
       });
     }).catch(function(err){
       console.log(err);
-      alertService.addAlert('Error registering. Please contact board@manchestermakerspace.org!', 'danger');
+      alertService.addAlert('Error registering. Please contact amanda.lambert@manchestermakerspace.org!', 'danger');
+    });
+  };
+
+  registerCtrl.selectTimeslot = function(){
+    var details = {
+      event: registerCtrl.timeSlot,
+      attendee: {email: registerCtrl.registerForm.email}
+    };
+    console.log(details);
+    calendarService.assignOrientation(details).then(function(){
+      alertService.addAlert('Orientation Confirmed!', 'success');
+      slackService.connect();
+      return $timeout(function(){
+        slackService.invite(registerCtrl.registerForm.email, registerCtrl.registerForm.fullname);
+        slackService.disconnect();
+      }, 500).then(function(){
+        $state.go('root.members');
+      });
     });
   };
 
@@ -68,6 +76,13 @@ function registerController(Auth, $state, slackService, alertService, $timeout, 
 
   registerCtrl.submitForm = function(form){
     if(!form) {return;}
-    registerCtrl.completedForm = true;
+    if(!registerCtrl.documents) {
+      tokenService.getDocuments().then(function(response){
+        registerCtrl.documents = response;
+        registerCtrl.completedForm = true;
+      });
+    } else {
+      registerCtrl.completedForm = true;
+    }
   };
 }

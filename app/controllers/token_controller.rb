@@ -14,6 +14,10 @@ class TokenController < ApplicationController
   end
 
   def validate
+    @member = Member.find_by(email: params[:email])
+    if !!@member
+      render json: {msg: 'Email already taken'}, status: 400 and return
+    end
     @token = RegistrationToken.find(params[:id])
     challenge_token = params[:token]
     salt = BCrypt::Password.new(@token.token).salt
