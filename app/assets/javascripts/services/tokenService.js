@@ -2,7 +2,7 @@ app.factory('tokenService', function($http){
 
   var validate = function(id, token){
     return $http.post('/api/token/' + id + "/" + token).then(function(response){
-      return response.data;
+      return response.data.email;
     });
   };
 
@@ -10,13 +10,15 @@ app.factory('tokenService', function($http){
     return $http.post('/api/token', {email: email});
   };
 
-  var getContract = function(){
-    return $http.get('/api/members/contract');
+  var getDocuments = function(){
+    return $http.get('/api/members/contract').then(function(response){
+      return response.data;
+    });
   };
 
   return {
     validate: validate,
     inviteMember: inviteMember,
-    getContract: getContract
+    getDocuments: getDocuments
   };
 });

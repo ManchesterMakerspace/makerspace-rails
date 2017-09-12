@@ -2,7 +2,8 @@ class RegistrationToken
   include Mongoid::Document
   include ActiveModel::Serializers::JSON
 
-  validates :email, presence: :true, uniqueness: :true
+  validates :email, presence: :true
+  validate :one_active_token_per_email, on: :create
 
   field :token, type: String
   field :months, type: Integer
@@ -12,6 +13,28 @@ class RegistrationToken
 
   after_create :generate_token
 
+  def one_active_token_per_email
+    member = Member.where(email: self.email).first
+    if member
+      errors.add(:email, "Email taken")
+    else
+      priorTokens = self.class.where(email: self.email, used: false)
+      if priorTokens.length > 0
+        priorTokens.each do |token|
+          token.used = true
+          token.save
+        end
+      end
+    end
+  end
+
+  def validate(challenge_token)
+    salt = BCrypt::Password.new(self.token).salt
+    hash = BCrypt::Engine.hash_secret(challenge_token, salt)
+    valid = Rack::Utils.secure_compare(self.token, hash)
+    valid
+  end
+
   protected
   def generate_token
     base_token = SecureRandom.urlsafe_base64(nil, false)
@@ -20,7 +43,7 @@ class RegistrationToken
     self.save
   end
 
-  def create_link(id, token)
-    return "https://makerspace-interface.herokuapp.com/#/register/#{id}/#{token}"
+  def create_link(id, base_token)
+    return "https://makerspace-interface.herokuapp.com/#/register/#{id}/#{base_token}"
   end
 end

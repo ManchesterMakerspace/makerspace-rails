@@ -11,6 +11,7 @@ Rails.application.routes.draw do
     post '/token/:id/:token', to: 'token#validate'
     resources :rentals, only: [:index]
     devise_for :members, :controllers => {:sessions => 'sessions', :registrations => 'registrations'}
+    resources :calendar, only: [:index, :update]
 
     authenticate :member do
       resources :members, only: [:show]

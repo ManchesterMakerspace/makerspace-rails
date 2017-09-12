@@ -12,36 +12,32 @@ class MembersController < ApplicationController
     end
 
     def show
-      # @workshops = Workshop.all.sort_by(&:name)
       render json: @member and return
     end
 
     def contract
-      credentials = Google::Auth::UserRefreshCredentials.new(JSON.parse(ENV['GDRIVE_CREDS']))
-      session = GoogleDrive.login_with_oauth(credentials)
-      drive_file = session.file_by_id(ENV['CONTRACT_ID'])
-      pdf_file = Tempfile.new(['contract', '.pdf'])
-      drive_file.download_to_file(pdf_file.path)
-      png_file = Tempfile.new(['contract', '.png'])
-      image = MiniMagick::Image.open(pdf_file.path)
-      image.format "png"
-      image.write(png_file.path)
-      pdf_file.unlink
-      data = Base64.encode64(image.to_blob).gsub("\n", '')
-      render json: {contract: "data:image/png;base64,#{data}"} and return
+      creds = Google::Auth::UserRefreshCredentials.new({
+        client_id: ENV['GOOGLE_ID'],
+        client_secret: ENV['GOOGLE_SECRET'],
+        refresh_token: ENV['GOOGLE_TOKEN'],
+        scope: ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/drive"]
+        })
+      session = GoogleDrive.login_with_oauth(creds)
+      contract = session.file_by_id(ENV['CONTRACT_ID'])
+      conduct = session.file_by_id(ENV['CODE_CONDUCT_ID'])
+      contract_html = Tempfile.new(['contract', '.html'])
+      conduct_html = Tempfile.new(['conduct', '.html'])
+      contract.export_as_file(contract_html.path, 'text/html')
+      conduct.export_as_file(conduct_html.path, 'text/html')
+      render json: {contract: contract_html.read, conduct: conduct_html.read}
+      contract_html.close
+      contract_html.unlink
+      conduct_html.close
+      conduct_html.unlink
     end
 
-    # def mailer
-    #     @members = Member.all
-    #     @members.each { |member| member.membership_mailer }
-    #     redirect_to members_path
-    # end
 
     private
-    # def member_params
-    #   params.require(:member).permit(:fullname, :email, :learned_skill_ids =>[])
-    # end
-
     def set_member
       @member = Member.find(params[:id])
     end

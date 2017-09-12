@@ -11,6 +11,24 @@
 	</div>
 	<div class="row">
 		<div class="col-sm-8 col-sm-offset-2 col-xs-12" ng-if="membersCtrl.searchText || membersCtrl.viewAll">
+			<div class="row">
+				<div class="col-xs-6">
+					<md-input-container class="md-block">
+						<md-select ng-model="membersCtrl.sortBy" placeholder="Sort By">
+							<md-option value="name">Name</md-option>
+							<md-option value="expirationTime">Expiration Date</md-option>
+					</md-input-container>
+				</div>
+				<div class="col-xs-6">
+					<div class="toggle" ng-class="membersCtrl.descToggle">
+						<md-input-container class="md-block">
+							<md-checkbox ng-model="membersCtrl.reverseSort" ng-click="membersCtrl.toggleOrder()">
+								{{membersCtrl.descToggle}}
+							</md-checkbox>
+						</md-input-container>
+					</div>
+				</div>
+			</div>
 			<table class="table members-table table-bordered table-striped">
 				<thead>
 					<tr>
@@ -20,7 +38,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr class="member-row" ng-repeat="member in membersCtrl.members | filter : membersCtrl.searchText">
+					<tr class="member-row" ng-repeat="member in membersCtrl.members | filter : membersCtrl.searchText | orderBy : membersCtrl.sortBy : membersCtrl.reverseSort">
 						<td class="col-xs-6 member-name"
 							ng-if="!membersCtrl.isUserAdmin()"
 		 			  	ng-bind="member.fullname"></td>

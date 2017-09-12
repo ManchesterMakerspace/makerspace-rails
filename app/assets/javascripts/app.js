@@ -8,20 +8,24 @@ var app = angular.module('app', [
   'ngMessages',
   'signature',
   'ipCookie'
-]).run(function($transitions, $state, Auth, alertService, $q){
+]).run(function($transitions, $state, Auth, alertService){
   $transitions.onStart({}, function(trans){
     var toState = trans.to();
-    Auth.currentUser().then(function(){
-      if (toState.name === 'login' || toState.name === 'register') {
-        alertService.addAlert("Logged In", 'success');
-        return $state.target("root.members");
-      }
-    }).catch(function(){
-      if (toState.name !== 'root.members') {
-        alertService.addAlert("Please log in");
-        return $state.go("login");
-      }
-    });
+    if (/root/.test(toState.name)) {
+      Auth.currentUser().catch(function(){
+        if (toState.name !== 'root.members') {
+          alertService.addAlert("Please log in");
+          return $state.go("login");
+        }
+      });
+    } else if (toState.name === 'login' || toState.name === 'register') {
+      Auth.currentUser().then(function(){
+          alertService.addAlert("Logged In", 'success');
+          return $state.go("root.members");
+      }).catch(function(){
+          return;
+      });
+    }
   });
 }).config(function($stateProvider, $urlRouterProvider, $locationProvider, AuthProvider){
   $locationProvider.hashPrefix('');
@@ -50,14 +54,17 @@ var app = angular.module('app', [
           return groupService.getAllGroups();
         },
         token: function(tokenService, $stateParams, $q, $state, alertService){
-          return tokenService.validate($stateParams.id, $stateParams.token).catch(function(){
+          return tokenService.validate($stateParams.id, $stateParams.token).then(function(email){
+            return {
+              token: $stateParams.token,
+              id: $stateParams.id,
+              email: email
+            };
+          }).catch(function(err){
             $state.go('login');
-            alertService.addAlert("Please login");
+            alertService.addAlert(err.data.msg, "danger");
             return $q.reject();
           });
-        },
-        contract: function(tokenService) {
-          return tokenService.getContract();
         }
       }
     })
@@ -88,7 +95,20 @@ var app = angular.module('app', [
     })
     .state('root.admin', {
       url: '/admin',
-      abstract: true
+      abstract: true,
+      resolve: {
+        auth: function(currentUser, $q, alertService, $state){
+          var deferred = $q.defer();
+          if(currentUser.role !== 'admin'){
+            $state.go('root.members');
+            alertService.addAlert('Unauthorized', 'danger');
+            deferred.reject('Not Authorized');
+          } else {
+            deferred.resolve();
+          }
+          return deferred.promise;
+        }
+      }
     })
     .state('root.members', {
       url: '/members',
@@ -119,8 +139,16 @@ var app = angular.module('app', [
       component: 'membershipsComponent',
       abstract: true,
       resolve: {
-        members: function(memberService){
-          return memberService.getAllMembers();
+        auth: function(currentUser, $q, alertService, $state){
+          var deferred = $q.defer();
+          if(currentUser.role !== 'admin'){
+            $state.go('root.members');
+            alertService.addAlert('Unauthorized', 'danger');
+            deferred.reject('Not Authorized');
+          } else {
+            deferred.resolve();
+          }
+          return deferred.promise;
         }
       }
     })
@@ -138,7 +166,12 @@ var app = angular.module('app', [
     })
     .state('root.memberships.renew', {
       url: '/renew',
-      component: 'renewMemberComponent'
+      component: 'renewMemberComponent',
+      resolve: {
+        members: function(memberService){
+          return memberService.getAllMembers();
+        }
+      }
     })
     .state('root.memberships.renewId', {
       url: '/renew/:id',

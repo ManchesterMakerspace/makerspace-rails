@@ -2,7 +2,7 @@ class GroupsController < ApplicationController
     before_action :set_group, only: [:show]
 
     def index
-      @groups = Group.all.sort_by(&:groupName)
+      @groups = Group.where(:expiry.gt => (Time.now.strftime('%s').to_i * 1000)).sort_by(&:groupName)
       render json: @groups and return
     end
 

@@ -2,28 +2,49 @@ class RegistrationsController < Devise::RegistrationsController
     respond_to :json
 
     def create
-      byebug
+      @member = Member.new(member_params)
       correct_token = RegistrationToken.find(params[:member][:token_id])
-      challenge_token = params[:member][:token]
-      salt = BCrypt::Password.new(correct_token.token).salt
-      hash = BCrypt::Engine.hash_secret(challenge_token, salt)
-      valid = Rack::Utils.secure_compare(correct_token.token, hash)
-      if !valid || correct_token.used
+      if !correct_token.validate(params[:member][:token]) || correct_token.used
         render json: {status: 400}, status: 400 and return
       else
-        @member = Member.new(member_params)
-        @member.renewal = {months: correct_token.months}
+        @member.renewal = {months: correct_token.months, start_date: Date.today}
+        encoded_img = params[:member][:signature].split(",")[1]
+        File.open("dump/signature.png", 'wb') do |f|
+          f.write(Base64.decode64(encoded_img))
+        end
+        creds = Google::Auth::UserRefreshCredentials.new({
+          client_id: ENV['GOOGLE_ID'],
+          client_secret: ENV['GOOGLE_SECRET'],
+          refresh_token: ENV['GOOGLE_TOKEN'],
+          scope: ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/drive"]
+          })
+        session = GoogleDrive.login_with_oauth(creds)
+        collection = session.file_by_id(ENV['SIGNATURES_FOLDER']);
+        collection.upload_from_file(Rails.root.join("dump/signature.png").to_s, "#{@member.fullname}_signature.png", convert: false)
+        if Rails.env.production?
+          notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
+            channel: 'master_slacker',
+            icon_emoji: ':ghost:'
+          notifier.ping("Signature uploaded.")
+        else
+          notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
+            channel: 'test_channel',
+            icon_emoji: ':ghost:'
+          notifier.ping("Signature uploaded.")
+        end
+        File.delete("dump/signature.png")
         if @member.save
           correct_token.update(used: true)
+          sign_in(@member)
           render json: @member and return
         else
-          render json: {status: 400}, status: 400 and return
+          render json: {status: 'error saving member'}, status: 400 and return
         end
       end
     end
 
     private
     def member_params
-      params.require(:member).permit(:fullname, :groupName, :email, :password, :password_confirmation, :renewal => [:months, :start_date])
+      params.require(:member).permit(:fullname, :groupName, :email, :password, :password_confirmation)
     end
 end

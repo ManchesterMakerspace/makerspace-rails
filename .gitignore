@@ -12,7 +12,11 @@ capybara-*.html
 rerun.txt
 pickle-email-*.html
 dump/*.archive
+dump/*.png
+
 config.json
+old-config.json
+
 /node_modules
 /public
 start.sh
@@ -31,7 +35,6 @@ production.env
 ## Environment normalization:
 /.bundle
 /vendor/bundle
-
 # these should all be checked in to normalize the environment:
 # Gemfile.lock, .ruby-version, .ruby-gemset
 

@@ -238,6 +238,7 @@ DEPENDENCIES
   byebug
   devise
   dotenv-rails
+  google-api-client
   google_drive
   mini_magick
   mongoid (~> 6.0.0)

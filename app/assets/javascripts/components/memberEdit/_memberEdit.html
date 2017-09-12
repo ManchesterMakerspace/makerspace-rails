@@ -115,14 +115,14 @@
     <div class="details" ng-if="memberEditCtrl.showDetails">
       <div class="current-cards row">
         <h5 class="text-center">Cards</h5>
-        <div ng-if="!memberEditCtrl.cards || memberEditCtrl.cards.length === 0">
+        <div class="text-center col-xs-12 col-sm-6" ng-if="!memberEditCtrl.cards || memberEditCtrl.cards.length === 0">
           No Cards Found!
         </div>
         <div class="member-card-wrapper text-center col-xs-12 col-sm-6" ng-if="memberEditCtrl.cards.length > 0" ng-repeat="card in memberEditCtrl.cards">
           <div class="member-card">
             <p>Card ID: <span ng-bind="card.id.substr(card.id.length - 5)"></span></p>
             <p>Card Status: <span ng-bind="card.validity"></span></p>
-            <p>Report as:
+            <p ng-if="card.validity !== 'lost' && card.validity !== 'stolen'">Report as:
               <button type="button"
                 class="btn btn-danger"
                 ng-click="memberEditCtrl.reportCard(card, 'lost')">Lost</button>

@@ -21,7 +21,7 @@ function loginController(Auth, $state, alertService, ipCookie) {
         $state.go('root.members');
       }
     }).catch(function(error) {
-      alertService.addAlert('Invalid credentials. Please try again');
+      alertService.addAlert('Invalid credentials. Please try again', 'danger');
       console.log(error);
         // Authentication failed...
     });

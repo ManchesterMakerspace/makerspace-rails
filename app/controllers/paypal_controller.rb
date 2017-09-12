@@ -1,5 +1,3 @@
-require 'uri'
-
 class PaypalController < ApplicationController
   protect_from_forgery except: [:notify]
   before_action :slack_connect, only: [:notify]

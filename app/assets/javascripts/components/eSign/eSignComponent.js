@@ -3,13 +3,23 @@ app.component('eSignComponent', {
   controller: eSignController,
   controllerAs: "signCtrl",
   bindings: {
-    signContact: '&'
+    name: '<',
+    signContact: '&',
+    documents: '<'
   }
 });
 
-function eSignController() {
+function eSignController($templateCache, $filter) {
   var signCtrl = this;
-  signCtrl.$onInit = function() {};
+  signCtrl.$onInit = function() {
+    console.log('init');
+    var now = $filter('date')(new Date(), 'longDate');
+    signCtrl.type = 'conduct';
+    signCtrl.documents.contract = signCtrl.documents.contract.replace('[name]', '<b>' + signCtrl.name + '</b>');
+    signCtrl.documents.contract = signCtrl.documents.contract.replace('[today]', '<b>' + now + '</b>');
+    $templateCache.put('contract', signCtrl.documents.contract);
+    $templateCache.put('conduct', signCtrl.documents.conduct);
+  };
 
   signCtrl.done = function(){
     var signature = signCtrl.accept();
