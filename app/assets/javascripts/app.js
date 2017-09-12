@@ -178,7 +178,7 @@ var app = angular.module('app', [
       component: 'renewMemberComponent',
       resolve: {
         member: function(memberService, $stateParams) {
-          return memberService.getByID($stateParams.id);
+          return memberService.getById($stateParams.id);
         }
       }
     })
