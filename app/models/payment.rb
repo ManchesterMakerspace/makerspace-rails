@@ -19,21 +19,21 @@ class Payment
 
   def find_member
     fullname = self.firstname + ' ' + self.lastname
-    member = Member.where(fullname: fullname).first
+     self.member = Member.where(fullname: fullname).first
     unless !!member
-      member = Member.where(email: self.payer_email).first
+       self.member = Member.where(email: self.payer_email).first
       unless !!member
-        member = Member.where(fullname: Regexp.new(self.lastname)).first
+         self.member = Member.where(fullname: Regexp.new(self.lastname)).first
         unless !!member
           payments = Payment.where(member: !nil, payer_email: self.payer_email)
           if payments.size > 0
-            member = payments.sort_by { |p| p[:payment_date]}.first.member
+             self.member = payments.sort_by { |p| p[:payment_date]}.first.member
           else
-            member = nil
+             self.member = nil
           end
         end
       end
     end
-    return member
+    return self.member
   end
 end
