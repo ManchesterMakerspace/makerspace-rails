@@ -26,17 +26,15 @@ class PaypalController < ApplicationController
       #   end
       # end
     else
-      if !Rails.env.production?
-        notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
-          channel: 'test_channel',
-          icon_emoji: ':ghost:'
-        if @payment.find_member
-          msg = "Member found: #{@payment.member.fullname}. <a href='https://makerspace-interface.herokuapp.com/#/memberships/renew/#{@payment.member.id}'>Renew Member</a>"
-          notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
-        else
-          msg = "No member found. <a href='https://makerspace-interface.herokuapp.com/#/memberships/invite/#{@payments.payer_email}'>Send registration email to #{@payer.payer_email}</a>"
-          notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
-        end
+      notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
+        channel: 'test_channel',
+        icon_emoji: ':ghost:'
+      if @payment.find_member
+        msg = "This is a test - Member found: #{@payment.member.fullname}. <a href='https://makerspace-interface.herokuapp.com/#/memberships/renew/#{@payment.member.id}'>Renew Member</a>"
+        notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
+      else
+        msg = "This is a test - No member found. <a href='https://makerspace-interface.herokuapp.com/#/memberships/invite/#{@payments.payer_email}'>Send registration email to #{@payer.payer_email}</a>"
+        notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
       end
     end
   end
