@@ -9,12 +9,13 @@ app.component('renewMemberComponent', {
   }
 });
 
-function renewMemberController(memberService, alertService) {
+function renewMemberController(memberService, alertService, $filter, $stateParams) {
   var renewMemberCtrl = this;
   renewMemberCtrl.$onInit = function() {
-    if (renewMemberCtrl.member) {
-      renewMemberCtrl.renewalForm.member = renewMemberCtrl.member;
-      renewMemberCtrl.members = memberService.getAllMembers();
+    if ($stateParams.id) {
+      renewMemberCtrl.renewalForm = {
+        member: $filter('filter')(renewMemberCtrl.members, { id: $stateParams.id })[0]
+      };
     }
   };
 
