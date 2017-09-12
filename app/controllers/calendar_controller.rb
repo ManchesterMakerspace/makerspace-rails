@@ -3,7 +3,7 @@ class CalendarController < ApplicationController
   before_action :init_notifier
 
   def index
-    @open = @service.list_events(ENV['GOOGLE_CALENDAR'], max_results: 20, q: 'Available', time_min: (DateTime.now + 1.day).rfc3339, single_events: true)
+    @open = @service.list_events(ENV['GOOGLE_CALENDAR'], max_results: 20, time_min: (DateTime.now + 1.day).rfc3339, single_events: true, order_by: 'starttime')
     render json: @open and return
   end
 

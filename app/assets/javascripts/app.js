@@ -95,7 +95,20 @@ var app = angular.module('app', [
     })
     .state('root.admin', {
       url: '/admin',
-      abstract: true
+      abstract: true,
+      resolve: {
+        auth: function(currentUser, $q, alertService, $state){
+          var deferred = $q.defer();
+          if(currentUser.role !== 'admin'){
+            $state.go('root.members');
+            alertService.addAlert('Unauthorized', 'danger');
+            deferred.reject('Not Authorized');
+          } else {
+            deferred.resolve();
+          }
+          return deferred.promise;
+        }
+      }
     })
     .state('root.members', {
       url: '/members',
@@ -126,8 +139,16 @@ var app = angular.module('app', [
       component: 'membershipsComponent',
       abstract: true,
       resolve: {
-        members: function(memberService){
-          return memberService.getAllMembers();
+        auth: function(currentUser, $q, alertService, $state){
+          var deferred = $q.defer();
+          if(currentUser.role !== 'admin'){
+            $state.go('root.members');
+            alertService.addAlert('Unauthorized', 'danger');
+            deferred.reject('Not Authorized');
+          } else {
+            deferred.resolve();
+          }
+          return deferred.promise;
         }
       }
     })
@@ -145,7 +166,12 @@ var app = angular.module('app', [
     })
     .state('root.memberships.renew', {
       url: '/renew',
-      component: 'renewMemberComponent'
+      component: 'renewMemberComponent',
+      resolve: {
+        members: function(memberService){
+          return memberService.getAllMembers();
+        }
+      }
     })
     .state('root.memberships.renewId', {
       url: '/renew/:id',

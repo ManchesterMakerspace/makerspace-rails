@@ -13,7 +13,8 @@ function renewMemberController(memberService, alertService) {
   var renewMemberCtrl = this;
   renewMemberCtrl.$onInit = function() {
     if (renewMemberCtrl.member) {
-      renewMemberCtrl.renewalForm.member = renewMemberCtrl.member
+      renewMemberCtrl.renewalForm.member = renewMemberCtrl.member;
+      renewMemberCtrl.members = memberService.getAllMembers();
     }
   };
 

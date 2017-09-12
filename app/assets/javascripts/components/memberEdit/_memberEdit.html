@@ -115,7 +115,7 @@
     <div class="details" ng-if="memberEditCtrl.showDetails">
       <div class="current-cards row">
         <h5 class="text-center">Cards</h5>
-        <div ng-if="!memberEditCtrl.cards || memberEditCtrl.cards.length === 0">
+        <div class="text-center col-xs-12 col-sm-6" ng-if="!memberEditCtrl.cards || memberEditCtrl.cards.length === 0">
           No Cards Found!
         </div>
         <div class="member-card-wrapper text-center col-xs-12 col-sm-6" ng-if="memberEditCtrl.cards.length > 0" ng-repeat="card in memberEditCtrl.cards">

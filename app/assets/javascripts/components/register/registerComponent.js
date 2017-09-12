@@ -52,7 +52,6 @@ function registerController(Auth, $state, slackService, alertService, $timeout, 
       event: registerCtrl.timeSlot,
       attendee: {email: registerCtrl.registerForm.email}
     };
-    console.log(details);
     calendarService.assignOrientation(details).then(function(){
       alertService.addAlert('Orientation Confirmed!', 'success');
       slackService.connect();
@@ -67,6 +66,7 @@ function registerController(Auth, $state, slackService, alertService, $timeout, 
 
   registerCtrl.signContract = function(signature){
     if(signature.dataUrl) {
+      alertService.addAlert('Saving...');
       registerCtrl.registerForm.signature = signature.dataUrl;
       registerCtrl.registerMember();
     } else {

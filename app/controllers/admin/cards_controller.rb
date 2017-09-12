@@ -14,7 +14,6 @@ class Admin::CardsController < ApplicationController
 
   def create
     @card = Card.new(card_params)
-    byebug
     cards = @card.member.access_cards.select { |c| (c.validity != 'lost') && (c.validity != 'stolen') && (c != @card)}
     if cards.length > 0
       render json: {msg: 'Member has Active cards', status: 400} and return
