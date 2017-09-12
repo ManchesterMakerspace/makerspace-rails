@@ -6,13 +6,17 @@ class PaypalController < ApplicationController
   def notify
     @api = PayPal::SDK::Merchant.new
     if @api.ipn_valid?(request.raw_post)
-      @notifier.ping("$#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
-      if @payment.find_member
-        msg = "Member found: #{@payment.member.fullname}. <a href='https://makerspace-interface.herokuapp.com/#/memberships/renew/#{@payment.member.id}'>Renew Member</a>"
-        @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
+      if @payment.save
+        @notifier.ping("$#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
+        if @payment.find_member
+          msg = "Member found: #{@payment.member.fullname}. <a href='https://makerspace-interface.herokuapp.com/#/memberships/renew/#{@payment.member.id}'>Renew Member</a>"
+          @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
+        else
+          msg = "No member found. <a href='https://makerspace-interface.herokuapp.com/#/memberships/invite/#{@payments.payer_email}'>Send registration email to #{@payer.payer_email}</a>"
+          @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
+        end
       else
-        msg = "No member found. <a href='https://makerspace-interface.herokuapp.com/#/memberships/invite/#{@payments.payer_email}'>Send registration email to #{@payer.payer_email}</a>"
-        @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
+        @notifier.ping("Error saving payment: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
       end
       # if @payment.find_member
       #   #renew some peeps
@@ -33,7 +37,7 @@ class PaypalController < ApplicationController
         msg = "This is a test - Member found: #{@payment.member.fullname}. <a href='https://makerspace-interface.herokuapp.com/#/memberships/renew/#{@payment.member.id}'>Renew Member</a>"
         notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
       else
-        msg = "This is a test - No member found. <a href='https://makerspace-interface.herokuapp.com/#/memberships/invite/#{@payments.payer_email}'>Send registration email to #{@payer.payer_email}</a>"
+        msg = "This is a test - No member found. <a href='https://makerspace-interface.herokuapp.com/#/memberships/invite/#{@payment.payer_email}'>Send registration email to #{@payer.payer_email}</a>"
         notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
       end
     end
