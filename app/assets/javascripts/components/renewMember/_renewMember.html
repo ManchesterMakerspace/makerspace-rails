@@ -9,7 +9,7 @@
       <md-select ng-model="renewMemberCtrl.renewalForm.member"
         name="member"
         required>
-        <md-option ng-repeat="member in renewMemberCtrl.members track by $index"
+        <md-option ng-repeat="member in renewMemberCtrl.members"
           ng-value="member">
           {{member.fullname}}
         </md-option>
