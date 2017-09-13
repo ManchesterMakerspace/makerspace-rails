@@ -12,7 +12,7 @@ class PaypalController < ApplicationController
           msg = "Member found: #{@payment.member.fullname}. <a href='https://makerspace-interface.herokuapp.com/#/memberships/renew/#{@payment.member.id}'>Renew Member</a>"
           @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
         else
-          msg = "No member found. <a href='https://makerspace-interface.herokuapp.com/#/memberships/invite/#{@payments.payer_email}'>Send registration email to #{@payer.payer_email}</a>"
+          msg = "No member found. <a href='https://makerspace-interface.herokuapp.com/#/memberships/invite/#{@payment.payer_email}'>Send registration email to #{@payment.payer_email}</a>"
           @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
         end
       else
