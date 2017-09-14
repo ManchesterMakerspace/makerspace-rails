@@ -23,11 +23,14 @@ function newMemberController(memberService, cardService, alertService, slackServ
       newMemberCtrl.newMember = {};
       slackService.connect();
       return $timeout(function(){
-        slackService.invite(newMemberCtrl.newMember.email, newMemberCtrl.newMember.fullname);
-        slackService.disconnect();
+        slackService.invite(member.email, member.fullname);
       }, 500).then(function(){
-        alertService.addAlert('Member saved!', 'success');
-        newMemberCtrl.updatedMembers.push(member);
+        return $timeout(function(){
+        slackService.disconnect();
+        }, 500).then(function(){
+          alertService.addAlert('Member saved!', 'success');
+          newMemberCtrl.updatedMembers.push(member);
+        });
       }).catch(function(err){
         console.log(err);
         alertService.addAlert("Error inviting to Slack!", "danger");
