@@ -33,10 +33,13 @@ function registerController(Auth, $state, slackService, alertService, $timeout, 
       slackService.connect();
       return $timeout(function(){
         slackService.invite(registerCtrl.registerForm.email, registerCtrl.registerForm.fullname);
-        slackService.disconnect();
       }, 500).then(function(){
-        alertService.addAlert('Registration Complete!', 'success');
-        registerCtrl.step = 3;
+        return $timeout(function(){
+          slackService.disconnect();
+          }, 500).then(function(){
+          alertService.addAlert('Registration Complete!', 'success');
+          registerCtrl.step = 3;
+        });
       }).catch(function(err){
         console.log(err);
         alertService.addAlert("Error inviting to Slack!", "danger");
