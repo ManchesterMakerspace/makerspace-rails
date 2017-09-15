@@ -26,11 +26,11 @@ function newMemberController(memberService, cardService, alertService, slackServ
         slackService.invite(member.email, member.fullname);
       }, 500).then(function(){
         return $timeout(function(){
-        slackService.disconnect();
-        }, 500).then(function(){
-          alertService.addAlert('Member saved!', 'success');
-          newMemberCtrl.updatedMembers.push(member);
-        });
+          slackService.disconnect();
+          }, 500).then(function(){
+            alertService.addAlert('Member saved!', 'success');
+            newMemberCtrl.updatedMembers.push(member);
+          });
       }).catch(function(err){
         console.log(err);
         alertService.addAlert("Error inviting to Slack!", "danger");
