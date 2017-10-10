@@ -5,9 +5,10 @@ app.factory('alertService', function(){
     return alerts;
   };
 
-  var addAlert = function(msg, status) {
+  var addAlert = function(msg, status, alertTimeout) {
     if(!msg){ return; }
-    alerts.push({type: status, msg: msg});
+    alertTimeout = alertTimeout || 4000;
+    alerts.push({type: status, msg: msg, timeout: alertTimeout});
   };
 
   var closeAlert = function(alert){

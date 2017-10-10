@@ -30,23 +30,21 @@ function registerController(Auth, $state, slackService, alertService, $timeout, 
     registerCtrl.registerForm.token_id = registerCtrl.token.id;
     registerCtrl.registerForm.role = registerCtrl.token.role;
     Auth.register(registerCtrl.registerForm). then(function(){
-      slackService.connect();
+      if(!slackService.socket.connected) {
+          slackService.connect();
+      }
       return $timeout(function(){
         slackService.invite(registerCtrl.registerForm.email, registerCtrl.registerForm.fullname);
       }, 500).then(function(){
-        return $timeout(function(){
-          slackService.disconnect();
-          }, 500).then(function(){
           alertService.addAlert('Registration Complete!', 'success');
           registerCtrl.step = 3;
-        });
       }).catch(function(err){
         console.log(err);
-        alertService.addAlert("Error inviting to Slack!", "danger");
+        alertService.addAlert("Error inviting to Slack!", "danger", 8000);
       });
     }).catch(function(err){
       console.log(err);
-      alertService.addAlert('Error registering. Please contact amanda.lambert@manchestermakerspace.org!', 'danger');
+      alertService.addAlert('Error registering. Please contact amanda.lambert@manchestermakerspace.org!', 'danger', 8000);
     });
   };
 
@@ -57,13 +55,7 @@ function registerController(Auth, $state, slackService, alertService, $timeout, 
     };
     calendarService.assignOrientation(details).then(function(){
       alertService.addAlert('Orientation Confirmed!', 'success');
-      slackService.connect();
-      return $timeout(function(){
-        slackService.invite(registerCtrl.registerForm.email, registerCtrl.registerForm.fullname);
-        slackService.disconnect();
-      }, 500).then(function(){
-        $state.go('root.members');
-      });
+      $state.go('root.members');
     });
   };
 
