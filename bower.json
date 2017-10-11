@@ -12,8 +12,7 @@
     "angular-messages": "latest",
     "angular-devise": "latest",
     "angular-signature": "latest",
-    "angular-cookie": "latest",
-    "ngGAPI": "https://github.com/christiansmith/ngGAPI.git"
+    "angular-cookie": "latest"
   },
   "resolutions": {
     "angular": "1.6.4"
