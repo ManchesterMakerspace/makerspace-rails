@@ -25,19 +25,15 @@ function newMemberController(memberService, cardService, alertService, slackServ
       return $timeout(function(){
         slackService.invite(member.email, member.fullname);
       }, 500).then(function(){
-        return $timeout(function(){
-          slackService.disconnect();
-          }, 500).then(function(){
-            alertService.addAlert('Member saved!', 'success');
-            newMemberCtrl.updatedMembers.push(member);
-          });
+        alertService.addAlert('Member saved!', 'success');
+        newMemberCtrl.updatedMembers.push(member);
       }).catch(function(err){
         console.log(err);
-        alertService.addAlert("Error inviting to Slack!", "danger");
+        alertService.addAlert("Error inviting to Slack!", "danger", 8000);
       });
     }).catch(function(err){
       console.log(err);
-      alertService.addAlert("Error creating member!", "danger");
+      alertService.addAlert("Error creating member!", "danger", 8000);
     });
   };
 

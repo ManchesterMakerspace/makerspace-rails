@@ -28,6 +28,7 @@ app.factory('slackService', function(){
   };
 
   return {
+    socket: socket,
     connect: connect,
     invite: invite,
     disconnect: disconnect

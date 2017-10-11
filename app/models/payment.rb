@@ -10,6 +10,7 @@ class Payment
   field :lastname
   field :amount, type: Float
   field :currency
+  field :status
   field :payment_date
   field :payer_email
   field :address
