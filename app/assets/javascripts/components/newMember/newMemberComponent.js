@@ -21,9 +21,7 @@ function newMemberController(memberService, cardService, alertService, slackServ
     if(!form) {return;}
     return memberService.createMember(newMemberCtrl.newMember).then(function(member){
       newMemberCtrl.newMember = {};
-      if(!slackService.socket.connected) {
-          slackService.connect();
-      }
+      slackService.connect();
       return $timeout(function(){
         slackService.invite(member.email, member.fullname);
       }, 500).then(function(){

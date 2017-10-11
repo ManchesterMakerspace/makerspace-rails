@@ -6,7 +6,7 @@ app.factory('slackService', function(){
     socket = io.connect("https://masterslacker.herokuapp.com/");
     socket.on('connect', function(){
       socket.emit('authenticate', {
-        token: <%=Rails.application.secrets.slack_variable%>,
+        token: '<%=Rails.application.secrets.slack_variable%>',
         goodBye: 'Interface connection closed.',
         slack: {
           username: 'Management Bot',

@@ -47,15 +47,12 @@ class PaypalController < ApplicationController
       #   end
       # end
     else
-      notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
-        channel: 'test_channel',
-        icon_emoji: ':ghost:'
       if @payment.member
         msg = "This is a test - Member found: #{@payment.member.fullname}. <a href='https://makerspace-interface.herokuapp.com/#/memberships/renew/#{@payment.member.id}'>Renew Member</a>"
-        notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
+        @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
       else
         msg = "This is a test - No member found. <a href='https://makerspace-interface.herokuapp.com/#/memberships/invite/#{@payment.payer_email}'>Send registration email to #{@payment.payer_email}</a>"
-        notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
+        @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
       end
     end
   end

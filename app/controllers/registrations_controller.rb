@@ -1,9 +1,11 @@
 class RegistrationsController < Devise::RegistrationsController
+    before_action :slack_connect, only: [:create]
     respond_to :json
 
     def create
       @member = Member.new(member_params)
       correct_token = RegistrationToken.find(params[:member][:token_id])
+      @member.cardID = correct_token.token
       if !correct_token.validate(params[:member][:token]) || correct_token.used
         render json: {status: 400}, status: 400 and return
       else
@@ -21,18 +23,9 @@ class RegistrationsController < Devise::RegistrationsController
         session = GoogleDrive.login_with_oauth(creds)
         collection = session.file_by_id(ENV['SIGNATURES_FOLDER']);
         collection.upload_from_file(Rails.root.join("dump/signature.png").to_s, "#{@member.fullname}_signature.png", convert: false)
-        if Rails.env.production?
-          notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
-            channel: 'master_slacker',
-            icon_emoji: ':ghost:'
-          notifier.ping("Signature uploaded.")
-        else
-          notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
-            channel: 'test_channel',
-            icon_emoji: ':ghost:'
-          notifier.ping("Signature uploaded.")
-        end
+        @notifier.ping("Signature uploaded.")
         File.delete("dump/signature.png")
+
         if @member.save
           correct_token.update(used: true)
           sign_in(@member)
@@ -46,5 +39,17 @@ class RegistrationsController < Devise::RegistrationsController
     private
     def member_params
       params.require(:member).permit(:fullname, :groupName, :email, :password, :password_confirmation)
+    end
+
+    def slack_connect
+        if Rails.env.production?
+          @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
+            channel: 'master_slacker',
+            icon_emoji: ':ghost:'
+        else
+          @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
+            channel: 'test_channel',
+            icon_emoji: ':ghost:'
+        end
     end
 end

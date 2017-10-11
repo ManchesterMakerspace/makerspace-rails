@@ -30,9 +30,7 @@ function registerController(Auth, $state, slackService, alertService, $timeout, 
     registerCtrl.registerForm.token_id = registerCtrl.token.id;
     registerCtrl.registerForm.role = registerCtrl.token.role;
     Auth.register(registerCtrl.registerForm). then(function(){
-      if(!slackService.socket.connected) {
-          slackService.connect();
-      }
+      slackService.connect();
       return $timeout(function(){
         slackService.invite(registerCtrl.registerForm.email, registerCtrl.registerForm.fullname);
       }, 500).then(function(){
