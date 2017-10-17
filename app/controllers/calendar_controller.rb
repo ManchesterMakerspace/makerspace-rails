@@ -9,40 +9,20 @@ class CalendarController < ApplicationController
 
   def update
     @event = @service.get_event(ENV['GOOGLE_CALENDAR'], params[:event][:id])
+    new_attendee = Google::Apis::CalendarV3::EventAttendee.new(email: params[:attendee][:email])
     if @event.attendees
-      @event.attendees.push( Google::Apis::CalendarV3::EventAttendee.new(email: params[:attendee][:email]) )
+      @event.attendees.push(new_attendee)
     else
-      @event.attendees = [ Google::Apis::CalendarV3::EventAttendee.new(email: params[:attendee][:email]) ]
+      @event.attendees = [ new_attendee ]
     end
     if @service.update_event(ENV['GOOGLE_CALENDAR'], @event.id, @event)
-      if Rails.env.production?
-        notifier.ping("Member registered for orientation - #{@event.start.date_time}")
-      else
-        notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
-          channel: 'test_channel',
-          icon_emoji: ':ghost:'
-          notifier.ping("Member registered for orientation - #{@event.start.date_time}")
-      end
+        @notifier.ping("Member registered for orientation - #{@event.start.date_time}")
     else
       member = Member.where(email: params[:attendee][:email])
       if member
-        if Rails.env.production?
           @notifier.ping("Error registering member for orientation. Contact #{member.fullname} - #{member.email}")
-        else
-          notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
-            channel: 'test_channel',
-            icon_emoji: ':ghost:'
-            notifier.ping("Error registering member for orientation. Contact #{member.fullname} - #{member.email}")
-        end
       else
-        if Rails.env.production?
           @notifier.ping("Unknown registration error from #{member.email}")
-        else
-          notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
-            channel: 'test_channel',
-            icon_emoji: ':ghost:'
-            notifier.ping("Unknown registration error from #{member.email}")
-        end
       end
     end
       render json: {status: 200}
@@ -60,8 +40,14 @@ class CalendarController < ApplicationController
     @service.authorization = creds
   end
   def init_notifier
-    @notifier = notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
-      channel: 'master_slacker',
-      icon_emoji: ':ghost:'
+    if Rails.env.production?
+        @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
+          channel: 'master_slacker',
+          icon_emoji: ':ghost:'
+    else
+        @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
+          channel: 'test_channel',
+          icon_emoji: ':ghost:'
+    end
   end
 end
