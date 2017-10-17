@@ -30,7 +30,11 @@ class PaypalController < ApplicationController
         when 'Refunded'
             @notifier.ping("Payment  Refunded: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
         else
-            @notifier.ping("Unidentified Paypal transaction from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
+            if @payment.txn_type == 'subscr_signup'
+                @notifier.ping("New Subscription sign up from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
+            else
+                @notifier.ping("Unidentified Paypal transaction from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
+            end
         end
       else
         @notifier.ping("Error saving payment: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
@@ -86,7 +90,7 @@ class PaypalController < ApplicationController
   def slack_connect
     if Rails.env.production?
       @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
-            channel: 'renewals',
+            channel: 'members_relations',
             icon_emoji: ':ghost:'
     else
       @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
