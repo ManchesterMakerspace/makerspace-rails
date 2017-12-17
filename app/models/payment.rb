@@ -1,9 +1,9 @@
 class Payment
   include Mongoid::Document
   include ActiveModel::Serializers::JSON
-  # store_in collection: 'general', database: 'heroku_pvjp3t1v', client: 'payments'
 
   belongs_to :member, optional: true
+  before_create :find_member
 
   field :product
   field :firstname
@@ -36,7 +36,22 @@ class Payment
           end
         end
       end
-      return self.member
+      if self.member
+        configure_subscription_status
+      end
     end
+  end
+
+  private
+  def configure_subscription_status
+    true_types = ['subscr_signup', 'subscr_payment']
+    false_types = ['subscr_eot', 'subscr_cancel', 'subscr_failed']
+    #use specific false types so other donations/payments don't invalidate subscription
+    if true_types.include?(self.txn_type)
+        self.member.subscription = true
+    elsif false_types.include?(self.txn_type)
+        self.member.subscription = false
+    end
+    self.member.save
   end
 end

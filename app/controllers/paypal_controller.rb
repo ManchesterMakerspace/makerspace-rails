@@ -5,58 +5,15 @@ class PaypalController < ApplicationController
 
   def notify
     @api = PayPal::SDK::Merchant.new
-    if @api.ipn_valid?(request.raw_post)
-      if @payment.save
-        case @payment.status
-        when 'Completed'
-            @notifier.ping("Payment Completed: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
-            if @payment.find_member
-              msg = "Member found: #{@payment.member.fullname}. <a href='https://makerspace-interface.herokuapp.com/#/memberships/renew/#{@payment.member.id}'>Renew Member</a>"
-              @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
-            else
-              msg = "No member found. <a href='https://makerspace-interface.herokuapp.com/#/memberships/invite/#{@payment.payer_email}'>Send registration email to #{@payment.payer_email}</a>"
-              @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
-            end
-        when 'Created'
-            @notifier.ping("#{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email} has created a recurring payment")
-        when 'Pending'
-            @notifier.ping("Payment Pending: $#{@payment.amount} for #{@payment.product} from  #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
-        when 'Voided'
-            @notifier.ping("Payment Cancelled: #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
-        when 'Denied'
-            @notifier.ping("Payment Denied: #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
-        when 'Failed'
-            @notifier.ping("Payment Failed: #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
-        when 'Refunded'
-            @notifier.ping("Payment  Refunded: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
-        else
-            if @payment.txn_type == 'subscr_signup'
-                @notifier.ping("New Subscription sign up from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
-            else
-                @notifier.ping("Unidentified Paypal transaction from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
-            end
-        end
-      else
-        @notifier.ping("Error saving payment: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
-      end
-      # if @payment.find_member
-      #   #renew some peeps
-      # else
-      #   token = RegistrationToken.new(email: @payment.payer_email)
-      #   if token.save
-      #     @notifier.ping("Registration email sent to #{@payment.payer_email}.")
-      #     render json: {status: 200}, status: 200 and return
-      #   else
-      #     render json: {msg: 'Email already taken'}, status: 400 and return
-      #   end
-      # end
+    @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
+    configure_messages
+    if @payment.save
+      @messages.each { |msg| @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg)) }
     else
-      if @payment.member
-        msg = "This is a test - Member found: #{@payment.member.fullname}. <a href='https://makerspace-interface.herokuapp.com/#/memberships/renew/#{@payment.member.id}'>Renew Member</a>"
-        @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
-      else
-        msg = "This is a test - No member found. <a href='https://makerspace-interface.herokuapp.com/#/memberships/invite/#{@payment.payer_email}'>Send registration email to #{@payment.payer_email}</a>"
-        @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
+      @notifier.ping("Error saving payment: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
+      if @messages.length > 0
+          @notifier.ping("Messages related to error: ")
+          @messages.each { |msg| @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg)) }
       end
     end
   end
@@ -67,8 +24,8 @@ class PaypalController < ApplicationController
       product: "#{params['item_name']} #{params['item_number']}".strip,
       firstname: params["first_name"],
       lastname: params["last_name"],
-      amount: params["mc_gross"],
-      currency: params["mc_currency"],
+      amount: number_to_currency(params["mc_gross"]),
+      currency: number_to_currency(params["mc_currency"]),
       status: params["payment_status"],
       payment_date: params["payment_date"] || Date.today,
       payer_email: params["payer_email"],
@@ -83,8 +40,6 @@ class PaypalController < ApplicationController
     if(params["address_city"] && params["address_street"])
       @payment.address = "#{params['address_fullname']}, #{params['address_city']}, #{params['address_state']} #{params['address_zip']}, #{params['address_country_code']}"
     end
-    @payment.find_member
-    @payment
   end
 
   def slack_connect
@@ -97,5 +52,46 @@ class PaypalController < ApplicationController
             channel: 'test_channel',
             icon_emoji: ':ghost:'
     end
+  end
+
+  def configure_messages
+      @messages = [];
+
+      if @payment.member
+          completed_message = "Payment Completed: $#{@payment.amount} for #{@payment.product} from  #{@payment.member.fullname}. <a href='https://makerspace-interface.herokuapp.com/#/memberships/renew/#{@payment.member.id}'>Renew Member</a>"
+          failed_message = "Error completing payment: $#{@payment.amount} for #{@payment.product} from #{@payment.member.fullname} ~ email: #{@payment.payer_email}"
+      else
+          completed_message = "Payment Completed: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}. No member found. <a href='https://makerspace-interface.herokuapp.com/#/memberships/invite/#{@payment.payer_email}'>Send registration email to #{@payment.payer_email}</a>"
+          failed_message = "Error completing payment: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}. No member found. <a href='mailto:#{@payment.payer_email}'>Contact #{@payment.payer_email}</a>"
+      end
+
+      if @api.ipn_valid?(request.raw_post)
+          case @payment.txn_type
+          when 'subscr_signup'
+              @messages.push("New Subscription sign up from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
+          when 'subscr_payment'
+              @messages.push("Subscription payment - " + completed_message)
+          when 'subscr_eot' || 'subscr_cancel'
+              @messages.push("#{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email} has cancelled their subscription")
+          when 'subscr_failed'
+              @messages.push("Failed subscription payment - " + failed_message)
+          when 'cart'
+              msg = "Standard payment - "
+              msg += (@payment.status == 'Completed') ? completed_message : failed_message
+              @messages.push(msg)
+          when 'send_money'
+              msg = "Custom payment - "
+              msg += (@payment.status == 'Completed') ? completed_message : failed_message
+              @messages.push(msg)
+          else
+              @messages.push("Unknown transaction type (#{@payment.txn_type}) from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}.  Details: $#{@payment.amount} for #{@payment.product}. Status: #{@payment.status}")
+          end
+      else
+        if @payment.member
+          @notifier.ping("This is a test - Member found: #{@payment.member.fullname}. <a href='https://makerspace-interface.herokuapp.com/#/memberships/renew/#{@payment.member.id}'>Renew Member</a>")
+        else
+          @notifier.ping("This is a test - No member found. <a href='https://makerspace-interface.herokuapp.com/#/memberships/invite/#{@payment.payer_email}'>Send registration email to #{@payment.payer_email}</a>")
+        end
+      end
   end
 end
