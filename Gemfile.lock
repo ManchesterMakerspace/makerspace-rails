@@ -73,6 +73,7 @@ GEM
     execjs (2.7.0)
     faraday (0.12.2)
       multipart-post (>= 1.2, < 3)
+    fast-stemmer (1.0.2)
     ffi (1.9.18)
     globalid (0.4.0)
       activesupport (>= 4.2.0)
@@ -124,6 +125,9 @@ GEM
     mongoid (6.0.3)
       activemodel (~> 5.0)
       mongo (~> 2.3)
+    mongoid_search (0.3.4)
+      fast-stemmer (~> 1.0.0)
+      mongoid (>= 3.0.0)
     multi_json (1.12.1)
     multipart-post (2.0.0)
     nio4r (2.1.0)
@@ -242,6 +246,7 @@ DEPENDENCIES
   google_drive
   mini_magick
   mongoid (~> 6.0.0)
+  mongoid_search
   paypal-sdk-merchant
   puma (~> 3.0)
   rails (~> 5.0.0, >= 5.0.0.1)

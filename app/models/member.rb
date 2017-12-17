@@ -1,5 +1,6 @@
 class Member
   include Mongoid::Document
+  include Mongoid::Search
   include ActiveModel::Serializers::JSON
 
   # Include default devise modules. Others available are:
@@ -27,6 +28,8 @@ class Member
   field :reset_password_sent_at, type: Time
   ## Rememberable - Handles cookies
   field :remember_created_at, type: Time
+
+  search_in :fullname, :email
 
   validates :fullname, presence: true, uniqueness: true
   validates :email, uniqueness: true
