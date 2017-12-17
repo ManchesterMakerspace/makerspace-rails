@@ -1,6 +1,6 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
-  config.action_mailer.default_url_options = { host: '192.168.1.3', port: 3002 }
+  config.action_mailer.default_url_options = { host: 'makerspace-interface.herokuapp.com'}
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = false
@@ -9,7 +9,7 @@ Rails.application.configure do
     authentication: :plain,
     address: 'smtp.gmail.com',
     port: 587,
-    domain: '192.168.1.3:3002',
+    domain: 'makerspace-interface.herokuapp.com',
     user_name: ENV['GMAIL_USERNAME'],
     password: ENV['GMAIL_PASSWORD']
   }
