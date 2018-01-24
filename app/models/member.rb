@@ -47,7 +47,7 @@ class Member
   def verify_group_expiry
     if self.group
       #make sure member benefits from group expTime
-      if self.group.expiry > (Time.now.strftime('%s').to_i * 1000) && self.group.expiry > self.expirationTime
+      if self.group.expiry && self.group.expiry > (Time.now.strftime('%s').to_i * 1000) && self.group.expiry > self.expirationTime
         self.expirationTime = self.group.expiry
       end
     end
