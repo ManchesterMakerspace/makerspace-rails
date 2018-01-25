@@ -12,7 +12,8 @@
     "angular-messages": "latest",
     "angular-devise": "latest",
     "angular-signature": "latest",
-    "angular-cookie": "latest"
+    "angular-cookie": "latest",
+    "jquery": "latest"
   },
   "resolutions": {
     "angular": "1.6.4"
