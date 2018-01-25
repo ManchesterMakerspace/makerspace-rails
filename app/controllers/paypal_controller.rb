@@ -2,10 +2,10 @@ class PaypalController < ApplicationController
   protect_from_forgery except: [:notify]
   before_action :slack_connect, only: [:notify]
   before_action :build_payment, only: [:notify]
+  include ActionView::Helpers::NumberHelper
 
   def notify
     @api = PayPal::SDK::Merchant.new
-    @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg))
     configure_messages
     if @payment.save
       @messages.each { |msg| @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg)) }
