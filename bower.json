@@ -1,7 +1,6 @@
 {
   "name": "vendor-assets",
   "dependencies": {
-    "bootstrap": "latest",
     "angular": "=1.6.4",
     "angular-animate": "=1.6.4",
     "angular-mocks": "=1.6.4",
@@ -12,8 +11,7 @@
     "angular-messages": "latest",
     "angular-devise": "latest",
     "angular-signature": "latest",
-    "angular-cookie": "latest",
-    "jquery": "latest"
+    "angular-cookie": "latest"
   },
   "resolutions": {
     "angular": "1.6.4"
