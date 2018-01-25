@@ -12,7 +12,7 @@ function passwordController(Auth, $state, $stateParams, alertService) {
     passwordCtrl.token = $stateParams.token;
   };
 
-  passwordCtrl.requestPasswordEmail = function(form, alertService){
+  passwordCtrl.requestPasswordEmail = function(form){
     if(!form){return;}
     Auth.sendResetPasswordInstructions(passwordCtrl.passwordForm).then(function() {
       alertService.addAlert('Please check your email for Password Reset Instructions', 'success');

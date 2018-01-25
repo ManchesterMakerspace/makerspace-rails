@@ -1,5 +1,6 @@
 class Member
   include Mongoid::Document
+  include Mongoid::Search
   include ActiveModel::Serializers::JSON
 
   # Include default devise modules. Others available are:
@@ -18,6 +19,7 @@ class Member
   field :memberContractOnFile, type: Boolean
   field :slackHandle
   field :notificationAck, type: Boolean
+  field :subscription,    type: Boolean,   default: false
   ## Database authenticatable
   field :email,              type: String, default: ""
   field :encrypted_password, type: String, default: ""
@@ -27,44 +29,26 @@ class Member
   ## Rememberable - Handles cookies
   field :remember_created_at, type: Time
 
+  search_in :fullname, :email
+
   validates :fullname, presence: true, uniqueness: true
   validates :email, uniqueness: true
   before_save :update_allowed_workshops
   before_update :verify_group_expiry
   after_update :update_card
-  # after_create :create_card
 
   has_many :offices, class_name: 'Workshop', inverse_of: :officer
   has_many :access_cards, class_name: "Card", inverse_of: :member
-  belongs_to :group, class_name: "Group", inverse_of: :active_members, optional: true
+  belongs_to :group, class_name: "Group", inverse_of: :active_members, optional: true, primary_key: 'groupName', foreign_key: "groupName"
   has_and_belongs_to_many :learned_skills, class_name: 'Skill', inverse_of: :trained_members
   has_and_belongs_to_many :expertises, class_name: 'Workshop', inverse_of: :experts
   has_and_belongs_to_many :allowed_workshops, class_name: 'Workshop', inverse_of: :allowed_members
 
-  # def cards_attributes=(cards_attributes)
-  #   cards_attributes.values.each do |card_attribute| #controller sends array of cards
-  #     card = Card.find_by(id: BSON::ObjectId.from_string(card_attribute["id"])) #convert id attribute to BSON::ObjectId class before query
-  #     if (!!card_attribute["card_location"])
-  #       card.update(card_location: card_attribute["card_location"])
-  #     end
-  #   end
-  # end
-
-  # def create_card
-  #   if self.cardID
-  #     Card.create(uid: self.cardID, member: self)
-  #     RejectionCard.find_by(uid: self.cardID).update(holder: self.fullname)
-  #   end
-  # end
-
   def verify_group_expiry
-    if self.groupName
-      group = Group.where(groupName: self.groupName).first
-      if group
-        self.group = group
-        if self.group.expiry > (Time.now.strftime('%s').to_i * 1000)
-          self.expirationTime = group.expiry
-        end
+    if self.group
+      #make sure member benefits from group expTime
+      if self.group.expiry && self.group.expiry > (Time.now.strftime('%s').to_i * 1000) && self.group.expiry > self.expirationTime
+        self.expirationTime = self.group.expiry
       end
     end
   end

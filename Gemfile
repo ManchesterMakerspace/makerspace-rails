@@ -15,6 +15,7 @@ gem 'devise'
 gem 'bcrypt'
 #Use Mongo DB
 gem 'mongoid', '~> 6.0.0'
+gem 'mongoid_search'
 #Paypal IPN
 gem 'paypal-sdk-merchant'
 gem "slack-notifier"
