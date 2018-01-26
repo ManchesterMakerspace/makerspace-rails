@@ -19,7 +19,7 @@ class Payment
   field :test, type: Boolean
 
   def find_member
-    self.member = Member.full_text_search("#{self.firstname} #{self.lastname} #{self.payer_email}").first
+    self.member = Member.full_text_search("#{self.firstname} #{self.lastname} #{self.payer_email}").sort_by {|m| m.relevance}.reverse.first
 
     unless !!self.member || !self.payer_email
       payments = Payment.where(member: !nil, payer_email: self.payer_email).order_by(payment_date: :desc);
