@@ -2,7 +2,6 @@ class PaypalController < ApplicationController
   protect_from_forgery except: [:notify]
   before_action :slack_connect, only: [:notify]
   before_action :build_payment, only: [:notify]
-  include ActionView::Helpers::NumberHelper
 
   def notify
     @api = PayPal::SDK::Merchant.new
@@ -24,8 +23,8 @@ class PaypalController < ApplicationController
       product: "#{params['item_name']} #{params['item_number']}".strip,
       firstname: params["first_name"],
       lastname: params["last_name"],
-      amount: number_to_currency(params["mc_gross"]),
-      currency: number_to_currency(params["mc_currency"]),
+      amount: params["mc_gross"],
+      currency: params["mc_currency"],
       status: params["payment_status"],
       payment_date: params["payment_date"] || Date.today,
       payer_email: params["payer_email"],
@@ -88,9 +87,9 @@ class PaypalController < ApplicationController
           end
       else
         if @payment.member
-          @notifier.ping("This is a test - Member found: #{@payment.member.fullname}. <a href='https://makerspace-interface.herokuapp.com/#/memberships/renew/#{@payment.member.id}'>Renew Member</a>")
+          @notifier.ping("This is a test - $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}  Member found: #{@payment.member.fullname}. <a href='https://makerspace-interface.herokuapp.com/#/memberships/renew/#{@payment.member.id}'>Renew Member</a>")
         else
-          @notifier.ping("This is a test - No member found. <a href='https://makerspace-interface.herokuapp.com/#/memberships/invite/#{@payment.payer_email}'>Send registration email to #{@payment.payer_email}</a>")
+          @notifier.ping("This is a test - $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email} No member found. <a href='https://makerspace-interface.herokuapp.com/#/memberships/invite/#{@payment.payer_email}'>Send registration email to #{@payment.payer_email}</a>")
         end
       end
   end
