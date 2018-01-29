@@ -7,14 +7,16 @@ class Member
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
-
+  field :__v, default: 0  #Mongoose generated.
   field :cardID
   field :fullname #full name of user
   field :status,                         default: "activeMember" # activeMember, nonMember, revoked
   field :accesspoints,     type: Array,  default: [] #points of access member (door, machine, etc)
   field :expirationTime,   type: Integer #pre-calcualted time of expiration
+  field :startDate, default: 0 #deprecated
   field :groupName #potentially member is in a group/partner membership
   field :groupKeystone,    type: Boolean
+  field :groupSize, default: nil #deprecated
   field :role,                          default: "member" #admin,officer,member
   field :memberContractOnFile, type: Boolean
   field :slackHandle
