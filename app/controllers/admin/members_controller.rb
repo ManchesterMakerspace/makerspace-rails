@@ -37,7 +37,7 @@ class Admin::MembersController < AdminController
   def slack_connect
     if Rails.env.production?
       @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
-              channel: 'renewal_reminders',
+              channel: 'membership',
               icon_emoji: ':ghost:'
     else
       @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
