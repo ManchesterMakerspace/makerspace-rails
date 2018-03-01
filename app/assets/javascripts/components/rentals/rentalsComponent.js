@@ -14,7 +14,6 @@ function rentalsController($filter, rentalsService, $q) {
   rentalsCtrl.$onInit = function() {
     rentalsCtrl.reverseSort = false;
     rentalsCtrl.descToggle = "Desc";
-    console.log(rentalsCtrl.rentals);
   };
 
   rentalsCtrl.checkExp = function(rental){

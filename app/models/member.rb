@@ -8,17 +8,15 @@ class Member
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
   field :cardID
+
+  #split first and last
   field :fullname #full name of user
   field :status,                         default: "activeMember" # activeMember, nonMember, revoked
   field :accesspoints,     type: Array,  default: [] #points of access member (door, machine, etc)
   field :expirationTime,   type: Integer #pre-calcualted time of expiration
-  field :startDate, default: 0 #deprecated
   field :groupName #potentially member is in a group/partner membership
-  field :groupKeystone,    type: Boolean
   field :role,                          default: "member" #admin,officer,member
   field :memberContractOnFile, type: Boolean
-  field :slackHandle
-  field :notificationAck, type: Boolean
   field :subscription,    type: Boolean,   default: false
   ## Database authenticatable
   field :email,              type: String, default: ""

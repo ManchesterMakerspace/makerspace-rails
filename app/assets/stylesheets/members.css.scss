@@ -14,6 +14,18 @@
   }
 }
 
+form.ng-submitted {
+  md-checkbox.ng-invalid {
+    .md-icon {
+      border-color: red;
+    }
+    .md-label {
+      color: red;
+    }
+  }
+}
+
+
 .member-edit-form {
   border: 1px solid black;
   border-radius: 4px;
