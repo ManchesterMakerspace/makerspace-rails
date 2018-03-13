@@ -7,18 +7,15 @@ class Member
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
-
   field :cardID
+
+  #split first and last
   field :fullname #full name of user
   field :status,                         default: "activeMember" # activeMember, nonMember, revoked
-  field :accesspoints,     type: Array,  default: [] #points of access member (door, machine, etc)
   field :expirationTime,   type: Integer #pre-calcualted time of expiration
   field :groupName #potentially member is in a group/partner membership
-  field :groupKeystone,    type: Boolean
   field :role,                          default: "member" #admin,officer,member
   field :memberContractOnFile, type: Boolean
-  field :slackHandle
-  field :notificationAck, type: Boolean
   field :subscription,    type: Boolean,   default: false
   ## Database authenticatable
   field :email,              type: String, default: ""
@@ -33,8 +30,11 @@ class Member
 
   validates :fullname, presence: true, uniqueness: true
   validates :email, uniqueness: true
+  validates :cardID, uniqueness: true
+  validates_confirmation_of :password
+
   before_save :update_allowed_workshops
-  before_update :verify_group_expiry
+  after_initialize :verify_group_expiry
   after_update :update_card
 
   has_many :offices, class_name: 'Workshop', inverse_of: :officer
@@ -43,6 +43,32 @@ class Member
   has_and_belongs_to_many :learned_skills, class_name: 'Skill', inverse_of: :trained_members
   has_and_belongs_to_many :expertises, class_name: 'Workshop', inverse_of: :experts
   has_and_belongs_to_many :allowed_workshops, class_name: 'Workshop', inverse_of: :allowed_members
+
+  def self.active_members
+    return Member.where(status: 'activeMember', :expirationTime.gt => (Time.now.strftime('%s').to_i * 1000))
+  end
+
+  def self.expiring_members
+    return Member.where(status: 'activeMember', :expirationTime.gt => (Time.now.strftime('%s').to_i * 1000), :expirationTime.lte => (Time.now + 1.week).strftime('%s').to_i * 1000)
+  end
+
+  def membership_status
+     if duration <= 0
+       'expired'
+     elsif duration < 1.week
+       'expiring'
+     else
+       'current'
+     end
+   end
+
+   def prettyTime
+     if self.expirationTime
+       return Time.at(self.expirationTime/1000)
+     else
+       return Time.at(0)
+     end
+   end
 
   def verify_group_expiry
     if self.group
@@ -53,6 +79,7 @@ class Member
     end
   end
 
+  private
   def update_card
     self.access_cards.each do |c|
       c.update(expiry: self.expirationTime)
@@ -74,45 +101,12 @@ class Member
     false
   end
 
-  def password_match?
-    self.errors[:password] << "can't be blank" if password.blank?
-    self.errors[:password_confirmation] << "can't be blank" if password_confirmation.blank?
-    self.errors[:password_confirmation] << "does not match password" if password != password_confirmation
-    password == password_confirmation && !password.blank?
-  end
-
-  def prettyTime
-    if self.expirationTime
-      return Time.at(self.expirationTime/1000)
-    else
-      return Time.at(0)
-    end
-  end
-
   def duration
     prettyTime - Time.now
   end
 
-  def membership_status
-     if duration <= 0
-       'expired'
-     elsif duration < 1.week
-       'expiring'
-     else
-       'current'
-     end
-   end
-
-   def self.active_members
-     return Member.where(status: 'activeMember', :expirationTime.gt => (Time.now.strftime('%s').to_i * 1000))
-   end
-
-   def self.expiring_members
-     return Member.where(status: 'activeMember', :expirationTime.gt => (Time.now.strftime('%s').to_i * 1000), :expirationTime.lte => (Time.now + 1.week).strftime('%s').to_i * 1000)
-   end
-
   def renewal=(time)
-    if(!time.is_a? Object)
+    if !time.is_a? Hash || !time[:months]
       return
     end
     num_months = time[:months]
@@ -132,9 +126,5 @@ class Member
       write_attribute(:expirationTime,  (newExpTime.to_i * 1000) )
     end
     self.save
-  end
-
-  def accesspoints=(point)
-    !self.accesspoints.include?(point) ? self.accesspoints.push(point) : nil
   end
 end
