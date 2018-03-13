@@ -12,6 +12,8 @@ app.component('renewMemberComponent', {
 function renewMemberController(memberService, alertService, $filter, $stateParams) {
   var renewMemberCtrl = this;
   renewMemberCtrl.$onInit = function() {
+    renewMemberCtrl.blockForm = false;
+
     if ($stateParams.id) {
       renewMemberCtrl.renewalForm = {
         member: $filter('filter')(renewMemberCtrl.members, { id: $stateParams.id })[0]
@@ -20,9 +22,9 @@ function renewMemberController(memberService, alertService, $filter, $stateParam
   };
 
   renewMemberCtrl.renewMember = function(form){
-    if(!form) {return;}
-    // console.log(renewMemberCtrl.renewalMember)
+    if(!form.$valid) {return;}
     return memberService.updateMember(renewMemberCtrl.renewalForm.member).then(function(member){
+      renewMemberCtrl.blockForm = false;
       alertService.addAlert('Member renewed!', 'success');
       renewMemberCtrl.renewalForm = {};
       renewMemberCtrl.updatedMembers.push(member);
