@@ -7,7 +7,7 @@ class TokenController < ApplicationController
     end
     token = RegistrationToken.new(email: params[:email])
     if token.save
-      render json: {status: 200}, status: 200 and return
+      render json: {}, status: 200 and return
     else
       render json: {msg: token.errors}, status: 400 and return
     end
@@ -24,9 +24,9 @@ class TokenController < ApplicationController
     hash = BCrypt::Engine.hash_secret(challenge_token, salt)
     valid = Rack::Utils.secure_compare(@token.token, hash)
     if !valid
-      render json: {msg: 'Invalid registration link', status: 400}, status: 400 and return
+      render json: {msg: 'Invalid registration link'}, status: 400 and return
     elsif @token.used
-      render json: {msg: 'Registeration link already used. Please login', status: 400}, status: 400 and return
+      render json: {msg: 'Registeration link already used. Please login'}, status: 400 and return
     else
       render json: @token
     end
