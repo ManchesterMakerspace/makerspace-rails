@@ -4,9 +4,12 @@
   <input type="password" style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
   <div class="col-xs-12">
     <md-input-container class="md-block">
-      <md-checkbox required ng-model="newMemberCtrl.newMember.memberContractOnFile">
+      <md-checkbox required name="contract" ng-model="newMemberCtrl.newMember.memberContractOnFile">
         Member Contract Signed?
       </md-checkbox>
+      <div ng-messages="newMember.contract.$error">
+        <div ng-message="required">Member must sign contract.</div>
+      </div>
     </md-input-container>
 
     <md-input-container class="md-block">
@@ -31,7 +34,7 @@
             disabled
             required
             md-no-asterisk/>
-          <div ng-messages="newMember.cardID.$error" ng-if="newMember.cardID.$dirty">
+          <div ng-messages="newMember.cardID.$error">
             <div ng-message="required">Cannot be blank.</div>
           </div>
         </md-input-container>
@@ -64,12 +67,15 @@
         <md-input-container class="md-block">
           <label for="months">Membership Length (# months)</label>
           <md-select ng-model="newMemberCtrl.newMember.renewal.months"
-            name="renewal[months]"
+            name="renewalMonths"
             required>
               <md-option ng-repeat="n in [1,2,3,4,5,6,7,8,9,10,11,12]" ng-value="n">
                 {{n}}
               </md-option>
           </md-select>
+          <div ng-messages="newMember.renewalMonths.$error">
+            <div ng-message="required">Cannot be blank.</div>
+          </div>
         </md-input-container>
       </div>
 
