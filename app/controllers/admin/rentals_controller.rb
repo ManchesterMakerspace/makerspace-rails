@@ -1,4 +1,4 @@
-class Admin::RentalsController < ApplicationController
+class Admin::RentalsController < AdminController
   before_action :set_rental, only: [:update, :destroy]
 
   def create
@@ -6,7 +6,7 @@ class Admin::RentalsController < ApplicationController
     if @rental.save
       render json: @rental and return
     else
-      render json: {status: 500}, status: 500 and return
+      render json: {}, status: 500 and return
     end
   end
 
@@ -14,16 +14,16 @@ class Admin::RentalsController < ApplicationController
     if @rental.update(rental_params)
       render json: @rental and return
     else
-      render json: {status: 500}, status: 500 and return
+      render json: {}, status: 500 and return
     end
   end
 
   def destroy
     if !!@rental
       @rental.delete
-      render json: {status: 200} and return
+      render json: {}, status: 200 and return
     else
-      render json: {status: 422} and return
+      render json: {}, status: 422 and return
     end
   end
 

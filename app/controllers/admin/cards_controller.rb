@@ -1,4 +1,4 @@
-class Admin::CardsController < ApplicationController
+class Admin::CardsController < AdminController
   before_action :set_member, only: [:create]
 
   def new
@@ -14,19 +14,24 @@ class Admin::CardsController < ApplicationController
 
   def create
     @card = Card.new(card_params)
+
+    render json: {msg: 'Member missing'}, status: 500 and return if !@card.member
+
     cards = @card.member.access_cards.select { |c| (c.validity != 'lost') && (c.validity != 'stolen') && (c != @card)}
     if cards.length > 0
-      render json: {msg: 'Member has Active cards', status: 400} and return
+      render json: {msg: 'Member has Active cards'}, status: 400 and return
     end
+
     if @card.save
-      RejectionCard.find_by(uid: @card.uid).update(holder: @card.holder)
+      rejection_card = RejectionCard.find_by(uid: @card.uid)
+      rejection_card.update(holder: @card.holder) unless rejection_card.nil?
       render json: @card and return
     else
-      render json: {status: 500}, status: 500 and return
+      render json: {}, status: 500 and return
     end
   end
 
-  def show
+  def index
     @cards = Card.where(member: Member.find(params[:id]))
     render json: @cards and return
   end
@@ -36,7 +41,7 @@ class Admin::CardsController < ApplicationController
     if @card.update(card_params)
       render json: @card and return
     else
-      render json: {status: 500}, status: 500 and return
+      render json: {}, status: 500 and return
     end
   end
 
