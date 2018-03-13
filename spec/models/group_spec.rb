@@ -28,6 +28,7 @@ RSpec.describe Group, type: :model do
 
   describe "private methods" do
     it "Updates group expiration and access card" do
+      expired_member = create(:member, :expired)
       card = create(:card, member: expired_member)
       group = create(:group, groupRep: expired_member)
       renewal_hash = {

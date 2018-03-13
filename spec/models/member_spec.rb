@@ -58,18 +58,18 @@ RSpec.describe Member, type: :model do
 
     it "Correctly parses expirationTime" do
       expect(expired_member.membership_status).to eq('expired')
-      expect(expired_member.duration).to be_within(1.day).of(-20.days.to_i)
+      expect(expired_member.send(:duration)).to be_within(1.day).of(-20.days.to_i)
 
       expect(valid_member.membership_status).to eq('current')
-      expect(valid_member.duration).to be_within(1.day).of(20.days.to_i)
+      expect(valid_member.send(:duration)).to be_within(1.day).of(20.days.to_i)
 
       expect(expiring_member.membership_status).to eq('expiring')
-      expect(expiring_member.duration).to be_within(1.day).of(5.days.to_i)
+      expect(expiring_member.send(:duration)).to be_within(1.day).of(5.days.to_i)
     end
 
     describe "Renewing members" do #method to be improved
       it "Will not renew a member if a time is not a hash" do
-        expired_member.renewal=(1)
+        expired_member.send(:renewal=, 1)
         expect(expired_member.membership_status).to eq('expired')
       end
 
@@ -77,7 +77,7 @@ RSpec.describe Member, type: :model do
         renewal_hash = {
           months: 1
         }
-        expired_member.renewal=(renewal_hash)
+        expired_member.send(:renewal=, renewal_hash)
         expect(expired_member.membership_status).to eq('current')
       end
     end
@@ -90,7 +90,7 @@ RSpec.describe Member, type: :model do
       first_expiration = expired_member.expirationTime
       expect(card.expiry).to eq(first_expiration)
 
-      expired_member.renewal=(renewal_hash)
+      expired_member.send(:renewal=, renewal_hash)
       new_expiration = expired_member.expirationTime
       expect(card.expiry).to eq(new_expiration)
       expect(new_expiration).not_to eq(first_expiration)

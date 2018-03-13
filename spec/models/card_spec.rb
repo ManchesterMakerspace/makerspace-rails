@@ -45,7 +45,7 @@ RSpec.describe Card, type: :model do
 
     it "Renewed member renews card" do
       expect(expired_card.validity).to eq('expired')
-      expired_member.renewal=({months:1})
+      expired_member.send(:renewal=, {months: 1})
       expect(expired_card.validity).not_to eq('expired')
       expect(expired_card.validity).to eq('activeMember')
     end
@@ -55,7 +55,7 @@ RSpec.describe Card, type: :model do
       expired_card.save
 
       expect(expired_card.validity).to eq('lost')
-      expired_member.renewal=({months:1})
+      expired_member.send(:renewal=, {months: 1})
       expect(expired_card.validity).to eq('lost')
     end
   end

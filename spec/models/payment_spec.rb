@@ -27,7 +27,6 @@ RSpec.describe Payment, type: :model do
 
   context "private methods" do
     it "Finds member from payment email or name" do
-      member
       name_payment = create(:payment, lastname: 'Mackley')
       email_payment = create(:payment, )
     end
