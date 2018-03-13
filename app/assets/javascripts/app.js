@@ -80,7 +80,6 @@ var app = angular.module('app', [
       }
     })
     .state('root', {
-      url: '',
       abstract: true,
       component: 'rootComponent',
       resolve: {
@@ -94,7 +93,6 @@ var app = angular.module('app', [
       }
     })
     .state('root.admin', {
-      url: '/admin',
       abstract: true,
       resolve: {
         auth: function(currentUser, $q, alertService, $state){
@@ -107,15 +105,6 @@ var app = angular.module('app', [
             deferred.resolve();
           }
           return deferred.promise;
-        }
-      }
-    })
-    .state('root.members', {
-      url: '/members',
-      component: 'membersIndexComponent',
-      resolve: {
-        members: function(memberService){
-          return memberService.getAllMembers();
         }
       }
     })
@@ -134,7 +123,7 @@ var app = angular.module('app', [
         }
       }
     })
-    .state('root.memberships', {
+    .state('root.admin.memberships', {
       url: '/memberships',
       component: 'membershipsComponent',
       abstract: true,
@@ -152,7 +141,7 @@ var app = angular.module('app', [
         }
       }
     })
-    .state('root.memberships.new', {
+    .state('root.admin.memberships.new', {
       url: '/new',
       component: 'newMemberComponent',
       resolve: {
@@ -164,7 +153,7 @@ var app = angular.module('app', [
         }
       }
     })
-    .state('root.memberships.renew', {
+    .state('root.admin.memberships.renew', {
       url: '/renew',
       component: 'renewMemberComponent',
       resolve: {
@@ -173,7 +162,7 @@ var app = angular.module('app', [
         }
       }
     })
-    .state('root.memberships.renewId', {
+    .state('root.admin.memberships.renewId', {
       url: '/renew/:id',
       component: 'renewMemberComponent',
       resolve: {
@@ -182,22 +171,19 @@ var app = angular.module('app', [
         }
       }
     })
-    .state('root.memberships.invite', {
+    .state('root.admin.memberships.invite', {
       url: '/invite/:email',
       component: 'inviteComponent',
       params: {
         email: null
       }
     })
-    .state('root.payments', {
-      url: '/payments',
-      component: 'paymentsComponent',
+    .state('root.members', {
+      url: '/members',
+      component: 'membersIndexComponent',
       resolve: {
         members: function(memberService){
           return memberService.getAllMembers();
-        },
-        payments: function(paymentsService){
-          return paymentsService.getAllPayments();
         }
       }
     })
@@ -229,14 +215,5 @@ var app = angular.module('app', [
     .state('root.rentals.new', {
       url: '/new',
       component: 'rentalFormComponent'
-    })
-    .state('root.workshops', {
-      url: '/workshops',
-      component: 'workshopsComponent',
-      resolve: {
-        workshops: function(workshopService){
-          return workshopService.getAllWorkshops();
-        }
-      }
     });
 });
