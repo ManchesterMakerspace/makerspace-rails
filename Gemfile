@@ -31,5 +31,15 @@ group :development do
   gem 'spring-watcher-listen', '~> 2.0.0'
 end
 
+group :test do
+  gem 'byebug', platform: :mri
+  gem 'rspec-rails'
+  gem 'mongoid-rspec'
+  gem 'factory_bot'
+  gem 'database_cleaner'
+  gem 'shoulda-callback-matchers'
+  gem 'rails-controller-testing'
+end
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]

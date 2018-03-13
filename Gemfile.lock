@@ -57,6 +57,7 @@ GEM
     case_transform (0.2)
       activesupport
     concurrent-ruby (1.0.5)
+    database_cleaner (1.6.1)
     declarative (0.0.9)
     declarative-option (0.1.0)
     devise (4.3.0)
@@ -65,12 +66,15 @@ GEM
       railties (>= 4.1.0, < 5.2)
       responders
       warden (~> 1.2.3)
+    diff-lcs (1.3)
     dotenv (2.2.1)
     dotenv-rails (2.2.1)
       dotenv (= 2.2.1)
       railties (>= 3.2, < 5.2)
     erubis (2.7.0)
     execjs (2.7.0)
+    factory_bot (4.8.2)
+      activesupport (>= 3.0.0)
     faraday (0.12.2)
       multipart-post (>= 1.2, < 3)
     fast-stemmer (1.0.2)
@@ -125,6 +129,14 @@ GEM
     mongoid (6.0.3)
       activemodel (~> 5.0)
       mongo (~> 2.3)
+    mongoid-compatibility (0.5.1)
+      activesupport
+      mongoid (>= 2.0)
+    mongoid-rspec (4.0.0)
+      activesupport (>= 3.0.0)
+      mongoid (>= 2.0)
+      mongoid-compatibility
+      rspec (~> 3.3)
     mongoid_search (0.3.4)
       fast-stemmer (~> 1.0.0)
       mongoid (>= 3.0.0)
@@ -157,6 +169,10 @@ GEM
       bundler (>= 1.3.0)
       railties (= 5.0.5)
       sprockets-rails (>= 2.0.0)
+    rails-controller-testing (1.0.2)
+      actionpack (~> 5.x, >= 5.0.1)
+      actionview (~> 5.x, >= 5.0.1)
+      activesupport (~> 5.x)
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
@@ -185,6 +201,27 @@ GEM
       actionpack (>= 4.2.0, < 5.3)
       railties (>= 4.2.0, < 5.3)
     retriable (3.1.1)
+    rspec (3.5.0)
+      rspec-core (~> 3.5.0)
+      rspec-expectations (~> 3.5.0)
+      rspec-mocks (~> 3.5.0)
+    rspec-core (3.5.4)
+      rspec-support (~> 3.5.0)
+    rspec-expectations (3.5.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.5.0)
+    rspec-mocks (3.5.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.5.0)
+    rspec-rails (3.5.2)
+      actionpack (>= 3.0)
+      activesupport (>= 3.0)
+      railties (>= 3.0)
+      rspec-core (~> 3.5.0)
+      rspec-expectations (~> 3.5.0)
+      rspec-mocks (~> 3.5.0)
+      rspec-support (~> 3.5.0)
+    rspec-support (3.5.0)
     ruby_dep (1.5.0)
     sass (3.5.1)
       sass-listen (~> 4.0.0)
@@ -197,6 +234,8 @@ GEM
       sprockets (>= 2.8, < 4.0)
       sprockets-rails (>= 2.0, < 4.0)
       tilt (>= 1.1, < 3)
+    shoulda-callback-matchers (1.1.4)
+      activesupport (>= 3)
     signet (0.7.3)
       addressable (~> 2.3)
       faraday (~> 0.9)
@@ -240,18 +279,24 @@ DEPENDENCIES
   angular-rails-templates
   bcrypt
   byebug
+  database_cleaner
   devise
   dotenv-rails
+  factory_bot
   google-api-client
   google_drive
   mini_magick
   mongoid (~> 6.0.0)
+  mongoid-rspec
   mongoid_search
   paypal-sdk-merchant
   puma (~> 3.0)
   rails (~> 5.0.0, >= 5.0.0.1)
+  rails-controller-testing
   rails_12factor
+  rspec-rails
   sass-rails (~> 5.0)
+  shoulda-callback-matchers
   slack-notifier
   socket.io-rails
   spring
