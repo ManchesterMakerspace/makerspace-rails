@@ -289,6 +289,7 @@ DEPENDENCIES
   mongoid (~> 6.0.0)
   mongoid-rspec
   mongoid_search
+  nokogiri
   paypal-sdk-merchant
   puma (~> 3.0)
   rails (~> 5.0.0, >= 5.0.0.1)

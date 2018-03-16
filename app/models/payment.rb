@@ -3,7 +3,7 @@ class Payment
   include ActiveModel::Serializers::JSON
 
   belongs_to :member, optional: true
-  after_initialize :find_member
+  after_create :find_member
 
   field :product
   field :firstname

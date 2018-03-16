@@ -79,6 +79,29 @@ class Member
     end
   end
 
+  def renewal=(time)
+    if !time.is_a? Hash || !time[:months]
+      return
+    end
+    num_months = time[:months]
+    now_in_ms = (Time.now.strftime('%s').to_i * 1000)
+    if (!!time[:startDate]) #check if startDate was passed to function.
+      d = time[:startDate].split("/");
+      start_date = (Time.new(d[2], d[0], d[1]))
+    else #if not, use today.
+      start_date = Time.now
+    end
+
+    if (!!self.expirationTime && self.try(:expirationTime) > now_in_ms && self.persisted?) #if renewing
+      newExpTime = prettyTime + num_months.to_i.months
+      write_attribute(:expirationTime, (newExpTime.to_i * 1000) )
+    else
+      newExpTime = start_date + num_months.to_i.months
+      write_attribute(:expirationTime,  (newExpTime.to_i * 1000) )
+    end
+    self.save
+  end
+  
   private
   def update_card
     self.access_cards.each do |c|
@@ -103,28 +126,5 @@ class Member
 
   def duration
     prettyTime - Time.now
-  end
-
-  def renewal=(time)
-    if !time.is_a? Hash || !time[:months]
-      return
-    end
-    num_months = time[:months]
-    now_in_ms = (Time.now.strftime('%s').to_i * 1000)
-    if (!!time[:startDate]) #check if startDate was passed to function.
-      d = time[:startDate].split("/");
-      start_date = (Time.new(d[2], d[0], d[1]))
-    else #if not, use today.
-      start_date = Time.now
-    end
-
-    if (!!self.expirationTime && self.try(:expirationTime) > now_in_ms && self.persisted?) #if renewing
-      newExpTime = prettyTime + num_months.to_i.months
-      write_attribute(:expirationTime, (newExpTime.to_i * 1000) )
-    else
-      newExpTime = start_date + num_months.to_i.months
-      write_attribute(:expirationTime,  (newExpTime.to_i * 1000) )
-    end
-    self.save
   end
 end

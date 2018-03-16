@@ -23,6 +23,10 @@ RSpec.describe RegistrationToken, type: :model do
     end
   end
 
+  it "has a valid factory" do
+    expect(build(:registration_token)).to be_valid
+  end
+
   context "callbacks" do
     let(:registration_token) { create(:registration_token) }
 

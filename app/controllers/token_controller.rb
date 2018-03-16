@@ -19,6 +19,8 @@ class TokenController < ApplicationController
       render json: {msg: 'Email already taken'}, status: 400 and return
     end
     @token = RegistrationToken.find(params[:id])
+    render json: {msg: 'Invalid registration link'}, status: 400 and return if !@token
+
     challenge_token = params[:token]
     salt = BCrypt::Password.new(@token.token).salt
     hash = BCrypt::Engine.hash_secret(challenge_token, salt)

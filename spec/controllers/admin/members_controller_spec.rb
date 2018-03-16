@@ -32,18 +32,18 @@ RSpec.describe Admin::MembersController, type: :controller do
       context "with valid params" do
         it "creates a new Admin::Member" do
           expect {
-            post :create, params: {member: valid_attributes.as_json}
+            post :create, params: {member: valid_attributes}, format: :json
           }.to change(Member, :count).by(1)
         end
 
         it "assigns a newly created member as @member" do
-          post :create, params: {member: valid_attributes.as_json}
+          post :create, params: {member: valid_attributes}, format: :json
           expect(assigns(:member)).to be_a(Member)
           expect(assigns(:member)).to be_persisted
         end
 
         it "renders json of the created member" do
-          post :create, params: {member: valid_attributes.as_json}
+          post :create, params: {member: valid_attributes}, format: :json
 
           parsed_response = JSON.parse(response.body)
           expect(response.status).to eq(200)
@@ -54,13 +54,13 @@ RSpec.describe Admin::MembersController, type: :controller do
 
       context "with invalid params" do
         it "assigns a newly created but unsaved member as @member" do
-          post :create, params: {member: invalid_attributes.as_json}
+          post :create, params: {member: invalid_attributes}, format: :json
           expect(assigns(:member)).to be_a(Member)
           expect(assigns(:member)).not_to be_persisted
         end
 
         it "Returns 500 status" do
-          post :create, params: {member: invalid_attributes.as_json}
+          post :create, params: {member: invalid_attributes}, format: :json
           expect(response.status).to eq(500)
         end
       end
@@ -82,7 +82,7 @@ RSpec.describe Admin::MembersController, type: :controller do
 
         it "updates the requested member" do
           member = Member.create! valid_attributes
-          put :update, params: {id: member.to_param, member: new_attributes.as_json}
+          put :update, params: {id: member.to_param, member: new_attributes}, format: :json
           member.reload
           expect(member.email).to eq(new_attributes[:email])
           expect(member.fullname).to eq(new_attributes[:fullname])
@@ -90,7 +90,7 @@ RSpec.describe Admin::MembersController, type: :controller do
 
         it "renders json of the member" do
           member = Member.create! valid_attributes
-          put :update, params: {id: member.to_param, member: new_attributes.as_json}
+          put :update, params: {id: member.to_param, member: new_attributes}, format: :json
 
           parsed_response = JSON.parse(response.body)
           expect(response.status).to eq(200)
@@ -100,7 +100,7 @@ RSpec.describe Admin::MembersController, type: :controller do
 
         it "Sends slack notification if member renewed" do
           member = Member.create! valid_attributes
-          put :update, params: {id: member.to_param, member: renewal.as_json}
+          put :update, params: {id: member.to_param, member: renewal}, format: :json
           member.reload
           expect(assigns(:notifier)).to be_a(Slack::Notifier)
         end

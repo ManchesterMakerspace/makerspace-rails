@@ -7,6 +7,9 @@ require 'spec_helper'
 require 'rspec/rails'
 require 'mongoid-rspec'
 require 'devise'
+require 'base64'
+require 'bcrypt'
+require 'securerandom'
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -27,6 +30,7 @@ Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, :type => :controller
   config.extend ControllerMacros, :type => :controller
+  config.include TestHelpers, :type => :controller
   # config.include Devise::TestHelpers, :type => :controller
   # config.include ControllerHelpers, :type => :controller
   config.include FactoryBot::Syntax::Methods

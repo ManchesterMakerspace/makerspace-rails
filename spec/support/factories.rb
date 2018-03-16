@@ -83,14 +83,13 @@ FactoryBot.define do
     payer_email { generate(:email)}
 
     trait :sub_payment do
-      after(:build) do |payment|
-        payment.txn_type = "subscr_payment"
-      end
+      txn_type "subscr_payment"
     end
     trait :sub_cancel do
-      after(:build) do |payment|
-        payment.txn_type = "subscr_cancel"
-      end
+      txn_type "subscr_cancel"
+    end
+    trait :subscr_failed do
+      txn_type "subscr_failed"
     end
   end
 

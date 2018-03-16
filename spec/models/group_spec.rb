@@ -20,6 +20,9 @@ RSpec.describe Group, type: :model do
     # it { is_expected.to belong_to(:member).with_primary_key("fullname").with_foreign_key("groupRep") }
     # it { is_expected.to have_many(:active_members).with_primary_key("groupName").as_inverse_of(:group).with_foreign_key("groupName")}
   end
+  it "has a valid factory" do
+    expect(build(:group)).to be_valid
+  end
 
   describe "callbacks" do
     it { expect(group).to callback(:update_active_members).after(:update) }
