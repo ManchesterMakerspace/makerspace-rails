@@ -14,6 +14,7 @@ function rentalsController($filter, rentalsService, $q) {
   rentalsCtrl.$onInit = function() {
     rentalsCtrl.reverseSort = false;
     rentalsCtrl.descToggle = "Desc";
+    rentalsCtrl.sortBy = 'number';
   };
 
   rentalsCtrl.checkExp = function(rental){
@@ -30,6 +31,15 @@ function rentalsController($filter, rentalsService, $q) {
     }
   };
 
+  rentalsCtrl.sort = function (rental) {
+    if(rentalsCtrl.sortBy === 'number') {
+      var number = parseInt(rental.number);
+      if (!isNaN(number)) {
+        return number;
+      }
+    }
+    return rental[rentalsCtrl.sortBy];
+  };
 
   rentalsCtrl.upsertRental = function(rental){
     rentalsCtrl.rentalUpdate = rental;

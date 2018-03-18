@@ -15,14 +15,14 @@
 				<div class="col-xs-6">
 					<md-input-container class="md-block">
 						<md-select ng-model="membersCtrl.sortBy" placeholder="Sort By">
-							<md-option value="name">Name</md-option>
-							<md-option value="expirationTime">Expiration Date</md-option>
+							<md-option class="sort-option" value="name">Name</md-option>
+							<md-option class="sort-option" value="expirationTime">Expiration Date</md-option>
 					</md-input-container>
 				</div>
 				<div class="col-xs-6">
 					<div class="toggle" ng-class="membersCtrl.descToggle">
 						<md-input-container class="md-block">
-							<md-checkbox ng-model="membersCtrl.reverseSort" ng-click="membersCtrl.toggleOrder()">
+							<md-checkbox ng-model="membersCtrl.reverseSort" ng-change="membersCtrl.toggleOrder()">
 								{{membersCtrl.descToggle}}
 							</md-checkbox>
 						</md-input-container>

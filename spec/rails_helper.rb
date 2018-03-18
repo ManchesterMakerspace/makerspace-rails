@@ -31,8 +31,6 @@ RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, :type => :controller
   config.extend ControllerMacros, :type => :controller
   config.include TestHelpers, :type => :controller
-  # config.include Devise::TestHelpers, :type => :controller
-  # config.include ControllerHelpers, :type => :controller
   config.include FactoryBot::Syntax::Methods
   config.include(Shoulda::Callback::Matchers::ActiveModel)
   config.include Mongoid::Matchers, type: :model

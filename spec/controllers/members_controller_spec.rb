@@ -14,7 +14,7 @@ RSpec.describe MembersController, type: :controller do
       get :index, params: {}, format: :json
 
       parsed_response = JSON.parse(response.body)
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
       expect(parsed_response.first['id']).to eq(Member.last.id.as_json)
     end
@@ -32,7 +32,7 @@ RSpec.describe MembersController, type: :controller do
       get :show, params: {id: member.to_param}, format: :json
 
       parsed_response = JSON.parse(response.body)
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
       expect(parsed_response['id']).to eq(Member.last.id.as_json)
     end
@@ -43,7 +43,7 @@ RSpec.describe MembersController, type: :controller do
       get :contract, params: {}, format: :json
 
       parsed_response = JSON.parse(response.body)
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
       expect(parsed_response['contract']).to include('Membership Contract')
       expect(parsed_response['conduct']).to include('Code of Conduct')

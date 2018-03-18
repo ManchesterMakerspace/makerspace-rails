@@ -51,7 +51,7 @@ RSpec.describe RegistrationsController, type: :controller do
         post :create, params: {member: valid_attributes}, format: :json
 
         parsed_response = JSON.parse(response.body)
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
         expect(parsed_response['id']).to eq(Member.last.id.as_json)
       end

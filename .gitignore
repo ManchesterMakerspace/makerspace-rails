@@ -53,3 +53,6 @@ test.env
 
 # Ignore Byebug command history file.
 .byebug_history
+
+# Reporter file for integration  tests and screenshots
+/spec/frontend/reporter

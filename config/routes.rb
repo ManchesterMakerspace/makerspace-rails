@@ -3,15 +3,19 @@ Rails.application.routes.draw do
   root to: "application#angular"
   post '/ipnlistener', to: 'paypal#notify'
 
-  scope :api do
+  scope :api, defaults: { format: :json } do
     resources :members, only: [:index]
     get 'members/contract', to: 'members#contract'
     resources :groups, only: [:index]
     resources :token, only: [:create]
     post '/token/:id/:token', to: 'token#validate'
     resources :rentals, only: [:index]
-    devise_for :members, :controllers => {:sessions => 'sessions', :registrations => 'registrations'}
     resources :calendar, only: [:index, :update]
+
+    devise_for :members, skip: [:registrations]
+    devise_scope :member do
+       post "members", to: "registrations#create"
+    end
 
     authenticate :member do
       resources :members, only: [:show]

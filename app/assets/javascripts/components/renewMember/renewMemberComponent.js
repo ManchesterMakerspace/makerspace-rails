@@ -24,7 +24,7 @@ function renewMemberController(memberService, alertService, $filter, $stateParam
   renewMemberCtrl.renewMember = function(form){
     if(!form.$valid) {return;}
     return memberService.updateMember(renewMemberCtrl.renewalForm.member).then(function(member){
-      renewMemberCtrl.blockForm = false;
+      // renewMemberCtrl.blockForm = false;
       alertService.addAlert('Member renewed!', 'success');
       renewMemberCtrl.renewalForm = {};
       renewMemberCtrl.updatedMembers.push(member);

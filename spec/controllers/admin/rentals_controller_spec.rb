@@ -38,7 +38,7 @@ RSpec.describe Admin::RentalsController, type: :controller do
         post :create, params: {rental: valid_attributes}, format: :json
 
         parsed_response = JSON.parse(response.body)
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
         expect(parsed_response['id']).to eq(Rental.last.id.to_s)
       end
@@ -52,7 +52,7 @@ RSpec.describe Admin::RentalsController, type: :controller do
 
       it "returns status 500" do
         post :create, params: {rental: invalid_attributes}, format: :json
-        expect(response.status).to eq(500)
+        expect(response).to have_http_status(500)
         expect(response.content_type).to eq "application/json"
       end
     end

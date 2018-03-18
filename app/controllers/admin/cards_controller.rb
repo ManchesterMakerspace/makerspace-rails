@@ -32,7 +32,7 @@ class Admin::CardsController < AdminController
   end
 
   def index
-    @cards = Card.where(member: Member.find(params[:id]))
+    @cards = Card.where(member: Member.find_by(id: params[:id]))
     render json: @cards and return
   end
 

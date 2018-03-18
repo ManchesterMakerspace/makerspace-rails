@@ -110,7 +110,7 @@ FactoryBot.define do
   end
 
   sequence :email do |n|
-    "user#{n}@example.com"
+    "user_#{n}@example.com"
   end
 
   sequence :fullname do |n|

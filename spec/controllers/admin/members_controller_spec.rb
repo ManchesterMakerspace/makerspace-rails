@@ -10,6 +10,7 @@ RSpec.describe Admin::MembersController, type: :controller do
       email: 'test@test.com',
       password: 'password',
       password_confirmation: 'password',
+      expirationTime: (Time.now + 1.month).to_i * 1000
       # renewal: { months: 1 }
     }
   }
@@ -46,7 +47,7 @@ RSpec.describe Admin::MembersController, type: :controller do
           post :create, params: {member: valid_attributes}, format: :json
 
           parsed_response = JSON.parse(response.body)
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           expect(response.content_type).to eq "application/json"
           expect(parsed_response['id']).to eq(Member.last.id.as_json)
         end
@@ -61,7 +62,7 @@ RSpec.describe Admin::MembersController, type: :controller do
 
         it "Returns 500 status" do
           post :create, params: {member: invalid_attributes}, format: :json
-          expect(response.status).to eq(500)
+          expect(response).to have_http_status(500)
         end
       end
     end
@@ -93,7 +94,7 @@ RSpec.describe Admin::MembersController, type: :controller do
           put :update, params: {id: member.to_param, member: new_attributes}, format: :json
 
           parsed_response = JSON.parse(response.body)
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           expect(response.content_type).to eq "application/json"
           expect(parsed_response['id']).to eq(member.id.as_json)
         end
@@ -103,6 +104,8 @@ RSpec.describe Admin::MembersController, type: :controller do
           put :update, params: {id: member.to_param, member: renewal}, format: :json
           member.reload
           expect(assigns(:notifier)).to be_a(Slack::Notifier)
+          slack = instance_double("Slack::Notifier")
+          byebug
         end
       end
     end

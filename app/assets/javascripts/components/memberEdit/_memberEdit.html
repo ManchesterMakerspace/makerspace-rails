@@ -27,8 +27,8 @@
     <md-input-container class="md-block">
       <label for="groupName">Group</label>
       <md-select ng-model="memberEditCtrl.editForm.groupName" name="groupName">
-        <md-option ng-value="null">None</md-option>
-        <md-option ng-repeat="group in memberEditCtrl.groups" ng-value="group.groupName">{{group.groupName}}</md-option>
+        <md-option class="group-option" ng-value="null">None</md-option>
+        <md-option class="group-option" ng-repeat="group in memberEditCtrl.groups" ng-value="::group.groupName">{{::group.groupName}}</md-option>
       </md-select>
     </md-input-container>
 
@@ -39,12 +39,12 @@
         md-no-asterisk
         required>
         <md-option ng-repeat="status in memberEditCtrl.statuses" ng-value="status">
-          {{status}}
+          {{::status}}
         </md-option>
       </md-select>
     </md-input-container>
 
-    <button class="btn btn-info" type="button" ng-if="!memberEditCtrl.toggleRoleButton" ng-click="memberEditCtrl.toggleRoleButton = 'true'">{{memberEditCtrl.editForm.role}} - Change Member Role</button>
+    <button class="btn btn-info member-role" type="button" ng-if="!memberEditCtrl.toggleRoleButton" ng-click="memberEditCtrl.toggleRoleButton = 'true'">{{memberEditCtrl.editForm.role}} - Change Member Role</button>
 
     <div ng-if="memberEditCtrl.toggleRoleButton">
       <md-input-container class="md-block">
@@ -53,8 +53,8 @@
           name="role"
           md-no-asterisk
           required>
-          <md-option ng-repeat="role in memberEditCtrl.roles" ng-value="role">
-            {{role}}
+          <md-option ng-repeat="role in memberEditCtrl.roles" ng-value="::role">
+            {{::role}}
           </md-option>
         </md-select>
       </md-input-container>
@@ -96,7 +96,7 @@
     </div>
 
     <div ng-if="!memberEditCtrl.showDetails">
-      <button type="button" class="btn btn-primary"
+      <button type="button" class="btn btn-primary details-button"
         ng-click="memberEditCtrl.showDetails = !memberEditCtrl.showDetails">Show Details</button>
     </div>
 

@@ -37,7 +37,7 @@ RSpec.describe TokenController, type: :controller do
         post :validate, params: {id: token_email[:id], token: token_email[:token]}, format: :json
         expect(assigns(:token)).to eq(token)
 
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
         parsed_response = JSON.parse(response.body)
         expect(parsed_response['email']).to eq(token.email)
@@ -51,7 +51,7 @@ RSpec.describe TokenController, type: :controller do
         token_email = get_registration_token(token.email)
         post :validate, params: {id: token_email[:id], token: token_email[:token], email: member.email}, format: :json
 
-        expect(response.status).to eq(400)
+        expect(response).to have_http_status(400)
         expect(response.content_type).to eq "application/json"
         parsed_response = JSON.parse(response.body)
         expect(parsed_response['msg']).to eq("Email already taken")
@@ -60,7 +60,7 @@ RSpec.describe TokenController, type: :controller do
       it "Returns 400 with validation error if no token found" do
         post :validate, params: {id: 666, token: 0}, format: :json
 
-        expect(response.status).to eq(400)
+        expect(response).to have_http_status(400)
         expect(response.content_type).to eq "application/json"
         parsed_response = JSON.parse(response.body)
         expect(parsed_response['msg']).to eq("Invalid registration link")
@@ -70,7 +70,7 @@ RSpec.describe TokenController, type: :controller do
         token = create(:registration_token)
         post :validate, params: {id: token.id, token: 'wrong'}, format: :json
 
-        expect(response.status).to eq(400)
+        expect(response).to have_http_status(400)
         expect(response.content_type).to eq "application/json"
         parsed_response = JSON.parse(response.body)
         expect(parsed_response['msg']).to eq("Invalid registration link")
@@ -83,7 +83,7 @@ RSpec.describe TokenController, type: :controller do
 
         post :validate, params: {id: token_email[:id], token: token_email[:token]}, format: :json
 
-        expect(response.status).to eq(400)
+        expect(response).to have_http_status(400)
         expect(response.content_type).to eq "application/json"
         parsed_response = JSON.parse(response.body)
         expect(parsed_response['msg']).to eq("Registeration link already used. Please login")
@@ -109,7 +109,7 @@ RSpec.describe TokenController, type: :controller do
 
       it "renders json w/ status 200" do
         post :create, params: valid_attributes, format: :json
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
       end
     end
@@ -119,7 +119,7 @@ RSpec.describe TokenController, type: :controller do
         member = create(:member)
         post :create, params: {email: member.email}, format: :json
 
-        expect(response.status).to eq(400)
+        expect(response).to have_http_status(400)
         expect(response.content_type).to eq "application/json"
         parsed_response = JSON.parse(response.body)
         expect(parsed_response['msg']).to eq("Email already taken")
@@ -128,7 +128,7 @@ RSpec.describe TokenController, type: :controller do
       it "Returns 400 with validation error if missing email" do
         post :create, params: {email: nil}, format: :json
 
-        expect(response.status).to eq(400)
+        expect(response).to have_http_status(400)
         expect(response.content_type).to eq "application/json"
         parsed_response = JSON.parse(response.body)
         expect(parsed_response['msg']['email']).to eq(["can't be blank"])
