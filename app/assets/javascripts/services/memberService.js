@@ -44,27 +44,15 @@ app.factory('memberService', function($http, slackService){
   };
 
 
-  // var introMember = function(paymentData){
-  //   var member;
-  //   if (!paymentData.member){
-  //     member = {
-  //       fullname: "Will Lynch",
-  //       email: "will.lynch91@gmail.com"
-  //       // fullname: paymentData.firstname + " " + paymentData.lastname,
-  //       // email: paymentData.payer_email
-  //     };
-  //   } else {
-  //     // member = paymentData.member;
-  //   }
-  //
-  //   return $http.post('/api/admin/members/intro', {member: member}).then(function(response){
-  //     console.log(response);
-  //     return response.data;
-  //   });
-  // };
+  var renewMember = function(memberData) {
+    return $http.put('/api/admin/members/renew/' + memberData.id, {member: memberData}).then(function(response){
+      return response.data;
+    });
+  };
 
   return {
     getAllMembers: getAllMembers,
+    renewMember: renewMember,
     getById: getById,
     createMember: createMember,
     renewMemberByPayment: renewMemberByPayment,

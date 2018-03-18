@@ -70,6 +70,7 @@ FactoryBot.define do
   end
 
   factory :rejection_card do
+    uid { generate(:cardID) }
     timeOf { generate(:time_of) }
     validity :unregistered
   end

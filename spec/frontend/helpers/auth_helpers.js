@@ -1,11 +1,13 @@
 exports.adminUsers = {
   user1: {
+    fullname: 'Admin Member1',
     email: 'admin_member_1@test.com',
     password: 'password'
   }
 };
 exports.basicUsers = {
   user1: {
+    fullname: 'Basic Member1',
     email: 'basic_member_1@test.com',
     password: 'password'
   }
@@ -28,10 +30,6 @@ exports.loginUser = function(credentials){
         });
     });
 });
-};
-
-exports.registerUser = function(credentials){
-
 };
 
 exports.logout = function(){

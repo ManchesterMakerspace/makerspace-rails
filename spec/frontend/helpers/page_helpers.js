@@ -2,6 +2,9 @@ var alerts = element.all(by.repeater("alert in alertCtrl.alerts"));
 exports.getAlerts = function () {
   return alerts;
 };
+exports.alertsPresent = function () {
+  return protractor.pageHelper.isDisplayed(alerts);
+};
 exports.clearAlerts = function () {
   return alerts.each(function (a) {
     return a.element(by.css("button")).click();

@@ -62,7 +62,9 @@ exports.config = {
 	suites: {
     login: 'spec/frontend/suites/login/integration_spec.js',
     members: 'spec/frontend/suites/members/integration_spec.js',
-    rentals: 'spec/frontend/suites/rentals/integration_spec.js'
+    rentals: 'spec/frontend/suites/rentals/integration_spec.js',
+    renewMember: 'spec/frontend/suites/renewMember/integration_spec.js',
+    newMember: 'spec/frontend/suites/newMember/integration_spec.js',
 	},
 	beforeLaunch: function() {
 		return new Promise(function(resolve){

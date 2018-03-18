@@ -10,4 +10,11 @@ namespace :db do
     DatabaseCleaner.clean
     SeedData.new.call
   end
+
+  task :reject_card => :environment do
+    return unless Rails.env.test?
+    last_card = RejectionCard.all.last
+    new_uid = "%04d" % (last_card.uid.to_i + 1)
+    FactoryBot.create(:rejection_card, uid: "#{new_uid}" || "0001" )
+  end
 end

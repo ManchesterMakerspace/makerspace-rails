@@ -1,5 +1,5 @@
 var RenewMemberFormPage = function () {
-  var submit = element(by.css('button[type="submit"]'));
+  var submit = element(by.css('button[ng-click="renewMemberCtrl.renewMember(renewalForm)"]'));
   var renewalMemberSelect = element(by.model("renewMemberCtrl.renewalForm.member"));
   var renewalMemberOptions = element.all(by.repeater("member in renewMemberCtrl.members"));
   var renewalMonthsSelect = element(by.model("renewMemberCtrl.renewalForm.member.renewal.months"));
@@ -15,22 +15,35 @@ var RenewMemberFormPage = function () {
     return url;
   };
 
+  this.getMemberOptions = function () {
+    return renewalMemberOptions;
+  };
+  this.getMonthOptions = function () {
+    return renewalMonthsOptions;
+  };
   this.setMember = function (memberName) {
     return renewalMemberSelect.click().then(function () {
-      return renewalMemberOptions.filter(function (opt) {
-        return opt.getText().then(function (text) {
-          return text.toLowerCase() === memberName.toLowerCase();
-        });
-      }).first().click();
+      return browser.sleep(500).then(function () {
+        return renewalMemberOptions.filter(function (opt) {
+          return opt.getText().then(function (text) {
+            return text.toLowerCase() === memberName.toLowerCase();
+          });
+        }).first().click();
+      });
     });
+  };
+  this.getMember = function () {
+    return renewalMemberSelect.getText();
   };
   this.setRenewal = function (month) {
     return renewalMonthsSelect.click().then(function () {
-      return renewalMonthsOptions.filter(function (opt) {
-        return opt.getText().then(function (text) {
-          return text.toLowerCase() === month.toLowerCase();
-        });
-      }).first().click();
+      return browser.sleep(500).then(function () {
+        return renewalMonthsOptions.filter(function (opt) {
+          return opt.getText().then(function (text) {
+            return text === month + " month(s)";
+          });
+        }).first().click();
+      });
     });
   };
   this.submit = function () {

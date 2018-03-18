@@ -1,6 +1,6 @@
 class Admin::MembersController < AdminController
-  before_action :set_member, only: [:update]
-  before_action :slack_connect, only: [:update]
+  before_action :set_member, only: [:update, :renew]
+  before_action :slack_connect, only: [:update, :renew]
 
   def create
     @member = Member.new(member_params)
@@ -30,9 +30,27 @@ class Admin::MembersController < AdminController
     end
   end
 
+  def renew
+    date = @member.expirationTime
+    if @member.update(renew_params)
+      if @member.expirationTime && date && @member.expirationTime > date
+        @notifier.ping "#{@member.fullname} renewed. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
+      elsif @member.expirationTime != date
+        @notifier.ping "#{@member.fullname} updated. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
+      end
+      render json: @member and return
+    else
+      render json: {}, status: 500 and return
+    end
+  end
+
   private
   def member_params
     params.require(:member).permit(:fullname, :cardID, :groupName, :memberContractOnFile, :role, :email, :slackHandle, :password, :password_confirmation, :status, :expirationTime, :renewal => [:months, :start_date])
+  end
+
+  def renew_params
+    params.require(:member).permit(:fullname, :renewal => [:months, :start_date])
   end
 
   def set_member

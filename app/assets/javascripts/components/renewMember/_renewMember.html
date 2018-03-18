@@ -42,7 +42,7 @@
 
   <div class="col-xs-12 text-center">
       <button type="button"
-        ng-click="renewMemberCtrl.renewMember(renewalForm.$valid)"
+        ng-click="renewMemberCtrl.renewMember(renewalForm)"
         class="btn"
         ng-class="renewalForm.$valid ? 'btn-success': 'btn-disabled'">
         Renew {{renewMemberCtrl.renewalForm.member.fullname}}

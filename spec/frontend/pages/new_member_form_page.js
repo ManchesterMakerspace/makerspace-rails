@@ -1,14 +1,11 @@
 var NewMemberFormPage = function () {
-  var contractToggle = element(by.model("newMemberCtrl.newMember.memberContractOnFile"));
+  var contractToggleInput = element(by.model("newMemberCtrl.newMember.memberContractOnFile"));
   var nameInput = element(by.model("newMemberCtrl.newMember.fullname"));
   var cardIdInput = element(by.model("newMemberCtrl.newMember.cardID"));
   var refreshCardButton = element(by.css('button[ng-click="newMemberCtrl.refreshCardID()"]'));
   var groupSelect = element(by.model("newMemberCtrl.newMember.groupName"));
   var groupOptions = element.all(by.repeater("group in newMemberCtrl.groups"));
-  var startDateInput = element(by.model("newMemberCtrl.newMember.renewal.startDate"));
-  var calendar = element(by.css("md-calendar-month"));
-  var calendarDate = element(by.css(".md-calendar-date-today"));
-  var renewalMonthsSelect = element(by.model("newMemberCtrl.newMember.renewal.months"));
+  var renewalMonthsInput = element(by.model("newMemberCtrl.newMember.renewal.months"));
   var renewalMonthsOptions = element.all(by.css(".renewal-option"));
   var emailInput = element(by.model("newMemberCtrl.newMember.email"));
   var passwordInput = element(by.model("newMemberCtrl.newMember.password"));
@@ -23,33 +20,40 @@ var NewMemberFormPage = function () {
   };
 
   this.toggleContractInput = function () {
-    return contractToggle.click();
+    return contractToggleInput.click();
   };
-
+  this.inputEnabled = function (input) {
+    var el = eval(input + "Input");
+    return el.isEnabled();
+  }
   this.setInput = function (input, content) {
     var el = eval(input + "Input");
     return el.clear().sendKeys(content);
   };
   this.getInput = function (input) {
     var el = eval(input + "Input");
-    return el.getText();
+    return el.getAttribute('value');
   };
   this.setGroup = function (groupName) {
     return groupSelect.click().then(function () {
-      return groupOptions.filter(function (opt) {
-        return opt.getText().then(function (text) {
-          return text.toLowerCase() === groupName.toLowerCase();
-        });
-      }).first().click();
+      return browser.sleep(500).then(function () {
+        return groupOptions.filter(function (opt) {
+          return opt.getText().then(function (text) {
+            return text.toLowerCase() === groupName.toLowerCase();
+          });
+        }).first().click();
+      });
     });
   };
   this.setRenewal = function (month) {
-    return renewalMonthsSelect.click().then(function () {
-      return renewalMonthsOptions.filter(function (opt) {
-        return opt.getText().then(function (text) {
-          return text.toLowerCase() === month.toLowerCase();
-        });
-      }).first().click();
+    return renewalMonthsInput.click().then(function () {
+      return browser.sleep(500).then(function () {
+        return renewalMonthsOptions.filter(function (opt) {
+          return opt.getText().then(function (text) {
+            return parseInt(text) === month;
+          });
+        }).first().click();
+      });
     });
   };
   this.refreshCardID = function () {
@@ -58,16 +62,10 @@ var NewMemberFormPage = function () {
   this.submit = function () {
     return submit.click();
   };
-  this.getDateInput = function(){
-      return startDateInput.getAttribute('value');
-  };
-  this.openCalendar = function(){
-      return startDateInput.click();
-  };
-  this.calendarOpen = function(){
-      return calendar.isPresent();
-  };
-  this.selectCalendarDate = function(){
-      return browser.actions().mouseMove(calendarDate).click().perform();
+  this.inputValid = function (inputName) {
+    var el = eval(inputName + "Input");
+    return protractor.pageHelper.inputValid(el);
   };
 };
+
+module.exports = NewMemberFormPage;

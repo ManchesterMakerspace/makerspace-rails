@@ -54,53 +54,41 @@
     </md-input-container>
   </div>
   <div class="col-xs-12">
+    <md-input-container class="md-block">
+      <label for="months">Membership Length (# months)</label>
+      <md-select ng-model="newMemberCtrl.newMember.renewal.months"
+        name="renewalMonths"
+        required>
+          <md-option class="renewal-option" ng-repeat="n in [1,2,3,4,5,6,7,8,9,10,11,12]" ng-value="n">
+            {{n}}
+          </md-option>
+      </md-select>
+      <div ng-messages="newMember.renewalMonths.$error">
+        <div ng-message="required">Cannot be blank.</div>
+      </div>
+    </md-input-container>
+  </div>
+  <div class="col-xs-12">
+    <md-input-container class="md-block">
+      <label for="email">Email</label>
+      <input type="email" name="email"
+      ng-model="newMemberCtrl.newMember.email" required/>
+      <div ng-messages="newMember.email.$error">
+        <div ng-message="required">Please complete this field.</div>
+        <div ng-message="email">Please use a valid email addreess.</div>
+      </div>
+    </md-input-container>
+  </div>
+
+  <input style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
+  <input type="password" style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
+
+  <div class="col-xs-12">
     <div class="row">
       <div class="col-xs-6">
         <md-input-container>
-          <label for="startDate">Start Date</label>
-          <md-datepicker name="renewal[startDate]"
-            md-open-on-focus
-            ng-model="newMemberCtrl.newMember.renewal.startDate"/>
-        </md-input-container>
-      </div>
-      <div class="col-xs-6">
-        <md-input-container class="md-block">
-          <label for="months">Membership Length (# months)</label>
-          <md-select ng-model="newMemberCtrl.newMember.renewal.months"
-            name="renewalMonths"
-            required>
-              <md-option class="renewal-option" ng-repeat="n in [1,2,3,4,5,6,7,8,9,10,11,12]" ng-value="n">
-                {{n}}
-              </md-option>
-          </md-select>
-          <div ng-messages="newMember.renewalMonths.$error">
-            <div ng-message="required">Cannot be blank.</div>
-          </div>
-        </md-input-container>
-      </div>
-
-    </div>
-    <div class="col-xs-12">
-      <md-input-container class="md-block">
-        <label for="email">Email</label>
-        <input type="email" name="email"
-        ng-model="newMemberCtrl.newMember.email" required/>
-        <div ng-messages="newMember.email.$error">
-          <div ng-message="required">Please complete this field.</div>
-          <div ng-message="email">Please use a valid email addreess.</div>
-        </div>
-      </md-input-container>
-    </div>
-
-    <input style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
-    <input type="password" style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
-
-    <div class="col-xs-12">
-      <div class="row">
-        <div class="col-xs-6">
-        <md-input-container>
           <label for="password">Password</label>
-          <input type="password" name="password" required
+          <input type="password" name="password"
             ng-required="newMemberCtrl.newMember.password_confirmation"
             ng-model="newMemberCtrl.newMember.password"
             match="newMember.password_confirmation"
@@ -108,26 +96,28 @@
             <div ng-messages="newMember.password.$error">
   						<div ng-message="required">Must enter current password in order to change passwords.</div>
   						<div ng-message="minlength">Must be at least 8 characters.</div>
+              <div ng-message="match">Passwords must match.</div>
   					</div>
-          </md-input-container>
-      </div>
-      <div class="col-xs-6">
-        <md-input-container>
-          <label for="passwordConf">Password Confirmation</label>
-          <input type="password" name="password_confirmation" required
-          ng-required="newMemberCtrl.newMember.password"
-          ng-model="newMemberCtrl.newMember.password_confirmation"
-          match="newMember.password"
-          minlength="8">
-          <div ng-messages="newMember.password_confirmation.$error">
-						<div ng-message="required">Must enter current password in order to change passwords.</div>
-						<div ng-message="minlength">Must be at least 8 characters.</div>
-					</div>
         </md-input-container>
-      </div>
+    </div>
+    <div class="col-xs-6">
+      <md-input-container>
+        <label for="passwordConf">Password Confirmation</label>
+        <input type="password" name="password_confirmation"
+        ng-required="newMemberCtrl.newMember.password"
+        ng-model="newMemberCtrl.newMember.password_confirmation"
+        match="newMember.password"
+        minlength="8">
+        <div ng-messages="newMember.password_confirmation.$error">
+					<div ng-message="required">Must enter current password in order to change passwords.</div>
+          <div ng-message="minlength">Must be at least 8 characters.</div>
+					<div ng-message="match">Passwords must match.</div>
+				</div>
+      </md-input-container>
     </div>
   </div>
-  <div class="col-xs-12 text-center">
-      <button type="submit" class="btn" ng-class="newMember.$valid ? 'btn-success': 'btn-disabled'">Create New Member</button>
+</div>
+<div class="col-xs-12 text-center">
+    <button type="submit" class="btn" ng-class="newMember.$valid ? 'btn-success': 'btn-disabled'">Create New Member</button>
   </div>
 </form>

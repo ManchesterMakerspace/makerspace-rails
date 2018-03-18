@@ -22,6 +22,11 @@ var EditMemberPage = function () {
   var refreshCardButton = element(by.css('button[ng-click="memberEditCtrl.refreshCardID()"]'));
   var createCardButton = element(by.css('button[ng-click="memberEditCtrl.createCard()"]'));
   var submit = element(by.css('button[type="submit"]'));
+  var url = /members\/[0-9]+/;
+
+  this.getUrl = function () {
+    return url;
+  }
 
   this.setInput = function (input, content) {
     var el = eval(input + "Input");

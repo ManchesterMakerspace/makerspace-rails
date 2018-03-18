@@ -8,7 +8,8 @@ class SeedData
     create_members
     create_rentals
     create_payments
-    create_groups
+    create_group
+    create_rejection_cards
   end
 
   private
@@ -53,7 +54,13 @@ class SeedData
     10.times { create(:payment) }
   end
 
-  def create_groups
-    5.times { create(:group) }
+  def create_group
+    create(:group, member: Member.where(email: 'admin_member_0@test.com').first)
+  end
+
+  def create_rejection_cards
+    create(:rejection_card, uid: '0000')
+    create(:rejection_card, uid: '0001')
+    create(:rejection_card, uid: '0002')
   end
 end

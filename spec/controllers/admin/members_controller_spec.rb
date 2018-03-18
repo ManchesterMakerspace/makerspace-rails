@@ -104,8 +104,6 @@ RSpec.describe Admin::MembersController, type: :controller do
           put :update, params: {id: member.to_param, member: renewal}, format: :json
           member.reload
           expect(assigns(:notifier)).to be_a(Slack::Notifier)
-          slack = instance_double("Slack::Notifier")
-          byebug
         end
       end
     end

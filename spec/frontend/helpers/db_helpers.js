@@ -9,3 +9,14 @@ exports.resetDB = function(){
         });
     });
 };
+
+exports.addRejectionCard = function () {
+  var exec = require('child_process').exec;
+  return new Promise(function(resolve, reject){
+      exec('RAILS_ENV=test rake db:reject_card', {maxBuffer: 1024 * 50000}, function(err, stdout, stderr){
+          if(err) {throw err; }
+          console.log('created');
+          resolve('done');
+      });
+  });
+}

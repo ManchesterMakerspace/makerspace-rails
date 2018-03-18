@@ -1,8 +1,9 @@
 var MembershipsPage = function () {
-  var newMemberTab = element(by.css('a[ui-sref="root.admin.memberships.new"]'));
-  var renewMemberTab = element(by.css('a[ui-sref="root.admin.memberships.renew"]'));
+  var wrapper = element(by.css("memberships-component"))
+  var newMemberTab = wrapper.element(by.css('a[ui-sref="root.admin.memberships.new"]'));
+  var renewMemberTab = wrapper.element(by.css('a[ui-sref="root.admin.memberships.renew"]'));
 
-  var updatedMembers = element.all(by.repeater("member in membershipCtrl.updatedMembers"));
+  var updatedMembers = wrapper.all(by.repeater("member in membershipCtrl.updatedMembers"));
   var memberName = element(by.binding("member.fullname"));
   var memberExpiry = element(by.binding("member.expirationTime"));
 
