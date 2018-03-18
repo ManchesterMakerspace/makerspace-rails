@@ -25,7 +25,7 @@ class CalendarController < ApplicationController
           @notifier.ping("Unknown registration error from #{member.email}")
       end
     end
-      render json: {status: 200}
+      render json: {}, status: 200
   end
 
   private

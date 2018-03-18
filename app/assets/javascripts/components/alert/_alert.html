@@ -1,1 +1,1 @@
-<div uib-alert ng-repeat="alert in alertCtrl.alerts" ng-class="'alert-' + (alert.type || 'warning')" close="alertCtrl.closeAlert(alert)" dismiss-on-timeout="alert.timeout">{{alert.msg}}</div>
+<div uib-alert ng-repeat="alert in alertCtrl.alerts" ng-class="'alert-' + (alert.type || 'warning')" close="alertCtrl.closeAlert(alert)" dismiss-on-timeout="{{alert.timeout}}">{{alert.msg}}</div>

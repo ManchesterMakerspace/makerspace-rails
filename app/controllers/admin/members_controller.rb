@@ -5,25 +5,28 @@ class Admin::MembersController < AdminController
   def create
     @member = Member.new(member_params)
     if @member.save
-      Card.create(uid: @member.cardID, member: @member)
-      RejectionCard.find_by(uid: @member.cardID).update(holder: @member.fullname)
+      if @member.cardID
+        Card.create(uid: @member.cardID, member: @member)
+        rejection_card = RejectionCard.find_by(uid: @member.cardID)
+        rejection_card.update(holder: @member.fullname) unless rejection_card.nil?
+      end
       render json: @member and return
     else
-      render json: {status: 500}, status: 500 and return
+      render json: {}, status: 500 and return
     end
   end
 
   def update
     date = @member.expirationTime
     if @member.update(member_params)
-      if @member.expirationTime > date
+      if @member.expirationTime && date && @member.expirationTime > date
         @notifier.ping "#{@member.fullname} renewed. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
       elsif @member.expirationTime != date
         @notifier.ping "#{@member.fullname} updated. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
       end
       render json: @member and return
     else
-      render json: {status: 500}, status: 500 and return
+      render json: {}, status: 500 and return
     end
   end
 

@@ -1,4 +1,4 @@
-class Admin::PaymentsController < ApplicationController
+class Admin::PaymentsController < AdminController
   before_action :find_payment, only: [:update]
 
   def index
@@ -14,9 +14,8 @@ class Admin::PaymentsController < ApplicationController
     if @payment.update(payment_params)
       render json: @payment and return
     else
-      render json: {status: 500}, status: 500 and return
+      render json: {}, status: 500 and return
     end
-    @members = Member.all
   end
 
   private

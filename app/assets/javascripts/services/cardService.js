@@ -19,7 +19,7 @@ app.factory('cardService', function($http){
   };
 
   var getMemberCards = function(memberID) {
-    return $http.get('/api/admin/cards/' + memberID).then(function(response){
+    return $http.get('/api/admin/cards/', {id: memberID}).then(function(response){
       return response.data;
     });
   };

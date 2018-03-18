@@ -15,6 +15,7 @@ class MembersController < ApplicationController
       render json: @member and return
     end
 
+    # TODO: Move this to a different controller
     def contract
       creds = Google::Auth::UserRefreshCredentials.new({
         client_id: ENV['GOOGLE_ID'],

@@ -13,6 +13,14 @@ class RegistrationToken
 
   after_create :generate_token
 
+  def validate(challenge_token)
+    salt = BCrypt::Password.new(self.token).salt
+    hash = BCrypt::Engine.hash_secret(challenge_token, salt)
+    valid = Rack::Utils.secure_compare(self.token, hash)
+    valid
+  end
+
+  private
   def one_active_token_per_email
     member = Member.where(email: self.email).first
     if member
@@ -28,14 +36,6 @@ class RegistrationToken
     end
   end
 
-  def validate(challenge_token)
-    salt = BCrypt::Password.new(self.token).salt
-    hash = BCrypt::Engine.hash_secret(challenge_token, salt)
-    valid = Rack::Utils.secure_compare(self.token, hash)
-    valid
-  end
-
-  protected
   def generate_token
     base_token = SecureRandom.urlsafe_base64(nil, false)
     self.token = BCrypt::Password.create(base_token)
