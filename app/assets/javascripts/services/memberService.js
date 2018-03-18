@@ -43,6 +43,12 @@ app.factory('memberService', function($http, slackService){
     });
   };
 
+  var renewMember = function(memberData) {
+    return $http.put('/api/admin/members/renew/' + memberData.id, {member: memberData}).then(function(response){
+      return response.data;
+    });
+  };
+
 
   // var introMember = function(paymentData){
   //   var member;
@@ -65,6 +71,7 @@ app.factory('memberService', function($http, slackService){
 
   return {
     getAllMembers: getAllMembers,
+    renewMember:  renewMember,
     getById: getById,
     createMember: createMember,
     renewMemberByPayment: renewMemberByPayment,

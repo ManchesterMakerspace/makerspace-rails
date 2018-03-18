@@ -23,6 +23,7 @@ Rails.application.routes.draw do
       namespace :admin  do
         # post '/members/intro', to: 'members#intro'
         # get '/members/welcome_email', to: 'members#welcome_email'
+        put '/members/renew/:id', to: 'members#renew'
         resources :payments, only: [:index, :update]
         resources :cards, only: [:new, :create, :show, :update]
         resources :rentals, only: [:create, :update, :destroy]
