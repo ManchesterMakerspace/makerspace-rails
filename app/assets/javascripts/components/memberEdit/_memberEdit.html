@@ -14,9 +14,15 @@
         required/>
     </md-input-container>
 
-    <div class="text-center">
+    <div class="text-left">
       <span>Expiration: </span><span ng-bind="memberEditCtrl.member.expirationTime | date: shortDate: EST"></span>
     </div>
+    <md-input-container>
+      <label for="expiration">Expiration Date</label>
+      <md-datepicker name="expiration"
+        md-open-on-focus
+        ng-model="memberEditCtrl.editForm.expirationTime"/>
+    </md-input-container>
 
     <md-input-container class="md-block">
       <label for="email">Email</label>

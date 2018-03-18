@@ -1,4 +1,4 @@
-<form class="renew-member-form row" name="renewalForm" novalidate>
+<form class="renew-member-form row" name="renewalForm"novalidate>
   <input style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
   <input type="password" style="display:none"> <!--required so Chrome won't autofill and ruin my day -->
 
@@ -41,6 +41,11 @@
   </div>
 
   <div class="col-xs-12 text-center">
-      <button type="submit" class="btn" ng-class="renewalForm.$valid ? 'btn-success': 'btn-disabled'" ng-disabled="renewMemberCtrl.blockForm" ng-click="renewMemberCtrl.blockForm = true; renewMemberCtrl.renewMember(renewalForm)">Renew {{renewMemberCtrl.renewalForm.member.fullname}}</button>
+      <button type="button"
+        ng-click="renewMemberCtrl.renewMember(renewalForm.$valid)"
+        class="btn"
+        ng-class="renewalForm.$valid ? 'btn-success': 'btn-disabled'">
+        Renew {{renewMemberCtrl.renewalForm.member.fullname}}
+      </button>
   </div>
 </form>
