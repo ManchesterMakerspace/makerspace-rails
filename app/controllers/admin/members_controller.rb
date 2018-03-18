@@ -18,6 +18,8 @@ class Admin::MembersController < AdminController
     if @member.update(member_params)
       if @member.expirationTime > date
         @notifier.ping "#{@member.fullname} renewed. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
+      elsif @member.expirationTime != date
+        @notifier.ping "#{@member.fullname} updated. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
       end
       render json: @member and return
     else
@@ -27,7 +29,7 @@ class Admin::MembersController < AdminController
 
   private
   def member_params
-    params.require(:member).permit(:fullname, :cardID, :groupName, :memberContractOnFile, :role, :email, :slackHandle, :password, :password_confirmation, :status, :renewal => [:months, :start_date])
+    params.require(:member).permit(:fullname, :cardID, :groupName, :memberContractOnFile, :role, :email, :slackHandle, :password, :password_confirmation, :status, :expirationTime, :renewal => [:months, :start_date])
   end
 
   def set_member
