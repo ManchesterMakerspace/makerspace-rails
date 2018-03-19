@@ -12,7 +12,8 @@ app.component('memberEditComponent', {
 function memberEditController(cardService, memberService, $state, $filter, alertService) {
   var memberEditCtrl = this;
   memberEditCtrl.$onInit = function() {
-    memberEditCtrl.editForm = memberEditCtrl.member;
+    memberEditCtrl.editForm = {};
+    angular.copy(memberEditCtrl.member, memberEditCtrl.editForm);
     memberEditCtrl.editForm.expirationTime = new Date(memberEditCtrl.editForm.expirationTime);
     memberEditCtrl.statuses = ["activeMember", "nonMember", "revoked"];
     memberEditCtrl.roles = ["member", "officer", "admin"];
@@ -57,13 +58,15 @@ function memberEditController(cardService, memberService, $state, $filter, alert
   memberEditCtrl.updateMember = function(form){
     if(!form){return;}
     if (!!memberEditCtrl.newCard && memberEditCtrl.newCard.uid){
-      memberEditCtrl.member.cards_attributes = memberEditCtrl.newCard;
+      memberEditCtrl.editForm.cards_attributes = memberEditCtrl.newCard;
     } else if (!!memberEditCtrl.reportedCard && memberEditCtrl.reportedCard.card_location) {
-      memberEditCtrl.member.cards_attributes = memberEditCtrl.reportedCard;
+      memberEditCtrl.editForm.cards_attributes = memberEditCtrl.reportedCard;
     }
-    memberEditCtrl.member.expirationTime = memberEditCtrl.editForm.expirationTime.getTime();
-    return memberService.updateMember(memberEditCtrl.member).then(function(response){
+    memberEditCtrl.editForm.expirationTime = memberEditCtrl.editForm.expirationTime.getTime();
+    return memberService.updateMember(memberEditCtrl.editForm).then(function(response){
       memberEditCtrl.member = response;
+      angular.copy(memberEditCtrl.member, memberEditCtrl.editForm);
+      memberEditCtrl.editForm.expirationTime = new Date(memberEditCtrl.editForm.expirationTime);
       alertService.addAlert('Member updated!', 'success');
     });
   };

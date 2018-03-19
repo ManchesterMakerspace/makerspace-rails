@@ -18,9 +18,15 @@ var HeaderPage = function () {
     return signInLink.click();
   };
   this.signOut = function () {
-    return signOutLink.click();
+    return protractor.pageHelper.isDisplayed(signOutLink).then(function (displayed) {
+      if(displayed) {
+        return signOutLink.click().then(function () {
+          return browser.sleep(1000);
+        });
+      }
+    });
   };
-  
+
 };
 
 module.exports = HeaderPage;

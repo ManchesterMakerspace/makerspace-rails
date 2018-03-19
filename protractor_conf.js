@@ -24,6 +24,10 @@ var shuffle = function(array){
     return array;
 };
 
+var addReset = function (array) {
+
+}
+
 exports.config = {
     // The address of a running selenium server.
     seleniumAddress: 'http://localhost:4444/wd/hub',
@@ -60,11 +64,13 @@ exports.config = {
 	// Spec patterns are relative to the location of the spec file. They may
 	// include glob patterns, such as /**/*_spec.js
 	suites: {
+    suiteHelper: './spec/frontend/suites/suiteHelper/helper.js',
     login: 'spec/frontend/suites/login/integration_spec.js',
     members: 'spec/frontend/suites/members/integration_spec.js',
     rentals: 'spec/frontend/suites/rentals/integration_spec.js',
     renewMember: 'spec/frontend/suites/renewMember/integration_spec.js',
     newMember: 'spec/frontend/suites/newMember/integration_spec.js',
+    memberEdit: 'spec/frontend/suites/memberEdit/integration_spec.js',
 	},
 	beforeLaunch: function() {
 		return new Promise(function(resolve){

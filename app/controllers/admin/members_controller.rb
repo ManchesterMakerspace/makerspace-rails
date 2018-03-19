@@ -24,6 +24,7 @@ class Admin::MembersController < AdminController
       elsif @member.expirationTime != date
         @notifier.ping "#{@member.fullname} updated. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
       end
+      @member.reload
       render json: @member and return
     else
       render json: {}, status: 500 and return

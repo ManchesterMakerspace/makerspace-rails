@@ -75,9 +75,9 @@ var RentalPage = function () {
       }).then(function (sortValues) {
         return page.getSortDirectionToggle().then(function (desc) {
           if (!desc) {
-            expect(sortValues).toEqual(sortValues.slice().sort());
+            expect(sortValues).toEqual(sortValues.slice().sort(compareNumbers));
           } else {
-            expect(sortValues).toEqual(sortValues.slice().sort().reverse());
+            expect(sortValues).toEqual(sortValues.slice().sort(compareNumbers).reverse());
           }
           return page.toggleSortDirection().then(function () {
             return rentals.map(function (r) {

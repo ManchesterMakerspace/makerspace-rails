@@ -22,19 +22,35 @@ var EditMemberPage = function () {
   var refreshCardButton = element(by.css('button[ng-click="memberEditCtrl.refreshCardID()"]'));
   var createCardButton = element(by.css('button[ng-click="memberEditCtrl.createCard()"]'));
   var submit = element(by.css('button[type="submit"]'));
+
+  var expiriationInput = element(by.model("memberEditCtrl.editForm.expirationTime"));
+  var calendar = element(by.css("md-calendar-month"));
+  var calendarDate = element(by.css(".md-calendar-date-today"));
+
   var url = /members\/[0-9]+/;
 
   this.getUrl = function () {
     return url;
   }
-
+  this.getDateInput = function(){
+      return expiriationInput.getAttribute('value');
+  };
+  this.openCalendar = function(){
+      return expiriationInput.click();
+  };
+  this.calendarOpen = function(){
+      return calendar.isPresent();
+  };
+  this.selectCalendarDate = function(){
+      return browser.actions().mouseMove(calendarDate).click().perform();
+  };
   this.setInput = function (input, content) {
     var el = eval(input + "Input");
     return el.clear().sendKeys(content);
   };
   this.getInput = function (input) {
     var el = eval(input + "Input");
-    return el.getText();
+    return el.getAttribute('value');
   };
   this.getExpiry = function () {
     return expiry.getText();
@@ -64,36 +80,48 @@ var EditMemberPage = function () {
     return refreshCardButton.click();
   };
   this.startCreateCard = function () {
-    return createCardButton.click();
+    return newCardButton.click();
+  };
+  this.refreshCardButtonPresent = function () {
+    return protractor.pageHelper.isDisplayed(refreshCardButton);
+  };
+  this.newCardButtonPresent = function () {
+    return protractor.pageHelper.isDisplayed(newCardButton);
   };
   this.submitNewCard = function () {
     return newCardButton.click();
   };
   this.setGroup = function (groupName) {
     return groupSelect.click().then(function () {
-      return groupOptions.filter(function (opt) {
-        return opt.getText().then(function (text) {
-          return text.toLowerCase() === groupName.toLowerCase();
-        });
-      }).first().click();
+      return browser.sleep(1000).then(function () {
+        return groupOptions.filter(function (opt) {
+          return opt.getText().then(function (text) {
+            return text.toLowerCase() === groupName.toLowerCase();
+          });
+        }).first().click();
+      });
     });
   };
   this.setStatus = function (status) {
     return statusSelect.click().then(function () {
-      return statusOptions.filter(function (opt) {
-        return opt.getText().then(function (text) {
-          return text.toLowerCase() === status.toLowerCase();
-        });
-      }).first().click();
+      return browser.sleep(1000).then(function () {
+        return statusOptions.filter(function (opt) {
+          return opt.getText().then(function (text) {
+            return text.toLowerCase() === status.toLowerCase();
+          });
+        }).first().click();
+      });
     });
   };
   this.setRole = function (role) {
     return roleSelect.click().then(function () {
-      return roleOptions.filter(function (opt) {
-        return opt.getText().then(function (text) {
-          return text.toLowerCase() === role.toLowerCase();
-        });
-      }).first().click();
+      return browser.sleep(1000).then(function () {
+        return roleOptions.filter(function (opt) {
+          return opt.getText().then(function (text) {
+            return text.toLowerCase() === role.toLowerCase();
+          });
+        }).first().click();
+      });
     });
   };
   this.submit = function () {

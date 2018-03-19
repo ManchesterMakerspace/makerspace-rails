@@ -10,6 +10,16 @@ exports.basicUsers = {
     fullname: 'Basic Member1',
     email: 'basic_member_1@test.com',
     password: 'password'
+  },
+  user2: {
+    fullname: 'Basic Member2',
+    email: 'basic_member_2@test.com',
+    password: 'password'
+  },
+  user3: {
+    fullname: 'Basic Member3',
+    email: 'basic_member_3@test.com',
+    password: 'password'
   }
 };
 
@@ -35,5 +45,5 @@ exports.loginUser = function(credentials){
 exports.logout = function(){
     browser.get(browser.baseUrl);
     var headerPage = new HeaderPage();
-    return headerPage.logout();
+    return headerPage.signOut();
 };
