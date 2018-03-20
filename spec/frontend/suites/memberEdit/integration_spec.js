@@ -34,7 +34,7 @@ describe("Integration spec for edit member", function  () {
     it("Member expiration can be changed", function () {
       editMemberPage.getExpiry().then(function (initExp) {
         var initDate = new Date(initExp)
-        var newDate = new Date(initDate.getTime() + (24 * 60 * 60 * 1000));
+        var newDate = new Date(initDate.getTime() + (24 * 60 * 60 * 1000)); //1 day later
         var dateString = newDate.getDate() + " " + newDate.getFullYear();
         var  el = protractor.pageObjectHelper.filterOneByDisplayed(element.all(by.css('td[aria-label$="' + dateString + '"]')));
         editMemberPage.openCalendar().then(function () {

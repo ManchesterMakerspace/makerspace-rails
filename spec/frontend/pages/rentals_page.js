@@ -6,7 +6,7 @@ var RentalPage = function () {
   var rentals = element.all(by.repeater("rental in rentalsCtrl.rentals"));
   var rentalNumber = element(by.binding("rental.number"));
   var rentalMember = element(by.css(".member-name"));
-  var rentalExpiration = element(by.binding("rental.expirationTime"));
+  var rentalExpiration = element(by.binding("rental.expiration"));
   var editRentalButton = element(by.css('a[ui-sref="root.rentals.edit({id: rental.id})"]'));
   var page = this;
   var createRentalButton = element(by.css('a[ui-sref="root.rentals.new"]'));
@@ -28,6 +28,23 @@ var RentalPage = function () {
             return text.toLowerCase() === option.toLowerCase();
           });
         }).first().click();
+      });
+    });
+  };
+  this.findInTable = function (search) {
+    return rentals.filter(function (r) {
+      if(search.number) {
+        return page.getRentalNumber(r).then(function (num) {
+          return num.toLowerCase() === search.number.toLowerCase();
+        });
+      }
+    }).then(function (filteredByNumber) {
+      return filteredByNumber.filter(function (r) {
+        if(search.member) {
+          return page.getMemberName(r).then(function (name) {
+            return name.toLowerCase() === search.member.toLowerCase();
+          });
+        }
       });
     });
   };

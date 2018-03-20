@@ -18,13 +18,13 @@ function rentalFormController(rentalsService, $state, $filter, alertService) {
     if(!!rentalFormCtrl.rental) {
       angular.copy(rentalFormCtrl.rental, rentalFormCtrl.rentalForm);
       rentalFormCtrl.rentalForm.member_id = $filter('filter')(rentalFormCtrl.members, {id: rentalFormCtrl.rental.member.id})[0].id;
+      rentalFormCtrl.rentalForm.expiration = new Date(rentalFormCtrl.rental.expiration);
     }
   };
 
   rentalFormCtrl.submitForm = function(form){
     if(!form){return;}
     return rentalFormCtrl.upsertRental({rental: rentalFormCtrl.rentalForm}).then(function(){
-      rentalFormCtrl.rentalForm = {};
       alertService.addAlert('Rental saved!', 'success');
       $state.go('root.rentals');
     }).catch(function(err){

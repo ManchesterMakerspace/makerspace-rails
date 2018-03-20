@@ -5,7 +5,7 @@
       <input id="number" type="text" name="number"
         ng-model="rentalFormCtrl.rentalForm.number"
         blacklist="rentalFormCtrl.rentals"
-        safeword="rentalFormCtrl.rental"
+        safeword="rentalFormCtrl.rental.number"
         required/>
       <div ng-messages="rentalForm.number.$error">
         <div ng-message="required">Cannot be blank.</div>
