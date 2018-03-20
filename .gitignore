@@ -56,3 +56,4 @@ test.env
 
 # Reporter file for integration  tests and screenshots
 /spec/frontend/reporter
+/test_results

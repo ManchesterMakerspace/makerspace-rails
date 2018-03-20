@@ -215,13 +215,13 @@ describe("Integration tests for creating and editing rentals", function () {
       });
     });
     it("Cancel alert stays on form page", function () {
-      browser.switchTo().alert().dismiss().then(function (alert) {
+      browser.switchTo().alert().dismiss().then(function () {
         expect(browser.getCurrentUrl()).toMatch(/rentals\/[0-9]+/);
       });
     });
     it("Accepting alert deletes rental from table", function () {
       rentalFormPage.deleteRental().then(function () {
-        browser.switchTo().alert().accept().then(function (alert) {
+        browser.switchTo().alert().accept().then(function () {
           expect(browser.getCurrentUrl()).toEqual(rentalsPage.getUrl());
           rentalsPage.findInTable(deleteRental).then(function (results) {
             expect(results.length).toEqual(0);
