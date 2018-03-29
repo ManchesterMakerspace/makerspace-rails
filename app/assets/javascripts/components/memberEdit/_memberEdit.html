@@ -11,6 +11,7 @@
       <label for="fullname">Name</label>
       <input type="text" name="fullname"
         ng-model="memberEditCtrl.editForm.fullname"
+        id="fullname"
         required/>
     </md-input-container>
 
@@ -19,20 +20,20 @@
     </div>
     <md-input-container>
       <label for="expiration">Expiration Date</label>
-      <md-datepicker name="expiration"
+      <md-datepicker name="expiration" id="expiration"
         md-open-on-focus
         ng-model="memberEditCtrl.editForm.expirationTime"/>
     </md-input-container>
 
     <md-input-container class="md-block">
       <label for="email">Email</label>
-      <input type="email" name="email"
+      <input id="email" type="email" name="email"
         ng-model="memberEditCtrl.editForm.email"/>
     </md-input-container>
 
     <md-input-container class="md-block">
       <label for="groupName">Group</label>
-      <md-select ng-model="memberEditCtrl.editForm.groupName" name="groupName">
+      <md-select id="groupName" ng-model="memberEditCtrl.editForm.groupName" name="groupName">
         <md-option class="group-option" ng-value="null">None</md-option>
         <md-option class="group-option" ng-repeat="group in memberEditCtrl.groups" ng-value="::group.groupName">{{::group.groupName}}</md-option>
       </md-select>
@@ -41,6 +42,7 @@
     <md-input-container class="md-block">
       <label for="status">Member Status</label>
       <md-select ng-model="memberEditCtrl.editForm.status"
+        id="status"
         name="status"
         md-no-asterisk
         required>
@@ -56,6 +58,7 @@
       <md-input-container class="md-block">
         <label for="role">Member Role</label>
         <md-select ng-model="memberEditCtrl.editForm.role"
+          id="role"
           name="role"
           md-no-asterisk
           required>
@@ -72,6 +75,7 @@
         <label for="password">Password</label>
         <input ng-model="memberEditCtrl.editForm.password"
           type="password"
+          id="password"
           name="password"
           match="editForm.passwordConfirmation"
           md-no-asterisk
@@ -88,6 +92,7 @@
         <label for="passwordConfirmation">Password Confirmation</label>
         <input ng-model="memberEditCtrl.editForm.passwordConfirmation"
           type="password"
+          id="passwordConfirmation"
           name="passwordConfirmation"
           md-no-asterisk
           ng-minlength="8"
@@ -141,6 +146,7 @@
                   <label for="cardID">Card ID</label>
                   <input type="text" name="newCard[uid]"
                     ng-model="memberEditCtrl.newCard.uid"
+                    id="cardID"
                     disabled
                     required
                     md-no-asterisk/>

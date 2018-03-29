@@ -1,5 +1,4 @@
 class Admin::CardsController < AdminController
-  before_action :set_member, only: [:create]
 
   def new
     @card = Card.new()
@@ -48,9 +47,5 @@ class Admin::CardsController < AdminController
   private
   def card_params
     params.require(:card).permit(:member_id, :uid, :card_location)
-  end
-
-  def set_member
-    @member = Member.find_by(id: params["member_id"]) || Member.find_by(id: params["card"]["member_id"])
   end
 end

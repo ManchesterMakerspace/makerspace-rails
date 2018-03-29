@@ -6,7 +6,7 @@
 				<label for="search">Search Members...</label>
 				<input type="text" name="search" ng-model="membersCtrl.searchText"/>
 			</md-input-container>
-			<md-checkbox ng-if="membersCtrl.isUserAdmin" ng-model="membersCtrl.viewAll">View all members</md-checkbox>
+			<md-checkbox ng-if="::membersCtrl.isUserAdmin" ng-model="membersCtrl.viewAll">View all members</md-checkbox>
 		</div>
 	</div>
 	<div class="row">
@@ -33,29 +33,18 @@
 				<thead>
 					<tr>
 						<th class="col-xs-6">Name</th>
-						<!-- <th class="col-xs-4">Allowed Workshops</th> -->
 						<th class="col-xs-6">Membership Exp. Date</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr class="member-row" ng-repeat="member in membersCtrl.members | filter : membersCtrl.searchText | orderBy : membersCtrl.sortBy : membersCtrl.reverseSort">
 						<td class="col-xs-6 member-name"
-							ng-if="!membersCtrl.isUserAdmin()"
+							ng-if="::!membersCtrl.isUserAdmin()"
 		 			  	ng-bind="member.fullname"></td>
 						<td class="col-xs-6 member-name"
-							ng-if="membersCtrl.isUserAdmin()"
+							ng-if="::membersCtrl.isUserAdmin()"
 							ng-click="membersCtrl.viewMember(member)" ng-bind="member.fullname"></td>
-						<!-- <td class="allowed-workershops col-xs-4">
-							<button type="button"
-								ng-if="!member.showShops"
-								ng-click="membersCtrl.toggleShowShop(member)">
-									Show Allowed Shops
-							</button>
-							<span ng-if="member.showShops"
-								ng-dblclick="membersCtrl.toggleShowShop(member)"
-								ng-bind="member.allowedWorkshops"></span>
-						</td> -->
-						<td class="col-xs-6" ng-class="membersCtrl.expStatus(member.expirationTime)" ng-bind="member.expirationTime | date: shortDate: EST"></td>
+						<td class="col-xs-6" ng-class="::membersCtrl.expStatus(member.expirationTime)" ng-bind="::member.expirationTime | date: shortDate: EST"></td>
 					</tr>
 				</tbody>
 			</table>

@@ -4,7 +4,7 @@ RSpec.describe RentalsController, type: :routing do
   describe "routing" do
 
     it "routes to #index" do
-      expect(:get => "/api/rentals").to route_to("rentals#index")
+      expect(:get => "/api/rentals").to route_to("rentals#index", format: :json)
     end
 
     it "does not route to #edit" do

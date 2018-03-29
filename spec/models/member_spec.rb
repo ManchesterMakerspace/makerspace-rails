@@ -68,29 +68,18 @@ RSpec.describe Member, type: :model do
     end
 
     describe "Renewing members" do #method to be improved
-      it "Will not renew a member if a time is not a hash" do
-        expired_member.send(:renewal=, 1)
-        expect(expired_member.membership_status).to eq('expired')
-      end
-
       it "Will renew a member with the number of months" do
-        renewal_hash = {
-          months: 1
-        }
-        expired_member.send(:renewal=, renewal_hash)
+        expired_member.send(:renewal=, 1)
         expect(expired_member.membership_status).to eq('current')
       end
     end
 
     it "Updates access card" do
       card = create(:card, member: expired_member)
-      renewal_hash = {
-        months: 1
-      }
       first_expiration = expired_member.expirationTime
       expect(card.expiry).to eq(first_expiration)
 
-      expired_member.send(:renewal=, renewal_hash)
+      expired_member.send(:renewal=, 1)
       new_expiration = expired_member.expirationTime
       expect(card.expiry).to eq(new_expiration)
       expect(new_expiration).not_to eq(first_expiration)

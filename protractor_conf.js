@@ -67,6 +67,7 @@ exports.config = {
     newMember: 'spec/frontend/suites/newMember/integration_spec.js',
     memberEdit: 'spec/frontend/suites/memberEdit/integration_spec.js',
     rentalForm: 'spec/frontend/suites/rentalForm/integration_spec.js',
+    selfRegister: 'spec/frontend/suites/selfRegister/integration_spec.js',
 	},
 	beforeLaunch: function() {
 		return new Promise(function(resolve){
@@ -101,6 +102,8 @@ exports.config = {
         RentalFormPage = require('./spec/frontend/pages/rental_form_page.js');
         RentalsPage = require('./spec/frontend/pages/rentals_page.js');
         ResetPasswordPage = require('./spec/frontend/pages/reset_password_page.js');
+        RegisterPage = require("./spec/frontend/pages/register_page.js");
+        InvitePage = require("./spec/frontend/pages/invite_page.js");
     },
 
 	afterLaunch: function(exitCode) {

@@ -4,11 +4,11 @@ RSpec.describe MembersController, type: :routing do
   describe "routing" do
 
     it "routes to #index" do
-      expect(:get => "/api/members").to route_to("members#index")
+      expect(:get => "/api/members").to route_to("members#index", format: :json)
     end
 
     it "routes to #contract" do
-      expect(:get => "/api/members/contract").to route_to("members#contract")
+      expect(:get => "/api/members/contract").to route_to("members#contract", format: :json)
     end
 
     it "does not route to #edit" do
@@ -28,7 +28,7 @@ RSpec.describe MembersController, type: :routing do
     end
 
     it "routes #create to registration" do
-      expect(:post => "/api/members").to route_to("registrations#create")
+      expect(:post => "/api/members").to route_to("registrations#create", format: :json)
     end
 
     # Routes requiring auth can't be tested this way

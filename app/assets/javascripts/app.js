@@ -126,20 +126,7 @@ var app = angular.module('app', [
     .state('root.admin.memberships', {
       url: '/memberships',
       component: 'membershipsComponent',
-      abstract: true,
-      resolve: {
-        auth: function(currentUser, $q, alertService, $state){
-          var deferred = $q.defer();
-          if(currentUser.role !== 'admin'){
-            $state.go('root.members');
-            alertService.addAlert('Unauthorized', 'danger');
-            deferred.reject('Not Authorized');
-          } else {
-            deferred.resolve();
-          }
-          return deferred.promise;
-        }
-      }
+      abstract: true
     })
     .state('root.admin.memberships.new', {
       url: '/new',
@@ -193,26 +180,34 @@ var app = angular.module('app', [
       resolve: {
         rentals: function(rentalsService) {
           return rentalsService.getAllRentals();
+        }
+      }
+    })
+    .state('root.admin.rentals', {
+      url: "/rentals",
+      component: 'rentalsComponent',
+      abstract: true,
+      resolve: {
+        rentals: function(rentalsService) {
+          return rentalsService.getAllRentals();
         },
         members: function(memberService){
           return memberService.getAllMembers();
         }
       }
     })
-    .state('root.rentals.edit', {
+    .state('root.admin.rentals.edit', {
       url: '/:id',
       component: 'rentalFormComponent',
       resolve: {
         rental: function(rentalsService, $stateParams) {
           return rentalsService.getByID($stateParams.id).then(function(response){
             return response;
-          }).catch(function(err){
-            return err; //return error so state doesn't drop
           });
         }
       }
     })
-    .state('root.rentals.new', {
+    .state('root.admin.rentals.new', {
       url: '/new',
       component: 'rentalFormComponent'
     });

@@ -21,7 +21,7 @@ class Admin::RentalsController < AdminController
   def destroy
     if !!@rental
       @rental.delete
-      render json: {}, status: 200 and return
+      render json: {}, status: 204 and return
     else
       render json: {}, status: 422 and return
     end

@@ -15,6 +15,10 @@ function rentalFormController(rentalsService, $state, $filter, alertService) {
   var rentalFormCtrl = this;
   rentalFormCtrl.$onInit = function() {
     rentalFormCtrl.rentalForm = {};
+    rentalFormCtrl.currentNumbers = rentalFormCtrl.rentals.map(function (r) {
+      return r.number;
+    });
+
     if(!!rentalFormCtrl.rental) {
       angular.copy(rentalFormCtrl.rental, rentalFormCtrl.rentalForm);
       rentalFormCtrl.rentalForm.member_id = $filter('filter')(rentalFormCtrl.members, {id: rentalFormCtrl.rental.member.id})[0].id;

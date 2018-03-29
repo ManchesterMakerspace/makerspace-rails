@@ -13,6 +13,7 @@ class Member
   field :fullname #full name of user
   field :status,                         default: "activeMember" # activeMember, nonMember, revoked
   field :expirationTime,   type: Integer #pre-calcualted time of expiration
+  field :startDate, default: Time.now
   field :groupName #potentially member is in a group/partner membership
   field :role,                          default: "member" #admin,officer,member
   field :memberContractOnFile, type: Boolean
@@ -73,40 +74,37 @@ class Member
   def verify_group_expiry
     if self.group
       #make sure member benefits from group expTime
-      if self.group.expiry && self.group.expiry > (Time.now.strftime('%s').to_i * 1000) && self.group.expiry > self.expirationTime
+      if benefits_from_group
         self.expirationTime = self.group.expiry
       end
     end
   end
 
-  def renewal=(time)
-    if !time.is_a? Hash || !time[:months]
-      return
-    end
-    num_months = time[:months]
+  def renewal=(num_months)
     now_in_ms = (Time.now.strftime('%s').to_i * 1000)
-    if (!!time[:startDate]) #check if startDate was passed to function.
-      d = time[:startDate].split("/");
-      start_date = (Time.new(d[2], d[0], d[1]))
-    else #if not, use today.
-      start_date = Time.now
-    end
 
     if (!!self.expirationTime && self.try(:expirationTime) > now_in_ms && self.persisted?) #if renewing
       newExpTime = prettyTime + num_months.to_i.months
       write_attribute(:expirationTime, (newExpTime.to_i * 1000) )
     else
-      newExpTime = start_date + num_months.to_i.months
+      newExpTime = Time.now + num_months.to_i.months
       write_attribute(:expirationTime,  (newExpTime.to_i * 1000) )
     end
     self.save
   end
-  
+
   private
   def update_card
     self.access_cards.each do |c|
       c.update(expiry: self.expirationTime)
     end
+  end
+
+  def benefits_from_group
+    return self.group.expiry &&
+           self.expirationTime &&
+           self.group.expiry > (Time.now.strftime('%s').to_i * 1000) &&
+           self.group.expiry > self.expirationTime
   end
 
   def update_allowed_workshops #this checks to see if they have learned all the skills in a workshop one at a time

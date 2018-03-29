@@ -4,15 +4,15 @@ RSpec.describe CalendarController, type: :routing do
   describe "routing" do
 
     it "routes to #index" do
-      expect(:get => "/api/calendar").to route_to("calendar#index")
+      expect(:get => "/api/calendar").to route_to("calendar#index", format: :json)
     end
 
     it "routes to #update via PUT" do
-      expect(:put => "/api/calendar/1").to route_to("calendar#update", :id => "1")
+      expect(:put => "/api/calendar/1").to route_to("calendar#update", :id => "1", format: :json)
     end
 
     it "routes to #update via PATCH" do
-      expect(:patch => "/api/calendar/1").to route_to("calendar#update", :id => "1")
+      expect(:patch => "/api/calendar/1").to route_to("calendar#update", :id => "1", format: :json)
     end
 
 

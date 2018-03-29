@@ -47,6 +47,7 @@ function registerController(Auth, $state, slackService, alertService, $timeout, 
   };
 
   registerCtrl.selectTimeslot = function(){
+    if(!registerCtrl.timeSlot) {return;}
     var details = {
       event: registerCtrl.timeSlot,
       attendee: {email: registerCtrl.registerForm.email}

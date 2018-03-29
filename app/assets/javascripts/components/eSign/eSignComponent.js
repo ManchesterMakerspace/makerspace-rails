@@ -12,7 +12,6 @@ app.component('eSignComponent', {
 function eSignController($templateCache, $filter) {
   var signCtrl = this;
   signCtrl.$onInit = function() {
-    console.log('init');
     var now = $filter('date')(new Date(), 'longDate');
     signCtrl.type = 'conduct';
     signCtrl.documents.contract = signCtrl.documents.contract.replace('[name]', '<b>' + signCtrl.name + '</b>');

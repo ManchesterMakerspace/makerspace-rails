@@ -9,7 +9,7 @@ class RegistrationsController < Devise::RegistrationsController
       if !correct_token.validate(params[:member][:token]) || correct_token.used
         render json: {status: 400}, status: 400 and return
       else
-        @member.renewal = {months: correct_token.months, start_date: Date.today}
+        @member.renewal = correct_token.months
         encoded_img = params[:member][:signature].split(",")[1]
         File.open("dump/signature.png", 'wb') do |f|
           f.write(Base64.decode64(encoded_img))

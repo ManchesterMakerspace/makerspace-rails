@@ -19,8 +19,8 @@ module TestHelpers
 
   def get_registration_token(file_name)
     email = read_email(file_name)
-    token = email.css("a[href^='https://makerspace-interface.herokuapp.com/#/register']")
-    address = token.first.values.first
+    token = email.css("a[href*='#{root_url}#/register']")
+    address = token.first.values.last
     token_parts = address.split("/")
 
     token = {}

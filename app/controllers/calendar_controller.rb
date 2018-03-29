@@ -8,7 +8,7 @@ class CalendarController < ApplicationController
   end
 
   def update
-    @event = @service.get_event(ENV['GOOGLE_CALENDAR'], params[:event][:id])
+    @event = @service.get_event(ENV['GOOGLE_CALENDAR'], params[:id])
     new_attendee = Google::Apis::CalendarV3::EventAttendee.new(email: params[:attendee][:email])
     if @event.attendees
       @event.attendees.push(new_attendee)

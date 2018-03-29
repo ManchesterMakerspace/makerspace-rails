@@ -6,7 +6,7 @@ class RegistrationToken
   validate :one_active_token_per_email, on: :create
 
   field :token, type: String
-  field :months, type: Integer
+  field :months, type: Integer, default: 0
   field :email, type: String
   field :role, type: String, default: "member"
   field :used, type: Boolean, default: false
@@ -44,6 +44,6 @@ class RegistrationToken
   end
 
   def create_link(id, base_token)
-    return "https://makerspace-interface.herokuapp.com/#/register/#{id}/#{base_token}"
+    return "#/register/#{id}/#{base_token}"
   end
 end

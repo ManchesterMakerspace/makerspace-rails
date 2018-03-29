@@ -36,11 +36,13 @@ var RentalFormPage = function () {
   };
   this.setMember = function (memberName) {
     return rentalMemberInput.click().then(function () {
-      return rentalMemberOptions.filter(function (opt) {
-        return opt.getText().then(function (text) {
-          return text.toLowerCase() === memberName.toLowerCase();
-        });
-      }).first().click();
+      return browser.sleep(1000).then(function () {
+        return rentalMemberOptions.filter(function (opt) {
+          return opt.getText().then(function (text) {
+            return text.toLowerCase() === memberName.toLowerCase();
+          });
+        }).first().click();
+      });
     });
   };
   this.getMember = function () {

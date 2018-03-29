@@ -12,7 +12,8 @@ describe("Integration tests for new member form", function () {
   var groupMember = {
     fullname: 'group_member',
     email: 'group_member@test.com',
-    password: 'password'
+    password: 'password',
+    group: "Fake Group 1"
   };
 
   beforeAll(function () {
@@ -34,16 +35,16 @@ describe("Integration tests for new member form", function () {
   it("CardID cannot be manually set", function () {
     expect(newMemberPage.inputEnabled('cardId')).toBeFalsy();
   });
-  // it("Refresh Card ID button loads the last rejected cardID", function () {
-  //   expect(newMemberPage.getInput('cardId')).toEqual('0002'); //Last created card in seed
-  //   expect(newMemberPage.inputValid('cardId')).toBeTruthy();
-  //   protractor.dbHelper.addRejectionCard().then(function () {
-  //     newMemberPage.refreshCardID().then(function () {
-  //       expect(newMemberPage.getInput('cardId')).toEqual('0003'); //Last created card in seed
-  //       expect(newMemberPage.inputValid('cardId')).toBeTruthy();
-  //     });
-  //   });
-  // });
+  it("Refresh Card ID button loads the last rejected cardID", function () {
+    expect(newMemberPage.getInput('cardId')).toEqual('0002'); //Last created card in seed
+    expect(newMemberPage.inputValid('cardId')).toBeTruthy();
+    protractor.dbHelper.addRejectionCard().then(function () {
+      newMemberPage.refreshCardID().then(function () {
+        expect(newMemberPage.getInput('cardId')).toEqual('0003'); //Last created card in seed
+        expect(newMemberPage.inputValid('cardId')).toBeTruthy();
+      });
+    });
+  });
   it("If password is entered, so must password confirmation", function () {
     expect(newMemberPage.inputValid('password')).toBeTruthy();
     expect(newMemberPage.inputValid('passwordConfirmation')).toBeTruthy();
@@ -124,7 +125,7 @@ describe("Integration tests for new member form", function () {
         newMemberPage.toggleContractInput().then(function () {
           newMemberPage.setInput('email', groupMember.email).then(function () {
             newMemberPage.setRenewal(12).then(function () {
-              newMemberPage.setGroup("Fake Group 1").then(function () {
+              newMemberPage.setGroup(groupMember.group).then(function () {
                 newMemberPage.submit().then(function () {
                   expect(membershipPage.getUpdatedMembers().count()).toEqual(1);
                   expect(membershipPage.getMemberName(membershipPage.getUpdatedMembers().first())).toEqual(groupMember.fullname)

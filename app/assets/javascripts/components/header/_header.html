@@ -1,11 +1,6 @@
 <div class="col-lg-12" id="navigation">
   <nav class="navbar navbar-default">
     <div class="container-fluid">
-      <!-- Brand and toggle get grouped for better mobile display -->
-      <!-- <div class="navbar-header">
-
-      </div> -->
-
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
           <span class="icon-bar"></span>
@@ -17,17 +12,13 @@
             alt="Manchester Makerspace"
             height="50px">
         </a>
-        <!-- <a class="navbar-brand" href="#">Manchester Makerspace</a> -->
       </div>
 
-      <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="navbar">
         <ul class="nav navbar-nav">
           <li><a class='navbar-link' ui-sref="root.members">Members</a></li>
-          <!-- <li><a class='navbar-link' ui-sref="root.workshops">Workshops</a></li> -->
           <li><a class='navbar-link' ui-sref="root.rentals">Rentals</a></li>
           <li><a class='navbar-link' ui-sref="root.admin.memberships.new"  ng-if="headerCtrl.isAdmin()">Memberships</a></li>
-          <!-- <li><a class='navbar-link' ui-sref="root.payments"  ng-if="headerCtrl.isAdmin()">Payments</a></li> -->
         </ul>
         <ul class="nav navbar-nav navbar-right" id="auth">
           <div class="navbar-link" ng-if="headerCtrl.currentUser.id">

@@ -29,14 +29,6 @@ app.factory('memberService', function($http, slackService){
     });
   };
 
-  var renewMemberByPayment = function(paymentData){
-    var member = paymentData.member;
-    member.renewal = {
-      months: paymentData.months
-    };
-    return $http.put('/api/admin/members/' + paymentData.member.id, {member: member});
-  };
-
   var updateMember = function(memberData) {
     return $http.put('/api/admin/members/' + memberData.id, {member: memberData}).then(function(response){
       return response.data;
@@ -55,7 +47,6 @@ app.factory('memberService', function($http, slackService){
     renewMember: renewMember,
     getById: getById,
     createMember: createMember,
-    renewMemberByPayment: renewMemberByPayment,
     updateMember: updateMember
   };
 });

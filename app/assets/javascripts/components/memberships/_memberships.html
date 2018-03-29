@@ -19,8 +19,8 @@
     </div>
     <div class="col-xs-4 member-record"
       ng-repeat="member in membershipCtrl.updatedMembers track by $index">
-      <p>Member Name: <span ng-bind="member.fullname"></span></p>
-      <p>Expiration Date: <span ng-bind="member.expirationTime | date: shortDate: EST"></span></p>
+      <p>Member Name: <span ng-bind="::member.fullname"></span></p>
+      <p>Expiration Date: <span ng-bind="::member.expirationTime | date: shortDate: EST"></span></p>
     </div>
   </div>
 </div>
