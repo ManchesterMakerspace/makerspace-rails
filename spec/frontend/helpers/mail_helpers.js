@@ -5,7 +5,7 @@ var mailDir = path.resolve(__dirname, '../../../tmp/mail');
 
 exports.emptyMail = function(){
     return new Promise(function (resolve) {
-        if(!fs.existsSync(mailDir)){
+      if(!fs.existsSync(mailDir)){
     		fs.mkdirSync(mailDir);
             resolve();
     	} else {

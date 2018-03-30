@@ -6,7 +6,7 @@
         style="margin-bottom: 1em;"
         class="btn btn-success"
         ng-if="::rentalsCtrl.isUserAdmin()"
-        ui-sref="root.rentals.new">Create New Rental</a>
+        ui-sref="root.admin.rentals.new">Create New Rental</a>
     </div>
   </div>
   <div class="row">
@@ -15,15 +15,15 @@
         <label for="sort">Sort By: </label>
         <md-select id="sort" ng-model="rentalsCtrl.sortBy" placeholder="Sort By">
           <md-option class="sort-option" value="number">Number</md-option>
-          <md-option class="sort-option" value="member.fullname">Member</md-option>
+          <md-option class="sort-option" value="member">Member</md-option>
           <md-option class="sort-option" value="expiration">Expiration</md-option>
       </md-input-container>
     </div>
     <div class="col-xs-6">
       <div class="toggle" ng-class="rentalsCtrl.descToggle">
         <md-input-container class="md-block">
-          <md-checkbox ng-model="rentalsCtrl.reverseSort" ng-click="rentalsCtrl.toggleOrder()">
-            {{rentalsCtrl.descToggle}}
+          <md-checkbox ng-model="rentalsCtrl.reverseSort">
+            Asc
           </md-checkbox>
         </md-input-container>
       </div>
@@ -58,7 +58,7 @@
           </div>
           <div ng-class="::rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-4'" ng-if="::rentalsCtrl.isUserAdmin()">
             <a type="button" class="btn btn-primary"
-             ui-sref="root.rentals.edit({id: rental.id})">Edit/Renew</a>
+             ui-sref="root.admin.rentals.edit({id: rental.id})">Edit/Renew</a>
           </div>
         </div>
       </div>

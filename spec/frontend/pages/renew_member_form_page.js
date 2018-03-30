@@ -2,7 +2,7 @@ var RenewMemberFormPage = function () {
   var submit = element(by.css('button[ng-click="renewMemberCtrl.renewMember(renewalForm)"]'));
   var renewalMemberSelect = element(by.model("renewMemberCtrl.renewalForm.member"));
   var renewalMemberOptions = element.all(by.repeater("member in renewMemberCtrl.members"));
-  var renewalMonthsSelect = element(by.model("renewMemberCtrl.renewalForm.member.renewal.months"));
+  var renewalMonthsSelect = element(by.model("renewMemberCtrl.renewalForm.months"));
   var renewalMonthsOptions = element.all(by.css(".renewal-option"));
 
   var selectedMemberName = element(by.binding("renewMemberCtrl.renewalForm.member.fullname"));

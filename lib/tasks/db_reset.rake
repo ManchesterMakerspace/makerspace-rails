@@ -14,11 +14,11 @@ namespace :db do
   task :reject_card, [:number] => :environment do |t, args|
     return unless Rails.env.test?
     if args[:number].nil? then
-      last_card = RejectionCard.where(uid: new_uid).last
-    else
       last_card = RejectionCard.all.last
+      new_uid = last_card.nil? ? "0001" : ("%04d" % (last_card.uid.to_i + 1))
+    else
+      new_uid = args[:number]
     end
-    new_uid = last_card.nil? ? "0001" : ("%04d" % (last_card.uid.to_i + 1))
     FactoryBot.create(:rejection_card, uid: "#{new_uid}")
   end
 end

@@ -115,7 +115,7 @@ describe("Integration tests for new member form", function () {
     it("Next member gets a different card Id", function () {
       headerPage.goToLink('membership').then(function () {
         newMemberPage.refreshCardID().then(function () {
-          expect(newMemberPage.getInput('cardId')).toEqual('0001'); //Last created card in seed
+          expect(newMemberPage.getInput('cardId')).toEqual('0002'); //Last created card in seed
           expect(newMemberPage.inputValid('cardId')).toBeTruthy();
         });
       });

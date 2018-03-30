@@ -13,7 +13,7 @@ function rentalsController($filter, rentalsService, $q) {
   var rentalsCtrl = this;
   rentalsCtrl.$onInit = function() {
     rentalsCtrl.reverseSort = false;
-    rentalsCtrl.descToggle = "Desc";
+    rentalsCtrl.descToggle = "Asc";
     rentalsCtrl.sortBy = 'number';
   };
 
@@ -37,6 +37,8 @@ function rentalsController($filter, rentalsService, $q) {
       if (!isNaN(number)) {
         return number;
       }
+    } else if (rentalsCtrl.sortBy === 'member') {
+      return rental.member.fullname;
     }
     return rental[rentalsCtrl.sortBy];
   };

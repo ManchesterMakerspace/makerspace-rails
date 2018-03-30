@@ -51,7 +51,7 @@ class Admin::MembersController < AdminController
   end
 
   def renew_params
-    params.require(:member).permit(:fullname, :renewal => [:months, :start_date])
+    params.require(:member).permit(:fullname, :renewal)
   end
 
   def set_member

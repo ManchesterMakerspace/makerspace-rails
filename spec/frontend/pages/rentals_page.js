@@ -7,9 +7,9 @@ var RentalPage = function () {
   var rentalNumber = element(by.binding("rental.number"));
   var rentalMember = element(by.css(".member-name"));
   var rentalExpiration = element(by.binding("rental.expiration"));
-  var editRentalButton = element(by.css('a[ui-sref="root.rentals.edit({id: rental.id})"]'));
+  var editRentalButton = element(by.css('a[ui-sref="root.admin.rentals.edit({id: rental.id})"]'));
   var page = this;
-  var createRentalButton = element(by.css('a[ui-sref="root.rentals.new"]'));
+  var createRentalButton = element(by.css('a[ui-sref="root.admin.rentals.new"]'));
   var url = browser.baseUrl + 'rentals';
   this.get = function () {
     return browser.get(url);
@@ -52,7 +52,7 @@ var RentalPage = function () {
     return sortDirectionToggle.click();
   };
   this.getSortDirectionToggle = function () {
-    return protractor.cssHelper.hasClass(sortDirectionToggle, 'md-checkbox');
+    return protractor.cssHelper.hasClass(sortDirectionToggle, 'md-checked');
   };
   this.getRentals = function () {
     return rentals;
@@ -78,10 +78,12 @@ var RentalPage = function () {
   };
   this.verifyTableSort = function (column) {
     function compareNumbers(a, b) {
-      if (!isNaN(a)){
-        return b.localeCompare(a, undefined, {numeric: true})
+      if(column === 'Expiration') {
+        return new Date(a).getTime() - new Date(b).getTime();;
+      } else if (column === 'Number') {
+        return parseInt(a) - parseInt(b);
       } else {
-        return parseInt(b) - parseInt(a);
+        return a.localeCompare(b);
       }
     }
     return page.setSortOption(column).then(function () {
@@ -90,8 +92,8 @@ var RentalPage = function () {
           return val;
         });
       }).then(function (sortValues) {
-        return page.getSortDirectionToggle().then(function (desc) {
-          if (!desc) {
+        return page.getSortDirectionToggle().then(function (asc) {
+          if (!asc) {
             expect(sortValues).toEqual(sortValues.slice().sort(compareNumbers));
           } else {
             expect(sortValues).toEqual(sortValues.slice().sort(compareNumbers).reverse());
@@ -102,8 +104,8 @@ var RentalPage = function () {
                 return val;
               });
             }).then(function (sortValues) {
-              return page.getSortDirectionToggle().then(function (desc) {
-                if (!desc) {
+              return page.getSortDirectionToggle().then(function (asc) {
+                if (!asc) {
                   expect(sortValues).toEqual(sortValues.slice().sort(compareNumbers));
                 } else {
                   expect(sortValues).toEqual(sortValues.slice().sort(compareNumbers).reverse());

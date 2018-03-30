@@ -13,10 +13,11 @@ exports.resetDB = function(){
 exports.addRejectionCard = function (number) {
   var cp = require('child_process');
   return new Promise(function(resolve, reject){
-      cp.execSync('RAILS_ENV=test rake db:reject_card[' + number + ']', {maxBuffer: 1024 * 50000}, function(err, stdout, stderr){
-          if(err) {throw err; }
-          console.log('created');
-          resolve('done');
-      });
+      if(number) {
+        cp.execSync('RAILS_ENV=test rake db:reject_card[' + number + ']', {maxBuffer: 1024 * 50000});
+      } else {
+        cp.execSync('RAILS_ENV=test rake db:reject_card', {maxBuffer: 1024 * 50000});
+      }
+      resolve('done');
   });
 };

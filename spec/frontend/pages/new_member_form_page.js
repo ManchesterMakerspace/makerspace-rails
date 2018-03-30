@@ -5,7 +5,7 @@ var NewMemberFormPage = function () {
   var refreshCardButton = element(by.css('button[ng-click="newMemberCtrl.refreshCardID()"]'));
   var groupSelect = element(by.model("newMemberCtrl.newMember.groupName"));
   var groupOptions = element.all(by.repeater("group in newMemberCtrl.groups"));
-  var renewalMonthsInput = element(by.model("newMemberCtrl.newMember.renewal.months"));
+  var renewalMonthsInput = element(by.model("newMemberCtrl.newMember.renewal"));
   var renewalMonthsOptions = element.all(by.css(".renewal-option"));
   var emailInput = element(by.model("newMemberCtrl.newMember.email"));
   var passwordInput = element(by.model("newMemberCtrl.newMember.password"));

@@ -55,5 +55,5 @@ test.env
 .byebug_history
 
 # Reporter file for integration  tests and screenshots
+/spec/frontend/test_results
 /spec/frontend/reporter
-/test_results
