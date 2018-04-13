@@ -2,9 +2,7 @@ development:
   # Configure available database clients. (required)
   clients:
     default:
-      database: makerauth
-      hosts:
-        - localhost:27017
+      uri: <%=ENV['MLAB_URI']%>
     # payments:
     #   uri: <%=ENV['MLAB_URI']%>
 
