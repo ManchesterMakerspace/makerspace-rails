@@ -1,2 +1,0 @@
-class ShipmentAddress < Address
-end
