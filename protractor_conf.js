@@ -91,6 +91,7 @@ exports.config = {
         protractor.authHelper = require('./spec/frontend/helpers/auth_helpers.js');
         protractor.pageHelper = require('./spec/frontend/helpers/page_helpers.js');
         protractor.pageObjectHelper = require('./spec/frontend/helpers/page_object_helpers.js');
+        protractor.coverageHelper = require('./spec/frontend/helpers/coverage_helpers.js');
 
         EditMemberPage = require('./spec/frontend/pages/edit_member_page.js');
         HeaderPage = require('./spec/frontend/pages/header_page.js');

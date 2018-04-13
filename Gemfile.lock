@@ -67,6 +67,7 @@ GEM
       responders
       warden (~> 1.2.3)
     diff-lcs (1.3)
+    docile (1.3.0)
     dotenv (2.2.1)
     dotenv-rails (2.2.1)
       dotenv (= 2.2.1)
@@ -102,6 +103,7 @@ GEM
       signet (~> 0.7)
     httpclient (2.8.3)
     i18n (0.8.6)
+    json (2.1.0)
     jsonapi-renderer (0.1.3)
     jwt (1.5.6)
     listen (3.1.5)
@@ -241,6 +243,11 @@ GEM
       faraday (~> 0.9)
       jwt (~> 1.5)
       multi_json (~> 1.10)
+    simplecov (0.16.1)
+      docile (~> 1.1)
+      json (>= 1.8, < 3)
+      simplecov-html (~> 0.10.0)
+    simplecov-html (0.10.2)
     slack-notifier (2.3.0)
     socket.io-rails (2.0.3)
       railties (>= 3.1)
@@ -298,6 +305,7 @@ DEPENDENCIES
   rspec-rails
   sass-rails (~> 5.0)
   shoulda-callback-matchers
+  simplecov
   slack-notifier
   socket.io-rails
   spring

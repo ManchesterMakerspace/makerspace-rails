@@ -10,6 +10,9 @@ describe("Integration tests for login page", function () {
   afterEach(function () {
     return protractor.pageHelper.clearAlerts();
   });
+  afterAll(function () {
+    return protractor.coverageHelper.loadCoverage();
+  });
 
   it("Can be navigated to", function () {
     expect(browser.getCurrentUrl()).not.toEqual(loginPage.getUrl());
