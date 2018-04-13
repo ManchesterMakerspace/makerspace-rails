@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe RegistrationsController, type: :controller do
   set_devise_mapping
 
-  email = 'new_email@email.com'
+  email = 'new_emails@email.com'
   let(:token) {SecureRandom.urlsafe_base64(nil, false)}
   let(:encrypted_token) {BCrypt::Password.create(token)}
   let(:token_model) { create(:registration_token, email: email)}
@@ -39,6 +39,11 @@ RSpec.describe RegistrationsController, type: :controller do
       it "Uploads the member's signature" do
         post :create, params: {member: valid_attributes}, format: :json
         expect(assigns(:notifier)).to be_a(Slack::Notifier)
+      end
+
+      it "Adds user to gdrive" do
+        post :create, params: {member: valid_attributes}, format: :json
+        expect(assigns(:service)).to be_a(Google::Apis::DriveV3::DriveService)
       end
 
       it "assigns a newly created member as @member" do
