@@ -21,4 +21,11 @@ class MemberMailer < ApplicationMailer
     @url = "#{root_url}#{url}"
     mail to: email, subject: "Welcome to Manchester Makerspace!"
   end
+
+  def member_registered(member)
+    @member = member
+    email = 'test@manchestermakerspace.org' unless Rails.env.production?
+    email = 'contact@manchestermakerspace.org' if Rails.env.production?
+    mail to: email, subject: 'New Member Registered'
+  end
 end
