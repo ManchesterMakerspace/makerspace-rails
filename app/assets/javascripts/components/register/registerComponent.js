@@ -35,7 +35,7 @@ function registerController(Auth, $state, slackService, alertService, $timeout, 
         slackService.invite(registerCtrl.registerForm.email, registerCtrl.registerForm.fullname);
       }, 500).then(function(){
           alertService.addAlert('Registration Complete!', 'success');
-          registerCtrl.step = 3;
+          $state.go('root.members');
       }).catch(function(err){
         console.log(err);
         alertService.addAlert("Error inviting to Slack!", "danger", 8000);

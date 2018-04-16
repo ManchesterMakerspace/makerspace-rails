@@ -150,34 +150,13 @@ describe("Integration tests for users registering from paypal payment trigger", 
           registerPage.proceed().then(function () {
             expect(registerPage.codeOfConductDisplayed()).toBeFalsy();
             expect(registerPage.memberContractDisplayed()).toBeTruthy();
-            registerPage.signContract().then(function () {
-              registerPage.proceed().then(function () {
-                expect(registerPage.memberContractDisplayed()).toBeFalsy();
-                expect(registerPage.codeOfConductDisplayed()).toBeFalsy();
-              });
-            });
-          });
-        });
-        it("Proceeds to orientation scheduling", function () {
-          expect(registerPage.calendarDisplayed()).toBeTruthy();
-        });
-      });
-      describe("Orientation Scheduling", function () {
-        it("Displays a Google Calendar with events", function () {
-          expect(registerPage.calendarDisplayed()).toBeTruthy();
-          // TODO: Check that calendar contains events
-        });
-        it("User must select a timeslot to conintue", function () {
-          registerPage.proceed().then(function () {
-            expect(registerPage.inputValid('timeSlot')).toBeFalsy();
-            expect(registerPage.calendarDisplayed()).toBeTruthy();
-            registerPage.selectTimeslot().then(function () {
-              expect(registerPage.inputValid('timeSlot')).toBeTruthy();
-            });
+            registerPage.signContract();
           });
         });
         it("Logs in and redirects to home page when complete", function () {
           registerPage.proceed().then(function () {
+            expect(registerPage.memberContractDisplayed()).toBeFalsy();
+            expect(registerPage.codeOfConductDisplayed()).toBeFalsy();
             expect(browser.getCurrentUrl()).toEqual(membersPage.getUrl());
             expect(protractor.authHelper.userLoggedIn()).toBeTruthy();
           });
@@ -252,12 +231,8 @@ describe("Integration tests for users registering from paypal payment trigger", 
                   registerPage.proceed().then(function () {
                     registerPage.signContract().then(function () {
                       registerPage.proceed().then(function () {
-                        registerPage.selectTimeslot().then(function () {
-                          registerPage.proceed().then(function () {
-                            expect(browser.getCurrentUrl()).toEqual(membersPage.getUrl());
-                            expect(protractor.authHelper.userLoggedIn()).toBeTruthy();
-                          });
-                        });
+                        expect(browser.getCurrentUrl()).toEqual(membersPage.getUrl());
+                        expect(protractor.authHelper.userLoggedIn()).toBeTruthy();
                       });
                     });
                   });
