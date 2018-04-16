@@ -5,7 +5,6 @@ class MemberSerializer < ActiveModel::Serializer
              :email,
              :status,
              :role,
-             :slackHandle,
              :groupName
   has_many :learned_skills
   has_many :allowed_workshops

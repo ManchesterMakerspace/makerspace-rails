@@ -1,5 +1,4 @@
-class Admin::CardsController < ApplicationController
-  before_action :set_member, only: [:create]
+class Admin::CardsController < AdminController
 
   def new
     @card = Card.new()
@@ -14,20 +13,25 @@ class Admin::CardsController < ApplicationController
 
   def create
     @card = Card.new(card_params)
+
+    render json: {msg: 'Member missing'}, status: 500 and return if !@card.member
+
     cards = @card.member.access_cards.select { |c| (c.validity != 'lost') && (c.validity != 'stolen') && (c != @card)}
     if cards.length > 0
-      render json: {msg: 'Member has Active cards', status: 400} and return
+      render json: {msg: 'Member has Active cards'}, status: 400 and return
     end
+
     if @card.save
-      RejectionCard.find_by(uid: @card.uid).update(holder: @card.holder)
+      rejection_card = RejectionCard.find_by(uid: @card.uid)
+      rejection_card.update(holder: @card.holder) unless rejection_card.nil?
       render json: @card and return
     else
-      render json: {status: 500}, status: 500 and return
+      render json: {}, status: 500 and return
     end
   end
 
-  def show
-    @cards = Card.where(member: Member.find(params[:id]))
+  def index
+    @cards = Card.where(member: Member.find_by(id: params[:id]))
     render json: @cards and return
   end
 
@@ -36,16 +40,12 @@ class Admin::CardsController < ApplicationController
     if @card.update(card_params)
       render json: @card and return
     else
-      render json: {status: 500}, status: 500 and return
+      render json: {}, status: 500 and return
     end
   end
 
   private
   def card_params
     params.require(:card).permit(:member_id, :uid, :card_location)
-  end
-
-  def set_member
-    @member = Member.find_by(id: params["member_id"]) || Member.find_by(id: params["card"]["member_id"])
   end
 end

@@ -80,7 +80,6 @@ var app = angular.module('app', [
       }
     })
     .state('root', {
-      url: '',
       abstract: true,
       component: 'rootComponent',
       resolve: {
@@ -94,7 +93,6 @@ var app = angular.module('app', [
       }
     })
     .state('root.admin', {
-      url: '/admin',
       abstract: true,
       resolve: {
         auth: function(currentUser, $q, alertService, $state){
@@ -107,15 +105,6 @@ var app = angular.module('app', [
             deferred.resolve();
           }
           return deferred.promise;
-        }
-      }
-    })
-    .state('root.members', {
-      url: '/members',
-      component: 'membersIndexComponent',
-      resolve: {
-        members: function(memberService){
-          return memberService.getAllMembers();
         }
       }
     })
@@ -134,25 +123,12 @@ var app = angular.module('app', [
         }
       }
     })
-    .state('root.memberships', {
+    .state('root.admin.memberships', {
       url: '/memberships',
       component: 'membershipsComponent',
-      abstract: true,
-      resolve: {
-        auth: function(currentUser, $q, alertService, $state){
-          var deferred = $q.defer();
-          if(currentUser.role !== 'admin'){
-            $state.go('root.members');
-            alertService.addAlert('Unauthorized', 'danger');
-            deferred.reject('Not Authorized');
-          } else {
-            deferred.resolve();
-          }
-          return deferred.promise;
-        }
-      }
+      abstract: true
     })
-    .state('root.memberships.new', {
+    .state('root.admin.memberships.new', {
       url: '/new',
       component: 'newMemberComponent',
       resolve: {
@@ -164,7 +140,7 @@ var app = angular.module('app', [
         }
       }
     })
-    .state('root.memberships.renew', {
+    .state('root.admin.memberships.renew', {
       url: '/renew',
       component: 'renewMemberComponent',
       resolve: {
@@ -173,7 +149,7 @@ var app = angular.module('app', [
         }
       }
     })
-    .state('root.memberships.renewId', {
+    .state('root.admin.memberships.renewId', {
       url: '/renew/:id',
       component: 'renewMemberComponent',
       resolve: {
@@ -182,22 +158,19 @@ var app = angular.module('app', [
         }
       }
     })
-    .state('root.memberships.invite', {
+    .state('root.admin.memberships.invite', {
       url: '/invite/:email',
       component: 'inviteComponent',
       params: {
         email: null
       }
     })
-    .state('root.payments', {
-      url: '/payments',
-      component: 'paymentsComponent',
+    .state('root.members', {
+      url: '/members',
+      component: 'membersIndexComponent',
       resolve: {
         members: function(memberService){
           return memberService.getAllMembers();
-        },
-        payments: function(paymentsService){
-          return paymentsService.getAllPayments();
         }
       }
     })
@@ -207,36 +180,35 @@ var app = angular.module('app', [
       resolve: {
         rentals: function(rentalsService) {
           return rentalsService.getAllRentals();
+        }
+      }
+    })
+    .state('root.admin.rentals', {
+      url: "/rentals",
+      component: 'rentalsComponent',
+      abstract: true,
+      resolve: {
+        rentals: function(rentalsService) {
+          return rentalsService.getAllRentals();
         },
         members: function(memberService){
           return memberService.getAllMembers();
         }
       }
     })
-    .state('root.rentals.edit', {
+    .state('root.admin.rentals.edit', {
       url: '/:id',
       component: 'rentalFormComponent',
       resolve: {
         rental: function(rentalsService, $stateParams) {
           return rentalsService.getByID($stateParams.id).then(function(response){
             return response;
-          }).catch(function(err){
-            return err; //return error so state doesn't drop
           });
         }
       }
     })
-    .state('root.rentals.new', {
+    .state('root.admin.rentals.new', {
       url: '/new',
       component: 'rentalFormComponent'
-    })
-    .state('root.workshops', {
-      url: '/workshops',
-      component: 'workshopsComponent',
-      resolve: {
-        workshops: function(workshopService){
-          return workshopService.getAllWorkshops();
-        }
-      }
     });
 });

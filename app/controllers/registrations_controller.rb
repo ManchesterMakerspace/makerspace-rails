@@ -1,4 +1,5 @@
 class RegistrationsController < Devise::RegistrationsController
+    before_action :initalize_gdrive, only: [:create]
     before_action :slack_connect, only: [:create]
     respond_to :json
 
@@ -9,25 +10,11 @@ class RegistrationsController < Devise::RegistrationsController
       if !correct_token.validate(params[:member][:token]) || correct_token.used
         render json: {status: 400}, status: 400 and return
       else
-        @member.renewal = {months: correct_token.months, start_date: Date.today}
-        encoded_img = params[:member][:signature].split(",")[1]
-        File.open("dump/signature.png", 'wb') do |f|
-          f.write(Base64.decode64(encoded_img))
-        end
-        creds = Google::Auth::UserRefreshCredentials.new({
-          client_id: ENV['GOOGLE_ID'],
-          client_secret: ENV['GOOGLE_SECRET'],
-          refresh_token: ENV['GOOGLE_TOKEN'],
-          scope: ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/drive"]
-          })
-        session = GoogleDrive.login_with_oauth(creds)
-        collection = session.file_by_id(ENV['SIGNATURES_FOLDER']);
-        collection.upload_from_file(Rails.root.join("dump/signature.png").to_s, "#{@member.fullname}_signature.png", convert: false)
-        @notifier.ping("Signature uploaded.")
-        File.delete("dump/signature.png")
-
+        @member.renewal = correct_token.months
         if @member.save
           correct_token.update(used: true)
+          upload_signature
+          invite_gdrive
           sign_in(@member)
           render json: @member and return
         else
@@ -41,10 +28,52 @@ class RegistrationsController < Devise::RegistrationsController
       params.require(:member).permit(:fullname, :groupName, :email, :password, :password_confirmation)
     end
 
+    def invite_gdrive
+      permission = Google::Apis::DriveV3::Permission.new(type: :user,
+          email_address: "#{@member.email}",
+          role: :reader)
+      @service.create_permission(ENV['RESOURCES_FOLDER'], permission) do |result, err|
+        @notifier.ping("Error sharing Member Resources folder with #{@member.fullname}. Error: #{err}") unless err.nil?
+      end
+    end
+
+    def upload_signature
+      encoded_img = params[:member][:signature].split(",")[1]
+      File.open("dump/signature.png", 'wb') do |f|
+        f.write(Base64.decode64(encoded_img))
+      end
+      signature_meta = {
+        name: "#{@member.fullname}_signature.png",
+        parents: [ENV['SIGNATURES_FOLDER']]
+      }
+      @service.create_file(signature_meta,
+                          fields: 'id',
+                          upload_source: Rails.root.join("dump/signature.png").to_s,
+                          content_type: 'image/png'
+                          ) do |result, err|
+
+        if result.id then
+            File.delete("dump/signature.png")
+        end
+        @notifier.ping("Error uploading #{@member.fullname}'s signature'. Error: #{err}") unless err.nil?
+      end
+    end
+
+    def initalize_gdrive
+      @service = Google::Apis::DriveV3::DriveService.new
+      creds = Google::Auth::UserRefreshCredentials.new({
+        client_id: ENV['GOOGLE_ID'],
+        client_secret: ENV['GOOGLE_SECRET'],
+        refresh_token: ENV['GOOGLE_TOKEN'],
+        scope: ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/drive"]
+      })
+      @service.authorization = creds
+    end
+
     def slack_connect
         if Rails.env.production?
           @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
-            channel: 'master_slacker',
+            channel: 'members_relations',
             icon_emoji: ':ghost:'
         else
           @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',

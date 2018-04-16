@@ -13,8 +13,8 @@ function rentalsController($filter, rentalsService, $q) {
   var rentalsCtrl = this;
   rentalsCtrl.$onInit = function() {
     rentalsCtrl.reverseSort = false;
-    rentalsCtrl.descToggle = "Desc";
-    console.log(rentalsCtrl.rentals);
+    rentalsCtrl.descToggle = "Asc";
+    rentalsCtrl.sortBy = 'number';
   };
 
   rentalsCtrl.checkExp = function(rental){
@@ -31,6 +31,17 @@ function rentalsController($filter, rentalsService, $q) {
     }
   };
 
+  rentalsCtrl.sort = function (rental) {
+    if(rentalsCtrl.sortBy === 'number') {
+      var number = parseInt(rental.number);
+      if (!isNaN(number)) {
+        return number;
+      }
+    } else if (rentalsCtrl.sortBy === 'member') {
+      return rental.member.fullname;
+    }
+    return rental[rentalsCtrl.sortBy];
+  };
 
   rentalsCtrl.upsertRental = function(rental){
     rentalsCtrl.rentalUpdate = rental;

@@ -5,25 +5,43 @@ class Admin::MembersController < AdminController
   def create
     @member = Member.new(member_params)
     if @member.save
-      Card.create(uid: @member.cardID, member: @member)
-      RejectionCard.find_by(uid: @member.cardID).update(holder: @member.fullname)
+      if @member.cardID
+        Card.create(uid: @member.cardID, member: @member)
+        rejection_card = RejectionCard.find_by(uid: @member.cardID)
+        rejection_card.update(holder: @member.fullname) unless rejection_card.nil?
+      end
       render json: @member and return
     else
-      render json: {status: 500}, status: 500 and return
+      render json: {}, status: 500 and return
     end
   end
 
   def update
     date = @member.expirationTime
     if @member.update(member_params)
-      if @member.expirationTime > date
+      if @member.expirationTime && date && @member.expirationTime > date
+        @notifier.ping "#{@member.fullname} renewed. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
+      elsif @member.expirationTime != date
+        @notifier.ping "#{@member.fullname} updated. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
+      end
+      @member.reload
+      render json: @member and return
+    else
+      render json: {}, status: 500 and return
+    end
+  end
+
+  def renew
+    date = @member.expirationTime
+    if @member.update(renew_params)
+      if @member.expirationTime && date && @member.expirationTime > date
         @notifier.ping "#{@member.fullname} renewed. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
       elsif @member.expirationTime != date
         @notifier.ping "#{@member.fullname} updated. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
       end
       render json: @member and return
     else
-      render json: {status: 500}, status: 500 and return
+      render json: {}, status: 500 and return
     end
   end
 
@@ -43,7 +61,11 @@ class Admin::MembersController < AdminController
 
   private
   def member_params
-    params.require(:member).permit(:fullname, :cardID, :groupName, :memberContractOnFile, :role, :email, :slackHandle, :password, :password_confirmation, :status, :expirationTime, :renewal => [:months, :start_date])
+    params.require(:member).permit(:fullname, :cardID, :groupName, :memberContractOnFile, :role, :email, :slackHandle, :password, :password_confirmation, :status, :expirationTime, :renewal)
+  end
+
+  def renew_params
+    params.require(:member).permit(:fullname, :renewal)
   end
 
   def renew_params
@@ -51,7 +73,7 @@ class Admin::MembersController < AdminController
   end
 
   def set_member
-    @member = Member.find_by(id: params[:id]) || Member.find_by(id: params[:member][:id]) || Member.find_by(fullname: params[:member][:fullname])
+    @member = Member.find_by(id: params[:id])
   end
 
   def slack_connect

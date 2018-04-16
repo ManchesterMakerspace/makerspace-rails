@@ -21,7 +21,7 @@ gem 'paypal-sdk-merchant'
 gem "slack-notifier"
 gem 'google_drive'
 gem 'socket.io-rails'
-gem 'google-api-client', require: 'google/apis/calendar_v3'
+gem 'google-api-client', require: ['google/apis/calendar_v3', 'google/apis/drive_v3']
 gem 'mini_magick'
 
 group :development do
@@ -29,6 +29,17 @@ group :development do
   # Spring speeds up development by keeping your application running in the background.
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+end
+
+group :test do
+  gem 'byebug', platform: :mri
+  gem 'rspec-rails'
+  gem 'mongoid-rspec'
+  gem 'factory_bot'
+  gem 'database_cleaner'
+  gem 'shoulda-callback-matchers'
+  gem 'rails-controller-testing'
+  gem 'simplecov'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

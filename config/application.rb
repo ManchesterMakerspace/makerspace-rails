@@ -15,6 +15,8 @@ require "rails/test_unit/railtie"
 require 'dotenv'
 if (ENV["RAILS_ENV"] == 'production')
   Dotenv.load('production.env')
+elsif (ENV["RAILS_ENV"] == 'test')
+  Dotenv.load('test.env')
 else
   Dotenv.load('development.env')
 end

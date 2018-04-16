@@ -7,7 +7,6 @@ app.factory('paymentsService', function($http, $filter){
   };
 
   var processPayment = function(paymentData) {
-    console.log(paymentData);
     return $http.put('/api/admin/payments/' + paymentData.txn_id, {payment: paymentData});
   };
 

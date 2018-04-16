@@ -14,6 +14,7 @@ class Card
 
   belongs_to :member, class_name: 'Member', inverse_of: :access_cards
 
+  private
   def set_holder
     self.holder = self.member.fullname
   end
@@ -30,11 +31,4 @@ class Card
       end
     end
   end
-
-  # def check_validity
-  #   Card.skip_callback(:save, :after, :check_validity)
-  #
-  #   self.save
-  #   Card.set_callback(:save, :after, :check_validity)
-  # end
 end

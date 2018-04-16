@@ -6,7 +6,7 @@
 				<label for="search">Search Members...</label>
 				<input type="text" name="search" ng-model="membersCtrl.searchText"/>
 			</md-input-container>
-			<md-checkbox ng-if="membersCtrl.isUserAdmin" ng-model="membersCtrl.viewAll">View all members</md-checkbox>
+			<md-checkbox ng-if="::membersCtrl.isUserAdmin" ng-model="membersCtrl.viewAll">View all members</md-checkbox>
 		</div>
 	</div>
 	<div class="row">
@@ -15,14 +15,14 @@
 				<div class="col-xs-6">
 					<md-input-container class="md-block">
 						<md-select ng-model="membersCtrl.sortBy" placeholder="Sort By">
-							<md-option value="name">Name</md-option>
-							<md-option value="expirationTime">Expiration Date</md-option>
+							<md-option class="sort-option" value="name">Name</md-option>
+							<md-option class="sort-option" value="expirationTime">Expiration Date</md-option>
 					</md-input-container>
 				</div>
 				<div class="col-xs-6">
 					<div class="toggle" ng-class="membersCtrl.descToggle">
 						<md-input-container class="md-block">
-							<md-checkbox ng-model="membersCtrl.reverseSort" ng-click="membersCtrl.toggleOrder()">
+							<md-checkbox ng-model="membersCtrl.reverseSort" ng-change="membersCtrl.toggleOrder()">
 								{{membersCtrl.descToggle}}
 							</md-checkbox>
 						</md-input-container>
@@ -33,29 +33,18 @@
 				<thead>
 					<tr>
 						<th class="col-xs-6">Name</th>
-						<!-- <th class="col-xs-4">Allowed Workshops</th> -->
 						<th class="col-xs-6">Membership Exp. Date</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr class="member-row" ng-repeat="member in membersCtrl.members | filter : membersCtrl.searchText | orderBy : membersCtrl.sortBy : membersCtrl.reverseSort">
 						<td class="col-xs-6 member-name"
-							ng-if="!membersCtrl.isUserAdmin()"
+							ng-if="::!membersCtrl.isUserAdmin()"
 		 			  	ng-bind="member.fullname"></td>
 						<td class="col-xs-6 member-name"
-							ng-if="membersCtrl.isUserAdmin()"
+							ng-if="::membersCtrl.isUserAdmin()"
 							ng-click="membersCtrl.viewMember(member)" ng-bind="member.fullname"></td>
-						<!-- <td class="allowed-workershops col-xs-4">
-							<button type="button"
-								ng-if="!member.showShops"
-								ng-click="membersCtrl.toggleShowShop(member)">
-									Show Allowed Shops
-							</button>
-							<span ng-if="member.showShops"
-								ng-dblclick="membersCtrl.toggleShowShop(member)"
-								ng-bind="member.allowedWorkshops"></span>
-						</td> -->
-						<td class="col-xs-6" ng-class="membersCtrl.expStatus(member.expirationTime)" ng-bind="member.expirationTime | date: shortDate: EST"></td>
+						<td class="col-xs-6" ng-class="::membersCtrl.expStatus(member.expirationTime)" ng-bind="::member.expirationTime | date: shortDate: EST"></td>
 					</tr>
 				</tbody>
 			</table>

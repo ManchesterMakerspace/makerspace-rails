@@ -15,15 +15,14 @@ function inviteController($stateParams, tokenService, alertService, $state) {
       alertService.addAlert("Registration Email sent to " + inviteCtrl.memberEmail, "success");
       $state.go('root.members');
     }).catch(function(err) {
-      console.log(err);
       alertService.addAlert("Error sending Registration", "danger");
       if(err.data && err.data.msg) {
-        alertService.addAlert(err.data.msg, "danger")
+        alertService.addAlert(err.data.msg, "danger");
       }
     });
   };
 
   inviteCtrl.cancel = function() {
-    $state.go('root.memberships.renew');
+    $state.go('root.admin.memberships.renew');
   };
 }

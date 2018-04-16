@@ -8,8 +8,8 @@ app.directive('blacklist', function() {
     require: '?ngModel',
     link: function(scope, element, attrs, ngModel) {
       if (!ngModel) { return; }
-      var blacklist = scope.blacklist.map(function(model){
-        return model.number;
+      var blacklist = scope.blacklist.filter(function (val) {
+        return val !== scope.safeword;
       });
 
       ngModel.$parsers.unshift(function(value){
