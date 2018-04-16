@@ -35,6 +35,12 @@ app.factory('memberService', function($http, slackService){
     });
   };
 
+  var renewMember = function(memberData) {
+    return $http.put('/api/admin/members/renew/' + memberData.id, {member: memberData}).then(function(response){
+      return response.data;
+    });
+  };
+
 
   var renewMember = function(memberData) {
     return $http.put('/api/admin/members/renew/' + memberData.id, {member: memberData}).then(function(response){
