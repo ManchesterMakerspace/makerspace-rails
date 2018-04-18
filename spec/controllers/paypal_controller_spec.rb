@@ -34,6 +34,8 @@ RSpec.describe PaypalController, type: :controller do
       it "assigns an array of messages for Slack" do
         post :notify, params: valid_attributes, format: :json
         expect(assigns(:messages)).to be_a(Array)
+        expect(assigns(:messages).first).to include("Payment Completed:")
+        expect(assigns(:messages).first).to include("Member found:")
       end
 
       it "Sends a notification to Slack" do
