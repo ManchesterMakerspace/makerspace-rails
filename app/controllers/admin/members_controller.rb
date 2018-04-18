@@ -34,20 +34,6 @@ class Admin::MembersController < AdminController
   def renew
     date = @member.expirationTime
     if @member.update(renew_params)
-      if @member.expirationTime && date && @member.expirationTime > date
-        @notifier.ping "#{@member.fullname} renewed. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
-      elsif @member.expirationTime != date
-        @notifier.ping "#{@member.fullname} updated. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
-      end
-      render json: @member and return
-    else
-      render json: {}, status: 500 and return
-    end
-  end
-
-  def renew
-    date = @member.expirationTime
-    if @member.update(renew_params)
       if @member.expirationTime > date
         @notifier.ping "#{@member.fullname} renewed. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
       elsif @member.expirationTime != date
@@ -66,10 +52,6 @@ class Admin::MembersController < AdminController
 
   def renew_params
     params.require(:member).permit(:fullname, :renewal)
-  end
-
-  def renew_params
-    params.require(:member).permit(:fullname, :renewal => [:months, :start_date])
   end
 
   def set_member

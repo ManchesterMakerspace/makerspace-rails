@@ -72,12 +72,8 @@ RSpec.describe Admin::MembersController, type: :controller do
         let(:new_attributes) {
           {
             email: 'new_email@test.com',
-            fullname: 'Change Name'
-          }
-        }
-        let(:renewal) {
-          {
-            renewal: { months: 1 }
+            fullname: 'Change Name',
+            renewal: 1
           }
         }
 
@@ -101,7 +97,44 @@ RSpec.describe Admin::MembersController, type: :controller do
 
         it "Sends slack notification if member renewed" do
           member = Member.create! valid_attributes
-          put :update, params: {id: member.to_param, member: renewal}, format: :json
+          put :update, params: {id: member.to_param, member: new_attributes}, format: :json
+          member.reload
+          expect(assigns(:notifier)).to be_a(Slack::Notifier)
+        end
+      end
+    end
+
+    describe "PUT #renew" do
+      context "with valid params" do
+        let(:new_attributes) {
+          {
+            email: 'new_email@test.com',
+            fullname: 'Change Name',
+            renewal: 1
+          }
+        }
+
+        it "updates the requested member's expiration time" do
+          member = Member.create! valid_attributes
+          original_exp = member.prettyTime
+          put :renew, params: {id: member.to_param, member: new_attributes}, format: :json
+          member.reload
+          expect(member.expirationTime).to eq((original_exp + 1.months).to_i * 1000)
+        end
+
+        it "renders json of the member" do
+          member = Member.create! valid_attributes
+          put :renew, params: {id: member.to_param, member: new_attributes}, format: :json
+
+          parsed_response = JSON.parse(response.body)
+          expect(response).to have_http_status(200)
+          expect(response.content_type).to eq "application/json"
+          expect(parsed_response['id']).to eq(member.id.as_json)
+        end
+
+        it "Sends slack notification if member renewed" do
+          member = Member.create! valid_attributes
+          put :renew, params: {id: member.to_param, member: new_attributes}, format: :json
           member.reload
           expect(assigns(:notifier)).to be_a(Slack::Notifier)
         end
