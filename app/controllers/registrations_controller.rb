@@ -15,6 +15,7 @@ class RegistrationsController < Devise::RegistrationsController
           correct_token.update(used: true)
           upload_signature
           invite_gdrive
+          MemberMailer.member_registered(@member).deliver_now
           sign_in(@member)
           render json: @member and return
         else

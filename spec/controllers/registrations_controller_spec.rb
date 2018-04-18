@@ -24,6 +24,10 @@ RSpec.describe RegistrationsController, type: :controller do
     skip("Add a hash of attributes invalid for your model")
   }
 
+  before(:all) do
+    clear_email
+  end
+
   before(:each) do
     token_model.update(token: encrypted_token)
   end
@@ -50,6 +54,10 @@ RSpec.describe RegistrationsController, type: :controller do
         post :create, params: {member: valid_attributes}, format: :json
         expect(assigns(:member)).to be_a(Member)
         expect(assigns(:member)).to be_persisted
+      end
+
+      it "sends email notifying us of registered member" do
+        expect(email_present(email)).to be_truthy
       end
 
       it "renders json of the created member" do

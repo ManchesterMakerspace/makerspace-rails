@@ -21,7 +21,7 @@ RSpec.describe Payment, type: :model do
   context "callbacks" do
     let(:payment) { create(:payment) }
 
-    it { expect(payment).to callback(:find_member).after(:create) }
+    it { expect(payment).to callback(:find_member).after(:initialize) }
   end
 
   context "private methods" do
@@ -31,27 +31,33 @@ RSpec.describe Payment, type: :model do
       email_member = create(:member, fullname: 'Tester', email: 'test@gmail.com')
       name_payment = create(:payment, lastname: 'Member')
       email_payment = create(:payment, payer_email: 'test@gmail.com')
+      name_payment.reload
+      email_payment.reload
       expect(name_payment.member).to eq(member)
       expect(email_payment.member).to eq(email_member)
     end
     it "Properly sets subscription based on subscription_status" do
       member = create(:member, fullname: 'Test Member')
       name_payment = create(:payment, :sub_payment, lastname: 'Member')
+      name_payment.reload
       expect(name_payment.member).to eq(member)
       member.reload
       expect(member.subscription).to be_truthy
 
       cancel_payment = create(:payment, :sub_cancel, lastname: 'Member')
+      cancel_payment.reload
       expect(cancel_payment.member).to eq(member)
       member.reload
       expect(member.subscription).to be_falsey
 
       other_payment = create(:payment, :sub_payment, lastname: 'Member')
+      other_payment.reload
       expect(other_payment.member).to eq(member)
       member.reload
       expect(member.subscription).to be_truthy
 
       failed_payment = create(:payment, :subscr_failed, lastname: 'Member')
+      failed_payment.reload
       expect(failed_payment.member).to eq(member)
       member.reload
       expect(member.subscription).to be_falsey

@@ -17,6 +17,10 @@ module TestHelpers
     return Nokogiri::HTML.fragment(email)
   end
 
+  def email_present(file_name)
+    return File.exist?(Rails.root.join("tmp/mail/#{file_name}"))
+  end
+
   def get_registration_token(file_name)
     email = read_email(file_name)
     token = email.css("a[href*='#{root_url}#/register']")
