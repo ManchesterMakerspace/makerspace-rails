@@ -1,6 +1,7 @@
 var NewMemberFormPage = function () {
   var contractToggleInput = element(by.model("newMemberCtrl.newMember.memberContractOnFile"));
-  var nameInput = element(by.model("newMemberCtrl.newMember.fullname"));
+  var firstnameInput = element(by.model("newMemberCtrl.newMember.firstname"));
+  var lastnameInput = element(by.model("newMemberCtrl.newMember.lastname"));
   var cardIdInput = element(by.model("newMemberCtrl.newMember.cardID"));
   var refreshCardButton = element(by.css('button[ng-click="newMemberCtrl.refreshCardID()"]'));
   var groupSelect = element(by.model("newMemberCtrl.newMember.groupName"));

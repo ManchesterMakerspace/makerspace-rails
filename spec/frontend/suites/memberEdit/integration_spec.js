@@ -18,14 +18,18 @@ describe("Integration spec for edit member", function  () {
       });
     });
     it("Member name and email can be changed", function () {
-      targetUser.fullname = 'New Name';
+      targetUser.firstname = 'New';
+      targetUser.lastname = 'Name';
       targetUser.email = 'new_email@test.com';
-      editMemberPage.setInput('name', targetUser.fullname).then(function () {
-        editMemberPage.setInput('email', targetUser.email).then(function () {
-          editMemberPage.submit().then(function () {
-            browser.refresh().then(function () {
-              expect(editMemberPage.getInput('name')).toEqual(targetUser.fullname);
-              expect(editMemberPage.getInput('email')).toEqual(targetUser.email);
+      editMemberPage.setInput('firstname', targetUser.firstname).then(function () {
+        editMemberPage.setInput('lastname', targetUser.lastname).then(function () {
+          editMemberPage.setInput('email', targetUser.email).then(function () {
+            editMemberPage.submit().then(function () {
+              browser.refresh().then(function () {
+                expect(editMemberPage.getInput('firstname')).toEqual(targetUser.firstname);
+                expect(editMemberPage.getInput('lastname')).toEqual(targetUser.lastname);
+                expect(editMemberPage.getInput('email')).toEqual(targetUser.email);
+              });
             });
           });
         });

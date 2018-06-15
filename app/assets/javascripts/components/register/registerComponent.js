@@ -25,6 +25,10 @@ function registerController(Auth, $state, slackService, alertService, $timeout, 
     };
   };
 
+  registerCtrl.getFullname = function () {
+    return registerCtrl.registerForm.firstname + " " + registerCtrl.registerForm.lastname;
+  };
+
   registerCtrl.registerMember = function(){
     registerCtrl.registerForm.token = registerCtrl.token.token;
     registerCtrl.registerForm.token_id = registerCtrl.token.id;
@@ -32,7 +36,7 @@ function registerController(Auth, $state, slackService, alertService, $timeout, 
     Auth.register(registerCtrl.registerForm). then(function(){
       slackService.connect();
       return $timeout(function(){
-        slackService.invite(registerCtrl.registerForm.email, registerCtrl.registerForm.fullname);
+        slackService.invite(registerCtrl.registerForm.email, registerCtrl.getFullname());
       }, 500).then(function(){
           alertService.addAlert('Registration Complete!', 'success');
           $state.go('root.members');

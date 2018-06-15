@@ -22,7 +22,7 @@ describe("Integration tests for creating and editing rentals", function () {
   describe("Creating Rentals", function () {
     var newRental = {
       number: 'new number',
-      member: targetMember.fullname
+      member: targetMember.firstname + " " + targetMember.lastname
     }
     it("Create Rental button opens form", function () {
       rentalsPage.openCreateRental().then(function () {
@@ -74,7 +74,7 @@ describe("Integration tests for creating and editing rentals", function () {
     it("Can be created with an expiration", function () {
       var expiringRental = {
         number: 'exp rental',
-        member: targetMember.fullname
+        member: targetMember.firstname + " " + targetMember.lastname
       };
       var newDate = new Date(Date.now() + (24 * 60 * 60 * 1000)); //1 day later
       var dateString = newDate.getDate() + " " + newDate.getFullYear();
@@ -106,7 +106,7 @@ describe("Integration tests for creating and editing rentals", function () {
     var editingRental = {};
     var changedRental = {
       number: 'changed number',
-      member: targetMember.fullname
+      member: targetMember.firstname + " " + targetMember.lastname
     };
     var dateString;
     beforeAll(function () {
@@ -138,13 +138,19 @@ describe("Integration tests for creating and editing rentals", function () {
     it("Number can be changed if not taken", function () {
       expect(rentalFormPage.inputValid('rentalNumber')).toBeTruthy();
       rentalFormPage.setInput('rentalNumber', takenNumbers[5]).then(function () {
-        expect(rentalFormPage.inputValid('rentalNumber')).toBeFalsy();
-        rentalFormPage.setInput('rentalNumber', editingRental.number).then(function () {
-          expect(rentalFormPage.inputValid('rentalNumber')).toBeTruthy();
-          rentalFormPage.setInput('rentalNumber', changedRental.number).then(function () {
-            expect(rentalFormPage.inputValid('rentalNumber')).toBeTruthy();
+        browser.sleep(1000).then(function () {
+          expect(rentalFormPage.inputValid('rentalNumber')).toBeFalsy();
+          rentalFormPage.setInput('rentalNumber', editingRental.number).then(function () {
+            browser.sleep(1000).then(function () {
+              expect(rentalFormPage.inputValid('rentalNumber')).toBeTruthy();
+              rentalFormPage.setInput('rentalNumber', changedRental.number).then(function () {
+                browser.sleep(1000).then(function () {
+                  expect(rentalFormPage.inputValid('rentalNumber')).toBeTruthy();
+                });
+              });
+            });
           });
-        });
+        })
       });
     });
     it("Member can be changed", function () {

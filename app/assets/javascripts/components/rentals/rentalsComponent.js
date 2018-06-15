@@ -38,7 +38,7 @@ function rentalsController($filter, rentalsService, $q) {
         return number;
       }
     } else if (rentalsCtrl.sortBy === 'member') {
-      return rental.member.fullname;
+      return rental.member.firstname + " " + rental.member.lastname;
     }
     return rental[rentalsCtrl.sortBy];
   };

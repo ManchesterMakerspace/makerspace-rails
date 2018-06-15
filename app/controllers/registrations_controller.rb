@@ -26,7 +26,7 @@ class RegistrationsController < Devise::RegistrationsController
 
     private
     def member_params
-      params.require(:member).permit(:fullname, :groupName, :email, :password, :password_confirmation)
+      params.require(:member).permit(:firstname, :lastname, :groupName, :email, :password, :password_confirmation)
     end
 
     def invite_gdrive

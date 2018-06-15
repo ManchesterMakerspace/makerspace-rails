@@ -17,9 +17,9 @@ app.factory('slackService', function(){
     });
   };
 
-  var invite = function(email, fullname) {
+  var invite = function(email, name) {
     socket.emit('invite', email);
-    var msg = 'New member ' + fullname + ' invited to Slack!';
+    var msg = 'New member ' + name + ' invited to Slack!';
     socket.emit('channelMsg', {channel: 'whos_at_the_space', msg: msg});
   };
 

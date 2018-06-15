@@ -21,7 +21,7 @@
         required>
         <md-option ng-repeat="member in rentalFormCtrl.members track by $index"
           ng-value="member.id">
-          {{member.fullname}}
+          {{member.firstname + " " + member.lastname}}
         </md-option>
       </md-select>
       <div ng-messages="rentalForm.member.$error">

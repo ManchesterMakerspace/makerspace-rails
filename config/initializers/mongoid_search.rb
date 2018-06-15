@@ -16,7 +16,7 @@ Mongoid::Search.setup do |config|
   # config.stem_proc = Proc.new { |word| Lingua.stemmer(word, :language => 'nl') }
 
   ## Words to ignore
-  config.ignore_list = ["manchestermakerspace", "gmail", "yahoo", "comcast", "org", "com", "net", "edu"]
+  config.ignore_list = ["manchestermakerspace", "gmail", "gmail.com", "yahoo", "yahoo.com", "comcast", "comcast.com", "org", "com", "net", "edu"]
 
   ## An array of words
   # config.ignore_list = %w{ a an to from as }

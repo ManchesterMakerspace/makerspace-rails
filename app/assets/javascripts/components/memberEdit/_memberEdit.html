@@ -6,14 +6,24 @@
   </div>
   <form class="member-edit-form row" name="editForm"
     ng-submit="memberEditCtrl.updateMember(editForm.$valid)" novalidate>
-
-    <md-input-container class="md-block">
-      <label for="fullname">Name</label>
-      <input type="text" name="fullname"
-        ng-model="memberEditCtrl.editForm.fullname"
-        id="fullname"
+    <div class="col-xs-6">
+      <md-input-container class="md-block">
+        <label for="firstname">First Name</label>
+        <input type="text" name="firstname"
+        ng-model="memberEditCtrl.editForm.firstname"
+        id="firstname"
         required/>
-    </md-input-container>
+      </md-input-container>
+    </div>
+    <div class="col-xs-6">
+      <md-input-container class="md-block">
+        <label for="lastname">Last Name</label>
+        <input type="text" name="lastname"
+        ng-model="memberEditCtrl.editForm.lastname"
+        id="lastname"
+        required/>
+      </md-input-container>
+    </div>
 
     <div class="text-left">
       <span>Expiration: </span><span ng-bind="memberEditCtrl.member.expirationTime | date: shortDate: EST"></span>

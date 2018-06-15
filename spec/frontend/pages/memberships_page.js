@@ -4,7 +4,7 @@ var MembershipsPage = function () {
   var renewMemberTab = wrapper.element(by.css('a[ui-sref="root.admin.memberships.renew"]'));
 
   var updatedMembers = wrapper.all(by.repeater("member in membershipCtrl.updatedMembers"));
-  var memberName = element(by.binding("member.fullname"));
+  var memberName = element(by.binding("member.firstname + ' ' + member.lastname"));
   var memberExpiry = element(by.binding("member.expirationTime"));
 
   this.goNewMemberTab = function () {

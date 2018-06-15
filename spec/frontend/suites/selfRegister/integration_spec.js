@@ -4,12 +4,14 @@ describe("Integration tests for users registering from paypal payment trigger", 
   var membersPage = new MembersPage();
   var newMember = {
     email: "new_self_register@test.com",
-    fullname: "Self Register",
+    firstname: "Self",
+    firstname: "Register",
     password: "password"
   };
   var newGroupMember = {
     email: 'group_self_register@test.com',
-    fullname: "Self Register Group Member",
+    firstname: "Self Register",
+    lastname: "Group Member",
     password: "password",
     group: "Fake Group 1"
   };
@@ -105,22 +107,26 @@ describe("Integration tests for users registering from paypal payment trigger", 
             expect(registerPage.inputValid('email')).toBeFalsy();
             expect(registerPage.inputValid('password')).toBeFalsy();
             expect(registerPage.inputValid('passwordConfirmation')).toBeFalsy();
-            registerPage.setInput('name', newMember.fullname).then(function () {
-              expect(registerPage.inputValid('name')).toBeTruthy();
-              expect(registerPage.getInput('name')).toEqual(newMember.fullname);
-              registerPage.setInput('email', newMember.email).then(function () {
-                expect(registerPage.inputValid('email')).toBeTruthy();
-                expect(registerPage.getInput('email')).toEqual(newMember.email);
-                registerPage.setInput('password', newMember.password).then(function () {
-                  expect(registerPage.getInput('password')).toEqual(newMember.password);
-                  registerPage.setInput('passwordConfirmation', 'notPassowrd').then(function () {
-                    expect(registerPage.inputValid('password')).toBeFalsy();
-                    expect(registerPage.inputValid('passwordConfirmation')).toBeFalsy();
-                    registerPage.setInput('passwordConfirmation', newMember.password).then(function () {
-                      browser.sleep(1000).then(function () {
-                        expect(registerPage.inputValid('password')).toBeTruthy();
-                        expect(registerPage.inputValid('passwordConfirmation')).toBeTruthy();
-                        expect(registerPage.getInput('passwordConfirmation')).toEqual(newMember.password);
+            registerPage.setInput('firstname', newMember.firstname).then(function () {
+              registerPage.setInput('lastname', newMember.lastname).then(function () {
+                expect(registerPage.inputValid('firstname')).toBeTruthy();
+                expect(registerPage.inputValid('lastname')).toBeTruthy();
+                expect(registerPage.getInput('firstname')).toEqual(newMember.firstname);
+                expect(registerPage.getInput('lastname')).toEqual(newMember.lastname);
+                registerPage.setInput('email', newMember.email).then(function () {
+                  expect(registerPage.inputValid('email')).toBeTruthy();
+                  expect(registerPage.getInput('email')).toEqual(newMember.email);
+                  registerPage.setInput('password', newMember.password).then(function () {
+                    expect(registerPage.getInput('password')).toEqual(newMember.password);
+                    registerPage.setInput('passwordConfirmation', 'notPassowrd').then(function () {
+                      expect(registerPage.inputValid('password')).toBeFalsy();
+                      expect(registerPage.inputValid('passwordConfirmation')).toBeFalsy();
+                      registerPage.setInput('passwordConfirmation', newMember.password).then(function () {
+                        browser.sleep(1000).then(function () {
+                          expect(registerPage.inputValid('password')).toBeTruthy();
+                          expect(registerPage.inputValid('passwordConfirmation')).toBeTruthy();
+                          expect(registerPage.getInput('passwordConfirmation')).toEqual(newMember.password);
+                        });
                       });
                     });
                   });
@@ -175,7 +181,7 @@ describe("Integration tests for users registering from paypal payment trigger", 
           protractor.authHelper.loginUser(protractor.authHelper.adminUsers.user1).then(function () {
             membersPage.get().then(function () {
               membersPage.setSearchInput(newMember.email).then(function () {
-                expect(membersPage.getMemberName(memberRow)).toEqual(newMember.fullname);
+                expect(membersPage.getMemberName(memberRow)).toEqual(newMember.firstname + " " + newMember.lastname);
                 membersPage.getMemberExpiration(memberRow).then(function (expiry) {
                   expect(new Date(expiry).getTime()).toBeLessThan(Date.now());
                 });
@@ -223,16 +229,18 @@ describe("Integration tests for users registering from paypal payment trigger", 
         });
       });
       it("User can register as part of a group", function () {
-        registerPage.setInput('name', newGroupMember.fullname).then(function () {
-          registerPage.setInput('email', newGroupMember.email).then(function () {
-            registerPage.setInput('password', newGroupMember.password).then(function () {
-              registerPage.setInput('passwordConfirmation', newGroupMember.password).then(function () {
-                registerPage.proceed().then(function () {
+        registerPage.setInput('firstname', newGroupMember.firstname).then(function () {
+          registerPage.setInput('lastname', newGroupMember.lastname).then(function () {
+            registerPage.setInput('email', newGroupMember.email).then(function () {
+              registerPage.setInput('password', newGroupMember.password).then(function () {
+                registerPage.setInput('passwordConfirmation', newGroupMember.password).then(function () {
                   registerPage.proceed().then(function () {
-                    registerPage.signContract().then(function () {
-                      registerPage.proceed().then(function () {
-                        expect(browser.getCurrentUrl()).toEqual(membersPage.getUrl());
-                        expect(protractor.authHelper.userLoggedIn()).toBeTruthy();
+                    registerPage.proceed().then(function () {
+                      registerPage.signContract().then(function () {
+                        registerPage.proceed().then(function () {
+                          expect(browser.getCurrentUrl()).toEqual(membersPage.getUrl());
+                          expect(protractor.authHelper.userLoggedIn()).toBeTruthy();
+                        });
                       });
                     });
                   });
@@ -254,7 +262,7 @@ describe("Integration tests for users registering from paypal payment trigger", 
         protractor.authHelper.loginUser(protractor.authHelper.adminUsers.user1).then(function () {
           membersPage.get().then(function () {
             membersPage.setSearchInput(newGroupMember.email).then(function () {
-              expect(membersPage.getMemberName(memberRow)).toEqual(newGroupMember.fullname);
+              expect(membersPage.getMemberName(memberRow)).toEqual(newGroupMember.firstname + " " + newGroupMember.lastname);
               membersPage.getMemberExpiration(memberRow).then(function (expiry) {
                 expect(new Date(expiry).getTime()).toEqual(new Date(groupExpiry).getTime());
               });

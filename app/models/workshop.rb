@@ -26,10 +26,6 @@ class Workshop
     experts << expert
   end
 
-  # def list_experts
-  #   experts.collect { |e| e.fullname }.join(", ")
-  # end
-
   def train_fully(member)
     self.skills.each do |skill|
       !member.learned_skills.include?(skill) ? (member.learned_skills << skill) : nil

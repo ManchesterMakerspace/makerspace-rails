@@ -6,7 +6,7 @@ var MemberPage = function () {
   var sortDirectionToggle = element(by.model("membersCtrl.reverseSort"));
 
   var members = element.all(by.repeater("member in membersCtrl.members"));
-  var memberName = element(by.binding("member.fullname"));
+  var memberName = element(by.binding("member.firstname + ' ' + member.lastname"));
   var memberExpiration = element(by.binding("member.expirationTime"));
   var page = this;
   var url = browser.baseUrl + 'members';

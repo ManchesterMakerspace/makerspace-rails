@@ -10,7 +10,8 @@ RSpec.describe RegistrationsController, type: :controller do
 
   let(:valid_attributes) {
     {
-      fullname: 'New Member',
+      firstname: 'New',
+      lastname: 'Member',
       email: email,
       password: 'password',
       password_confirmation: 'password',
