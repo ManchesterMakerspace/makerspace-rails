@@ -8,7 +8,7 @@ app.component('membersIndexComponent', {
   }
 });
 
-function membersIndexController($state) {
+function membersIndexController($state, memberService) {
   var membersCtrl = this;
   membersCtrl.$onInit = function() {
     membersCtrl.viewAll = false;
@@ -56,5 +56,11 @@ function membersIndexController($state) {
     } else {
       return 'success';
     }
+  };
+
+  membersCtrl.updateList = function () {
+    return memberService.getAllMembers(membersCtrl.searchText).then(function (members) {
+      membersCtrl.members = members;
+    });
   };
 }

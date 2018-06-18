@@ -10,7 +10,8 @@ expiring_time = (today + 5.days).to_i * 1000
 # member related factory
 FactoryBot.define do
   factory :member do
-    fullname {generate(:fullname)}
+    firstname {generate(:firstname)}
+    lastname {generate(:lastname)}
     cardID {generate(:cardID)}
     expirationTime {generate(:expiry)}
     email {generate(:email)}
@@ -114,8 +115,12 @@ FactoryBot.define do
     "user_#{n}@example.com"
   end
 
-  sequence :fullname do |n|
-    "first_name#{n} last_name#{n}"
+  sequence :firstname do |n|
+    "first_name#{n}"
+  end
+
+  sequence :lastname do |n|
+    "last_name#{n}"
   end
 
   sequence :group_name do |n|

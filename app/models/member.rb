@@ -10,7 +10,8 @@ class Member
   field :cardID
 
   #split first and last
-  field :fullname #full name of user
+  field :firstname
+  field :lastname
   field :status,                         default: "activeMember" # activeMember, nonMember, revoked
   field :expirationTime,   type: Integer #pre-calcualted time of expiration
   field :startDate, default: Time.now
@@ -27,9 +28,10 @@ class Member
   ## Rememberable - Handles cookies
   field :remember_created_at, type: Time
 
-  search_in :fullname, :email
+  search_in :email, :lastname, :firstname
 
-  validates :fullname, presence: true, uniqueness: true
+  validates :firstname, presence: true
+  validates :lastname, presence: true
   validates :email, uniqueness: true
   validates :cardID, uniqueness: true
   validates_confirmation_of :password
@@ -51,6 +53,27 @@ class Member
 
   def self.expiring_members
     return Member.where(status: 'activeMember', :expirationTime.gt => (Time.now.strftime('%s').to_i * 1000), :expirationTime.lte => (Time.now + 1.week).strftime('%s').to_i * 1000)
+  end
+
+  def self.search_members(searchTerms)
+    regexp_search = Regexp.new(searchTerms, 'i')
+    members = Member.where(email: searchTerms)
+    members = Member.where("(this.firstname + ' ' + this.lastname).match(new RegExp('#{searchTerms}', 'i'))") unless (members.size > 0)
+    members = Member.full_text_search(searchTerms, index: :_lastname_keywords).sort_by(&:relevance).reverse unless (members.size > 0)
+    members = Member.full_text_search(searchTerms, index: :_email_keywords).sort_by(&:relevance).reverse unless (members.size > 0)
+    return members
+  end
+
+  # Includes firstname if cant find anything else
+  # Not to be used for Payment association
+  def self.rough_search_members(searchTerms)
+    members = self.search_members
+    memebrs = Member.full_text_search(searchTerms).sort_by(&:relevance).reverse unless (members.size > 0)
+    return members
+  end
+
+  def fullname
+    return "#{self.firstname} #{self.lastname}"
   end
 
   def membership_status

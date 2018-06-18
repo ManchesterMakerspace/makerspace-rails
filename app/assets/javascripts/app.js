@@ -159,7 +159,7 @@ var app = angular.module('app', [
       }
     })
     .state('root.admin.memberships.invite', {
-      url: '/invite/:email',
+      url: '/invite/{email:string}',
       component: 'inviteComponent',
       params: {
         email: null

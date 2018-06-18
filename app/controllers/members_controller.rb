@@ -2,7 +2,11 @@ class MembersController < ApplicationController
     before_action :set_member, only: [:show]
 
     def index
-      @members = Member.all.sort_by(&:fullname)
+      if (params[:search]) then
+        @members = Member.rough_search_members(params[:search])
+      else
+        @members = Member.all.sort_by(&:lastname)
+      end
       if current_member.try(:role) != 'admin'
         @members = @members.select do |m|
           Time.at(m.expirationTime/1000) - Time.now > 0

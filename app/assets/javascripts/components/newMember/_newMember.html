@@ -11,18 +11,34 @@
         <div ng-message="required">Member must sign contract.</div>
       </div>
     </md-input-container>
-
-    <md-input-container class="md-block">
-      <label for="fullname">Name</label>
-      <input type="text" name="fullname"
-        ng-model="newMemberCtrl.newMember.fullname"
-        required
-        ng-minlength="2"/>
-      <div ng-messages="newMember.fullname.$error">
-        <div ng-message="required">Cannot be blank.</div>
-        <div ng-message="minlength">Must be at least 2 characters.</div>
+    <div class="row">
+      <div class="col-xs-6">
+        <md-input-container class="md-block">
+          <label for="firstname">First Name</label>
+          <input type="text" name="firstname"
+            ng-model="newMemberCtrl.newMember.firstname"
+            required
+            ng-minlength="2"/>
+          <div ng-messages="newMember.firstname.$error">
+            <div ng-message="required">Cannot be blank.</div>
+            <div ng-message="minlength">Must be at least 2 characters.</div>
+          </div>
+        </md-input-container>
       </div>
-    </md-input-container>
+      <div class="col-xs-6">
+        <md-input-container class="md-block">
+          <label for="lastname">Last Name</label>
+          <input type="text" name="lastname"
+            ng-model="newMemberCtrl.newMember.lastname"
+            required
+            ng-minlength="2"/>
+          <div ng-messages="newMember.lastname.$error">
+            <div ng-message="required">Cannot be blank.</div>
+            <div ng-message="minlength">Must be at least 2 characters.</div>
+          </div>
+        </md-input-container>
+      </div>
+    </div>
   </div>
   <div class="col-xs-12">
     <div class="row">

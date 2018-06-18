@@ -1,7 +1,8 @@
 app.factory('memberService', function($http, slackService){
 
-  var getAllMembers = function(){
-    return $http.get('/api/members').then(function(response){
+  var getAllMembers = function(search) {
+    var url = '/api/members' + (search ? ("?search=" + search) : "");
+    return $http.get(url).then(function(response){
       var members = response.data.map(function(member){
         member.allowedWorkshops = member.allowed_workshops.map(function(shop){
           return shop.name;
@@ -23,7 +24,8 @@ app.factory('memberService', function($http, slackService){
   var createMember = function(memberData){
     return $http.post('/api/admin/members', {member: memberData}).then(function(response){
       slackService.connect();
-      slackService.invite(response.data.email, response.data.fullname);
+      var name = response.data.firstname + " " + response.data.lastname;
+      slackService.invite(response.data.email, name);
       slackService.disconnect();
       return response.data;
     });

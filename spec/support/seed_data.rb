@@ -18,8 +18,9 @@ class SeedData
     create_admins
     100.times do |n|
       create(:member,
-        email: "basic_member_#{n}@test.com",
-        fullname: "Basic Member#{n}"
+        email: "basic_member#{n}@test.com",
+        firstname: "Basic",
+        lastname: "Member#{n}"
       )
     end
   end
@@ -27,8 +28,9 @@ class SeedData
   def create_expired_members
     20.times do |n|
       create(:member, :expired,
-        email: "expired_memebr_#{n}@test.com",
-        fullname: "Expired Member#{n}"
+        email: "expired_memebr#{n}@test.com",
+        firstname: "Expired",
+        lastname: "Member#{n}"
       )
     end
   end
@@ -36,8 +38,9 @@ class SeedData
   def create_admins
     5.times do |n|
       create(:member, :admin,
-        email: "admin_member_#{n}@test.com",
-        fullname: "Admin Member#{n}"
+        email: "admin_member#{n}@test.com",
+        firstname: "Admin",
+        lastname: "Member#{n}"
       )
     end
   end
@@ -55,7 +58,7 @@ class SeedData
   end
 
   def create_group
-    create(:group, member: Member.where(email: 'admin_member_0@test.com').first)
+    create(:group, member: Member.where(email: 'admin_member0@test.com').first)
   end
 
   def create_rejection_cards

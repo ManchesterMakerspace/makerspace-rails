@@ -1,6 +1,7 @@
 class MemberSerializer < ActiveModel::Serializer
   attributes :id,
-             :fullname,
+             :firstname,
+             :lastname,
              :expirationTime,
              :email,
              :status,

@@ -5,12 +5,14 @@ describe("Integration tests for new member form", function () {
   var headerPage = new HeaderPage();
   var currentUser  = protractor.authHelper.adminUsers.user1;
   var newMember = {
-    fullname: 'new_member',
+    firstname: 'new',
+    lastname: 'member',
     email: 'new_member@test.com',
     password: 'password'
   };
   var groupMember = {
-    fullname: 'group_member',
+    firstname: 'group',
+    lastname: 'member',
     email: 'group_member@test.com',
     password: 'password',
     group: "Fake Group 1"
@@ -27,7 +29,8 @@ describe("Integration tests for new member form", function () {
   it("Member contract, name, cardID, membership length, and email are all required", function () {
     newMemberPage.submit().then(function () {
       expect(newMemberPage.inputValid('contractToggle')).toBeFalsy();
-      expect(newMemberPage.inputValid('name')).toBeFalsy();
+      expect(newMemberPage.inputValid('firstname')).toBeFalsy();
+      expect(newMemberPage.inputValid('lastname')).toBeFalsy();
       expect(newMemberPage.inputValid('email')).toBeFalsy();
       expect(newMemberPage.inputValid('renewalMonths')).toBeFalsy();
     });
@@ -57,17 +60,21 @@ describe("Integration tests for new member form", function () {
     });
   });
   it("Completing fields makes them valid", function () {
-    newMemberPage.setInput('name', newMember.fullname).then(function () {
-      expect(newMemberPage.getInput('name')).toEqual(newMember.fullname);
-      expect(newMemberPage.inputValid('name')).toBeTruthy();
-      newMemberPage.toggleContractInput().then(function () {
-        browser.sleep(1000).then(function () {
-          expect(newMemberPage.inputValid('contractToggle')).toBeTruthy();
-          newMemberPage.setInput('email', newMember.email).then(function () {
-            expect(newMemberPage.getInput('email')).toEqual(newMember.email);
-            expect(newMemberPage.inputValid('email')).toBeTruthy();
-            newMemberPage.setRenewal(1).then(function () {
-              expect(newMemberPage.inputValid('renewalMonths')).toBeTruthy();
+    newMemberPage.setInput('firstname', newMember.firstname).then(function () {
+      newMemberPage.setInput('lastname', newMember.lastname).then(function () {
+        expect(newMemberPage.getInput('firstname')).toEqual(newMember.firstname);
+        expect(newMemberPage.getInput('lastname')).toEqual(newMember.lastname);
+        expect(newMemberPage.inputValid('firstname')).toBeTruthy();
+        expect(newMemberPage.inputValid('lastname')).toBeTruthy();
+        newMemberPage.toggleContractInput().then(function () {
+          browser.sleep(1000).then(function () {
+            expect(newMemberPage.inputValid('contractToggle')).toBeTruthy();
+            newMemberPage.setInput('email', newMember.email).then(function () {
+              expect(newMemberPage.getInput('email')).toEqual(newMember.email);
+              expect(newMemberPage.inputValid('email')).toBeTruthy();
+              newMemberPage.setRenewal(1).then(function () {
+                expect(newMemberPage.inputValid('renewalMonths')).toBeTruthy();
+              });
             });
           });
         });
@@ -78,7 +85,7 @@ describe("Integration tests for new member form", function () {
     expect(membershipPage.getUpdatedMembers().count()).toEqual(0);
     newMemberPage.submit().then(function () {
       expect(membershipPage.getUpdatedMembers().count()).toEqual(1);
-      expect(membershipPage.getMemberName(membershipPage.getUpdatedMembers().first())).toEqual(newMember.fullname)
+      expect(membershipPage.getMemberName(membershipPage.getUpdatedMembers().first())).toEqual(newMember.firstname + " " + newMember.lastname);
       membershipPage.getMemberExpiry(membershipPage.getUpdatedMembers().first()).then(function (expiry) {
         expect(new Date(expiry).getTime()).toBeGreaterThan(Date.now());
       });
@@ -87,7 +94,7 @@ describe("Integration tests for new member form", function () {
   it("New member can be found in members page", function () {
     membersPage.get().then(function () {
       membersPage.setSearchInput(newMember.email).then(function () {
-        expect(membersPage.getMemberName(membersPage.getMembers().first())).toEqual(newMember.fullname);
+        expect(membersPage.getMemberName(membersPage.getMembers().first())).toEqual(newMember.firstname + " " + newMember.lastname);
       });
     });
   });
@@ -121,16 +128,18 @@ describe("Integration tests for new member form", function () {
       });
     });
     it("Member can be created as part of a group", function () {
-      newMemberPage.setInput('name', groupMember.fullname).then(function () {
-        newMemberPage.toggleContractInput().then(function () {
-          newMemberPage.setInput('email', groupMember.email).then(function () {
-            newMemberPage.setRenewal(12).then(function () {
-              newMemberPage.setGroup(groupMember.group).then(function () {
-                newMemberPage.submit().then(function () {
-                  expect(membershipPage.getUpdatedMembers().count()).toEqual(1);
-                  expect(membershipPage.getMemberName(membershipPage.getUpdatedMembers().first())).toEqual(groupMember.fullname)
-                  membershipPage.getMemberExpiry(membershipPage.getUpdatedMembers().first()).then(function (expiry) {
-                    expect(new Date(expiry).getTime()).toBeGreaterThan(Date.now());
+      newMemberPage.setInput('firstname', groupMember.firstname).then(function () {
+        newMemberPage.setInput('lastname', groupMember.lastname).then(function () {
+          newMemberPage.toggleContractInput().then(function () {
+            newMemberPage.setInput('email', groupMember.email).then(function () {
+              newMemberPage.setRenewal(12).then(function () {
+                newMemberPage.setGroup(groupMember.group).then(function () {
+                  newMemberPage.submit().then(function () {
+                    expect(membershipPage.getUpdatedMembers().count()).toEqual(1);
+                    expect(membershipPage.getMemberName(membershipPage.getUpdatedMembers().first())).toEqual(groupMember.firstname + " " + groupMember.lastname)
+                    membershipPage.getMemberExpiry(membershipPage.getUpdatedMembers().first()).then(function (expiry) {
+                      expect(new Date(expiry).getTime()).toBeGreaterThan(Date.now());
+                    });
                   });
                 });
               });

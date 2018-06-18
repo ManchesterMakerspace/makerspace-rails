@@ -38,8 +38,8 @@ describe("Integration tests for Member Renewal", function () {
       expect(renewMemberPage.getMemberOptions().count()).toBeGreaterThan(0);
     });
     it("Selecting member loads member's info into view", function () {
-      renewMemberPage.setMember(targetMember.fullname).then(function () {
-        expect(renewMemberPage.getMemberName()).toEqual(targetMember.fullname);
+      renewMemberPage.setMember(targetMember.firstname + " " + targetMember.lastname).then(function () {
+        expect(renewMemberPage.getMemberName()).toEqual(targetMember.firstname + " " + targetMember.lastname);
         expect(renewMemberPage.getMemberExpiry()).toEqual(targetMember.expiry);
       });
     });
@@ -51,7 +51,7 @@ describe("Integration tests for Member Renewal", function () {
       renewMemberPage.setRenewal(1).then(function () {
         renewMemberPage.submit().then(function () {
           expect(membershipPage.getUpdatedMembers().count()).toEqual(1);
-          expect(membershipPage.getMemberName(membershipPage.getUpdatedMembers().first())).toEqual(targetMember.fullname)
+          expect(membershipPage.getMemberName(membershipPage.getUpdatedMembers().first())).toEqual(targetMember.firstname + " " + targetMember.lastname)
           membershipPage.getMemberExpiry(membershipPage.getUpdatedMembers().first()).then(function (expiry) {
             expect(new Date(expiry).getTime()).toBeGreaterThan(new Date(targetMember.expiry).getTime());
           });
@@ -84,8 +84,8 @@ describe("Integration tests for Member Renewal", function () {
       });
     });
     it("Preselects member in dropdown and fills info", function () {
-      expect(renewMemberPage.getMember()).toEqual(targetMember.fullname);
-      expect(renewMemberPage.getMemberName()).toEqual(targetMember.fullname);
+      expect(renewMemberPage.getMember()).toEqual(targetMember.firstname + " " + targetMember.lastname);
+      expect(renewMemberPage.getMemberName()).toEqual(targetMember.firstname + " " + targetMember.lastname);
       expect(renewMemberPage.getMemberExpiry()).toEqual(targetMember.expiry);
     });
     it("Renew is successful and adds to updated members list", function () {
@@ -98,7 +98,7 @@ describe("Integration tests for Member Renewal", function () {
             });
           }, 5000).then(function () {
             expect(membershipPage.getUpdatedMembers().count()).toEqual(1);
-            expect(membershipPage.getMemberName(membershipPage.getUpdatedMembers().first())).toEqual(targetMember.fullname)
+            expect(membershipPage.getMemberName(membershipPage.getUpdatedMembers().first())).toEqual(targetMember.firstname + " " + targetMember.lastname);
             membershipPage.getMemberExpiry(membershipPage.getUpdatedMembers().first()).then(function (expiry) {
               expect(new Date(expiry).getTime()).toBeGreaterThan(new Date(targetMember.expiry).getTime());
             });

@@ -26,15 +26,30 @@
   <form ng-if="registerCtrl.step === 1" class="member-edit-form row" name="registerForm"
     ng-submit="registerCtrl.submitForm(registerForm.$valid)" novalidate>
     <div class="text-center h4">Please complete this form to proceed</div>
-    <md-input-container class="md-block">
-      <label for="fullname">Full Name</label>
-      <input type="text" name="fullname"
-        ng-model="registerCtrl.registerForm.fullname"
-        required/>
-        <div ng-messages="registerForm.fullname.$error">
-          <div ng-message="required">Please complete this field.</div>
-        </div>
-    </md-input-container>
+    <div class="row">
+      <div class="col-xs-6">
+        <md-input-container class="md-block">
+          <label for="firstname">First Name</label>
+          <input type="text" name="firstname"
+            ng-model="registerCtrl.registerForm.firstname"
+            required/>
+            <div ng-messages="registerForm.firstname.$error">
+              <div ng-message="required">Please complete this field.</div>
+            </div>
+        </md-input-container>
+      </div>
+      <div class="col-xs-6">
+        <md-input-container class="md-block">
+          <label for="lastname">Last Name</label>
+          <input type="text" name="lastname"
+            ng-model="registerCtrl.registerForm.lastname"
+            required/>
+            <div ng-messages="registerForm.lastname.$error">
+              <div ng-message="required">Please complete this field.</div>
+            </div>
+        </md-input-container>
+      </div>
+    </div>
 
     <md-input-container class="md-block">
       <md-checkbox ng-model="registerCtrl.group">
@@ -107,7 +122,7 @@
 <e-sign-component ng-if="registerCtrl.completedForm && registerCtrl.step !== 3"
   sign-contact="registerCtrl.signContract(signature)"
   documents="registerCtrl.documents"
-  name="registerCtrl.registerForm.fullname"></e-sign-component>
+  name="registerCtrl.getFullname()"></e-sign-component>
 
 <form name="orientation" class="col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1" ng-if="registerCtrl.step === 3">
   <h3>Registration Complete!</h3>

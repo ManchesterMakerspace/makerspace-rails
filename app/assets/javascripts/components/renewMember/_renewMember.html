@@ -10,7 +10,7 @@
         required>
         <md-option ng-repeat="member in renewMemberCtrl.members"
           ng-value="member">
-          {{member.fullname}}
+          {{member.firstname + " " + member.lastname}}
         </md-option>
       </md-select>
       <div ng-messages="renewalForm.member.$error">
@@ -36,7 +36,7 @@
 
   <div class="selected-member col-xs-12">
     <h4>Selected Member</h4>
-    <p>Name: <span ng-bind="renewMemberCtrl.renewalForm.member.fullname"></span></p>
+    <p>Name: <span ng-bind="renewMemberCtrl.renewalForm.member.firstname + ' ' + renewMemberCtrl.renewalForm.member.lastname"></span></p>
     <p>Current Expiration: <span ng-bind="renewMemberCtrl.renewalForm.member.expirationTime | date: shortDate: EST"></span></p>
   </div>
 
@@ -45,7 +45,7 @@
         ng-click="renewMemberCtrl.renewMember(renewalForm)"
         class="btn"
         ng-class="renewalForm.$valid ? 'btn-success': 'btn-disabled'">
-        Renew {{renewMemberCtrl.renewalForm.member.fullname}}
+        Renew {{renewMemberCtrl.renewalForm.member.firstname + " " + renewMemberCtrl.renewalForm.member.lastname}}
       </button>
   </div>
 </form>

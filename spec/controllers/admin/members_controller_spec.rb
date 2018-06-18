@@ -4,7 +4,8 @@ RSpec.describe Admin::MembersController, type: :controller do
 
   let(:valid_attributes) {
     {
-      fullname: 'Test',
+      firstname: 'Test',
+      lastname: 'Tester',
       cardID: '1234',
       memberContractOnFile: true,
       email: 'test@test.com',
@@ -17,7 +18,8 @@ RSpec.describe Admin::MembersController, type: :controller do
 
   let(:invalid_attributes) {
     {
-      fullname: 'Test',
+      firstname: 'Test',
+      lastname: 'Tester',
       cardID: '1234',
       memberContractOnFile: true,
       email: 'test@test.com',
@@ -26,6 +28,10 @@ RSpec.describe Admin::MembersController, type: :controller do
       renewal: { months: 1 }
     }
   }
+
+  def get_fullname(member)
+    return member[:firstname] + " " + member[:lastname]
+  end
 
   describe "Authenticated admin" do
     login_admin
@@ -72,7 +78,8 @@ RSpec.describe Admin::MembersController, type: :controller do
         let(:new_attributes) {
           {
             email: 'new_email@test.com',
-            fullname: 'Change Name',
+            firstname: 'Change',
+            lastname: 'Name',
             renewal: 1
           }
         }
@@ -82,7 +89,7 @@ RSpec.describe Admin::MembersController, type: :controller do
           put :update, params: {id: member.to_param, member: new_attributes}, format: :json
           member.reload
           expect(member.email).to eq(new_attributes[:email])
-          expect(member.fullname).to eq(new_attributes[:fullname])
+          expect(member.fullname).to eq(get_fullname(new_attributes))
         end
 
         it "renders json of the member" do
@@ -109,7 +116,8 @@ RSpec.describe Admin::MembersController, type: :controller do
         let(:new_attributes) {
           {
             email: 'new_email@test.com',
-            fullname: 'Change Name',
+            firstname: 'Change',
+            lastname: 'Name',
             renewal: 1
           }
         }

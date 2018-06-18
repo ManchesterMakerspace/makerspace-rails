@@ -5,7 +5,7 @@ var RenewMemberFormPage = function () {
   var renewalMonthsSelect = element(by.model("renewMemberCtrl.renewalForm.months"));
   var renewalMonthsOptions = element.all(by.css(".renewal-option"));
 
-  var selectedMemberName = element(by.binding("renewMemberCtrl.renewalForm.member.fullname"));
+  var selectedMemberName = element(by.binding("renewMemberCtrl.renewalForm.member.firstname + ' ' + renewMemberCtrl.renewalForm.member.lastname"));
   var selectedMemberExpiry = element(by.binding("renewMemberCtrl.renewalForm.member.expirationTime"));
   var url = browser.baseUrl + 'memberships/renew';
   this.get = function () {

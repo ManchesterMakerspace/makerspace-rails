@@ -51,7 +51,7 @@
           <div ng-bind="::rental.number" ng-class="::rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-4'">
           </div>
           <div class="member-name" ng-class="::rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-4'">
-            <span ng-if="::rental.member" ng-bind="rental.member.fullname"></span>
+            <span ng-if="::rental.member" ng-bind="rental.member.firstname + ' ' + rental.member.lastname"></span>
             <span ng-if="::!rental.member">Available for Rent</span>
           </div>
           <div ng-bind="::rental.expiration | date: shortDate: EST" ng-class="::rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-4'">

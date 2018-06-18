@@ -23,7 +23,8 @@ function newMemberController(memberService, cardService, alertService, slackServ
       newMemberCtrl.newMember = {};
       slackService.connect();
       return $timeout(function(){
-        slackService.invite(member.email, member.fullname);
+        var name = member.firstname + ' ' + member.lastname;
+        slackService.invite(member.email, name);
       }, 500).then(function(){
         alertService.addAlert('Member saved!', 'success');
         newMemberCtrl.updatedMembers.push(member);

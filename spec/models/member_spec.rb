@@ -9,7 +9,7 @@ RSpec.describe Member, type: :model do
     it { is_expected.to be_mongoid_document }
     it { is_expected.to be_stored_in(collection: 'members') }
 
-    it { is_expected.to have_fields(:cardID, :fullname, :groupName) }
+    it { is_expected.to have_fields(:cardID, :firstname, :lastname, :groupName) }
     it { is_expected.to have_field(:status).with_default_value_of('activeMember') }
     it { is_expected.to have_field(:expirationTime).of_type(Integer) }
     it { is_expected.to have_field(:role).with_default_value_of('member') }
@@ -21,8 +21,8 @@ RSpec.describe Member, type: :model do
   end
 
   describe "ActiveModel validations" do
-    it { is_expected.to validate_presence_of(:fullname) }
-    it { is_expected.to validate_uniqueness_of(:fullname) }
+    it { is_expected.to validate_presence_of(:firstname) }
+    it { is_expected.to validate_presence_of(:lastname) }
     it { is_expected.to validate_uniqueness_of(:email) }
     it { is_expected.to have_many(:access_cards).as_inverse_of(:member) }
     it { is_expected.to belong_to(:group).as_inverse_of(:active_members).with_foreign_key("groupName") }

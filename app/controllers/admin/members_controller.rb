@@ -47,11 +47,11 @@ class Admin::MembersController < AdminController
 
   private
   def member_params
-    params.require(:member).permit(:fullname, :cardID, :groupName, :memberContractOnFile, :role, :email, :slackHandle, :password, :password_confirmation, :status, :expirationTime, :renewal)
+    params.require(:member).permit(:firstname, :lastname, :cardID, :groupName, :memberContractOnFile, :role, :email, :slackHandle, :password, :password_confirmation, :status, :expirationTime, :renewal)
   end
 
   def renew_params
-    params.require(:member).permit(:fullname, :renewal)
+    params.require(:member).permit(:firstname, :lastname, :renewal)
   end
 
   def set_member

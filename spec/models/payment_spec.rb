@@ -26,9 +26,9 @@ RSpec.describe Payment, type: :model do
 
   context "private methods" do
     it "Finds member from payment email or name" do
-      member = create(:member, fullname: 'New Member')
-      incorrect_member = create(:member, fullname: 'Wrong User', email: 'wrong_email@gmail.com')
-      email_member = create(:member, fullname: 'Tester', email: 'test@gmail.com')
+      member = create(:member, firstname: "New", lastname: 'Member')
+      incorrect_member = create(:member, firstname: "Wrong", lastname: 'User', email: 'wrong_email@gmail.com')
+      email_member = create(:member, firstname: "Test", lastname: 'Tester', email: 'test@gmail.com')
       name_payment = create(:payment, lastname: 'Member')
       email_payment = create(:payment, payer_email: 'test@gmail.com')
       name_payment.reload
@@ -37,7 +37,7 @@ RSpec.describe Payment, type: :model do
       expect(email_payment.member).to eq(email_member)
     end
     it "Properly sets subscription based on subscription_status" do
-      member = create(:member, fullname: 'Test Member')
+      member = create(:member, firstname: "Test", lastname: 'Member')
       name_payment = create(:payment, :sub_payment, lastname: 'Member')
       name_payment.reload
       expect(name_payment.member).to eq(member)

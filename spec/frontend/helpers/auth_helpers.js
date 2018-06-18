@@ -1,24 +1,28 @@
 exports.adminUsers = {
   user1: {
-    fullname: 'Admin Member1',
-    email: 'admin_member_1@test.com',
+    firstname: 'Admin',
+    lastname: 'Member1',
+    email: 'admin_member1@test.com',
     password: 'password'
   }
 };
 exports.basicUsers = {
   user1: {
-    fullname: 'Basic Member1',
-    email: 'basic_member_1@test.com',
+    firstname: 'Basic',
+    lastname: 'Member1',
+    email: 'basic_member1@test.com',
     password: 'password'
   },
   user2: {
-    fullname: 'Basic Member2',
-    email: 'basic_member_2@test.com',
+    firstname: 'Basic',
+    lastname: 'Member2',
+    email: 'basic_member2@test.com',
     password: 'password'
   },
   user3: {
-    fullname: 'Basic Member3',
-    email: 'basic_member_3@test.com',
+    firstname: 'Basic',
+    lastname: 'Member3',
+    email: 'basic_member3@test.com',
     password: 'password'
   }
 };

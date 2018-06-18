@@ -1,5 +1,6 @@
 var EditMemberPage = function () {
-  var nameInput = element(by.model("memberEditCtrl.editForm.fullname"));
+  var firstnameInput = element(by.model("memberEditCtrl.editForm.firstname"));
+  var lastnameInput = element(by.model("memberEditCtrl.editForm.lastname"));
   var expiry = element(by.binding("memberEditCtrl.member.expirationTime"));
   var emailInput = element(by.model("memberEditCtrl.editForm.email"));
   var groupSelect = element(by.model("memberEditCtrl.editForm.groupName"));
