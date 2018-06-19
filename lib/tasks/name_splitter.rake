@@ -5,7 +5,7 @@
 task :split_fullname => :environment do
   initial_size = Member.all.size
   members = Member.all.map do |m|
-    next unless defined?(m.fullname) && !m.fullname.nil?
+    next unless m.attribute_present(:fullname) && !m.fullname.nil?
     name=m.fullname.split(" ")
     first=name.shift
     last=name.to_a.join(" ")

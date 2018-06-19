@@ -5,6 +5,18 @@ Entry point is config.ru.
 "app" folder contains MVC framework.
 config/routes.rb contains routes for MVC.
 
+# Importing an archived db
+Note: Need to have the same name for source and target db for this to work.
+
+```
+mongorestore --host <host:port> -d <target_db> --username <name> --password <password> --archive=<path>
+```
+If need to change db names, allegedly you can use --nsInclude but I haven't had success.  Instead, I restored to the same named db then dumped that db into a folder instead of an archive, and then used the following:
+```
+mongorestore --db <target_db> -h <host:port> --username <name> --password <password> <folder_path>/<source_db_name>/
+
+```
+
 # INSTALLATION
 Must have MongoDB makerauth running on localhost:27017.
 
