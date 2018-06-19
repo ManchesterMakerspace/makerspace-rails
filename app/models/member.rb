@@ -67,7 +67,7 @@ class Member
   # Includes firstname if cant find anything else
   # Not to be used for Payment association
   def self.rough_search_members(searchTerms)
-    members = self.search_members
+    members = self.search_members(searchTerms)
     memebrs = Member.full_text_search(searchTerms).sort_by(&:relevance).reverse unless (members.size > 0)
     return members
   end
