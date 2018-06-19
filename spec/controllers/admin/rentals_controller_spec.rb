@@ -57,4 +57,37 @@ RSpec.describe Admin::RentalsController, type: :controller do
       end
     end
   end
+
+  describe "PUT #update" do
+    context "with valid params" do
+      let(:new_attributes) {
+        {
+          expiration: (Time.now + 2.months)
+        }
+      }
+      it "updates the requested rental" do
+        rental = Rental.create! valid_attributes
+        put :update, params: {id: rental.to_param, rental: new_attributes}, format: :json
+        rental.reload
+        expect(rental.getExpiration).to eq(Time.parse(new_attributes[:expiration].to_s))
+      end
+
+      it "renders json of the rental" do
+        rental = Rental.create! valid_attributes
+        put :update, params: {id: rental.to_param, rental: new_attributes}, format: :json
+
+        parsed_response = JSON.parse(response.body)
+        expect(response).to have_http_status(200)
+        expect(response.content_type).to eq "application/json"
+        expect(parsed_response['id']).to eq(rental.id.as_json)
+      end
+
+      it "Sends slack notification if member renewed" do
+        rental = Rental.create! valid_attributes
+        put :update, params: {id: rental.to_param, rental: new_attributes}, format: :json
+        member.reload
+        expect(assigns(:notifier)).to be_a(Slack::Notifier)
+      end
+    end
+  end
 end
