@@ -19,10 +19,13 @@ clean-test:
 	${DC_TEST} kill
 	${DC_TEST} rm -f
 
+st:
+	@echo $(shell printenv | grep -E '^CI_')
+
 build-up-test:
 	${DC_TEST} build
 	@echo 'Intializing...'
-	${DC_TEST} up $(printenv | grep -E '^CI_' | sed 's/CI_/-e /g')
+	$(shell printenv | grep -E '^CI_' | sed 's/CI_//;') ${DC_TEST} up
 
 clean-integration:
 	${DC_INTEGRATION} kill
@@ -31,7 +34,7 @@ clean-integration:
 build-up-integration:
 	${DC_INTEGRATION} build
 	@echo 'Intializing...'
-	@${DC_INTEGRATION} up $(printenv | grep -E '^CI_' | sed 's/CI_/-e /g')
+	$(shell printenv | grep -E '^CI_' | sed 's/CI_//;') ${DC_INTEGRATION} up
 
 integration-down:
 	${DC_INTEGRATION} down
