@@ -1,7 +1,7 @@
 sudo: required
 
 language: ruby
-
+install: true
 services:
   - docker
 
