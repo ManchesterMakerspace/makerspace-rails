@@ -5,7 +5,7 @@ DC_TEST=docker-compose -f Docker/docker-compose/test.yml -p $(PROJECT_NAME)
 
 start-dev: clean-dev build-up-dev
 start-integration: clean-integration build-up-integration
-test: clean-test build-up-test build-up-integration
+test: clean-test build-up-test
 
 clean-dev:
 	${DC_DEV} kill
@@ -22,7 +22,7 @@ clean-test:
 build-up-test:
 	${DC_TEST} build
 	@echo 'Intializing...'
-	@${DC_TEST} up $(printenv | grep -E '^CI_' | sed 's/CI_/-e /g')
+	${DC_TEST} up $(printenv | grep -E '^CI_' | sed 's/CI_/-e /g')
 
 clean-integration:
 	${DC_INTEGRATION} kill
