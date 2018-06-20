@@ -25,7 +25,7 @@ st:
 build-up-test:
 	${DC_TEST} build
 	@echo 'Intializing...'
-	$(shell printenv | grep -E '^CI_' | sed 's/CI_//;') ${DC_TEST} up
+	@${DC_TEST} up
 
 clean-integration:
 	${DC_INTEGRATION} kill
@@ -34,7 +34,7 @@ clean-integration:
 build-up-integration:
 	${DC_INTEGRATION} build
 	@echo 'Intializing...'
-	$(shell printenv | grep -E '^CI_' | sed 's/CI_//;') ${DC_INTEGRATION} up
+	@${DC_INTEGRATION} up
 
 integration-down:
 	${DC_INTEGRATION} down
