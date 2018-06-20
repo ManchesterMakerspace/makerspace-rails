@@ -6,4 +6,4 @@ services:
       service: interface
     environment:
      - RAILS_ENV=test
-    command: bash -c "rm -f tmp/pids/server.pid && rspec --format html --out /myapp/spec/rspec_results.html"
+    command: bash -c "rm -f tmp/pids/server.pid && rspec --format progress --format html --out /myapp/spec/rspec_results.html"
