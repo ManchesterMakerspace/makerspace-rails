@@ -1,5 +1,8 @@
+sudo: required
+
 language: ruby
-rvm:
- - 2.2
- - jruby
- - rbx-3
+
+services:
+  - docker
+
+script: make test
