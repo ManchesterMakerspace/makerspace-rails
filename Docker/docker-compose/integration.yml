@@ -10,7 +10,7 @@ services:
      - 3002:3002
     volumes_from:
       - bundle
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3002 -b '0.0.0.0'"
+    command: Docker/scripts/start.sh
   selenium:
     image: selenium/standalone-chrome:latest
     ports:

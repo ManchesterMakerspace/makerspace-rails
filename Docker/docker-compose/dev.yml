@@ -8,4 +8,10 @@ services:
      - RAILS_ENV=development
     ports:
       - 3002:3002
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3002 -b '0.0.0.0'"
+    volumes_from:
+      - bundle
+    command: bash -c "chmod +x Docker/scripts/start.sh && Docker/scripts/start.sh"
+  bundle:
+    image: mmsinterface_interface
+    volumes:
+      - /box
