@@ -181,14 +181,16 @@ describe("Integration tests for creating and editing rentals", function () {
     });
     it("Updates saved and displayed on rentals table", function () {
       rentalFormPage.submit().then(function () {
-        expect(browser.getCurrentUrl()).toEqual(rentalsPage.getUrl());
-        rentalsPage.findInTable(changedRental).then(function (results) {
-          expect(results.length).toEqual(1);
-          expect(rentalsPage.getRentalExpiration(results[0])).toMatch(new RegExp(dateString.split(" ").join(", ")));
-          rentalsPage.findInTable(editingRental).then(function (results) {
-            expect(results.length).toEqual(0);
+        browser.sleep(2000).then(function () {
+          expect(browser.getCurrentUrl()).toEqual(rentalsPage.getUrl());
+          rentalsPage.findInTable(changedRental).then(function (results) {
+            expect(results.length).toEqual(1);
+            expect(rentalsPage.getRentalExpiration(results[0])).toMatch(new RegExp(dateString.split(" ").join(", ")));
+            rentalsPage.findInTable(editingRental).then(function (results) {
+              expect(results.length).toEqual(0);
+            });
           });
-        });
+        })
       });
     });
   });
@@ -217,7 +219,11 @@ describe("Integration tests for creating and editing rentals", function () {
     });
     it("Delete button brings up confirmation prompt", function () {
       rentalFormPage.deleteRental().then(function () {
-        expect(EC.alertIsPresent()).toBeTruthy();
+        return browser.wait(function () {
+          return EC.alertIsPresent();
+        }, 5000).then(function () {
+          expect(EC.alertIsPresent()).toBeTruthy();
+        });
       });
     });
     it("Cancel alert stays on form page", function () {

@@ -1,0 +1,8 @@
+version: '2'
+services:
+  interface:
+    build:
+      context: ../..
+      dockerfile: Docker/Dockerfiles/dev
+    volumes:
+      - ../../:/myapp

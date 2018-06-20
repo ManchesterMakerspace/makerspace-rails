@@ -17,7 +17,11 @@ class Rental
   end
 
   def getExpiration
-    return Time.parse(self.expiration.to_s)
+    if self.expiration.is_a? Numeric
+      return Time.at(self.expiration/1000)
+    else
+      return Time.parse(self.expiration.to_s)
+    end
   end
 
   def build_slack_msg(initial_date)

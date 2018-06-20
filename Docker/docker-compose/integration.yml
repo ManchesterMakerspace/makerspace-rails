@@ -1,25 +1,27 @@
-version: '3'
+version: '2'
 services:
-  web:
-    build:
-      context: ../../
-      dockerfile: Docker/Dockerfiles/Dockerfile
+  interface:
+    extends:
+      file: app.yml
+      service: interface
     environment:
      - RAILS_ENV=test
-    command: bundle exec rails s -p 3000 -b '0.0.0.0'
-    volumes:
-      - ../../:/myapp
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3002 -b '0.0.0.0'"
     ports:
-      - 3002:3002
-
-  selenium-hub:
-    image: selenium/hub
+     - 3002:3002
+  selenium:
+    image: selenium/standalone-chrome:latest
     ports:
     - 4444:4444
-
-  chrome:
-    image: selenium/node-chrome
+    - 5900
     links:
-    - selenium-hub:hub
-    ports:
-      - 5900
+      - interface
+  tester:
+    build:
+      context: ../..
+      dockerfile: Docker/Dockerfiles/tester
+    volumes:
+      - ../../:/myapp
+    links:
+      - selenium
+      - interface
