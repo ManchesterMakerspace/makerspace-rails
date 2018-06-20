@@ -1,8 +1,10 @@
 DC_INTEGRATION=docker-compose -f Docker/docker-compose/integration.yml
 DC_DEV=docker-compose -f Docker/docker-compose/dev.yml
+DC_TEST=docker-compose -f Docker/docker-compose/test.yml
 
 start-dev: clean-dev build-up-dev
 start-integration: clean-integration build-up-integration
+test: clean-test build-up-test build-up-integration
 
 clean-dev:
 	${DC_DEV} kill
@@ -12,7 +14,13 @@ build-up-dev:
 	${DC_DEV} build
 	${DC_DEV} up
 
-test:
+clean-test:
+	${DC_TEST} kill
+	${DC_TEST} rm -f
+
+build-up-test:
+	${DC_TEST} build
+	${DC_TEST} up
 
 clean-integration:
 	${DC_INTEGRATION} kill
