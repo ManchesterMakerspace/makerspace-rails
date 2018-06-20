@@ -1,6 +1,7 @@
-DC_INTEGRATION=docker-compose -f Docker/docker-compose/integration.yml
-DC_DEV=docker-compose -f Docker/docker-compose/dev.yml
-DC_TEST=docker-compose -f Docker/docker-compose/test.yml
+PROJECT_NAME=mmsinterface
+DC_INTEGRATION=docker-compose -f Docker/docker-compose/integration.yml -p $(PROJECT_NAME)
+DC_DEV=docker-compose -f Docker/docker-compose/dev.yml -p $(PROJECT_NAME)
+DC_TEST=docker-compose -f Docker/docker-compose/test.yml -p $(PROJECT_NAME)
 
 start-dev: clean-dev build-up-dev
 start-integration: clean-integration build-up-integration
@@ -20,7 +21,8 @@ clean-test:
 
 build-up-test:
 	${DC_TEST} build
-	${DC_TEST} up
+	@echo 'Intializing...'
+	@${DC_TEST} up $(printenv | grep -E '^CI_' | sed 's/CI_/-e /g')
 
 clean-integration:
 	${DC_INTEGRATION} kill
@@ -28,4 +30,8 @@ clean-integration:
 
 build-up-integration:
 	${DC_INTEGRATION} build
-	${DC_INTEGRATION} up
+	@echo 'Intializing...'
+	@${DC_INTEGRATION} up $(printenv | grep -E '^CI_' | sed 's/CI_/-e /g')
+
+integration-down:
+	${DC_INTEGRATION} down

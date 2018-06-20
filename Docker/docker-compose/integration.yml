@@ -6,9 +6,11 @@ services:
       service: interface
     environment:
      - RAILS_ENV=test
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3002 -b '0.0.0.0'"
     ports:
      - 3002:3002
+    volumes_from:
+      - bundle
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3002 -b '0.0.0.0'"
   selenium:
     image: selenium/standalone-chrome:latest
     ports:
@@ -20,8 +22,15 @@ services:
     build:
       context: ../..
       dockerfile: Docker/Dockerfiles/tester
-    volumes:
-      - ../../:/myapp
+    volumes_from:
+      - bundle
+      - interface
     links:
       - selenium
       - interface
+    depends_on:
+      - interface
+  bundle:
+    image: mmsinterface_interface
+    volumes:
+      - /box
