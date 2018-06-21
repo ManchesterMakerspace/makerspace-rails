@@ -32,7 +32,6 @@ group :development do
 end
 
 group :test do
-  gem 'byebug', platform: :mri
   gem 'rspec-rails'
   gem 'mongoid-rspec'
   gem 'factory_bot'
