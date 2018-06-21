@@ -11,13 +11,16 @@ WORKDIR $app
 
 COPY Gemfile* $app/
 COPY package* $app/
+COPY bower* $app/
 
 ENV BUNDLE_GEMFILE=$app/Gemfile \
   BUNDLE_JOBS=2 \
   BUNDLE_PATH=/box
 
 RUN npm install -g protractor
+RUN npm install -g bower
 RUN npm install
+RUN bower install
 RUN cp $app/node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs /usr/bin/phantomjs
 
 COPY . $app
