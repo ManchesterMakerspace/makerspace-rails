@@ -24,7 +24,6 @@ services:
       dockerfile: Docker/Dockerfiles/tester
     volumes_from:
       - bundle
-      - interface
     links:
       - selenium
       - interface

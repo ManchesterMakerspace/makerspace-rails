@@ -22,11 +22,13 @@ clean-test:
 	${DC_INTEGRATION} rm -f
 
 build-up-test:
+	@(lsof -ti :3002 | xargs kill) || true
 	${DC_TEST} build
 	@echo 'Intializing...'
 	@${DC_TEST} up
 
 build-up-integration:
+	@(lsof -ti :3002 | xargs kill) || true
 	${DC_INTEGRATION} build
 	@echo 'Intializing...'
 	@${DC_INTEGRATION} up
