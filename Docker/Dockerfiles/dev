@@ -5,6 +5,7 @@ RUN apt-get install -y nodejs
 
 ENV app /myapp
 RUN mkdir $app
+RUN mkdir $app/tmp
 WORKDIR $app
 
 COPY Gemfile* $app/
