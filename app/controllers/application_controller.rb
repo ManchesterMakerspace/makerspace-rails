@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
-  after_filter :set_csrf_cookie_for_ng
+  after_action :set_csrf_cookie_for_ng
 
   before_action :configure_permitted_parameters, if: :devise_controller?
   # before_action :authenticate_member!, except: [:index, :search_by, :angular]
