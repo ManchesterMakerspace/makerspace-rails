@@ -70,10 +70,12 @@ describe("Integration tests for new member form", function () {
           browser.sleep(1000).then(function () {
             expect(newMemberPage.inputValid('contractToggle')).toBeTruthy();
             newMemberPage.setInput('email', newMember.email).then(function () {
-              expect(newMemberPage.getInput('email')).toEqual(newMember.email);
-              expect(newMemberPage.inputValid('email')).toBeTruthy();
-              newMemberPage.setRenewal(1).then(function () {
-                expect(newMemberPage.inputValid('renewalMonths')).toBeTruthy();
+              browser.sleep(2000).then(function () {
+                expect(newMemberPage.getInput('email')).toEqual(newMember.email);
+                expect(newMemberPage.inputValid('email')).toBeTruthy();
+                newMemberPage.setRenewal(1).then(function () {
+                  expect(newMemberPage.inputValid('renewalMonths')).toBeTruthy();
+                });
               });
             });
           });
