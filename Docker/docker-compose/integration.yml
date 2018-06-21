@@ -29,6 +29,25 @@ services:
       - interface
     depends_on:
       - interface
+    environment:
+      - MLAB_URI
+      - MLAB_USER
+      - MLAB_PASSWORD
+      - MLAB_BASE_URL
+      - SECRET_KEY_BASE
+      - SLACK_ADMIN_TOKEN
+      - SLACK_VARIABLE
+      - SLACK_WEBHOOK_URL
+      - RESOURCES_FOLDER
+      - CODE_CONDUCT_ID
+      - CONTRACT_ID
+      - SIGNATURES_FOLDER
+      - GMAIL_PASSWORD
+      - GMAIL_USERNAME
+      - GOOGLE_CALENDAR
+      - GOOGLE_ID
+      - GOOGLE_SECRET
+      - GOOGLE_TOKEN
   bundle:
     image: mmsinterface_interface
     volumes:
