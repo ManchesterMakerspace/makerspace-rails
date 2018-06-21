@@ -8,10 +8,9 @@ services:
      - RAILS_ENV=test
     ports:
      - 3002:3002
-    volumes_from:
-      - bundle
     volumes:
       - /myapp
+      - /box
     command: Docker/scripts/start.sh
   selenium:
     image: selenium/standalone-chrome:latest
@@ -25,7 +24,6 @@ services:
       context: ../..
       dockerfile: Docker/Dockerfiles/tester
     volumes_from:
-      - bundle
       - interface
     links:
       - selenium
@@ -37,7 +35,3 @@ services:
       - MLAB_USER
       - MLAB_PASSWORD
       - MLAB_BASE_URL
-  bundle:
-    image: mmsinterface_interface
-    volumes:
-      - /box

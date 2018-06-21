@@ -16,10 +16,10 @@ build-up-test:
 	${DC_TEST} rm -f
 	${DC_TEST} build
 	@echo 'Intializing...'
-	@${DC_TEST} up
+	@${DC_TEST} up --exit-code-from interface
 
 build-up-integration:
 	${DC_INTEGRATION} rm -f
 	${DC_INTEGRATION} build
 	@echo 'Intializing...'
-	@${DC_INTEGRATION} up
+	@${DC_INTEGRATION} up --exit-code-from tester
