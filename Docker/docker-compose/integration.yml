@@ -19,6 +19,7 @@ services:
     - 5900
     links:
       - interface
+    tty: false
   tester:
     build:
       context: ../..
