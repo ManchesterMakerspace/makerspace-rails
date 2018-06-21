@@ -20,7 +20,7 @@ ENV BUNDLE_GEMFILE=$app/Gemfile \
 RUN npm install -g protractor
 RUN npm install -g bower
 RUN npm install
-RUN bower install
+RUN bower install --allow-root
 RUN cp $app/node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs /usr/bin/phantomjs
 
 COPY . $app
