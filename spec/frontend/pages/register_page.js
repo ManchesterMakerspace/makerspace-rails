@@ -3,7 +3,7 @@ var RegisterPage = function () {
   var welcomeNotice = element(by.css("div.member-edit-form"));
   var step1Button = welcomeNotice.element(by.cssContainingText("button", "Proceed"));
 
-  var registerForm = element(by.css("form.member-edit-form"));
+  var registerForm = element(by.css("form.self-registration"));
   var firstnameInput = registerForm.element(by.model("registerCtrl.registerForm.firstname"));
   var lastnameInput = registerForm.element(by.model("registerCtrl.registerForm.lastname"));
   var groupCheckbox = registerForm.element(by.model("registerCtrl.group"));

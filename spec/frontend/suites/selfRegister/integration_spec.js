@@ -77,7 +77,7 @@ describe("Integration tests for users registering from paypal payment trigger", 
     describe("individual", function () {
       it("Can navigate to register using correct link", function () {
         browser.driver.get(firstRegisterLink).then(function () {
-          expect(browser.getCurrentUrl()).not.toMatch(/register\/[0-9]+/);
+          expect(registerPage.registerFormDisplayed()).toBeFalsy();
           browser.driver.get(newRegisterLink).then(function () {
             expect(browser.getCurrentUrl()).toMatch(/register\/[0-9]+/);
           });

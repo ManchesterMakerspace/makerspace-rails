@@ -26,8 +26,6 @@ services:
       dockerfile: Docker/Dockerfiles/tester
     volumes_from:
       - interface
-    volumes:
-      - ../../spec/frontend/test_results:/myapp/spec/frontend/test_results
     links:
       - selenium
       - interface
