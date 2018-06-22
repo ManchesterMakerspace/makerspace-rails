@@ -101,24 +101,24 @@ describe("Integration tests for users registering from paypal payment trigger", 
           });
         });
         it("Name, email, and password are required", function () {
-          registerPage.proceed().then(function () {
+          return registerPage.proceed().then(function () {
             expect(registerPage.registerFormDisplayed()).toBeTruthy();
             expect(registerPage.inputValid('firstname')).toBeFalsy();
             expect(registerPage.inputValid('lastname')).toBeFalsy();
             expect(registerPage.inputValid('email')).toBeFalsy();
             expect(registerPage.inputValid('password')).toBeFalsy();
             expect(registerPage.inputValid('passwordConfirmation')).toBeFalsy();
-            registerPage.setInput('firstname', newMember.firstname).then(function () {
-              registerPage.setInput('lastname', newMember.lastname).then(function () {
-                registerPage.setInput('email', newMember.email).then(function () {
-                  browser.sleep(2000).then(function () {
-                    registerPage.setInput('password', newMember.password).then(function () {
+            return registerPage.setInput('firstname', newMember.firstname).then(function () {
+              return registerPage.setInput('lastname', newMember.lastname).then(function () {
+                return registerPage.setInput('email', newMember.email).then(function () {
+                  return browser.sleep(2000).then(function () {
+                    return registerPage.setInput('password', newMember.password).then(function () {
                       expect(registerPage.getInput('password')).toEqual(newMember.password);
-                      registerPage.setInput('passwordConfirmation', 'notPassowrd').then(function () {
+                      return registerPage.setInput('passwordConfirmation', 'notPassowrd').then(function () {
                         expect(registerPage.inputValid('password')).toBeFalsy();
                         expect(registerPage.inputValid('passwordConfirmation')).toBeFalsy();
-                        registerPage.setInput('passwordConfirmation', newMember.password).then(function () {
-                          browser.sleep(2000).then(function () {
+                        return registerPage.setInput('passwordConfirmation', newMember.password).then(function () {
+                          return browser.sleep(2000).then(function () {
                             expect(registerPage.inputValid('firstname')).toBeTruthy();
                             expect(registerPage.inputValid('lastname')).toBeTruthy();
                             expect(registerPage.getInput('firstname')).toEqual(newMember.firstname);
