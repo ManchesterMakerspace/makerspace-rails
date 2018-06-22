@@ -7,18 +7,19 @@ var summary = testResultPath + "/results.html";
 var cheerio = require('cheerio');
 var phantom = require('phantom');
 
+var error = false;
+
 if( fs.existsSync(summary) ) {
   fs.unlinkSync(summary);
 }
-
-resultFolders.forEach(function (folder) {
+return Promise.all(resultFolders.map(function (folder) {
   var folderName = path.resolve(testResultPath, folder);
   if(fs.existsSync(folderName) && fs.lstatSync(folderName).isFile()) {return;}
   var reportFile = path.resolve(folderName, 'integration-report.html');
 
   var _ph, _page;
 
-  phantom.create().then(function(ph){
+  return phantom.create().then(function(ph){
       _ph = ph;
       return _ph.createPage();
   }).then(function(page){
@@ -32,10 +33,12 @@ resultFolders.forEach(function (folder) {
       var total = totalString.split(" ").pop();
       var failString = $('#summaryTotalFailed').text();
       var fails = failString.split(" ").pop();
+      var failCount = parseInt(fails);
       var pass = total - fails;
-      var statusClass = 'red';
-      if(parseInt(fails) === 0) {
-        statusClass = 'green';
+      var statusClass = 'green';
+      if(failCount !== 0) {
+        statusClass = 'red';
+        error = true;
       }
       var reportLink = (`<div><a style="color: ${statusClass}" href="${reportFile}">
           Suite: ${folder}; Failed: ${fails}; Passed: ${pass}; Total: ${total}
@@ -43,8 +46,13 @@ resultFolders.forEach(function (folder) {
       fs.appendFileSync(summary, reportLink);
       _page.close().then(function () {
         _ph.exit();
-      })
-  }).catch(function(e){
-     console.log(e);
+      });
   });
+})).then(function () {
+  if (error) {
+    process.exit(1);
+  }
+}).catch(function(e){
+   console.log(e);
+   process.exit(1);
 });

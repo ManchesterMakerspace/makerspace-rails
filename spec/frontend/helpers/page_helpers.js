@@ -55,5 +55,7 @@ exports.logErrors = function(){
 };
 
 exports.inputValid = function (el) {
-  return protractor.cssHelper.hasClass(el, "ng-valid");
+  return protractor.cssHelper.hasClass(el, "ng-invalid").then(function (invalid) {
+    return !invalid;
+  });
 };

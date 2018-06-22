@@ -11,7 +11,7 @@ describe("Integration tests for login page", function () {
     return protractor.pageHelper.clearAlerts();
   });
   afterAll(function () {
-    return protractor.coverageHelper.loadCoverage();
+    // return protractor.coverageHelper.loadCoverage();
   });
 
   it("Can be navigated to", function () {

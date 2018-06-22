@@ -17,4 +17,5 @@ while IFS='' read -r line || [[ -n "$line" ]]; do
   cp -r $frontend/reporter/* $results/$line
   RAILS_ENV=test bundle exec rake db:db_reset
 done < $suites
+echo "Integration Tests complete. Compiling all suites..."
 node $frontend/compile_test_results.js

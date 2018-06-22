@@ -1,7 +1,9 @@
 login
+memberEdit
 members
 rentals
-renewMember
 newMember
-memberEdit
+renewMember
 rentalForm
+rentals
+selfRegister
