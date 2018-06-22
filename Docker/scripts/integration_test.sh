@@ -1,12 +1,14 @@
 #!/bin/bash
 frontend="$PWD/spec/frontend"
-suites="$frontend/suites.txt"
+suites=$(find $frontend/suites/ -type d -mindepth 1 -exec basename {} \;)
 results="$frontend/test_results"
+
 if [ -e $results ]; then
   rm -r $results
 fi
 mkdir -p $results
-while IFS='' read -r line || [[ -n "$line" ]]; do
+for d in  $suites; do
+  line=$(basename $d)
   if [ -e $results/$line ]; then
     rm -r $results/$line
   fi
@@ -16,6 +18,6 @@ while IFS='' read -r line || [[ -n "$line" ]]; do
   echo "Suite finished, saving results"
   cp -r $frontend/reporter/* $results/$line
   RAILS_ENV=test bundle exec rake db:db_reset
-done < $suites
+done
 echo "Integration Tests complete. Compiling all suites..."
 node $frontend/compile_test_results.js
