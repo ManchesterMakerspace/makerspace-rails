@@ -12,6 +12,6 @@ ENV BUNDLE_GEMFILE=$app/Gemfile \
   BUNDLE_PATH=/box
 
 COPY Docker/scripts/integration_test.sh /bin/integration_test.sh
-RUN chmod +x /bin/integration_test.sh && pwd && ls
+RUN chmod +x /bin/integration_test.sh
 
 CMD ["/bin/integration_test.sh"]

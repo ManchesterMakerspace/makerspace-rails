@@ -1,9 +1,1 @@
-login
-memberEdit
-members
-rentals
-newMember
-renewMember
-rentalForm
-rentals
 selfRegister

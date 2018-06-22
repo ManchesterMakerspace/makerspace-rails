@@ -32,7 +32,7 @@ var RegisterPage = function () {
   };
   this.setInput = function (input, content) {
     var el = eval(input + "Input");
-    return el.clear().sendKeys(content);
+    return el.clear().sendKeys(content).sendKeys(protractor.Key.TAB);
   };
   this.getInput = function (input) {
     var el = eval(input + "Input");
