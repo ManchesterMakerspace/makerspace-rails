@@ -10,6 +10,7 @@ var RegisterPage = function () {
   var groupInput = registerForm.element(by.model("registerCtrl.registerForm.groupName"));
   var groupOptions = element.all(by.css(".group-option"));
   var emailInput = registerForm.element(by.model("registerCtrl.registerForm.email"));
+  var emailError = registerForm.element(by.css('[ng-messages="registerForm.email.$error"]'));
   var passwordInput = registerForm.element(by.model("registerCtrl.registerForm.password"));
   var passwordConfirmationInput = registerForm.element(by.model("registerCtrl.registerForm.password_confirmation"));
   var step2Button = registerForm.element(by.css('button[type="submit"]'));
@@ -40,7 +41,13 @@ var RegisterPage = function () {
   };
   this.inputValid = function (inputName) {
     var el = eval(inputName + "Input");
-    return protractor.pageHelper.inputValid(el);
+    if (el === emailInput) {
+      return protractor.pageHelper.isDisplayed(emailError).then(function (d) {
+        return !d;
+      });
+    } else {
+      return protractor.pageHelper.inputValid(el);
+    }
   };
   this.welcomeNoticePresent = function () {
     return protractor.pageHelper.isDisplayed(welcomeNotice);
