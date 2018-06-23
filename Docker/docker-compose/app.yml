@@ -8,9 +8,6 @@ services:
       - ../../:/myapp
     environment:
       - MLAB_URI
-      - MLAB_USER
-      - MLAB_PASSWORD
-      - MLAB_BASE_URL
       - SECRET_KEY_BASE
       - SLACK_ADMIN_TOKEN
       - SLACK_VARIABLE

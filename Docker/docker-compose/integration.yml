@@ -33,6 +33,3 @@ services:
       - interface
     environment:
       - MLAB_URI
-      - MLAB_USER
-      - MLAB_PASSWORD
-      - MLAB_BASE_URL
