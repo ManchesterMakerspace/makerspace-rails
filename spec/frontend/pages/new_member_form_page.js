@@ -68,7 +68,7 @@ var NewMemberFormPage = function () {
     var el = eval(inputName + "Input");
     if (el === emailInput) {
       return protractor.pageHelper.isDisplayed(emailError).then(function (d) {
-        return d;
+        return !d;
       });
     } else {
       return protractor.pageHelper.inputValid(el);
