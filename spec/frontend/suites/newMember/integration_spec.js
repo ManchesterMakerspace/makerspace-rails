@@ -60,19 +60,19 @@ describe("Integration tests for new member form", function () {
     });
   });
   it("Completing fields makes them valid", function () {
-    newMemberPage.setInput('firstname', newMember.firstname).then(function () {
-      newMemberPage.setInput('lastname', newMember.lastname).then(function () {
+    return newMemberPage.setInput('firstname', newMember.firstname).then(function () {
+      return newMemberPage.setInput('lastname', newMember.lastname).then(function () {
         expect(newMemberPage.getInput('firstname')).toEqual(newMember.firstname);
         expect(newMemberPage.getInput('lastname')).toEqual(newMember.lastname);
         expect(newMemberPage.inputValid('firstname')).toBeTruthy();
         expect(newMemberPage.inputValid('lastname')).toBeTruthy();
-        newMemberPage.toggleContractInput().then(function () {
-          browser.sleep(1000).then(function () {
+        return newMemberPage.toggleContractInput().then(function () {
+          return browser.sleep(1000).then(function () {
             expect(newMemberPage.inputValid('contractToggle')).toBeTruthy();
-            newMemberPage.setInput('email', newMember.email).then(function () {
-              browser.sleep(2000).then(function () {
+            return newMemberPage.setInput('email', newMember.email).then(function () {
+              return browser.sleep(2000).then(function () {
                 expect(newMemberPage.getInput('email')).toEqual(newMember.email);
-                newMemberPage.setRenewal(1).then(function () {
+                return newMemberPage.setRenewal(1).then(function () {
                   expect(newMemberPage.inputValid('email')).toBeTruthy();
                   expect(newMemberPage.inputValid('renewalMonths')).toBeTruthy();
                 });

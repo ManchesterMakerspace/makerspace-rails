@@ -8,4 +8,4 @@ install: true
 services:
   - docker
 
-script: make test-fast
+script: make test
