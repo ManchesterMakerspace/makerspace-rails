@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'securerandom'
 
 RSpec.describe PaypalController, type: :controller do
 
@@ -13,7 +14,8 @@ RSpec.describe PaypalController, type: :controller do
       mc_currency: "USD",
       payment_status: 'Completed',
       payer_email: member.email,
-      txn_type: 'cart'
+      txn_type: 'cart',
+      txn_id: SecureRandom.uuid
     }
   }
 
