@@ -18,8 +18,8 @@ class Payment
   field :txn_type
   field :test, type: Boolean
 
-  validates :txn_id, presence: true
-  validates :txn_id, uniqueness: true
+  validates :txn_id, presence: true, message: "Txn ID is missing"
+  validates :txn_id, uniqueness: true, message: "Txn ID is taken"
 
   private
   def configure_subscription_status
@@ -35,6 +35,7 @@ class Payment
   end
 
   def find_member
+    return unless self.valid?
     unless !!self.member
       self.member = Member.search_members("#{self.firstname} #{self.lastname} #{self.payer_email}").first
       if !self.member && self.payer_email then

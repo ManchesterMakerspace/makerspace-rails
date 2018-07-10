@@ -65,6 +65,7 @@ RSpec.describe PaypalController, type: :controller do
         member.reload
         expect(member.subscription).to be_truthy
         valid_attributes[:txn_type] = "subscr_cancel"
+        valid_attributes[:txn_id] = SecureRandom.uuid
         post :notify, params: valid_attributes, format: :json
         member.reload
         expect(member.subscription).to be_falsey
