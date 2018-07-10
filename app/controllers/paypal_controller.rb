@@ -8,9 +8,13 @@ class PaypalController < ApplicationController
     configure_messages
     if Rails.env.production?
       if @api.ipn_valid?(request.raw_post)
-        save_and_notify
+        if @payment.valid?
+          save_and_notify
+        else
+          @notifier.ping("Possible duplicate IPN received: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
+        end
       else
-        @notifier.ping("Invalid payment received: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
+        @notifier.ping("Invalid IPN received: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
       end
     else #dev & test
       save_and_notify
