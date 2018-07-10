@@ -8,11 +8,7 @@ class PaypalController < ApplicationController
     configure_messages
     if Rails.env.production?
       if @api.ipn_valid?(request.raw_post)
-        if @payment.valid?
           save_and_notify
-        else
-          @notifier.ping("Possible duplicate IPN received: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
-        end
       else
         @notifier.ping("Invalid IPN received: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
       end
@@ -61,6 +57,7 @@ class PaypalController < ApplicationController
     if @payment.save
       @messages.each { |msg| @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg)) }
     else
+      @messages.concat(@payment.errors.full_messages)
       @notifier.ping("Error saving payment: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
       if @messages.length > 0
           @notifier.ping("Messages related to error: ")

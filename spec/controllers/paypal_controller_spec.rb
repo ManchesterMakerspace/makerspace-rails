@@ -67,6 +67,12 @@ RSpec.describe PaypalController, type: :controller do
         member.reload
         expect(member.subscription).to be_falsey
       end
+
+      it "Notifies of duplicate txn_ids" do
+        post :notify, params: valid_attributes, format: :json
+        post :notify, params: valid_attributes, format: :json
+        expect(assigns(:messages).last).to include("Txn is already taken")
+      end
     end
   end
 end
