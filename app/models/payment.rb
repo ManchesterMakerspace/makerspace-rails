@@ -18,8 +18,8 @@ class Payment
   field :txn_type
   field :test, type: Boolean
 
-  validates :txn_id, presence: true, message: "Txn ID is missing"
-  validates :txn_id, uniqueness: true, message: "Txn ID is taken"
+  validates :txn_id, presence: true
+  validates :txn_id, uniqueness: true
 
   private
   def configure_subscription_status
