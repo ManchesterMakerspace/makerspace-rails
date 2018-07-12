@@ -8,9 +8,9 @@ class PaypalController < ApplicationController
     configure_messages
     if Rails.env.production?
       if @api.ipn_valid?(request.raw_post)
-        save_and_notify
+          save_and_notify
       else
-        @notifier.ping("Invalid payment received: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
+        @notifier.ping("Invalid IPN received: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
       end
     else #dev & test
       save_and_notify
@@ -55,13 +55,12 @@ class PaypalController < ApplicationController
 
   def save_and_notify
     if @payment.save
-      @messages.each { |msg| @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg)) }
+      send_slack_messages(@messages)
     else
-      @notifier.ping("Error saving payment: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
-      if @messages.length > 0
-          @notifier.ping("Messages related to error: ")
-          @messages.each { |msg| @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg)) }
-      end
+      @messages.push("Error saving payment: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
+      @messages.push("Messages related to error: ")
+      @messages.concat(@payment.errors.full_messages)
+      send_slack_messages(@messages)
     end
   end
 

@@ -13,6 +13,11 @@ class ApplicationController < ActionController::Base
     cookies['XSRF-TOKEN'] = form_authenticity_token if protect_against_forgery?
   end
 
+  def send_slack_messages(messages)
+    msg_string = messages.join(" \n ");
+    Slack::Notifier::Util::LinkFormatter.format(msg_string)
+  end
+
   private
   def is_officer?(workshop = nil)
     unless current_member.nil?
