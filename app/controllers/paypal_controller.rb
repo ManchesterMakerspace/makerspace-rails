@@ -57,9 +57,9 @@ class PaypalController < ApplicationController
     if @payment.save
       send_slack_messages(@messages)
     else
-      @messages.concat(@payment.errors.full_messages)
       @messages.push("Error saving payment: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
       @messages.push("Messages related to error: ")
+      @messages.concat(@payment.errors.full_messages)
       send_slack_messages(@messages)
     end
   end
