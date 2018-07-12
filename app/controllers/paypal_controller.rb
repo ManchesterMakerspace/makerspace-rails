@@ -55,14 +55,14 @@ class PaypalController < ApplicationController
 
   def save_and_notify
     if @payment.save
-      @messages.each { |msg| @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg)) }
+      send_slack_messages(@messages)
     else
       @messages.concat(@payment.errors.full_messages)
-      @notifier.ping("Error saving payment: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
-      if @messages.length > 0
-          @notifier.ping("Messages related to error: ")
-          @messages.each { |msg| @notifier.ping(Slack::Notifier::Util::LinkFormatter.format(msg)) }
+      @messages.push("Error saving payment: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
+      if @payment.errors.length > 0
+          @messages.push("Messages related to error: ")
       end
+      send_slack_messages(@messages)
     end
   end
 
