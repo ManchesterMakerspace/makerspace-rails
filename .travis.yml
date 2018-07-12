@@ -1,0 +1,11 @@
+sudo: required
+cache:
+  directories:
+    - /box
+    - /myapp/node_modules
+language: ruby
+install: true
+services:
+  - docker
+
+script: make test

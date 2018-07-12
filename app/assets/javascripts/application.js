@@ -11,7 +11,7 @@
 // about supported directives.
 //
 //= require angular
-//= require angular-ui-router
+//= require angular-ui-router/release/angular-ui-router
 //= require angular-rails-templates
 //= require angular-devise
 //= require angular-messages
@@ -21,6 +21,6 @@
 //= require angular-bootstrap
 //= require angular-signature
 //= require angular-cookie
-//= require signature_pad
+//= require signature_pad/dist/signature_pad
 //= require socket.io
 //= require_tree .

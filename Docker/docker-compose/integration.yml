@@ -1,0 +1,35 @@
+version: '2'
+services:
+  interface:
+    extends:
+      file: app.yml
+      service: interface
+    environment:
+     - RAILS_ENV=test
+    ports:
+     - 3002:3002
+    volumes:
+      - /myapp
+      - /box
+    command: Docker/scripts/start.sh
+  selenium:
+    image: selenium/standalone-chrome:latest
+    ports:
+    - 4444:4444
+    - 5900
+    links:
+      - interface
+    tty: false
+  tester:
+    build:
+      context: ../..
+      dockerfile: Docker/Dockerfiles/tester
+    volumes_from:
+      - interface
+    links:
+      - selenium
+      - interface
+    depends_on:
+      - interface
+    environment:
+      - MLAB_URI

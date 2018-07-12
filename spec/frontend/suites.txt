@@ -1,7 +1,0 @@
-login
-members
-rentals
-renewMember
-newMember
-memberEdit
-rentalForm

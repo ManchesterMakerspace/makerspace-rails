@@ -83,6 +83,7 @@ FactoryBot.define do
     amount 65.0
     currency "USD"
     payer_email { generate(:email)}
+    txn_id { generate(:uid) }
 
     trait :sub_payment do
       txn_type "subscr_payment"

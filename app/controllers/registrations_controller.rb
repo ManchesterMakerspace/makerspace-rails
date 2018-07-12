@@ -53,10 +53,10 @@ class RegistrationsController < Devise::RegistrationsController
                           content_type: 'image/png'
                           ) do |result, err|
 
-        if result.id then
+        @notifier.ping("Error uploading #{@member.fullname}'s signature'. Error: #{err}") unless err.nil?
+        if result && result.id then
             File.delete("dump/signature.png")
         end
-        @notifier.ping("Error uploading #{@member.fullname}'s signature'. Error: #{err}") unless err.nil?
       end
     end
 

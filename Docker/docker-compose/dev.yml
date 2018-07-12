@@ -1,0 +1,17 @@
+version: '2'
+services:
+  interface:
+    extends:
+      file: app.yml
+      service: interface
+    environment:
+     - RAILS_ENV=development
+    ports:
+      - 3002:3002
+    volumes_from:
+      - bundle
+    command: bash -c "chmod +x Docker/scripts/start.sh && Docker/scripts/start.sh"
+  bundle:
+    image: mmsinterface_interface
+    volumes:
+      - /box

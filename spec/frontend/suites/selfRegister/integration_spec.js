@@ -5,7 +5,7 @@ describe("Integration tests for users registering from paypal payment trigger", 
   var newMember = {
     email: "new_self_register@test.com",
     firstname: "Self",
-    firstname: "Register",
+    lastname: "Register",
     password: "password"
   };
   var newGroupMember = {
@@ -76,9 +76,9 @@ describe("Integration tests for users registering from paypal payment trigger", 
     });
     describe("individual", function () {
       it("Can navigate to register using correct link", function () {
-        browser.get(firstRegisterLink).then(function () {
-          expect(browser.getCurrentUrl()).not.toMatch(/register\/[0-9]+/);
-          browser.get(newRegisterLink).then(function () {
+        browser.driver.get(firstRegisterLink).then(function () {
+          expect(registerPage.registerFormDisplayed()).toBeFalsy();
+          browser.driver.get(newRegisterLink).then(function () {
             expect(browser.getCurrentUrl()).toMatch(/register\/[0-9]+/);
           });
         });
@@ -101,31 +101,34 @@ describe("Integration tests for users registering from paypal payment trigger", 
           });
         });
         it("Name, email, and password are required", function () {
-          registerPage.proceed().then(function () {
+          return registerPage.proceed().then(function () {
             expect(registerPage.registerFormDisplayed()).toBeTruthy();
-            expect(registerPage.inputValid('name')).toBeFalsy();
+            expect(registerPage.inputValid('firstname')).toBeFalsy();
+            expect(registerPage.inputValid('lastname')).toBeFalsy();
             expect(registerPage.inputValid('email')).toBeFalsy();
             expect(registerPage.inputValid('password')).toBeFalsy();
             expect(registerPage.inputValid('passwordConfirmation')).toBeFalsy();
-            registerPage.setInput('firstname', newMember.firstname).then(function () {
-              registerPage.setInput('lastname', newMember.lastname).then(function () {
-                expect(registerPage.inputValid('firstname')).toBeTruthy();
-                expect(registerPage.inputValid('lastname')).toBeTruthy();
-                expect(registerPage.getInput('firstname')).toEqual(newMember.firstname);
-                expect(registerPage.getInput('lastname')).toEqual(newMember.lastname);
-                registerPage.setInput('email', newMember.email).then(function () {
-                  expect(registerPage.inputValid('email')).toBeTruthy();
-                  expect(registerPage.getInput('email')).toEqual(newMember.email);
-                  registerPage.setInput('password', newMember.password).then(function () {
-                    expect(registerPage.getInput('password')).toEqual(newMember.password);
-                    registerPage.setInput('passwordConfirmation', 'notPassowrd').then(function () {
-                      expect(registerPage.inputValid('password')).toBeFalsy();
-                      expect(registerPage.inputValid('passwordConfirmation')).toBeFalsy();
-                      registerPage.setInput('passwordConfirmation', newMember.password).then(function () {
-                        browser.sleep(1000).then(function () {
-                          expect(registerPage.inputValid('password')).toBeTruthy();
-                          expect(registerPage.inputValid('passwordConfirmation')).toBeTruthy();
-                          expect(registerPage.getInput('passwordConfirmation')).toEqual(newMember.password);
+            return registerPage.setInput('firstname', newMember.firstname).then(function () {
+              return registerPage.setInput('lastname', newMember.lastname).then(function () {
+                return registerPage.setInput('email', newMember.email).then(function () {
+                  return browser.sleep(2000).then(function () {
+                    return registerPage.setInput('password', newMember.password).then(function () {
+                      expect(registerPage.getInput('password')).toEqual(newMember.password);
+                      return registerPage.setInput('passwordConfirmation', 'notPassowrd').then(function () {
+                        expect(registerPage.inputValid('password')).toBeFalsy();
+                        expect(registerPage.inputValid('passwordConfirmation')).toBeFalsy();
+                        return registerPage.setInput('passwordConfirmation', newMember.password).then(function () {
+                          return browser.sleep(2000).then(function () {
+                            expect(registerPage.inputValid('firstname')).toBeTruthy();
+                            expect(registerPage.inputValid('lastname')).toBeTruthy();
+                            expect(registerPage.getInput('firstname')).toEqual(newMember.firstname);
+                            expect(registerPage.getInput('lastname')).toEqual(newMember.lastname);
+                            expect(registerPage.getInput('email')).toEqual(newMember.email);
+                            expect(registerPage.inputValid('email')).toBeTruthy();
+                            expect(registerPage.inputValid('password')).toBeTruthy();
+                            expect(registerPage.inputValid('passwordConfirmation')).toBeTruthy();
+                            expect(registerPage.getInput('passwordConfirmation')).toEqual(newMember.password);
+                          });
                         });
                       });
                     });

@@ -3,13 +3,14 @@ var RegisterPage = function () {
   var welcomeNotice = element(by.css("div.member-edit-form"));
   var step1Button = welcomeNotice.element(by.cssContainingText("button", "Proceed"));
 
-  var registerForm = element(by.css("form.member-edit-form"));
+  var registerForm = element(by.css("form.self-registration"));
   var firstnameInput = registerForm.element(by.model("registerCtrl.registerForm.firstname"));
   var lastnameInput = registerForm.element(by.model("registerCtrl.registerForm.lastname"));
   var groupCheckbox = registerForm.element(by.model("registerCtrl.group"));
   var groupInput = registerForm.element(by.model("registerCtrl.registerForm.groupName"));
   var groupOptions = element.all(by.css(".group-option"));
   var emailInput = registerForm.element(by.model("registerCtrl.registerForm.email"));
+  var emailError = registerForm.element(by.css('[ng-messages="registerForm.email.$error"]'));
   var passwordInput = registerForm.element(by.model("registerCtrl.registerForm.password"));
   var passwordConfirmationInput = registerForm.element(by.model("registerCtrl.registerForm.password_confirmation"));
   var step2Button = registerForm.element(by.css('button[type="submit"]'));
@@ -32,7 +33,7 @@ var RegisterPage = function () {
   };
   this.setInput = function (input, content) {
     var el = eval(input + "Input");
-    return el.clear().sendKeys(content);
+    return el.clear().sendKeys(content).sendKeys(protractor.Key.TAB);
   };
   this.getInput = function (input) {
     var el = eval(input + "Input");
@@ -40,7 +41,13 @@ var RegisterPage = function () {
   };
   this.inputValid = function (inputName) {
     var el = eval(inputName + "Input");
-    return protractor.pageHelper.inputValid(el);
+    if (el === emailInput) {
+      return protractor.pageHelper.isDisplayed(emailError).then(function (d) {
+        return !d;
+      });
+    } else {
+      return protractor.pageHelper.inputValid(el);
+    }
   };
   this.welcomeNoticePresent = function () {
     return protractor.pageHelper.isDisplayed(welcomeNotice);

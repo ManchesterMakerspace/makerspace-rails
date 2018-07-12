@@ -15,10 +15,10 @@ require "rails/test_unit/railtie"
 require 'dotenv'
 if (ENV["RAILS_ENV"] == 'production')
   Dotenv.load('production.env')
-elsif (ENV["RAILS_ENV"] == 'test')
-  Dotenv.load('test.env')
-else
+elsif (ENV["RAILS_ENV"] == 'development')
   Dotenv.load('development.env')
+else
+  Dotenv.load('test.env')
 end
 
 # Require the gems listed in Gemfile, including any gems
@@ -28,7 +28,6 @@ Mongoid.load!('config/mongoid.yml')
 
 module MemberInterface
   class Application < Rails::Application
-
     config.to_prepare do
       DeviseController.respond_to :html, :json
     end

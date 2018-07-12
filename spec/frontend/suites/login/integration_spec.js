@@ -11,7 +11,7 @@ describe("Integration tests for login page", function () {
     return protractor.pageHelper.clearAlerts();
   });
   afterAll(function () {
-    return protractor.coverageHelper.loadCoverage();
+    // return protractor.coverageHelper.loadCoverage();
   });
 
   it("Can be navigated to", function () {
@@ -27,8 +27,10 @@ describe("Integration tests for login page", function () {
   it("Form is valid with email and password", function () {
     loginPage.setEmail(currentUser.email).then(function () {
       loginPage.setPassword('not password').then(function () {
-        expect(loginPage.emailValid()).toBeTruthy();
-        expect(loginPage.passwordValid()).toBeTruthy();
+        browser.sleep(2000).then(function () {
+          expect(loginPage.emailValid()).toBeTruthy();
+          expect(loginPage.passwordValid()).toBeTruthy();
+        });
       });
     });
   });
