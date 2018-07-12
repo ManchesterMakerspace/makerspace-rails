@@ -18,8 +18,7 @@ class Payment
   field :txn_type
   field :test, type: Boolean
 
-  validates :txn_id, presence: true
-  validates :txn_id, uniqueness: true
+  validates :txn_id, uniqueness: true, :allow_blank => true, :allow_nil => true
 
   private
   def configure_subscription_status
