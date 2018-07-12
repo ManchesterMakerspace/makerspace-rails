@@ -26,10 +26,12 @@ var shuffle = function(array){
 
 exports.config = {
     // The address of a running selenium server.
-    seleniumAddress: 'http://selenium:4444/wd/hub',
+    seleniumAddress: 'http://localhost:4444/wd/hub',
+    // seleniumAddress: 'http://selenium:4444/wd/hub',
 
     framework: 'jasmine',
-    baseUrl: 'http://interface:3002/#/',
+    baseUrl: 'http://localhost:3002/#/',
+    // baseUrl: 'http://interface:3002/#/',
     jasmineNodeOpts: {
             // If true, display spec names.
             isVerbose: true,

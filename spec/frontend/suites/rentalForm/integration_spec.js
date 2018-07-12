@@ -162,10 +162,9 @@ describe("Integration tests for creating and editing rentals", function () {
       });
     });
     it("Expiration can be updated", function () {
-      var newDate = new Date(new Date(editingRental.expiration) + (24 * 60 * 60 * 1000)); //1 day later
+      var newDate = new Date(new Date(editingRental.expiration).getTime() + (72 * 60 * 60 * 1000)); //1 day later
       dateString = newDate.getDate() + " " + newDate.getFullYear();
       var  el = protractor.pageObjectHelper.filterOneByDisplayed(element.all(by.css('td[aria-label$="' + dateString + '"]')));
-
       rentalFormPage.getDateInput().then(function (initExp) {
         expect(new Date(initExp)).toEqual(new Date(editingRental.expiration));
         rentalFormPage.openCalendar().then(function () {
