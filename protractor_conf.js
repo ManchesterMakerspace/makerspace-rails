@@ -63,6 +63,7 @@ exports.config = {
 	// include glob patterns, such as /**/*_spec.js
 	suites: {
     login: 'spec/frontend/suites/login/integration_spec.js',
+    password: 'spec/frontend/suites/password/integration_spec.js',
     members: 'spec/frontend/suites/members/integration_spec.js',
     rentals: 'spec/frontend/suites/rentals/integration_spec.js',
     renewMember: 'spec/frontend/suites/renewMember/integration_spec.js',
@@ -98,6 +99,7 @@ exports.config = {
         EditMemberPage = require('./spec/frontend/pages/edit_member_page.js');
         HeaderPage = require('./spec/frontend/pages/header_page.js');
         LoginPage = require('./spec/frontend/pages/login_page.js');
+        PasswordPage = require('./spec/frontend/pages/password_page.js');
         MembersPage = require('./spec/frontend/pages/members_page.js');
         MembershipsPage = require('./spec/frontend/pages/memberships_page.js');
         NewMemberPage = require('./spec/frontend/pages/new_member_form_page.js');
