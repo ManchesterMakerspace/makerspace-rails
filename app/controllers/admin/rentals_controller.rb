@@ -14,8 +14,8 @@ class Admin::RentalsController < AdminController
   def update
     initial_date = @rental.getExpiration
     if @rental.update(rental_params)
-      slack_msg = @rental.build_slack_msg(initial_date)
-      @notifier.ping slack_msg unless slack_msg.nil?
+      @messages.push(@rental.build_slack_msg(initial_date))
+      @notifier.ping(format_slack_messages(@messages)) unless @messages.empty?
       @rental.reload
       render json: @rental and return
     else
@@ -42,6 +42,7 @@ class Admin::RentalsController < AdminController
   end
 
   def slack_connect
+    @messages = [];
     if Rails.env.production?
       @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
               channel: 'membership',
