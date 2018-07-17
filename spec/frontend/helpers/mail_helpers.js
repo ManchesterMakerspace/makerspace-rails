@@ -37,6 +37,16 @@ exports.extractRegisterLink = function (filename) {
   });
 };
 
+exports.extractPasswordLink = function (filename) {
+  return new Promise(function (resolve) {
+    var data = fs.readFileSync(mailDir + '/' + filename, 'utf-8');
+    var $ = cheerio.load(data);
+    var link = $('a[href^="http://"]');
+    var url = $(link).attr('href');
+    resolve(url);
+  });
+};
+
 exports.emailPresent = function(filename){
     return new Promise(function(resolve){
         var files = fs.readdirSync(mailDir);

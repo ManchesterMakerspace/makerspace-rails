@@ -84,9 +84,14 @@ RSpec.describe Admin::RentalsController, type: :controller do
 
       it "Sends slack notification if member renewed" do
         rental = Rental.create! valid_attributes
+        slack_msg = "msg"
+        Slack::Notifier.any_instance.stub(:ping)
+        Slack::Notifier::Util::LinkFormatter.stub(:format).and_return(slack_msg)
         put :update, params: {id: rental.to_param, rental: new_attributes}, format: :json
         member.reload
         expect(assigns(:notifier)).to be_a(Slack::Notifier)
+        expect(Slack::Notifier::Util::LinkFormatter).to have_received(:format).with(assigns(:messages).join("\n"))
+        expect(assigns(:notifier)).to have_received(:ping).with(slack_msg)
       end
     end
   end

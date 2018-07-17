@@ -20,10 +20,11 @@ class Admin::MembersController < AdminController
     date = @member.expirationTime
     if @member.update(member_params)
       if @member.expirationTime && date && @member.expirationTime > date
-        @notifier.ping "#{@member.fullname} renewed. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
+        @messages.push("#{@member.fullname} renewed. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}")
       elsif @member.expirationTime != date
-        @notifier.ping "#{@member.fullname} updated. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
+        @messages.push("#{@member.fullname} updated. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}")
       end
+      @notifier.ping(format_slack_messages(@messages)) unless @messages.empty?
       @member.reload
       render json: @member and return
     else
@@ -35,10 +36,11 @@ class Admin::MembersController < AdminController
     date = @member.expirationTime
     if @member.update(renew_params)
       if @member.expirationTime > date
-        @notifier.ping "#{@member.fullname} renewed. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
+        @messages.push("#{@member.fullname} renewed. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}")
       elsif @member.expirationTime != date
-        @notifier.ping "#{@member.fullname} updated. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}"
+        @messages.push("#{@member.fullname} updated. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}")
       end
+      @notifier.ping(format_slack_messages(@messages)) unless @messages.empty?
       render json: @member and return
     else
       render json: {status: 500}, status: 500 and return
@@ -59,6 +61,7 @@ class Admin::MembersController < AdminController
   end
 
   def slack_connect
+    @messages = [];
     if Rails.env.production?
       @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
               channel: 'membership',

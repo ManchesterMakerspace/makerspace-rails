@@ -1,4 +1,5 @@
 class RegistrationsController < Devise::RegistrationsController
+    include ApplicationHelper
     before_action :initalize_gdrive, only: [:create]
     before_action :slack_connect, only: [:create]
     respond_to :json
@@ -15,6 +16,7 @@ class RegistrationsController < Devise::RegistrationsController
           correct_token.update(used: true)
           upload_signature
           invite_gdrive
+          @notifier.ping(format_slack_messages(@messages)) unless @messages.empty?
           MemberMailer.member_registered(@member).deliver_now
           sign_in(@member)
           render json: @member and return
@@ -34,7 +36,7 @@ class RegistrationsController < Devise::RegistrationsController
           email_address: "#{@member.email}",
           role: :reader)
       @service.create_permission(ENV['RESOURCES_FOLDER'], permission) do |result, err|
-        @notifier.ping("Error sharing Member Resources folder with #{@member.fullname}. Error: #{err}") unless err.nil?
+        @messages.push("Error sharing Member Resources folder with #{@member.fullname}. Error: #{err}") unless err.nil?
       end
     end
 
@@ -53,8 +55,9 @@ class RegistrationsController < Devise::RegistrationsController
                           content_type: 'image/png'
                           ) do |result, err|
 
-        @notifier.ping("Error uploading #{@member.fullname}'s signature'. Error: #{err}") unless err.nil?
+        @messages.push("Error uploading #{@member.fullname}'s signature'. Error: #{err}") unless err.nil?
         if result && result.id then
+            @messages.push("New member #{@member.fullname}'s Member Contract signature uploaded.'")
             File.delete("dump/signature.png")
         end
       end
@@ -72,6 +75,7 @@ class RegistrationsController < Devise::RegistrationsController
     end
 
     def slack_connect
+        @messages = []
         if Rails.env.production?
           @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
             channel: 'members_relations',

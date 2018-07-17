@@ -42,8 +42,13 @@ RSpec.describe RegistrationsController, type: :controller do
       end
 
       it "Uploads the member's signature" do
+        slack_msg = "msg"
+        Slack::Notifier.any_instance.stub(:ping)
+        Slack::Notifier::Util::LinkFormatter.stub(:format).and_return(slack_msg)
         post :create, params: {member: valid_attributes}, format: :json
         expect(assigns(:notifier)).to be_a(Slack::Notifier)
+        expect(Slack::Notifier::Util::LinkFormatter).to have_received(:format).with(assigns(:messages).join("\n"))
+        expect(assigns(:notifier)).to have_received(:ping).with(slack_msg)
       end
 
       it "Adds user to gdrive" do

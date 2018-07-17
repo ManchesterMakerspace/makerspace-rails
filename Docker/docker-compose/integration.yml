@@ -6,6 +6,7 @@ services:
       service: interface
     environment:
      - RAILS_ENV=test
+     - DOCKER_HOST=interface
     ports:
      - 3002:3002
     volumes:
