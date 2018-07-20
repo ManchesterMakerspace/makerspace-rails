@@ -152,11 +152,9 @@ GEM
       mini_portile2 (~> 2.3.0)
     orm_adapter (0.5.0)
     os (0.9.6)
-    paypal-sdk-core (0.3.4)
+    paypal-sdk-rest (1.6.0)
       multi_json (~> 1.0)
       xml-simple
-    paypal-sdk-merchant (1.117.2)
-      paypal-sdk-core (~> 0.3.0)
     public_suffix (2.0.5)
     puma (3.9.1)
     rack (2.0.6)
@@ -297,7 +295,7 @@ DEPENDENCIES
   mongoid (~> 6.0.0)
   mongoid-rspec
   mongoid_search
-  paypal-sdk-merchant
+  paypal-sdk-rest
   puma (~> 3.0)
   rails (~> 5.0.0, >= 5.0.0.1)
   rails-controller-testing

@@ -4,10 +4,9 @@ class PaypalController < ApplicationController
   before_action :build_payment, only: [:notify]
 
   def notify
-    @api = PayPal::SDK::Merchant.new
     configure_messages
     if Rails.env.production?
-      if @api.ipn_valid?(request.raw_post)
+      if PaypalService.ipn_valid?(request.raw_post)
           save_and_notify
       else
         @notifier.ping("Invalid IPN received: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
