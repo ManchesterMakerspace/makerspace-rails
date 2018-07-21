@@ -1,7 +1,5 @@
-class PaypalService::Payment
-  include PaypalService
+class PaypalService::Payment < PayPal::SDK::REST::Payment
+  extend PaypalService
 
-  def self.all
-    return self.api.all
-  end
+
 end
