@@ -1,0 +1,6 @@
+<div id="dropin-container"></div>
+<button ng-click="checkoutCtrl.requestPaymentMethod()">Request payment method</button>
+<button ng-click="checkoutCtrl.submitPayment()">Submit Payment</button>
+<div ng-if="checkoutCtrl.checkoutError">
+  {{JSON.stringify(checkoutCtrl.checkoutError)}}
+</div>

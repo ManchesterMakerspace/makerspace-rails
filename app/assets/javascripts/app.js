@@ -210,5 +210,9 @@ var app = angular.module('app', [
     .state('root.admin.rentals.new', {
       url: '/new',
       component: 'rentalFormComponent'
+    })
+    .state('checkout', {
+      url: '/checkout',
+      component: 'checkoutComponent'
     });
 });

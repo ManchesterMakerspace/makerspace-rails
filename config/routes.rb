@@ -11,7 +11,9 @@ Rails.application.routes.draw do
     post '/token/:id/:token', to: 'token#validate'
     resources :rentals, only: [:index]
     resources :calendar, only: [:index, :update]
-
+    resources :checkout, only: [:index, :create]
+    get "checkout/plans", to: "checkout#get_all_payment_plans"
+    get "checkout/subscriptions", to: "checkout#get_all_subscriptions"
     devise_for :members, skip: [:registrations]
     devise_scope :member do
        post "members", to: "registrations#create"

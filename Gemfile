@@ -18,6 +18,7 @@ gem 'mongoid', '~> 6.0.0'
 gem 'mongoid_search'
 #Paypal IPN
 gem 'paypal-sdk-rest'
+gem "braintree"
 gem "slack-notifier"
 gem 'google_drive'
 gem 'socket.io-rails'
