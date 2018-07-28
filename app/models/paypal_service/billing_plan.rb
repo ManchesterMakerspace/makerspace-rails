@@ -25,6 +25,9 @@ class PaypalService::BillingPlan < PayPal::SDK::REST::Plan
   end
 
   def self.get_all_by_status(status)
+    if Rails.env.production?
+      throw Error.new("Production Only")
+    end
     self.api_service.all({ status: status })
   end
 

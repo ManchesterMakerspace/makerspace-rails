@@ -1,21 +1,21 @@
 app.factory('checkoutService', function($http){
 
   var getClientToken = function () {
-    return $http.get("/api/checkout").then(function (response) {
+    return $http.get("/api/payment/checkout/new").then(function (response) {
       return response.data.client_token;
     });
   };
 
   var postCheckout = function (checkoutPayload) {
-    return $http.post("/api/checkout", { checkout: checkoutPayload });
+    return $http.post("/api/payment/checkout", { checkout: checkoutPayload });
   };
 
   var getSubscriptions = function () {
-    return $http.get("/api/checkout/subscriptions")
+    return $http.get("/api/payment/subscriptions")
   };
 
   var getPlans = function () {
-    return $http.get("/api/checkout/plans")
+    return $http.get("/api/payment/plans")
   };
 
   return {
