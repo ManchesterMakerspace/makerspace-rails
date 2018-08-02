@@ -58,3 +58,8 @@ test.env
 /spec/frontend/test_results
 /spec/rspec_results.html
 /spec/frontend/reporter
+/public/packs
+/public/packs-test
+/node_modules
+yarn-debug.log*
+.yarn-integrity

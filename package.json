@@ -4,6 +4,7 @@
   "description": "This is an interface to review which members are signed off on which stations.  This can be expanded to handle the access points.  If logged in (feature for officers & admin), you can also see member expiration dates and renew members.",
   "main": "index.js",
   "dependencies": {
+    "@rails/webpacker": "3.5",
     "angular": "^1.7.2",
     "angular-animate": "^1.7.2",
     "angular-aria": "^1.7.2",
@@ -14,14 +15,19 @@
     "angular-sanitize": "^1.7.2",
     "angular-signature": "^1.0.3",
     "angular-ui-router": "^1.0.18",
-    "bower": "1.8.0"
+    "babel-preset-react": "^6.24.1",
+    "bower": "1.8.0",
+    "prop-types": "^15.6.2",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2"
   },
   "devDependencies": {
-    "phantom": "^4.0.12",
-    "protractor-jasmine2-screenshot-reporter": "^0.4.0",
-    "protractor": "^5.3.0",
+    "cheerio": "latest",
     "dotenv": "^4.0.0",
-    "cheerio": "latest"
+    "phantom": "^4.0.12",
+    "protractor": "^5.3.0",
+    "protractor-jasmine2-screenshot-reporter": "^0.4.0",
+    "webpack-dev-server": "2.11.2"
   },
   "scripts": {
     "postinstall": "./node_modules/bower/bin/bower install"
