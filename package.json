@@ -5,21 +5,14 @@
   "main": "index.js",
   "dependencies": {
     "@rails/webpacker": "3.5",
-    "angular": "^1.7.2",
-    "angular-animate": "^1.7.2",
-    "angular-aria": "^1.7.2",
-    "angular-cookie": "^4.1.0",
-    "angular-material": "^1.1.10",
-    "angular-messages": "^1.7.2",
-    "angular-mocks": "^1.7.2",
-    "angular-sanitize": "^1.7.2",
-    "angular-signature": "^1.0.3",
-    "angular-ui-router": "^1.0.18",
+    "axios": "^0.18.0",
     "babel-preset-react": "^6.24.1",
-    "bower": "1.8.0",
     "prop-types": "^15.6.2",
     "react": "^16.4.2",
-    "react-dom": "^16.4.2"
+    "react-dom": "^16.4.2",
+    "react-router": "^4.3.1",
+    "redux": "^4.0.0",
+    "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
     "cheerio": "latest",
@@ -27,9 +20,7 @@
     "phantom": "^4.0.12",
     "protractor": "^5.3.0",
     "protractor-jasmine2-screenshot-reporter": "^0.4.0",
+    "redux-mock-store": "^1.5.3",
     "webpack-dev-server": "2.11.2"
-  },
-  "scripts": {
-    "postinstall": "./node_modules/bower/bin/bower install"
   }
 }
