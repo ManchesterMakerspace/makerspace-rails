@@ -1,15 +1,9 @@
 source 'https://rubygems.org'
 
-gem 'rails_12factor', group: :production
 gem 'rails', '~> 5.0.0', '>= 5.0.0.1'
 gem 'puma', '~> 3.0'
-gem 'sass-rails', '~> 5.0'
 gem 'active_model_serializers'
-gem 'angular-rails-templates'
-# Use Uglifier as compressor for JavaScript assets
-gem 'uglifier', '>= 1.3.0'
 gem 'dotenv-rails'
-
 gem 'webpacker'
 
 #authentication
@@ -22,8 +16,6 @@ gem 'mongoid_search'
 gem 'paypal-sdk-rest'
 gem "braintree"
 gem "slack-notifier"
-gem 'google_drive'
-gem 'socket.io-rails'
 gem 'google-api-client', require: ['google/apis/calendar_v3', 'google/apis/drive_v3']
 gem 'mini_magick'
 
