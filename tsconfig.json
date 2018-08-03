@@ -2,7 +2,13 @@
   "compilerOptions": {
     "allowJs": true,
     "declaration": false,
-    "baseUrl": "./app/javacript/src",
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "*",
+        "app/javascript/src/*"
+      ]
+    },
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
