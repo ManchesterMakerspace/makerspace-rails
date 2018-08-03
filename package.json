@@ -4,15 +4,24 @@
   "description": "This is an interface to review which members are signed off on which stations.  This can be expanded to handle the access points.  If logged in (feature for officers & admin), you can also see member expiration dates and renew members.",
   "main": "index.js",
   "dependencies": {
+    "@material-ui/core": "^1.4.2",
+    "@material-ui/icons": "^2.0.0",
     "@rails/webpacker": "3.5",
+    "@types/react": "^16.4.7",
+    "@types/react-dom": "^16.0.6",
     "axios": "^0.18.0",
     "babel-preset-react": "^6.24.1",
+    "connected-react-router": "^4.3.0",
+    "history": "^4.7.2",
     "prop-types": "^15.6.2",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
+    "react-redux": "^5.0.7",
     "react-router": "^4.3.1",
     "redux": "^4.0.0",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "ts-loader": "3.5.0",
+    "typescript": "^3.0.1"
   },
   "devDependencies": {
     "cheerio": "latest",
@@ -20,6 +29,7 @@
     "phantom": "^4.0.12",
     "protractor": "^5.3.0",
     "protractor-jasmine2-screenshot-reporter": "^0.4.0",
+    "react-hot-loader": "^4.3.4",
     "redux-mock-store": "^1.5.3",
     "webpack-dev-server": "2.11.2"
   }
