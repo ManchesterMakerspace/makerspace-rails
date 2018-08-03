@@ -39,7 +39,7 @@ const styles = theme => (createStyles({
   },
 }));
 
-class SignIn extends React.Component<Props, State> {
+class Authorization extends React.Component<Props, State> {
 
   public render(): JSX.Element {
     const { isOpen, onClose, classes } = this.props;
@@ -65,4 +65,4 @@ class SignIn extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(SignIn);
+export default withStyles(styles)(Authorization);

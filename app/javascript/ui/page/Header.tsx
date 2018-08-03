@@ -13,7 +13,7 @@ import {
 import {
   Menu as MenuIcon,
 } from "@material-ui/icons";
-import SignIn from "../authorization/SignIn";
+import Authorization from "../authorization/Authorization";
 
 
 const styles = {
@@ -117,7 +117,7 @@ class Header extends React.Component<Props, State> {
             <Button color="inherit" onClick={this.openSignIn}>Login</Button>
           </Toolbar>
         </AppBar>
-        <SignIn 
+        <Authorization 
           isOpen={authOpen}
           onClose={this.closeSignIn}
         />
