@@ -1,9 +1,10 @@
-import { Switch, Route } from "react-router"; 
-import Home from "../ui/page/Home";
-import Header from "../ui/page/Header";
-import NotFound from "../ui/page/NotFound";
-
 import * as React from "react";
+import { Switch, Route } from "react-router";
+
+import Home from "ui/page/Home";
+import Header from "ui/page/Header";
+import NotFound from "ui/page/NotFound";
+
 
 const Routes: React.SFC<{}> = () => {
   return (

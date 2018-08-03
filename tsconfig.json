@@ -1,14 +1,27 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "declaration": false,
+    "baseUrl": "./app/javacript/src",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "lib": ["es6", "dom"],
-    "module": "es6",
+    "allowSyntheticDefaultImports": true,
+    "lib": [
+      "es6",
+      "dom",
+      "es2015",
+      "es2016",
+      "es2017.object"
+    ],
+    "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
     "target": "es5",
-    "jsx": "react"
+    "jsx": "react",
+    "typeRoots": [
+      "node_modules/@types",
+      "@types"
+    ]
   },
   "exclude": [
     "**/*.spec.ts",

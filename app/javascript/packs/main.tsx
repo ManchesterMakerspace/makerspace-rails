@@ -5,10 +5,10 @@ import { applyMiddleware, compose, createStore } from 'redux';
 import reduxThunk from "redux-thunk";
 import { Provider } from "react-redux";
 import { connectRouter, routerMiddleware, ConnectedRouter } from 'connected-react-router';
-
-import { rootReducer } from '../ui/reducer';
-import Routes from '../app/Routes';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
+
+import { rootReducer } from 'ui/reducer';
+import Routes from 'app/Routes';
 
 const init = () => {
   const history = createBrowserHistory();
