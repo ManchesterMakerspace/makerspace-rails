@@ -1,4 +1,6 @@
 import * as React from "react";
+import { connect } from "react-redux";
+
 import {
   AppBar,
   Toolbar,
@@ -9,12 +11,12 @@ import {
   Menu,
   MenuItem
 } from "@material-ui/core";
-
 import {
   Menu as MenuIcon,
 } from "@material-ui/icons";
-import Authorization from "../authorization/Authorization";
 
+import Authorization from "../authorization/Authorization";
+import { StateProps as ReduxState } from "../reducer";
 
 const styles = {
   root: {
@@ -29,12 +31,20 @@ const styles = {
   },
 };
 
-interface Props {
+interface StateProps {
+  auth: boolean;
+}
+
+interface OwnProps {
   classes: {
     root: string;
     flex: string;
     menuButton: string;
   }
+}
+
+interface Props extends StateProps, OwnProps {
+
 }
 
 interface State {
@@ -103,18 +113,23 @@ class Header extends React.Component<Props, State> {
   }
   
   public render(): JSX.Element {
-    const { classes } = this.props;
+    const { classes, auth } = this.props;
     const { authOpen } = this.state;
 
     return (
       <div className={classes.root}>
         <AppBar position="static">
           <Toolbar>
-            {this.renderHambMenu()}
             <Typography variant="title" color="inherit" className={classes.flex}>
               Manchester Makerspace
             </Typography>
-            <Button color="inherit" onClick={this.openSignIn}>Login</Button>
+            {
+              auth ?
+                this.renderHambMenu()
+              : <Button color="inherit" onClick={this.openSignIn}>
+                  Login
+                </Button>
+            }
           </Toolbar>
         </AppBar>
         <Authorization 
@@ -126,4 +141,17 @@ class Header extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(Header);
+const mapStateToProps = (state: ReduxState, ownProps: Props): StateProps => {
+  const {
+    auth: {
+      email
+    }
+  } = state;
+
+  return {
+    auth: !!email
+  }
+}
+
+const styledHeader = withStyles(styles)(Header);
+export default connect(mapStateToProps)(styledHeader)

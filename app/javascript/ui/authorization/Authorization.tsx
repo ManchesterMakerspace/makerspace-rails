@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Modal, Typography, withStyles, createStyles } from "@material-ui/core";
+import { Modal, Typography, withStyles, createStyles, TextField, Button } from "@material-ui/core";
 
 interface OwnProps {
   isOpen: boolean;
@@ -14,21 +14,6 @@ interface Props extends OwnProps {
   }
 }
 
-const rand = () => {
-  return Math.round(Math.random() * 20) - 10;
-}
-
-const getModalStyle = () => {
-  const top = 50 + rand();
-  const left = 50 + rand();
-
-  return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
-  };
-}
-
 const styles = theme => (createStyles({
   paper: {
     position: 'absolute',
@@ -36,6 +21,9 @@ const styles = theme => (createStyles({
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
     padding: theme.spacing.unit * 4,
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
   },
 }));
 
@@ -51,13 +39,25 @@ class Authorization extends React.Component<Props, State> {
           open={isOpen}
           onClose={onClose}
         >
-          <div style={getModalStyle()} className={classes.paper}>
+          <div className={classes.paper}>
             <Typography variant="title" id="modal-title">
-              Text in a modal
+              Please Sign In
             </Typography>
-            <Typography variant="subheading" id="simple-modal-description">
-              Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-            </Typography>
+            <TextField
+              id="auth-email"
+              label="Email"
+              name="authEmail"
+              placeholder="enter email"
+              type="email"
+            />
+            <TextField
+              id="auth-password"
+              label="Password"
+              name="authPassword"
+              placeholder="enter password"
+              type="password"
+            />
+            <Button>Submit</Button>
           </div>
         </Modal>
       </div>
