@@ -5,18 +5,16 @@ export enum Action {
   LogoutSuccess = "AUTH/LOGOUT",
 }
 
-const formPrefix = "auth-modal-";
+const formPrefix = "auth-modal";
 export const fields = {
   email: {
-    id: `${formPrefix}email`,
     label: "Email",
-    name: `${formPrefix}email`,
+    name: `${formPrefix}-email`,
     placeholder: "Enter email"
   },
   password: {
-    id: `${formPrefix}password`,
     label: "Password",
-    name: `${formPrefix}password`,
+    name: `${formPrefix}-password`,
     placeholder: "Enter Password"
   }
 }

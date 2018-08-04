@@ -21,20 +21,29 @@
 
  .form-modal {
    width: 600px;
+   min-width: 600px;
  }
  .error-message {
-  color: "red";
-  height: "8px";
-  font-size: "0.8em";
-  line-height: "1em";
-  margin-top: "0.2em";
+  color: red;
+  height: 8px;
+  font-size: 0.8em;
+  line-height: 1em;
+  margin-top: 0.2em;
  }
  .loading-overlay {
-   height: 100%;
-   width: 100%;
-   z-index: 1000;
-   background-color: grey;
- }
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 1000;
+  background-color: rgba(200, 200, 200, 0.5);
+  overflow: hidden;
+  .spinner-container {
+    position: relative;
+    transform: translateY(calc(50% - 20px));
+    text-align: center;
+    height: 100%;
+  }
+}
  .root {
   @include flex;
 }

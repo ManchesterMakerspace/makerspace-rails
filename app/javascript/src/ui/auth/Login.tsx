@@ -3,27 +3,23 @@ import { connect } from "react-redux";
 
 import { TextField } from "@material-ui/core";
 import isEmpty from "lodash-es/isEmpty";
-import mapValues from "lodash-es/mapValues";
 
 import { CollectionOf } from "app/interfaces";
 import { emailValid } from "app/utils";
-
-import { postLogin } from "api/auth/transactions";
 
 import { StateProps as ReduxState } from "ui/reducer";
 import FormModal from "ui/common/FormModal";
 import { loginUserAction } from "ui/auth/actions";
 import { fields } from "ui/auth/constants";
 import { AuthForm } from "ui/auth/interfaces";
-import { MemberDetails } from "ui/member/interfaces";
-import ErrorMessage from "ui/page/ErrorMessage";
+import ErrorMessage from "ui/common/ErrorMessage";
 
 interface OwnProps {
   isOpen: boolean;
   onClose: () => void;
 }
 interface DispatchProps {
-  loginUser: (authForm: AuthForm) => Promise<MemberDetails>;
+  loginUser: (authForm: AuthForm) => Promise<void>;
 }
 interface StateProps {
   isRequesting: boolean;
@@ -36,14 +32,10 @@ class Login extends React.Component<Props, State> {
   private formRef;
   private setFormRef = ref => this.formRef = ref;
 
-  public componentDidMount() {
-    postLogin();
-  }
-
   public componentDidUpdate(prevProps: Props) {
     const { isRequesting: wasRequesting } = prevProps;
     const { isRequesting, error, onClose } = this.props;
-
+    
     // When login complete
     if (wasRequesting && !isRequesting && !error) {
       onClose();
@@ -79,6 +71,7 @@ class Login extends React.Component<Props, State> {
   private submit = async (form) => {
     let errors = {};
     let validAuth: AuthForm = {};
+    
     try {
       validAuth = this.validateForm(form);
     } catch (e) {
@@ -87,11 +80,9 @@ class Login extends React.Component<Props, State> {
         ...e
       }
     }
-    const values = form.getValues();
 
     form.setFormState({
       errors,
-      touched: mapValues(values, () => true)
     });
 
     if (!isEmpty(errors)) return;
@@ -116,7 +107,6 @@ class Login extends React.Component<Props, State> {
         <TextField
           fullWidth
           required
-          id={fields.email.id}
           label={fields.email.label}
           name={fields.email.name}
           placeholder={fields.email.placeholder}
@@ -125,13 +115,12 @@ class Login extends React.Component<Props, State> {
         <TextField
           fullWidth
           required
-          id={fields.password.id}
           label={fields.password.label}
           name={fields.password.name}
           placeholder={fields.password.placeholder}
           type="password"
         />
-        { error && <ErrorMessage error={error}/>}
+        { !isRequesting && error && <ErrorMessage error={error}/>}
       </FormModal>
     );
   }

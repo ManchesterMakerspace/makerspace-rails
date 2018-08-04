@@ -7,7 +7,6 @@ import {
   IconButton,
   Typography,
   Button,
-  withStyles,
   Menu,
   MenuItem
 } from "@material-ui/core";
@@ -17,35 +16,19 @@ import {
 
 import Login from "ui/auth/Login";
 import { StateProps as ReduxState } from "ui/reducer";
-
-const styles = {
-  root: {
-    flexGrow: 1,
-  },
-  flex: {
-    flexGrow: 1,
-  },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20,
-  },
-};
+import { logoutUserAction, activeSessionLogin } from "ui/auth/actions";
 
 interface StateProps {
   auth: boolean;
 }
 
-interface OwnProps {
-  classes: {
-    root: string;
-    flex: string;
-    menuButton: string;
-  }
+interface OwnProps {}
+interface DispatchProps {
+  logout: () => void;
+  attemptLogin: () => void;
 }
 
-interface Props extends StateProps, OwnProps {
-
-}
+interface Props extends StateProps, OwnProps, DispatchProps {}
 
 interface State {
   authOpen: boolean;
@@ -60,6 +43,10 @@ class Header extends React.Component<Props, State> {
       authOpen: false,
       anchorEl: null,
     };
+  }
+
+  public componentDidMount() {
+    this.props.attemptLogin();
   }
 
   private openSignIn = () => {
@@ -78,14 +65,14 @@ class Header extends React.Component<Props, State> {
   };
 
   private renderHambMenu = (): JSX.Element => {
-    const { classes } = this.props;
+    const { logout } = this.props;
     const { anchorEl } = this.state;
     const menuOpen = Boolean(anchorEl);
 
     return (
       <>
         <IconButton 
-          className={classes.menuButton} 
+          className="menu-button"
           color="inherit" aria-label="Menu"
           onClick={this.attachMenu}
         >
@@ -107,20 +94,21 @@ class Header extends React.Component<Props, State> {
         >
           <MenuItem onClick={this.detachMenu}>Profile</MenuItem>
           <MenuItem onClick={this.detachMenu}>My account</MenuItem>
+          <MenuItem onClick={logout && this.detachMenu}>Logout</MenuItem>
         </Menu>
       </>
     )
   }
   
   public render(): JSX.Element {
-    const { classes, auth } = this.props;
+    const { auth } = this.props;
     const { authOpen } = this.state;
 
     return (
-      <div className={classes.root}>
+      <div className="root">
         <AppBar position="static">
           <Toolbar>
-            <Typography variant="title" color="inherit" className={classes.flex}>
+            <Typography variant="title" color="inherit" className="flex">
               Manchester Makerspace
             </Typography>
             {
@@ -144,7 +132,7 @@ class Header extends React.Component<Props, State> {
 const mapStateToProps = (state: ReduxState, ownProps: Props): StateProps => {
   const {
     auth: {
-      member: currentUser
+      currentUser
     }
   } = state;
 
@@ -153,5 +141,13 @@ const mapStateToProps = (state: ReduxState, ownProps: Props): StateProps => {
   }
 }
 
-const styledHeader = withStyles(styles)(Header);
-export default connect(mapStateToProps)(styledHeader)
+const mapDispatchToProps = (
+  dispatch
+): DispatchProps => {
+  return {
+    logout: () => dispatch(logoutUserAction()),
+    attemptLogin: () => dispatch(activeSessionLogin())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header)

@@ -1,13 +1,15 @@
-import { AnyAction } from "redux";
-import { AuthState, AuthForm } from "ui/auth/interfaces";
-import { postLogin } from "api/auth/transactions";
-import { Action as AuthAction } from "ui/auth/constants";
 import { ThunkAction } from "redux-thunk";
-import { MemberDetails } from "ui/member/interfaces";
+import { AnyAction } from "redux";
+
+import { handleApiError } from "app/utils";
+
+import { AuthState, AuthForm } from "ui/auth/interfaces";
+import { postLogin, deleteLogin } from "api/auth/transactions";
+import { Action as AuthAction } from "ui/auth/constants";
 
 export const loginUserAction = (
-  loginForm: AuthForm
-): ThunkAction<Promise<MemberDetails>, {}, {}, AnyAction> => async (dispatch) => {
+  loginForm?: AuthForm
+): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
   dispatch({ type: AuthAction.StartAuthRequest });
 
   let member;
@@ -19,16 +21,44 @@ export const loginUserAction = (
       data: member
     });
   } catch (e) {
+    const error = handleApiError(e);
     dispatch({
       type: AuthAction.LoginUserFailure,
-      error: e
+      error
     });
   }
-  return member;
+}
+
+// Only used when initializing app
+// Used to attempt login from session cookies
+export const activeSessionLogin = (
+): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
+  dispatch({ type: AuthAction.StartAuthRequest });
+
+  let member;
+  try {
+    const response = await postLogin();
+    member = response.data;
+    dispatch({
+      type: AuthAction.LoginUserSuccess,
+      data: member
+    });
+  } catch {
+    dispatch({ type: AuthAction.LoginUserFailure })
+  }
+}
+
+export const logoutUserAction = (
+): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
+  dispatch({ type: AuthAction.StartAuthRequest });
+  try {
+    await deleteLogin();
+  } catch {}
+  dispatch({ type: AuthAction.LogoutSuccess });
 }
 
 const defaultState: AuthState = {
-  member: {
+  currentUser: {
     firstname: undefined,
     lastname: undefined,
     email: undefined,
@@ -48,8 +78,9 @@ export const authReducer = (state: AuthState = defaultState, action: AnyAction) 
       const { data: newUser } = action;
       return {
         ...state,
-        member: newUser,
+        currentUser: newUser,
         isRequesting: false,
+        error: ""
       };
     case AuthAction.LoginUserFailure:
       const { error } = action;

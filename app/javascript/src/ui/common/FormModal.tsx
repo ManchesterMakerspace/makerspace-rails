@@ -1,15 +1,18 @@
 import * as React from "react";
+import mapValues from "lodash-es/mapValues";
+import omit from "lodash-es/omit";
 import { 
   Dialog, 
   DialogTitle, 
   DialogContent, 
   DialogActions, 
   Button,
-  CircularProgress, 
 } from "@material-ui/core";
-import ErrorMessage from "ui/page/ErrorMessage";
+
 import { CollectionOf } from "app/interfaces";
-import { FormTypes } from "ui/common/constants";
+
+import ErrorMessage from "ui/common/ErrorMessage";
+import LoadingOverlay from "ui/common/LoadingOverlay";
 
 interface OwnProps {
   formRef: (ref: any) => any;
@@ -27,37 +30,40 @@ interface State {
   errors: CollectionOf<string>;
   isDirty: boolean;
   touched: CollectionOf<boolean>;
-  enhancedChildren: React.ReactNode;
-  requiredFields: string[];
 }
 
 type ChildNode = React.ReactElement<any>;
 
-const formStyle = {
-  width: "600px"
-}
-
 class FormModal extends React.Component<FormModalProps, State> {
+
+  /**
+   * Set values to collection of strings by input name
+   */
+  private getDefaultState = (props): State => {
+    const formInputs = React.Children.toArray(props.children).filter((child: ChildNode) => {
+      return this.isFormInput(child);
+    });
+    const defaultValues = formInputs.reduce((values: CollectionOf<string>, input: ChildNode) => {
+      values[input.props.name] = input.props.defaultValue || "";
+      return values;
+    }, {});
+
+    return (
+      {
+        values: defaultValues,
+        errors: {},
+        touched: {},
+        isDirty: false
+      }
+    )
+  }
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      enhancedChildren: props.children,
-      requiredFields: this.readRequiredFieldsFromChildren(),
-      values: this.readNamesFromChildren(),
-      errors: {},
-      touched: {},
-      isDirty: false
-    };
+    this.state = this.getDefaultState(props);
   }
 
-  public componentDidUpdate(_prevProps: FormModalProps, prevState: State) {
-    const { errors } = this.state;
-    if (prevState.errors !== errors) this.assignErrorsToChildren(errors);
-  }
-
-  public getValues = () => {
+  public getValues = (): CollectionOf<string> => {
     return this.state.values;
   };
 
@@ -65,67 +71,17 @@ class FormModal extends React.Component<FormModalProps, State> {
     this.setState(state => ({ ...state, ...newState}))
   };
 
-  /**
-   * Get array of field names that are required in form
-   */
-  private readRequiredFieldsFromChildren = () => {
-    const fields = React.Children.toArray(this.props.children);
-    return fields.reduce((requiredFields, field: ChildNode) => {
-      if (this.isFormInput(field) && field.props.required) {
-        requiredFields.push(field.props.name);
-      }
-      return requiredFields;
-    }, []);
-  }
-
-  /**
-   * Re-render child components with updated error states
-   */
-  private assignErrorsToChildren = (errors: CollectionOf<string>) => {
-    const errorNames = Object.keys(errors);
-    const updatedChildren = React.Children.map(this.props.children, (child: ChildNode) => {
-      // Only modify inputs
-      if (this.isFormInput(child)) {
-        const { name: fieldName } = child.props;
-        if (errorNames.includes(fieldName)) {
-          // Toggle error state if form has error for this field
-          return React.cloneElement(child, { error: true, ...child.props })
-        } 
-        return React.cloneElement(child, { error: false, ...child.props })
-      } else {
-        return child;
-      }
-    });
-    this.setState({ enhancedChildren: updatedChildren });
-  }
-
-  /**
-   * Convert child nodes into collection by node name.
-   * Only considers inputs that are included in FormTypes
-   * 
-   * @param children: Component props.children
-   * @return inputs object
-   */
-  private readNamesFromChildren = () => {
-    const inputs = {};
-    const childArray = React.Children.toArray(this.props.children);
-    childArray.reduce((inputs, child: React.ReactElement<any>) => {
-      if (this.isFormInput(child)) {
-        inputs[child.props.name] = child.props.defaultValue || ""
-      }
-      return inputs;
-    }, inputs);
-    return inputs;
-  }
-
-  private isFormInput = (child: ChildNode): boolean => {
-    return child && FormTypes.has(child.type as React.ComponentType);
-  }
-
   private handleSubmit = (event) => {
     event.preventDefault();
-    this.setState({ isDirty: true });
-    this.props.onSubmit(this);
+    this.setState(state => {
+      return { 
+        isDirty: true, 
+        touched: mapValues(state.values, () => true) 
+      };
+    }, () => {
+      this.props.onSubmit(this);
+    }
+  );
   }
 
   private handleChange = (event) => {
@@ -144,9 +100,16 @@ class FormModal extends React.Component<FormModalProps, State> {
         touched: {
           ...state.touched,
           [fieldName]: true
+        },
+        errors: {
+          ...omit(state.errors, [fieldName])
         }
       };
     });
+  }
+
+  private isFormInput = (element: ChildNode): boolean => {
+    return element && element.hasOwnProperty("props") && element.props.hasOwnProperty("name");
   }
 
   /**
@@ -154,17 +117,27 @@ class FormModal extends React.Component<FormModalProps, State> {
    * Always added to hold space for error
    * Only displayed once child is considered touched
    */
-  private renderChildren = (children: React.ReactNode): JSX.Element[] => {
-    const { errors, touched } = this.state;
+  private renderChildren = (): JSX.Element[] => {
+    const { children, id: formId, } = this.props;
+    const { values, errors, touched, isDirty } = this.state;
     return React.Children.map(children, (child: ChildNode) => {
       if (this.isFormInput(child)) {
         const fieldName = child.props.name;
+        const id = child.props.id || `${formId}-${fieldName}`;
         const isTouched = touched[fieldName];
         const error = errors[fieldName];
+        const value = values[fieldName];
+
+        const controlledInput = React.cloneElement(child, {
+          ...child.props,
+          error: !!error,
+          id,
+          value
+        });
         return (
           <>
-            {child}
-            <ErrorMessage touched={isTouched} error={error}/>
+            {controlledInput}
+            <ErrorMessage error={isDirty && isTouched && error}/>
           </>
         );
       }
@@ -172,37 +145,47 @@ class FormModal extends React.Component<FormModalProps, State> {
     });
   }
 
+  private closeForm = () => {
+    this.setState(this.getDefaultState(this.props));
+    this.props.closeHandler()
+  }
+
+  private renderFormContent = (): JSX.Element => {
+    const { submitText, title, id } = this.props;
+    return (
+      <>
+        <DialogTitle id={`${id}-title`}>{title}</DialogTitle>
+        <DialogContent>
+          {this.renderChildren()}
+        </DialogContent>
+
+        <DialogActions>
+          <Button variant="contained" color="primary" type="submit">{submitText}</Button>
+          <Button variant="outlined" onClick={this.closeForm}>Cancel</Button>
+        </DialogActions>
+      </>
+    )
+  }
+
+  // Wrap form in loading icon w/ background blocker if loading
   public render(): JSX.Element {
-    const { isOpen, closeHandler, submitText, title, id, formRef, loading } = this.props;
-    const { enhancedChildren } = this.state;
+    const { isOpen, id, loading, formRef } = this.props;
 
     return (
       <Dialog
         aria-labelledby={`${id}-title`}
         open={isOpen}
-        onClose={closeHandler}
+        onClose={this.closeForm}
       >
         <form 
           onSubmit={this.handleSubmit} 
           ref={formRef} 
           onChange={this.handleChange} 
           noValidate 
-          style={formStyle}
+          className="form-modal"
         >
-          <DialogTitle id={`${id}-title`}>{title}</DialogTitle>
-          <DialogContent>
-            {
-              loading ?
-              <CircularProgress/>
-              : this.renderChildren(enhancedChildren)
-            }
-            
-          </DialogContent>
-
-          <DialogActions>
-            <Button variant="contained" color="primary" type="submit">{submitText}</Button>
-            <Button variant="outlined" onClick={closeHandler}>Cancel</Button>
-          </DialogActions>
+          {loading &&  <LoadingOverlay formId={id}/>}
+          {this.renderFormContent()}
         </form>
       </Dialog>
     );

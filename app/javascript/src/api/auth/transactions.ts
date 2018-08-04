@@ -3,12 +3,15 @@ import axios from "axios";
 import { Url } from "app/constants";
 import { buildJsonUrl } from "app/utils";
 
-export const postLogin = async (creds?) => {
-  const member = await axios.post(buildJsonUrl(Url.signInPath), {
+export const postLogin = (creds?) => {
+  return axios.post(buildJsonUrl(Url.signInPath), {
     member: creds || {}
-  })
-  return member;
+  });
 }
+
+export const deleteLogin = () => {
+  return axios.delete(buildJsonUrl(Url.signOutPath));
+};
 
 // AuthProvider.resourceName('member');
 //   AuthProvider.registerPath('api/members.json');
