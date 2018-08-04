@@ -1,7 +1,7 @@
 import * as React from "react";
 
 interface ErrorProps {
-  touched: boolean;
+  touched?: boolean;
   error: string;
 }
 
@@ -15,7 +15,10 @@ const errorSpanStyle = {
 
 const ErrorMessage: React.SFC<ErrorProps> = (props) => {
   return (
+    props.hasOwnProperty("touched") ?
     <div style={errorSpanStyle}>{props.touched && props.error}</div>
+    :
+    <div style={errorSpanStyle}>{props.error}</div>
   )
 }
 

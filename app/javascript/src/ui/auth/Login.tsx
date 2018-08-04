@@ -10,11 +10,13 @@ import { emailValid } from "app/utils";
 
 import { postLogin } from "api/auth/transactions";
 
+import { StateProps as ReduxState } from "ui/reducer";
+import FormModal from "ui/common/FormModal";
 import { loginUserAction } from "ui/auth/actions";
 import { fields } from "ui/auth/constants";
-import FormModal from "ui/page/FormModal";
 import { AuthForm } from "ui/auth/interfaces";
 import { MemberDetails } from "ui/member/interfaces";
+import ErrorMessage from "ui/page/ErrorMessage";
 
 interface OwnProps {
   isOpen: boolean;
@@ -23,7 +25,10 @@ interface OwnProps {
 interface DispatchProps {
   loginUser: (authForm: AuthForm) => Promise<MemberDetails>;
 }
-interface StateProps {}
+interface StateProps {
+  isRequesting: boolean;
+  error: string;
+}
 interface State {}
 interface Props extends OwnProps, DispatchProps, StateProps {}
 
@@ -33,6 +38,16 @@ class Login extends React.Component<Props, State> {
 
   public componentDidMount() {
     postLogin();
+  }
+
+  public componentDidUpdate(prevProps: Props) {
+    const { isRequesting: wasRequesting } = prevProps;
+    const { isRequesting, error, onClose } = this.props;
+
+    // When login complete
+    if (wasRequesting && !isRequesting && !error) {
+      onClose();
+    }
   }
 
   private validateForm = (form) => {
@@ -85,12 +100,13 @@ class Login extends React.Component<Props, State> {
   }
 
   public render(): JSX.Element {
-    const { isOpen, onClose } = this.props;
+    const { isOpen, onClose, isRequesting, error } = this.props;
 
     return (
       <FormModal
         formRef={this.setFormRef}
         id="sign-in"
+        loading={isRequesting}
         isOpen={isOpen}
         closeHandler={onClose}
         title="Please Sign In"
@@ -115,8 +131,21 @@ class Login extends React.Component<Props, State> {
           placeholder={fields.password.placeholder}
           type="password"
         />
+        { error && <ErrorMessage error={error}/>}
       </FormModal>
     );
+  }
+}
+
+const mapStateToProps = (
+  state: ReduxState,
+  _ownProps: OwnProps
+): StateProps => {
+  const { isRequesting, error } = state.auth;
+
+  return {
+    isRequesting,
+    error
   }
 }
 
@@ -127,4 +156,4 @@ const mapDispatchToProps = (
     loginUser: (authForm) => dispatch(loginUserAction(authForm))
   }
 }
-export default connect(null, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

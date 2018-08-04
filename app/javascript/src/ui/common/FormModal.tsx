@@ -4,13 +4,12 @@ import {
   DialogTitle, 
   DialogContent, 
   DialogActions, 
-  Button, 
-  TextField, 
-  Radio, 
-  Checkbox 
+  Button,
+  CircularProgress, 
 } from "@material-ui/core";
 import ErrorMessage from "ui/page/ErrorMessage";
 import { CollectionOf } from "app/interfaces";
+import { FormTypes } from "ui/common/constants";
 
 interface OwnProps {
   formRef: (ref: any) => any;
@@ -20,6 +19,7 @@ interface OwnProps {
   closeHandler: () => void;
   submitText: string;
   onSubmit: (form) => void;
+  loading: boolean;
 }
 interface FormModalProps extends OwnProps {}
 interface State {
@@ -36,15 +36,6 @@ type ChildNode = React.ReactElement<any>;
 const formStyle = {
   width: "600px"
 }
-
-const FormTypes = new Set([
-  TextField,
-  HTMLInputElement,
-  HTMLSelectElement,
-  HTMLTextAreaElement,
-  Radio,
-  Checkbox,
-]);
 
 class FormModal extends React.Component<FormModalProps, State> {
 
@@ -80,7 +71,7 @@ class FormModal extends React.Component<FormModalProps, State> {
   private readRequiredFieldsFromChildren = () => {
     const fields = React.Children.toArray(this.props.children);
     return fields.reduce((requiredFields, field: ChildNode) => {
-      if (field.props.required) {
+      if (this.isFormInput(field) && field.props.required) {
         requiredFields.push(field.props.name);
       }
       return requiredFields;
@@ -93,11 +84,17 @@ class FormModal extends React.Component<FormModalProps, State> {
   private assignErrorsToChildren = (errors: CollectionOf<string>) => {
     const errorNames = Object.keys(errors);
     const updatedChildren = React.Children.map(this.props.children, (child: ChildNode) => {
-      const { name: fieldName } = child.props;
-      if (errorNames.includes(fieldName)) {
-        return React.cloneElement(child, { error: true, ...child.props })
-      } 
-      return React.cloneElement(child, { error: false, ...child.props })
+      // Only modify inputs
+      if (this.isFormInput(child)) {
+        const { name: fieldName } = child.props;
+        if (errorNames.includes(fieldName)) {
+          // Toggle error state if form has error for this field
+          return React.cloneElement(child, { error: true, ...child.props })
+        } 
+        return React.cloneElement(child, { error: false, ...child.props })
+      } else {
+        return child;
+      }
     });
     this.setState({ enhancedChildren: updatedChildren });
   }
@@ -113,12 +110,16 @@ class FormModal extends React.Component<FormModalProps, State> {
     const inputs = {};
     const childArray = React.Children.toArray(this.props.children);
     childArray.reduce((inputs, child: React.ReactElement<any>) => {
-      if (FormTypes.has(child.type as React.ComponentType)) {
+      if (this.isFormInput(child)) {
         inputs[child.props.name] = child.props.defaultValue || ""
       }
       return inputs;
     }, inputs);
     return inputs;
+  }
+
+  private isFormInput = (child: ChildNode): boolean => {
+    return child && FormTypes.has(child.type as React.ComponentType);
   }
 
   private handleSubmit = (event) => {
@@ -153,23 +154,26 @@ class FormModal extends React.Component<FormModalProps, State> {
    * Always added to hold space for error
    * Only displayed once child is considered touched
    */
-  private displayError = (children: React.ReactNode): JSX.Element[] => {
+  private renderChildren = (children: React.ReactNode): JSX.Element[] => {
     const { errors, touched } = this.state;
     return React.Children.map(children, (child: ChildNode) => {
-      const fieldName = child.props.name;
-      const isTouched = touched[fieldName];
-      const error = errors[fieldName];
-      return (
-        <>
-          {child}
-          <ErrorMessage touched={isTouched} error={error}/>
-        </>
-      );
-    })
+      if (this.isFormInput(child)) {
+        const fieldName = child.props.name;
+        const isTouched = touched[fieldName];
+        const error = errors[fieldName];
+        return (
+          <>
+            {child}
+            <ErrorMessage touched={isTouched} error={error}/>
+          </>
+        );
+      }
+      return child;
+    });
   }
 
   public render(): JSX.Element {
-    const { isOpen, closeHandler, submitText, title, id, formRef } = this.props;
+    const { isOpen, closeHandler, submitText, title, id, formRef, loading } = this.props;
     const { enhancedChildren } = this.state;
 
     return (
@@ -187,7 +191,12 @@ class FormModal extends React.Component<FormModalProps, State> {
         >
           <DialogTitle id={`${id}-title`}>{title}</DialogTitle>
           <DialogContent>
-            {...enhancedChildren && this.displayError(enhancedChildren)}
+            {
+              loading ?
+              <CircularProgress/>
+              : this.renderChildren(enhancedChildren)
+            }
+            
           </DialogContent>
 
           <DialogActions>
