@@ -1,4 +1,6 @@
 import * as React from "react";
+import { connect } from "react-redux";
+
 import { TextField } from "@material-ui/core";
 import isEmpty from "lodash-es/isEmpty";
 import mapValues from "lodash-es/mapValues";
@@ -8,18 +10,22 @@ import { emailValid } from "app/utils";
 
 import { postLogin } from "api/auth/transactions";
 
-import { loginUserAction as loginUser } from "ui/auth/actions";
+import { loginUserAction } from "ui/auth/actions";
 import { fields } from "ui/auth/constants";
 import FormModal from "ui/page/FormModal";
 import { AuthForm } from "ui/auth/interfaces";
+import { MemberDetails } from "ui/member/interfaces";
 
 interface OwnProps {
   isOpen: boolean;
   onClose: () => void;
 }
-
+interface DispatchProps {
+  loginUser: (authForm: AuthForm) => Promise<MemberDetails>;
+}
+interface StateProps {}
 interface State {}
-interface Props extends OwnProps {}
+interface Props extends OwnProps, DispatchProps, StateProps {}
 
 class Login extends React.Component<Props, State> {
   private formRef;
@@ -32,7 +38,7 @@ class Login extends React.Component<Props, State> {
   private validateForm = (form) => {
     const values = form.getValues();
     const errors: CollectionOf<string> = {};
-    const validatedForm: Partial<AuthForm> = {};
+    const validatedForm: AuthForm = {};
 
     const email = values[fields.email.name];
     if (email && emailValid(email)) {
@@ -52,12 +58,12 @@ class Login extends React.Component<Props, State> {
       throw errors;
     }
 
-    return validatedForm as AuthForm;
+    return validatedForm;
   }
 
   private submit = async (form) => {
     let errors = {};
-    let validAuth = {};
+    let validAuth: AuthForm = {};
     try {
       validAuth = this.validateForm(form);
     } catch (e) {
@@ -75,7 +81,7 @@ class Login extends React.Component<Props, State> {
 
     if (!isEmpty(errors)) return;
 
-    await loginUser(validAuth);
+    await this.props.loginUser(validAuth);
   }
 
   public render(): JSX.Element {
@@ -113,4 +119,12 @@ class Login extends React.Component<Props, State> {
     );
   }
 }
-export default Login;
+
+const mapDispatchToProps = (
+  dispatch
+): DispatchProps => {
+  return {
+    loginUser: (authForm) => dispatch(loginUserAction(authForm))
+  }
+}
+export default connect(null, mapDispatchToProps)(Login);

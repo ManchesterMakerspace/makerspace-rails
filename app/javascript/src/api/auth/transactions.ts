@@ -3,10 +3,11 @@ import axios from "axios";
 import { Url } from "app/constants";
 import { buildJsonUrl } from "app/utils";
 
-export const postLogin = (creds?) => {
-  axios.post(buildJsonUrl(Url.signInPath), {
+export const postLogin = async (creds?) => {
+  const member = await axios.post(buildJsonUrl(Url.signInPath), {
     member: creds || {}
   })
+  return member;
 }
 
 // AuthProvider.resourceName('member');

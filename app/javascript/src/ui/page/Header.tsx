@@ -144,12 +144,12 @@ class Header extends React.Component<Props, State> {
 const mapStateToProps = (state: ReduxState, ownProps: Props): StateProps => {
   const {
     auth: {
-      email
+      member: currentUser
     }
   } = state;
 
   return {
-    auth: !!email
+    auth: currentUser && !!currentUser.email
   }
 }
 

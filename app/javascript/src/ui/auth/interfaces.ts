@@ -1,8 +1,12 @@
+import { MemberDetails } from "ui/member/interfaces";
+
 export interface AuthState {
-  email: string;
+  member: MemberDetails;
+  isRequesting: boolean;
+  error: string;
 }
 
 export interface AuthForm {
-  email: string;
-  password: string;
+  email?: string;
+  password?: string;
 }

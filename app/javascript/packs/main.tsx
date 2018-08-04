@@ -6,6 +6,7 @@ import reduxThunk from "redux-thunk";
 import { Provider } from "react-redux";
 import { connectRouter, routerMiddleware, ConnectedRouter } from 'connected-react-router';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
+import { composeWithDevTools } from 'redux-devtools-extension';
 
 import { rootReducer } from 'ui/reducer';
 import Routes from 'app/Routes';
@@ -14,7 +15,7 @@ const init = () => {
   const history = createBrowserHistory();
   const store = createStore(
     connectRouter(history)(rootReducer), // new root reducer with router state
-    compose(
+    composeWithDevTools(
       applyMiddleware(
         routerMiddleware(history), // for dispatching history actions
         reduxThunk
