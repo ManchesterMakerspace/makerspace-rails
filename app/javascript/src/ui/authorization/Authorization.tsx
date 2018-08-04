@@ -1,5 +1,6 @@
 import * as React from "react";
 import { TextField } from "@material-ui/core";
+import isEmpty from "lodash-es/isEmpty";
 import FormModal from "ui/page/FormModal";
 
 interface OwnProps {
@@ -15,7 +16,16 @@ class Authorization extends React.Component<Props, State> {
   private setFormRef = ref => this.formRef = ref;
 
   private submit = (form) => {
-    console.log(form)
+    const values = form.getValues();
+    const errors = {};
+    if (!values["authEmail"]) {
+      errors["authEmail"] = "Email is required";
+    }
+    form.setFormState({
+      errors,
+      // touched: mapValues(values, true);
+    });
+    if (!isEmpty(errors)) return;
   }
 
   public render(): JSX.Element {
@@ -33,6 +43,7 @@ class Authorization extends React.Component<Props, State> {
       >
         <TextField
           fullWidth
+          required
           id="auth-email"
           label="Email"
           name="authEmail"
@@ -41,6 +52,7 @@ class Authorization extends React.Component<Props, State> {
         />
         <TextField
           fullWidth
+          required
           id="auth-password"
           label="Password"
           name="authPassword"
