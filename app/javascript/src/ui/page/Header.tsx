@@ -15,8 +15,8 @@ import {
   Menu as MenuIcon,
 } from "@material-ui/icons";
 
-import Authorization from "../authorization/Authorization";
-import { StateProps as ReduxState } from "../reducer";
+import Login from "ui/auth/Login";
+import { StateProps as ReduxState } from "ui/reducer";
 
 const styles = {
   root: {
@@ -132,7 +132,7 @@ class Header extends React.Component<Props, State> {
             }
           </Toolbar>
         </AppBar>
-        <Authorization 
+        <Login 
           isOpen={authOpen}
           onClose={this.closeSignIn}
         />

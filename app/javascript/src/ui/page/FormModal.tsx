@@ -10,6 +10,7 @@ import {
   Checkbox 
 } from "@material-ui/core";
 import ErrorMessage from "ui/page/ErrorMessage";
+import { CollectionOf } from "app/interfaces";
 
 interface OwnProps {
   formRef: (ref: any) => any;
@@ -22,16 +23,10 @@ interface OwnProps {
 }
 interface FormModalProps extends OwnProps {}
 interface State {
-  values: {
-    [key: string]: string;
-  };
-  errors: {
-    [key: string]: string;
-  };
+  values: CollectionOf<string>;
+  errors: CollectionOf<string>;
   isDirty: boolean;
-  touched: {
-    [key: string]: boolean;
-  };
+  touched: CollectionOf<boolean>;
   enhancedChildren: React.ReactNode;
   requiredFields: string[];
 }
@@ -95,7 +90,7 @@ class FormModal extends React.Component<FormModalProps, State> {
   /**
    * Re-render child components with updated error states
    */
-  private assignErrorsToChildren = (errors: { [key: string]: string; }) => {
+  private assignErrorsToChildren = (errors: CollectionOf<string>) => {
     const errorNames = Object.keys(errors);
     const updatedChildren = React.Children.map(this.props.children, (child: ChildNode) => {
       const { name: fieldName } = child.props;

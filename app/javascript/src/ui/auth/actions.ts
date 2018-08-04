@@ -1,5 +1,10 @@
 import { AnyAction } from "redux";
-import { AuthState } from "./interfaces";
+import { AuthState } from "ui/auth/interfaces";
+import { postLogin } from "api/auth/transactions";
+
+export const loginUserAction = async (loginForm = {}) => {
+  await postLogin(loginForm);
+}
 
 const defaultState: AuthState = {
   email: ""
