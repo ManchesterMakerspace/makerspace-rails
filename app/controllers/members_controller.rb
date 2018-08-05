@@ -5,7 +5,7 @@ class MembersController < ApplicationController
       if (params[:search]) then
         @members = Member.rough_search_members(params[:search])
       else
-        @members = Member.asc(&:lastname)
+        @members = Member.limit(20).sort_by(&:lastname)
       end
       if current_member.try(:role) != 'admin'
         @members = @members.select do |m|
