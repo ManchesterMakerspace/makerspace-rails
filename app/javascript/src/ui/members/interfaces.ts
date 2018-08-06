@@ -3,5 +3,7 @@ import { MemberDetails } from "ui/member/interfaces";
 
 export interface MembersState {
   entities: CollectionOf<MemberDetails>;
-  read: RequestStatus;
+  read: RequestStatus & {
+    totalItems: number;
+  };
 }

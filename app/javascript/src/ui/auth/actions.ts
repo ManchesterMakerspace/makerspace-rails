@@ -59,6 +59,7 @@ export const logoutUserAction = (
 
 const defaultState: AuthState = {
   currentUser: {
+    id: undefined,
     firstname: undefined,
     lastname: undefined,
     email: undefined,

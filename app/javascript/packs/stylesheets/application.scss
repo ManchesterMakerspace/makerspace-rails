@@ -30,13 +30,15 @@
   line-height: 1em;
   margin-top: 0.2em;
  }
+ .table-wrapper {
+   position: relative;
+ }
  .loading-overlay {
   position: absolute;
   height: 100%;
   width: 100%;
   z-index: 1000;
   background-color: rgba(200, 200, 200, 0.5);
-  overflow: hidden;
   .spinner-container {
     position: relative;
     transform: translateY(calc(50% - 20px));

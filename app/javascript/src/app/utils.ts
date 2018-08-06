@@ -1,5 +1,3 @@
-import { Url } from "url";
-
 export const buildJsonUrl = (path: string) => {
   return `${path}.json`;
 };

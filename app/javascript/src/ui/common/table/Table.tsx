@@ -1,8 +1,6 @@
 import * as React from "react";
 import {
   Table,
-  TablePagination,
-  Paper,
   TableCell,
   Tooltip,
   TableSortLabel,
@@ -12,6 +10,7 @@ import {
   TableBody,
 } from '@material-ui/core';
 import { SortDirection } from 'ui/common/table/constants';
+import LoadingOverlay from "ui/common/LoadingOverlay";
 
 interface OwnProps {
   id: string;
@@ -22,16 +21,16 @@ interface OwnProps {
   order: SortDirection;
   orderBy: string;
   onSelectAll: () => void;
-  onSelectionChange: (id: string, direction: boolean) => void;
+  onSelect: (id: string, direction: boolean) => void;
   rowId: (row) => string;
-  onSort: (event, property: string) => void;
+  onSort: (property: string) => void;
 }
 interface Props extends OwnProps {}
 
 class EnhancedTable extends React.Component<Props, {}> {
 
   private getHeaderRow = () => {
-    const { onSelectionChange, onSelectAll, selectedIds, data } = this.props;
+    const { onSelect, onSelectAll, selectedIds, data } = this.props;
     const numSelected = selectedIds && selectedIds.length;
     const rowCount = data.length;
 
@@ -39,7 +38,7 @@ class EnhancedTable extends React.Component<Props, {}> {
       <TableCell padding="checkbox">
         <Checkbox
           indeterminate={numSelected > 0 && numSelected < rowCount}
-          checked={numSelected === rowCount}
+          checked={numSelected > 0 && numSelected === rowCount}
           onChange={onSelectAll}
         />
       </TableCell>
@@ -48,7 +47,7 @@ class EnhancedTable extends React.Component<Props, {}> {
     return (
       <TableHead>
         <TableRow>
-          {onSelectionChange &&
+          {onSelect &&
             checkbox
           }
           {this.getHeaderCells()}
@@ -58,7 +57,7 @@ class EnhancedTable extends React.Component<Props, {}> {
   }
 
   private createSortHandler = property => event => {
-    this.props.onSort(event, property);
+    this.props.onSort(property);
   };
 
   private getHeaderCells = () => {
@@ -70,26 +69,31 @@ class EnhancedTable extends React.Component<Props, {}> {
     } = this.props;
 
     return columns.map((column) => {
+      const { label, id, numeric, sortable, disablePadding } = column;
       return (
         <TableCell
-          id={tableId && `${tableId}-${column.id}`}
-          key={`header-${column.id}`}
-          numeric={column.numeric}
-          padding={column.disablePadding ? 'none' : 'default'}
+          id={tableId && `${tableId}-${id}`}
+          key={`header-${id}`}
+          numeric={numeric}
+          padding={disablePadding ? 'none' : 'default'}
         >
-        <Tooltip
-          title="Sort"
-          placement={column.numeric ? 'bottom-end' : 'bottom-start'}
-          enterDelay={300}
-        >
-          <TableSortLabel
-            active={orderBy === column.id}
-            direction={order}
-            onClick={this.createSortHandler(column.id)}
-          >
-            {column.label}
-          </TableSortLabel>
-        </Tooltip>
+        {
+          sortable ?
+            <Tooltip
+              title="Sort"
+              placement={numeric ? 'bottom-end' : 'bottom-start'}
+              enterDelay={300}
+            >
+              <TableSortLabel
+                active={orderBy === id}
+                direction={order}
+                onClick={this.createSortHandler(id)}
+              >
+                {label}
+              </TableSortLabel>
+            </Tooltip>
+          : label
+        }
       </TableCell>
       )
     })
@@ -101,7 +105,7 @@ class EnhancedTable extends React.Component<Props, {}> {
       data,
       rowId,
       selectedIds,
-      onSelectionChange
+      onSelect
     } = this.props;
 
     return Array.isArray(data) ? data.map((row) => {
@@ -110,10 +114,10 @@ class EnhancedTable extends React.Component<Props, {}> {
       let checked = false;
       let checkbox = null;
 
-      if (onSelectionChange) {
+      if (onSelect) {
         checked = selectedIds && selectedIds.includes(id);
         const checkHandler = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-          onSelectionChange(id, checked);
+          onSelect(id, checked);
         }
         checkbox = (
           <TableCell padding="checkbox">
@@ -160,41 +164,17 @@ class EnhancedTable extends React.Component<Props, {}> {
   public render() {
     const {
       id,
-      rowId,
-      data,
-      columns,
-      onSelectionChange,
-      selectedIds,
-      order,
-      orderBy,
-      onSort,
-      page,
     } = this.props;
 
     return (
-      <Paper>
-        <div>
-          <Table>
-            {this.getHeaderRow()}
-            <TableBody>
-              {this.getBodyRows()}
-            </TableBody>
-          </Table>
-        </div>
-        {/* <TablePagination
-          component="div"
-          count={data.length}
-          rowsPerPage={20}
-          page={page}
-          backIconButtonProps={{
-            'aria-label': 'Previous Page',
-          }}
-          nextIconButtonProps={{
-            'aria-label': 'Next Page',
-          }}
-          onChangePage={this.handleChangePage}
-        /> */}
-      </Paper>
+      <>
+        <Table>
+          {this.getHeaderRow()}
+          <TableBody>
+            {this.getBodyRows()}
+          </TableBody>
+        </Table>
+      </>
     );
   }
 }

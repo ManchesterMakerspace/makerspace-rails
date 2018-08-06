@@ -1,17 +1,19 @@
 class MembersController < ApplicationController
     before_action :set_member, only: [:show]
+    include FastQuery
 
     def index
-      if (params[:search]) then
-        @members = Member.rough_search_members(params[:search])
-      else
-        @members = Member.limit(20).sort_by(&:lastname)
-      end
-      if current_member.try(:role) != 'admin'
-        @members = @members.select do |m|
-          Time.at(m.expirationTime/1000) - Time.now > 0 unless m.expirationTime.nil?
-        end
-      end
+      items_per_page = 20
+      page_num = params[:pageNum].to_i || 0
+      start_index = items_per_page * page_num
+      sort_by = params[:orderBy].empty? ? :lastname : params[:orderBy].to_sym
+      order = params[:order].empty? ? :desc : params[:order].to_sym
+
+      @members = params[:search].empty? ? Member : Member.rough_search_members(params[:search])
+      @members = @members.select{ |m| m.membership_status != 'expired' } if current_member.try(:role) != 'admin'
+      @members = query_resource(@members, params)
+
+      response.set_header("total-items", Member.count)
       render json: @members and return
     end
 

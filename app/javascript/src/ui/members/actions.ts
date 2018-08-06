@@ -1,21 +1,28 @@
 import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
+import toNumber from "lodash-es/toNumber";
+
 import { getMembers } from "api/members/transactions";
 import { Action as MembersAction } from "ui/members/constants";
 import { handleApiError } from "app/utils";
 import { MembersState } from "ui/members/interfaces";
+import { QueryParams } from "app/interfaces";
 
 export const readMembersAction = (
+  queryParams?: QueryParams
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
   dispatch({ type: MembersAction.StartReadRequest });
 
-  let member;
   try {
-    const response = await getMembers();
-    member = response.data;
+    const response = await getMembers(queryParams);
+    const members = response.data;
+    const totalItems = response.headers[("total-items")];
     dispatch({
       type: MembersAction.GetMembersSuccess,
-      data: member
+      data: {
+        members,
+        totalItems: toNumber(totalItems)
+      }
     });
   } catch (e) {
     const error = handleApiError(e);
@@ -30,7 +37,8 @@ const defaultState: MembersState = {
   entities: {},
   read: {
     isRequesting: false,
-    error: ""
+    error: "",
+    totalItems: 0,
   }
 }
 
@@ -45,7 +53,13 @@ export const membersReducer = (state: MembersState = defaultState, action: AnyAc
         }
       };
     case MembersAction.GetMembersSuccess:
-      const { data: members } = action;
+      const { 
+        data: {
+          members,
+          totalItems,
+        }
+      } = action;
+      
       const newMembers = {};
       members.forEach((member) => {
         newMembers[member.id] = member;
@@ -53,12 +67,10 @@ export const membersReducer = (state: MembersState = defaultState, action: AnyAc
 
       return {
         ...state,
-        entities: {
-          ...state.entities,
-          ...newMembers
-        },
+        entities: newMembers,
         read: {
           ...state.read,
+          totalItems,
           isRequesting: false,
           error: ""
         }
