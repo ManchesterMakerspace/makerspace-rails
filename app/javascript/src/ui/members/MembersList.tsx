@@ -2,14 +2,11 @@ import * as React from "react";
 import { connect } from "react-redux";
 
 import { StateProps as ReduxState } from "ui/reducer";
-import Table from "ui/common/table/Table";
 import { SortDirection } from "ui/common/table/constants";
 import { MemberDetails } from "ui/member/interfaces";
 import { readMembersAction } from "ui/members/actions";
-import { TablePagination, Toolbar, Typography, TextField } from "@material-ui/core";
-import { itemsPerPage } from "app/constants";
 import { QueryParams } from "app/interfaces";
-import LoadingOverlay from "ui/common/LoadingOverlay";
+import TableContainer from "ui/common/table/TableContainer";
 
 interface OwnProps {}
 interface DispatchProps {
@@ -111,20 +108,16 @@ class MembersList extends React.Component<Props, State> {
     );
   }
   
-  private onPageChange = (_event, newPage) => {
+  private onPageChange = (newPage) => {
     this.setState({ pageNum: newPage },
       this.getMembers
     );
   }
 
-  private onSearchChange = (event) => {
-    console.log(event.target.value)
-  }
-
-  private handleEnter = (event) => {
-    if (event.key === "Enter") {
-      console.log(event.target.value);
-    }
+  private onSearchEnter = (searchTerm) => {
+    this.setState({ search: searchTerm },
+      this.getMembers
+    );
   }
 
   
@@ -132,57 +125,26 @@ class MembersList extends React.Component<Props, State> {
     const { members: data, totalItems, loading } = this.props;
     
     const { selectedIds, pageNum, order, orderBy } = this.state;
-    const numSelected = selectedIds.length;
     
     return (
-      <>
-        <Toolbar>
-          <Typography variant="title" color="inherit" className="flex">
-            Members
-          </Typography>
-          {numSelected > 0 &&
-            <Typography color="inherit" variant="subheading">
-              {numSelected} selected
-            </Typography>
-          }
-          <TextField
-            disabled={loading}
-            placeholder="Search..."
-            onKeyPress={this.handleEnter}
-            onChange={this.onSearchChange}
-          />
-        </Toolbar>
-        <div className="table-wrapper">
-          {loading &&  <LoadingOverlay formId="members-tabe"/>}
-          <Table
-            id="members-table"
-            page={pageNum}
-            columns={fields}
-            data={data}
-            selectedIds={selectedIds}
-            order={order}
-            orderBy={orderBy}
-            rowId={this.rowId}
-            onSelect={this.onSelectCell}
-            onSort={this.onSort}
-            onSelectAll={this.onSelectAll}
-          >
-          </Table>
-          <TablePagination
-            component="div"
-            count={totalItems || 0}
-            rowsPerPage={itemsPerPage}
-            page={pageNum}
-            backIconButtonProps={{
-              'aria-label': 'Previous Page',
-            }}
-            nextIconButtonProps={{
-              'aria-label': 'Next Page',
-            }}
-            onChangePage={this.onPageChange}
-          />
-        </div>
-      </>
+      <TableContainer
+        id="members-table"
+        title="Members"
+        loading={loading}
+        data={data}
+        totalItems={totalItems}
+        selectedIds={selectedIds}
+        pageNum={pageNum}
+        onSearchEnter={this.onSearchEnter}
+        columns={fields}
+        order={order}
+        orderBy={orderBy}
+        onSort={this.onSort}
+        rowId={this.rowId}
+        onSelect={this.onSelectCell}
+        onSelectAll={this.onSelectAll}
+        onPageChange={this.onPageChange}
+      />
     );
   }
 }

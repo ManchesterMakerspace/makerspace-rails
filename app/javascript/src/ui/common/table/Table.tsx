@@ -37,6 +37,7 @@ class EnhancedTable extends React.Component<Props, {}> {
     const checkbox = (
       <TableCell padding="checkbox">
         <Checkbox
+          color="primary"
           indeterminate={numSelected > 0 && numSelected < rowCount}
           checked={numSelected > 0 && numSelected === rowCount}
           onChange={onSelectAll}
@@ -123,6 +124,7 @@ class EnhancedTable extends React.Component<Props, {}> {
           <TableCell padding="checkbox">
             <Checkbox
               id={id}
+              color="primary"
               checked={checked}
               onChange={checkHandler}
             />
