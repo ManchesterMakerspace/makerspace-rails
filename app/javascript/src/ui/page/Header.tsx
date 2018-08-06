@@ -1,5 +1,4 @@
 import * as React from "react";
-import { connect } from "react-redux";
 
 import {
   AppBar,
@@ -15,27 +14,18 @@ import {
 } from "@material-ui/icons";
 
 import Login from "ui/auth/Login";
-import { StateProps as ReduxState } from "ui/reducer";
-import { logoutUserAction, activeSessionLogin } from "ui/auth/actions";
 
-interface StateProps {
+interface Props {
+  logout: () => void;
   auth: boolean;
 }
-
-interface OwnProps {}
-interface DispatchProps {
-  logout: () => void;
-  attemptLogin: () => void;
-}
-
-interface Props extends StateProps, OwnProps, DispatchProps {}
 
 interface State {
   authOpen: boolean;
   anchorEl: HTMLElement;
 }
 
-class Header extends React.Component<Props, State> {
+export default class Header extends React.Component<Props, State> {
 
   constructor(props: Props){
     super(props)
@@ -45,10 +35,6 @@ class Header extends React.Component<Props, State> {
     };
   }
 
-  public componentDidMount() {
-    this.props.attemptLogin();
-  }
-
   private openSignIn = () => {
     this.setState({ authOpen: true });
   }
@@ -56,7 +42,7 @@ class Header extends React.Component<Props, State> {
     this.setState({ authOpen: false });
   }
 
-  private attachMenu = (event) => {
+  private attachMenu = (event: React.MouseEvent<HTMLElement>) => {
     this.setState({ anchorEl: event.currentTarget });
   }
 
@@ -71,7 +57,7 @@ class Header extends React.Component<Props, State> {
 
     return (
       <>
-        <IconButton 
+        <IconButton
           className="menu-button"
           color="inherit" aria-label="Menu"
           onClick={this.attachMenu}
@@ -99,7 +85,7 @@ class Header extends React.Component<Props, State> {
       </>
     )
   }
-  
+
   public render(): JSX.Element {
     const { auth } = this.props;
     const { authOpen } = this.state;
@@ -120,7 +106,7 @@ class Header extends React.Component<Props, State> {
             }
           </Toolbar>
         </AppBar>
-        <Login 
+        <Login
           isOpen={authOpen}
           onClose={this.closeSignIn}
         />
@@ -128,26 +114,3 @@ class Header extends React.Component<Props, State> {
     )
   }
 }
-
-const mapStateToProps = (state: ReduxState, ownProps: Props): StateProps => {
-  const {
-    auth: {
-      currentUser
-    }
-  } = state;
-
-  return {
-    auth: currentUser && !!currentUser.email
-  }
-}
-
-const mapDispatchToProps = (
-  dispatch
-): DispatchProps => {
-  return {
-    logout: () => dispatch(logoutUserAction()),
-    attemptLogin: () => dispatch(activeSessionLogin())
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Header)

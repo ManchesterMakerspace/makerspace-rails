@@ -7,6 +7,7 @@ import { Action as MembersAction } from "ui/members/constants";
 import { handleApiError } from "app/utils";
 import { MembersState } from "ui/members/interfaces";
 import { QueryParams } from "app/interfaces";
+import { MemberDetails } from "ui/member/interfaces";
 
 export const readMembersAction = (
   queryParams?: QueryParams
@@ -53,15 +54,15 @@ export const membersReducer = (state: MembersState = defaultState, action: AnyAc
         }
       };
     case MembersAction.GetMembersSuccess:
-      const { 
+      const {
         data: {
           members,
           totalItems,
         }
       } = action;
-      
+
       const newMembers = {};
-      members.forEach((member) => {
+      members.forEach((member: MemberDetails) => {
         newMembers[member.id] = member;
       });
 
@@ -85,7 +86,7 @@ export const membersReducer = (state: MembersState = defaultState, action: AnyAc
           error
         }
       }
-    default: 
+    default:
       return state;
   }
 }

@@ -1,11 +1,11 @@
 import * as React from "react";
 import mapValues from "lodash-es/mapValues";
 import omit from "lodash-es/omit";
-import { 
-  Dialog, 
-  DialogTitle, 
-  DialogContent, 
-  DialogActions, 
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
   Button,
 } from "@material-ui/core";
 
@@ -21,10 +21,20 @@ interface OwnProps {
   title: string;
   closeHandler: () => void;
   submitText: string;
-  onSubmit: (form) => void;
+  onSubmit: (form: FormModal) => void;
   loading: boolean;
 }
-interface FormModalProps extends OwnProps {}
+interface FormModalProps {
+  formRef: (ref: any) => any;
+  id: string;
+  isOpen: boolean;
+  title: string;
+  closeHandler: () => void;
+  submitText: string;
+  onSubmit: (form: FormModal) => void;
+  loading: boolean;
+  children?: React.ReactNode;
+}
 interface State {
   values: CollectionOf<string>;
   errors: CollectionOf<string>;
@@ -32,14 +42,14 @@ interface State {
   touched: CollectionOf<boolean>;
 }
 
-type ChildNode = React.ReactElement<any>;
+type ChildNode = React.ReactElement<HTMLFormElement>;
 
 class FormModal extends React.Component<FormModalProps, State> {
 
   /**
    * Set values to collection of strings by input name
    */
-  private getDefaultState = (props): State => {
+  private getDefaultState = (props: FormModalProps): State => {
     const formInputs = React.Children.toArray(props.children).filter((child: ChildNode) => {
       return this.isFormInput(child);
     });
@@ -58,7 +68,7 @@ class FormModal extends React.Component<FormModalProps, State> {
     )
   }
 
-  constructor(props) {
+  constructor(props: FormModalProps) {
     super(props);
     this.state = this.getDefaultState(props);
   }
@@ -67,16 +77,16 @@ class FormModal extends React.Component<FormModalProps, State> {
     return this.state.values;
   };
 
-  public setFormState = (newState) => {
+  public setFormState = (newState: Partial<State>) => {
     this.setState(state => ({ ...state, ...newState}))
   };
 
-  private handleSubmit = (event) => {
+  private handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     this.setState(state => {
-      return { 
-        isDirty: true, 
-        touched: mapValues(state.values, () => true) 
+      return {
+        isDirty: true,
+        touched: mapValues(state.values, () => true)
       };
     }, () => {
       this.props.onSubmit(this);
@@ -84,15 +94,15 @@ class FormModal extends React.Component<FormModalProps, State> {
   );
   }
 
-  private handleChange = (event) => {
-    const fieldName = event.target.name;
-    const fieldValue = event.target.value;
+  private handleChange = (event: React.ChangeEvent<HTMLFormElement>) => {
+    const fieldName = event.currentTarget.name;
+    const fieldValue = event.currentTarget.value;
     const { isDirty } = this.state;
     if (!isDirty) {
       this.setState({ isDirty: true });
     }
     this.setState((state) => {
-      return { 
+      return {
         values: {
           ...state.values,
           [fieldName]: fieldValue
@@ -177,11 +187,11 @@ class FormModal extends React.Component<FormModalProps, State> {
         open={isOpen}
         onClose={this.closeForm}
       >
-        <form 
-          onSubmit={this.handleSubmit} 
-          ref={formRef} 
-          onChange={this.handleChange} 
-          noValidate 
+        <form
+          onSubmit={this.handleSubmit}
+          ref={formRef}
+          onChange={this.handleChange}
+          noValidate
           className="form-modal"
         >
           {loading &&  <LoadingOverlay formId={id}/>}

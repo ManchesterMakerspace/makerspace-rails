@@ -9,7 +9,7 @@ import { Action as AuthAction } from "ui/auth/constants";
 
 export const loginUserAction = (
   loginForm?: AuthForm
-): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
+): ThunkAction<Promise<void>, {}, {}, AnyAction>  => async (dispatch) => {
   dispatch({ type: AuthAction.StartAuthRequest });
 
   let member;
@@ -63,6 +63,7 @@ const defaultState: AuthState = {
     firstname: undefined,
     lastname: undefined,
     email: undefined,
+    expirationTime: undefined
   },
   isRequesting: false,
   error: ""
@@ -94,7 +95,7 @@ export const authReducer = (state: AuthState = defaultState, action: AnyAction) 
       return {
         ...defaultState
       }
-    default: 
+    default:
       return state;
   }
 }

@@ -2,8 +2,9 @@ import axios from "axios";
 
 import { Url } from "app/constants";
 import { buildJsonUrl } from "app/utils";
+import { AuthForm } from "ui/auth/interfaces";
 
-export const postLogin = (creds?) => {
+export const postLogin = (creds?: AuthForm) => {
   return axios.post(buildJsonUrl(Url.signInPath), {
     member: creds || {}
   });

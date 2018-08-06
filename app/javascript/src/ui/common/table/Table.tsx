@@ -12,22 +12,30 @@ import {
 import { SortDirection } from 'ui/common/table/constants';
 import LoadingOverlay from "ui/common/LoadingOverlay";
 
-interface OwnProps {
+
+export interface Column<T> {
+  id: string;
+  label: string;
+  cell: (row: T) => JSX.Element | number | string | boolean;
+  defaultSortDirection?: SortDirection;
+  numeric?: boolean;
+}
+
+interface Props<T> {
   id: string;
   page: number;
-  data: any[];
-  columns: any[];
+  data: T[];
+  columns: Column<T>[];
   selectedIds: string[];
   order: SortDirection;
   orderBy: string;
   onSelectAll: () => void;
   onSelect: (id: string, direction: boolean) => void;
-  rowId: (row) => string;
+  rowId: (row: T) => string;
   onSort: (property: string) => void;
 }
-interface Props extends OwnProps {}
 
-class EnhancedTable extends React.Component<Props, {}> {
+class EnhancedTable<T> extends React.Component<Props<T>, {}> {
 
   private getHeaderRow = () => {
     const { onSelect, onSelectAll, selectedIds, data } = this.props;
@@ -57,29 +65,27 @@ class EnhancedTable extends React.Component<Props, {}> {
     )
   }
 
-  private createSortHandler = property => event => {
+  private createSortHandler = (property: string) => (_event: React.ChangeEvent<EventTarget>) => {
     this.props.onSort(property);
   };
 
   private getHeaderCells = () => {
-    const { 
-      id: tableId, 
-      columns, 
-      order, 
-      orderBy, 
+    const {
+      id: tableId,
+      columns,
+      order,
+      orderBy,
     } = this.props;
 
     return columns.map((column) => {
-      const { label, id, numeric, sortable, disablePadding } = column;
+      const { label, id, numeric, defaultSortDirection } = column;
       return (
         <TableCell
           id={tableId && `${tableId}-${id}`}
           key={`header-${id}`}
-          numeric={numeric}
-          padding={disablePadding ? 'none' : 'default'}
         >
         {
-          sortable ?
+          defaultSortDirection ?
             <Tooltip
               title="Sort"
               placement={numeric ? 'bottom-end' : 'bottom-start'}
@@ -101,7 +107,7 @@ class EnhancedTable extends React.Component<Props, {}> {
   }
 
   private getBodyRows = () => {
-    const { 
+    const {
       id: tableId,
       data,
       rowId,
@@ -117,7 +123,7 @@ class EnhancedTable extends React.Component<Props, {}> {
 
       if (onSelect) {
         checked = selectedIds && selectedIds.includes(id);
-        const checkHandler = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+        const checkHandler = (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
           onSelect(id, checked);
         }
         checkbox = (
@@ -141,7 +147,7 @@ class EnhancedTable extends React.Component<Props, {}> {
     }): [];
   }
 
-  private getBodyCells = (row) => {
+  private getBodyCells = (row: T)  => {
     const {
       columns,
       id: tableId,

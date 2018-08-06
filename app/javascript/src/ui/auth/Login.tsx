@@ -7,7 +7,7 @@ import isEmpty from "lodash-es/isEmpty";
 import { CollectionOf } from "app/interfaces";
 import { emailValid } from "app/utils";
 
-import { StateProps as ReduxState } from "ui/reducer";
+import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import FormModal from "ui/common/FormModal";
 import { loginUserAction } from "ui/auth/actions";
 import { fields } from "ui/auth/constants";
@@ -29,20 +29,20 @@ interface State {}
 interface Props extends OwnProps, DispatchProps, StateProps {}
 
 class Login extends React.Component<Props, State> {
-  private formRef;
-  private setFormRef = ref => this.formRef = ref;
+  private formRef: FormModal;
+  private setFormRef = (ref: FormModal) => this.formRef = ref;
 
   public componentDidUpdate(prevProps: Props) {
     const { isRequesting: wasRequesting } = prevProps;
     const { isRequesting, error, onClose } = this.props;
-    
+
     // When login complete
     if (wasRequesting && !isRequesting && !error) {
       onClose();
     }
   }
 
-  private validateForm = (form) => {
+  private validateForm = (form: FormModal) => {
     const values = form.getValues();
     const errors: CollectionOf<string> = {};
     const validatedForm: AuthForm = {};
@@ -68,10 +68,10 @@ class Login extends React.Component<Props, State> {
     return validatedForm;
   }
 
-  private submit = async (form) => {
+  private submit = async (form: FormModal) => {
     let errors = {};
     let validAuth: AuthForm = {};
-    
+
     try {
       validAuth = this.validateForm(form);
     } catch (e) {
@@ -139,7 +139,7 @@ const mapStateToProps = (
 }
 
 const mapDispatchToProps = (
-  dispatch
+  dispatch: ScopedThunkDispatch
 ): DispatchProps => {
   return {
     loginUser: (authForm) => dispatch(loginUserAction(authForm))

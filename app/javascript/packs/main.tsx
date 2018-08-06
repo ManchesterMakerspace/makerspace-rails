@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { createBrowserHistory } from "history";
-import { applyMiddleware, compose, createStore } from 'redux';
+import { applyMiddleware, createStore, Store } from 'redux';
 import reduxThunk from "redux-thunk";
 import { Provider } from "react-redux";
 import { connectRouter, routerMiddleware, ConnectedRouter } from 'connected-react-router';
@@ -9,11 +9,12 @@ import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import { composeWithDevTools } from 'redux-devtools-extension';
 
 import { rootReducer } from 'ui/reducer';
-import Routes from 'app/Routes';
+import { State as ReduxState } from "ui/reducer";
+import App from 'app/App';
 
 const init = () => {
   const history = createBrowserHistory();
-  const store = createStore(
+  const store: Store<ReduxState> = createStore(
     connectRouter(history)(rootReducer), // new root reducer with router state
     composeWithDevTools(
       applyMiddleware(
@@ -39,7 +40,7 @@ const init = () => {
       { /* ConnectedRouter will use the store from Provider automatically */ }
       <ConnectedRouter history={history}>
         <MuiThemeProvider theme={theme}>
-          <Routes/>
+          <App />
         </MuiThemeProvider>
       </ConnectedRouter>
     </Provider>,

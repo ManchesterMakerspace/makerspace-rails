@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 
-import { StateProps as ReduxState } from "ui/reducer";
+import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { SortDirection } from "ui/common/table/constants";
 import { MemberDetails } from "ui/member/interfaces";
 import { readMembersAction } from "ui/members/actions";
@@ -30,18 +30,18 @@ const fields = [
   {
     id: "lastname",
     label: "Name",
-    cell: (row) => `${row.firstname} ${row.lastname}`,
-    sortable: true
+    cell: (row: MemberDetails) => `${row.firstname} ${row.lastname}`,
+    defaultSortDirection: SortDirection.Desc,
   },
   {
     id: "expiration",
     label: "Expiration",
-    cell: (row) => `${row.expirationTime}`,
-    sortable: true
+    cell: (row: MemberDetails) => `${row.expirationTime}`,
+    defaultSortDirection: SortDirection.Desc
   },
 ];
 
-class MembersList extends React.Component<Props, State> {  
+class MembersList extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
@@ -75,9 +75,9 @@ class MembersList extends React.Component<Props, State> {
   private getMembers = () => {
     this.props.getMembers(this.getQueryParams());
   }
-  private rowId = (row) => row.id;
+  private rowId = (row: MemberDetails) => row.id;
 
-  private onSelectCell = (id, add) => {
+  private onSelectCell = (id: string, add: boolean) => {
     const { selectedIds } = this.state;
     if (add) {
       selectedIds.push(id);
@@ -97,7 +97,7 @@ class MembersList extends React.Component<Props, State> {
     this.setState({ selectedIds: newIds })
   }
 
-  private onSort = (prop) => {
+  private onSort = (prop: string) => {
     const orderBy = prop;
     let order = SortDirection.Desc;
     if (this.state.orderBy === orderBy && this.state.order === order) {
@@ -107,25 +107,25 @@ class MembersList extends React.Component<Props, State> {
       this.getMembers
     );
   }
-  
-  private onPageChange = (newPage) => {
+
+  private onPageChange = (newPage: number) => {
     this.setState({ pageNum: newPage },
       this.getMembers
     );
   }
 
-  private onSearchEnter = (searchTerm) => {
+  private onSearchEnter = (searchTerm: string) => {
     this.setState({ search: searchTerm },
       this.getMembers
     );
   }
 
-  
+
   public render(): JSX.Element {
     const { members: data, totalItems, loading } = this.props;
-    
+
     const { selectedIds, pageNum, order, orderBy } = this.state;
-    
+
     return (
       <TableContainer
         id="members-table"
@@ -162,7 +162,7 @@ const mapStateToProps = (
 }
 
 const mapDispatchToProps = (
-  dispatch
+  dispatch: ScopedThunkDispatch
 ): DispatchProps => {
   return {
     getMembers: (queryParams) => dispatch(readMembersAction(queryParams))
