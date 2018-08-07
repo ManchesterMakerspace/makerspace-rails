@@ -1,25 +1,13 @@
-import * as React from "react";
+import * as React from 'react';
 import { connect } from "react-redux";
 
-import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  Typography,
-  Button,
-  Menu,
-  MenuItem
-} from "@material-ui/core";
-import {
-  Menu as MenuIcon,
-} from "@material-ui/icons";
-
 import { Switch, Route } from "react-router";
-import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
+import { ScopedThunkDispatch, State as ReduxState } from "ui/reducer";
 import { logoutUserAction, activeSessionLogin } from "ui/auth/actions";
-import Header from "ui/page/Header";
+import Header from "ui/common/Header";
 import MembersList from "ui/members/MembersList";
-import NotFound from "ui/page/NotFound";
+import NotFound from "ui/common/NotFound";
+import PlansList from 'ui/billing/PlansList';
 
 interface StateProps {
   auth: boolean;
@@ -42,10 +30,11 @@ class App extends React.Component<Props, {}> {
 
     return (
       <div className="root">
-        <Header auth={auth} logout={logout}/>
+        <Header auth={auth} logout={logout} />
         <div>
           <Switch>
             <Route exact path="/" component={MembersList} />
+            <Route exact path="/billing" component={PlansList} />
             <Route component={NotFound} />
           </Switch>
         </div>

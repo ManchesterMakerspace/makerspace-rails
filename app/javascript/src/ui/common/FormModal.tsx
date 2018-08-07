@@ -95,8 +95,8 @@ class FormModal extends React.Component<FormModalProps, State> {
   }
 
   private handleChange = (event: React.ChangeEvent<HTMLFormElement>) => {
-    const fieldName = event.currentTarget.name;
-    const fieldValue = event.currentTarget.value;
+    const fieldName = event.target.name;
+    const fieldValue = event.target.value;
     const { isDirty } = this.state;
     if (!isDirty) {
       this.setState({ isDirty: true });

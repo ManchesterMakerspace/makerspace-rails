@@ -3,7 +3,7 @@ import * as React from "react";
 import Table, { Column } from "ui/common/table/Table";
 import { SortDirection } from "ui/common/table/constants";
 import { TablePagination, Toolbar, Typography, TextField } from "@material-ui/core";
-import { itemsPerPage } from "app/constants";
+import { itemsPerPage } from "ui/constants";
 import LoadingOverlay from "ui/common/LoadingOverlay";
 
 interface Props<T> {
@@ -33,7 +33,7 @@ class TableContainer<T> extends React.Component<Props<T>, {}> {
 
   private onSearchEnter = (event: React.KeyboardEvent<EventTarget>) => {
     if (event.key === "Enter") {
-      const searchTerm = (event.currentTarget as HTMLInputElement).value;
+      const searchTerm = (event.target as HTMLInputElement).value;
       this.props.onSearchEnter(searchTerm);
     }
   }
