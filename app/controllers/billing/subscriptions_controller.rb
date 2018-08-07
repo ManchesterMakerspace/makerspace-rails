@@ -1,4 +1,4 @@
-class Payment::SubscriptionsController < ApplicationController
+class Billing::SubscriptionsController < ApplicationController
   include BraintreeGateway
 
   def index

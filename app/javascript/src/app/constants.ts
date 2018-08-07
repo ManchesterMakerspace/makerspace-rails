@@ -5,7 +5,7 @@ export namespace Url {
   export const SignIn = `${Members}/sign_in`;
   export const SignOut = `${Members}/sign_out`;
 
-  export const baseBillingPath = `${baseApiPath}/payment`;
+  export const baseBillingPath = `${baseApiPath}/billing`;
   export const BillingPlans = `${baseBillingPath}/plans`;
 
   export const Rentals = `${baseApiPath}/rentals`; 

@@ -48,6 +48,7 @@ class App extends React.Component<Props, {}> {
           <div>
             <Switch>
               <Route exact path="/billing" component={PlansList} />
+              <Route exact path="/members" component={MembersList} />
               <Route exact path="/" component={MembersList} />
               <Route component={NotFound} />
             </Switch>

@@ -28,7 +28,7 @@ Rails.application.routes.draw do
       end
     end
 
-    namespace :payment do
+    namespace :billing do
       resources :checkout, only: [:new, :create]
       resources :plans, only: [:index]
       resources :subscriptions, only: [:index]

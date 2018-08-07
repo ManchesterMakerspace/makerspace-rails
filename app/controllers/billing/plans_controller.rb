@@ -1,4 +1,4 @@
-class Payment::PlansController < ApplicationController
+class Billing::PlansController < ApplicationController
   include BraintreeGateway
 
   def index
