@@ -1,5 +1,5 @@
 import * as React from "react";
-
+import { Link } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -79,7 +79,7 @@ export default class Header extends React.Component<Props, State> {
           onClose={this.detachMenu}
         >
           <MenuItem onClick={this.detachMenu}>Profile</MenuItem>
-          <MenuItem onClick={this.detachMenu}>My account</MenuItem>
+          <MenuItem onClick={this.detachMenu}><Link to="/billing" style={{ textDecoration: 'none', color: 'unset' }}>Billing</Link></MenuItem>
           <MenuItem onClick={this.logoutUser}>Logout</MenuItem>
         </Menu>
       </>
@@ -104,7 +104,7 @@ export default class Header extends React.Component<Props, State> {
               Manchester Makerspace
             </Typography>
             {
-              auth ?
+              !auth ?
                 this.renderHambMenu()
               : <Button color="inherit" onClick={this.openSignIn}>
                   Login

@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-  root to: "application#angular"
+  root to: "application#application"
   post '/ipnlistener', to: 'paypal#notify'
 
   scope :api, defaults: { format: :json } do
@@ -35,4 +35,6 @@ Rails.application.routes.draw do
       resources :customer, only: [:create]
     end
   end
+
+  get '*path', to: 'application#application'
 end

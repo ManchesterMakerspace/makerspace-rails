@@ -33,8 +33,8 @@ class App extends React.Component<Props, {}> {
         <Header auth={auth} logout={logout} />
         <div>
           <Switch>
-            <Route exact path="/" component={MembersList} />
             <Route exact path="/billing" component={PlansList} />
+            <Route exact path="/" component={MembersList} />
             <Route component={NotFound} />
           </Switch>
         </div>
