@@ -1,5 +1,5 @@
 import { RequestStatus, CollectionOf } from "app/interfaces";
-import { MemberDetails } from "ui/member/interfaces";
+import { MemberDetails } from "app/entities/member";
 
 export interface MembersState {
   entities: CollectionOf<MemberDetails>;

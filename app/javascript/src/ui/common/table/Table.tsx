@@ -10,8 +10,6 @@ import {
   TableBody,
 } from '@material-ui/core';
 import { SortDirection } from 'ui/common/table/constants';
-import LoadingOverlay from "ui/common/LoadingOverlay";
-
 
 export interface Column<T> {
   id: string;

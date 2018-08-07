@@ -6,6 +6,11 @@ import { TablePagination, Toolbar, Typography, TextField } from "@material-ui/co
 import { itemsPerPage } from "app/constants";
 import LoadingOverlay from "ui/common/LoadingOverlay";
 
+
+interface ActionButton {
+  label: string;
+  onClick: () => void;
+}
 interface Props<T> {
   id: string;
   columns: Column<T>[];
@@ -18,11 +23,11 @@ interface Props<T> {
   totalItems: number;
   title: string;
   rowId: (row: T) => string;
-  onSearchEnter: (searchTerm: string) => void;
-  onSort: (columnName: string) => void;
-  onSelect: (rowId: string, selected: boolean) => void;
-  onSelectAll: () => void;
   onPageChange: (pageNum: number) => void;
+  onSearchEnter?: (searchTerm: string) => void;
+  onSort?: (columnName: string) => void;
+  onSelect?: (rowId: string, selected: boolean) => void;
+  onSelectAll?: () => void;
 }
 
 class TableContainer<T> extends React.Component<Props<T>, {}> {
@@ -40,7 +45,22 @@ class TableContainer<T> extends React.Component<Props<T>, {}> {
 
 
   public render(): JSX.Element {
-    const { id, rowId, onSelect, onSort, onSelectAll, columns, title, data, totalItems, loading, selectedIds, pageNum, order, orderBy } = this.props;
+    const { 
+      id, 
+      rowId, 
+      onSelect, 
+      onSelectAll, 
+      onSort, 
+      columns, 
+      title, 
+      data, 
+      totalItems, 
+      loading, 
+      selectedIds, 
+      pageNum, 
+      order, 
+      orderBy 
+    } = this.props;
 
     return (
       <div className="table-container-wrapper">

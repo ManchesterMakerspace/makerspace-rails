@@ -7,7 +7,7 @@ import { Action as MembersAction } from "ui/members/constants";
 import { handleApiError } from "app/utils";
 import { MembersState } from "ui/members/interfaces";
 import { QueryParams } from "app/interfaces";
-import { MemberDetails } from "ui/member/interfaces";
+import { MemberDetails } from "app/entities/member";
 
 export const readMembersAction = (
   queryParams?: QueryParams
