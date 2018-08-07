@@ -2,6 +2,19 @@
 # yarn lockfile v1
 
 
+"@babel/runtime@7.0.0-beta.42":
+  version "7.0.0-beta.42"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.0.0-beta.42.tgz#352e40c92e0460d3e82f49bd7e79f6cda76f919f"
+  dependencies:
+    core-js "^2.5.3"
+    regenerator-runtime "^0.11.1"
+
+"@babel/runtime@7.0.0-beta.56":
+  version "7.0.0-beta.56"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.0.0-beta.56.tgz#cda612dffd5b1719a7b8e91e3040bd6ae64de8b0"
+  dependencies:
+    regenerator-runtime "^0.12.0"
+
 "@babel/runtime@^7.0.0-beta.42":
   version "7.0.0-beta.55"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.0.0-beta.55.tgz#0bc33aa5a6ac0b012f37e25b9e6aaa2e489a916b"
@@ -41,12 +54,12 @@
     recompose "^0.27.0"
     warning "^4.0.1"
 
-"@material-ui/icons@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@material-ui/icons/-/icons-2.0.0.tgz#f2c4e80d0cb4bbbd433127781da67d93393535f8"
+"@material-ui/icons@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@material-ui/icons/-/icons-2.0.1.tgz#1151cc66a3d41099de3ddaac33488e399d3425f0"
   dependencies:
-    "@babel/runtime" "^7.0.0-beta.42"
-    recompose "^0.27.0"
+    "@babel/runtime" "7.0.0-beta.42"
+    recompose "^0.28.0"
 
 "@rails/webpacker@3.5":
   version "3.5.5"
@@ -1682,7 +1695,7 @@ core-js@^1.0.0:
   version "1.2.7"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-1.2.7.tgz#652294c14651db28fa93bd2d5ff2983a4f08c636"
 
-core-js@^2.4.0, core-js@^2.5.0, core-js@^2.5.7:
+core-js@^2.4.0, core-js@^2.5.0, core-js@^2.5.3, core-js@^2.5.7:
   version "2.5.7"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.5.7.tgz#f972608ff0cead68b841a16a932d0b183791814e"
 
@@ -5632,6 +5645,17 @@ recompose@^0.27.0:
     react-lifecycles-compat "^3.0.2"
     symbol-observable "^1.0.4"
 
+recompose@^0.28.0:
+  version "0.28.2"
+  resolved "https://registry.yarnpkg.com/recompose/-/recompose-0.28.2.tgz#19e679227bdf979e0d31b73ffe7ae38c9194f4a7"
+  dependencies:
+    "@babel/runtime" "7.0.0-beta.56"
+    change-emitter "^0.1.2"
+    fbjs "^0.8.1"
+    hoist-non-react-statics "^2.3.1"
+    react-lifecycles-compat "^3.0.2"
+    symbol-observable "^1.0.4"
+
 redent@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/redent/-/redent-1.0.0.tgz#cf916ab1fd5f1f16dfb20822dd6ec7f730c2afde"
@@ -5689,7 +5713,7 @@ regenerator-runtime@^0.10.5:
   version "0.10.5"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.10.5.tgz#336c3efc1220adcedda2c9fab67b5a7955a33658"
 
-regenerator-runtime@^0.11.0:
+regenerator-runtime@^0.11.0, regenerator-runtime@^0.11.1:
   version "0.11.1"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.11.1.tgz#be05ad7f9bf7d22e056f9726cee5017fbf19e2e9"
 

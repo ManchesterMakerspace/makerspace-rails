@@ -10,10 +10,10 @@ class MembersController < ApplicationController
       order = params[:order].empty? ? :desc : params[:order].to_sym
 
       @members = params[:search].empty? ? Member : Member.rough_search_members(params[:search])
-      @members = @members.select{ |m| m.membership_status != 'expired' } if current_member.try(:role) != 'admin'
+      @members = @members.where(:expirationTime => { '$gt' => (Time.now.strftime('%s').to_i * 1000) }) if current_member.try(:role) != 'admin'
       @members = query_resource(@members, params)
 
-      response.set_header("total-items", Member.count)
+      response.set_header("total-items", @members.count)
       render json: @members and return
     end
 

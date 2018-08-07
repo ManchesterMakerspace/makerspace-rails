@@ -53,7 +53,7 @@ const fields: Column<MemberDetails>[] = [
       const inActive = row.status !== MemberStatus.Active;
       const current = row.expirationTime > Date.now();
       const statusColor = current ? Status.Success : Status.Danger;
-      
+
       let label;
       if (inActive) {
         label = memberStatusLabelMap[row.status];
@@ -139,7 +139,7 @@ class MembersList extends React.Component<Props, State> {
     );
   }
 
-
+  
   public render(): JSX.Element {
     const { members: data, totalItems, loading } = this.props;
 

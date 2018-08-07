@@ -6,11 +6,6 @@ import { TablePagination, Toolbar, Typography, TextField } from "@material-ui/co
 import { itemsPerPage } from "app/constants";
 import LoadingOverlay from "ui/common/LoadingOverlay";
 
-
-interface ActionButton {
-  label: string;
-  onClick: () => void;
-}
 interface Props<T> {
   id: string;
   columns: Column<T>[];
@@ -59,7 +54,7 @@ class TableContainer<T> extends React.Component<Props<T>, {}> {
       selectedIds, 
       pageNum, 
       order, 
-      orderBy 
+      orderBy
     } = this.props;
 
     return (

@@ -80,10 +80,16 @@ export default class Header extends React.Component<Props, State> {
         >
           <MenuItem onClick={this.detachMenu}>Profile</MenuItem>
           <MenuItem onClick={this.detachMenu}>My account</MenuItem>
-          <MenuItem onClick={logout && this.detachMenu}>Logout</MenuItem>
+          <MenuItem onClick={this.logoutUser}>Logout</MenuItem>
         </Menu>
       </>
     )
+  }
+
+  private logoutUser = () => {
+    const { logout } = this.props;
+    logout();
+    this.detachMenu();
   }
 
   public render(): JSX.Element {

@@ -79,8 +79,8 @@ class EnhancedTable<T> extends React.Component<Props<T>, {}> {
       const { label, id, numeric, defaultSortDirection } = column;
       return (
         <TableCell
-          id={tableId && `${tableId}-${id}`}
-          key={`header-${id}`}
+          id={tableId && `${tableId}-${id}-header`}
+          key={`${tableId}-${id}-header`}
         >
         {
           defaultSortDirection ?
@@ -101,7 +101,7 @@ class EnhancedTable<T> extends React.Component<Props<T>, {}> {
         }
       </TableCell>
       )
-    })
+    });
   }
 
   private getBodyRows = () => {
@@ -110,7 +110,7 @@ class EnhancedTable<T> extends React.Component<Props<T>, {}> {
       data,
       rowId,
       selectedIds,
-      onSelect
+      onSelect,
     } = this.props;
 
     return Array.isArray(data) ? data.map((row) => {
