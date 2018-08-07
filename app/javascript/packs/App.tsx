@@ -16,8 +16,8 @@ interface DispatchProps {
   logout: () => void;
   attemptLogin: () => void;
 }
-
-interface Props extends StateProps, DispatchProps { }
+interface OwnProps {}
+interface Props extends StateProps, DispatchProps, OwnProps { }
 
 class App extends React.Component<Props, {}> {
 
@@ -43,7 +43,7 @@ class App extends React.Component<Props, {}> {
   }
 }
 
-const mapStateToProps = (state: ReduxState, _ownProps: Props): StateProps => {
+const mapStateToProps = (state: ReduxState, _ownProps: OwnProps): StateProps => {
   const {
     auth: { currentUser }
   } = state;
@@ -62,4 +62,4 @@ const mapDispatchToProps = (
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App) as React.ComponentClass;
+export default connect(mapStateToProps, mapDispatchToProps)(App);
