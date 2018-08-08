@@ -10,3 +10,17 @@ export namespace Url {
 
   export const Rentals = `${baseApiPath}/rentals`; 
 }
+
+export enum ApiErrorStatus {
+  InternalServerError = "Internal Server Error",
+  Unauthorized = "Unauthorized",
+  NotFound = "Not Found",
+  Forbidden = "Forbidden"
+}
+
+export const ApiErrorMessageMap = {
+  [ApiErrorStatus.InternalServerError]: "Server Error. Please try again or contact an administrator.",
+  [ApiErrorStatus.Unauthorized]: "Not Authorized.  Please sign in.",
+  [ApiErrorStatus.Forbidden]: "Not Authorized.  Contact an admin for access.",
+  [ApiErrorStatus.NotFound]: "Resource not found.",
+}

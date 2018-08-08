@@ -3,7 +3,7 @@ import * as React from "react";
 import Table, { Column } from "ui/common/table/Table";
 import { SortDirection } from "ui/common/table/constants";
 import { TablePagination, Toolbar, Typography, TextField } from "@material-ui/core";
-import { itemsPerPage } from "ui/constants";
+import { defaultItemsPerPage } from "ui/constants";
 import LoadingOverlay from "ui/common/LoadingOverlay";
 
 interface Props<T> {
@@ -17,6 +17,7 @@ interface Props<T> {
   loading: boolean;
   totalItems: number;
   title: string;
+  error?: string;
   rowId: (row: T) => string;
   onPageChange: (pageNum: number) => void;
   onSearchEnter?: (searchTerm: string) => void;
@@ -38,7 +39,6 @@ class TableContainer<T> extends React.Component<Props<T>, {}> {
     }
   }
 
-
   public render(): JSX.Element {
     const { 
       id, 
@@ -54,7 +54,9 @@ class TableContainer<T> extends React.Component<Props<T>, {}> {
       selectedIds, 
       pageNum, 
       order, 
-      orderBy
+      orderBy,
+      onSearchEnter,
+      error
     } = this.props;
 
     return (
@@ -63,7 +65,7 @@ class TableContainer<T> extends React.Component<Props<T>, {}> {
           <Typography variant="title" color="inherit" className="flex">
             {title}
           </Typography>
-          { this.onSearchEnter &&
+          { onSearchEnter &&
             <TextField
               type="text"
               disabled={loading}
@@ -86,12 +88,14 @@ class TableContainer<T> extends React.Component<Props<T>, {}> {
             onSelect={onSelect}
             onSort={onSort}
             onSelectAll={onSelectAll}
+            error={error}
           >
           </Table>
           <TablePagination
             component="div"
             count={totalItems || 0}
-            rowsPerPage={itemsPerPage}
+            rowsPerPage={defaultItemsPerPage}
+            rowsPerPageOptions={[]}
             page={pageNum}
             backIconButtonProps={{
               'aria-label': 'Previous Page',

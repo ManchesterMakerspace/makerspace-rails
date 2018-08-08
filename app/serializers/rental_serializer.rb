@@ -1,4 +1,7 @@
 class RentalSerializer < ActiveModel::Serializer
-  attributes :id, :number, :expiration, :description
-  belongs_to :member
+  attributes :id, :number, :expiration, :member
+
+  def member
+    object.member && "#{object.member.fullname}"
+  end
 end

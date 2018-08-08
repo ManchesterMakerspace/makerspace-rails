@@ -1,5 +1,6 @@
 export interface Rental {
   id: string;
-  expirationTime: string;
+  number: string;
+  expiration: number;
   member: string;
 }

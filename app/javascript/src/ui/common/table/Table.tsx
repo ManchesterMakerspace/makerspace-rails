@@ -10,6 +10,7 @@ import {
   TableBody,
 } from '@material-ui/core';
 import { SortDirection } from 'ui/common/table/constants';
+import ErrorMessage from "ui/common/ErrorMessage";
 
 export interface Column<T> {
   id: string;
@@ -17,6 +18,7 @@ export interface Column<T> {
   cell: (row: T) => JSX.Element | number | string | boolean;
   defaultSortDirection?: SortDirection;
   numeric?: boolean;
+  width?: string | number;
 }
 
 interface Props<T> {
@@ -27,6 +29,7 @@ interface Props<T> {
   selectedIds: string[];
   order: SortDirection;
   orderBy: string;
+  error: string;
   onSelectAll: () => void;
   onSelect: (id: string, direction: boolean) => void;
   rowId: (row: T) => string;
@@ -76,11 +79,12 @@ class EnhancedTable<T> extends React.Component<Props<T>, {}> {
     } = this.props;
 
     return columns.map((column) => {
-      const { label, id, numeric, defaultSortDirection } = column;
+      const { label, id, numeric, defaultSortDirection, width } = column;
       return (
         <TableCell
           id={tableId && `${tableId}-${id}-header`}
           key={`${tableId}-${id}-header`}
+          style={width && { width }}
         >
         {
           defaultSortDirection ?
@@ -102,6 +106,22 @@ class EnhancedTable<T> extends React.Component<Props<T>, {}> {
       </TableCell>
       )
     });
+  }
+
+  private getErrorRow = () => {
+    const {
+      id: tableId,
+      columns,
+      error 
+    } = this.props;
+
+    return (
+      <TableRow id={`${tableId}-error-row`}>
+        <TableCell colSpan={columns.length}>
+          <ErrorMessage error={error}/>
+        </TableCell>
+      </TableRow>
+    )
   }
 
   private getBodyRows = () => {
@@ -170,6 +190,7 @@ class EnhancedTable<T> extends React.Component<Props<T>, {}> {
   public render() {
     const {
       id,
+      error
     } = this.props;
 
     return (
@@ -177,7 +198,11 @@ class EnhancedTable<T> extends React.Component<Props<T>, {}> {
         <Table>
           {this.getHeaderRow()}
           <TableBody>
-            {this.getBodyRows()}
+            {
+              error ? 
+                this.getErrorRow()
+              : this.getBodyRows()
+            }
           </TableBody>
         </Table>
       </>

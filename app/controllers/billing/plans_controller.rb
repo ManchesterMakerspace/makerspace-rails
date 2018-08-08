@@ -1,8 +1,9 @@
 class Billing::PlansController < ApplicationController
-  include BraintreeGateway
+    include FastQuery
+    include BraintreeGateway
 
   def index
     plans = ::BraintreeService::Plan.get_plans(@gateway)
-    render json: plans, each_serializer: Braintree::PlanSerializer and return
+    return render_with_total_items(plans, { :each_serializer => Braintree::PlanSerializer})
   end
 end

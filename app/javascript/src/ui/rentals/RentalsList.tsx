@@ -1,75 +1,71 @@
 import * as React from "react";
 import { connect } from "react-redux";
-
+import { Button, Grid } from "@material-ui/core";
 import * as moment from "moment";
+
+import { Rental } from "app/entities/rental";
+import { QueryParams } from "app/interfaces";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { SortDirection } from "ui/common/table/constants";
-import { MemberDetails, MemberStatus } from "app/entities/member";
-import { readMembersAction } from "ui/members/actions";
-import { QueryParams } from "app/interfaces";
 import TableContainer from "ui/common/table/TableContainer";
 import { Column } from "ui/common/table/Table";
-import { Button, Grid } from "@material-ui/core";
-import { Status } from "ui/common/constants";
+import { readRentalsAction } from "ui/rentals/actions";
+import { Status } from "ui/constants";
 import StatusLabel from "ui/common/StatusLabel";
-import { memberStatusLabelMap } from "ui/members/constants";
 
-interface OwnProps {}
+
+interface OwnProps { }
 interface DispatchProps {
-  getMembers: (queryParams?: QueryParams) => void;
+  getRentals: (queryParams?: QueryParams) => void;
 }
 interface StateProps {
-  members: MemberDetails[];
+  rentals: Rental[];
   totalItems: number;
   loading: boolean;
   error: string;
 }
-interface Props extends OwnProps, DispatchProps, StateProps {}
+interface Props extends OwnProps, DispatchProps, StateProps { }
 interface State {
   selectedIds: string[];
   pageNum: number;
   orderBy: string;
-  search: string;
   order: SortDirection;
 }
 
-const fields: Column<MemberDetails>[] = [
+const fields: Column<Rental>[] = [
   {
-    id: "lastname",
-    label: "Name",
-    cell: (row: MemberDetails) => `${row.firstname} ${row.lastname}`,
+    id: "number",
+    label: "Number",
+    cell: (row: Rental) => row.number,
     defaultSortDirection: SortDirection.Desc,
-  },
-  {
-    id: "expirationTime",
-    label: "Expiration",
-    cell: (row: MemberDetails) => `${moment(row.expirationTime).format("DD MMM YYYY")}`,
-    defaultSortDirection: SortDirection.Desc
-  },
-  {
+  },{
+    id: "expiration",
+    label: "Expiration Date",
+    cell: (row: Rental) => `${moment(row.expiration).format("DD MMM YYYY")}`,
+    defaultSortDirection: SortDirection.Desc,
+  }, {
+    id: "member",
+    label: "Member",
+    cell: (row: Rental) => row.member,
+    defaultSortDirection: SortDirection.Desc,
+    width: 200
+  }, {
     id: "status",
     label: "Status",
-    cell: (row: MemberDetails) => {
-      const inActive = row.status !== MemberStatus.Active;
-      const current = row.expirationTime > Date.now();
+    cell: (row: Rental) => {
+      const current = row.expiration > Date.now();
       const statusColor = current ? Status.Success : Status.Danger;
-
-      let label;
-      if (inActive) {
-        label = memberStatusLabelMap[row.status];
-      } else {
-        label = current ? "Active" : "Expired";
-      }
+      const label = current ? "Active" : "Expired";
 
       return (
         <StatusLabel label={label} color={statusColor}/> 
       );
     },
-  },
+  }
 ];
 
-class MembersList extends React.Component<Props, State> {
+class RentalsList extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
@@ -77,19 +73,18 @@ class MembersList extends React.Component<Props, State> {
       selectedIds: [],
       pageNum: 0,
       orderBy: "",
-      search: "",
       order: SortDirection.Asc
     };
   }
 
-  private promptNewMember = () => {
+  private openNewRentalModal = () => {
     console.log("foo");
   }
 
   private getActionButton = () => {
     return (
-      <Button variant="contained" color="primary" onClick={this.promptNewMember}>
-        Create New Member
+      <Button variant="contained" color="primary" onClick={(this.openNewRentalModal)}>
+        Create New Rental
       </Button>
     )
   }
@@ -99,23 +94,21 @@ class MembersList extends React.Component<Props, State> {
       pageNum,
       orderBy,
       order,
-      search
     } = this.state
     return {
       pageNum,
       orderBy,
       order,
-      search
     };
   }
   public componentDidMount() {
-    this.getMembers();
+    this.getRentals();
   }
 
-  private getMembers = () => {
-    this.props.getMembers(this.getQueryParams());
+  private getRentals = () => {
+    this.props.getRentals(this.getQueryParams());
   }
-  private rowId = (row: MemberDetails) => row.id;
+  private rowId = (row: Rental) => row.id;
 
   private onSort = (prop: string) => {
     const orderBy = prop;
@@ -124,43 +117,35 @@ class MembersList extends React.Component<Props, State> {
       order = SortDirection.Asc;
     }
     this.setState({ order, orderBy, pageNum: 0 },
-      this.getMembers
+      this.getRentals
     );
   }
 
   private onPageChange = (newPage: number) => {
     this.setState({ pageNum: newPage },
-      this.getMembers
+      this.getRentals
     );
   }
-
-  private onSearchEnter = (searchTerm: string) => {
-    this.setState({ search: searchTerm, pageNum: 0 },
-      this.getMembers
-    );
-  }
-
 
   public render(): JSX.Element {
-    const { members: data, totalItems, loading, error } = this.props;
+    const { rentals: data, totalItems, loading, error } = this.props;
 
     const { selectedIds, pageNum, order, orderBy } = this.state;
 
     return (
       <>
-        <Grid style={{paddingTop: 20}}>
+        <Grid style={{ paddingTop: 20 }}>
           {this.getActionButton()}
         </Grid>
         <TableContainer
-          id="members-table"
-          title="Members"
+          id="rentals-table"
+          title="Rentals"
           loading={loading}
           data={data}
           error={error}
           totalItems={totalItems}
           selectedIds={selectedIds}
           pageNum={pageNum}
-          onSearchEnter={this.onSearchEnter}
           columns={fields}
           order={order}
           orderBy={orderBy}
@@ -178,15 +163,15 @@ const mapStateToProps = (
   _ownProps: OwnProps
 ): StateProps => {
   const { 
-    entities: members, 
+    entities: rentals, 
     read: { 
       totalItems, 
       isRequesting: loading,
-      error
-    }
-  } = state.members;
+      error 
+    } 
+  } = state.rentals;
   return {
-    members: Object.values(members),
+    rentals: Object.values(rentals),
     totalItems,
     loading,
     error
@@ -197,8 +182,8 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch
 ): DispatchProps => {
   return {
-    getMembers: (queryParams) => dispatch(readMembersAction(queryParams))
+    getRentals: (queryParams) => dispatch(readRentalsAction(queryParams))
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MembersList);
+export default connect(mapStateToProps, mapDispatchToProps)(RentalsList);

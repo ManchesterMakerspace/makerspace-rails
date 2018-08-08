@@ -1,6 +1,6 @@
 class MembersController < ApplicationController
-    before_action :set_member, only: [:show]
     include FastQuery
+    before_action :set_member, only: [:show]
 
     def index
       items_per_page = 20
@@ -13,8 +13,7 @@ class MembersController < ApplicationController
       @members = @members.where(:expirationTime => { '$gt' => (Time.now.strftime('%s').to_i * 1000) }) if current_member.try(:role) != 'admin'
       @members = query_resource(@members, params)
 
-      response.set_header("total-items", @members.count)
-      render json: @members and return
+      return render_with_total_items(@members)
     end
 
     def show

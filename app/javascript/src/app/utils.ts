@@ -7,6 +7,7 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 
 import { rootReducer } from 'ui/reducer';
 import { State as ReduxState } from "ui/reducer";
+import { ApiErrorMessageMap } from "app/constants";
 
 export const buildJsonUrl = (path: string) => {
   return `${path}.json`;
@@ -17,7 +18,27 @@ export const emailValid = (email: string): boolean => {
 };
 
 export const handleApiError = (e: any): string => {
-  return e.response.data.error;
+  const { response: errorResponse } = e;
+  // Always capture original response for upstream handlers
+  let apiErrorResponse:any = {
+    response: errorResponse,
+  }
+  console.log(apiErrorResponse);
+  let errorMessage = "";
+  if (e.response.data && e.response.data.error) {
+    errorMessage = errorResponse.data.error;
+
+  } else {
+    errorMessage = ApiErrorMessageMap[apiErrorResponse.statusText] ||
+      "Unknown Error.  Contact an administrator";
+  }
+
+  apiErrorResponse = {
+    ...apiErrorResponse,
+    errorMessage
+  }
+  
+  return apiErrorResponse;
 };
 
 let store: Store<ReduxState>;

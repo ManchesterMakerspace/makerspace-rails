@@ -1,17 +1,27 @@
 import axios from "axios";
 
 import { Url } from "app/constants";
-import { buildJsonUrl } from "app/utils";
+import { buildJsonUrl, handleApiError } from "app/utils";
 import { AuthForm } from "ui/auth/interfaces";
 
-export const postLogin = (creds?: AuthForm) => {
-  return axios.post(buildJsonUrl(Url.signInPath), {
-    member: creds || {}
-  });
+export const postLogin = async (creds?: AuthForm) => {
+  try {
+    return await axios.post(buildJsonUrl(Url.SignIn), {
+      member: creds || {}
+    });
+  } catch (e) {
+    const error = handleApiError(e);
+    throw error;
+  }
 }
 
-export const deleteLogin = () => {
-  return axios.delete(buildJsonUrl(Url.signOutPath));
+export const deleteLogin = async () => {
+  try {
+    return await axios.delete(buildJsonUrl(Url.SignOut));
+  } catch (e) {
+    const error = handleApiError(e);
+    throw error;
+  }
 };
 
 // AuthProvider.resourceName('member');

@@ -7,9 +7,9 @@ import { QueryParams } from "app/interfaces";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { SortDirection } from "ui/common/table/constants";
-import { readMembersAction } from "ui/members/actions";
 import TableContainer from "ui/common/table/TableContainer";
 import { Column } from "ui/common/table/Table";
+import { readPlansAction } from "ui/billing/actions";
 
 
 interface OwnProps { }
@@ -20,6 +20,7 @@ interface StateProps {
   plans: BillingPlan[];
   totalItems: number;
   loading: boolean;
+  error: string;
 }
 interface Props extends OwnProps, DispatchProps, StateProps { }
 interface State {
@@ -32,9 +33,21 @@ interface State {
 
 const fields: Column<BillingPlan>[] = [
   {
-    id: "id",
-    label: "ID",
-    cell: (row: BillingPlan) => row.id,
+    id: "name",
+    label: "Name",
+    cell: (row: BillingPlan) => row.name,
+  }, {
+    id: "description",
+    label: "Description",
+    cell: (row: BillingPlan) => row.description,
+  }, {
+    id: "frequency",
+    label: "Billing Frequency",
+    cell: (row: BillingPlan) => row.billing_frequency,
+  }, {
+    id: "amount",
+    label: "Amount",
+    cell: (row: BillingPlan) => row.amount,
   }
 ];
 
@@ -111,7 +124,7 @@ class PlansList extends React.Component<Props, State> {
 
 
   public render(): JSX.Element {
-    const { plans: data, totalItems, loading } = this.props;
+    const { plans: data, totalItems, loading, error } = this.props;
 
     const { selectedIds, pageNum, order, orderBy } = this.state;
 
@@ -125,6 +138,7 @@ class PlansList extends React.Component<Props, State> {
           title="Billing Plans"
           loading={loading}
           data={data}
+          error={error}
           totalItems={totalItems}
           selectedIds={selectedIds}
           pageNum={pageNum}
@@ -145,11 +159,19 @@ const mapStateToProps = (
   state: ReduxState,
   _ownProps: OwnProps
 ): StateProps => {
-  const { entities: plans, read: { totalItems, isRequesting: loading } } = state.members;
+  const { 
+    entities: plans, 
+    read: { 
+      totalItems, 
+      isRequesting: loading,
+      error
+    }
+  } = state.plans;
   return {
     plans: Object.values(plans),
     totalItems,
-    loading
+    loading,
+    error
   }
 }
 
@@ -157,7 +179,7 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch
 ): DispatchProps => {
   return {
-    getPlans: (queryParams) => dispatch(readMembersAction(queryParams))
+    getPlans: (queryParams) => dispatch(readPlansAction(queryParams))
   }
 }
 

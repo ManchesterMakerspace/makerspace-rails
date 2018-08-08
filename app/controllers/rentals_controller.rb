@@ -1,9 +1,10 @@
 class RentalsController < ApplicationController
-  before_action :set_rental, only: [:show]
+    include FastQuery
+    before_action :set_rental, only: [:show]
 
   def index
     @rentals = Rental.all
-    render json: @rentals and return
+    return render_with_total_items(@rentals)
   end
 
   def show

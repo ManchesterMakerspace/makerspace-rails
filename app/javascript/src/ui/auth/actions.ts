@@ -21,10 +21,10 @@ export const loginUserAction = (
       data: member
     });
   } catch (e) {
-    const error = handleApiError(e);
+    const { errorMessage } = e;
     dispatch({
       type: AuthAction.LoginUserFailure,
-      error
+      error: errorMessage
     });
   }
 }

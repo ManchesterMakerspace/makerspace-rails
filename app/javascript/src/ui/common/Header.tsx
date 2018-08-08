@@ -50,6 +50,16 @@ export default class Header extends React.Component<Props, State> {
     this.setState({ anchorEl: null });
   };
 
+  private renderMenuNavLink = (path: string, label: string) => {
+    return (
+      <MenuItem onClick={this.detachMenu}>
+        <Link to={path} style={{ textDecoration: 'none', color: 'unset' }}>
+          {label}
+        </Link>
+      </MenuItem>
+    )
+  }
+
   private renderHambMenu = (): JSX.Element => {
     const { logout } = this.props;
     const { anchorEl } = this.state;
@@ -78,8 +88,10 @@ export default class Header extends React.Component<Props, State> {
           open={menuOpen}
           onClose={this.detachMenu}
         >
+          {this.renderMenuNavLink("/members", "Membership")}
+          {this.renderMenuNavLink("/rentals", "Rentals")}
+          {this.renderMenuNavLink("/billing", "Billing")}
           <MenuItem onClick={this.detachMenu}>Profile</MenuItem>
-          <MenuItem onClick={this.detachMenu}><Link to="/billing" style={{ textDecoration: 'none', color: 'unset' }}>Billing</Link></MenuItem>
           <MenuItem onClick={this.logoutUser}>Logout</MenuItem>
         </Menu>
       </>
@@ -104,7 +116,7 @@ export default class Header extends React.Component<Props, State> {
               Manchester Makerspace
             </Typography>
             {
-              !auth ?
+              auth ?
                 this.renderHambMenu()
               : <Button color="inherit" onClick={this.openSignIn}>
                   Login

@@ -16,20 +16,20 @@ export const readPlansAction = (
 
   try {
     const response = await getPlans(queryParams);
-    const members = response.data;
+    const plans = response.data;
     const totalItems = response.headers[("total-items")];
     dispatch({
       type: PlansAction.GetPlansSuccess,
       data: {
-        members,
+        plans,
         totalItems: toNumber(totalItems)
       }
     });
   } catch (e) {
-    const error = handleApiError(e);
+    const { errorMessage } = e;
     dispatch({
       type: PlansAction.GetPlansFailure,
-      error
+      error: errorMessage
     });
   }
 };

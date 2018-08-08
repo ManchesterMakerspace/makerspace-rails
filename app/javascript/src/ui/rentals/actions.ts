@@ -2,39 +2,39 @@ import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import toNumber from "lodash-es/toNumber";
 
-import { getMembers } from "api/members/transactions";
-import { Action as MembersAction } from "ui/members/constants";
+import { getRentals } from "api/rentals/transactions";
+import { Action as RentalsAction } from "ui/rentals/constants";
 import { handleApiError } from "app/utils";
-import { MembersState } from "ui/members/interfaces";
+import { RentalsState } from "ui/rentals/interfaces";
 import { QueryParams } from "app/interfaces";
-import { MemberDetails } from "app/entities/member";
+import { Rental } from "app/entities/rental";
 
-export const readMembersAction = (
+export const readRentalsAction = (
   queryParams?: QueryParams
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
-  dispatch({ type: MembersAction.StartReadRequest });
+  dispatch({ type: RentalsAction.StartReadRequest });
 
   try {
-    const response = await getMembers(queryParams);
-    const members = response.data;
+    const response = await getRentals(queryParams);
+    const rentals = response.data;
     const totalItems = response.headers[("total-items")];
     dispatch({
-      type: MembersAction.GetMembersSuccess,
+      type: RentalsAction.GetRentalsSuccess,
       data: {
-        members,
+        rentals,
         totalItems: toNumber(totalItems)
       }
     });
   } catch (e) {
     const { errorMessage } = e;
     dispatch({
-      type: MembersAction.GetMembersFailure,
+      type: RentalsAction.GetRentalsFailure,
       error: errorMessage
     });
   }
 };
 
-const defaultState: MembersState = {
+const defaultState: RentalsState = {
   entities: {},
   read: {
     isRequesting: false,
@@ -43,9 +43,9 @@ const defaultState: MembersState = {
   }
 }
 
-export const membersReducer = (state: MembersState = defaultState, action: AnyAction) => {
+export const rentalsReducer = (state: RentalsState = defaultState, action: AnyAction) => {
   switch (action.type) {
-    case MembersAction.StartReadRequest:
+    case RentalsAction.StartReadRequest:
       return {
         ...state,
         read: {
@@ -53,22 +53,22 @@ export const membersReducer = (state: MembersState = defaultState, action: AnyAc
           isRequesting: true
         }
       };
-    case MembersAction.GetMembersSuccess:
+    case RentalsAction.GetRentalsSuccess:
       const {
         data: {
-          members,
+          rentals,
           totalItems,
         }
       } = action;
 
-      const newMembers = {};
-      members.forEach((member: MemberDetails) => {
-        newMembers[member.id] = member;
+      const newRentals = {};
+      rentals.forEach((rental: Rental) => {
+        newRentals[rental.id] = rental;
       });
 
       return {
         ...state,
-        entities: newMembers,
+        entities: newRentals,
         read: {
           ...state.read,
           totalItems,
@@ -76,7 +76,7 @@ export const membersReducer = (state: MembersState = defaultState, action: AnyAc
           error: ""
         }
       };
-    case MembersAction.GetMembersFailure:
+    case RentalsAction.GetRentalsFailure:
       const { error } = action;
       return {
         ...state,
