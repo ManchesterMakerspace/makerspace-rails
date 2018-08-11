@@ -1,14 +1,25 @@
 
 export namespace Url {
+  export enum PathPlaceholder {
+    MemberId = "{memberId}",
+    RentalId = "{rentalId}",
+  }
+
   const baseApiPath = "api";
   export const Members = `${baseApiPath}/members`;
+  export const Member = `${Members}/${PathPlaceholder.MemberId}`
   export const SignIn = `${Members}/sign_in`;
   export const SignOut = `${Members}/sign_out`;
-
   export const baseBillingPath = `${baseApiPath}/billing`;
   export const BillingPlans = `${baseBillingPath}/plans`;
+  export const Rentals = `${baseApiPath}/rentals`;
 
-  export const Rentals = `${baseApiPath}/rentals`; 
+  const baseAdminPath = `${baseApiPath}/admin`;
+  export const Admin = {
+    Member: `${baseAdminPath}/${Member}`
+  }
+
+
 }
 
 export enum ApiErrorStatus {

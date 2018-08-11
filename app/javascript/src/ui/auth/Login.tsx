@@ -42,10 +42,10 @@ class Login extends React.Component<Props, State> {
     }
   }
 
-  private validateForm = (form: FormModal) => {
+  private validateForm = (form: FormModal): AuthForm => {
     const values = form.getValues();
     const errors: CollectionOf<string> = {};
-    const validatedForm: AuthForm = {};
+    const validatedForm: Partial<AuthForm> = {};
 
     const email = values[fields.email.name];
     if (email && emailValid(email)) {
@@ -65,12 +65,12 @@ class Login extends React.Component<Props, State> {
       throw errors;
     }
 
-    return validatedForm;
+    return validatedForm as AuthForm;
   }
 
   private submit = async (form: FormModal) => {
     let errors = {};
-    let validAuth: AuthForm = {};
+    let validAuth: AuthForm;
 
     try {
       validAuth = this.validateForm(form);
@@ -95,7 +95,7 @@ class Login extends React.Component<Props, State> {
 
     return (
       <FormModal
-        formRef={this.setFormRef}
+        ref={this.setFormRef}
         id="sign-in"
         loading={isRequesting}
         isOpen={isOpen}

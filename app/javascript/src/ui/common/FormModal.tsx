@@ -14,18 +14,7 @@ import { CollectionOf } from "app/interfaces";
 import ErrorMessage from "ui/common/ErrorMessage";
 import LoadingOverlay from "ui/common/LoadingOverlay";
 
-interface OwnProps {
-  formRef: (ref: any) => any;
-  id: string;
-  isOpen: boolean;
-  title: string;
-  closeHandler: () => void;
-  submitText: string;
-  onSubmit: (form: FormModal) => void;
-  loading: boolean;
-}
 interface FormModalProps {
-  formRef: (ref: any) => any;
   id: string;
   isOpen: boolean;
   title: string;
@@ -179,7 +168,7 @@ class FormModal extends React.Component<FormModalProps, State> {
 
   // Wrap form in loading icon w/ background blocker if loading
   public render(): JSX.Element {
-    const { isOpen, id, loading, formRef } = this.props;
+    const { isOpen, id, loading } = this.props;
 
     return (
       <Dialog
@@ -189,7 +178,6 @@ class FormModal extends React.Component<FormModalProps, State> {
       >
         <form
           onSubmit={this.handleSubmit}
-          ref={formRef}
           onChange={this.handleChange}
           noValidate
           className="form-modal"

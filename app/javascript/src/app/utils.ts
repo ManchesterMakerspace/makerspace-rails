@@ -23,7 +23,6 @@ export const handleApiError = (e: any): string => {
   let apiErrorResponse:any = {
     response: errorResponse,
   }
-  console.log(apiErrorResponse);
   let errorMessage = "";
   if (e.response.data && e.response.data.error) {
     errorMessage = errorResponse.data.error;
@@ -37,7 +36,6 @@ export const handleApiError = (e: any): string => {
     ...apiErrorResponse,
     errorMessage
   }
-  
   return apiErrorResponse;
 };
 

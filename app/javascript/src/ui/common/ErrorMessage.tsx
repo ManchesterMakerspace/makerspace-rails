@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Typography } from "@material-ui/core";
 
 interface ErrorProps {
   error: string;
@@ -7,7 +8,7 @@ interface ErrorProps {
 const ErrorMessage: React.SFC<ErrorProps> = (props) => {
   const { error } = props;
   return (
-    <div className="error-message">{error}</div>
+    <Typography color="error">{error}</Typography>
   )
 }
 

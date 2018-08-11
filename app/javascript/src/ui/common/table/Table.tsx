@@ -57,8 +57,10 @@ class EnhancedTable<T> extends React.Component<Props<T>, {}> {
     return (
       <TableHead>
         <TableRow>
-          {onSelect &&
-            checkbox
+          {
+            //Display checkbox only if selectAll is possible
+            onSelectAll && checkbox ||
+            onSelect && <TableCell/>
           }
           {this.getHeaderCells()}
         </TableRow>
@@ -112,7 +114,7 @@ class EnhancedTable<T> extends React.Component<Props<T>, {}> {
     const {
       id: tableId,
       columns,
-      error 
+      error
     } = this.props;
 
     return (
@@ -199,7 +201,7 @@ class EnhancedTable<T> extends React.Component<Props<T>, {}> {
           {this.getHeaderRow()}
           <TableBody>
             {
-              error ? 
+              error ?
                 this.getErrorRow()
               : this.getBodyRows()
             }

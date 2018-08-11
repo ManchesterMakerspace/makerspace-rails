@@ -7,11 +7,11 @@ export interface AuthState {
 }
 
 export interface AuthForm {
-  email?: string;
-  password?: string;
+  email: string;
+  password: string;
 }
 
-type AuthMember = Pick<MemberDetails, 
+type AuthMember = Pick<MemberDetails,
                         MemberProperties.Id |
                         MemberProperties.Email |
                         MemberProperties.Lastname |
