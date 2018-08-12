@@ -2,39 +2,38 @@ import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import toNumber from "lodash-es/toNumber";
 
-import { getPlans } from "api/billing/transactions";
-import { Action as PlansAction } from "ui/billing/constants";
-import { handleApiError } from "app/utils";
-import { PlansState } from "ui/billing/interfaces";
 import { QueryParams } from "app/interfaces";
-import { BillingPlan } from "app/entities/billingPlan";
+import { getSubscriptions } from "api/billing/transactions";
+import { Action as SubscriptionsAction } from "ui/billing/subscriptions/constants";
+import { SubscriptionsState } from "ui/billing/subscriptions/interfaces";
+import { Subscription } from "app/entities/subscription";
 
-export const readPlansAction = (
+export const readSubscriptionsAction = (
   queryParams?: QueryParams
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
-  dispatch({ type: PlansAction.StartReadRequest });
+  dispatch({ type: SubscriptionsAction.StartReadRequest });
 
   try {
-    const response = await getPlans(queryParams);
-    const plans = response.data;
+    const response = await getSubscriptions(queryParams);
+    const subscriptions = response.data;
     const totalItems = response.headers[("total-items")];
     dispatch({
-      type: PlansAction.GetPlansSuccess,
+      type: SubscriptionsAction.GetSubscriptionsSuccess,
       data: {
-        plans,
+        subscriptions,
         totalItems: toNumber(totalItems)
       }
     });
   } catch (e) {
     const { errorMessage } = e;
     dispatch({
-      type: PlansAction.GetPlansFailure,
+      type: SubscriptionsAction.GetSubscriptionsFailure,
       error: errorMessage
     });
   }
 };
 
-const defaultState: PlansState = {
+const defaultState: SubscriptionsState = {
   entities: {},
   read: {
     isRequesting: false,
@@ -43,9 +42,9 @@ const defaultState: PlansState = {
   }
 }
 
-export const plansReducer = (state: PlansState = defaultState, action: AnyAction) => {
+export const subscriptionsReducer = (state: SubscriptionsState = defaultState, action: AnyAction) => {
   switch (action.type) {
-    case PlansAction.StartReadRequest:
+    case SubscriptionsAction.StartReadRequest:
       return {
         ...state,
         read: {
@@ -53,22 +52,22 @@ export const plansReducer = (state: PlansState = defaultState, action: AnyAction
           isRequesting: true
         }
       };
-    case PlansAction.GetPlansSuccess:
+    case SubscriptionsAction.GetSubscriptionsSuccess:
       const {
         data: {
-          plans,
+          subscriptions,
           totalItems,
         }
       } = action;
 
-      const newPlans = {};
-      plans.forEach((plan: BillingPlan) => {
-        newPlans[plan.id] = plan;
+      const newSubs = {};
+      subscriptions.forEach((sub: Subscription) => {
+        newSubs[sub.id] = sub;
       });
 
       return {
         ...state,
-        entities: newPlans,
+        entities: newSubs,
         read: {
           ...state.read,
           totalItems,
@@ -76,7 +75,7 @@ export const plansReducer = (state: PlansState = defaultState, action: AnyAction
           error: ""
         }
       };
-    case PlansAction.GetPlansFailure:
+    case SubscriptionsAction.GetSubscriptionsFailure:
       const { error } = action;
       return {
         ...state,

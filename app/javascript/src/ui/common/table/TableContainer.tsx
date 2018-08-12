@@ -8,18 +8,18 @@ import LoadingOverlay from "ui/common/LoadingOverlay";
 
 interface Props<T> {
   id: string;
+  title: string;
   columns: Column<T>[];
   data: T[];
-  selectedIds: string[];
-  pageNum: number;
-  orderBy: string;
-  order: SortDirection;
-  loading: boolean;
-  totalItems: number;
-  title: string;
-  error?: string;
   rowId: (row: T) => string;
-  onPageChange: (pageNum: number) => void;
+  selectedIds?: string[];
+  pageNum?: number;
+  orderBy?: string;
+  order?: SortDirection;
+  loading?: boolean;
+  totalItems?: number;
+  error?: string;
+  onPageChange?: (pageNum: number) => void;
   onSearchEnter?: (searchTerm: string) => void;
   onSort?: (columnName: string) => void;
   onSelect?: (rowId: string, selected: boolean) => void;
@@ -56,7 +56,8 @@ class TableContainer<T> extends React.Component<Props<T>, {}> {
       order, 
       orderBy,
       onSearchEnter,
-      error
+      error,
+      onPageChange
     } = this.props;
 
     return (
@@ -91,7 +92,7 @@ class TableContainer<T> extends React.Component<Props<T>, {}> {
             error={error}
           >
           </Table>
-          <TablePagination
+          {onPageChange && <TablePagination
             component="div"
             count={totalItems || 0}
             rowsPerPage={defaultItemsPerPage}
@@ -104,7 +105,7 @@ class TableContainer<T> extends React.Component<Props<T>, {}> {
               'aria-label': 'Next Page',
             }}
             onChangePage={this.onPageChange}
-          />
+          />}
         </div>
       </div>
     );

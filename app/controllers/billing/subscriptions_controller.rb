@@ -1,8 +1,9 @@
 class Billing::SubscriptionsController < ApplicationController
-  include BraintreeGateway
+    include FastQuery
+    include BraintreeGateway
 
   def index
-    subs = @gateway.subscription.search
-    render json: { subs: subs.ids } and return
+    subs = ::BraintreeService::Subscription.get_subscriptions(@gateway)
+    return render_with_total_items(subs, { :each_serializer => Braintree::SubscriptionSerializer})
   end
 end

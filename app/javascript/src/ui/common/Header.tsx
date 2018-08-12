@@ -52,16 +52,15 @@ export default class Header extends React.Component<Props, State> {
 
   private renderMenuNavLink = (path: string, label: string) => {
     return (
-      <MenuItem onClick={this.detachMenu}>
-        <Link to={path} style={{ textDecoration: 'none', color: 'unset' }}>
+      <Link to={path} style={{ textDecoration: 'none', color: 'unset' }} onClick={this.detachMenu}>
+        <MenuItem>
           {label}
-        </Link>
-      </MenuItem>
+        </MenuItem>
+      </Link>
     )
   }
 
   private renderHambMenu = (): JSX.Element => {
-    const { logout } = this.props;
     const { anchorEl } = this.state;
     const menuOpen = Boolean(anchorEl);
 
@@ -91,6 +90,7 @@ export default class Header extends React.Component<Props, State> {
           {this.renderMenuNavLink("/members", "Membership")}
           {this.renderMenuNavLink("/rentals", "Rentals")}
           {this.renderMenuNavLink("/billing", "Billing")}
+          {this.renderMenuNavLink("/subscriptions", "Subscriptions")}
           <MenuItem onClick={this.detachMenu}>Profile</MenuItem>
           <MenuItem onClick={this.logoutUser}>Logout</MenuItem>
         </Menu>

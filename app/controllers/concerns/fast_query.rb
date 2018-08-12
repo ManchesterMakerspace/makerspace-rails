@@ -1,9 +1,6 @@
 module FastQuery
   extend ActiveSupport::Concern
   @@items_per_page = 20
-  included do
-    # before_action :init_gateway
-  end
 
   def query_resource(current_query, query_params)
     items_per_page = @@items_per_page

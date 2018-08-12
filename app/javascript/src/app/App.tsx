@@ -12,8 +12,9 @@ import { logoutUserAction, activeSessionLogin } from "ui/auth/actions";
 import Header from "ui/common/Header";
 import NotFound from "ui/common/NotFound";
 import MembersList from "ui/members/MembersList";
-import PlansList from 'ui/billing/PlansList';
+import PlansList from 'ui/billing/plans/PlansList';
 import RentalsList from 'ui/rentals/RentalsList';
+import SubscriptionsList from 'ui/billing/subscriptions/SubscriptionsList';
 
 interface StateProps {
   auth: boolean;
@@ -49,6 +50,7 @@ class App extends React.Component<Props, {}> {
           <div>
             <Switch>
               <Route exact path="/billing" component={PlansList} />
+              <Route exact path="/subscriptions" component={SubscriptionsList} />
               <Route exact path="/members" component={MembersList} />
               <Route exact path="/rentals" component={RentalsList} />
               <Route exact path="/" component={MembersList} />

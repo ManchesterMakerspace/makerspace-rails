@@ -6,15 +6,14 @@ import { BillingPlan } from "app/entities/billingPlan";
 import { QueryParams } from "app/interfaces";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
-import { SortDirection } from "ui/common/table/constants";
 import TableContainer from "ui/common/table/TableContainer";
 import { Column } from "ui/common/table/Table";
-import { readPlansAction } from "ui/billing/actions";
+import { readPlansAction } from "ui/billing/plans/actions";
 
 
 interface OwnProps { }
 interface DispatchProps {
-  getPlans: (queryParams?: QueryParams) => void;
+  getPlans: () => void;
 }
 interface StateProps {
   plans: BillingPlan[];
@@ -23,13 +22,6 @@ interface StateProps {
   error: string;
 }
 interface Props extends OwnProps, DispatchProps, StateProps { }
-interface State {
-  selectedIds: string[];
-  pageNum: number;
-  orderBy: string;
-  search: string;
-  order: SortDirection;
-}
 
 const fields: Column<BillingPlan>[] = [
   {
@@ -51,87 +43,22 @@ const fields: Column<BillingPlan>[] = [
   }
 ];
 
-class PlansList extends React.Component<Props, State> {
+class PlansList extends React.Component<Props, {}> {
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      selectedIds: [],
-      pageNum: 0,
-      orderBy: "",
-      search: "",
-      order: SortDirection.Asc
-    };
-  }
-
-  private openNewPlanModal = () => {
-    console.log("foo");
-  }
-
-  private getActionButton = () => {
-    return (
-      <Button variant="contained" color="primary" onClick={(this.openNewPlanModal)}>
-        Create New Billing Plan
-      </Button>
-    )
-  }
-
-  private getQueryParams = (): QueryParams => {
-    const {
-      pageNum,
-      orderBy,
-      order,
-      search
-    } = this.state
-    return {
-      pageNum,
-      orderBy,
-      order,
-      search
-    };
-  }
   public componentDidMount() {
-    this.getPlans();
+    this.props.getPlans();
   }
 
-  private getPlans = () => {
-    this.props.getPlans(this.getQueryParams());
-  }
   private rowId = (row: BillingPlan) => row.id;
-
-  private onSort = (prop: string) => {
-    const orderBy = prop;
-    let order = SortDirection.Desc;
-    if (this.state.orderBy === orderBy && this.state.order === order) {
-      order = SortDirection.Asc;
-    }
-    this.setState({ order, orderBy, pageNum: 0 },
-      this.getPlans
-    );
-  }
-
-  private onPageChange = (newPage: number) => {
-    this.setState({ pageNum: newPage },
-      this.getPlans
-    );
-  }
-
-  private onSearchEnter = (searchTerm: string) => {
-    this.setState({ search: searchTerm, pageNum: 0 },
-      this.getPlans
-    );
-  }
-
 
   public render(): JSX.Element {
     const { plans: data, totalItems, loading, error } = this.props;
 
-    const { selectedIds, pageNum, order, orderBy } = this.state;
 
     return (
       <>
         <Grid style={{ paddingTop: 20 }}>
-          {this.getActionButton()}
+          *Plans can only be created, modified or deleted via Braintree Control Panel
         </Grid>
         <TableContainer
           id="billing-plans-table"
@@ -140,15 +67,8 @@ class PlansList extends React.Component<Props, State> {
           data={data}
           error={error}
           totalItems={totalItems}
-          selectedIds={selectedIds}
-          pageNum={pageNum}
-          onSearchEnter={this.onSearchEnter}
           columns={fields}
-          order={order}
-          orderBy={orderBy}
-          onSort={this.onSort}
           rowId={this.rowId}
-          onPageChange={this.onPageChange}
         />
       </>
     );
@@ -179,7 +99,7 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch
 ): DispatchProps => {
   return {
-    getPlans: (queryParams) => dispatch(readPlansAction(queryParams))
+    getPlans: () => dispatch(readPlansAction())
   }
 }
 

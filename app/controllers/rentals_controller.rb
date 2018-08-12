@@ -4,7 +4,7 @@ class RentalsController < ApplicationController
 
   def index
     @rentals = Rental.all
-    return render_with_total_items(@rentals)
+    return render_with_total_items(query_resource(@rentals, params))
   end
 
   def show
