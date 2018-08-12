@@ -9,7 +9,13 @@ import { rootReducer } from 'ui/reducer';
 import { State as ReduxState } from "ui/reducer";
 import { ApiErrorMessageMap } from "app/constants";
 
-export const buildJsonUrl = (path: string) => {
+export const buildJsonUrl = (pathFragments: string | string[]) => {
+  let path: string;
+  if (Array.isArray(pathFragments)) {
+    path = pathFragments.join("/");
+  } else {
+    path = pathFragments;
+  }
   return `${path}.json`;
 };
 

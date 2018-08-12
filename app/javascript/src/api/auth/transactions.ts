@@ -6,7 +6,7 @@ import { AuthForm } from "ui/auth/interfaces";
 
 export const postLogin = async (creds?: AuthForm) => {
   try {
-    return await axios.post(buildJsonUrl(Url.SignIn), {
+    return await axios.post(buildJsonUrl(Url.Auth.SignIn), {
       member: creds || {}
     });
   } catch (e) {
@@ -17,7 +17,7 @@ export const postLogin = async (creds?: AuthForm) => {
 
 export const deleteLogin = async () => {
   try {
-    return await axios.delete(buildJsonUrl(Url.SignOut));
+    return await axios.delete(buildJsonUrl(Url.Auth.SignOut));
   } catch (e) {
     const error = handleApiError(e);
     throw error;

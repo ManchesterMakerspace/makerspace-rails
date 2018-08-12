@@ -6,24 +6,29 @@ export namespace Url {
   }
 
   const baseApiPath = "api";
+  const baseAdminPath = `${baseApiPath}/admin`;
+  const baseBillingPath = `${baseApiPath}/billing`;
+
   export const Members = `${baseApiPath}/members`;
   export const Member = `${Members}/${PathPlaceholder.MemberId}`
-  export const SignIn = `${Members}/sign_in`;
-  export const SignOut = `${Members}/sign_out`;
-  
+
   export const Rentals = `${baseApiPath}/rentals`;
 
-  const baseAdminPath = `${baseApiPath}/admin`;
+  export const Auth = {
+    SignIn: `${Members}/sign_in`,
+    SignOut: `${Members}/sign_out`,
+    PasswordReset: `${Members}/password`
+  }
+
   export const Admin = {
     Member: `${baseAdminPath}/${Member}`
   }
 
-  const baseBillingPath = `${baseApiPath}/billing`;
   export const Billing = {
     Plans: `${baseBillingPath}/plans`,
     Subscriptions: `${baseBillingPath}/subscriptions`,
+    Checkout: `${baseBillingPath}/checkout`
   }
-
 
 }
 
