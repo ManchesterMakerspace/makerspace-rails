@@ -31,7 +31,7 @@ export const readMemberAction = (
 export const updateMemberAction = (
   memberId: string,
   updateDetails: Partial<MemberDetails>
-): ThunkAction < Promise < void>, {}, {}, AnyAction > => async (dispatch) => {
+): ThunkAction<Promise<void>, {}, {}, AnyAction > => async (dispatch) => {
   dispatch({ type: MemberAction.StartUpdateRequest });
 
   try {

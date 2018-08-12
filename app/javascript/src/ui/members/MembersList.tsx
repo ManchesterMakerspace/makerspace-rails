@@ -14,9 +14,8 @@ import { Button, Grid } from "@material-ui/core";
 import { Status } from "ui/common/constants";
 import StatusLabel from "ui/common/StatusLabel";
 import { memberStatusLabelMap, membershipRenewalOptions } from "ui/members/constants";
-import RenewalForm, { RenewalEntity } from "ui/common/RenewalForm";
+import RenewalForm, { RenewalEntity, RenewForm } from "ui/common/RenewalForm";
 import FormModal from "ui/common/FormModal";
-import { RenewForm } from "ui/interfaces";
 import { updateMemberAction } from "ui/member/actions";
 import { memberToRenewal } from "ui/member/utils";
 

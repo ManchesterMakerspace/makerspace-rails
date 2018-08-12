@@ -14,6 +14,20 @@ import { CollectionOf } from "app/interfaces";
 import ErrorMessage from "ui/common/ErrorMessage";
 import LoadingOverlay from "ui/common/LoadingOverlay";
 
+
+export interface FormField {
+  label: string;
+  name: string;
+  placeholder: string;
+  validate: (val: string) => boolean;
+  error: string;
+  render?: (value: string | number | object) => string | JSX.Element;
+}
+
+export interface FormFields {
+  [key: string]: FormField
+}
+
 interface FormModalProps {
   id: string;
   isOpen: boolean;

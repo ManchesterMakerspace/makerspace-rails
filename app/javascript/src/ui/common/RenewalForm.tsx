@@ -1,14 +1,16 @@
 import * as React from "react";
-import { Select, MenuItem, Typography } from "@material-ui/core";
+import { Select } from "@material-ui/core";
 import toNumber from "lodash-es/toNumber";
 
 import FormModal from "ui/common/FormModal";
 import ErrorMessage from "ui/common/ErrorMessage";
-import { timeToDate } from "ui/utils/timeToDate";
 import { CollectionOf } from "app/interfaces";
-import { RenewForm } from "ui/interfaces";
 import kebabCase from "lodash-es/kebabCase";
 
+export interface RenewForm {
+  id: string;
+  term: number;
+}
 export interface RenewalEntity {
   id: string;
   name: string;
@@ -38,7 +40,6 @@ class RenewalForm extends React.Component<OwnProps, {}> {
 
   public validateRenewalForm = (): RenewForm => {
     const formValues = this.formRef.getValues();
-    console.log(formValues)
     const errors: CollectionOf<string> = {};
     const validatedForm: Partial<RenewForm> = {};
 
@@ -96,17 +97,3 @@ class RenewalForm extends React.Component<OwnProps, {}> {
 }
 
 export default RenewalForm;
-
-
-// <Typography variant="subheading" gutterBottom>
-//   Name:
-//         </Typography>
-//   <Typography variant="subheading" gutterBottom>
-//     {entity && entity.name}
-//   </Typography>
-//   <Typography variant="subheading" gutterBottom>
-//     Expiration:
-//         </Typography>
-//   <Typography variant="subheading" gutterBottom>
-//     {entity && timeToDate(entity.expiration)}
-//   </Typography>
