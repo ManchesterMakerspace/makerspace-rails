@@ -6,6 +6,7 @@ import FormModal from "ui/common/FormModal";
 import ErrorMessage from "ui/common/ErrorMessage";
 import { CollectionOf } from "app/interfaces";
 import kebabCase from "lodash-es/kebabCase";
+import Form from "ui/common/Form";
 
 export interface RenewForm {
   id: string;
@@ -29,16 +30,16 @@ interface OwnProps {
   isRequesting: boolean;
   error: string;
   onClose: () => void;
-  onSubmit: (form: FormModal) => void;
+  onSubmit: (form: Form) => void;
 }
 
 const renewalSelectName = "renewal-form-renewal-length";
 
 class RenewalForm extends React.Component<OwnProps, {}> {
-  private formRef: FormModal;
-  private setFormRef = (ref: FormModal) => this.formRef = ref;
+  private formRef: Form;
+  private setFormRef = (ref: Form) => this.formRef = ref;
 
-  public validateRenewalForm = (form: FormModal): RenewForm => {
+  public validateRenewalForm = (form: Form): RenewForm => {
     const formValues = form.getValues();
     const errors: CollectionOf<string> = {};
     const validatedForm: Partial<RenewForm> = {};
@@ -70,7 +71,7 @@ class RenewalForm extends React.Component<OwnProps, {}> {
 
     return (
       <FormModal
-        ref={this.setFormRef}
+        formRef={this.setFormRef}
         id="renewal-form"
         loading={isRequesting}
         isOpen={isOpen}

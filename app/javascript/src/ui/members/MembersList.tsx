@@ -1,6 +1,5 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import isEmpty from "lodash-es/isEmpty";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { timeToDate } from "ui/utils/timeToDate";
@@ -15,9 +14,9 @@ import { Status } from "ui/common/constants";
 import StatusLabel from "ui/common/StatusLabel";
 import { memberStatusLabelMap, membershipRenewalOptions } from "ui/members/constants";
 import RenewalForm, { RenewalEntity, RenewForm } from "ui/common/RenewalForm";
-import FormModal from "ui/common/FormModal";
 import { updateMemberAction } from "ui/member/actions";
 import { memberToRenewal } from "ui/member/utils";
+import Form from "ui/common/Form";
 
 interface OwnProps {}
 interface DispatchProps {
@@ -114,7 +113,7 @@ class MembersList extends React.Component<Props, State> {
     this.setState({ openRenewalForm: false });
   }
 
-  private submitRenewalForm = async (form: FormModal) => {
+  private submitRenewalForm = async (form: Form) => {
     const validRenewal: RenewForm = this.renewFormRef.validateRenewalForm(form);
 
     if (!form.isValid()) return;

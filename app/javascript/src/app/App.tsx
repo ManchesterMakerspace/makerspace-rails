@@ -1,26 +1,21 @@
 import * as React from 'react';
 import { Store } from 'redux';
 import { connect, Provider } from "react-redux";
-import { Switch, Route } from "react-router";
 import { ConnectedRouter } from 'connected-react-router';
 import { History } from 'history';
 
 import { Theme, MuiThemeProvider } from '@material-ui/core';
 
 import { ScopedThunkDispatch, State as ReduxState } from "ui/reducer";
-import { logoutUserAction, activeSessionLogin } from "ui/auth/actions";
+import { activeSessionLogin } from "ui/auth/actions";
 import Header from "ui/common/Header";
-import NotFound from "ui/common/NotFound";
-import MembersList from "ui/members/MembersList";
-import PlansList from 'ui/billing/plans/PlansList';
-import RentalsList from 'ui/rentals/RentalsList';
-import SubscriptionsList from 'ui/billing/subscriptions/SubscriptionsList';
+import ProtectedFrame from 'ui/common/ProtectedFrame';
+import LandingPage from 'ui/common/LandingPage';
 
 interface StateProps {
   auth: boolean;
 }
 interface DispatchProps {
-  logout: () => void;
   attemptLogin: () => void;
 }
 interface OwnProps {
@@ -38,7 +33,7 @@ class App extends React.Component<Props, {}> {
   }
 
   public render(): JSX.Element {
-    const { auth, logout, store, history, theme } = this.props;
+    const { auth, store, history, theme } = this.props;
 
     return (
       <Provider store={store}>
@@ -46,18 +41,9 @@ class App extends React.Component<Props, {}> {
       <ConnectedRouter history={history}>
         <MuiThemeProvider theme={theme}>
           <div className="root">
-          <Header auth={auth} logout={logout} />
-          <div>
-            <Switch>
-              <Route exact path="/billing" component={PlansList} />
-              <Route exact path="/subscriptions" component={SubscriptionsList} />
-              <Route exact path="/members" component={MembersList} />
-              <Route exact path="/rentals" component={RentalsList} />
-              <Route exact path="/" component={MembersList} />
-              <Route component={NotFound} />
-            </Switch>
+          <Header/>
+            {auth ? <ProtectedFrame/> : <LandingPage/>}
           </div>
-        </div>
         </MuiThemeProvider>
       </ConnectedRouter>
     </Provider>
@@ -79,7 +65,6 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch
 ): DispatchProps => {
   return {
-    logout: () => dispatch(logoutUserAction()),
     attemptLogin: () => dispatch(activeSessionLogin())
   }
 }

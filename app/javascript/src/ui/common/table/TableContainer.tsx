@@ -40,20 +40,20 @@ class TableContainer<T> extends React.Component<Props<T>, {}> {
   }
 
   public render(): JSX.Element {
-    const { 
-      id, 
-      rowId, 
-      onSelect, 
-      onSelectAll, 
-      onSort, 
-      columns, 
-      title, 
-      data, 
-      totalItems, 
-      loading, 
-      selectedIds, 
-      pageNum, 
-      order, 
+    const {
+      id,
+      rowId,
+      onSelect,
+      onSelectAll,
+      onSort,
+      columns,
+      title,
+      data,
+      totalItems,
+      loading,
+      selectedIds,
+      pageNum,
+      order,
       orderBy,
       onSearchEnter,
       error,
@@ -76,7 +76,7 @@ class TableContainer<T> extends React.Component<Props<T>, {}> {
           }
         </Toolbar>
         <div className="table-wrapper">
-          {loading &&  <LoadingOverlay formId={id}/>}
+          {loading &&  <LoadingOverlay id={id}/>}
           <Table
             id={id}
             page={pageNum}

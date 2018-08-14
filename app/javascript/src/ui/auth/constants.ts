@@ -1,6 +1,6 @@
-import { FormFields } from "ui/common/FormModal";
 import { emailValid } from "app/utils";
 import isString from "lodash-es/isString";
+import { FormFields } from "ui/common/Form";
 
 export enum Action {
   StartAuthRequest = "AUTH/START_REQUEST",
@@ -53,9 +53,9 @@ export const SignUpFields: FormFields = {
     error: "Invalid email"
   },
   password: {
-    label: "Email",
-    name: `${formPrefix}-email`,
-    placeholder: "Enter email",
+    label: "Password",
+    name: `${formPrefix}-password`,
+    placeholder: "Enter password",
     validate: (val) => isString(val) && val.length > 7,
     error: "Password must be 8 characters minimum"
   },

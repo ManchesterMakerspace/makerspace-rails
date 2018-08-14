@@ -1,5 +1,7 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+
 import {
   AppBar,
   Toolbar,
@@ -13,19 +15,26 @@ import {
   Menu as MenuIcon,
 } from "@material-ui/icons";
 
+import { ScopedThunkDispatch, State as ReduxState } from "ui/reducer";
 import Login from "ui/auth/Login";
+import { logoutUserAction } from "ui/auth/actions";
 
-interface Props {
-  logout: () => void;
+interface OwnProps {}
+interface StateProps {
   auth: boolean;
 }
+interface DispatchProps {
+  logout: () => void;
+}
+
+interface Props extends OwnProps, StateProps, DispatchProps {}
 
 interface State {
   authOpen: boolean;
   anchorEl: HTMLElement;
 }
 
-export default class Header extends React.Component<Props, State> {
+class Header extends React.Component<Props, State> {
 
   constructor(props: Props){
     super(props)
@@ -33,13 +42,6 @@ export default class Header extends React.Component<Props, State> {
       authOpen: false,
       anchorEl: null,
     };
-  }
-
-  private openSignIn = () => {
-    this.setState({ authOpen: true });
-  }
-  private closeSignIn = () => {
-    this.setState({ authOpen: false });
   }
 
   private attachMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -109,26 +111,34 @@ export default class Header extends React.Component<Props, State> {
     const { authOpen } = this.state;
 
     return (
-      <div className="root">
-        <AppBar position="static">
-          <Toolbar>
-            <Typography variant="title" color="inherit" className="flex">
-              Manchester Makerspace
-            </Typography>
-            {
-              auth ?
-                this.renderHambMenu()
-              : <Button color="inherit" onClick={this.openSignIn}>
-                  Login
-                </Button>
-            }
-          </Toolbar>
-        </AppBar>
-        <Login
-          isOpen={authOpen}
-          onClose={this.closeSignIn}
-        />
-      </div>
+      <AppBar style={{marginBottom: "1em"}} position="static">
+        <Toolbar>
+          <Typography variant="title" color="inherit" className="flex">
+            Manchester Makerspace
+          </Typography>
+          { auth && this.renderHambMenu() }
+        </Toolbar>
+      </AppBar>
     )
   }
 }
+
+const mapStateToProps = (state: ReduxState, _ownProps: OwnProps): StateProps => {
+  const {
+    auth: { currentUser }
+  } = state;
+
+  return {
+    auth: currentUser && !!currentUser.email
+  }
+}
+
+const mapDispatchToProps = (
+  dispatch: ScopedThunkDispatch
+): DispatchProps => {
+  return {
+    logout: () => dispatch(logoutUserAction()),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

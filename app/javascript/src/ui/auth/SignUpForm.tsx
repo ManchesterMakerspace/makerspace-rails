@@ -2,19 +2,19 @@ import * as React from "react";
 import { connect } from "react-redux";
 
 import { TextField, Grid, InputAdornment } from "@material-ui/core";
-import isEmpty from "lodash-es/isEmpty";
 
 import { CollectionOf } from "app/interfaces";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
-import FormModal from "ui/common/FormModal";
 import { SignUpFields } from "ui/auth/constants";
 import { SignUpForm } from "ui/auth/interfaces";
 import ErrorMessage from "ui/common/ErrorMessage";
 import { stageSignUpAction } from "ui/auth/actions";
 import { RemoveRedEye } from "@material-ui/icons";
+import Form from "ui/common/Form";
 
-interface OwnProps {}
+interface OwnProps {
+}
 interface DispatchProps {
   stageSignUp: (signUpForm: SignUpForm) => void;
 }
@@ -28,8 +28,8 @@ interface State {
 interface Props extends OwnProps, DispatchProps, StateProps { }
 
 class SignUpFormComponent extends React.Component<Props, State> {
-  private formRef: FormModal;
-  private setFormRef = (ref: FormModal) => this.formRef = ref;
+  private formRef: Form;
+  private setFormRef = (ref: Form) => this.formRef = ref;
 
   constructor(props: Props) {
     super(props);
@@ -64,7 +64,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
     )
   }
 
-  private validateForm = (form: FormModal): SignUpForm => {
+  private validateForm = (form: Form): SignUpForm => {
     const values = form.getValues();
     const errors: CollectionOf<string> = {};
     const validatedForm: Partial<SignUpForm> = {};
@@ -85,7 +85,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
     return validatedForm as SignUpForm;
   }
 
-  private submit = async (form: FormModal) => {
+  private submit = async (form: Form) => {
     const validSignUp: SignUpForm = this.validateForm(form);
 
     if (!form.isValid()) return;
@@ -97,32 +97,33 @@ class SignUpFormComponent extends React.Component<Props, State> {
     const { isRequesting, error } = this.props;
 
     return (
-      <FormModal
+      <Form
         ref={this.setFormRef}
         id="sign-up"
         loading={isRequesting}
-        isOpen={true}
         title="Register"
         onSubmit={this.submit}
         submitText="Submit"
       >
-        <Grid xs={6}>
-          <TextField
-            fullWidth
-            required
-            label={SignUpFields.firstname.label}
-            name={SignUpFields.firstname.name}
-            placeholder={SignUpFields.firstname.placeholder}
-          />
-        </Grid>
-        <Grid xs={6}>
-          <TextField
-            fullWidth
-            required
-            label={SignUpFields.lastname.label}
-            name={SignUpFields.lastname.name}
-            placeholder={SignUpFields.lastname.placeholder}
-          />
+        <Grid container spacing={24}>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              required
+              label={SignUpFields.firstname.label}
+              name={SignUpFields.firstname.name}
+              placeholder={SignUpFields.firstname.placeholder}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              required
+              label={SignUpFields.lastname.label}
+              name={SignUpFields.lastname.name}
+              placeholder={SignUpFields.lastname.placeholder}
+            />
+          </Grid>
         </Grid>
         <TextField
           fullWidth
@@ -134,7 +135,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
         />
         {this.renderPasswordInput()}
         {!isRequesting && error && <ErrorMessage error={error} />}
-      </FormModal>
+      </Form>
     );
   }
 }

@@ -13,10 +13,9 @@ import { loginUserAction } from "ui/auth/actions";
 import { LoginFields } from "ui/auth/constants";
 import { AuthForm } from "ui/auth/interfaces";
 import ErrorMessage from "ui/common/ErrorMessage";
+import Form from "ui/common/Form";
 
 interface OwnProps {
-  isOpen: boolean;
-  onClose: () => void;
 }
 interface DispatchProps {
   loginUser: (authForm: AuthForm) => Promise<void>;
@@ -29,20 +28,10 @@ interface State {}
 interface Props extends OwnProps, DispatchProps, StateProps {}
 
 class Login extends React.Component<Props, State> {
-  private formRef: FormModal;
-  private setFormRef = (ref: FormModal) => this.formRef = ref;
+  private formRef: Form;
+  private setFormRef = (ref: Form) => this.formRef = ref;
 
-  public componentDidUpdate(prevProps: Props) {
-    const { isRequesting: wasRequesting } = prevProps;
-    const { isRequesting, error, onClose } = this.props;
-
-    // When login complete
-    if (wasRequesting && !isRequesting && !error) {
-      onClose();
-    }
-  }
-
-  private validateForm = (form: FormModal): AuthForm => {
+  private validateForm = (form: Form): AuthForm => {
     const values = form.getValues();
     const errors: CollectionOf<string> = {};
     const validatedForm: Partial<AuthForm> = {};
@@ -63,7 +52,7 @@ class Login extends React.Component<Props, State> {
     return validatedForm as AuthForm;
   }
 
-  private submit = async (form: FormModal) => {
+  private submit = async (form: Form) => {
     const validAuth: AuthForm = this.validateForm(form);
 
     if (!form.isValid()) return;
@@ -72,15 +61,13 @@ class Login extends React.Component<Props, State> {
   }
 
   public render(): JSX.Element {
-    const { isOpen, onClose, isRequesting, error } = this.props;
+    const { isRequesting, error } = this.props;
 
     return (
-      <FormModal
+      <Form
         ref={this.setFormRef}
         id="sign-in"
         loading={isRequesting}
-        isOpen={isOpen}
-        closeHandler={onClose}
         title="Please Sign In"
         onSubmit={this.submit}
         submitText="Sign In"
@@ -102,7 +89,7 @@ class Login extends React.Component<Props, State> {
           type="password"
         />
         { !isRequesting && error && <ErrorMessage error={error}/>}
-      </FormModal>
+      </Form>
     );
   }
 }

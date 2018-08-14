@@ -7,6 +7,7 @@ import { CollectionOf } from "app/interfaces";
 import FormModal from "ui/common/FormModal";
 import ErrorMessage from "ui/common/ErrorMessage";
 import { fields } from "ui/member/constants";
+import Form from "ui/common/Form";
 
 interface OwnProps {
   member: MemberDetails;
@@ -18,10 +19,10 @@ interface OwnProps {
 }
 
 class MemberForm extends React.Component<OwnProps, {}> {
-  private formRef: FormModal;
-  private setFormRef = (ref: FormModal) => this.formRef = ref;
+  private formRef: Form;
+  private setFormRef = (ref: Form) => this.formRef = ref;
 
-  private validate = (form: FormModal): MemberDetails => {
+  private validate = (form: Form): MemberDetails => {
     const formValues = form.getValues();
     const errors: CollectionOf<string> = {};
     const validatedMember: Partial<MemberDetails> = {};
@@ -42,7 +43,7 @@ class MemberForm extends React.Component<OwnProps, {}> {
     return validatedMember as MemberDetails;
   }
 
-  private submit = async (form: FormModal) => {
+  private submit = async (form: Form) => {
     const validMember: MemberDetails = this.validate(form);
 
     if (!form.isValid()) return;
@@ -56,7 +57,7 @@ class MemberForm extends React.Component<OwnProps, {}> {
 
     return (
       <FormModal
-        ref={this.setFormRef}
+        formRef={this.setFormRef}
         id="member-form"
         loading={isRequesting}
         isOpen={isOpen}
