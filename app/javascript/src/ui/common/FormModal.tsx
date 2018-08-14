@@ -1,5 +1,6 @@
 import * as React from "react";
 import mapValues from "lodash-es/mapValues";
+import isEmpty from "lodash-es/isEmpty";
 import omit from "lodash-es/omit";
 import {
   Dialog,
@@ -32,7 +33,7 @@ interface FormModalProps {
   id: string;
   isOpen: boolean;
   title: string;
-  closeHandler: () => void;
+  closeHandler?: () => void;
   submitText: string;
   onSubmit: (form: FormModal) => void;
   loading: boolean;
@@ -83,6 +84,10 @@ class FormModal extends React.Component<FormModalProps, State> {
   public setFormState = (newState: Partial<State>) => {
     this.setState(state => ({ ...state, ...newState}))
   };
+
+  public isValid = (): boolean => {
+    return isEmpty(this.state.errors);
+  }
 
   private handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -159,8 +164,9 @@ class FormModal extends React.Component<FormModalProps, State> {
   }
 
   private closeForm = () => {
+    const { closeHandler } = this.props;
     this.setState(this.getDefaultState(this.props));
-    this.props.closeHandler()
+    closeHandler && closeHandler();
   }
 
   private renderFormContent = (): JSX.Element => {

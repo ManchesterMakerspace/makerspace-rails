@@ -34,7 +34,6 @@ class Member
   validates :lastname, presence: true
   validates :email, uniqueness: true
   validates :cardID, uniqueness: true
-  validates_confirmation_of :password
 
   before_save :update_allowed_workshops
   after_initialize :verify_group_expiry

@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     end
 
     authenticate :member do
+      get 'members/check_email/:email', to: 'members#check_email'
       resources :members, only: [:show]
       resources :rentals, only: [:show]
       namespace :admin  do

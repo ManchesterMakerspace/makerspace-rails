@@ -38,8 +38,8 @@ class RenewalForm extends React.Component<OwnProps, {}> {
   private formRef: FormModal;
   private setFormRef = (ref: FormModal) => this.formRef = ref;
 
-  public validateRenewalForm = (): RenewForm => {
-    const formValues = this.formRef.getValues();
+  public validateRenewalForm = (form: FormModal): RenewForm => {
+    const formValues = form.getValues();
     const errors: CollectionOf<string> = {};
     const validatedForm: Partial<RenewForm> = {};
 
@@ -58,9 +58,9 @@ class RenewalForm extends React.Component<OwnProps, {}> {
       errors[renewalSelectName] = "Select a renewal term."
     }
 
-    if (Object.keys(errors).length) {
-      throw errors;
-    }
+    form.setFormState({
+      errors,
+    });
 
     return validatedForm as RenewForm;
   }

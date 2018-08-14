@@ -3,6 +3,7 @@ export namespace Url {
   export enum PathPlaceholder {
     MemberId = "{memberId}",
     RentalId = "{rentalId}",
+    Email = "{email}"
   }
 
   const baseApiPath = "api";
@@ -17,7 +18,9 @@ export namespace Url {
   export const Auth = {
     SignIn: `${Members}/sign_in`,
     SignOut: `${Members}/sign_out`,
-    PasswordReset: `${Members}/password`
+    PasswordReset: `${Members}/password`,
+    EmailCheck: `${Members}/check_email/${PathPlaceholder.Email}`,
+    SignUp: `${Members}`
   }
 
   export const Admin = {

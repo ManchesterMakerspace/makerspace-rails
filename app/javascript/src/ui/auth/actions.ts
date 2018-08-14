@@ -1,11 +1,10 @@
 import { ThunkAction } from "redux-thunk";
 import { AnyAction } from "redux";
 
-import { handleApiError } from "app/utils";
-
-import { AuthState, AuthForm } from "ui/auth/interfaces";
-import { postLogin, deleteLogin } from "api/auth/transactions";
+import { AuthState, AuthForm, SignUpForm } from "ui/auth/interfaces";
+import { postLogin, deleteLogin, checkEmailExists, postSignUp } from "api/auth/transactions";
 import { Action as AuthAction } from "ui/auth/constants";
+import { getMember } from "api/member/transactions";
 
 export const loginUserAction = (
   loginForm?: AuthForm
@@ -17,13 +16,13 @@ export const loginUserAction = (
     const response = await postLogin(loginForm);
     member = response.data;
     dispatch({
-      type: AuthAction.LoginUserSuccess,
+      type: AuthAction.AuthUserSuccess,
       data: member
     });
   } catch (e) {
     const { errorMessage } = e;
     dispatch({
-      type: AuthAction.LoginUserFailure,
+      type: AuthAction.AuthUserFailure,
       error: errorMessage
     });
   }
@@ -35,16 +34,14 @@ export const activeSessionLogin = (
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
   dispatch({ type: AuthAction.StartAuthRequest });
 
-  let member;
   try {
     const response = await postLogin();
-    member = response.data;
     dispatch({
-      type: AuthAction.LoginUserSuccess,
-      data: member
+      type: AuthAction.AuthUserSuccess,
+      data: response.data
     });
   } catch {
-    dispatch({ type: AuthAction.LoginUserFailure })
+    dispatch({ type: AuthAction.AuthUserFailure })
   }
 }
 
@@ -57,6 +54,48 @@ export const logoutUserAction = (
   dispatch({ type: AuthAction.LogoutSuccess });
 }
 
+export const stageSignUpAction = (
+  signUpForm: SignUpForm
+): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
+  dispatch({ type: AuthAction.StartAuthRequest });
+  try {
+    const exists = await checkEmailExists(signUpForm.email);
+    if (exists) {
+      dispatch({ type: AuthAction.AuthUserFailure, error: "Email already exists" });
+    } else {
+      dispatch({
+        type: AuthAction.StageSignUp,
+        data: signUpForm
+      });
+    }
+  } catch (e) {
+    const { errorMessage } = e;
+    dispatch({
+      type: AuthAction.AuthUserFailure,
+      error: errorMessage
+    });
+  }
+};
+
+export const submitSignUpAction = (
+  signUpForm: SignUpForm
+): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
+  dispatch({ type: AuthAction.StartAuthRequest });
+  try {
+    const response = await postSignUp(signUpForm);
+    dispatch({
+      type: AuthAction.AuthUserSuccess,
+      data: response.data
+    });
+  } catch(e) {
+    const { errorMessage } = e;
+    dispatch({
+      type: AuthAction.AuthUserFailure,
+      error: errorMessage
+    })
+  }
+}
+
 const defaultState: AuthState = {
   currentUser: {
     id: undefined,
@@ -64,6 +103,15 @@ const defaultState: AuthState = {
     lastname: undefined,
     email: undefined,
     expirationTime: undefined
+  },
+  newUser: {
+    firstname: undefined,
+    lastname: undefined,
+    email: undefined,
+    password: undefined,
+    paymentMethod: undefined,
+    paymentMethodNonce: undefined,
+    planId: undefined
   },
   isRequesting: false,
   error: ""
@@ -76,7 +124,7 @@ export const authReducer = (state: AuthState = defaultState, action: AnyAction) 
         ...state,
         isRequesting: true
       };
-    case AuthAction.LoginUserSuccess:
+    case AuthAction.AuthUserSuccess:
       const { data: newUser } = action;
       return {
         ...state,
@@ -84,7 +132,7 @@ export const authReducer = (state: AuthState = defaultState, action: AnyAction) 
         isRequesting: false,
         error: ""
       };
-    case AuthAction.LoginUserFailure:
+    case AuthAction.AuthUserFailure:
       const { error } = action;
       return {
         ...state,
@@ -95,6 +143,22 @@ export const authReducer = (state: AuthState = defaultState, action: AnyAction) 
       return {
         ...defaultState
       }
+    case AuthAction.ClearStagedSignUp:
+      return {
+        ...state,
+        newUser: defaultState.newUser
+      }
+    case AuthAction.StageSignUp:
+     const { data: memebrSignUpForm } = action;
+     return {
+       ...state,
+       newUser: {
+         ...state.newUser,
+         ...memebrSignUpForm
+       },
+       isRequesting: false,
+       error: ""
+     }
     default:
       return state;
   }

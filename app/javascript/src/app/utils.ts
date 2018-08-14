@@ -8,6 +8,7 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import { rootReducer } from 'ui/reducer';
 import { State as ReduxState } from "ui/reducer";
 import { ApiErrorMessageMap } from "app/constants";
+import { ApiErrorResponse } from "app/interfaces";
 
 export const buildJsonUrl = (pathFragments: string | string[]) => {
   let path: string;
@@ -23,18 +24,17 @@ export const emailValid = (email: string): boolean => {
   return (/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i).test(email);
 };
 
-export const handleApiError = (e: any): string => {
+export const handleApiError = (e: any): ApiErrorResponse => {
   const { response: errorResponse } = e;
   // Always capture original response for upstream handlers
-  let apiErrorResponse:any = {
+  let apiErrorResponse: ApiErrorResponse = {
     response: errorResponse,
   }
   let errorMessage = "";
-  if (e.response.data && e.response.data.error) {
+  if (apiErrorResponse.response.data && apiErrorResponse.response.data.error) {
     errorMessage = errorResponse.data.error;
-
   } else {
-    errorMessage = ApiErrorMessageMap[apiErrorResponse.statusText] ||
+    errorMessage = ApiErrorMessageMap[apiErrorResponse.response.status] ||
       "Unknown Error.  Contact an administrator";
   }
 

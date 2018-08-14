@@ -115,24 +115,9 @@ class MembersList extends React.Component<Props, State> {
   }
 
   private submitRenewalForm = async (form: FormModal) => {
-    let errors = {};
-    let validRenewal: RenewForm;
+    const validRenewal: RenewForm = this.renewFormRef.validateRenewalForm(form);
 
-    try {
-      validRenewal = this.renewFormRef.validateRenewalForm();
-      console.log(validRenewal);
-    } catch (e) {
-      errors = {
-        ...errors,
-        ...e
-      };
-    }
-
-    form.setFormState({
-      errors
-    });
-
-    if (!isEmpty(errors)) return;
+    if (!form.isValid()) return;
 
     await this.props.updateMember(validRenewal.id, validRenewal);
   }

@@ -10,7 +10,7 @@ import { emailValid } from "app/utils";
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import FormModal from "ui/common/FormModal";
 import { loginUserAction } from "ui/auth/actions";
-import { fields } from "ui/auth/constants";
+import { LoginFields } from "ui/auth/constants";
 import { AuthForm } from "ui/auth/interfaces";
 import ErrorMessage from "ui/common/ErrorMessage";
 
@@ -47,45 +47,26 @@ class Login extends React.Component<Props, State> {
     const errors: CollectionOf<string> = {};
     const validatedForm: Partial<AuthForm> = {};
 
-    const email = values[fields.email.name];
-    if (email && emailValid(email)) {
-      validatedForm.email = email;
-    } else {
-      errors[fields.email.name] = "Invalid email";
-    }
-
-    const password = values[fields.password.name];
-    if (password) {
-      validatedForm.password = password;
-    } else {
-      errors[fields.password.name] = "Invalid password";
-    }
-
-    if (Object.keys(errors).length) {
-      throw errors;
-    }
-
-    return validatedForm as AuthForm;
-  }
-
-  private submit = async (form: FormModal) => {
-    let errors = {};
-    let validAuth: AuthForm;
-
-    try {
-      validAuth = this.validateForm(form);
-    } catch (e) {
-      errors = {
-        ...errors,
-        ...e
+    Object.entries(LoginFields).forEach(([key, field]) => {
+      const value = values[field.name];
+      if (field.validate(value)) {
+        validatedForm[key] = value;
+      } else {
+        errors[field.name] = value;
       }
-    }
+    });
 
     form.setFormState({
       errors,
     });
 
-    if (!isEmpty(errors)) return;
+    return validatedForm as AuthForm;
+  }
+
+  private submit = async (form: FormModal) => {
+    const validAuth: AuthForm = this.validateForm(form);
+
+    if (!form.isValid()) return;
 
     await this.props.loginUser(validAuth);
   }
@@ -107,17 +88,17 @@ class Login extends React.Component<Props, State> {
         <TextField
           fullWidth
           required
-          label={fields.email.label}
-          name={fields.email.name}
-          placeholder={fields.email.placeholder}
+          label={LoginFields.email.label}
+          name={LoginFields.email.name}
+          placeholder={LoginFields.email.placeholder}
           type="email"
         />
         <TextField
           fullWidth
           required
-          label={fields.password.label}
-          name={fields.password.name}
-          placeholder={fields.password.placeholder}
+          label={LoginFields.password.label}
+          name={LoginFields.password.name}
+          placeholder={LoginFields.password.placeholder}
           type="password"
         />
         { !isRequesting && error && <ErrorMessage error={error}/>}

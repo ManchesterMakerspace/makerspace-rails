@@ -1,4 +1,4 @@
-import { AxiosRequestConfig } from "axios";
+import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { SortDirection } from "ui/common/table/constants";
 
 export interface CollectionOf<T> {
@@ -15,4 +15,9 @@ export interface QueryParams extends AxiosRequestConfig {
   order: SortDirection;
   orderBy: string;
   search?: string;
+}
+
+export interface ApiErrorResponse {
+  errorMessage?: string;
+  response: AxiosResponse
 }

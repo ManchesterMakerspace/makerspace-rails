@@ -21,8 +21,8 @@ class MemberForm extends React.Component<OwnProps, {}> {
   private formRef: FormModal;
   private setFormRef = (ref: FormModal) => this.formRef = ref;
 
-  private validate = (): Partial<MemberDetails> => {
-    const formValues = this.formRef.getValues();
+  private validate = (form: FormModal): MemberDetails => {
+    const formValues = form.getValues();
     const errors: CollectionOf<string> = {};
     const validatedMember: Partial<MemberDetails> = {};
 
@@ -35,32 +35,17 @@ class MemberForm extends React.Component<OwnProps, {}> {
       }
     });
 
-    if (Object.keys(errors)) {
-      throw errors;
-    }
-
-    return validatedMember;
-  }
-
-  private submit = async (form: FormModal) => {
-    let errors = {};
-    let validMember: MemberDetails;
-
-    try {
-      const validatedForm = this.validate();
-      validMember = Object.assign({}, this.props.member, validatedForm);
-    } catch (e) {
-      errors = {
-        ...errors,
-        ...e
-      }
-    }
-
     form.setFormState({
       errors,
     });
 
-    if (!isEmpty(errors)) return;
+    return validatedMember as MemberDetails;
+  }
+
+  private submit = async (form: FormModal) => {
+    const validMember: MemberDetails = this.validate(form);
+
+    if (!form.isValid()) return;
 
     this.props.onSubmit(validMember);
   }

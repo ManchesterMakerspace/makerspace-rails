@@ -2,7 +2,8 @@ import axios from "axios";
 
 import { Url } from "app/constants";
 import { buildJsonUrl, handleApiError } from "app/utils";
-import { AuthForm } from "ui/auth/interfaces";
+import { AuthForm, SignUpForm } from "ui/auth/interfaces";
+import { buildEmailCheckPath } from "api/auth/utils";
 
 export const postLogin = async (creds?: AuthForm) => {
   try {
@@ -24,9 +25,24 @@ export const deleteLogin = async () => {
   }
 };
 
-// AuthProvider.resourceName('member');
-//   AuthProvider.registerPath('api/members.json');
-//   AuthProvider.loginPath('api/members/sign_in.json');
-//   AuthProvider.logoutPath('api/members/sign_out.json');
-//   AuthProvider.sendResetPasswordInstructionsPath('api/members/password.json');
-//   AuthProvider.resetPasswordPath('api/members/password.json');
+export const checkEmailExists = async (email: string) => {
+  try {
+    const response = await axios.get(`${buildEmailCheckPath(email)}`);
+    const exists = response.status === 200 ? true : false;
+    return exists;
+  } catch (e) {
+    const error = handleApiError(e);
+    throw error;
+  }
+}
+
+export const postSignUp = async (signUpForm: SignUpForm) => {
+  try {
+    return await axios.post(buildJsonUrl(Url.Auth.SignUp), {
+      member: signUpForm
+    });
+  } catch (e) {
+    const error = handleApiError(e);
+    throw error;
+  }
+}
