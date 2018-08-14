@@ -6,11 +6,12 @@ import { History } from 'history';
 
 import { Theme, MuiThemeProvider } from '@material-ui/core';
 
+import Routing from 'app/Routing';
+
 import { ScopedThunkDispatch, State as ReduxState } from "ui/reducer";
 import { activeSessionLogin } from "ui/auth/actions";
 import Header from "ui/common/Header";
-import ProtectedFrame from 'ui/common/ProtectedFrame';
-import LandingPage from 'ui/common/LandingPage';
+import LandingPage from 'ui/auth/LandingPage';
 
 interface StateProps {
   auth: boolean;
@@ -38,15 +39,15 @@ class App extends React.Component<Props, {}> {
     return (
       <Provider store={store}>
       { /* ConnectedRouter will use the store from Provider automatically */}
-      <ConnectedRouter history={history}>
-        <MuiThemeProvider theme={theme}>
-          <div className="root">
-          <Header/>
-            {auth ? <ProtectedFrame/> : <LandingPage/>}
-          </div>
-        </MuiThemeProvider>
-      </ConnectedRouter>
-    </Provider>
+        <ConnectedRouter history={history}>
+          <MuiThemeProvider theme={theme}>
+            <div className="root">
+            <Header/>
+              {auth ? <Routing/> : <LandingPage/>}
+            </div>
+          </MuiThemeProvider>
+        </ConnectedRouter>
+      </Provider>
     )
   }
 }

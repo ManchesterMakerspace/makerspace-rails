@@ -7,7 +7,6 @@ import {
   Toolbar,
   IconButton,
   Typography,
-  Button,
   Menu,
   MenuItem
 } from "@material-ui/core";
@@ -16,7 +15,6 @@ import {
 } from "@material-ui/icons";
 
 import { ScopedThunkDispatch, State as ReduxState } from "ui/reducer";
-import Login from "ui/auth/Login";
 import { logoutUserAction } from "ui/auth/actions";
 
 interface OwnProps {}
@@ -108,7 +106,6 @@ class Header extends React.Component<Props, State> {
 
   public render(): JSX.Element {
     const { auth } = this.props;
-    const { authOpen } = this.state;
 
     return (
       <AppBar style={{marginBottom: "1em"}} position="static">
