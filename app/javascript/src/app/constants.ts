@@ -24,7 +24,7 @@ export namespace Url {
   }
 
   export const Admin = {
-    Member: `${baseAdminPath}/${Member}`
+    Member: `${baseAdminPath}/members/${PathPlaceholder.MemberId}`
   }
 
   export const Billing = {

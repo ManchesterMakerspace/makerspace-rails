@@ -22,7 +22,7 @@ Rails.application.routes.draw do
       resources :members, only: [:show]
       resources :rentals, only: [:show]
       namespace :admin  do
-        put 'members/renew/:id', to: 'members#renew'
+        patch 'members/renew/:id', to: 'members#renew'
         resources :cards, only: [:new, :create, :index, :update]
         resources :rentals, only: [:create, :update, :destroy]
         resources :members, only: [:create, :update]

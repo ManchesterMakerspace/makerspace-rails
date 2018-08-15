@@ -3,8 +3,6 @@ import { connect } from "react-redux";
 
 import { TextField, Grid, InputAdornment } from "@material-ui/core";
 
-import { CollectionOf } from "app/interfaces";
-
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { SignUpFields } from "ui/auth/constants";
 import { SignUpForm } from "ui/auth/interfaces";
@@ -64,28 +62,8 @@ class SignUpFormComponent extends React.Component<Props, State> {
     )
   }
 
-  private validateForm = (form: Form): SignUpForm => {
-    const values = form.getValues();
-    const errors: CollectionOf<string> = {};
-    const validatedForm: Partial<SignUpForm> = {};
-    Object.entries(SignUpFields).forEach(([key, field]) => {
-      const value = values[field.name];
-      if (field.validate(value)) {
-        validatedForm[key] = value;
-      } else {
-        errors[field.name] = field.error;
-      }
-    });
-
-    form.setFormState({
-      errors,
-    });
-
-    return validatedForm as SignUpForm;
-  }
-
   private submit = async (form: Form) => {
-    const validSignUp: SignUpForm = this.validateForm(form);
+    const validSignUp: SignUpForm = form.simpleValidate(SignUpFields);
 
     if (!form.isValid()) return;
 

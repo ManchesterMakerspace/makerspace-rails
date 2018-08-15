@@ -106,6 +106,26 @@ class Form extends React.Component<FormModalProps, State> {
     return isEmpty(this.state.errors);
   }
 
+  public simpleValidate = <T extends object>(fields: FormFields) => {
+    const values = this.getValues();
+    const errors: CollectionOf<string> = {};
+    const validatedForm: Partial<T> = {};
+    Object.entries(fields).forEach(([key, field]) => {
+      const value = values[field.name];
+      if (field.validate(value)) {
+        validatedForm[key] = value;
+      } else {
+        errors[field.name] = field.error;
+      }
+    });
+
+    this.setFormState({
+      errors,
+    });
+
+    return validatedForm as T;
+  }
+
   private handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     this.setState(state => {
@@ -158,7 +178,7 @@ class Form extends React.Component<FormModalProps, State> {
     let uniqKey = index + 1;
     return React.Children.map(children, (child: ChildNode, index: number) => {
       let modifiedChild = child;
-      if (child) {
+      if (child && child.props) {
 
         uniqKey = uniqKey + index;
         const key = child.props.key || `${id}-${uniqKey}`;

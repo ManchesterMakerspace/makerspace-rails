@@ -16,7 +16,7 @@ export const getMember = async (id: string) => {
 
 export const updateMember = async (id: string, details: Partial<MemberDetails>) => {
   try {
-    return await axios.patch(`${buildMemberUrl(id, true)}`, { params: details });
+    return await axios.put(`${buildMemberUrl(id, true)}`, { member: details });
   } catch (e) {
     const error = handleApiError(e);
     throw error;

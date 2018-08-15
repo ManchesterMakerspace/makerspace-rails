@@ -31,29 +31,8 @@ class Login extends React.Component<Props, State> {
   private formRef: Form;
   private setFormRef = (ref: Form) => this.formRef = ref;
 
-  private validateForm = (form: Form): AuthForm => {
-    const values = form.getValues();
-    const errors: CollectionOf<string> = {};
-    const validatedForm: Partial<AuthForm> = {};
-
-    Object.entries(LoginFields).forEach(([key, field]) => {
-      const value = values[field.name];
-      if (field.validate(value)) {
-        validatedForm[key] = value;
-      } else {
-        errors[field.name] = field.error;
-      }
-    });
-
-    form.setFormState({
-      errors,
-    });
-
-    return validatedForm as AuthForm;
-  }
-
   private submit = async (form: Form) => {
-    const validAuth: AuthForm = this.validateForm(form);
+    const validAuth: AuthForm = form.simpleValidate(LoginFields);
 
     if (!form.isValid()) return;
 

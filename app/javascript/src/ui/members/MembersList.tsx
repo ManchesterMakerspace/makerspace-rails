@@ -149,6 +149,7 @@ class MembersList extends React.Component<Props, State> {
       search
     };
   }
+  
   public componentDidMount() {
     this.getMembers();
   }
