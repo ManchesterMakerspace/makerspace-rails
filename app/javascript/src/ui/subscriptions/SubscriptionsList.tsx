@@ -9,7 +9,7 @@ import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { SortDirection } from "ui/common/table/constants";
 import TableContainer from "ui/common/table/TableContainer";
 import { Column } from "ui/common/table/Table";
-import { readSubscriptionsAction } from "ui/billing/subscriptions/actions";
+import { readSubscriptionsAction } from "ui/subscriptions/actions";
 import { timeToDate } from "ui/utils/timeToDate";
 
 
@@ -105,10 +105,10 @@ const mapStateToProps = (
   state: ReduxState,
   _ownProps: OwnProps
 ): StateProps => {
-  const { 
-    entities: subscriptions, 
-    read: { 
-      totalItems, 
+  const {
+    entities: subscriptions,
+    read: {
+      totalItems,
       isRequesting: loading,
       error
     }

@@ -4,7 +4,6 @@ import toNumber from "lodash-es/toNumber";
 
 import { getMembers } from "api/members/transactions";
 import { Action as MembersAction } from "ui/members/constants";
-import { handleApiError } from "app/utils";
 import { MembersState } from "ui/members/interfaces";
 import { QueryParams } from "app/interfaces";
 import { MemberDetails } from "app/entities/member";

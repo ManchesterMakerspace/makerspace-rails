@@ -3,13 +3,13 @@ import { Switch, Route } from "react-router";
 
 import NotFound from "ui/common/NotFound";
 import MembersList from "ui/members/MembersList";
-import PlansList from 'ui/billing/plans/PlansList';
+import PlansList from 'ui/billingPlans/PlansList';
 import RentalsList from 'ui/rentals/RentalsList';
-import SubscriptionsList from 'ui/billing/subscriptions/SubscriptionsList';
+import SubscriptionsList from 'ui/subscriptions/SubscriptionsList';
 import LandingPage from 'ui/auth/LandingPage';
 
 
-const Routing: React.SFC<{}> = () => (
+const PrivateRouting: React.SFC<{}> = () => (
   <Switch>
     <Route exact path="/billing" component={PlansList} />
     <Route exact path="/subscriptions" component={SubscriptionsList} />
@@ -20,4 +20,4 @@ const Routing: React.SFC<{}> = () => (
   </Switch>
 );
 
-export default Routing;
+export default PrivateRouting;

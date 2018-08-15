@@ -6,13 +6,12 @@ import { History } from 'history';
 
 import { Theme, MuiThemeProvider } from '@material-ui/core';
 
-import Routing from 'app/Routing';
-
 import { ScopedThunkDispatch, State as ReduxState } from "ui/reducer";
 import { activeSessionLogin } from "ui/auth/actions";
 import Header from "ui/common/Header";
-import LandingPage from 'ui/auth/LandingPage';
 import LoadingOverlay from 'ui/common/LoadingOverlay';
+import PrivateRouting from 'app/PublicRouting';
+import PublicRouting from 'app/PublicRouting';
 
 interface StateProps {
   auth: boolean;
@@ -63,7 +62,7 @@ class App extends React.Component<Props, State> {
     if (attemptingLogin) {
       return <LoadingOverlay id="body"/>;
     } else {
-      return auth ? <Routing/> : <LandingPage/>;
+      return auth ? <PrivateRouting /> : <PublicRouting/>;
     }
   }
   public render(): JSX.Element {

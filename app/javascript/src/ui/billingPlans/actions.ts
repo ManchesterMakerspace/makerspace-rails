@@ -2,10 +2,9 @@ import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import toNumber from "lodash-es/toNumber";
 
-import { getPlans } from "api/billing/transactions";
-import { Action as PlansAction } from "ui/billing/plans/constants";
-import { PlansState } from "ui/billing/plans/interfaces";
-import { QueryParams } from "app/interfaces";
+import { getPlans } from "api/billingPlans/transactions";
+import { Action as PlansAction } from "ui/billingPlans/constants";
+import { PlansState } from "ui/billingPlans/interfaces";
 import { BillingPlan } from "app/entities/billingPlan";
 
 export const readPlansAction = (): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
