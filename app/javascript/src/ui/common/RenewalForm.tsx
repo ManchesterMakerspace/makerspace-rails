@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Select } from "@material-ui/core";
+import { Select, Typography } from "@material-ui/core";
 import toNumber from "lodash-es/toNumber";
 
 import FormModal from "ui/common/FormModal";
@@ -7,6 +7,7 @@ import ErrorMessage from "ui/common/ErrorMessage";
 import { CollectionOf } from "app/interfaces";
 import kebabCase from "lodash-es/kebabCase";
 import Form from "ui/common/Form";
+import { timeToDate } from "ui/utils/timeToDate";
 
 export interface RenewForm {
   id: string;
@@ -66,8 +67,33 @@ class RenewalForm extends React.Component<OwnProps, {}> {
     return validatedForm as RenewForm;
   }
 
+  private renderForm = (): JSX.Element => {
+    const { isRequesting, error, entity, renewalOptions } = this.props;
+
+    return (
+      <>
+       <Typography gutterBottom variant="subheading" align="center" color="primary">
+          {entity.name}
+        </Typography>
+        <Typography gutterBottom align="left">
+          <strong>Expiration:</strong> {timeToDate(entity.expiration)}
+        </Typography>
+        <Select
+          fullWidth
+          native
+          required
+          placeholder="Select an option"
+          name={renewalSelectName}
+        >
+          {renewalOptions.map((option) => <option key={kebabCase(option.label)} value={option.value}>{option.label}</option>)}
+        </Select>
+        {!isRequesting && error && <ErrorMessage error={error} />}
+      </>
+    )
+  }
+
   public render(): JSX.Element {
-    const { isOpen, onClose, isRequesting, error, title, onSubmit, entity, renewalOptions } = this.props;
+    const { isOpen, onClose, isRequesting, title, onSubmit, entity } = this.props;
 
     return (
       <FormModal
@@ -80,18 +106,7 @@ class RenewalForm extends React.Component<OwnProps, {}> {
         onSubmit={onSubmit}
         submitText="Submit"
       >
-        <Select
-          fullWidth
-          native
-          required
-          placeholder="Select an option"
-          name={renewalSelectName}
-        >
-          {renewalOptions.map((option) => <option key={kebabCase(option.label)} value={option.value}>{option.label}</option>)}
-        </Select>
-        {!entity && <ErrorMessage error="Nothing to renew" /> ||
-          !isRequesting && error && <ErrorMessage error={error} />
-        }
+        {entity ? this.renderForm() :  <ErrorMessage error="Nothing to renew"/>}
       </FormModal>
     );
   }

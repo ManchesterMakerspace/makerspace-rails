@@ -51,17 +51,33 @@ type ChildNode = React.ReactElement<HTMLFormElement>;
 
 class Form extends React.Component<FormModalProps, State> {
 
+  private extractInputNames = (values: CollectionOf<string>, input: ChildNode) => {
+    if (input && input.props) {
+      // Get input name
+      if (this.isFormInput(input)) {
+        values[input.props.name] = input.props.defaultValue || "";
+      }
+      // extract names from input children elements
+      if (React.Children.count(input.props.children) > 0) {
+        values = {
+          ...values,
+          ...this.extractNamesFromChildren(input.props.children)
+        }
+      } 
+    }
+
+    return values;
+  }
+
+  private extractNamesFromChildren = (children: React.ReactNode) => {
+    return React.Children.toArray(children).reduce(this.extractInputNames, {});
+  }
+
   /**
    * Set values to collection of strings by input name
    */
   private getDefaultState = (props: FormModalProps): State => {
-    const formInputs = React.Children.toArray(props.children).filter((child: ChildNode) => {
-      return this.isFormInput(child);
-    });
-    const defaultValues = formInputs.reduce((values: CollectionOf<string>, input: ChildNode) => {
-      values[input.props.name] = input.props.defaultValue || "";
-      return values;
-    }, {});
+    const defaultValues = this.extractNamesFromChildren(props.children);
 
     return (
       {
@@ -136,32 +152,62 @@ class Form extends React.Component<FormModalProps, State> {
    * Always added to hold space for error
    * Only displayed once child is considered touched
    */
-  private renderChildren = (): JSX.Element[] => {
-    const { children, id: formId, } = this.props;
-    const { values, errors, touched, isDirty } = this.state;
-    return React.Children.map(children, (child: ChildNode) => {
-      if (this.isFormInput(child)) {
-        const fieldName = child.props.name;
-        const id = child.props.id || `${formId}-${fieldName}`;
-        const isTouched = touched[fieldName];
-        const error = errors[fieldName];
-        const value = values[fieldName];
+  private renderChildren = (children: React.ReactNode, index: number = 0): JSX.Element[] => {
+    const { id } = this.props;
+    index++;
+    let uniqKey = index + 1;
+    return React.Children.map(children, (child: ChildNode, index: number) => {
+      let modifiedChild = child;
+      if (child) {
 
-        const controlledInput = React.cloneElement(child, {
-          ...child.props,
-          error: !!error,
-          id,
-          value
-        });
-        return (
-          <>
-            {controlledInput}
-            <ErrorMessage error={isDirty && isTouched && error}/>
-          </>
-        );
+        uniqKey = uniqKey + index;
+        const key = child.props.key || `${id}-${uniqKey}`;
+        const hasChildren = child && React.Children.count(child.props.children) > 0;
+
+        if (this.isFormInput(child)) {
+          // Configure error handling for input
+          modifiedChild = this.configureFormInput(child);
+        } else if (typeof child === "string") {
+          // Do nothing if plain text
+        } else if (hasChildren) {
+          // Recursively modify children
+          const nestedChildren = this.renderChildren(child.props.children, index);
+          modifiedChild = React.cloneElement(child, { key }, nestedChildren);
+        }
       }
-      return child;
+      return modifiedChild;
     });
+  }
+
+  private configureFormInput = (input: ChildNode) => {
+    const { id: formId, } = this.props;
+    const { errors, touched, isDirty } = this.state;
+    const fieldName = input.props.name;
+    const id = input.props.id || `${formId}-${fieldName}`;
+    const isTouched = touched[fieldName];
+    const error = errors[fieldName];
+    return (
+      <React.Fragment key={id}>
+        {this.cloneFormInput(input)}
+        <ErrorMessage error={isDirty && isTouched && error}/>
+      </React.Fragment>
+    );
+  }
+
+  private cloneFormInput = (input: ChildNode, newChildren?: React.ReactNode) => {
+    const { id: formId, } = this.props;
+    const { values, errors, touched, isDirty } = this.state;
+    const fieldName = input.props.name;
+    const id = input.props.id || `${formId}-${fieldName}`;
+    const error = errors[fieldName];
+    const value = values[fieldName];
+    return (
+      React.cloneElement(input, {
+        error: !!error,
+        id,
+        value
+      })
+    );
   }
 
   private closeForm = () => {
@@ -171,12 +217,12 @@ class Form extends React.Component<FormModalProps, State> {
   }
 
   private renderFormContent = (): JSX.Element => {
-    const { submitText, cancelText, title, id, onCancel } = this.props;
+    const { submitText, cancelText, title, id, onCancel, children } = this.props;
     return (
       <>
         <DialogTitle id={`${id}-title`}>{title}</DialogTitle>
         <DialogContent>
-          {this.renderChildren()}
+          {this.renderChildren(children)}
         </DialogContent>
 
         <DialogActions>

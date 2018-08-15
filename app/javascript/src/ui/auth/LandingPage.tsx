@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Redirect } from 'react-router';
 import { connect } from "react-redux";
 
-import { Grid, Card, CardContent, Button, Typography } from '@material-ui/core';
+import { Grid, Card, CardContent, Button, Typography, Hidden } from '@material-ui/core';
 
 import { State as ReduxState } from "ui/reducer";
 import Login from 'ui/auth/Login';
@@ -56,14 +56,16 @@ class LandingPage extends React.Component<Props, State> {
     }
     return (
       <Grid container spacing={24}>
-        <Grid item container xs={6} justify="center" alignItems="center">
+      <Hidden smDown>
+        <Grid item container md={6} justify="center" alignItems="center">
           <Typography variant="display1" color="primary" gutterBottom>
             Manchester Makerspace
           </Typography>
         </Grid>
+        </Hidden>
 
 
-        <Grid item container xs={6} justify="center" spacing={24}>
+        <Grid item container md={6} sm={12} justify="center" spacing={24}>
           <Grid item xs={12}>
             <Card style={{minWidth: 275}}>
               <CardContent>

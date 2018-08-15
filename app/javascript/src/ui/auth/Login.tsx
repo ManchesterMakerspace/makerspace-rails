@@ -41,7 +41,7 @@ class Login extends React.Component<Props, State> {
       if (field.validate(value)) {
         validatedForm[key] = value;
       } else {
-        errors[field.name] = value;
+        errors[field.name] = field.error;
       }
     });
 

@@ -128,7 +128,7 @@ class MembersList extends React.Component<Props, State> {
         <Button variant="contained" color="primary" onClick={this.openCreateForm}>
           Create New Member
         </Button>
-        <Button variant="contained" color="secondary" disabled={!selectedId} onClick={this.openRenewalForm}>
+        <Button variant="outlined" color="primary" disabled={!selectedId} onClick={this.openRenewalForm}>
           Renew Member
         </Button>
       </>

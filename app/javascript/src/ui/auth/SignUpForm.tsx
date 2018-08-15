@@ -68,13 +68,12 @@ class SignUpFormComponent extends React.Component<Props, State> {
     const values = form.getValues();
     const errors: CollectionOf<string> = {};
     const validatedForm: Partial<SignUpForm> = {};
-
     Object.entries(SignUpFields).forEach(([key, field]) => {
       const value = values[field.name];
       if (field.validate(value)) {
         validatedForm[key] = value;
       } else {
-        errors[field.name] = value;
+        errors[field.name] = field.error;
       }
     });
 
@@ -101,9 +100,9 @@ class SignUpFormComponent extends React.Component<Props, State> {
         ref={this.setFormRef}
         id="sign-up"
         loading={isRequesting}
-        title="Register"
+        title="Become a Member"
         onSubmit={this.submit}
-        submitText="Submit"
+        submitText="Sign Up"
       >
         <Grid container spacing={24}>
           <Grid item xs={6}>
