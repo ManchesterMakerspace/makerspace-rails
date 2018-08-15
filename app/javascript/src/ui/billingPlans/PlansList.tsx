@@ -1,14 +1,13 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { Button, Grid } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 
 import { BillingPlan } from "app/entities/billingPlan";
-import { QueryParams } from "app/interfaces";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import TableContainer from "ui/common/table/TableContainer";
 import { Column } from "ui/common/table/Table";
-import { readPlansAction } from "ui/billing/plans/actions";
+import { readPlansAction } from "ui/billingPlans/actions";
 
 
 interface OwnProps { }
@@ -79,10 +78,10 @@ const mapStateToProps = (
   state: ReduxState,
   _ownProps: OwnProps
 ): StateProps => {
-  const { 
-    entities: plans, 
-    read: { 
-      totalItems, 
+  const {
+    entities: plans,
+    read: {
+      totalItems,
       isRequesting: loading,
       error
     }

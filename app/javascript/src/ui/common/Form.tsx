@@ -63,7 +63,7 @@ class Form extends React.Component<FormModalProps, State> {
           ...values,
           ...this.extractNamesFromChildren(input.props.children)
         }
-      } 
+      }
     }
 
     return values;
@@ -258,7 +258,7 @@ class Form extends React.Component<FormModalProps, State> {
     const { id, loading } = this.props;
 
     return (
-      <Grid container style={{position: "relative", overflow: "hidden"}}>
+      <div style={{position: "relative", overflow: "hidden"}}>
         <form
           onSubmit={this.handleSubmit}
           onChange={this.handleChange}
@@ -269,7 +269,7 @@ class Form extends React.Component<FormModalProps, State> {
           {loading &&  <LoadingOverlay id={id}/>}
           {this.renderFormContent()}
         </form>
-      </Grid>
+      </div>
     );
   }
 }

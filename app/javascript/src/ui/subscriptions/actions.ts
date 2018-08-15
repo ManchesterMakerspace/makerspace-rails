@@ -3,9 +3,9 @@ import { ThunkAction } from "redux-thunk";
 import toNumber from "lodash-es/toNumber";
 
 import { QueryParams } from "app/interfaces";
-import { getSubscriptions } from "api/billing/transactions";
-import { Action as SubscriptionsAction } from "ui/billing/subscriptions/constants";
-import { SubscriptionsState } from "ui/billing/subscriptions/interfaces";
+import { getSubscriptions } from "api/subscriptions/transactions";
+import { Action as SubscriptionsAction } from "ui/subscriptions/constants";
+import { SubscriptionsState } from "ui/subscriptions/interfaces";
 import { Subscription } from "app/entities/subscription";
 
 export const readSubscriptionsAction = (
