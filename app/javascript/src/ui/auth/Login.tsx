@@ -1,14 +1,10 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import { Redirect } from "react-router";
 
 import { TextField } from "@material-ui/core";
-import isEmpty from "lodash-es/isEmpty";
-
-import { CollectionOf } from "app/interfaces";
-import { emailValid } from "app/utils";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
-import FormModal from "ui/common/FormModal";
 import { loginUserAction } from "ui/auth/actions";
 import { LoginFields } from "ui/auth/constants";
 import { AuthForm } from "ui/auth/interfaces";
@@ -23,13 +19,39 @@ interface DispatchProps {
 interface StateProps {
   isRequesting: boolean;
   error: string;
+  auth: boolean;
 }
-interface State {}
+interface State {
+  redirect: boolean;
+}
 interface Props extends OwnProps, DispatchProps, StateProps {}
 
 class Login extends React.Component<Props, State> {
   private formRef: Form;
   private setFormRef = (ref: Form) => this.formRef = ref;
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      redirect: false,
+    }
+  }
+
+  public componentDidMount() {
+    const { auth } = this.props;
+    if (auth) {
+      this.setState({ redirect: true });
+    }
+  }
+
+  public componentDidUpdate(prevProps: Props) {
+    const { isRequesting: wasRequesting } = prevProps;
+
+    const { isRequesting, auth, error } = this.props;
+    if (wasRequesting && !isRequesting && !error && auth) {
+      this.setState({ redirect: true });
+    }
+  }
 
   private submit = async (form: Form) => {
     const validAuth: AuthForm = form.simpleValidate(LoginFields);
@@ -41,6 +63,11 @@ class Login extends React.Component<Props, State> {
 
   public render(): JSX.Element {
     const { isRequesting, error } = this.props;
+    const { redirect } = this.state;
+
+    if (redirect) {
+      return <Redirect to="/members" push={true} /> 
+    }
 
     return (
       <Form
@@ -77,11 +104,12 @@ const mapStateToProps = (
   state: ReduxState,
   _ownProps: OwnProps
 ): StateProps => {
-  const { isRequesting, error } = state.auth;
+  const { currentUser, isRequesting, error } = state.auth;
 
   return {
     isRequesting,
-    error
+    error,
+    auth: currentUser && !!currentUser.email,
   }
 }
 

@@ -3,8 +3,9 @@ import { AnyAction } from "redux";
 
 import { AuthState, AuthForm, SignUpForm } from "ui/auth/interfaces";
 import { postLogin, deleteLogin, checkEmailExists, postSignUp } from "api/auth/transactions";
-import { Action as AuthAction } from "ui/auth/constants";
+import { Action as AuthAction, EmailExistsError } from "ui/auth/constants";
 import { getMember } from "api/member/transactions";
+import { getClientTokenAction } from "ui/checkout/actions";
 
 export const loginUserAction = (
   loginForm?: AuthForm
@@ -61,12 +62,13 @@ export const stageSignUpAction = (
   try {
     const exists = await checkEmailExists(signUpForm.email);
     if (exists) {
-      dispatch({ type: AuthAction.AuthUserFailure, error: "Email already exists" });
+      dispatch({ type: AuthAction.AuthUserFailure, error: EmailExistsError });
     } else {
       dispatch({
         type: AuthAction.StageSignUp,
         data: signUpForm
       });
+      dispatch(getClientTokenAction())
     }
   } catch (e) {
     const { errorMessage } = e;

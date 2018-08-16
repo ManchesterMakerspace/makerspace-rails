@@ -56,3 +56,45 @@
   margin-left: -12;
   margin-right: 20;
 }
+
+.hosted-field {
+  height: 32px;
+  margin-bottom: 1em;
+  display: block;
+  background-color: transparent;
+  color: rgba(0, 0, 0, .87);
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, .26);
+  outline: 0;
+  width: 100%;
+  font-size: 16px;
+  padding: 0;
+  box-shadow: none;
+  border-radius: 0;
+  position: relative;
+}
+
+.hosted-field--label {
+  transform: translateY(0.4em);
+  font-size: 1.125em;
+  line-height: 32px;
+  transition: all .15s ease-out;
+  display: block;
+  width: 100%;
+  font-weight: 400;
+  overflow: hidden;
+  margin-bottom: 0.5em;
+  &.label-float {
+    text-overflow: ellipsis;
+    color: #2196F3;
+    transition: all .15s ease-out
+  }
+  &.filled {
+    @extend .label-float;
+    color: rgba(0, 0, 0, .54);
+  }
+  &.invalid {
+    @extend .label-float;
+    color: #F44336;
+  }
+}

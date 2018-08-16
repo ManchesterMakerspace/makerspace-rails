@@ -16,9 +16,9 @@ Rails.application.routes.draw do
     devise_scope :member do
        post "members", to: "registrations#create"
     end
+    post 'members/check_email', to: 'members#check_email'
 
     authenticate :member do
-      get 'members/check_email/:email', to: 'members#check_email'
       resources :members, only: [:show]
       resources :rentals, only: [:show]
       namespace :admin  do

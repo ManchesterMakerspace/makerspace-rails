@@ -19,7 +19,7 @@ export namespace Url {
     SignIn: `${Members}/sign_in`,
     SignOut: `${Members}/sign_out`,
     PasswordReset: `${Members}/password`,
-    EmailCheck: `${Members}/check_email/${PathPlaceholder.Email}`,
+    EmailCheck: `${Members}/check_email`,
     SignUp: `${Members}`
   }
 

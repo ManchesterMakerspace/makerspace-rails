@@ -12,9 +12,9 @@ export const getClientToken = async () => {
   }
 }
 
-export const postCheckout = async (checkoutDetails: Checkout) => {
+export const postCheckout = async (nonce: string) => {
   try {
-    return await axios.post(buildJsonUrl(Url.Billing.Checkout), { checkout: checkoutDetails });
+    return await axios.post(buildJsonUrl(Url.Billing.Checkout), { checkout: { payment_method_nonce: nonce } });
   } catch (e) {
     const error = handleApiError(e);
     throw error;

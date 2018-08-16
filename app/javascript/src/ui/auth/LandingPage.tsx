@@ -1,23 +1,16 @@
 import * as React from 'react';
-import { Redirect } from 'react-router';
-import { connect } from "react-redux";
 
 import { Grid, Card, CardContent, Button, Typography, Hidden } from '@material-ui/core';
 
-import { State as ReduxState } from "ui/reducer";
 import Login from 'ui/auth/Login';
 import SignUpForm from 'ui/auth/SignUpForm';
+import { AuthDisplayOption } from 'ui/auth/constants';
 
 interface State {
-  displayLogin: boolean;
-  redirect: boolean;
+  authDisplay: AuthDisplayOption;
 }
-interface OwnProps {
-}
-interface StateProps {
-  auth: boolean;
-  isRequesting: boolean;
-}
+interface OwnProps {}
+interface StateProps {}
 interface DispatchProps {}
 interface Props extends OwnProps, StateProps, DispatchProps {}
 
@@ -25,43 +18,37 @@ class LandingPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      displayLogin: false,
-      redirect: false,
+      authDisplay: AuthDisplayOption.SignUp,
     }
   }
 
-  public componentDidMount() {
-    const { auth } = this.props;
-    if (auth) {
-      this.setState({ redirect: true });
+  private toggleDisplay = (_event: React.MouseEvent<HTMLElement>, targetDisplay?: AuthDisplayOption) => {
+    if (targetDisplay) {
+      this.setState({ authDisplay: targetDisplay });
+    } else {
+      this.setState((state) => {
+        const { authDisplay: currentDisplay } = state;
+        const newDisplay = Object.values(AuthDisplayOption).find((opt) => opt !== currentDisplay);
+        return { authDisplay: newDisplay };
+      });
     }
   }
 
-  public componentDidUpdate(prevProps: Props) {
-    const { isRequesting: wasRequesting } = prevProps;
-    const { isRequesting, auth } = this.props;
-    if (wasRequesting && !isRequesting && auth) {
-      this.setState({ redirect: true });
-    }
+  private goToLogin = () => {
+    this.toggleDisplay(null, AuthDisplayOption.Login);
   }
 
-  private toggleDisplay = () => {
-    this.setState((state) => ({ displayLogin: !state.displayLogin}));
-  }
+  public render(): JSX.Element {
+    const { authDisplay } = this.state;
 
-  render(): JSX.Element {
-    const { displayLogin, redirect } = this.state;
-    if (redirect) {
-      return <Redirect to="/members" push={true} /> 
-    }
     return (
       <Grid container spacing={24}>
-      <Hidden smDown>
-        <Grid item container md={6} justify="center" alignItems="center">
-          <Typography variant="display1" color="primary" gutterBottom>
-            Manchester Makerspace
-          </Typography>
-        </Grid>
+        <Hidden smDown>
+          <Grid item container md={6} justify="center" alignItems="center">
+            <Typography variant="display1" color="primary" gutterBottom>
+              Manchester Makerspace
+            </Typography>
+          </Grid>
         </Hidden>
 
 
@@ -69,16 +56,16 @@ class LandingPage extends React.Component<Props, State> {
           <Grid item xs={12}>
             <Card style={{minWidth: 275}}>
               <CardContent>
-                {displayLogin ?
+                {authDisplay === AuthDisplayOption.Login ?
                   <Login/> :
-                  <SignUpForm />
+                  <SignUpForm goToLogin={this.goToLogin}/>
                 }
               </CardContent>
             </Card>
           </Grid>
           <Grid item container xs={12} justify="center" alignItems="center">
             <Button variant="outlined" color="primary" fullWidth onClick={this.toggleDisplay}>
-              {displayLogin ? "Register" : "Log In"}
+              {authDisplay === AuthDisplayOption.Login ? "Register" : "Login"}
             </Button>
           </Grid>
         </Grid>
@@ -87,15 +74,4 @@ class LandingPage extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: ReduxState, _ownProps: OwnProps): StateProps => {
-  const {
-    auth: { currentUser, isRequesting }
-  } = state;
-
-  return {
-    auth: currentUser && !!currentUser.email,
-    isRequesting
-  }
-}
-
-export default connect(mapStateToProps)(LandingPage);
+export default LandingPage;

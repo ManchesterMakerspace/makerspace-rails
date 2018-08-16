@@ -27,7 +27,7 @@ export const deleteLogin = async () => {
 
 export const checkEmailExists = async (email: string) => {
   try {
-    const response = await axios.get(`${buildEmailCheckPath(email)}`);
+    const response = await axios.post(`${buildEmailCheckPath()}`, { params: email });
     const exists = response.status === 200 ? true : false;
     return exists;
   } catch (e) {

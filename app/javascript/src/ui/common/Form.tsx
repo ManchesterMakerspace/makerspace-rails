@@ -18,11 +18,11 @@ import LoadingOverlay from "ui/common/LoadingOverlay";
 
 
 export interface FormField {
-  label: string;
+  label?: string;
   name: string;
-  placeholder: string;
-  validate: (val: string) => boolean;
-  error: string;
+  placeholder?: string;
+  validate?: (val: string) => boolean;
+  error?: string;
   render?: (value: string | number | object) => string | JSX.Element;
 }
 
@@ -32,12 +32,12 @@ export interface FormFields {
 
 interface FormModalProps {
   id: string;
-  title: string;
+  title?: string;
   onCancel?: () => void;
   cancelText?: string;
   onSubmit: (form: Form) => void;
   submitText?: string;
-  loading: boolean;
+  loading?: boolean;
   children?: React.ReactNode;
 }
 interface State {
@@ -240,7 +240,7 @@ class Form extends React.Component<FormModalProps, State> {
     const { submitText, cancelText, title, id, onCancel, children } = this.props;
     return (
       <>
-        <DialogTitle id={`${id}-title`}>{title}</DialogTitle>
+        {title && <DialogTitle id={`${id}-title`}>{title}</DialogTitle>}
         <DialogContent>
           {this.renderChildren(children)}
         </DialogContent>

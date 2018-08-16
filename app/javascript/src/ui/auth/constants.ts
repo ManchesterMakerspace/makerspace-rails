@@ -12,6 +12,13 @@ export enum Action {
   ClearStagedSignUp = "AUTH/CLEAR_STAGED_SIGN_UP",
 }
 
+export enum AuthDisplayOption {
+  Login = "login",
+  SignUp = "signUp"
+}
+
+export const EmailExistsError = "Email already exists";
+
 const formPrefix = "auth-modal";
 export const LoginFields: FormFields = {
   email: {

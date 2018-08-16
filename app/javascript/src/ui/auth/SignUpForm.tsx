@@ -1,27 +1,31 @@
 import * as React from "react";
 import { connect } from "react-redux";
 
-import { TextField, Grid, InputAdornment } from "@material-ui/core";
+import { TextField, Grid, InputAdornment, Card, CardContent } from "@material-ui/core";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
-import { SignUpFields } from "ui/auth/constants";
+import { SignUpFields, EmailExistsError } from "ui/auth/constants";
 import { SignUpForm } from "ui/auth/interfaces";
 import ErrorMessage from "ui/common/ErrorMessage";
 import { stageSignUpAction } from "ui/auth/actions";
 import { RemoveRedEye } from "@material-ui/icons";
 import Form from "ui/common/Form";
+import { Redirect } from "react-router";
 
 interface OwnProps {
+  goToLogin: () => void;
 }
 interface DispatchProps {
   stageSignUp: (signUpForm: SignUpForm) => void;
 }
 interface StateProps {
+  signUpComplete: boolean;
   isRequesting: boolean;
   error: string;
 }
 interface State {
   passwordMask: boolean;
+  emailExists: boolean;
 }
 interface Props extends OwnProps, DispatchProps, StateProps { }
 
@@ -32,8 +36,18 @@ class SignUpFormComponent extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      passwordMask: true
+      passwordMask: true,
+      emailExists: false,
     };
+  }
+
+  public componentDidUpdate(prevProps: Props) {
+    const { isRequesting: wasRequesting } = prevProps;
+    const { isRequesting, error } = this.props;
+
+    if (wasRequesting && !isRequesting && error === EmailExistsError) {
+      this.setState({ emailExists: true });
+    }
   }
 
   private togglePasswordMask = () => {
@@ -70,8 +84,39 @@ class SignUpFormComponent extends React.Component<Props, State> {
     await this.props.stageSignUp(validSignUp);
   }
 
+  private closeNotification = () => {
+    this.setState({ emailExists: false });
+  }
+
+  private renderEmailNotification = (): JSX.Element => {
+    const { goToLogin } = this.props;
+
+    return (
+      <Card style={{minWidth: 275}}>
+        <CardContent>
+          <Form
+            id="email-exists"
+            title="Email already exists"
+            onSubmit={goToLogin}
+            submitText="Login"
+            onCancel={this.closeNotification}
+            cancelText="Cancel"
+          >
+            An account with this email already exists.  Please login to continue.
+          </Form>
+        </CardContent>
+      </Card>
+
+    )
+  }
+
   public render(): JSX.Element {
-    const { isRequesting, error } = this.props;
+    const { isRequesting, error, signUpComplete } = this.props;
+    const { emailExists } = this.state;
+
+    if (signUpComplete) {
+      return <Redirect to="/checkout"/>
+    }
 
     return (
       <Form
@@ -112,6 +157,8 @@ class SignUpFormComponent extends React.Component<Props, State> {
         />
         {this.renderPasswordInput()}
         {!isRequesting && error && <ErrorMessage error={error} />}
+
+        {emailExists && this.renderEmailNotification()}
       </Form>
     );
   }
@@ -121,9 +168,18 @@ const mapStateToProps = (
   state: ReduxState,
   _ownProps: OwnProps
 ): StateProps => {
-  const { isRequesting, error } = state.auth;
+  const { 
+    newUser: {
+      email
+    },
+    isRequesting, 
+    error 
+  } = state.auth;
+
+  const signUpComplete = !error && !!email
 
   return {
+    signUpComplete,
     isRequesting,
     error
   }
