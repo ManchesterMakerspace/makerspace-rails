@@ -27,7 +27,7 @@ export const CheckoutFields: FormFields = {
     name: `${formPrefix}-expirationDate`,
     placeholder: "MM/YYYY"
   },
-  zipcode: {
+  postalCode: {
     label: "Zipcode",
     name: `${formPrefix}-zipcode`,
     placeholder: "90210"

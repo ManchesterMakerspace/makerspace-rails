@@ -9,7 +9,7 @@ const HostedInput: React.SFC<Props> = (props) => {
     <FormControl
       fullWidth
       required
-    >
+      >
       <FormLabel>
         {props.label} 
       </FormLabel>
