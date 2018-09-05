@@ -7,6 +7,8 @@ import * as Braintree from "braintree-web";
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { getClientTokenAction } from "ui/checkout/actions";
 import CreditCardForm from "ui/checkout/CreditCardForm";
+import PaypalButton from "ui/checkout/PaypalButton";
+import ErrorMessage from "ui/common/ErrorMessage";
 
 interface OwnProps {}
 interface StateProps {
@@ -53,23 +55,32 @@ class CheckoutForm extends React.Component<Props, State> {
 
     try {
       await Braintree.client.create({
-        authorization: clientToken,
+        authorization: "sandbox_8dnfyyb9_j9f4k8pnshzfzsxv",
       }, (err, clientInstance) => {
         if (err) throw err;
         this.setState({ braintreeInstance: clientInstance });
+        console.log(clientInstance);
       });
     } catch (err) {
+      console.log(err);
       this.setState({ braintreeError: err });
     }
   }
 
   public render(): JSX.Element {
     const { braintreeError, braintreeInstance } = this.state;
-    const { isRequesting } = this.props;
+    const { isRequesting, clientToken } = this.props;
     return (
-      <CreditCardForm
-        braintreeInstance={braintreeInstance}
-      />
+      <>
+        {/* <CreditCardForm
+          braintreeInstance={braintreeInstance}
+        /> */}
+        <PaypalButton
+          braintreeInstance={braintreeInstance}
+          amount={10.00}
+        />
+        {!isRequesting && braintreeError && braintreeError.message && <ErrorMessage error={braintreeError.message} />}
+      </>        
     );
   }
 }
