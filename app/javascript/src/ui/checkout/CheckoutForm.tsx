@@ -55,11 +55,10 @@ class CheckoutForm extends React.Component<Props, State> {
 
     try {
       await Braintree.client.create({
-        authorization: "sandbox_8dnfyyb9_j9f4k8pnshzfzsxv",
+        authorization: clientToken,
       }, (err, clientInstance) => {
         if (err) throw err;
         this.setState({ braintreeInstance: clientInstance });
-        console.log(clientInstance);
       });
     } catch (err) {
       console.log(err);
@@ -72,12 +71,11 @@ class CheckoutForm extends React.Component<Props, State> {
     const { isRequesting, clientToken } = this.props;
     return (
       <>
-        {/* <CreditCardForm
+        <CreditCardForm
           braintreeInstance={braintreeInstance}
-        /> */}
+        />
         <PaypalButton
           braintreeInstance={braintreeInstance}
-          amount={10.00}
         />
         {!isRequesting && braintreeError && braintreeError.message && <ErrorMessage error={braintreeError.message} />}
       </>        

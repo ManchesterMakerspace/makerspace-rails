@@ -3,12 +3,10 @@ import mapValues from "lodash-es/mapValues";
 import isEmpty from "lodash-es/isEmpty";
 import omit from "lodash-es/omit";
 import {
-  Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   Button,
-  Grid,
 } from "@material-ui/core";
 
 import { CollectionOf } from "app/interfaces";

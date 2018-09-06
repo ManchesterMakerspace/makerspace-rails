@@ -4,22 +4,15 @@ import { connect } from "react-redux";
 //@ts-ignore
 import * as Braintree from "braintree-web";
 //@ts-ignore
-import * as checkoutJs from "checkout.js";
+import * as checkoutJs from "paypal-checkout";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
-import { getClientTokenAction, submitPaymentAction } from "ui/checkout/actions";
-import { readPlansAction } from "ui/billingPlans/actions";
-import { Button, TextField, Grid, Typography, FormControl, InputLabel, FormControlLabel, FormLabel } from "@material-ui/core";
-import Form from "ui/common/Form";
-import { CheckoutFields } from "ui/checkout/constants";
+import { submitPaymentAction } from "ui/checkout/actions";
 import ErrorMessage from "ui/common/ErrorMessage";
-import HostedInput from "ui/checkout/HostedInput";
-
-const paypalCheckout = (Braintree as any).paypalCheckout;
+import LoadingOverlay from "ui/common/LoadingOverlay";
 
 interface OwnProps {
   braintreeInstance: any;
-  amount: string | number;
 }
 
 interface StateProps {
@@ -62,41 +55,25 @@ class PaypalButton extends React.Component<Props, State> {
   private initPaypal = async () => {
     const { braintreeInstance } = this.props;
     try {
-      await paypalCheckout.create({
+      await (Braintree as any).paypalCheckout.create({
         client: braintreeInstance
       }, (paypalCheckoutErr: any, paypalCheckoutInstance: any) => {
     
-        // Stop if there was a problem creating PayPal Checkout.
-        // This could happen if there was a network error or if it's incorrectly
-        // configured.
         if (paypalCheckoutErr) throw paypalCheckoutErr;
-        this.setState({ paypalInstance: paypalCheckoutInstance });
 
         checkoutJs.Button.render({
-          env: 'sandbox', // or 'sandbox'
-
+          env: "sandbox",
           payment: function () {
             return paypalCheckoutInstance.createPayment({
               flow: 'vault',
-              billingAgreementDescription: 'Your agreement description',
-              enableShippingAddress: true,
-              shippingAddressEditable: false,
-              shippingAddressOverride: {
-                recipientName: 'Scruff McGruff',
-                line1: '1234 Main St.',
-                line2: 'Unit 1',
-                city: 'Chicago',
-                countryCode: 'US',
-                postalCode: '60652',
-                state: 'IL',
-                phone: '123.456.7890'
-              }
             });
           },
 
           onAuthorize: function (data: any, actions: any) {
             return paypalCheckoutInstance.tokenizePayment(data, function (err: any, payload: any) {
-              // Submit `payload.nonce` to your server.
+              if (err) throw err;
+              console.log(payload.nonce)
+              this.setState({ paymentMethodNonce: payload.nonce });
             });
           },
 
@@ -105,12 +82,10 @@ class PaypalButton extends React.Component<Props, State> {
           },
 
           onError: function (err: any) {
-            console.error('checkout.js error', err);
+            if (err) throw err;
           }
-        }, '#paypal-button').then(function () {
-          // The PayPal button will be rendered in an html element with the id
-          // `paypal-button`. This function will be called when the PayPal button
-          // is set up and ready to be used.
+        }, '#paypal-button').then(() => {
+          this.setState({ paypalInstance: paypalCheckoutInstance });
         });
       });
     } catch (err) {
@@ -118,45 +93,14 @@ class PaypalButton extends React.Component<Props, State> {
     }
   }
 
-  private requestPaymentMethod = () => {
-    const { paypalInstance } = this.state;
-    const { amount } = this.props;
-
-    if (paypalInstance) {
-      paypalInstance.tokenize({ 
-        amount,
-        currency: "USD",
-        flow: "vault"
-      }, (err: Braintree.BraintreeError, payload:{ [key: string]: string }) => {
-        if (err) {
-          console.log(err);
-          this.setState({ braintreeError: err });
-        }
-        this.setState({ paymentMethodNonce: payload.nonce });
-      });
-    }
-  }
-
-  private submitPayment = async () => {
-    const { submitPayment } = this.props;
-    const { paymentMethodNonce } = this.state;
-    await submitPayment(paymentMethodNonce);
-  }
-
   public render(): JSX.Element {
     const { braintreeError, paypalInstance  } = this.state;
-    const { isRequesting, braintreeInstance } = this.props;
+    const { isRequesting } = this.props;
     return (
       <>
-        <Form
-          id="paypal-form"
-          onSubmit={this.requestPaymentMethod}
-          submitText="Paypallllll"
-          loading={isRequesting || !braintreeInstance || !paypalInstance }
-        >
-          <button id="paypal-button"/>
-          {!isRequesting && braintreeError && braintreeError.message && <ErrorMessage error={braintreeError.message} />}
-        </Form>
+        {!paypalInstance &&  <LoadingOverlay id="paypal-button-loading"/>}
+        <button id="paypal-button"/>
+        {!isRequesting && braintreeError && braintreeError.message && <ErrorMessage error={braintreeError.message} />}
       </>
     )
   }

@@ -5,9 +5,8 @@ import { connect } from "react-redux";
 import * as Braintree from "braintree-web";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
-import { getClientTokenAction, submitPaymentAction } from "ui/checkout/actions";
-import { readPlansAction } from "ui/billingPlans/actions";
-import { Button, TextField, Grid, Typography, FormControl, InputLabel, FormControlLabel, FormLabel } from "@material-ui/core";
+import { submitPaymentAction } from "ui/checkout/actions";
+import { Grid } from "@material-ui/core";
 import Form from "ui/common/Form";
 import { CheckoutFields } from "ui/checkout/constants";
 import ErrorMessage from "ui/common/ErrorMessage";
@@ -88,22 +87,17 @@ class CreditCardForm extends React.Component<Props, State> {
   }
 
   private requestPaymentMethod = () => {
-    const { braintreeInstance } = this.props;
-    if (braintreeInstance) {
-      braintreeInstance.tokenize((err: Braintree.BraintreeError, payload:{ [key: string]: string }) => {
+    const { hostedFieldsInstance } = this.state;
+    if (hostedFieldsInstance) {
+      hostedFieldsInstance.tokenize((err: Braintree.BraintreeError, payload:{ [key: string]: string }) => {
         if (err) {
-          console.log(err);
           this.setState({ braintreeError: err });
+        } else {
+          console.log(payload.nonce)
+          this.setState({ paymentMethodNonce: payload.nonce });
         }
-        this.setState({ paymentMethodNonce: payload.nonce });
       });
     }
-  }
-
-  private submitPayment = async () => {
-    const { submitPayment } = this.props;
-    const { paymentMethodNonce } = this.state;
-    await submitPayment(paymentMethodNonce);
   }
 
   public render(): JSX.Element {
@@ -138,7 +132,6 @@ class CreditCardForm extends React.Component<Props, State> {
             label={CheckoutFields.postalCode.label}
             id={CheckoutFields.postalCode.name}
           />
-          <Button onClick={this.submitPayment}>Submit Payment</Button>
           {!isRequesting && braintreeError && braintreeError.message && <ErrorMessage error={braintreeError.message} />}
         </Form>
       </>
