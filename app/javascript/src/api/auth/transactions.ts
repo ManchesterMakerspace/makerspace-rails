@@ -3,7 +3,6 @@ import axios from "axios";
 import { Url } from "app/constants";
 import { buildJsonUrl, handleApiError } from "app/utils";
 import { AuthForm, SignUpForm } from "ui/auth/interfaces";
-import { buildEmailCheckPath } from "api/auth/utils";
 
 export const postLogin = async (creds?: AuthForm) => {
   try {
@@ -24,17 +23,6 @@ export const deleteLogin = async () => {
     throw error;
   }
 };
-
-export const checkEmailExists = async (email: string) => {
-  try {
-    const response = await axios.post(`${buildEmailCheckPath()}`, { params: email });
-    const exists = response.status === 200 ? true : false;
-    return exists;
-  } catch (e) {
-    const error = handleApiError(e);
-    throw error;
-  }
-}
 
 export const postSignUp = async (signUpForm: SignUpForm) => {
   try {

@@ -61,7 +61,6 @@ class CheckoutForm extends React.Component<Props, State> {
         this.setState({ braintreeInstance: clientInstance });
       });
     } catch (err) {
-      console.log(err);
       this.setState({ braintreeError: err });
     }
   }
@@ -78,7 +77,7 @@ class CheckoutForm extends React.Component<Props, State> {
           braintreeInstance={braintreeInstance}
         />
         {!isRequesting && braintreeError && braintreeError.message && <ErrorMessage error={braintreeError.message} />}
-      </>        
+      </>
     );
   }
 }

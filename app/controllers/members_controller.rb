@@ -20,15 +20,6 @@ class MembersController < ApplicationController
       render json: @member and return
     end
 
-    def check_email
-      member = Member.find_by(email: params[:email])
-      if member
-        render json: {}, status: 200 and return
-      else
-        render json: {}, status: 204 and return
-      end
-    end
-
     # TODO: Move this to a different controller
     def contract
       creds = Google::Auth::UserRefreshCredentials.new({

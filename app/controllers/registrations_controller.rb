@@ -6,23 +6,14 @@ class RegistrationsController < Devise::RegistrationsController
 
     def create
       @member = Member.new(member_params)
-      correct_token = RegistrationToken.find(params[:member][:token_id])
-      @member.cardID = correct_token.token
-      if !correct_token.validate(params[:member][:token]) || correct_token.used
-        render json: {status: 400}, status: 400 and return
+      if @member.save
+        invite_gdrive
+        @notifier.ping(format_slack_messages(@messages)) unless @messages.empty?
+        MemberMailer.member_registered(@member).deliver_now
+        sign_in(@member)
+        render json: @member and return
       else
-        @member.renewal = correct_token.months
-        if @member.save
-          correct_token.update(used: true)
-          upload_signature
-          invite_gdrive
-          @notifier.ping(format_slack_messages(@messages)) unless @messages.empty?
-          MemberMailer.member_registered(@member).deliver_now
-          sign_in(@member)
-          render json: @member and return
-        else
-          render json: {status: 'error saving member'}, status: 400 and return
-        end
+        render json: { message: @member.errors.full_messages }, status: 400 and return
       end
     end
 

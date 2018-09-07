@@ -2,10 +2,8 @@ import { ThunkAction } from "redux-thunk";
 import { AnyAction } from "redux";
 
 import { AuthState, AuthForm, SignUpForm } from "ui/auth/interfaces";
-import { postLogin, deleteLogin, checkEmailExists, postSignUp } from "api/auth/transactions";
-import { Action as AuthAction, EmailExistsError } from "ui/auth/constants";
-import { getMember } from "api/member/transactions";
-import { getClientTokenAction } from "ui/checkout/actions";
+import { postLogin, deleteLogin, postSignUp } from "api/auth/transactions";
+import { Action as AuthAction } from "ui/auth/constants";
 
 export const loginUserAction = (
   loginForm?: AuthForm
@@ -54,30 +52,6 @@ export const logoutUserAction = (
   } catch {}
   dispatch({ type: AuthAction.LogoutSuccess });
 }
-
-export const stageSignUpAction = (
-  signUpForm: SignUpForm
-): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
-  dispatch({ type: AuthAction.StartAuthRequest });
-  try {
-    const exists = await checkEmailExists(signUpForm.email);
-    if (exists) {
-      dispatch({ type: AuthAction.AuthUserFailure, error: EmailExistsError });
-    } else {
-      dispatch({
-        type: AuthAction.StageSignUp,
-        data: signUpForm
-      });
-      dispatch(getClientTokenAction())
-    }
-  } catch (e) {
-    const { errorMessage } = e;
-    dispatch({
-      type: AuthAction.AuthUserFailure,
-      error: errorMessage
-    });
-  }
-};
 
 export const submitSignUpAction = (
   signUpForm: SignUpForm

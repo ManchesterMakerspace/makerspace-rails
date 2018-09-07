@@ -7,7 +7,7 @@ import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { SignUpFields, EmailExistsError } from "ui/auth/constants";
 import { SignUpForm } from "ui/auth/interfaces";
 import ErrorMessage from "ui/common/ErrorMessage";
-import { stageSignUpAction } from "ui/auth/actions";
+import { submitSignUpAction } from "ui/auth/actions";
 import { RemoveRedEye } from "@material-ui/icons";
 import Form from "ui/common/Form";
 import { Redirect } from "react-router";
@@ -16,7 +16,7 @@ interface OwnProps {
   goToLogin: () => void;
 }
 interface DispatchProps {
-  stageSignUp: (signUpForm: SignUpForm) => void;
+  submitSignUp: (signUpForm: SignUpForm) => void;
 }
 interface StateProps {
   signUpComplete: boolean;
@@ -81,7 +81,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
 
     if (!form.isValid()) return;
 
-    await this.props.stageSignUp(validSignUp);
+    await this.props.submitSignUp(validSignUp);
   }
 
   private closeNotification = () => {
@@ -168,12 +168,12 @@ const mapStateToProps = (
   state: ReduxState,
   _ownProps: OwnProps
 ): StateProps => {
-  const { 
+  const {
     newUser: {
       email
     },
-    isRequesting, 
-    error 
+    isRequesting,
+    error
   } = state.auth;
 
   const signUpComplete = !error && !!email
@@ -189,7 +189,7 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch
 ): DispatchProps => {
   return {
-    stageSignUp: (signUpForm) => dispatch(stageSignUpAction(signUpForm))
+    submitSignUp: (signUpForm) => dispatch(submitSignUpAction(signUpForm))
   };
 }
 export default connect(mapStateToProps, mapDispatchToProps)(SignUpFormComponent);
