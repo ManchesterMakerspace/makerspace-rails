@@ -100,7 +100,7 @@ class MembersList extends React.Component<Props, State> {
   }
 
   private submitRenewalForm = async (form: Form) => {
-    const validRenewal: RenewForm = await this.renewFormRef.validateRenewalForm(form);
+    const validRenewal: RenewForm = await this.renewFormRef.validate(form);
 
     if (!form.isValid()) return;
 

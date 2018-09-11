@@ -7,24 +7,22 @@ import { MemberDetails } from "app/entities/member";
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { timeToDate } from "ui/utils/timeToDate";
 import LoadingOverlay from "ui/common/LoadingOverlay";
-import Form from "ui/common/Form";
-import RenewalForm, { RenewForm } from "ui/common/RenewalForm";
 import KeyValueItem from "ui/common/KeyValueItem";
 import DetailView from "ui/common/DetailView";
-import { readMemberAction, updateMemberAction } from "ui/member/actions";
-import MemberForm from "ui/member/MemberForm"
+import { readMemberAction } from "ui/member/actions";
+import RenewalForm from "ui/common/RenewalForm";
+import MemberForm from "ui/member/MemberForm";
+import MemberStatusLabel from "ui/member/MemberStatusLabel";
+import UpdateMemberContainer, { UpdateMemberRenderProps } from "ui/member/UpdateMemberContainer";
 import { memberToRenewal } from "ui/member/utils";
 import { membershipRenewalOptions } from "ui/members/constants";
-import MemberStatusLabel from "ui/member/MemberStatusLabel";
 
 interface DispatchProps {
   getMember: () => Promise<void>;
-  updateMember: (details: Partial<MemberDetails>) => void;
 }
 interface StateProps {
   requestingError: string;
   isRequestingMember: boolean;
-  updateError: string;
   isUpdatingMember: boolean;
   member: MemberDetails
 }
@@ -41,10 +39,6 @@ const defaultState = {
 }
 
 class MemberDetail extends React.Component<Props, State> {
-  private renewFormRef: RenewalForm;
-  private setRenewFormRef = (ref: RenewalForm) => this.renewFormRef = ref;
-  private editFormRef: MemberForm;
-  private setEditFormRef = (ref: MemberForm) => this.editFormRef = ref;
 
   constructor(props: Props) {
     super(props);
@@ -66,24 +60,9 @@ class MemberDetail extends React.Component<Props, State> {
 
   private openRenewModal = () => this.setState({ isRenewOpen: true });
   private closeRenewModal = () => this.setState({ isRenewOpen: false });
-  private submitRenewalForm = async (form: Form) => {
-    const validRenewal: RenewForm = await this.renewFormRef.validateRenewalForm(form);
-
-    if (!form.isValid()) return;
-
-    await this.props.updateMember(validRenewal);
-  }
-
   private openEditModal = () => this.setState({ isEditOpen: true });
   private closeEditModal = () => this.setState({ isEditOpen: false });
-  private submitEditForm = async (form: Form) => {
-    const validUpdate: MemberDetails = await this.editFormRef.validate(form);
-
-    if (!form.isValid()) return;
-
-    await this.props.updateMember(validUpdate);
-  }
-
+  
   private renderMemberInfo = (): JSX.Element => {
     const { member } = this.props;
 
@@ -103,8 +82,7 @@ class MemberDetail extends React.Component<Props, State> {
   }
 
   private renderMemberDetails = (): JSX.Element => {
-    const { member, updateError, isUpdatingMember, isRequestingMember, match } = this.props;
-    const { isRenewOpen, isEditOpen } = this.state;
+    const { member, isUpdatingMember, isRequestingMember, match } = this.props;
     const { memberId } = match.params;
     const loading = isUpdatingMember || isRequestingMember;
 
@@ -131,26 +109,53 @@ class MemberDetail extends React.Component<Props, State> {
           ]}
           information={this.renderMemberInfo()}
         />
+        {this.renderMemberForms()}
+      </>
+    )
+  }
 
-        <RenewalForm
-          ref={this.setRenewFormRef}
-          renewalOptions={membershipRenewalOptions}
-          title="Renew Membership"
-          entity={memberToRenewal(member)}
-          isOpen={isRenewOpen}
-          isRequesting={loading}
-          error={updateError}
-          onClose={this.closeRenewModal}
-          onSubmit={this.submitRenewalForm}
+  private renderMemberForms = () => {
+    const { member } = this.props;
+    const { isEditOpen, isRenewOpen } = this.state;
+
+    const editForm = (renderProps:UpdateMemberRenderProps) => (
+      <MemberForm
+        ref={renderProps.setRef}
+        member={renderProps.member}
+        isOpen={renderProps.isOpen}
+        isRequesting={renderProps.isUpdating}
+        error={renderProps.error}
+        onClose={renderProps.closeHandler}
+        onSubmit={renderProps.submit}
+      />
+    )
+    const renewForm = (renderProps:UpdateMemberRenderProps) => (
+      <RenewalForm
+        ref={renderProps.setRef}
+        renewalOptions={membershipRenewalOptions}
+        title="Renew Membership"
+        entity={memberToRenewal(renderProps.member)}
+        isOpen={renderProps.isOpen}
+        isRequesting={renderProps.isUpdating}
+        error={renderProps.error}
+        onClose={renderProps.closeHandler}
+        onSubmit={renderProps.submit}
         />
-        <MemberForm
-          ref={this.setEditFormRef}
+    )
+
+    return (
+      <>
+        <UpdateMemberContainer
+          isOpen={isRenewOpen}
           member={member}
+          closeHandler={this.closeRenewModal}
+          render={renewForm}
+        />
+        <UpdateMemberContainer
           isOpen={isEditOpen}
-          isRequesting={loading}
-          error={updateError}
-          onClose={this.closeEditModal}
-          onSubmit={this.submitEditForm}
+          member={member}
+          closeHandler={this.closeEditModal}
+          render={editForm}
         />
       </>
     )
@@ -173,11 +178,10 @@ const mapStateToProps = (
   _ownProps: OwnProps
 ): StateProps => {
   const { isRequesting, error: requestingError } = state.member.read;
-  const { isRequesting: isUpdating, error: updateError } = state.member.update
+  const { isRequesting: isUpdating } = state.member.update
   const { entity: member } = state.member;
   return {
     member,
-    updateError,
     requestingError,
     isRequestingMember: isRequesting,
     isUpdatingMember: isUpdating
@@ -191,7 +195,6 @@ const mapDispatchToProps = (
   const memberId = ownProps.match.params.memberId;
   return {
     getMember: () => dispatch(readMemberAction(memberId)),
-    updateMember: (memberDetails) => dispatch(updateMemberAction(memberId, memberDetails)),
   }
 }
 

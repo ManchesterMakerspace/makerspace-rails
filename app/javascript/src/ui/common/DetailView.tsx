@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Grid, Typography, Button } from "@material-ui/core";
 import { ButtonProps } from "@material-ui/core/Button";
+import { kebabCase } from "lodash-es";
 
 interface ActionButton {
   color: ButtonProps["color"];
@@ -27,9 +28,10 @@ class DetailView extends React.Component<OwnProps, {}> {
 
   private renderActionButtons = (): JSX.Element | JSX.Element[] => {
     const { actionButtons } = this.props;
-    return actionButtons.map((action) => {
+    return actionButtons.map((action, index) => {
       return (
         <Button
+          key={`${kebabCase(action.label)}-${index}`}
           style={{ marginRight: ".25em" }}
           color={action.color}
           variant={action.variant}

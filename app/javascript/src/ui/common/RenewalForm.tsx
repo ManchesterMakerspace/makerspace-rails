@@ -40,7 +40,7 @@ class RenewalForm extends React.Component<OwnProps, {}> {
   private formRef: Form;
   private setFormRef = (ref: Form) => this.formRef = ref;
 
-  public validateRenewalForm = async (form: Form): Promise<RenewForm> => {
+  public validate = async (form: Form): Promise<RenewForm> => {
     const formValues = form.getValues();
     const errors: CollectionOf<string> = {};
     const validatedForm: Partial<RenewForm> = {};
@@ -68,7 +68,7 @@ class RenewalForm extends React.Component<OwnProps, {}> {
   }
 
   private renderForm = (): JSX.Element => {
-    const { isRequesting, error, entity, renewalOptions } = this.props;
+    const { entity, renewalOptions } = this.props;
 
     return (
       <>
