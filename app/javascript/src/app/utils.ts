@@ -10,12 +10,12 @@ import { State as ReduxState } from "ui/reducer";
 import { ApiErrorMessageMap } from "app/constants";
 import { ApiErrorResponse } from "app/interfaces";
 
-export const buildJsonUrl = (pathFragments: string | string[]) => {
-  let path: string;
+export const buildJsonUrl = (pathFragments: string | string[], includeBase: boolean = true) => {
+  let path: string = includeBase ? `${process.env.DOMAIN}/` : "";
   if (Array.isArray(pathFragments)) {
-    path = pathFragments.join("/");
+    path += pathFragments.join("/");
   } else {
-    path = pathFragments;
+    path += pathFragments;
   }
   return `${path}.json`;
 };

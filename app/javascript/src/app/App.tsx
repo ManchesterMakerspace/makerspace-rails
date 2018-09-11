@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Store } from 'redux';
 import { connect, Provider } from "react-redux";
 import { ConnectedRouter } from 'connected-react-router';
+import { Switch } from "react-router";
 import { History } from 'history';
 
 import { Theme, MuiThemeProvider } from '@material-ui/core';
@@ -10,7 +11,7 @@ import { ScopedThunkDispatch, State as ReduxState } from "ui/reducer";
 import { activeSessionLogin } from "ui/auth/actions";
 import Header from "ui/common/Header";
 import LoadingOverlay from 'ui/common/LoadingOverlay';
-import PrivateRouting from 'app/PublicRouting';
+import PrivateRouting from 'app/PrivateRouting';
 import PublicRouting from 'app/PublicRouting';
 
 interface StateProps {
@@ -66,7 +67,7 @@ class App extends React.Component<Props, State> {
     }
   }
   public render(): JSX.Element {
-    const { auth, store, history, theme } = this.props;
+    const { store, history, theme } = this.props;
 
     return (
       <Provider store={store}>
@@ -75,7 +76,9 @@ class App extends React.Component<Props, State> {
           <MuiThemeProvider theme={theme}>
             <div className="root">
             <Header/>
+            <Switch>
               {this.renderBody()}
+            </Switch>
             </div>
           </MuiThemeProvider>
         </ConnectedRouter>

@@ -1,22 +1,24 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import { Link } from 'react-router-dom'
+import { Button, Grid } from "@material-ui/core";
+
+import { MemberDetails, MemberStatus } from "app/entities/member";
+import { QueryParams } from "app/interfaces";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { timeToDate } from "ui/utils/timeToDate";
+import Form from "ui/common/Form";
 import { SortDirection } from "ui/common/table/constants";
-import { MemberDetails, MemberStatus } from "app/entities/member";
-import { readMembersAction } from "ui/members/actions";
-import { QueryParams } from "app/interfaces";
 import TableContainer from "ui/common/table/TableContainer";
 import { Column } from "ui/common/table/Table";
-import { Button, Grid } from "@material-ui/core";
 import { Status } from "ui/common/constants";
 import StatusLabel from "ui/common/StatusLabel";
-import { memberStatusLabelMap, membershipRenewalOptions } from "ui/members/constants";
 import RenewalForm, { RenewalEntity, RenewForm } from "ui/common/RenewalForm";
+import { readMembersAction } from "ui/members/actions";
+import { memberStatusLabelMap, membershipRenewalOptions } from "ui/members/constants";
 import { updateMemberAction } from "ui/member/actions";
 import { memberToRenewal } from "ui/member/utils";
-import Form from "ui/common/Form";
 
 interface OwnProps {}
 interface DispatchProps {
@@ -47,7 +49,7 @@ const fields: Column<MemberDetails>[] = [
   {
     id: "lastname",
     label: "Name",
-    cell: (row: MemberDetails) => `${row.firstname} ${row.lastname}`,
+    cell: (row: MemberDetails) => <Link to={`/members/${row.id}`}>{row.firstname} {row.lastname}</Link>,
     defaultSortDirection: SortDirection.Desc,
   },
   {
