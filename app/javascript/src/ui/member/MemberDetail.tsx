@@ -1,7 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { Grid, Typography, Button } from "@material-ui/core";
 
 import { MemberDetails } from "app/entities/member";
 
@@ -11,6 +10,7 @@ import LoadingOverlay from "ui/common/LoadingOverlay";
 import Form from "ui/common/Form";
 import RenewalForm, { RenewForm } from "ui/common/RenewalForm";
 import KeyValueItem from "ui/common/KeyValueItem";
+import DetailView from "ui/common/DetailView";
 import { readMemberAction, updateMemberAction } from "ui/member/actions";
 import MemberForm from "ui/member/MemberForm"
 import { memberToRenewal } from "ui/member/utils";
@@ -46,10 +46,8 @@ class MemberDetail extends React.Component<Props, State> {
   private editFormRef: MemberForm;
   private setEditFormRef = (ref: MemberForm) => this.editFormRef = ref;
 
-
   constructor(props: Props) {
     super(props);
-
     this.state = defaultState;
   }
 
@@ -87,54 +85,60 @@ class MemberDetail extends React.Component<Props, State> {
   }
 
   private renderMemberInfo = (): JSX.Element => {
-    const { member, isRequestingMember } = this.props;
+    const { member } = this.props;
 
     return (
-      <Grid container spacing={24} justify="center">
-        <Grid item xs={10}>
-          <Typography gutterBottom variant="title">{`${member.firstname} ${member.lastname}`}</Typography>
-          <Button
-            style={{marginRight: ".25em"}}
-            color="primary"
-            variant="contained"
-            disabled={isRequestingMember}
-            onClick={this.openRenewModal}
-          >
-            Renew
-          </Button>
-          <Button
-            style={{marginLeft: ".25em"}}
-            color="primary"
-            variant="outlined"
-            disabled={isRequestingMember}
-            onClick={this.openEditModal}
-          >
-            Edit
-          </Button>
-        </Grid>
-        <Grid item xs={10} style={{ border: "1px solid black", borderRadius: "3px" }}>
-          <KeyValueItem label="Email" value={member.email ? <a href={`mailto:${member.email}`}>{member.email}</a> : "N/A"}/>
-          <KeyValueItem label="Membership Expiration" value={timeToDate(member.expirationTime)}/>
-          <KeyValueItem label="Membership Status" value={<MemberStatusLabel member={member} />} />
-        </Grid>
-      </Grid>
+      <>
+        <KeyValueItem label="Email">
+          {member.email ? <a href={`mailto:${member.email}`}>{member.email}</a> : "N/A"}
+        </KeyValueItem>
+        <KeyValueItem label="Membership Expiration">
+          {timeToDate(member.expirationTime)}
+        </KeyValueItem>
+        <KeyValueItem label="Membership Status">
+          <MemberStatusLabel member={member} />
+        </KeyValueItem>
+      </>
     )
   }
 
   private renderMemberDetails = (): JSX.Element => {
-    const { member, updateError, isUpdatingMember } = this.props;
+    const { member, updateError, isUpdatingMember, isRequestingMember, match } = this.props;
     const { isRenewOpen, isEditOpen } = this.state;
+    const { memberId } = match.params;
+    const loading = isUpdatingMember || isRequestingMember;
 
     return (
       <>
-        {this.renderMemberInfo()}
+        <DetailView
+          title={`${member.firstname} ${member.lastname}`}
+          basePath={`/members/${memberId}`}
+          actionButtons={[
+            {
+              color: "primary",
+              variant: "contained",
+              disabled: loading,
+              label: "Renew",
+              onClick: this.openRenewModal
+            },
+            {
+              color: "primary",
+              variant: "outlined",
+              disabled: loading,
+              label: "Edit",
+              onClick: this.openEditModal
+            }
+          ]}
+          information={this.renderMemberInfo()}
+        />
+
         <RenewalForm
           ref={this.setRenewFormRef}
           renewalOptions={membershipRenewalOptions}
           title="Renew Membership"
           entity={memberToRenewal(member)}
           isOpen={isRenewOpen}
-          isRequesting={isUpdatingMember}
+          isRequesting={loading}
           error={updateError}
           onClose={this.closeRenewModal}
           onSubmit={this.submitRenewalForm}
@@ -143,7 +147,7 @@ class MemberDetail extends React.Component<Props, State> {
           ref={this.setEditFormRef}
           member={member}
           isOpen={isEditOpen}
-          isRequesting={isUpdatingMember}
+          isRequesting={loading}
           error={updateError}
           onClose={this.closeEditModal}
           onSubmit={this.submitEditForm}

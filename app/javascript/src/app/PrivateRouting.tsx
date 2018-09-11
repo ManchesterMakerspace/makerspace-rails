@@ -13,7 +13,7 @@ import MemberDetail from 'ui/member/MemberDetail';
 const PrivateRouting: React.SFC<{}> = () => (
   <Switch>
     <Route exact path="/members" component={MembersList} />
-    <Route exact path="/members/:memberId" component={MemberDetail} />
+    <Route exact path="/members/:memberId/:resource?" component={MemberDetail} />
     <Route exact path="/billing" component={PlansList} />
     <Route exact path="/subscriptions" component={SubscriptionsList} />
     <Route exact path="/rentals" component={RentalsList} />
