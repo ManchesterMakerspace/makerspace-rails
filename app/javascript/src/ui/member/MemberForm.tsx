@@ -1,11 +1,10 @@
 import * as React from "react";
-import isEmpty from "lodash-es/isEmpty";
+import { Grid, TextField } from "@material-ui/core";
 
 import { MemberDetails } from "app/entities/member";
 import { CollectionOf } from "app/interfaces";
 
 import FormModal from "ui/common/FormModal";
-import ErrorMessage from "ui/common/ErrorMessage";
 import { fields } from "ui/member/constants";
 import Form from "ui/common/Form";
 
@@ -15,14 +14,14 @@ interface OwnProps {
   isRequesting: boolean;
   error: string;
   onClose: () => void;
-  onSubmit: (validMember: MemberDetails) => void;
+  onSubmit: (form: Form) => void;
 }
 
 class MemberForm extends React.Component<OwnProps, {}> {
-  private formRef: Form;
+  public formRef: Form;
   private setFormRef = (ref: Form) => this.formRef = ref;
 
-  private validate = (form: Form): MemberDetails => {
+  public validate = async (form: Form): Promise<MemberDetails> => {
     const formValues = form.getValues();
     const errors: CollectionOf<string> = {};
     const validatedMember: Partial<MemberDetails> = {};
@@ -36,24 +35,15 @@ class MemberForm extends React.Component<OwnProps, {}> {
       }
     });
 
-    form.setFormState({
+    await form.setFormState({
       errors,
     });
 
     return validatedMember as MemberDetails;
   }
 
-  private submit = async (form: Form) => {
-    const validMember: MemberDetails = this.validate(form);
-
-    if (!form.isValid()) return;
-
-    this.props.onSubmit(validMember);
-  }
-
-
   public render(): JSX.Element {
-    const { isOpen, onClose, isRequesting, error } = this.props;
+    const { isOpen, onClose, isRequesting, error, onSubmit, member } = this.props;
 
     return (
       <FormModal
@@ -62,16 +52,45 @@ class MemberForm extends React.Component<OwnProps, {}> {
         loading={isRequesting}
         isOpen={isOpen}
         closeHandler={onClose}
-        title="Edit Member"
-        onSubmit={this.submit}
+        title={`Edit ${member ? `${member.firstname} ${member.lastname}` : "Member"}`}
+        onSubmit={onSubmit}
         submitText="Save"
+        error={error}
       >
-        First & Last Name
+        <Grid container spacing={24}>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              required
+              value={member.firstname}
+              label={fields.firstname.label}
+              name={fields.firstname.name}
+              placeholder={fields.firstname.placeholder}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              required
+              value={member.lastname}
+              label={fields.lastname.label}
+              name={fields.lastname.name}
+              placeholder={fields.lastname.placeholder}
+            />
+          </Grid>
+        </Grid>
         Expiration (Date Picker)
-        Email
+        <TextField
+          fullWidth
+          required
+          value={member.email}
+          label={fields.email.label}
+          name={fields.email.name}
+          placeholder={fields.email.placeholder}
+          type="email"
+        />
         Status (Select)
         Permissions (Select)
-        {!isRequesting && error && <ErrorMessage error={error} />}
       </FormModal>
     )
   }

@@ -8,11 +8,11 @@ import MemberDetail from 'ui/member/MemberDetail';
 
 
 const PublicRouting: React.SFC<{}> = () => (
-  <>
+  <Switch >
     <Route exact path="/checkout" component={CheckoutContainer} />
     <Route exact path="/" component={LandingPage} />
-    <Route path="*" component={NotFound} />
-  </>
+    <Route component={NotFound} />
+  </Switch>
 );
 
 export default PublicRouting;

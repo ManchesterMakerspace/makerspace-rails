@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Link } from 'react-router-dom'
 import { Button, Grid } from "@material-ui/core";
 
-import { MemberDetails, MemberStatus } from "app/entities/member";
+import { MemberDetails } from "app/entities/member";
 import { QueryParams } from "app/interfaces";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
@@ -12,11 +12,10 @@ import Form from "ui/common/Form";
 import { SortDirection } from "ui/common/table/constants";
 import TableContainer from "ui/common/table/TableContainer";
 import { Column } from "ui/common/table/Table";
-import { Status } from "ui/common/constants";
-import StatusLabel from "ui/common/StatusLabel";
 import RenewalForm, { RenewalEntity, RenewForm } from "ui/common/RenewalForm";
 import { readMembersAction } from "ui/members/actions";
-import { memberStatusLabelMap, membershipRenewalOptions } from "ui/members/constants";
+import { membershipRenewalOptions } from "ui/members/constants";
+import MemberStatusLabel from "ui/member/MemberStatusLabel";
 import { updateMemberAction } from "ui/member/actions";
 import { memberToRenewal } from "ui/member/utils";
 
@@ -61,22 +60,7 @@ const fields: Column<MemberDetails>[] = [
   {
     id: "status",
     label: "Status",
-    cell: (row: MemberDetails) => {
-      const inActive = row.status !== MemberStatus.Active;
-      const current = row.expirationTime > Date.now();
-      const statusColor = current ? Status.Success : Status.Danger;
-
-      let label;
-      if (inActive) {
-        label = memberStatusLabelMap[row.status];
-      } else {
-        label = current ? "Active" : "Expired";
-      }
-
-      return (
-        <StatusLabel label={label} color={statusColor}/>
-      );
-    },
+    cell: (row: MemberDetails) => <MemberStatusLabel member={row}/>
   },
 ];
 
@@ -116,7 +100,7 @@ class MembersList extends React.Component<Props, State> {
   }
 
   private submitRenewalForm = async (form: Form) => {
-    const validRenewal: RenewForm = this.renewFormRef.validateRenewalForm(form);
+    const validRenewal: RenewForm = await this.renewFormRef.validateRenewalForm(form);
 
     if (!form.isValid()) return;
 
@@ -151,7 +135,7 @@ class MembersList extends React.Component<Props, State> {
       search
     };
   }
-  
+
   public componentDidMount() {
     this.getMembers();
   }

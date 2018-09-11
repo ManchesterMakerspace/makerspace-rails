@@ -40,7 +40,7 @@ class RenewalForm extends React.Component<OwnProps, {}> {
   private formRef: Form;
   private setFormRef = (ref: Form) => this.formRef = ref;
 
-  public validateRenewalForm = (form: Form): RenewForm => {
+  public validateRenewalForm = async (form: Form): Promise<RenewForm> => {
     const formValues = form.getValues();
     const errors: CollectionOf<string> = {};
     const validatedForm: Partial<RenewForm> = {};
@@ -60,7 +60,7 @@ class RenewalForm extends React.Component<OwnProps, {}> {
       errors[renewalSelectName] = "Select a renewal term."
     }
 
-    form.setFormState({
+    await form.setFormState({
       errors,
     });
 
@@ -87,13 +87,12 @@ class RenewalForm extends React.Component<OwnProps, {}> {
         >
           {renewalOptions.map((option) => <option key={kebabCase(option.label)} value={option.value}>{option.label}</option>)}
         </Select>
-        {!isRequesting && error && <ErrorMessage error={error} />}
       </>
     )
   }
 
   public render(): JSX.Element {
-    const { isOpen, onClose, isRequesting, title, onSubmit, entity } = this.props;
+    const { isOpen, onClose, isRequesting, title, onSubmit, entity, error } = this.props;
 
     return (
       <FormModal
@@ -105,6 +104,7 @@ class RenewalForm extends React.Component<OwnProps, {}> {
         title={title}
         onSubmit={onSubmit}
         submitText="Submit"
+        error={error}
       >
         {entity ? this.renderForm() :  <ErrorMessage error="Nothing to renew"/>}
       </FormModal>

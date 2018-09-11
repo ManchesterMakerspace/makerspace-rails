@@ -76,9 +76,7 @@ class App extends React.Component<Props, State> {
           <MuiThemeProvider theme={theme}>
             <div className="root">
             <Header/>
-            <Switch>
               {this.renderBody()}
-            </Switch>
             </div>
           </MuiThemeProvider>
         </ConnectedRouter>

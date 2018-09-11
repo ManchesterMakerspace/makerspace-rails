@@ -37,6 +37,7 @@ interface FormModalProps {
   submitText?: string;
   loading?: boolean;
   children?: React.ReactNode;
+  error?: string;
 }
 interface State {
   values: CollectionOf<string>;
@@ -53,7 +54,7 @@ class Form extends React.Component<FormModalProps, State> {
     if (input && input.props) {
       // Get input name
       if (this.isFormInput(input)) {
-        values[input.props.name] = input.props.defaultValue || "";
+        values[input.props.name] = input.props.value || input.props.defaultValue || "";
       }
       // extract names from input children elements
       if (React.Children.count(input.props.children) > 0) {
@@ -97,14 +98,14 @@ class Form extends React.Component<FormModalProps, State> {
   };
 
   public setFormState = (newState: Partial<State>) => {
-    this.setState(state => ({ ...state, ...newState}))
+    return new Promise((resolve) => this.setState(state => ({ ...state, ...newState }), resolve))
   };
 
   public isValid = (): boolean => {
     return isEmpty(this.state.errors);
   }
 
-  public simpleValidate = <T extends object>(fields: FormFields) => {
+  public simpleValidate = async <T extends object>(fields: FormFields) => {
     const values = this.getValues();
     const errors: CollectionOf<string> = {};
     const validatedForm: Partial<T> = {};
@@ -117,7 +118,7 @@ class Form extends React.Component<FormModalProps, State> {
       }
     });
 
-    this.setFormState({
+    await this.setFormState({
       errors,
     });
 
@@ -235,12 +236,14 @@ class Form extends React.Component<FormModalProps, State> {
   }
 
   private renderFormContent = (): JSX.Element => {
-    const { submitText, cancelText, title, id, onCancel, children } = this.props;
+    const { submitText, cancelText, title, id, onCancel, children, error, loading } = this.props;
+    const { isDirty } = this.state;
     return (
       <>
         {title && <DialogTitle id={`${id}-title`}>{title}</DialogTitle>}
         <DialogContent>
           {this.renderChildren(children)}
+          {isDirty && !loading && error && <ErrorMessage error={error} />}
         </DialogContent>
 
         <DialogActions>

@@ -7,12 +7,6 @@ export enum Action {
   GetMembersFailure = "MEMBERS/GET_MEMBERS_FAILURE",
 }
 
-export const memberStatusLabelMap = {
-  [MemberStatus.Active]: "Active",
-  [MemberStatus.Revoked]: "Revoked",
-  [MemberStatus.NonMember]: "Non-Member",
-};
-
   export const membershipRenewalOptions: SelectOption[] = [
   {
     label: "None",

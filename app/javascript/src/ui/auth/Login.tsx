@@ -54,7 +54,7 @@ class Login extends React.Component<Props, State> {
   }
 
   private submit = async (form: Form) => {
-    const validAuth: AuthForm = form.simpleValidate(LoginFields);
+    const validAuth: AuthForm = await form.simpleValidate<AuthForm>(LoginFields);
 
     if (!form.isValid()) return;
 
@@ -66,7 +66,7 @@ class Login extends React.Component<Props, State> {
     const { redirect } = this.state;
 
     if (redirect) {
-      return <Redirect to="/members" push={true} /> 
+      return <Redirect to="/members" push={true} />
     }
 
     return (

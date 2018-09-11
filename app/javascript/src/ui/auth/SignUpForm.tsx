@@ -77,7 +77,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
   }
 
   private submit = async (form: Form) => {
-    const validSignUp: SignUpForm = form.simpleValidate(SignUpFields);
+    const validSignUp: SignUpForm = await form.simpleValidate<SignUpForm>(SignUpFields);
 
     if (!form.isValid()) return;
 
