@@ -15,6 +15,8 @@ import { MemberState } from "ui/member/interfaces";
 import { memberReducer } from "ui/member/actions";
 import { CheckoutState } from "ui/checkout/interfaces";
 import { checkoutReducer } from "ui/checkout/actions";
+import { CardState } from "ui/accessCards/interfaces";
+import { cardReducer } from "ui/accessCards/actions";
 
 export type ScopedThunkDispatch = ThunkDispatch<State, {}, Action>
 
@@ -26,6 +28,7 @@ export interface State {
   plans: PlansState;
   subscriptions: SubscriptionsState;
   checkout: CheckoutState;
+  card: CardState;
 }
 
 export const rootReducer = combineReducers({
@@ -35,5 +38,6 @@ export const rootReducer = combineReducers({
   rentals: rentalsReducer,
   plans: plansReducer,
   subscriptions: subscriptionsReducer,
-  checkout: checkoutReducer
+  checkout: checkoutReducer,
+  card: cardReducer,
 });

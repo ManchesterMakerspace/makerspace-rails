@@ -3,7 +3,8 @@ export namespace Url {
   export enum PathPlaceholder {
     MemberId = "{memberId}",
     RentalId = "{rentalId}",
-    Email = "{email}"
+    Email = "{email}",
+    CardId = "{cardId}",
   }
 
   const baseApiPath = "api";
@@ -15,6 +16,7 @@ export namespace Url {
 
   export const Rentals = `${baseApiPath}/rentals`;
 
+
   export const Auth = {
     SignIn: `${Members}/sign_in`,
     SignOut: `${Members}/sign_out`,
@@ -23,7 +25,9 @@ export namespace Url {
   }
 
   export const Admin = {
-    Member: `${baseAdminPath}/members/${PathPlaceholder.MemberId}`
+    Member: `${baseAdminPath}/members/${PathPlaceholder.MemberId}`,
+    AccessCards: `${baseAdminPath}/cards`,
+    AccessCard: `${baseAdminPath}/cards/${PathPlaceholder.CardId}`,
   }
 
   export const Billing = {
