@@ -1,15 +1,7 @@
 import * as React from "react";
-import { Grid, Typography, Button } from "@material-ui/core";
-import { ButtonProps } from "@material-ui/core/Button";
-import { kebabCase } from "lodash-es";
+import { Grid, Typography } from "@material-ui/core";
+import ButtonRow, { ActionButton } from "ui/common/ButtonRow";
 
-interface ActionButton {
-  color: ButtonProps["color"];
-  variant: ButtonProps["variant"];
-  disabled: boolean;
-  onClick: () => void;
-  label: string;
-}
 interface Resource {
   name: string;
   displayName?: string;
@@ -26,32 +18,13 @@ interface OwnProps {
 
 class DetailView extends React.Component<OwnProps, {}> {
 
-  private renderActionButtons = (): JSX.Element | JSX.Element[] => {
-    const { actionButtons } = this.props;
-    return actionButtons.map((action, index) => {
-      return (
-        <Button
-          key={`${kebabCase(action.label)}-${index}`}
-          style={{ marginRight: ".25em" }}
-          color={action.color}
-          variant={action.variant}
-          disabled={action.disabled}
-          onClick={action.onClick}
-        >
-          {action.label}
-        </Button>
-      )
-    })
-  }
-
   private renderInformation = (): JSX.Element => {
-    const { information, title } = this.props;
-
+    const { information, title, actionButtons } = this.props;
     return (
       <Grid container spacing={24} justify="center">
         <Grid item xs={10}>
           <Typography gutterBottom variant="title">{title}</Typography>
-          {this.renderActionButtons()}
+          <ButtonRow actionButtons={actionButtons} />
         </Grid>
         <Grid item xs={10} style={{ border: "1px solid black", borderRadius: "3px" }}>
           {information}
