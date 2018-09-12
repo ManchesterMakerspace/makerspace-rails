@@ -2,7 +2,6 @@ import * as React from "react";
 import { Grid, TextField } from "@material-ui/core";
 
 import { MemberDetails } from "app/entities/member";
-import { CollectionOf } from "app/interfaces";
 
 import FormModal from "ui/common/FormModal";
 import { fields } from "ui/member/constants";
@@ -21,26 +20,9 @@ class MemberForm extends React.Component<OwnProps, {}> {
   public formRef: Form;
   private setFormRef = (ref: Form) => this.formRef = ref;
 
-  public validate = async (form: Form): Promise<MemberDetails> => {
-    const formValues = form.getValues();
-    const errors: CollectionOf<string> = {};
-    const validatedMember: Partial<MemberDetails> = {};
-
-    Object.entries(fields).forEach(([key, field]) => {
-      const formVal = formValues[field.name];
-      if (field.validate(formVal)) {
-        validatedMember[key] = formVal
-      } else {
-        errors[field.name] = field.error;
-      }
-    });
-
-    await form.setFormState({
-      errors,
-    });
-
-    return validatedMember as MemberDetails;
-  }
+  public validate = async (_form: Form): Promise<MemberDetails> => (
+    this.formRef.simpleValidate<MemberDetails>(fields)
+  );
 
   public render(): JSX.Element {
     const { isOpen, onClose, isRequesting, error, onSubmit, member } = this.props;
