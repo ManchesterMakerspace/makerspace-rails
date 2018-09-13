@@ -3,12 +3,6 @@ class MembersController < ApplicationController
     before_action :set_member, only: [:show]
 
     def index
-      items_per_page = 20
-      page_num = params[:pageNum].to_i || 0
-      start_index = items_per_page * page_num
-      sort_by = params[:orderBy].empty? ? :lastname : params[:orderBy].to_sym
-      order = params[:order].empty? ? :desc : params[:order].to_sym
-
       @members = params[:search].empty? ? Member : Member.rough_search_members(params[:search])
       @members = @members.where(:expirationTime => { '$gt' => (Time.now.strftime('%s').to_i * 1000) }) if current_member.try(:role) != 'admin'
       @members = query_resource(@members, params)
