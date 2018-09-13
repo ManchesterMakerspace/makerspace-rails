@@ -16,6 +16,7 @@ import MemberStatusLabel from "ui/member/MemberStatusLabel";
 import UpdateMemberContainer, { UpdateMemberRenderProps } from "ui/member/UpdateMemberContainer";
 import { memberToRenewal } from "ui/member/utils";
 import { membershipRenewalOptions } from "ui/members/constants";
+import AccessCardForm from "ui/accessCards/AccessCardForm";
 
 interface DispatchProps {
   getMember: () => Promise<void>;
@@ -32,10 +33,12 @@ interface Props extends OwnProps, DispatchProps, StateProps {}
 interface State {
   isEditOpen: boolean;
   isRenewOpen: boolean;
+  isCardOpen: boolean;
 }
 const defaultState = {
   isEditOpen: false,
   isRenewOpen: false,
+  isCardOpen: false,
 }
 
 class MemberDetail extends React.Component<Props, State> {
@@ -62,6 +65,8 @@ class MemberDetail extends React.Component<Props, State> {
   private closeRenewModal = () => this.setState({ isRenewOpen: false });
   private openEditModal = () => this.setState({ isEditOpen: true });
   private closeEditModal = () => this.setState({ isEditOpen: false });
+  private openCardModal = () => this.setState({ isCardOpen: true });
+  private closeCardModal = () => this.setState({ isCardOpen: false });
   
   private renderMemberInfo = (): JSX.Element => {
     const { member } = this.props;
@@ -105,6 +110,13 @@ class MemberDetail extends React.Component<Props, State> {
               disabled: loading,
               label: "Edit",
               onClick: this.openEditModal
+            },
+            {
+              color: "primary",
+              variant: "outlined",
+              disabled: loading,
+              label: member && member.cardId ? "Replace Fob" : "Register Fob",
+              onClick: this.openCardModal
             }
           ]}
           information={this.renderMemberInfo()}
@@ -116,7 +128,7 @@ class MemberDetail extends React.Component<Props, State> {
 
   private renderMemberForms = () => {
     const { member } = this.props;
-    const { isEditOpen, isRenewOpen } = this.state;
+    const { isEditOpen, isRenewOpen, isCardOpen } = this.state;
 
     const editForm = (renderProps:UpdateMemberRenderProps) => (
       <MemberForm
@@ -142,6 +154,17 @@ class MemberDetail extends React.Component<Props, State> {
         onSubmit={renderProps.submit}
         />
     )
+    const accessCardForm = (renderProps:UpdateMemberRenderProps) => (
+      <AccessCardForm
+        ref={renderProps.setRef}
+        cardId={renderProps.member.cardId}
+        isOpen={renderProps.isOpen}
+        isRequesting={renderProps.isUpdating}
+        error={renderProps.error}
+        onClose={renderProps.closeHandler}
+        onSubmit={renderProps.submit}
+      />
+    )
 
     return (
       <>
@@ -157,6 +180,12 @@ class MemberDetail extends React.Component<Props, State> {
           closeHandler={this.closeEditModal}
           render={editForm}
         />
+        <UpdateMemberContainer
+          isOpen={isCardOpen}
+          member={member}
+          closeHandler={this.closeCardModal}
+          render={accessCardForm}
+        />
       </>
     )
   }
@@ -166,7 +195,7 @@ class MemberDetail extends React.Component<Props, State> {
     const { memberId } = match.params
     return (
       <>
-        { isRequestingMember && <LoadingOverlay id={memberId} />}
+        {isRequestingMember && <LoadingOverlay id={memberId}/>}
         {member && this.renderMemberDetails()}
       </>
     )

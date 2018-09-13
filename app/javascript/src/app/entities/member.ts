@@ -5,6 +5,7 @@ export interface MemberDetails {
   email: string;
   expirationTime: number;
   status: MemberStatus;
+  cardId: string;
 }
 
 export enum Properties {

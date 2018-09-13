@@ -14,7 +14,7 @@
     Validity = "validity",
   }
 
-  enum CardStatus {
+  export enum CardStatus {
     Active = "activeMember",
     Revoked = "revoked",
     NonMember = "nonMember",

@@ -23,7 +23,7 @@ export const updateCard = async (id: string, details: Partial<AccessCard>) => {
 
 export const getRejectionCard = async () => {
   try {
-    return await axios.get(`${buildAccessCardUrl()}`);
+    return await axios.get(`${buildAccessCardUrl("new")}`);
   } catch (e) {
     const error = handleApiError(e);
     throw error;

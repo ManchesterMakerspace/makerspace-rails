@@ -8,10 +8,11 @@ import Form from "ui/common/Form";
 import RenewalForm from "ui/common/RenewalForm"
 import { updateMemberAction } from "ui/member/actions";
 import MemberForm from "ui/member/MemberForm"
+import AccessCardForm from "ui/accessCards/AccessCardForm"
 
 export interface UpdateMemberRenderProps extends Props {
   submit: (form: Form) => void;
-  setRef: (ref: MemberForm | RenewalForm) => void;
+  setRef: (ref: MemberForm | RenewalForm | AccessCardForm) => void;
 }
 interface OwnProps {
   member: MemberDetails;
@@ -40,7 +41,7 @@ class EditMember extends React.Component<Props, {}> {
     }
   }
 
-  private submitEditForm = async (form: Form) => {
+  private submitMemberForm = async (form: Form) => {
     const validUpdate: MemberDetails = await this.formRef.validate(form);
 
     if (!form.isValid()) return;
@@ -52,7 +53,7 @@ class EditMember extends React.Component<Props, {}> {
     const { render } = this.props;
     const renderPayload = {
       ...this.props,
-      submit: this.submitEditForm,
+      submit: this.submitMemberForm,
       setRef: this.setFormRef,
     }
     return (
