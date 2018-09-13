@@ -5,6 +5,7 @@ export namespace Url {
     RentalId = "{rentalId}",
     Email = "{email}",
     CardId = "{cardId}",
+    InvoiceId = "{invoiceId}",
   }
 
   const baseApiPath = "api";
@@ -15,7 +16,7 @@ export namespace Url {
   export const Member = `${Members}/${PathPlaceholder.MemberId}`
 
   export const Rentals = `${baseApiPath}/rentals`;
-
+  export const Invoices = `${baseApiPath}/invoices`;
 
   export const Auth = {
     SignIn: `${Members}/sign_in`,
@@ -28,6 +29,8 @@ export namespace Url {
     Member: `${baseAdminPath}/members/${PathPlaceholder.MemberId}`,
     AccessCards: `${baseAdminPath}/cards`,
     AccessCard: `${baseAdminPath}/cards/${PathPlaceholder.CardId}`,
+    Invoices: `${baseAdminPath}/invoices`,
+    Invoice: `${baseAdminPath}/invoices/${PathPlaceholder.InvoiceId}`
   }
 
   export const Billing = {

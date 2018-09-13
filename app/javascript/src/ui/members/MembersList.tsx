@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { Button, Grid } from "@material-ui/core";
 
 import { MemberDetails } from "app/entities/member";
-import { QueryParams } from "app/interfaces";
+import { QueryParams, CollectionOf } from "app/interfaces";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { timeToDate } from "ui/utils/timeToDate";
@@ -25,7 +25,7 @@ interface DispatchProps {
   updateMember: (id: string, details: Partial<MemberDetails>) => void;
 }
 interface StateProps {
-  members: MemberDetails[];
+  members: CollectionOf<MemberDetails>;
   totalItems: number;
   loading: boolean;
   error: string;
@@ -91,8 +91,7 @@ class MembersList extends React.Component<Props, State> {
   private openRenewalForm = () => {
     const { members } = this.props;
     const { selectedId } = this.state;
-    const selectedMember = members.find( member => member.id == selectedId );
-    const renewalEntity = memberToRenewal(selectedMember);
+    const renewalEntity = memberToRenewal(members[selectedId]);
     this.setState({ openRenewalForm: true, renewalEntity });
   }
   private closeRenewalForm = () => {
@@ -179,7 +178,7 @@ class MembersList extends React.Component<Props, State> {
 
   public render(): JSX.Element {
     const {
-      members: data,
+      members,
       totalItems,
       loading,
       error,
@@ -205,7 +204,7 @@ class MembersList extends React.Component<Props, State> {
           id="members-table"
           title="Members"
           loading={loading}
-          data={data}
+          data={Object.values(members)}
           error={error}
           totalItems={totalItems}
           selectedIds={[selectedId]}
@@ -255,7 +254,7 @@ const mapStateToProps = (
   } = state.member;
 
   return {
-    members: Object.values(members),
+    members,
     totalItems,
     loading,
     error,

@@ -30,7 +30,7 @@ export const fields: FormFields = {
     label: "Email",
     name: `${formPrefix}-email`,
     placeholder: "Enter email",
-    validate: (val) => val && emailValid(val),
+    validate: (val: string) => val && emailValid(val),
     error: "Invalid email"
   },
   // status: {

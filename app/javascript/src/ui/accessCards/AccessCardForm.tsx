@@ -3,7 +3,7 @@ import * as React from "react";
 import { Button, Typography } from "@material-ui/core";
 
 import { AccessCard, CardStatus } from "app/entities/card";
-import { getRejectionCard, updateCard } from "api/accessCards/transactions";
+import { getRejectionCard, putCard } from "api/accessCards/transactions";
 import FormModal from "ui/common/FormModal";
 import Form from "ui/common/Form";
 import ButtonRow from "ui/common/ButtonRow";
@@ -87,7 +87,7 @@ class AccessCardForm extends React.Component<OwnProps,State> {
         ...state,
         loading: true
       }), async () => {
-        await updateCard(cardDetails.id, cardDetails);
+        await putCard(cardDetails.id, cardDetails);
         this.setState({
           loading: false,
           error: "",
@@ -110,7 +110,7 @@ class AccessCardForm extends React.Component<OwnProps,State> {
         {this.renderImportInstructions()}
       </>
     )
-  } 
+  }
 
   private renderImportInstructions = () => {
     const { rejectionCardId } = this.state;
@@ -126,7 +126,7 @@ class AccessCardForm extends React.Component<OwnProps,State> {
               onClick={this.fetchRejectionCard}
             >
               Import New Key
-            </Button> 
+            </Button>
           </div>
         </li>
         <li>Confirm new ID is displayed here: {
@@ -153,7 +153,7 @@ class AccessCardForm extends React.Component<OwnProps,State> {
           <ol className="instruction-list">
             <li>
               <div>
-                A member can only have 1 key fob active at a time.  
+                A member can only have 1 key fob active at a time.
                 Before you can issue a new fob, please mark the current one as Lost or Stolen with the following buttons:
               </div>
               <div>

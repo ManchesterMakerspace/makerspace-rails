@@ -12,7 +12,7 @@ export const getCard = async (id: string) => {
   }
 }
 
-export const updateCard = async (id: string, details: Partial<AccessCard>) => {
+export const putCard = async (id: string, details: Partial<AccessCard>) => {
   try {
     return await axios.put(`${buildAccessCardUrl(id)}`, { card: details });
   } catch (e) {

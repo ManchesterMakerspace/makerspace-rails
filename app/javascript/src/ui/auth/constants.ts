@@ -26,7 +26,7 @@ export const LoginFields: FormFields = {
     name: `${formPrefix}-email`,
     placeholder: "Enter email",
     error: "Invalid email",
-    validate: (val) => emailValid(val)
+    validate: (val: string) => emailValid(val)
   },
   password: {
     label: "Password",
@@ -56,7 +56,7 @@ export const SignUpFields: FormFields = {
     label: "Email",
     name: `${formPrefix}-email`,
     placeholder: "Enter email",
-    validate: (val) => val && emailValid(val),
+    validate: (val: string) => val && emailValid(val),
     error: "Invalid email"
   },
   password: {

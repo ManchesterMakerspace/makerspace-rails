@@ -2,7 +2,6 @@ import { MemberDetails, Properties as MemberProperties } from "app/entities/memb
 import { BillingPlan } from "app/entities/billingPlan";
 export interface AuthState {
   currentUser: AuthMember;
-  newUser: NewUserSignUp;
   isRequesting: boolean;
   error: string;
 }
@@ -24,7 +23,8 @@ type AuthMember = Pick<MemberDetails,
                         MemberProperties.Email |
                         MemberProperties.Lastname |
                         MemberProperties.Firstname |
-                        MemberProperties.Expiration
+                        MemberProperties.Expiration |
+                        MemberProperties.Role
                       >;
 
 type NewUserSignUp = Pick<MemberDetails,

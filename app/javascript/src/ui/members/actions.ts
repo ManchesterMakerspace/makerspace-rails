@@ -2,11 +2,13 @@ import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import toNumber from "lodash-es/toNumber";
 
+import { QueryParams } from "app/interfaces";
+import { MemberDetails } from "app/entities/member";
+
 import { getMembers } from "api/members/transactions";
 import { Action as MembersAction } from "ui/members/constants";
 import { MembersState } from "ui/members/interfaces";
-import { QueryParams } from "app/interfaces";
-import { MemberDetails } from "app/entities/member";
+
 
 export const readMembersAction = (
   queryParams?: QueryParams

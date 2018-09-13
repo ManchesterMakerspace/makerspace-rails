@@ -17,6 +17,7 @@ import UpdateMemberContainer, { UpdateMemberRenderProps } from "ui/member/Update
 import { memberToRenewal } from "ui/member/utils";
 import { membershipRenewalOptions } from "ui/members/constants";
 import AccessCardForm from "ui/accessCards/AccessCardForm";
+import InvoicesList from "ui/invoices/InvoicesList";
 
 interface DispatchProps {
   getMember: () => Promise<void>;
@@ -67,7 +68,7 @@ class MemberDetail extends React.Component<Props, State> {
   private closeEditModal = () => this.setState({ isEditOpen: false });
   private openCardModal = () => this.setState({ isCardOpen: true });
   private closeCardModal = () => this.setState({ isCardOpen: false });
-  
+
   private renderMemberInfo = (): JSX.Element => {
     const { member } = this.props;
 
@@ -120,6 +121,16 @@ class MemberDetail extends React.Component<Props, State> {
             }
           ]}
           information={this.renderMemberInfo()}
+          resources={[
+            {
+              name: "invoices",
+              content: (
+                <InvoicesList
+                  memberId={member.id}
+                />
+              )
+            }
+          ]}
         />
         {this.renderMemberForms()}
       </>

@@ -12,8 +12,10 @@ Rails.application.routes.draw do
     authenticate :member do
       resources :members, only: [:show, :index]
       resources :rentals, only: [:show, :index]
+      resources :invoices, only: [:index]
       namespace :admin  do
         resources :cards, only: [:new, :create, :index, :update]
+        resources :invoices, only: [:index, :create, :update]
         resources :rentals, only: [:create, :update, :destroy]
         resources :members, only: [:create, :update]
       end

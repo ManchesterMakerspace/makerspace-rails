@@ -6,6 +6,7 @@ export interface MemberDetails {
   expirationTime: number;
   status: MemberStatus;
   cardId: string;
+  role: MemberRole[];
 }
 
 export enum Properties {
@@ -14,11 +15,18 @@ export enum Properties {
   Lastname = "lastname",
   Email = "email",
   Expiration = "expirationTime",
-  Status = "status"
+  Status = "status",
+  Role = "role",
 }
 
 export enum MemberStatus {
   Active = "activeMember",
   Revoked = "revoked",
   NonMember = "nonMember"
+}
+
+export enum MemberRole {
+  Admin = "admin",
+  Officer = "officer",
+  Member = "member"
 }

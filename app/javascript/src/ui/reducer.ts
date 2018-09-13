@@ -17,6 +17,10 @@ import { CheckoutState } from "ui/checkout/interfaces";
 import { checkoutReducer } from "ui/checkout/actions";
 import { CardState } from "ui/accessCards/interfaces";
 import { cardReducer } from "ui/accessCards/actions";
+import { InvoiceState } from "ui/invoice/interfaces";
+import { invoiceReducer } from "ui/invoice/actions";
+import { InvoicesState } from "ui/invoices/interfaces";
+import { invoicesReducer } from "ui/invoices/actions";
 
 export type ScopedThunkDispatch = ThunkDispatch<State, {}, Action>
 
@@ -29,6 +33,8 @@ export interface State {
   subscriptions: SubscriptionsState;
   checkout: CheckoutState;
   card: CardState;
+  invoice: InvoiceState;
+  invoices: InvoicesState;
 }
 
 export const rootReducer = combineReducers({
@@ -40,4 +46,6 @@ export const rootReducer = combineReducers({
   subscriptions: subscriptionsReducer,
   checkout: checkoutReducer,
   card: cardReducer,
+  invoice: invoiceReducer,
+  invoices: invoicesReducer,
 });

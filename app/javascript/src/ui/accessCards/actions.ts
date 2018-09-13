@@ -1,7 +1,7 @@
 import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 
-import { getCard, updateCard } from "api/accessCards/transactions";
+import { getCard, putCard } from "api/accessCards/transactions";
 import { Action as CardAction } from "ui/accessCards/constants";
 import { CardState } from "ui/accessCards/interfaces";
 import { AccessCard } from "app/entities/card";
@@ -34,7 +34,7 @@ export const updateCardAction = (
   dispatch({ type: CardAction.StartUpdateRequest });
 
   try {
-    const response = await updateCard(cardId, updateDetails);
+    const response = await putCard(cardId, updateDetails);
     const { data } = response;
     dispatch({
       type: CardAction.UpdateCardSuccess,

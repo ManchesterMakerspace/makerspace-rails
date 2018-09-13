@@ -19,7 +19,7 @@ interface DispatchProps {
   submitSignUp: (signUpForm: SignUpForm) => void;
 }
 interface StateProps {
-  signUpComplete: boolean;
+  memberId: string;
   isRequesting: boolean;
   error: string;
 }
@@ -111,11 +111,11 @@ class SignUpFormComponent extends React.Component<Props, State> {
   }
 
   public render(): JSX.Element {
-    const { isRequesting, error, signUpComplete } = this.props;
+    const { isRequesting, error, memberId } = this.props;
     const { emailExists } = this.state;
 
-    if (signUpComplete) {
-      return <Redirect to="/checkout"/>
+    if (!error && memberId) {
+      return <Redirect to={`/members/${memberId}`}/>
     }
 
     return (
@@ -169,17 +169,15 @@ const mapStateToProps = (
   _ownProps: OwnProps
 ): StateProps => {
   const {
-    newUser: {
-      email
+    currentUser: {
+      id: memberId,
     },
     isRequesting,
     error
   } = state.auth;
 
-  const signUpComplete = !error && !!email
-
   return {
-    signUpComplete,
+    memberId,
     isRequesting,
     error
   }

@@ -78,16 +78,8 @@ const defaultState: AuthState = {
     firstname: undefined,
     lastname: undefined,
     email: undefined,
-    expirationTime: undefined
-  },
-  newUser: {
-    firstname: undefined,
-    lastname: undefined,
-    email: undefined,
-    password: undefined,
-    paymentMethod: undefined,
-    paymentMethodNonce: undefined,
-    planId: undefined
+    expirationTime: undefined,
+    role: undefined,
   },
   isRequesting: false,
   error: ""
@@ -119,22 +111,6 @@ export const authReducer = (state: AuthState = defaultState, action: AnyAction) 
       return {
         ...defaultState
       }
-    case AuthAction.ClearStagedSignUp:
-      return {
-        ...state,
-        newUser: defaultState.newUser
-      }
-    case AuthAction.StageSignUp:
-     const { data: memebrSignUpForm } = action;
-     return {
-       ...state,
-       newUser: {
-         ...state.newUser,
-         ...memebrSignUpForm
-       },
-       isRequesting: false,
-       error: ""
-     }
     default:
       return state;
   }

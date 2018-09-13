@@ -1,55 +1,53 @@
 import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
+import { Invoice } from "app/entities/invoice";
+import { getInvoice, putInvoice } from "api/invoices/transactions";
+import { Action as InvoiceAction } from "ui/invoice/constants";
+import { InvoiceState } from "ui/invoice/interfaces";
 
-import { getMember, putMember } from "api/members/transactions";
-import { Action as MemberAction } from "ui/member/constants";
-import { MemberState } from "ui/member/interfaces";
-import { MemberDetails } from "app/entities/member";
-
-export const readMemberAction = (
-  memberId: string
+export const readInvoiceAction = (
+  invoiceId: string
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
-  dispatch({ type: MemberAction.StartReadRequest });
+  dispatch({ type: InvoiceAction.StartReadRequest });
 
   try {
-    const response = await getMember(memberId);
-    const { data } = response;
+    const { data } = await getInvoice(invoiceId);
     dispatch({
-      type: MemberAction.GetMemberSuccess,
+      type: InvoiceAction.GetInvoiceSuccess,
       data
-    });
+    })
   } catch (e) {
     const { errorMessage } = e;
     dispatch({
-      type: MemberAction.GetMemberFailure,
+      type: InvoiceAction.GetInvoiceFailure,
       error: errorMessage
     });
   }
 };
 
-export const updateMemberAction = (
-  memberId: string,
-  updateDetails: Partial<MemberDetails>
-): ThunkAction<Promise<void>, {}, {}, AnyAction > => async (dispatch) => {
-  dispatch({ type: MemberAction.StartUpdateRequest });
+export const updateInvoiceAction = (
+  invoiceId: string,
+  updateDetails: Partial<Invoice>
+): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
+  dispatch({ type: InvoiceAction.StartUpdateRequest });
 
   try {
-    const response = await putMember(memberId, updateDetails);
+    const response = await putInvoice(invoiceId, updateDetails);
     const { data } = response;
     dispatch({
-      type: MemberAction.UpdateMemberSuccess,
+      type: InvoiceAction.UpdateInvoiceSuccess,
       data
     });
   } catch (e) {
     const { errorMessage } = e;
     dispatch({
-      type: MemberAction.UpdateMemberFailure,
+      type: InvoiceAction.UpdateInvoiceFailure,
       error: errorMessage
     });
   }
 }
 
-const defaultState: MemberState = {
+const defaultState: InvoiceState = {
   entity: undefined,
   read: {
     isRequesting: false,
@@ -61,11 +59,11 @@ const defaultState: MemberState = {
   }
 }
 
-export const memberReducer = (state: MemberState = defaultState, action: AnyAction) => {
+export const invoiceReducer = (state: InvoiceState = defaultState, action: AnyAction) => {
   let error;
 
   switch (action.type) {
-    case MemberAction.StartReadRequest:
+    case InvoiceAction.StartReadRequest:
       return {
         ...state,
         read: {
@@ -73,19 +71,19 @@ export const memberReducer = (state: MemberState = defaultState, action: AnyActi
           isRequesting: true
         }
       };
-    case MemberAction.GetMemberSuccess:
-      const { data: member } = action;
+    case InvoiceAction.GetInvoiceSuccess:
+      const { data: invoice } = action;
 
       return {
         ...state,
-        entity: member,
+        entity: invoice,
         read: {
           ...state.read,
           isRequesting: false,
           error: ""
         }
       };
-    case MemberAction.GetMemberFailure:
+    case InvoiceAction.GetInvoiceFailure:
       error = action.error;
 
       return {
@@ -96,7 +94,7 @@ export const memberReducer = (state: MemberState = defaultState, action: AnyActi
           error
         }
       }
-    case MemberAction.StartUpdateRequest:
+    case InvoiceAction.StartUpdateRequest:
       return {
         ...state,
         update: {
@@ -104,19 +102,19 @@ export const memberReducer = (state: MemberState = defaultState, action: AnyActi
           isRequesting: true
         }
       };
-    case MemberAction.UpdateMemberSuccess:
-      const { data: updatedMemebr } = action;
+    case InvoiceAction.UpdateInvoiceSuccess:
+      const { data: updatedInvoice } = action;
 
       return {
         ...state,
-        entity: updatedMemebr,
+        entity: updatedInvoice,
         update: {
           ...state.update,
           isRequesting: false,
           error: ""
         }
       };
-    case MemberAction.UpdateMemberFailure:
+    case InvoiceAction.UpdateInvoiceFailure:
       error = action.error;
 
       return {

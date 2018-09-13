@@ -19,7 +19,7 @@ export interface FormField {
   label?: string;
   name: string;
   placeholder?: string;
-  validate?: (val: string) => boolean;
+  validate?: (val: string | number | Date) => boolean;
   error?: string;
   render?: (value: string | number | object) => string | JSX.Element;
 }
