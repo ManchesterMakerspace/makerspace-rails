@@ -9,6 +9,9 @@ class Invoice
   field :settled_at, type: Time
   field :due_date, type: Time
   field :payment_type, type: String
+  field :amount, type: Float
+  field :operationg_string, type: String
+  field :resource_id, type: String
 
   validates :description, presence: true
   validates :contact, presence: true
@@ -16,13 +19,7 @@ class Invoice
   validates_numericality_of :amount, greater_than: 0
 
   belongs_to :member, optional: true
-  embeds_many :invoice_items
 
-
-  def amount
-    self.invoice_items.map(&:amount).inject(0, &:+)
-  end
-  
   def settled
     !!self.settled_at
   end

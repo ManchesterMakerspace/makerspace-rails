@@ -169,18 +169,8 @@ class InvoicesList extends React.Component<Props, State> {
   }
 
   private getQueryParams = (): QueryParams => {
-    const {
-      pageNum,
-      orderBy,
-      order,
-      search
-    } = this.state
-    return {
-      pageNum,
-      orderBy,
-      order,
-      search
-    };
+    const { pageNum, orderBy, order, search } = this.state
+    return { pageNum, orderBy, order, search };
   }
 
   public componentDidMount() {
@@ -297,7 +287,7 @@ class InvoicesList extends React.Component<Props, State> {
         <UpdateInvoiceContainer
           operation={CrudOperation.Create}
           isOpen={openCreateForm}
-          invoice={member && { memberId: member.id, contact: member.email }}
+          invoice={member && { resourceId: member.id, contact: member.email }}
           closeHandler={this.closeCreateForm}
           render={createForm}
         />
@@ -339,7 +329,6 @@ class InvoicesList extends React.Component<Props, State> {
 
     return (
       <>
-        {this.getActionButtons()}
         <TableContainer
           id="invoices-table"
           title="Invoices"
@@ -357,7 +346,6 @@ class InvoicesList extends React.Component<Props, State> {
           onPageChange={this.onPageChange}
           onSelect={this.onSelect}
         />
-        {this.renderInvoiceForms()}
       </>
     );
   }
@@ -408,7 +396,7 @@ const mapDispatchToProps = (
   return {
     getInvoices: (queryParams, admin) => dispatch(readInvoicesAction(admin, {
       ...queryParams,
-      ...member && {[Properties.MemberId]: member.id},
+      ...member && {[Properties.ResourceId]: member.id},
     })),
   }
 }

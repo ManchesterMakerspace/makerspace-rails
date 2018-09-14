@@ -1,11 +1,13 @@
 import * as React from "react";
-import { TextField, Typography, Grid } from "@material-ui/core";
+import { TextField, Typography, Grid, Select, InputLabel } from "@material-ui/core";
 
-import { Invoice } from "app/entities/invoice";
+import { Invoice, InvoiceableResource } from "app/entities/invoice";
 import FormModal from "ui/common/FormModal";
+import FieldList from "ui/common/FieldList";
 import Form from "ui/common/Form";
 import { fields } from "ui/invoice/constants";
-import { isEmpty } from "lodash-es";
+import { isEmpty, kebabCase } from "lodash-es";
+import { membershipRenewalOptions } from "ui/members/constants";
 
 interface OwnProps {
   invoice?: Partial<Invoice>;
@@ -59,6 +61,14 @@ class InvoiceForm extends React.Component<OwnProps, {}> {
         <TextField
           fullWidth
           required
+          value={invoice && invoice.amount}
+          label={fields.amount.label}
+          name={fields.amount.name}
+          placeholder={fields.amount.placeholder}
+        />
+        <TextField
+          fullWidth
+          required
           value={invoice && invoice.due_date}
           label={fields.due_date.label}
           name={fields.due_date.name}
@@ -68,34 +78,6 @@ class InvoiceForm extends React.Component<OwnProps, {}> {
             shrink: true,
           }}
         />
-
-        <Grid container spacing={24}>
-          <Grid item xs={12}>
-            <Typography gutterBottom variant="subheading">Items</Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              required
-              value={invoice && invoice.amount}
-              label={fields.amount.label}
-              name={fields.amount.name}
-              placeholder={fields.amount.placeholder}
-              type="number"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-                fullWidth
-                required
-                value={invoice && invoice.amount}
-                label={fields.amount.label}
-                name={fields.amount.name}
-                placeholder={fields.amount.placeholder}
-                type="number"
-              />
-          </Grid>
-        </Grid>
         <TextField
           fullWidth
           value={invoice && invoice.notes}

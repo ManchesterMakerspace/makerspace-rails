@@ -1,3 +1,5 @@
+import { InvoiceableResource } from "app/entities/invoice";
+
 export enum Action {
   StartReadRequest = "INVOICE/START_READ_REQUEST",
   GetInvoiceSuccess = "INVOICE/GET_INVOICE_SUCCESS",
@@ -42,9 +44,23 @@ export const fields = {
   },
   amount: {
     label: "Amount",
-    name: `${formPrefix}-amount`,
+    name: `${formPrefix}-item-amount`,
     placeholder: "Enter amount",
     validate: (val: number) => (!!val && val > 0),
     error: "Invoice amount required"
+  },
+  resource: {
+    label: "Invoice For",
+    name: `${formPrefix}-item-resource`,
+    placeholder: "Select an item to invoice for",
+    validate: (val: InvoiceableResource) => val && Object.values(InvoiceableResource).includes(val),
+    error: "Invalid selection"
+  },
+  term: {
+    label: "Renewal Length",
+    name: `${formPrefix}-item-value`,
+    placeholder: "Select a term to renew",
+    validate: (val: string) => !!val,
+    error: "Invalid selection"
   }
 }

@@ -5,6 +5,7 @@ import * as moment from "moment";
 
 import { Rental } from "app/entities/rental";
 import { QueryParams } from "app/interfaces";
+import { MemberDetails } from "app/entities/member";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { SortDirection } from "ui/common/table/constants";
@@ -15,7 +16,9 @@ import { Status } from "ui/constants";
 import StatusLabel from "ui/common/StatusLabel";
 
 
-interface OwnProps { }
+interface OwnProps {
+  member?: MemberDetails;
+}
 interface DispatchProps {
   getRentals: (queryParams?: QueryParams) => void;
 }
@@ -59,7 +62,7 @@ const fields: Column<Rental>[] = [
       const label = current ? "Active" : "Expired";
 
       return (
-        <StatusLabel label={label} color={statusColor}/> 
+        <StatusLabel label={label} color={statusColor}/>
       );
     },
   }
@@ -90,17 +93,10 @@ class RentalsList extends React.Component<Props, State> {
   }
 
   private getQueryParams = (): QueryParams => {
-    const {
-      pageNum,
-      orderBy,
-      order,
-    } = this.state
-    return {
-      pageNum,
-      orderBy,
-      order,
-    };
+    const { pageNum, orderBy, order } = this.state
+    return { pageNum, orderBy, order };
   }
+
   public componentDidMount() {
     this.getRentals();
   }
@@ -162,13 +158,13 @@ const mapStateToProps = (
   state: ReduxState,
   _ownProps: OwnProps
 ): StateProps => {
-  const { 
-    entities: rentals, 
-    read: { 
-      totalItems, 
+  const {
+    entities: rentals,
+    read: {
+      totalItems,
       isRequesting: loading,
-      error 
-    } 
+      error
+    }
   } = state.rentals;
   return {
     rentals: Object.values(rentals),
