@@ -48,7 +48,7 @@ const fields: Column<Subscription>[] = [
   }, {
     id: "nextBilling",
     label: "Next Billing Date",
-    cell: (row: Subscription) => timeToDate(row.next_billing_date),
+    cell: (row: Subscription) => timeToDate(row.nextBillingDate),
   }
 ];
 

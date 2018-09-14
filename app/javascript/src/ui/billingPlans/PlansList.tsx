@@ -34,7 +34,7 @@ const fields: Column<BillingPlan>[] = [
   }, {
     id: "frequency",
     label: "Billing Frequency",
-    cell: (row: BillingPlan) => row.billing_frequency,
+    cell: (row: BillingPlan) => row.billingFrequency,
   }, {
     id: "amount",
     label: "Amount",

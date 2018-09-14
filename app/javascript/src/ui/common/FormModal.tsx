@@ -25,6 +25,7 @@ const FormModal: React.SFC<FormModalProps> = (props: FormModalProps) => {
 
   return (
     <Dialog
+      style={{minWidth: "50vw"}}
       aria-labelledby={`${id}-title`}
       open={isOpen}
       onClose={closeHandler}

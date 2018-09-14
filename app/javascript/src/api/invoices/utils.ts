@@ -16,7 +16,7 @@ const buildInvoicePath = (invoiceId: string) => {
 
 const regexTestExpression = /([\w]*)\.([\w]*)\s\=\s([\w\d])/;
 export const parseApiInvoice = (invoice: ApiInvoice): Invoice => {
-  const { operation_string: operationString, ...rest } = invoice;
+  const { operationString, ...rest } = invoice;
   if (regexTestExpression.test(operationString)) {
     const [operationPrefix, value] = operationString.split(" = ");
     const [resource, operation] = operationPrefix.split(".");
@@ -51,7 +51,7 @@ export const constructApiInvoice = (invoice: Invoice): ApiInvoice => {
   if (regexTestExpression.test(operationString)) {
     return {
       ...rest,
-      operation_string: operationString
+      operationString
     }
   } else {
     throw new Error("Invalid operation expression");

@@ -5,13 +5,13 @@ export interface ApiInvoice {
   description: string;
   notes: string;
   contact: string;
-  created_at: string;
-  due_date: string;
+  createdAt: string;
+  dueDate: string;
   amount: number;
   settled?: boolean;
-  past_due?: boolean;
+  pastDue?: boolean;
   resourceId: string;
-  operation_string: string;
+  operationString: string;
 }
 
 export interface Invoice {
@@ -19,11 +19,11 @@ export interface Invoice {
   description: string;
   notes: string;
   contact: string;
-  created_at: string;
-  due_date: string;
+  createdAt: string;
+  dueDate: string;
   amount: number;
   settled?: boolean;
-  past_due?: boolean;
+  pastDue?: boolean;
   resourceId: string;
   resource: InvoiceableResource;
   operation: InvoiceOperation,

@@ -16,7 +16,7 @@ export const readMemberAction = (
     const { data } = response;
     dispatch({
       type: MemberAction.GetMemberSuccess,
-      data
+      data: data.member
     });
   } catch (e) {
     const { errorMessage } = e;
@@ -38,7 +38,7 @@ export const updateMemberAction = (
     const { data } = response;
     dispatch({
       type: MemberAction.UpdateMemberSuccess,
-      data
+      data: data.member
     });
   } catch (e) {
     const { errorMessage } = e;

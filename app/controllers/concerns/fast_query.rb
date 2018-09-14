@@ -7,8 +7,8 @@ module FastQuery
     items_per_page = @@items_per_page
     page_num = query[:pageNum].to_i || 0
     start_index = items_per_page * page_num
-    sort_by = query[:orderBy].empty? ? :lastname : query[:orderBy].to_sym
-    order = query[:order].empty? ? :asc : query[:order].to_sym
+    sort_by = query[:orderBy].nil? || query[:orderBy].empty? ? :lastname : query[:orderBy].to_sym
+    order = query[:order].nil? || query[:order].empty? ? :asc : query[:order].to_sym
 
     current_query.order_by(sort_by => order).skip(start_index).limit(items_per_page)
   end
@@ -22,5 +22,5 @@ module FastQuery
 end
 
 def query_params
-  params.permit(:orderBy, :memberId, :order, :pageNum, :search)
+  params.permit(:orderBy, :order, :pageNum, :search)
 end

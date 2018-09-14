@@ -46,7 +46,7 @@ class SettleInvoiceModal extends React.Component<OwnProps, {}> {
           {`$${invoice.amount}`}
         </KeyValueItem>
         <KeyValueItem label="Due Date">
-          {timeToDate(invoice.due_date)}
+          {timeToDate(invoice.dueDate)}
         </KeyValueItem>
       </FormModal>
     ) : null;

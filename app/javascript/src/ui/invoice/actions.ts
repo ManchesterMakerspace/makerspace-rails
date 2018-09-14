@@ -15,7 +15,7 @@ export const readInvoiceAction = (
     const { data } = await getInvoice(invoiceId);
     dispatch({
       type: InvoiceAction.GetInvoiceSuccess,
-      data
+      data: data.invoice
     })
   } catch (e) {
     const { errorMessage } = e;
@@ -37,7 +37,7 @@ export const updateInvoiceAction = (
     const { data } = response;
     dispatch({
       type: InvoiceAction.UpdateInvoiceSuccess,
-      data
+      data: data.invoice
     });
     dispatch({
       type: InvoicesAction.UpdateInvoiceSuccess,

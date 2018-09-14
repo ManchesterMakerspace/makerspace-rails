@@ -10,11 +10,9 @@ class Invoice
   field :due_date, type: Time
   field :payment_type, type: String
   field :amount, type: Float
-  field :operationg_string, type: String
+  field :operation_string, type: String
   field :resource_id, type: String
 
-  validates :description, presence: true
-  validates :contact, presence: true
   validates :payment_type, inclusion: { in: [:cash, :paypal, :credit_card, :other] }, allow_nil: true
   validates_numericality_of :amount, greater_than: 0
 

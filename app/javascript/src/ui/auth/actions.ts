@@ -13,7 +13,7 @@ export const loginUserAction = (
   let member;
   try {
     const response = await postLogin(loginForm);
-    member = response.data;
+    member = response.data.member;
     dispatch({
       type: AuthAction.AuthUserSuccess,
       data: member
@@ -37,7 +37,7 @@ export const activeSessionLogin = (
     const response = await postLogin();
     dispatch({
       type: AuthAction.AuthUserSuccess,
-      data: response.data
+      data: response.data.member
     });
   } catch {
     dispatch({ type: AuthAction.AuthUserFailure })

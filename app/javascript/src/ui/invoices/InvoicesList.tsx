@@ -60,13 +60,13 @@ class InvoicesList extends React.Component<Props, State> {
       defaultSortDirection: SortDirection.Desc,
     },
     {
-      id: "due_date",
+      id: "dueDate",
       label: "Due Date",
       cell: (row: Invoice) => {
-        const textColor = row.past_due ? "red" : "black"
+        const textColor = row.pastDue ? "red" : "black"
         return (
           <span style={{ color: textColor }}>
-            {timeToDate(row.due_date)}
+            {timeToDate(row.dueDate)}
           </span>
         )
       },
@@ -277,7 +277,7 @@ class InvoicesList extends React.Component<Props, State> {
 
     return (admin &&
       <>
-        <UpdateInvoiceContainer
+        {/* <UpdateInvoiceContainer
           operation={CrudOperation.Update}
           isOpen={openUpdateForm}
           invoice={invoices[selectedId]}
@@ -290,7 +290,7 @@ class InvoicesList extends React.Component<Props, State> {
           invoice={member && { resourceId: member.id, contact: member.email }}
           closeHandler={this.closeCreateForm}
           render={createForm}
-        />
+        /> */}
         <UpdateInvoiceContainer
           operation={CrudOperation.Update}
           isOpen={openSettleForm}
@@ -318,6 +318,7 @@ class InvoicesList extends React.Component<Props, State> {
       totalItems,
       loading,
       error,
+      admin
     } = this.props;
 
     const {
@@ -329,6 +330,7 @@ class InvoicesList extends React.Component<Props, State> {
 
     return (
       <>
+        {this.getActionButtons()}
         <TableContainer
           id="invoices-table"
           title="Invoices"
@@ -344,8 +346,9 @@ class InvoicesList extends React.Component<Props, State> {
           onSort={this.onSort}
           rowId={this.rowId}
           onPageChange={this.onPageChange}
-          onSelect={this.onSelect}
+          onSelect={admin && this.onSelect}
         />
+        {this.renderInvoiceForms()}
       </>
     );
   }

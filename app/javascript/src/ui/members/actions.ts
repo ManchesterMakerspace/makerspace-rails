@@ -17,7 +17,7 @@ export const readMembersAction = (
 
   try {
     const response = await getMembers(queryParams);
-    const members = response.data;
+    const {members} = response.data;
     const totalItems = response.headers[("total-items")];
     dispatch({
       type: MembersAction.GetMembersSuccess,

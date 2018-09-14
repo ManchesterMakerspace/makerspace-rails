@@ -16,7 +16,7 @@ export const readInvoicesAction = (
 
   try {
     const response = await getInvoices(isUserAdmin, queryParams);
-    const invoices = response.data;
+    const {invoices} = response.data;
     const totalItems = response.headers[("total-items")];
     dispatch({
       type: InvoicesAction.GetInvoicesSuccess,

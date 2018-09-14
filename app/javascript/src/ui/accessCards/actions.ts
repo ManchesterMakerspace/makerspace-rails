@@ -16,7 +16,7 @@ export const readCardAction = (
     const { data } = response;
     dispatch({
       type: CardAction.GetCardSuccess,
-      data
+      data: data.cards
     });
   } catch (e) {
     const { errorMessage } = e;
@@ -38,7 +38,7 @@ export const updateCardAction = (
     const { data } = response;
     dispatch({
       type: CardAction.UpdateCardSuccess,
-      data
+      data: data.cards
     });
   } catch (e) {
     const { errorMessage } = e;

@@ -1,7 +1,7 @@
 export interface Checkout {
-  payment_method_none: string;
+  paymentMethodNonce: string;
   firstname: string,
   lastname: string,
   email: string,
-  plan_id?: string;
+  planId?: string;
 }

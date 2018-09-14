@@ -15,7 +15,7 @@ export const readSubscriptionsAction = (
 
   try {
     const response = await getSubscriptions(queryParams);
-    const subscriptions = response.data;
+    const {subscriptions} = response.data;
     const totalItems = response.headers[("total-items")];
     dispatch({
       type: SubscriptionsAction.GetSubscriptionsSuccess,

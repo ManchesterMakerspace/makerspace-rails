@@ -35,7 +35,7 @@ export const fields = {
     validate: (val: string) => !!val,
     error: "Contact info required"
   },
-  due_date: {
+  dueDate: {
     label: "Due Date",
     name: `${formPrefix}-due-date`,
     placeholder: "Select a due date",
