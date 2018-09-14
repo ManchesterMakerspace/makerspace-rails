@@ -1,3 +1,5 @@
+import { QueryParams } from "app/interfaces";
+
 export interface Invoice {
   id: string;
   description: string;
@@ -33,4 +35,8 @@ export enum Properties {
   Settled = "settled",
   PastDue = "Past Due",
   MemberId = "memberId",
+}
+
+export interface InvoiceQueryParams extends QueryParams {
+  [Properties.MemberId]: string;
 }

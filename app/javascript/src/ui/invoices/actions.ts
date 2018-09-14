@@ -1,16 +1,16 @@
 import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import toNumber from "lodash-es/toNumber";
+import omit from "lodash-es/omit";
 
-import { QueryParams } from "app/interfaces";
-import { Invoice } from "app/entities/invoice";
+import { Invoice, InvoiceQueryParams } from "app/entities/invoice";
 import { getInvoices, postInvoices } from "api/invoices/transactions";
 import { Action as InvoicesAction } from "ui/invoices/constants";
 import { InvoicesState } from "ui/invoices/interfaces";
 
 export const readInvoicesAction = (
   isUserAdmin: boolean,
-  queryParams?: QueryParams,
+  queryParams?: InvoiceQueryParams,
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
   dispatch({ type: InvoicesAction.StartReadRequest });
 
@@ -60,6 +60,10 @@ const defaultState: InvoicesState = {
     isRequesting: false,
     error: "",
     totalItems: 0,
+  },
+  create: {
+    isRequesting: false,
+    error: "",
   }
 }
 
@@ -105,6 +109,52 @@ export const invoicesReducer = (state: InvoicesState = defaultState, action: Any
           ...state.read,
           isRequesting: false,
           error
+        }
+      }
+    case InvoicesAction.UpdateInvoiceSuccess:
+      const { data: updatedInvoice } = action;
+
+      return {
+        ...state,
+        entities: {
+          ...state.entities,
+          [updatedInvoice.id]: updatedInvoice
+        }
+      };
+    case InvoicesAction.DeleteInvoiceSuccess:
+      const { data: deletedId } = action;
+
+      return {
+        ...state,
+        entities: {
+          ...omit(state.entities, deletedId)
+        }
+      };
+    case InvoicesAction.StartCreateRequest:
+      return {
+        ...state,
+        create: {
+          ...state.create,
+          isRequesting: true
+        }
+      };
+    case InvoicesAction.CreateInvoiceSuccess:
+      return {
+        ...state,
+        create: {
+          ...state.create,
+          isRequesting: false,
+          error: ""
+        }
+      };
+    case InvoicesAction.CreateInvoiceFailure:
+      const { error: createError } = action;
+      return {
+        ...state,
+        create: {
+          ...state.create,
+          isRequesting: false,
+          error: createError
         }
       }
     default:

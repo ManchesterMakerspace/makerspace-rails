@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link } from 'react-router-dom'
-import { Button, Grid } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 
 import { MemberDetails } from "app/entities/member";
 import { QueryParams, CollectionOf } from "app/interfaces";
@@ -9,6 +9,7 @@ import { QueryParams, CollectionOf } from "app/interfaces";
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { timeToDate } from "ui/utils/timeToDate";
 import Form from "ui/common/Form";
+import ButtonRow from "ui/common/ButtonRow";
 import { SortDirection } from "ui/common/table/constants";
 import TableContainer from "ui/common/table/TableContainer";
 import { Column } from "ui/common/table/Table";
@@ -109,14 +110,20 @@ class MembersList extends React.Component<Props, State> {
   private getActionButtons = () => {
     const { selectedId } = this.state;
     return (
-      <>
-        <Button variant="contained" color="primary" onClick={this.openCreateForm}>
-          Create New Member
-        </Button>
-        <Button variant="outlined" color="primary" disabled={!selectedId} onClick={this.openRenewalForm}>
-          Renew Member
-        </Button>
-      </>
+      <ButtonRow
+        actionButtons={[{
+          variant: "contained",
+          color: "primary",
+          onClick: this.openCreateForm,
+          label: "Create New Member"
+        }, {
+          variant: "outlined",
+          color: "primary",
+          disabled: !selectedId,
+          onClick: this.openRenewalForm,
+          label: "Renew Member"
+        }]}
+      />
     )
   }
 

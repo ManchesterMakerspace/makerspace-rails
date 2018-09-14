@@ -35,8 +35,8 @@ class EditMember extends React.Component<Props, {}> {
 
   public componentDidUpdate(prevProps: Props){
     const { isUpdating: wasUpdating } = prevProps;
-    const { isOpen, isUpdating, closeHandler } = this.props;
-    if (isOpen && wasUpdating && !isUpdating) {
+    const { isOpen, isUpdating, closeHandler, error } = this.props;
+    if (isOpen && wasUpdating && !isUpdating && !error) {
       closeHandler();
     }
   }

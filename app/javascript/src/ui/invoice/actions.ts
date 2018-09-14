@@ -1,8 +1,9 @@
 import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import { Invoice } from "app/entities/invoice";
-import { getInvoice, putInvoice } from "api/invoices/transactions";
+import { getInvoice, putInvoice, deleteInvoice } from "api/invoices/transactions";
 import { Action as InvoiceAction } from "ui/invoice/constants";
+import { Action as InvoicesAction } from "ui/invoices/constants";
 import { InvoiceState } from "ui/invoice/interfaces";
 
 export const readInvoiceAction = (
@@ -38,10 +39,37 @@ export const updateInvoiceAction = (
       type: InvoiceAction.UpdateInvoiceSuccess,
       data
     });
+    dispatch({
+      type: InvoicesAction.UpdateInvoiceSuccess,
+      data
+    });
   } catch (e) {
     const { errorMessage } = e;
     dispatch({
       type: InvoiceAction.UpdateInvoiceFailure,
+      error: errorMessage
+    });
+  }
+}
+
+export const deleteInvoiceAction = (
+  invoiceId: string,
+): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
+  dispatch({ type: InvoiceAction.StartDeleteRequest });
+
+  try {
+    await deleteInvoice(invoiceId);
+    dispatch({
+      type: InvoiceAction.DeleteInvoiceSuccess,
+    });
+    dispatch({
+      type: InvoicesAction.DeleteInvoiceSuccess,
+      data: invoiceId
+    });
+  } catch (e) {
+    const { errorMessage } = e;
+    dispatch({
+      type: InvoiceAction.DeleteInvoiceFailure,
       error: errorMessage
     });
   }
@@ -54,6 +82,10 @@ const defaultState: InvoiceState = {
     error: "",
   },
   update: {
+    isRequesting: false,
+    error: "",
+  },
+  delete: {
     isRequesting: false,
     error: "",
   }
@@ -121,6 +153,35 @@ export const invoiceReducer = (state: InvoiceState = defaultState, action: AnyAc
         ...state,
         update: {
           ...state.update,
+          isRequesting: false,
+          error
+        }
+      }
+      case InvoiceAction.StartDeleteRequest:
+      return {
+        ...state,
+        delete: {
+          ...state.delete,
+          isRequesting: true
+        }
+      };
+    case InvoiceAction.DeleteInvoiceSuccess:
+      return {
+        ...state,
+        entity: defaultState.entity,
+        delete: {
+          ...state.delete,
+          isRequesting: false,
+          error: ""
+        }
+      };
+    case InvoiceAction.DeleteInvoiceFailure:
+      error = action.error;
+
+      return {
+        ...state,
+        delete: {
+          ...state.delete,
           isRequesting: false,
           error
         }

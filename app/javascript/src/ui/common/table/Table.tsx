@@ -8,6 +8,7 @@ import {
   TableRow,
   TableHead,
   TableBody,
+  Typography,
 } from '@material-ui/core';
 import { SortDirection } from 'ui/common/table/constants';
 import ErrorMessage from "ui/common/ErrorMessage";
@@ -114,13 +115,25 @@ class EnhancedTable<T> extends React.Component<Props<T>, {}> {
     const {
       id: tableId,
       columns,
-      error
+      error,
+      onSelect,
     } = this.props;
 
     return (
       <TableRow id={`${tableId}-error-row`}>
-        <TableCell colSpan={columns.length}>
+        <TableCell colSpan={onSelect ? (columns.length + 1) : columns.length}>
           <ErrorMessage error={error}/>
+        </TableCell>
+      </TableRow>
+    )
+  }
+
+  private noDataRow = () => {
+    const { columns, id: tableId, onSelect } = this.props;
+    return (
+      <TableRow id={`${tableId}-no-data-row`}>
+        <TableCell colSpan={onSelect ? (columns.length + 1) : columns.length}>
+          <Typography align="center" variant="body2">No items</Typography>
         </TableCell>
       </TableRow>
     )
@@ -135,7 +148,9 @@ class EnhancedTable<T> extends React.Component<Props<T>, {}> {
       onSelect,
     } = this.props;
 
-    return Array.isArray(data) ? data.map((row) => {
+    if (!Array.isArray(data) || !data.length) { return this.noDataRow(); }
+
+    return  data.map((row) => {
       const id = rowId(row);
       const tableRowId = `${tableId}-${id}`;
       let checked = false;
@@ -164,7 +179,7 @@ class EnhancedTable<T> extends React.Component<Props<T>, {}> {
           {...this.getBodyCells(row)}
         </TableRow>
       )
-    }): [];
+    });
   }
 
   private getBodyCells = (row: T)  => {
@@ -190,10 +205,7 @@ class EnhancedTable<T> extends React.Component<Props<T>, {}> {
   }
 
   public render() {
-    const {
-      id,
-      error
-    } = this.props;
+    const { error } = this.props;
 
     return (
       <>

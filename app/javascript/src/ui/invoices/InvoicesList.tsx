@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { Button, Grid } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 
 import { Invoice, Properties } from "app/entities/invoice";
 import { QueryParams, CollectionOf } from "app/interfaces";
@@ -12,12 +12,15 @@ import TableContainer from "ui/common/table/TableContainer";
 import { Column } from "ui/common/table/Table";
 import InvoiceForm from "ui/invoice/InvoiceForm";
 import SettleInvoiceModal from "ui/invoice/SettleInvoiceModal";
+import DeleteInvoiceModal from "ui/invoice/DeleteInvoiceModal";
 import { readInvoicesAction } from "ui/invoices/actions";
 import UpdateInvoiceContainer, { UpdateInvoiceRenderProps } from "ui/invoice/UpdateInvoiceContainer";
-import { MemberRole } from "app/entities/member";
+import { MemberRole, MemberDetails } from "app/entities/member";
+import ButtonRow from "ui/common/ButtonRow";
+import { CrudOperation } from "app/constants";
 
 interface OwnProps {
-  memberId?: string;
+  member?: MemberDetails;
 }
 interface DispatchProps {
   getInvoices: (queryParams: QueryParams, admin: boolean) => void;
@@ -30,6 +33,8 @@ interface StateProps {
   error: string;
   isUpdating: boolean;
   updateError: string;
+  isCreating: boolean;
+  createError: string;
 }
 interface Props extends OwnProps, DispatchProps, StateProps { }
 interface State {
@@ -41,6 +46,7 @@ interface State {
   openUpdateForm: boolean;
   openCreateForm: boolean;
   openSettleForm: boolean;
+  openDeleteConfirm: boolean;
 }
 
 
@@ -77,8 +83,8 @@ class InvoicesList extends React.Component<Props, State> {
       label: "Paid?",
       cell: (row: Invoice) => {
         const settleInvoice = () => {
-          this.onSelect(row.id, true);
-          this.openSettleInvoice;
+          this.onSelect(this.rowId(row), true);
+          this.openSettleInvoice();
         }
         return (row.settled ? "Yes" :
           <Button
@@ -106,6 +112,7 @@ class InvoicesList extends React.Component<Props, State> {
       openUpdateForm: false,
       openCreateForm: false,
       openSettleForm: false,
+      openDeleteConfirm: false,
     };
   }
 
@@ -127,18 +134,37 @@ class InvoicesList extends React.Component<Props, State> {
   private closeSettleInvoice = () => {
     this.setState({ openSettleForm: false });
   }
+  private openDeleteInvoice = () => {
+    this.setState({ openDeleteConfirm: true });
+  }
+  private closeDeleteInvoice = () => {
+    this.setState({ openDeleteConfirm: false });
+  }
 
   private getActionButtons = () => {
     const { selectedId } = this.state;
-    return (
-      <>
-        <Button variant="contained" color="primary" onClick={this.openCreateForm}>
-          Create New Invoice
-        </Button>
-        <Button variant="outlined" color="primary" disabled={!selectedId} onClick={this.openUpdateForm}>
-          Edit Invoice
-        </Button>
-      </>
+    const { admin } = this.props;
+    return (admin &&
+      <ButtonRow
+        actionButtons={[{
+          variant: "contained",
+          color: "primary",
+          onClick: this.openCreateForm,
+          label: "Create New Invoice"
+        }, {
+          variant: "outlined",
+          color: "primary",
+          disabled: !selectedId,
+          onClick: this.openUpdateForm,
+          label: "Edit Invoice"
+        }, {
+          variant: "outlined",
+          color: "primary",
+          disabled: !selectedId,
+          onClick: this.openDeleteInvoice,
+          label: "Delete Invoice"
+        }]}
+      />
     )
   }
 
@@ -159,6 +185,14 @@ class InvoicesList extends React.Component<Props, State> {
 
   public componentDidMount() {
     this.getInvoices();
+  }
+
+  public componentDidUpdate(prevProps: Props) {
+    const { isCreating: wasCreating } = prevProps;
+    const { isCreating, createError } = this.props;
+    if (wasCreating && !isCreating && !createError) {
+      this.getInvoices();
+    }
   }
 
   private getInvoices = () => {
@@ -184,12 +218,6 @@ class InvoicesList extends React.Component<Props, State> {
     );
   }
 
-  private onSearchEnter = (searchTerm: string) => {
-    this.setState({ search: searchTerm, pageNum: 0 },
-      this.getInvoices
-    );
-  }
-
   // Only select one at a time
   private onSelect = (id: string, selected: boolean) => {
     if (selected) {
@@ -200,15 +228,15 @@ class InvoicesList extends React.Component<Props, State> {
   }
 
   private renderInvoiceForms = () => {
-    const { selectedId, openCreateForm, openUpdateForm, openSettleForm } = this.state;
-    const { invoices } = this.props;
+    const { selectedId, openCreateForm, openUpdateForm, openSettleForm, openDeleteConfirm } = this.state;
+    const { invoices, member, admin } = this.props;
 
     const editForm = (renderProps: UpdateInvoiceRenderProps) => (
       <InvoiceForm
         ref={renderProps.setRef}
         invoice={renderProps.invoice}
         isOpen={renderProps.isOpen}
-        isRequesting={renderProps.isUpdating}
+        isRequesting={renderProps.isRequesting}
         error={renderProps.error}
         onClose={renderProps.closeHandler}
         onSubmit={renderProps.submit}
@@ -220,7 +248,7 @@ class InvoicesList extends React.Component<Props, State> {
         ref={renderProps.setRef}
         invoice={renderProps.invoice}
         isOpen={renderProps.isOpen}
-        isRequesting={renderProps.isUpdating}
+        isRequesting={renderProps.isRequesting}
         error={renderProps.error}
         onClose={renderProps.closeHandler}
         onSubmit={renderProps.submit}
@@ -232,27 +260,49 @@ class InvoicesList extends React.Component<Props, State> {
         ref={renderProps.setRef}
         invoice={renderProps.invoice}
         isOpen={renderProps.isOpen}
-        isRequesting={renderProps.isUpdating}
+        isRequesting={renderProps.isRequesting}
         error={renderProps.error}
         onClose={renderProps.closeHandler}
         onSubmit={renderProps.submit}
       />
     );
 
-    return (
+    const deleteModal = (renderProps: UpdateInvoiceRenderProps) => {
+      const close = () => {
+        this.setState({ selectedId: undefined });
+        renderProps.closeHandler();
+      }
+      return (
+        <DeleteInvoiceModal
+          ref={renderProps.setRef}
+          invoice={renderProps.invoice}
+          isOpen={renderProps.isOpen}
+          isRequesting={renderProps.isRequesting}
+          error={renderProps.error}
+          onClose={close}
+          onSubmit={renderProps.submit}
+        />
+      );
+    }
+
+    return (admin &&
       <>
         <UpdateInvoiceContainer
+          operation={CrudOperation.Update}
           isOpen={openUpdateForm}
           invoice={invoices[selectedId]}
           closeHandler={this.closeUpdateForm}
           render={editForm}
         />
         <UpdateInvoiceContainer
+          operation={CrudOperation.Create}
           isOpen={openCreateForm}
+          invoice={member && { memberId: member.id, contact: member.email }}
           closeHandler={this.closeCreateForm}
           render={createForm}
         />
         <UpdateInvoiceContainer
+          operation={CrudOperation.Update}
           isOpen={openSettleForm}
           invoice={{
             ...invoices[selectedId],
@@ -261,8 +311,15 @@ class InvoicesList extends React.Component<Props, State> {
           closeHandler={this.closeSettleInvoice}
           render={settlementModal}
         />
+         <UpdateInvoiceContainer
+          operation={CrudOperation.Delete}
+          isOpen={openDeleteConfirm}
+          invoice={invoices[selectedId]}
+          closeHandler={this.closeDeleteInvoice}
+          render={deleteModal}
+        />
       </>
-    )
+    );
   }
 
   public render(): JSX.Element {
@@ -282,19 +339,16 @@ class InvoicesList extends React.Component<Props, State> {
 
     return (
       <>
-        <Grid style={{ paddingTop: 20 }}>
-          {this.getActionButtons()}
-        </Grid>
+        {this.getActionButtons()}
         <TableContainer
-          id="members-table"
-          title="Members"
+          id="invoices-table"
+          title="Invoices"
           loading={loading}
           data={Object.values(invoices)}
           error={error}
           totalItems={totalItems}
           selectedIds={[selectedId]}
           pageNum={pageNum}
-          onSearchEnter={this.onSearchEnter}
           columns={this.fields}
           order={order}
           orderBy={orderBy}
@@ -320,6 +374,10 @@ const mapStateToProps = (
       isRequesting: loading,
       error
     },
+    create: {
+      isRequesting: isCreating,
+      error: createError
+    },
   } = state.invoices;
   const {
     update: {
@@ -336,7 +394,9 @@ const mapStateToProps = (
     loading,
     error,
     isUpdating,
-    updateError
+    updateError,
+    isCreating,
+    createError,
   }
 }
 
@@ -344,14 +404,11 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch,
   ownProps: OwnProps
 ): DispatchProps => {
-  const { memberId } = ownProps;
+  const { member } = ownProps;
   return {
     getInvoices: (queryParams, admin) => dispatch(readInvoicesAction(admin, {
       ...queryParams,
-      filter: {
-        property: Properties.MemberId,
-        criteria: memberId
-      }
+      ...member && {[Properties.MemberId]: member.id},
     })),
   }
 }

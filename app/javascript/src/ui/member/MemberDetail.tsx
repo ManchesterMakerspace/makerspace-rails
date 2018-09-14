@@ -23,6 +23,7 @@ interface DispatchProps {
   getMember: () => Promise<void>;
 }
 interface StateProps {
+  admin: boolean;
   requestingError: string;
   isRequestingMember: boolean;
   isUpdatingMember: boolean;
@@ -88,7 +89,7 @@ class MemberDetail extends React.Component<Props, State> {
   }
 
   private renderMemberDetails = (): JSX.Element => {
-    const { member, isUpdatingMember, isRequestingMember, match } = this.props;
+    const { member, isUpdatingMember, isRequestingMember, match, admin } = this.props;
     const { memberId } = match.params;
     const loading = isUpdatingMember || isRequestingMember;
 
@@ -97,7 +98,7 @@ class MemberDetail extends React.Component<Props, State> {
         <DetailView
           title={`${member.firstname} ${member.lastname}`}
           basePath={`/members/${memberId}`}
-          actionButtons={[
+          actionButtons={admin && [
             {
               color: "primary",
               variant: "contained",
@@ -126,7 +127,7 @@ class MemberDetail extends React.Component<Props, State> {
               name: "invoices",
               content: (
                 <InvoicesList
-                  memberId={member.id}
+                  member={member}
                 />
               )
             }
@@ -138,7 +139,7 @@ class MemberDetail extends React.Component<Props, State> {
   }
 
   private renderMemberForms = () => {
-    const { member } = this.props;
+    const { member, admin } = this.props;
     const { isEditOpen, isRenewOpen, isCardOpen } = this.state;
 
     const editForm = (renderProps:UpdateMemberRenderProps) => (
@@ -177,7 +178,7 @@ class MemberDetail extends React.Component<Props, State> {
       />
     )
 
-    return (
+    return (admin &&
       <>
         <UpdateMemberContainer
           isOpen={isRenewOpen}
@@ -220,7 +221,11 @@ const mapStateToProps = (
   const { isRequesting, error: requestingError } = state.member.read;
   const { isRequesting: isUpdating } = state.member.update
   const { entity: member } = state.member;
+  const { currentUser } = state.auth;
+  const admin = currentUser && !!currentUser.id;
+
   return {
+    admin,
     member,
     requestingError,
     isRequestingMember: isRequesting,

@@ -15,7 +15,7 @@ Rails.application.routes.draw do
       resources :invoices, only: [:index]
       namespace :admin  do
         resources :cards, only: [:new, :create, :index, :update]
-        resources :invoices, only: [:index, :create, :update]
+        resources :invoices, only: [:index, :create, :update, :destroy]
         resources :rentals, only: [:create, :update, :destroy]
         resources :members, only: [:create, :update]
       end

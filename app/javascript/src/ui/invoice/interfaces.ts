@@ -5,4 +5,5 @@ export interface InvoiceState {
   entity: Invoice;
   read: RequestStatus;
   update: RequestStatus;
+  delete: RequestStatus;
 }

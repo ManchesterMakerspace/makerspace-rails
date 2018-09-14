@@ -18,7 +18,7 @@ export interface SignUpForm {
   password: string;
 }
 
-type AuthMember = Pick<MemberDetails,
+export type AuthMember = Pick<MemberDetails,
                         MemberProperties.Id |
                         MemberProperties.Email |
                         MemberProperties.Lastname |

@@ -5,9 +5,10 @@ import { Invoice } from "app/entities/invoice";
 import FormModal from "ui/common/FormModal";
 import Form from "ui/common/Form";
 import { fields } from "ui/invoice/constants";
+import { isEmpty } from "lodash-es";
 
 interface OwnProps {
-  invoice?: Invoice;
+  invoice?: Partial<Invoice>;
   isOpen: boolean;
   isRequesting: boolean;
   error: string;
@@ -16,7 +17,7 @@ interface OwnProps {
 }
 
 
-class MemberForm extends React.Component<OwnProps, {}> {
+class InvoiceForm extends React.Component<OwnProps, {}> {
   public formRef: Form;
   private setFormRef = (ref: Form) => this.formRef = ref;
 
@@ -34,7 +35,7 @@ class MemberForm extends React.Component<OwnProps, {}> {
         loading={isRequesting}
         isOpen={isOpen}
         closeHandler={onClose}
-        title="Invoices"
+        title={isEmpty(invoice) && "Create Invoice" || "Edit Invoice"}
         onSubmit={onSubmit}
         submitText="Save"
         error={error}
@@ -78,7 +79,6 @@ class MemberForm extends React.Component<OwnProps, {}> {
         />
         <TextField
           fullWidth
-          required
           value={invoice && invoice.notes}
           label={fields.notes.label}
           name={fields.notes.name}
@@ -90,4 +90,4 @@ class MemberForm extends React.Component<OwnProps, {}> {
   }
 }
 
-export default MemberForm;
+export default InvoiceForm;

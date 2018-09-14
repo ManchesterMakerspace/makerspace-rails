@@ -12,7 +12,7 @@ class Admin::MembersController < AdminController
       end
       render json: @member and return
     else
-      render json: @member.error.full_messages, status: 500 and return
+      render json: @member.errors.full_messages, status: 500 and return
     end
   end
 
@@ -28,7 +28,7 @@ class Admin::MembersController < AdminController
       @member.reload
       render json: @member and return
     else
-      render json: @member.error.full_messages, status: 500 and return
+      render json: @member.errors.full_messages, status: 500 and return
     end
   end
 

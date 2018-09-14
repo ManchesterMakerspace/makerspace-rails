@@ -6,4 +6,5 @@ export interface InvoicesState {
   read: RequestStatus & {
     totalItems: number;
   };
+  create: RequestStatus;
 }

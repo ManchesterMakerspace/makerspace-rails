@@ -14,12 +14,17 @@ class Invoice
 
   validates :description, presence: true
   validates :contact, presence: true
-  validates_inclusion_of :payment_type, in: [:cash, :paypal, :credit_card, :other]
+  validates :payment_type, inclusion: { in: [:cash, :paypal, :credit_card, :other] }, allow_nil: true
+  validates_numericality_of :amount, greater_than: 0
 
   belongs_to :member, optional: true
 
   def settled
     !!self.settled_at
+  end
+
+  def settled=(value)
+    self.settled_at ||= Time.now if value
   end
 
   def past_due

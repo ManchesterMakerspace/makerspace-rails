@@ -1,11 +1,9 @@
-class InvoicesController < ApplicationController
+class Admin::InvoicesController < ApplicationController
     include FastQuery
 
   def index
-    params[:orderBy] ||= :created_at
-    invoices = params[:filter] ? Invoice.where(
-      params[:filter][:property] => params[:filter][:criteria]) : Invoice
-    invoices = query_resource(invoices, params)
+    invoices = params[:memberId] ? Invoice.where(member_id: params[:memberId]) : Invoice
+    invoices = query_resource(invoices)
 
     return render_with_total_items(invoices)
   end
@@ -15,7 +13,7 @@ class InvoicesController < ApplicationController
     if invoice.save
       render json: invoice and return
     else
-      render json: invoice.error.full_messages, status: 500 and return
+      render json: invoice.errors.full_messages, status: 500 and return
     end
   end
 
@@ -24,12 +22,21 @@ class InvoicesController < ApplicationController
     if invoice && invoice.update(invoice_params)
       render json: invoice and return
     else
-      render json: invoice.error.full_messages, status: (invoice ? 500 : 404) and return
+      render json: invoice.errors.full_messages, status: (invoice ? 500 : 404) and return
+    end
+  end
+
+  def destroy
+    invoice = Invoice.find_by(id: params[:id])
+    if invoice && invoice.delete
+      render json: invoice and return
+    else
+      render json: invoice.errors.full_messages, status: (invoice ? 500 : 404) and return
     end
   end
 
   private
   def invoice_params
-    params.require(:invoice).permit(:description, :contact, :items, :settled, :amount, :payment_type)
+    params.require(:invoice).permit(:description, :contact, :items, :settled, :amount, :payment_type, :member_id, :due_date)
   end
 end

@@ -17,7 +17,7 @@ interface OwnProps {
 }
 
 
-class SettleInvoiceModal extends React.Component<OwnProps, {}> {
+class DeleteInvoiceModal extends React.Component<OwnProps, {}> {
   public formRef: Form;
   private setFormRef = (ref: Form) => this.formRef = ref;
 
@@ -27,17 +27,17 @@ class SettleInvoiceModal extends React.Component<OwnProps, {}> {
     return invoice ? (
       <FormModal
         formRef={this.setFormRef}
-        id="settle-invoice-confirm"
+        id="delete-invoice-confirm"
         loading={isRequesting}
         isOpen={isOpen}
         closeHandler={onClose}
-        title="Confirm Settlement"
+        title="Delete Settlement"
         onSubmit={onSubmit}
-        submitText="Confirm"
+        submitText="Delete"
         error={error}
       >
         <Typography gutterBottom>
-          Are you sure you want to manually settle this invoice?  This action cannot be reversed.
+          Are you sure you want to delete this invoice?
         </Typography>
         <KeyValueItem label="Contact">
           {invoice.contact}
@@ -53,4 +53,4 @@ class SettleInvoiceModal extends React.Component<OwnProps, {}> {
   }
 }
 
-export default SettleInvoiceModal;
+export default DeleteInvoiceModal;

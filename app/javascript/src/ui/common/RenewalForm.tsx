@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Select, Typography } from "@material-ui/core";
+import { Select, Typography, InputLabel } from "@material-ui/core";
 import toNumber from "lodash-es/toNumber";
 
 import FormModal from "ui/common/FormModal";
@@ -7,6 +7,7 @@ import ErrorMessage from "ui/common/ErrorMessage";
 import { CollectionOf } from "app/interfaces";
 import kebabCase from "lodash-es/kebabCase";
 import Form from "ui/common/Form";
+import KeyValueItem from "ui/common/KeyValueItem";
 import { timeToDate } from "ui/utils/timeToDate";
 
 export interface RenewForm {
@@ -75,18 +76,20 @@ class RenewalForm extends React.Component<OwnProps, {}> {
        <Typography gutterBottom variant="subheading" align="center" color="primary">
           {entity.name}
         </Typography>
-        <Typography gutterBottom align="left">
-          <strong>Expiration:</strong> {timeToDate(entity.expiration)}
-        </Typography>
-        <Select
-          fullWidth
-          native
-          required
-          placeholder="Select an option"
-          name={renewalSelectName}
-        >
-          {renewalOptions.map((option) => <option key={kebabCase(option.label)} value={option.value}>{option.label}</option>)}
-        </Select>
+        <KeyValueItem label="Expiration" align="left">
+          {timeToDate(entity.expiration)}
+        </KeyValueItem>
+        <KeyValueItem label="Renewal Term" align="left">
+          <Select
+            id="renewal-term"
+            native
+            required
+            placeholder="Select an option"
+            name={renewalSelectName}
+          >
+            {renewalOptions.map((option) => <option key={kebabCase(option.label)} value={option.value}>{option.label}</option>)}
+          </Select>
+        </KeyValueItem>
       </>
     )
   }

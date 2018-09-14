@@ -3,9 +3,9 @@ class MembersController < ApplicationController
     before_action :set_member, only: [:show]
 
     def index
-      @members = params[:search].empty? ? Member : Member.rough_search_members(params[:search])
+      @members = query_params[:search].empty? ? Member : Member.rough_search_members(query_params[:search])
       @members = @members.where(:expirationTime => { '$gt' => (Time.now.strftime('%s').to_i * 1000) }) if current_member.try(:role) != 'admin'
-      @members = query_resource(@members, params)
+      @members = query_resource(@members)
 
       return render_with_total_items(@members)
     end

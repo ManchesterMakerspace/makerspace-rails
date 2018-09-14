@@ -16,6 +16,8 @@ export namespace Url {
   export const Member = `${Members}/${PathPlaceholder.MemberId}`
 
   export const Rentals = `${baseApiPath}/rentals`;
+
+  export const RejectionCard = `${baseApiPath}/rejectionCard`;
   export const Invoices = `${baseApiPath}/invoices`;
 
   export const Auth = {
@@ -30,7 +32,7 @@ export namespace Url {
     AccessCards: `${baseAdminPath}/cards`,
     AccessCard: `${baseAdminPath}/cards/${PathPlaceholder.CardId}`,
     Invoices: `${baseAdminPath}/invoices`,
-    Invoice: `${baseAdminPath}/invoices/${PathPlaceholder.InvoiceId}`
+    Invoice: `${baseAdminPath}/invoices/${PathPlaceholder.InvoiceId}`,
   }
 
   export const Billing = {
@@ -53,4 +55,11 @@ export const ApiErrorMessageMap = {
   [ApiErrorStatus.Unauthorized]: "Not Authorized.  Please sign in.",
   [ApiErrorStatus.Forbidden]: "Not Authorized.  Contact an admin for access.",
   [ApiErrorStatus.NotFound]: "Resource not found.",
+}
+
+export enum CrudOperation {
+  Read = "read",
+  Create = "create",
+  Update = "update",
+  Delete = "delete",
 }

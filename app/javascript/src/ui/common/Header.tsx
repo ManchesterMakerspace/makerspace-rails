@@ -16,10 +16,12 @@ import {
 
 import { ScopedThunkDispatch, State as ReduxState } from "ui/reducer";
 import { logoutUserAction } from "ui/auth/actions";
+import { AuthMember } from "ui/auth/interfaces";
+import { memberIsAdmin } from "ui/member/utils";
 
 interface OwnProps {}
 interface StateProps {
-  auth: boolean;
+  currentUser: AuthMember;
 }
 interface DispatchProps {
   logout: () => void;
@@ -61,6 +63,7 @@ class Header extends React.Component<Props, State> {
   }
 
   private renderHambMenu = (): JSX.Element => {
+    const { currentUser } = this.props;
     const { anchorEl } = this.state;
     const menuOpen = Boolean(anchorEl);
 
@@ -87,11 +90,11 @@ class Header extends React.Component<Props, State> {
           open={menuOpen}
           onClose={this.detachMenu}
         >
-          {this.renderMenuNavLink("/members", "Membership")}
-          {this.renderMenuNavLink("/rentals", "Rentals")}
-          {this.renderMenuNavLink("/billing", "Billing")}
-          {this.renderMenuNavLink("/subscriptions", "Subscriptions")}
-          <MenuItem onClick={this.detachMenu}>Profile</MenuItem>
+          {this.renderMenuNavLink("/members", memberIsAdmin(currentUser) ? "Member Management" : "Members List")}
+          {memberIsAdmin(currentUser) && this.renderMenuNavLink("/rentals", "Rental Management")}
+          {memberIsAdmin(currentUser) && this.renderMenuNavLink("/subscriptions", "Subscription Management")}
+          {memberIsAdmin(currentUser) && this.renderMenuNavLink("/billing", "View Billing Plans")}
+          {this.renderMenuNavLink(`/members/${currentUser.id}`, "Profile")}
           <MenuItem onClick={this.logoutUser}>Logout</MenuItem>
         </Menu>
       </>
@@ -105,7 +108,7 @@ class Header extends React.Component<Props, State> {
   }
 
   public render(): JSX.Element {
-    const { auth } = this.props;
+    const { currentUser } = this.props;
 
     return (
       <AppBar style={{marginBottom: "1em"}} position="static">
@@ -113,7 +116,7 @@ class Header extends React.Component<Props, State> {
           <Typography variant="title" color="inherit" className="flex">
             Manchester Makerspace
           </Typography>
-          { auth && this.renderHambMenu() }
+          { currentUser.id && this.renderHambMenu() }
         </Toolbar>
       </AppBar>
     )
@@ -126,7 +129,7 @@ const mapStateToProps = (state: ReduxState, _ownProps: OwnProps): StateProps => 
   } = state;
 
   return {
-    auth: currentUser && !!currentUser.email
+    currentUser,
   }
 }
 
