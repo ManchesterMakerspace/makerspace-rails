@@ -6,8 +6,8 @@ import MembersList from "ui/members/MembersList";
 import PlansList from 'ui/billingPlans/PlansList';
 import RentalsList from 'ui/rentals/RentalsList';
 import SubscriptionsList from 'ui/subscriptions/SubscriptionsList';
-import LandingPage from 'ui/auth/LandingPage';
 import MemberDetail from 'ui/member/MemberDetail';
+import LandingPage from 'ui/auth/LandingPage';
 
 
 const PrivateRouting: React.SFC<{}> = () => (

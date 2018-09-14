@@ -1,11 +1,6 @@
 import * as React from 'react';
-import { Store } from 'redux';
-import { connect, Provider } from "react-redux";
-import { ConnectedRouter } from 'connected-react-router';
-import { Switch } from "react-router";
-import { History } from 'history';
-
-import { Theme, MuiThemeProvider } from '@material-ui/core';
+import { connect } from "react-redux";
+import { RouteComponentProps, withRouter } from "react-router";
 
 import { ScopedThunkDispatch, State as ReduxState } from "ui/reducer";
 import { activeSessionLogin } from "ui/auth/actions";
@@ -21,11 +16,7 @@ interface StateProps {
 interface DispatchProps {
   attemptLogin: () => void;
 }
-interface OwnProps {
-  store: Store<ReduxState>,
-  history: History,
-  theme: Theme,
-}
+interface OwnProps extends RouteComponentProps<any> {}
 
 interface State {
   attemptingLogin: boolean;
@@ -38,7 +29,7 @@ class App extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      attemptingLogin: false
+      attemptingLogin: true
     }
   }
 
@@ -67,20 +58,11 @@ class App extends React.Component<Props, State> {
     }
   }
   public render(): JSX.Element {
-    const { store, history, theme } = this.props;
-
     return (
-      <Provider store={store}>
-      { /* ConnectedRouter will use the store from Provider automatically */}
-        <ConnectedRouter history={history}>
-          <MuiThemeProvider theme={theme}>
-            <div className="root">
-            <Header/>
-              {this.renderBody()}
-            </div>
-          </MuiThemeProvider>
-        </ConnectedRouter>
-      </Provider>
+      <div className="root">
+        <Header/>
+        {this.renderBody()}
+      </div>
     )
   }
 }
@@ -104,4 +86,4 @@ const mapDispatchToProps = (
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));

@@ -1,18 +1,22 @@
 import * as React from 'react';
-import { Switch, Route } from "react-router";
+import { Switch, Route, Redirect } from "react-router";
 
-import NotFound from "ui/common/NotFound";
 import LandingPage from 'ui/auth/LandingPage';
 import CheckoutContainer from 'ui/checkout/CheckoutContainer';
-import MemberDetail from 'ui/member/MemberDetail';
 
-
-const PublicRouting: React.SFC<{}> = () => (
-  <Switch >
-    <Route exact path="/checkout" component={CheckoutContainer} />
-    <Route exact path="/" component={LandingPage} />
-    <Route component={NotFound} />
-  </Switch>
-);
+enum PublicRoutes {
+  Checkout = "/checkout",
+  Root = "/"
+}
+const PublicRouting: React.SFC<{}> = () => {
+  // Redirect to root if not authed and somewhere else
+  return (
+    <Switch >
+      <Route exact path={PublicRoutes.Checkout} component={CheckoutContainer} />
+      <Route exact path={PublicRoutes.Root} component={LandingPage} />
+      <Redirect to="/"/>
+    </Switch>
+  );
+};
 
 export default PublicRouting;
