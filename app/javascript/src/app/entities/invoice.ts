@@ -30,6 +30,12 @@ export interface Invoice {
   value: string | number;
 }
 
+export interface InvoiceOption {
+  id: string;
+  description: string;
+  amount: number;
+}
+
 
 export enum InvoiceOperation {
   Renew = "renew"

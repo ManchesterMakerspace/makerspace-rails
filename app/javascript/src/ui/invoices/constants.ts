@@ -9,4 +9,9 @@ export enum Action {
 
   UpdateInvoiceSuccess = "INVOICES/UPDATE_INVOICE_SUCCESS",
   DeleteInvoiceSuccess = "INVOICES/DELETE_INVOICE_SUCCESS",
+
+
+  StartMembershipOptionsRequest = "INVOICES/START_MEMBERSHIP_OPTIONS_REQUEST",
+  GetMembershipOptionsSuccess = "INVOICES/GET_MEMBERSHIP_OPTIONS_SUCCESS",
+  GetMembershipOptionsFailure = "INVOICES/GET_MEMBERSHIP_OPTIONS_FAILURE",
 }

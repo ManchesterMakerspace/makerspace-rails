@@ -17,8 +17,8 @@ export namespace Url {
 
   export const Rentals = `${baseApiPath}/rentals`;
 
-  export const RejectionCard = `${baseApiPath}/rejectionCard`;
   export const Invoices = `${baseApiPath}/invoices`;
+  export const InvoiceOptions = `${Invoices}/options`;
 
   export const Auth = {
     SignIn: `${Members}/sign_in`,

@@ -66,4 +66,9 @@ export const SignUpFields: FormFields = {
     validate: (val) => isString(val) && val.length > 7,
     error: "Password must be 8 characters minimum"
   },
+  membership: {
+    label: "Membership Option",
+    name: `${formPrefix}-membership`,
+    placeholder: "Select a Membership Option",
+  },
 }

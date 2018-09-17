@@ -8,11 +8,13 @@ Rails.application.routes.draw do
     devise_scope :member do
        post "members", to: "registrations#create"
     end
+    get "/invoices/options", to: "invoices#options"
 
     authenticate :member do
       resources :members, only: [:show, :index]
       resources :rentals, only: [:show, :index]
       resources :invoices, only: [:index]
+
       namespace :admin  do
         resources :cards, only: [:new, :create, :index, :update]
         resources :invoices, only: [:index, :create, :update, :destroy]

@@ -1,24 +1,30 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import { Redirect } from "react-router";
 
-import { TextField, Grid, InputAdornment, Card, CardContent } from "@material-ui/core";
+import { TextField, Grid, InputAdornment, Card, CardContent, FormLabel, Select } from "@material-ui/core";
+import { RemoveRedEye } from "@material-ui/icons";
+
+import { CollectionOf } from "app/interfaces";
+import { InvoiceOption } from "app/entities/invoice";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { SignUpFields, EmailExistsError } from "ui/auth/constants";
 import { SignUpForm } from "ui/auth/interfaces";
-import ErrorMessage from "ui/common/ErrorMessage";
 import { submitSignUpAction } from "ui/auth/actions";
-import { RemoveRedEye } from "@material-ui/icons";
+import ErrorMessage from "ui/common/ErrorMessage";
 import Form from "ui/common/Form";
-import { Redirect } from "react-router";
+import { getMembershipOptionsAction } from "ui/invoices/actions";
 
 interface OwnProps {
   goToLogin: () => void;
 }
 interface DispatchProps {
   submitSignUp: (signUpForm: SignUpForm) => void;
+  getMembershipOptions: () => void;
 }
 interface StateProps {
+  membershipOptions: CollectionOf<InvoiceOption>;
   memberId: string;
   isRequesting: boolean;
   error: string;
@@ -41,6 +47,10 @@ class SignUpFormComponent extends React.Component<Props, State> {
     };
   }
 
+  public componentDidMount() {
+    this.props.getMembershipOptions();
+  }
+
   public componentDidUpdate(prevProps: Props) {
     const { isRequesting: wasRequesting } = prevProps;
     const { isRequesting, error } = this.props;
@@ -58,21 +68,23 @@ class SignUpFormComponent extends React.Component<Props, State> {
     const { passwordMask } = this.state;
 
     return (
-      <TextField
-        fullWidth
-        required
-        label={SignUpFields.password.label}
-        name={SignUpFields.password.name}
-        placeholder={SignUpFields.password.placeholder}
-        type={passwordMask ? 'password' : 'text'}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <RemoveRedEye style={{cursor: 'pointer'}} onClick={this.togglePasswordMask} />
-            </InputAdornment>
-          ),
-        }}
-      />
+      <Grid item xs={12}>
+        <TextField
+          fullWidth
+          required
+          label={SignUpFields.password.label}
+          name={SignUpFields.password.name}
+          placeholder={SignUpFields.password.placeholder}
+          type={passwordMask ? 'password' : 'text'}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <RemoveRedEye style={{cursor: 'pointer'}} onClick={this.togglePasswordMask} />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Grid>
     )
   }
 
@@ -110,6 +122,32 @@ class SignUpFormComponent extends React.Component<Props, State> {
     )
   }
 
+  private renderMembershipSelect = (): JSX.Element => {
+    const { membershipOptions } = this.props;
+    const options = Object.values(membershipOptions).slice();
+    options.push({
+      id: null,
+      description: "Do later",
+      amount: 0
+    });
+    const selectOptions = options.map((option) => <option key={option.id} value={option.id}>{option.description}</option>)
+    return (
+      <Grid item xs={12}>
+        <FormLabel>{SignUpFields.membership.label}</FormLabel>
+        <Select
+          fullWidth
+          id="renewal-term"
+          native
+          required
+          placeholder={SignUpFields.membership.placeholder}
+          name={SignUpFields.membership.name}
+        >
+          {selectOptions}
+        </Select>
+      </Grid>
+    )
+  }
+
   public render(): JSX.Element {
     const { isRequesting, error, memberId } = this.props;
     const { emailExists } = this.state;
@@ -127,7 +165,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
         onSubmit={this.submit}
         submitText="Sign Up"
       >
-        <Grid container spacing={24}>
+        <Grid container spacing={16}>
           <Grid item xs={6}>
             <TextField
               fullWidth
@@ -146,18 +184,21 @@ class SignUpFormComponent extends React.Component<Props, State> {
               placeholder={SignUpFields.lastname.placeholder}
             />
           </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              required
+              label={SignUpFields.email.label}
+              name={SignUpFields.email.name}
+              placeholder={SignUpFields.email.placeholder}
+              type="email"
+            />
+          </Grid>
+          {this.renderPasswordInput()}
+          {this.renderMembershipSelect()}
         </Grid>
-        <TextField
-          fullWidth
-          required
-          label={SignUpFields.email.label}
-          name={SignUpFields.email.name}
-          placeholder={SignUpFields.email.placeholder}
-          type="email"
-        />
-        {this.renderPasswordInput()}
-        {!isRequesting && error && <ErrorMessage error={error} />}
 
+        {!isRequesting && error && <ErrorMessage error={error} />}
         {emailExists && this.renderEmailNotification()}
       </Form>
     );
@@ -176,7 +217,12 @@ const mapStateToProps = (
     error
   } = state.auth;
 
+  const { invoiceOptions: {
+    membership: membershipOptions
+  } } = state.invoices;
+
   return {
+    membershipOptions,
     memberId,
     isRequesting,
     error
@@ -187,7 +233,8 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch
 ): DispatchProps => {
   return {
-    submitSignUp: (signUpForm) => dispatch(submitSignUpAction(signUpForm))
+    submitSignUp: (signUpForm) => dispatch(submitSignUpAction(signUpForm)),
+    getMembershipOptions: () => dispatch(getMembershipOptionsAction())
   };
 }
 export default connect(mapStateToProps, mapDispatchToProps)(SignUpFormComponent);

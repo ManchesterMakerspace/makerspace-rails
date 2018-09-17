@@ -8,4 +8,8 @@ class BraintreeService::Plan < Braintree::Plan
       self.new(gateway, instance_to_hash(plan))
     end
   end
+
+  def amount
+    self.price.truncate.to_s + '.' + sprintf('%02d', (self.price.frac * 100).truncate)
+  end
 end

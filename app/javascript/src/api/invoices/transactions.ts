@@ -2,7 +2,8 @@ import axios from "axios";
 import { handleApiError } from "app/utils";
 import { Invoice, InvoiceQueryParams } from "app/entities/invoice";
 
-import { buildInvoicesUrl, buildInvoiceUrl } from "api/invoices/utils";
+import { buildInvoicesUrl, buildInvoiceUrl, buildInvoiceOptionsUrl } from "api/invoices/utils";
+import { InvoiceOptionTypes } from "api/invoices/constants";
 
 export const getInvoices = async (isUserAdmin: boolean, queryParams?: InvoiceQueryParams) => {
   try {
@@ -54,3 +55,15 @@ export const deleteInvoice = async (invoiceId: string) => {
     throw error;
   }
 };
+
+export const getMembershipOptions = async () => {
+  const options = {
+    types: [InvoiceOptionTypes.Membership]
+  }
+  try {
+    return await axios.get(buildInvoiceOptionsUrl(), { params: options });
+  } catch (e) {
+    const error = handleApiError(e);
+    throw error;
+  }
+}

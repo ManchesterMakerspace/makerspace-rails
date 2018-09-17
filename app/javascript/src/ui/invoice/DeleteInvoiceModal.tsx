@@ -31,7 +31,7 @@ class DeleteInvoiceModal extends React.Component<OwnProps, {}> {
         loading={isRequesting}
         isOpen={isOpen}
         closeHandler={onClose}
-        title="Delete Settlement"
+        title="Delete Invoice"
         onSubmit={onSubmit}
         submitText="Delete"
         error={error}

@@ -9,6 +9,9 @@ export const buildInvoicesUrl = (admin: boolean = false): string => {
 export const buildInvoiceUrl = (invoiceId: string) => {
   return buildJsonUrl(buildInvoicePath(invoiceId));
 }
+export const buildInvoiceOptionsUrl = () => {
+  return buildJsonUrl(Url.InvoiceOptions)
+}
 
 const buildInvoicePath = (invoiceId: string) => {
   return Url.Admin.Invoice.replace(Url.PathPlaceholder.InvoiceId, invoiceId);
