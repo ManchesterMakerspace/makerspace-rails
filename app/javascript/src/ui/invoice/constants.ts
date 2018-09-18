@@ -12,6 +12,9 @@ export enum Action {
   StartDeleteRequest = "INVOICE/START_DELETE_REQUEST",
   DeleteInvoiceSuccess = "INVOICE/DELETE_INVOICE_SUCCESS",
   DeleteInvoiceFailure = "INVOICE/DELETE_INVOICE_FAILURE",
+
+  StageInvoice = "INVOICE/STAGE",
+  ResetStagedInvoice = "INVOICE/RESET_STAGED",
 }
 
 const formPrefix = "invoice-form";

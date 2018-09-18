@@ -1,4 +1,5 @@
 class RegistrationsController < Devise::RegistrationsController
+    include BraintreeGateway
     include ApplicationHelper
     before_action :initalize_gdrive, only: [:create]
     before_action :slack_connect, only: [:create]
@@ -7,6 +8,7 @@ class RegistrationsController < Devise::RegistrationsController
     def create
       @member = Member.new(member_params)
       if @member.save
+        create_initial_membership_invoice
         invite_gdrive
         @notifier.ping(format_slack_messages(@messages)) unless @messages.empty?
         MemberMailer.member_registered(@member).deliver_now
@@ -19,7 +21,7 @@ class RegistrationsController < Devise::RegistrationsController
 
     private
     def member_params
-      params.require(:member).permit(:firstname, :lastname, :groupName, :email, :password, :password_confirmation)
+      params.require(:member).permit(:firstname, :lastname, :email, :password)
     end
 
     def invite_gdrive
@@ -28,6 +30,14 @@ class RegistrationsController < Devise::RegistrationsController
           role: :reader)
       @service.create_permission(ENV['RESOURCES_FOLDER'], permission) do |result, err|
         @messages.push("Error sharing Member Resources folder with #{@member.fullname}. Error: #{err}") unless err.nil?
+      end
+    end
+
+    def create_initial_membership_invoice
+      plan = ::BraintreeService::Plan.get_plan_by_id(@gateway, ENV["MONTHLY_SUBSCRIPTION_ID"])
+      invoice = plan.build_invoice
+      unless invoice.save
+        @notifier.ping("Error creating initial membership invoice for new member: #{@member.email}")
       end
     end
 

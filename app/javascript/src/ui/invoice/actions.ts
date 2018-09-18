@@ -77,6 +77,7 @@ export const deleteInvoiceAction = (
 
 const defaultState: InvoiceState = {
   entity: undefined,
+  stagedEntity: undefined,
   read: {
     isRequesting: false,
     error: "",
@@ -185,6 +186,20 @@ export const invoiceReducer = (state: InvoiceState = defaultState, action: AnyAc
           isRequesting: false,
           error
         }
+      }
+    case InvoiceAction.StageInvoice:
+      const { data: stagedInvoice } = action;
+      return {
+        ...state,
+        stagedEntity: {
+          ...state.stagedEntity,
+          ...stagedInvoice
+        }
+      }
+    case InvoiceAction.ResetStagedInvoice:
+      return {
+        ...state,
+        stagedEntity: defaultState.stagedEntity,
       }
     default:
       return state;

@@ -111,10 +111,10 @@ class Form extends React.Component<FormModalProps, State> {
     const validatedForm: Partial<T> = {};
     Object.entries(fields).forEach(([key, field]) => {
       const value = values[field.name];
-      if (field.validate(value)) {
-        validatedForm[key] = value;
-      } else {
+      if (field.validate && !field.validate(value)) {
         errors[field.name] = field.error;
+      } else {
+        validatedForm[key] = value;
       }
     });
 
@@ -140,7 +140,8 @@ class Form extends React.Component<FormModalProps, State> {
 
   private handleChange = (event: React.ChangeEvent<HTMLFormElement>) => {
     const fieldName = event.target.name;
-    const fieldValue = event.target.value;
+    // Set value depending on checked state for checkboxes and radios
+    const fieldValue = event.target.hasOwnProperty("checked") ? (event.target.checked ? event.target.value : "") : event.target.value;
     const { isDirty } = this.state;
     if (!isDirty) {
       this.setState({ isDirty: true });
@@ -222,7 +223,7 @@ class Form extends React.Component<FormModalProps, State> {
     const value = values[fieldName];
     return (
       React.cloneElement(input, {
-        error: !!error,
+        error: error ? !!error : undefined,
         id,
         value
       })

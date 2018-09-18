@@ -65,7 +65,7 @@ class LandingPage extends React.Component<Props, State> {
           </Grid>
           <Grid item container xs={12} justify="center" alignItems="center">
             <Button variant="outlined" color="primary" fullWidth onClick={this.toggleDisplay}>
-              {authDisplay === AuthDisplayOption.Login ? "Register" : "Login"}
+              {authDisplay === AuthDisplayOption.Login ? "Register" : "Already a Member? Login"}
             </Button>
           </Grid>
         </Grid>

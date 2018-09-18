@@ -2,9 +2,10 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router";
 
-import { TextField, Grid, InputAdornment, Card, CardContent, FormLabel, Select } from "@material-ui/core";
+import { FormControlLabel, TextField, Grid, InputAdornment, Card, CardContent, FormLabel, Select, Checkbox } from "@material-ui/core";
 import { RemoveRedEye } from "@material-ui/icons";
 
+import { Routing } from "app/constants";
 import { CollectionOf } from "app/interfaces";
 import { InvoiceOption } from "app/entities/invoice";
 
@@ -12,9 +13,11 @@ import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { SignUpFields, EmailExistsError } from "ui/auth/constants";
 import { SignUpForm } from "ui/auth/interfaces";
 import { submitSignUpAction } from "ui/auth/actions";
+import { buildProfileRouting } from "ui/auth/utils";
 import ErrorMessage from "ui/common/ErrorMessage";
 import Form from "ui/common/Form";
 import { getMembershipOptionsAction } from "ui/invoices/actions";
+import { Action as InvoiceAction } from "ui/invoice/constants";
 
 interface OwnProps {
   goToLogin: () => void;
@@ -22,6 +25,7 @@ interface OwnProps {
 interface DispatchProps {
   submitSignUp: (signUpForm: SignUpForm) => void;
   getMembershipOptions: () => void;
+  resetStagedInvoice: () => void;
 }
 interface StateProps {
   membershipOptions: CollectionOf<InvoiceOption>;
@@ -32,7 +36,9 @@ interface StateProps {
 interface State {
   passwordMask: boolean;
   emailExists: boolean;
+  redirect: string;
 }
+
 interface Props extends OwnProps, DispatchProps, StateProps { }
 
 class SignUpFormComponent extends React.Component<Props, State> {
@@ -44,19 +50,38 @@ class SignUpFormComponent extends React.Component<Props, State> {
     this.state = {
       passwordMask: true,
       emailExists: false,
+      redirect: undefined
     };
   }
 
   public componentDidMount() {
     this.props.getMembershipOptions();
+    this.props.resetStagedInvoice();
   }
 
   public componentDidUpdate(prevProps: Props) {
     const { isRequesting: wasRequesting } = prevProps;
-    const { isRequesting, error } = this.props;
+    const { isRequesting, error, memberId } = this.props;
 
-    if (wasRequesting && !isRequesting && error === EmailExistsError) {
-      this.setState({ emailExists: true });
+    if (wasRequesting && !isRequesting) {
+      if (error === EmailExistsError) {
+        this.setState({ emailExists: true });
+      }
+      if (!error && memberId) {
+        this.redirectFromSignUp();
+      }
+    }
+  }
+
+  private redirectFromSignUp = () => {
+    const { memberId } = this.props;
+    const formValues = this.formRef.getValues();
+    const membershipId = formValues[SignUpFields.membershipId.name];
+
+    if (membershipId) {
+      this.setState({ redirect: Routing.Checkout })
+    } else {
+      this.setState({ redirect: buildProfileRouting(memberId) })
     }
   }
 
@@ -90,10 +115,13 @@ class SignUpFormComponent extends React.Component<Props, State> {
 
   private submit = async (form: Form) => {
     const validSignUp: SignUpForm = await form.simpleValidate<SignUpForm>(SignUpFields);
-
+    
     if (!form.isValid()) return;
 
-    await this.props.submitSignUp(validSignUp);
+    await this.props.submitSignUp({
+      ...validSignUp,
+      discount: !!validSignUp.discount 
+    });
   }
 
   private closeNotification = () => {
@@ -118,7 +146,6 @@ class SignUpFormComponent extends React.Component<Props, State> {
           </Form>
         </CardContent>
       </Card>
-
     )
   }
 
@@ -130,30 +157,45 @@ class SignUpFormComponent extends React.Component<Props, State> {
       description: "Do later",
       amount: 0
     });
-    const selectOptions = options.map((option) => <option key={option.id} value={option.id}>{option.description}</option>)
+    const selectOptions = options.map((option) => (
+      <option key={option.id} value={option.id}>
+        {option.description}{!!option.amount && ` ($${option.amount})`}
+      </option>
+    ));
     return (
-      <Grid item xs={12}>
-        <FormLabel>{SignUpFields.membership.label}</FormLabel>
-        <Select
-          fullWidth
-          id="renewal-term"
-          native
-          required
-          placeholder={SignUpFields.membership.placeholder}
-          name={SignUpFields.membership.name}
-        >
-          {selectOptions}
-        </Select>
-      </Grid>
-    )
+      <>
+        <Grid item xs={12}>
+          <FormLabel>{SignUpFields.membershipId.label}</FormLabel>
+          <Select
+            fullWidth
+            id="renewal-term"
+            native
+            required
+            placeholder={SignUpFields.membershipId.placeholder}
+            name={SignUpFields.membershipId.name}
+          >
+            {selectOptions}
+          </Select>
+        </Grid>
+        <Grid item xs={12}>
+          <FormControlLabel
+            name={SignUpFields.discount.name}
+            label={SignUpFields.discount.label}
+            control={
+              <Checkbox color="primary" value={SignUpFields.discount.name}/>
+            }
+          />
+        </Grid>
+      </>
+    );
   }
 
   public render(): JSX.Element {
-    const { isRequesting, error, memberId } = this.props;
-    const { emailExists } = this.state;
+    const { isRequesting, error } = this.props;
+    const { emailExists, redirect } = this.state;
 
-    if (!error && memberId) {
-      return <Redirect to={`/members/${memberId}`}/>
+    if (!error && redirect) {
+      return <Redirect to={redirect}/>
     }
 
     return (
@@ -234,7 +276,8 @@ const mapDispatchToProps = (
 ): DispatchProps => {
   return {
     submitSignUp: (signUpForm) => dispatch(submitSignUpAction(signUpForm)),
-    getMembershipOptions: () => dispatch(getMembershipOptionsAction())
+    getMembershipOptions: () => dispatch(getMembershipOptionsAction()),
+    resetStagedInvoice: () => dispatch({ type: InvoiceAction.ResetStagedInvoice })
   };
 }
 export default connect(mapStateToProps, mapDispatchToProps)(SignUpFormComponent);

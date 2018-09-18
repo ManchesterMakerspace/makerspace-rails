@@ -60,9 +60,10 @@ export const getMembershipOptionsAction = (
 
   try {
     const response = await getMembershipOptions();
+    const { invoices } = response.data;
     dispatch({
       type: InvoicesAction.GetMembershipOptionsSuccess,
-      data: response.data
+      data: invoices
     })
   } catch (e) {
     const { errorMessage } = e;

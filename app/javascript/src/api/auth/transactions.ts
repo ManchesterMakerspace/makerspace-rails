@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { Url } from "app/constants";
 import { buildJsonUrl, handleApiError } from "app/utils";
-import { AuthForm, SignUpForm } from "ui/auth/interfaces";
+import { AuthForm, MemberSignUpForm } from "ui/auth/interfaces";
 
 export const postLogin = async (creds?: AuthForm) => {
   try {
@@ -24,7 +24,7 @@ export const deleteLogin = async () => {
   }
 };
 
-export const postSignUp = async (signUpForm: SignUpForm) => {
+export const postSignUp = async (signUpForm: MemberSignUpForm) => {
   try {
     return await axios.post(buildJsonUrl(Url.Auth.SignUp), {
       member: signUpForm

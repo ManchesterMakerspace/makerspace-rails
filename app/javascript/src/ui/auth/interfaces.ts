@@ -11,11 +11,16 @@ export interface AuthForm {
   password: string;
 }
 
-export interface SignUpForm {
+export interface MemberSignUpForm {
   firstname: string;
   lastname: string;
   email: string;
   password: string;
+}
+
+export interface SignUpForm extends MemberSignUpForm {
+  membershipId: string;
+  discount: boolean;
 }
 
 export type AuthMember = Pick<MemberDetails,

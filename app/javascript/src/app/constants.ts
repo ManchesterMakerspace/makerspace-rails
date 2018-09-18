@@ -43,6 +43,23 @@ export namespace Url {
 
 }
 
+export namespace Routing {
+  export enum PathPlaceholder {
+    Optional = "?",
+    MemberId = ":memberId",
+    Resource = ":resource",
+  }
+
+  export const Root = "/";
+  export const Members = "/members";
+  export const Profile = `${Members}/${PathPlaceholder.MemberId}`;
+
+  export const Billing = "/billing";
+  export const Subscriptions = "/subscriptions";
+  export const Rentals = "/rentals";
+  export const Checkout = "/checkout";
+}
+
 export enum ApiErrorStatus {
   InternalServerError = "Internal Server Error",
   Unauthorized = "Unauthorized",

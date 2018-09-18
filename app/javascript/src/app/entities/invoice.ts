@@ -1,6 +1,6 @@
 import { QueryParams } from "app/interfaces";
 
-export interface ApiInvoice {
+interface BaseInvoice {
   id: string;
   description: string;
   notes: string;
@@ -8,23 +8,17 @@ export interface ApiInvoice {
   createdAt: string;
   dueDate: string;
   amount: number;
+  discount: boolean;
   settled?: boolean;
   pastDue?: boolean;
   resourceId: string;
+}
+
+export interface ApiInvoice extends BaseInvoice {
   operationString: string;
 }
 
-export interface Invoice {
-  id: string;
-  description: string;
-  notes: string;
-  contact: string;
-  createdAt: string;
-  dueDate: string;
-  amount: number;
-  settled?: boolean;
-  pastDue?: boolean;
-  resourceId: string;
+export interface Invoice extends BaseInvoice {
   resource: InvoiceableResource;
   operation: InvoiceOperation,
   value: string | number;
