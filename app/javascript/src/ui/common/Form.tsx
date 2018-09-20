@@ -33,7 +33,7 @@ interface FormModalProps {
   title?: string;
   onCancel?: () => void;
   cancelText?: string;
-  onSubmit: (form: Form) => void;
+  onSubmit?: (form: Form) => void;
   submitText?: string;
   loading?: boolean;
   children?: React.ReactNode;
@@ -237,7 +237,7 @@ class Form extends React.Component<FormModalProps, State> {
   }
 
   private renderFormContent = (): JSX.Element => {
-    const { submitText, cancelText, title, id, onCancel, children, error, loading } = this.props;
+    const { onSubmit, submitText, cancelText, title, id, onCancel, children, error, loading } = this.props;
     const { isDirty } = this.state;
     return (
       <>
@@ -248,7 +248,7 @@ class Form extends React.Component<FormModalProps, State> {
         </DialogContent>
 
         <DialogActions>
-          <Button variant="contained" color="primary" type="submit">{submitText || "Submit"}</Button>
+          {onSubmit && <Button variant="contained" color="primary" type="submit">{submitText || "Submit"}</Button>}
           {onCancel && <Button variant="outlined" onClick={this.closeForm}>{cancelText || "Cancel"}</Button>}
         </DialogActions>
       </>

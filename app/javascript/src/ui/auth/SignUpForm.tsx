@@ -118,7 +118,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
     
     if (!form.isValid()) return;
 
-    await this.props.submitSignUp({
+    this.props.submitSignUp({
       ...validSignUp,
       discount: !!validSignUp.discount 
     });

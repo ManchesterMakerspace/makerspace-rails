@@ -23,7 +23,7 @@ export namespace Url {
   export const Auth = {
     SignIn: `${Members}/sign_in`,
     SignOut: `${Members}/sign_out`,
-    PasswordReset: `${Members}/password`,
+    Password: `${Members}/password`,
     SignUp: `${Members}`
   }
 
@@ -51,6 +51,8 @@ export namespace Routing {
   }
 
   export const Root = "/";
+  export const Login = "/login";
+  export const SignUp = "/signUp";
   export const Members = "/members";
   export const Profile = `${Members}/${PathPlaceholder.MemberId}`;
 
@@ -58,6 +60,7 @@ export namespace Routing {
   export const Subscriptions = "/subscriptions";
   export const Rentals = "/rentals";
   export const Checkout = "/checkout";
+  export const PasswordReset = "/passwordReset";
 }
 
 export enum ApiErrorStatus {

@@ -34,3 +34,16 @@ export const postSignUp = async (signUpForm: MemberSignUpForm) => {
     throw error;
   }
 }
+
+export const requestNewPassword = async (email: string) => {
+  try {
+    return await axios.post(buildJsonUrl(Url.Auth.Password), {
+      member: {
+        email
+      }
+    });
+  } catch (e) {
+    const error = handleApiError(e);
+    throw error;
+  }
+}
