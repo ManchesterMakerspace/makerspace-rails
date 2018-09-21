@@ -7,6 +7,9 @@ export enum Action {
 
   PostCheckoutSuccess = "CHECKOUT/POST_CHECKOUT_SUCCESS",
   PostCheckoutFailure = "CHECKOUT/POST_CHECKOUT_FAILURE",
+
+  StageInvoicesForPayment = "CHECKOUT/STAGE_INVOICES_PAYMENT",
+  ResetStagedInvoices = "CHECKOUT/RESET_STAGED_INVOICES",
 }
 
 const formPrefix = "checkout-form";

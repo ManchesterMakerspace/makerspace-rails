@@ -195,7 +195,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
     const { emailExists, redirect } = this.state;
 
     if (!error && redirect) {
-      return <Redirect to={redirect}/>
+      return <Redirect to={`${redirect}/welcome`}/>
     }
 
     return (

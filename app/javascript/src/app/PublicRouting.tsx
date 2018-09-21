@@ -5,11 +5,13 @@ import { Routing } from "app/constants";
 import LandingPage from 'ui/auth/LandingPage';
 import CheckoutContainer from 'ui/checkout/CheckoutContainer';
 import { AuthDisplayOption } from 'ui/auth/constants';
+import PasswordReset from 'ui/auth/PasswordReset';
 
 const PublicRouting: React.SFC<{}> = () => {
   // Redirect to root if not authed and somewhere else
   return (
     <Switch >
+      <Route exact path={`${Routing.PasswordReset}/:token`} component={PasswordReset} />
       <Route exact path={Routing.Checkout} component={CheckoutContainer} />
       <Route exact path={Routing.Login} 
         render={(props) => <LandingPage {...props} defaultView={AuthDisplayOption.Login} />} />

@@ -31,3 +31,7 @@ export const putMember = async (id: string, details: Partial<MemberDetails>) => 
     throw error;
   }
 }
+
+export const uploadMemberSignature = async () => {
+  console.log("Save that signature. No route currently");
+}

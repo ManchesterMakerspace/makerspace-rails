@@ -4,6 +4,8 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 
 import { MemberDetails } from "app/entities/member";
 
+import { uploadMemberSignature } from "api/members/transactions";
+
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { timeToDate } from "ui/utils/timeToDate";
 import LoadingOverlay from "ui/common/LoadingOverlay";
@@ -11,8 +13,10 @@ import KeyValueItem from "ui/common/KeyValueItem";
 import DetailView from "ui/common/DetailView";
 import { readMemberAction } from "ui/member/actions";
 import RenewalForm from "ui/common/RenewalForm";
+import Form from "ui/common/Form";
 import MemberForm from "ui/member/MemberForm";
 import MemberStatusLabel from "ui/member/MemberStatusLabel";
+import WelcomeModal from "ui/member/WelcomeModal";
 import UpdateMemberContainer, { UpdateMemberRenderProps } from "ui/member/UpdateMemberContainer";
 import { memberToRenewal } from "ui/member/utils";
 import { membershipRenewalOptions } from "ui/members/constants";
@@ -36,18 +40,30 @@ interface State {
   isEditOpen: boolean;
   isRenewOpen: boolean;
   isCardOpen: boolean;
+  isWelcomeOpen: boolean;
+  isInvoiceNotificationOpen: boolean;
+  submittingSignature: boolean;
+  submitSignatureError: string;
 }
 const defaultState = {
   isEditOpen: false,
   isRenewOpen: false,
   isCardOpen: false,
+  isWelcomeOpen: false,
+  isInvoiceNotificationOpen: false,
+  submittingSignature: false,
+  submitSignatureError: ""
 }
 
 class MemberDetail extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = defaultState;
+    console.log(props)
+    this.state = {
+      ...defaultState,
+      isWelcomeOpen: props.match.params.resource === "welcome"
+    };
   }
 
   public componentDidMount() {
@@ -69,6 +85,7 @@ class MemberDetail extends React.Component<Props, State> {
   private closeEditModal = () => this.setState({ isEditOpen: false });
   private openCardModal = () => this.setState({ isCardOpen: true });
   private closeCardModal = () => this.setState({ isCardOpen: false });
+  private closeWelcomeModal = () => this.setState({ isWelcomeOpen: false });
 
   private renderMemberInfo = (): JSX.Element => {
     const { member } = this.props;
@@ -92,6 +109,7 @@ class MemberDetail extends React.Component<Props, State> {
     const { member, isUpdatingMember, isRequestingMember, match, admin } = this.props;
     const { memberId } = match.params;
     const loading = isUpdatingMember || isRequestingMember;
+    const { isWelcomeOpen } = this.state;
 
     return (
       <>
@@ -122,7 +140,7 @@ class MemberDetail extends React.Component<Props, State> {
             }
           ]}
           information={this.renderMemberInfo()}
-          resources={[
+          resources={!isWelcomeOpen && [
             {
               name: "invoices",
               content: (
@@ -134,9 +152,46 @@ class MemberDetail extends React.Component<Props, State> {
           ]}
         />
         {this.renderMemberForms()}
+        {this.renderNotifications()}
       </>
     )
   }
+
+  private renderNotifications = () => {
+    const { isWelcomeOpen, submittingSignature, submitSignatureError } = this.state;
+
+    return (
+      <WelcomeModal
+        isOpen={isWelcomeOpen}
+        isRequesting={submittingSignature}
+        error={submitSignatureError}
+        onSubmit={this.saveSignature}
+      />
+    );
+  }
+
+  private saveSignature = (form: Form) => {
+    const { submitSignatureError, submittingSignature } = this.state;
+
+    // Allow member to continue past modal if error submitting signature
+    // Backend will send a slack notifiation if it errors so we can contact them directly
+    if (!submittingSignature && submitSignatureError) {
+      this.closeWelcomeModal();
+    }
+
+    // Don't request if already in progress
+    if (!submittingSignature) {
+      this.setState({ submittingSignature: true }, async () => {
+        try {
+          const response = await uploadMemberSignature();
+          this.setState({ submittingSignature: false });
+        } catch (e) {
+          const { errorMessage } = e;
+          this.setState({ submittingSignature: false, submitSignatureError: errorMessage });
+        }
+      })
+    }
+  } 
 
   private renderMemberForms = () => {
     const { member, admin } = this.props;
@@ -204,7 +259,7 @@ class MemberDetail extends React.Component<Props, State> {
 
   public render(): JSX.Element {
     const { member, isRequestingMember, match } = this.props;
-    const { memberId } = match.params
+    const { memberId } = match.params;
     return (
       <>
         {isRequestingMember && <LoadingOverlay id={memberId}/>}

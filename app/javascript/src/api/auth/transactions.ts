@@ -47,3 +47,17 @@ export const requestNewPassword = async (email: string) => {
     throw error;
   }
 }
+
+export const putPassword = async (token: string, password: string) => {
+  try {
+    return await axios.put(buildJsonUrl(Url.Auth.Password), {
+      member: {
+        passwordResetToken: token,
+        password
+      }
+    });
+  } catch (e) {
+    const error = handleApiError(e);
+    throw error;
+  }
+}

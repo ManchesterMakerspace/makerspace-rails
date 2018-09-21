@@ -18,6 +18,7 @@ import UpdateInvoiceContainer, { UpdateInvoiceRenderProps } from "ui/invoice/Upd
 import { MemberRole, MemberDetails } from "app/entities/member";
 import ButtonRow from "ui/common/ButtonRow";
 import { CrudOperation } from "app/constants";
+import PaymentRequiredModal from "ui/invoices/PaymentRequiredModal";
 
 interface OwnProps {
   member?: MemberDetails;
@@ -47,6 +48,7 @@ interface State {
   openCreateForm: boolean;
   openSettleForm: boolean;
   openDeleteConfirm: boolean;
+  openPaymentNotification: boolean;
 }
 
 
@@ -103,6 +105,7 @@ class InvoicesList extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
+    const { invoices } = props;
     this.state = {
       selectedId: undefined,
       pageNum: 0,
@@ -113,33 +116,19 @@ class InvoicesList extends React.Component<Props, State> {
       openCreateForm: false,
       openSettleForm: false,
       openDeleteConfirm: false,
+      openPaymentNotification: props.member && Array.isArray(invoices) && invoices.length > 0,
     };
   }
 
-  private openCreateForm = () => {
-    this.setState({ openCreateForm: true });
-  }
-  private closeCreateForm = () => {
-    this.setState({ openCreateForm: false });
-  }
-  private openUpdateForm = () => {
-    this.setState({ openUpdateForm: true });
-  }
-  private closeUpdateForm = () => {
-    this.setState({ openUpdateForm: false });
-  }
-  private openSettleInvoice = () => {
-    this.setState({ openSettleForm: true });
-  }
-  private closeSettleInvoice = () => {
-    this.setState({ openSettleForm: false });
-  }
-  private openDeleteInvoice = () => {
-    this.setState({ openDeleteConfirm: true });
-  }
-  private closeDeleteInvoice = () => {
-    this.setState({ openDeleteConfirm: false });
-  }
+  private openCreateForm = () => { this.setState({ openCreateForm: true });}
+  private closeCreateForm = () => { this.setState({ openCreateForm: false });}
+  private openUpdateForm = () => { this.setState({ openUpdateForm: true });}
+  private closeUpdateForm = () => { this.setState({ openUpdateForm: false });}
+  private openSettleInvoice = () => { this.setState({ openSettleForm: true });}
+  private closeSettleInvoice = () => { this.setState({ openSettleForm: false });}
+  private openDeleteInvoice = () => { this.setState({ openDeleteConfirm: true });}
+  private closeDeleteInvoice = () => { this.setState({ openDeleteConfirm: false });}
+  private closePaymentNotification = () => { this.setState({ openPaymentNotification: false });}
 
   private getActionButtons = () => {
     const { selectedId } = this.state;
@@ -210,11 +199,7 @@ class InvoicesList extends React.Component<Props, State> {
 
   // Only select one at a time
   private onSelect = (id: string, selected: boolean) => {
-    if (selected) {
-      this.setState({ selectedId: id });
-    } else {
-      this.setState({ selectedId: undefined });
-    }
+      this.setState({ selectedId: selected ? id : undefined });
   }
 
   private renderInvoiceForms = () => {
@@ -312,6 +297,21 @@ class InvoicesList extends React.Component<Props, State> {
     );
   }
 
+  private renderPaymentNotifiation = () => {
+    const { loading, error, invoices } = this.props;
+    const { openPaymentNotification } = this.state;
+
+    return (
+      <PaymentRequiredModal
+        isOpen={openPaymentNotification}
+        onClose={this.closePaymentNotification}
+        isRequesting={loading}
+        error={error}
+        invoices={invoices}
+      />
+    )
+  }
+
   public render(): JSX.Element {
     const {
       invoices,
@@ -349,6 +349,7 @@ class InvoicesList extends React.Component<Props, State> {
           onSelect={admin && this.onSelect}
         />
         {this.renderInvoiceForms()}
+        {this.renderPaymentNotifiation()}
       </>
     );
   }

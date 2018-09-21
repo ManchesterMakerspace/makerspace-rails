@@ -1,6 +1,10 @@
 import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
+
 import { getClientToken, postCheckout } from "api/checkout/transactions";
+
+import { CollectionOf } from "app/interfaces";
+import { Invoice } from "app/entities/invoice";
 
 import { Action as CheckoutAction } from "ui/checkout/constants";
 import { CheckoutState } from "ui/checkout/interfaces";
@@ -42,6 +46,7 @@ export const submitPaymentAction = (
 };
 
 const defaultState: CheckoutState = {
+  invoices: {},
   clientToken: undefined,
   isRequesting: false,
   error: ""
@@ -68,6 +73,17 @@ export const checkoutReducer = (state: CheckoutState = defaultState, action: Any
         ...state,
         isRequesting: false,
         error: action.error
+      }
+    case CheckoutAction.StageInvoicesForPayment:
+      const invoices = action.data;
+      return {
+        ...state,
+        invoices
+      }
+    case CheckoutAction.ResetStagedInvoices:
+      return {
+        ...state,
+        invoices: defaultState.invoices
       }
     default:
       return state;

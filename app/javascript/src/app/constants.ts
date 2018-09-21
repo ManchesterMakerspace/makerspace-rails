@@ -60,7 +60,7 @@ export namespace Routing {
   export const Subscriptions = "/subscriptions";
   export const Rentals = "/rentals";
   export const Checkout = "/checkout";
-  export const PasswordReset = "/passwordReset";
+  export const PasswordReset = "/resetPassword";
 }
 
 export enum ApiErrorStatus {
