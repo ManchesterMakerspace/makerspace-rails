@@ -95,39 +95,4 @@ class PasswordReset extends React.Component<Props, State> {
   }
 }
 
-// const mapStateToProps = (
-//   state: ReduxState,
-//   _ownProps: OwnProps
-// ): StateProps => {
-//   const { isRequesting, error: requestingError } = state.member.read;
-//   const { isRequesting: isUpdating } = state.member.update
-//   const { entity: member } = state.member;
-//   const { currentUser } = state.auth;
-//   const admin = currentUser && !!currentUser.id;
-
-//   return {
-//     admin,
-//     member,
-//     requestingError,
-//     isRequestingMember: isRequesting,
-//     isUpdatingMember: isUpdating
-//   }
-// }
-
-// const mapDispatchToProps = (
-//   dispatch: ScopedThunkDispatch,
-//   ownProps: OwnProps
-// ): DispatchProps => {
-//   return {
-//     resetStagedInvoices: () => dispatch({
-//       type: CheckoutAction.ResetStagedInvoices
-//     }),
-//     stageInvoices: (invoices) => dispatch({
-//       type: CheckoutAction.StageInvoicesForPayment,
-//       data: invoices
-//     })
-//   }
-// };
-
-// export default connect(mapStateToProps)(PasswordReset);
 export default PasswordReset;
