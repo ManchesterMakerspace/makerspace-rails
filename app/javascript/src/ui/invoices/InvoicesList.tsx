@@ -333,7 +333,7 @@ class InvoicesList extends React.Component<Props, State> {
         {this.getActionButtons()}
         <TableContainer
           id="invoices-table"
-          title="Invoices"
+          title="Dues"
           loading={loading}
           data={Object.values(invoices)}
           error={error}

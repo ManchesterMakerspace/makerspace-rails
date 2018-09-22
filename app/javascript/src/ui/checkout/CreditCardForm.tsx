@@ -43,13 +43,8 @@ class CreditCardForm extends React.Component<Props, State> {
     }
   }
 
-  public componentDidUpdate(prevProps: Props) {
-    const { braintreeInstance } = this.props;
-    const { braintreeInstance: oldInstance } = prevProps;
-
-    if (!oldInstance && braintreeInstance) {
-      this.initHostedFields();
-    }
+  public componentDidMount() {
+    this.initHostedFields();
   }
 
   private initHostedFields = async () => {

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import { Grid } from '@material-ui/core';
 
 //@ts-ignore
 import * as Braintree from "braintree-web";
@@ -42,14 +43,8 @@ class PaypalButton extends React.Component<Props, State> {
     }
   }
 
-  public componentDidUpdate(prevProps: Props) {
-    const { braintreeInstance } = this.props;
-    const { braintreeInstance: oldInstance } = prevProps;
-
-    // When client initialized
-    if (!oldInstance && braintreeInstance) {
-      this.initPaypal();
-    }
+  public componentDidMount() {
+    this.initPaypal();
   }
 
   private initPaypal = async () => {
@@ -97,11 +92,13 @@ class PaypalButton extends React.Component<Props, State> {
     const { braintreeError, paypalInstance  } = this.state;
     const { isRequesting } = this.props;
     return (
-      <>
-        {!paypalInstance &&  <LoadingOverlay id="paypal-button-loading"/>}
-        <button id="paypal-button"/>
-        {!isRequesting && braintreeError && braintreeError.message && <ErrorMessage error={braintreeError.message} />}
-      </>
+      <Grid container spacing={16} style={{position: "relative", overflow: "hidden"}}>
+        <Grid item xs={12} style={{textAlign: "center"}}>
+          {!paypalInstance &&  <LoadingOverlay id="paypal-button-loading"/>}
+          <button id="paypal-button" style={{background: "none", border: "none"}}/>
+          {!isRequesting && braintreeError && braintreeError.message && <ErrorMessage error={braintreeError.message} />}
+        </Grid>
+      </Grid>
     )
   }
 }

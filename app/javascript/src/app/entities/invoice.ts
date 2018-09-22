@@ -53,6 +53,12 @@ export enum Properties {
   ResourceId = "resourceId",
 }
 
+export enum PaymentMethod {
+  PayPal = "paypal",
+  Cash = "cash",
+  CreditCard = "cc",
+}
+
 export interface InvoiceQueryParams extends QueryParams {
   [Properties.ResourceId]: string;
 }
