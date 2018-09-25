@@ -209,7 +209,7 @@ class Form extends React.Component<FormModalProps, State> {
     return (
       <React.Fragment key={id}>
         {this.cloneFormInput(input)}
-        <ErrorMessage error={isDirty && isTouched && error}/>
+        <ErrorMessage id={`${id}-error`} error={isDirty && isTouched && error}/>
       </React.Fragment>
     );
   }

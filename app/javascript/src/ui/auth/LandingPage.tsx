@@ -61,7 +61,7 @@ class LandingPage extends React.Component<Props, State> {
       <Grid container spacing={24}>
         <Hidden smDown>
           <Grid item container md={6} justify="center" alignItems="center">
-            <Typography variant="display1" color="primary" gutterBottom>
+            <Typography id="landing-page-graphic" variant="display1" color="primary" gutterBottom>
               Manchester Makerspace
             </Typography>
           </Grid>

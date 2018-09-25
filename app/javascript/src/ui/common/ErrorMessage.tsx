@@ -3,12 +3,13 @@ import { Typography } from "@material-ui/core";
 
 interface ErrorProps {
   error: string;
+  id?: string;
 }
 
 const ErrorMessage: React.SFC<ErrorProps> = (props) => {
-  const { error } = props;
+  const { error, id } = props;
   return (
-    <Typography color="error">{error}</Typography>
+    <Typography id={id} color="error">{error}</Typography>
   )
 }
 

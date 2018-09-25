@@ -37,13 +37,44 @@
     "typescript": "^3.0.1"
   },
   "devDependencies": {
+    "@types/jest": "^23.3.2",
     "cheerio": "latest",
+    "chromedriver": "^2.42.0",
     "dotenv": "^4.0.0",
+    "jest": "^23.6.0",
     "phantom": "^4.0.12",
     "protractor": "^5.3.0",
     "protractor-jasmine2-screenshot-reporter": "^0.4.0",
     "react-hot-loader": "^4.3.4",
     "redux-mock-store": "^1.5.3",
+    "ts-jest": "^23.10.1",
     "webpack-dev-server": "2.11.2"
+  },
+  "scripts": {
+    "test": "$(npm bin)/jest --no-cache",
+    "test-watch": "yarn test --watch",
+    "test-functional": "yarn test --testRegex='/tests/functional/.*\\.spec\\.(j|t)sx?$'"
+  },
+  "jest": {
+    "collectCoverage": false,
+    "collectCoverageFrom": [
+      "app/javascript/src/**/*.{ts,tsx}"
+    ],
+    "coverageReporters": [
+      "text",
+      "html"
+    ],
+    "transform": {
+      "^.+\\.(j|t)sx?$": "ts-jest"
+    },
+    "testRegex": "/tests/unit/.*\\.spec\\.(j|t)sx?$",
+    "moduleNameMapper": {
+      "^(api|app|ui|)[/](.*)$": "<rootDir>/app/javascript/src/$1/$2"
+    },
+    "moduleFileExtensions": [
+      "js",
+      "ts",
+      "tsx"
+    ]
   }
 }
