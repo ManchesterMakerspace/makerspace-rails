@@ -10,5 +10,5 @@ export const memberToRenewal = (member: MemberDetails): RenewalEntity => {
 }
 
 export const memberIsAdmin = (member: Partial<MemberDetails>): boolean => {
-  return member && member.role.includes(MemberRole.Admin);
+  return member && member.role &&  member.role.includes(MemberRole.Admin);
 }

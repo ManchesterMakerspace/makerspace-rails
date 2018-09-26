@@ -11,7 +11,7 @@ import { ApiErrorMessageMap } from "app/constants";
 import { ApiErrorResponse } from "app/interfaces";
 
 export const buildJsonUrl = (pathFragments: string | string[], includeBase: boolean = true) => {
-  let path: string = includeBase ? `${process.env.DOMAIN}/` : "";
+  let path: string = includeBase ? `${process.env.API_DOMAIN}/` : "";
   if (Array.isArray(pathFragments)) {
     path += pathFragments.join("/");
   } else {

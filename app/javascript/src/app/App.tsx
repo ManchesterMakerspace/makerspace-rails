@@ -10,7 +10,7 @@ import PrivateRouting from 'app/PrivateRouting';
 import PublicRouting from 'app/PublicRouting';
 
 interface StateProps {
-  auth: boolean;
+  auth: string;
   isRequesting: boolean;
 }
 interface DispatchProps {
@@ -20,6 +20,7 @@ interface OwnProps extends RouteComponentProps<any> {}
 
 interface State {
   attemptingLogin: boolean;
+  redirect: boolean;
 }
 
 interface Props extends StateProps, DispatchProps, OwnProps { }
@@ -29,7 +30,8 @@ class App extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      attemptingLogin: true
+      attemptingLogin: true,
+      redirect: true,
     }
   }
 
@@ -44,7 +46,7 @@ class App extends React.Component<Props, State> {
 
     const { attemptingLogin } = this.state;
     if (wasRequesting && !isRequesting && attemptingLogin) {
-      this.setState({ attemptingLogin: false });
+      this.setState({ attemptingLogin: false, redirect: !!this.props.auth });
     }
   }
 
@@ -54,7 +56,7 @@ class App extends React.Component<Props, State> {
     if (attemptingLogin) {
       return <LoadingOverlay id="body"/>;
     } else {
-      return auth ? <PrivateRouting /> : <PublicRouting/>;
+      return auth ? <PrivateRouting auth={auth} /> : <PublicRouting/>;
     }
   }
   public render(): JSX.Element {
@@ -73,7 +75,7 @@ const mapStateToProps = (state: ReduxState, _ownProps: OwnProps): StateProps => 
   } = state;
 
   return {
-    auth: currentUser && !!currentUser.email,
+    auth: currentUser.id,
     isRequesting
   }
 }

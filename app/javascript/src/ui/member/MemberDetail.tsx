@@ -33,7 +33,9 @@ interface StateProps {
   isUpdatingMember: boolean;
   member: MemberDetails
 }
-interface OwnProps extends RouteComponentProps<any> {}
+interface OwnProps extends RouteComponentProps<any> {
+  memberId?: string;
+}
 interface Props extends OwnProps, DispatchProps, StateProps {}
 
 interface State {
@@ -59,7 +61,6 @@ class MemberDetail extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    console.log(props)
     this.state = {
       ...defaultState,
       isWelcomeOpen: props.match.params.resource === "welcome"
@@ -292,7 +293,7 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch,
   ownProps: OwnProps,
 ): DispatchProps => {
-  const memberId = ownProps.match.params.memberId;
+  const memberId = ownProps.match.params.memberId || ownProps.memberId;
   return {
     getMember: () => dispatch(readMemberAction(memberId)),
   }

@@ -13,6 +13,7 @@ rerun.txt
 pickle-email-*.html
 dump/*.archive
 dump/*.png
+*.log
 
 config.json
 old-config.json

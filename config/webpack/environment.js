@@ -1,10 +1,10 @@
 const { environment } = require('@rails/webpacker')
 const typescript =  require('./loaders/typescript')
 const webpack = require('webpack')
+const dotenv = require('dotenv')
 
-environment.plugins.prepend('Environment', new webpack.DefinePlugin({
-  'process.env.DOMAIN': JSON.stringify("http://localhost:3002")
-}));
+dotenv.config({ path: `./${process.env.NODE_ENV}.env`, silent: true })
+environment.plugins.prepend('Environment', new webpack.EnvironmentPlugin(JSON.parse(JSON.stringify(process.env))))
 
 environment.loaders.append('typescript', typescript)
 module.exports = environment
