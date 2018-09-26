@@ -1,7 +1,3 @@
-const { Builder, By, Key, until } = require('selenium-webdriver')
-require('selenium-webdriver/chrome')
-require('selenium-webdriver/firefox')
-require('chromedriver')
 const mockServerClient = require('mockserver-client').mockServerClient;
 
 const rootURL = 'http://www.localhost:3002/'
@@ -10,31 +6,20 @@ let driver;
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000 * 60 * 5
 
 async function getElementById(id) {
-  const el = await driver.wait(until.elementLocated(By.id(id)), waitUntilTime)
-  return await driver.wait(until.elementIsVisible(el), waitUntilTime)
+  const el = await browser.wait(until.elementLocated(by.id(id)), waitUntilTime)
+  return await browser.wait(until.elementIsVisible(el), waitUntilTime)
 }
 
 async function getElementByCss(css) {
-  const el = await driver.wait(until.elementLocated(By.css(css)), waitUntilTime)
-  return await driver.wait(until.elementIsVisible(el), waitUntilTime)
+  const el = await browser.wait(until.elementLocated(by.css(css)), waitUntilTime)
+  return await browser.wait(until.elementIsVisible(el), waitUntilTime)
 }
 
-beforeAll(() => {
-  return new Builder().forBrowser('chrome').build().then((d) => {
-    driver = d 
-  });
-})
-afterAll(() => {
-  driver && driver.quit && driver.quit()
-})
-
 it('initialises the context', async () => {
-  await driver.manage().window().setPosition(0, 0)
-  await driver.manage().window().setSize(1280, 1024)
-  await driver.get(rootURL)
+  await browser.get(rootURL)
 })
 
-xit('should load the landing page', async () => {
+it('should load the landing page', async () => {
   const el = await getElementByCss('[id="landing-page-graphic"]');
   expect(await el.getText()).toEqual("Manchester Makerspace");
 })
@@ -46,7 +31,6 @@ describe("API Mocking", () => {
   });
 
   it("Mocks sign in request", async () => {
-    
     await mockserver.mockAnyResponse({
         "httpRequest": {
           "method": "POST",
@@ -81,8 +65,10 @@ describe("API Mocking", () => {
         })
       }
     })
-    await driver.get(rootURL);
+    await browser.get(rootURL);
     const el = await getElementByCss('[id="landing-page-graphic"]');
-    await driver.wait(() => false)
+    browser.wait(() => {
+      return el.isDisplayed().then((d) => !d);
+    });
   });
 })
