@@ -3,7 +3,7 @@ class RentalsController < ApplicationController
     before_action :set_rental, only: [:show]
 
   def index
-    @rentals = Rental.all
+    @rentals = Rental.where(member_id: current_member.id)
     return render_with_total_items(query_resource(@rentals))
   end
 

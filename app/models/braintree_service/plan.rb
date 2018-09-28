@@ -23,21 +23,24 @@ class BraintreeService::Plan < Braintree::Plan
   end
 
   def self.get_plan_by_id(gateway, id)
+    return if id.nil?
     plans = self.get_plans(gateway)
-    plans.select { |plan| plan.id == id } unless plans.nil?
+    plans.find { |plan| plan.id == id } unless plans.nil?
   end
 
   def amount
     self.price.truncate.to_s + '.' + sprintf('%02d', (self.price.frac * 100).truncate)
   end
 
-  def build_invoice
+  def build_invoice(member_id=nil, due_date=nil)
     invoice_args = {
       subscription_id: self.id,
       amount: self.amount,
       description: self.description,
       discounts: self.discounts,
-      operation_string: self.build_operation_string
+      operation_string: self.build_operation_string,
+      due_date: due_date,
+      member_id: member_id
     }
     Invoice.new(invoice_args)
   end

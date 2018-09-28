@@ -33,6 +33,7 @@ export namespace Url {
     AccessCard: `${baseAdminPath}/cards/${PathPlaceholder.CardId}`,
     Invoices: `${baseAdminPath}/invoices`,
     Invoice: `${baseAdminPath}/invoices/${PathPlaceholder.InvoiceId}`,
+    Rentals: `${baseAdminPath}/rentals`,
   }
 
   export const Billing = {
@@ -52,7 +53,7 @@ export namespace Routing {
 
   export const Root = "/";
   export const Login = "/login";
-  export const SignUp = "/signUp";
+  export const SignUp = "/signup";
   export const Members = "/members";
   export const Profile = `${Members}/${PathPlaceholder.MemberId}`;
 

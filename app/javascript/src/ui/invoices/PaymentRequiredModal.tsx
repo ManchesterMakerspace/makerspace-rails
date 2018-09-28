@@ -4,7 +4,7 @@ import { Redirect } from "react-router";
 
 import pick from "lodash-es/pick";
 
-import { Invoice, Properties } from "app/entities/invoice";
+import { Invoice } from "app/entities/invoice";
 import { MemberDetails } from "app/entities/member";
 import { CollectionOf } from "app/interfaces";
 import { Routing } from "app/constants";

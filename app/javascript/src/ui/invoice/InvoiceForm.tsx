@@ -1,13 +1,11 @@
 import * as React from "react";
-import { TextField, Typography, Grid, Select, InputLabel } from "@material-ui/core";
+import { TextField } from "@material-ui/core";
 
-import { Invoice, InvoiceableResource } from "app/entities/invoice";
+import { Invoice } from "app/entities/invoice";
 import FormModal from "ui/common/FormModal";
-import FieldList from "ui/common/FieldList";
 import Form from "ui/common/Form";
 import { fields } from "ui/invoice/constants";
-import { isEmpty, kebabCase } from "lodash-es";
-import { membershipRenewalOptions } from "ui/members/constants";
+import { isEmpty } from "lodash-es";
 
 interface OwnProps {
   invoice?: Partial<Invoice>;

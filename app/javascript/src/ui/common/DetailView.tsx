@@ -48,10 +48,11 @@ class DetailView extends React.Component<OwnProps, State> {
     }
   }
 
-  private setActiveResourceFromProps = () => {
+  private setActiveResourceFromProps = (newActiveName?: string) => {
     const { activeResourceName, resources } = this.props;
+    const resourceLookupName = newActiveName || activeResourceName;
     if (this.resourcesExist()) {
-      const activeResource = activeResourceName && resources.find(resource => resource.name === activeResourceName) || resources[0];
+      const activeResource = resourceLookupName && resources.find(resource => resource.name === resourceLookupName) || resources[0];
       this.setState({ activeResource });
     }
   }
@@ -76,8 +77,8 @@ class DetailView extends React.Component<OwnProps, State> {
     )
   }
 
-  private changeResource = (event: React.ChangeEvent) => {
-    console.log(event);
+  private changeResource = (_event: React.ChangeEvent, value: string) => {
+    this.setActiveResourceFromProps(value);
   }
 
   private renderResources = (): JSX.Element => {

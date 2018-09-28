@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Button, Grid } from "@material-ui/core";
 import * as moment from "moment";
 
-import { Rental } from "app/entities/rental";
+import { Rental, Properties } from "app/entities/rental";
 import { QueryParams } from "app/interfaces";
 import { MemberDetails } from "app/entities/member";
 
@@ -18,15 +18,17 @@ import StatusLabel from "ui/common/StatusLabel";
 
 interface OwnProps {
   member?: MemberDetails;
+  fields?: Column<Rental>[];
 }
 interface DispatchProps {
-  getRentals: (queryParams?: QueryParams) => void;
+  getRentals: (admin: boolean, queryParams?: QueryParams) => void;
 }
 interface StateProps {
   rentals: Rental[];
   totalItems: number;
   loading: boolean;
   error: string;
+  admin: boolean;
 }
 interface Props extends OwnProps, DispatchProps, StateProps { }
 interface State {
@@ -102,7 +104,8 @@ class RentalsList extends React.Component<Props, State> {
   }
 
   private getRentals = () => {
-    this.props.getRentals(this.getQueryParams());
+    const { admin } = this.props;
+    this.props.getRentals(admin, this.getQueryParams());
   }
   private rowId = (row: Rental) => row.id;
 
@@ -124,15 +127,19 @@ class RentalsList extends React.Component<Props, State> {
   }
 
   public render(): JSX.Element {
-    const { rentals: data, totalItems, loading, error } = this.props;
+    const { rentals: data, totalItems, loading, error, admin } = this.props;
 
     const { selectedIds, pageNum, order, orderBy } = this.state;
 
     return (
       <>
-        <Grid style={{ paddingTop: 20 }}>
-          {this.getActionButton()}
-        </Grid>
+        {
+          admin && (
+            <Grid style={{ paddingTop: 20 }}>
+              {this.getActionButton()}
+            </Grid>
+          )
+        }
         <TableContainer
           id="rentals-table"
           title="Rentals"
@@ -166,19 +173,29 @@ const mapStateToProps = (
       error
     }
   } = state.rentals;
+
+  const { currentUser: { isAdmin: admin } } = state.auth;
   return {
     rentals: Object.values(rentals),
     totalItems,
     loading,
-    error
+    error,
+    admin,
   }
 }
 
 const mapDispatchToProps = (
-  dispatch: ScopedThunkDispatch
+  dispatch: ScopedThunkDispatch,
+  ownProps: OwnProps
 ): DispatchProps => {
+  const { member } = ownProps;
   return {
-    getRentals: (queryParams) => dispatch(readRentalsAction(queryParams))
+    getRentals: (admin, queryParams) => dispatch(
+      readRentalsAction(admin, {
+        ...queryParams,
+      ...member && { [Properties.MemberId]: member.id},
+      })
+    )
   }
 }
 

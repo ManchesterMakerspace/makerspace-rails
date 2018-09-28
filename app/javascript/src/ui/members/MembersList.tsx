@@ -26,6 +26,7 @@ interface DispatchProps {
   updateMember: (id: string, details: Partial<MemberDetails>) => void;
 }
 interface StateProps {
+  admin: boolean;
   members: CollectionOf<MemberDetails>;
   totalItems: number;
   loading: boolean;
@@ -191,6 +192,7 @@ class MembersList extends React.Component<Props, State> {
       error,
       isUpdating,
       updateError,
+      admin,
     } = this.props;
 
     const {
@@ -204,9 +206,11 @@ class MembersList extends React.Component<Props, State> {
 
     return (
       <>
-        <Grid style={{paddingTop: 20}}>
-          {this.getActionButtons()}
-        </Grid>
+        {admin && (
+          <Grid style={{paddingTop: 20}}>
+            {this.getActionButtons()}
+          </Grid>
+        )}
         <TableContainer
           id="members-table"
           title="Members"
@@ -223,7 +227,7 @@ class MembersList extends React.Component<Props, State> {
           onSort={this.onSort}
           rowId={this.rowId}
           onPageChange={this.onPageChange}
-          onSelect={this.onSelect}
+          onSelect={admin && this.onSelect}
         />
         <RenewalForm
           ref={this.setFormRef}
@@ -259,6 +263,7 @@ const mapStateToProps = (
       error: updateError
     }
   } = state.member;
+  const { currentUser: { isAdmin: admin } } = state.auth;
 
   return {
     members,
@@ -266,7 +271,8 @@ const mapStateToProps = (
     loading,
     error,
     isUpdating,
-    updateError
+    updateError,
+    admin
   }
 }
 

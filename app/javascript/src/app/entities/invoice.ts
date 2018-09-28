@@ -12,6 +12,7 @@ interface BaseInvoice {
   settled?: boolean;
   pastDue?: boolean;
   resourceId: string;
+  memberId: string;
 }
 
 export interface ApiInvoice extends BaseInvoice {

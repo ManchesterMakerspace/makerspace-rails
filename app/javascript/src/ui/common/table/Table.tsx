@@ -12,6 +12,7 @@ import {
 } from '@material-ui/core';
 import { SortDirection } from 'ui/common/table/constants';
 import ErrorMessage from "ui/common/ErrorMessage";
+import LoadingOverlay from "ui/common/LoadingOverlay";
 
 export interface Column<T> {
   id: string;
@@ -31,6 +32,7 @@ interface Props<T> {
   order: SortDirection;
   orderBy: string;
   error: string;
+  loading: boolean;
   onSelectAll: () => void;
   onSelect: (id: string, direction: boolean) => void;
   rowId: (row: T) => string;
@@ -205,17 +207,18 @@ class EnhancedTable<T> extends React.Component<Props<T>, {}> {
   }
 
   public render() {
-    const { error } = this.props;
+    const { error, loading, id } = this.props;
 
     return (
       <>
+        {loading &&  <LoadingOverlay id={id}/>}
         <Table>
           {this.getHeaderRow()}
           <TableBody>
             {
-              error ?
+              !loading && (error ?
                 this.getErrorRow()
-              : this.getBodyRows()
+                : this.getBodyRows())
             }
           </TableBody>
         </Table>

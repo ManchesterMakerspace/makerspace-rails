@@ -1,15 +1,18 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps, withRouter } from 'react-router-dom';
+import * as moment from "moment";
 
 import { MemberDetails } from "app/entities/member";
 
 import { uploadMemberSignature } from "api/members/transactions";
-
+import { Invoice } from "app/entities/invoice";
+import { Column } from "ui/common/table/Table";
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { timeToDate } from "ui/utils/timeToDate";
 import LoadingOverlay from "ui/common/LoadingOverlay";
 import KeyValueItem from "ui/common/KeyValueItem";
+import { SortDirection } from "ui/common/table/constants";
 import DetailView from "ui/common/DetailView";
 import { readMemberAction } from "ui/member/actions";
 import RenewalForm from "ui/common/RenewalForm";
@@ -22,6 +25,10 @@ import { memberToRenewal } from "ui/member/utils";
 import { membershipRenewalOptions } from "ui/members/constants";
 import AccessCardForm from "ui/accessCards/AccessCardForm";
 import InvoicesList from "ui/invoices/InvoicesList";
+import RentalsList from "ui/rentals/RentalsList";
+import { Rental } from "app/entities/rental";
+import { Status } from "ui/constants";
+import StatusLabel from "ui/common/StatusLabel";
 
 interface DispatchProps {
   getMember: () => Promise<void>;
@@ -31,10 +38,10 @@ interface StateProps {
   requestingError: string;
   isRequestingMember: boolean;
   isUpdatingMember: boolean;
-  member: MemberDetails
+  member: MemberDetails,
+  currentUserId: string;
 }
 interface OwnProps extends RouteComponentProps<any> {
-  memberId?: string;
 }
 interface Props extends OwnProps, DispatchProps, StateProps {}
 
@@ -58,6 +65,62 @@ const defaultState = {
 }
 
 class MemberDetail extends React.Component<Props, State> {
+  private invoiceFields: Column<Invoice>[] = [
+    {
+      id: "dueDate",
+      label: "Due Date",
+      cell: (row: Invoice) => {
+        const textColor = row.pastDue ? "red" : "black"
+        return (
+          <span style={{ color: textColor }}>
+            {timeToDate(row.dueDate)}
+          </span>
+        )
+      },
+      defaultSortDirection: SortDirection.Desc
+    },
+    {
+      id: "amount",
+      label: "Amount",
+      cell: (row: Invoice) => `$${row.amount}`,
+      defaultSortDirection: SortDirection.Desc
+    },
+  ];
+
+  private rentalFields: Column<Rental>[] = [
+    {
+      id: "number",
+      label: "Number",
+      cell: (row: Rental) => row.number,
+      defaultSortDirection: SortDirection.Desc,
+    },
+    {
+      id: "expiration",
+      label: "Expiration Date",
+      cell: (row: Rental) => `${moment(row.expiration).format("DD MMM YYYY")}`,
+      defaultSortDirection: SortDirection.Desc,
+    }, 
+    ...this.props.admin && [{
+      id: "member",
+      label: "Member",
+      cell: (row: Rental) => row.member,
+      defaultSortDirection: SortDirection.Desc,
+      width: 200
+    }], 
+    {
+      id: "status",
+      label: "Status",
+      cell: (row: Rental) => {
+        const current = row.expiration > Date.now();
+        const statusColor = current ? Status.Success : Status.Danger;
+        const label = current ? "Active" : "Expired";
+  
+        return (
+          <StatusLabel label={label} color={statusColor}/>
+        );
+      },
+    }
+  ].filter(f => !!f);
 
   constructor(props: Props) {
     super(props);
@@ -106,12 +169,16 @@ class MemberDetail extends React.Component<Props, State> {
     )
   }
 
+  private allowViewProfile = () => {
+    const { currentUserId, admin } = this.props;
+    return this.props.match.params.memberId === currentUserId || admin;
+  }
+
   private renderMemberDetails = (): JSX.Element => {
     const { member, isUpdatingMember, isRequestingMember, match, admin } = this.props;
     const { memberId } = match.params;
     const loading = isUpdatingMember || isRequestingMember;
     const { isWelcomeOpen } = this.state;
-
     return (
       <>
         <DetailView
@@ -141,16 +208,26 @@ class MemberDetail extends React.Component<Props, State> {
             }
           ]}
           information={this.renderMemberInfo()}
-          resources={!isWelcomeOpen && [
+          resources={!isWelcomeOpen && this.allowViewProfile() && [
             {
               name: "invoices",
               content: (
                 <InvoicesList
                   member={member}
+                  fields={this.invoiceFields}
+                />
+              )
+            },
+            {
+              name: "rentals",
+              content: (
+                <RentalsList
+                  member={member}
+                  fields={this.rentalFields}
                 />
               )
             }
-          ]}
+          ].filter(r => !!r)}
         />
         {this.renderMemberForms()}
         {this.renderNotifications()}
@@ -277,13 +354,13 @@ const mapStateToProps = (
   const { isRequesting, error: requestingError } = state.member.read;
   const { isRequesting: isUpdating } = state.member.update
   const { entity: member } = state.member;
-  const { currentUser } = state.auth;
-  const admin = currentUser && !!currentUser.id;
+  const { currentUser: { isAdmin: admin, id: currentUserId } } = state.auth;
 
   return {
     admin,
     member,
     requestingError,
+    currentUserId,
     isRequestingMember: isRequesting,
     isUpdatingMember: isUpdating
   }
@@ -293,7 +370,7 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch,
   ownProps: OwnProps,
 ): DispatchProps => {
-  const memberId = ownProps.match.params.memberId || ownProps.memberId;
+  const memberId = ownProps.match.params.memberId;
   return {
     getMember: () => dispatch(readMemberAction(memberId)),
   }

@@ -33,7 +33,7 @@ class Member
   validates :firstname, presence: true
   validates :lastname, presence: true
   validates :email, uniqueness: true
-  validates :cardID, uniqueness: true
+  validates :cardID, uniqueness: true, allow_nil: true
   validates_inclusion_of :status, in: ["activeMember", "nonMember", "revoked"]
 
   before_save :update_allowed_workshops

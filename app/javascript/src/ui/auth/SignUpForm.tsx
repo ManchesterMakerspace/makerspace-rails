@@ -50,7 +50,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
     this.state = {
       passwordMask: true,
       emailExists: false,
-      redirect: undefined
+      redirect: ""
     };
   }
 
@@ -68,20 +68,8 @@ class SignUpFormComponent extends React.Component<Props, State> {
         this.setState({ emailExists: true });
       }
       if (!error && memberId) {
-        this.redirectFromSignUp();
+        this.setState({ redirect: buildProfileRouting(memberId) })
       }
-    }
-  }
-
-  private redirectFromSignUp = () => {
-    const { memberId } = this.props;
-    const formValues = this.formRef.getValues();
-    const membershipId = formValues[SignUpFields.membershipId.name];
-
-    if (membershipId) {
-      this.setState({ redirect: Routing.Checkout })
-    } else {
-      this.setState({ redirect: buildProfileRouting(memberId) })
     }
   }
 

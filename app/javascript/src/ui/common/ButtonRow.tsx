@@ -14,7 +14,7 @@ export interface ActionButton {
 const ButtonRow: React.SFC<{ actionButtons: ActionButton[] }> = (props) => {
   return (
     <>
-      {props.actionButtons.map((action, index) => (
+      {Array.isArray(props.actionButtons) && props.actionButtons.map((action, index) => (
         <Button
           key={`${kebabCase(action.label)}-${index}`}
           style={{ marginRight: ".25em" }}

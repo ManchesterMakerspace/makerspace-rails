@@ -15,13 +15,14 @@ import SettleInvoiceModal from "ui/invoice/SettleInvoiceModal";
 import DeleteInvoiceModal from "ui/invoice/DeleteInvoiceModal";
 import { readInvoicesAction } from "ui/invoices/actions";
 import UpdateInvoiceContainer, { UpdateInvoiceRenderProps } from "ui/invoice/UpdateInvoiceContainer";
-import { MemberRole, MemberDetails } from "app/entities/member";
-import ButtonRow from "ui/common/ButtonRow";
+import { MemberDetails } from "app/entities/member";
+import ButtonRow, { ActionButton } from "ui/common/ButtonRow";
 import { CrudOperation } from "app/constants";
 import PaymentRequiredModal from "ui/invoices/PaymentRequiredModal";
 
 interface OwnProps {
   member?: MemberDetails;
+  fields?: Column<Invoice>[];
 }
 interface DispatchProps {
   getInvoices: (queryParams: QueryParams, admin: boolean) => void;
@@ -36,10 +37,11 @@ interface StateProps {
   updateError: string;
   isCreating: boolean;
   createError: string;
+  currentUserId: string;
 }
 interface Props extends OwnProps, DispatchProps, StateProps { }
 interface State {
-  selectedId: string;
+  selectedIds: string[];
   pageNum: number;
   orderBy: string;
   search: string;
@@ -107,7 +109,7 @@ class InvoicesList extends React.Component<Props, State> {
     super(props);
     const { invoices } = props;
     this.state = {
-      selectedId: undefined,
+      selectedIds: undefined,
       pageNum: 0,
       orderBy: "",
       search: "",
@@ -131,28 +133,46 @@ class InvoicesList extends React.Component<Props, State> {
   private closePaymentNotification = () => { this.setState({ openPaymentNotification: false });}
 
   private getActionButtons = () => {
-    const { selectedId } = this.state;
-    const { admin } = this.props;
-    return (admin &&
+    const { selectedIds } = this.state;
+    const { admin, currentUserId, invoices } = this.props;
+    const invoiceList = (Array.isArray(selectedIds) && selectedIds.length  ? 
+      selectedIds.map(id => invoices[id]) : Object.values(invoices)) || [];
+    const payNow = (invoiceList).every(invoice => {
+      console.log(invoice);
+      return invoice.memberId === currentUserId
+    })
+
+    const payLabel = `Pay Invoice${(invoiceList).length > 1 ? `s` : ''} (${invoiceList.length})`
+    const actionButtons: ActionButton[] = [
+      ...(admin && [{
+        variant: "contained",
+        color: "primary",
+        onClick: this.openCreateForm,
+        label: "Create New Invoice"
+      }, {
+        variant: "outlined",
+        color: "primary",
+        disabled: !Array.isArray(selectedIds) || selectedIds.length !== 1,
+        onClick: this.openUpdateForm,
+        label: "Edit Invoice"
+      }, {
+        variant: "outlined",
+        color: "primary",
+        disabled: !Array.isArray(selectedIds) || selectedIds.length !== 1,
+        onClick: this.openDeleteInvoice,
+        label: "Delete Invoice"
+      }] as ActionButton[] || []),
+    ...[payNow && {
+        variant: "contained",
+        color: "primary",
+        onClick: this.openCreateForm,
+        label: payLabel
+      }]  as ActionButton[]
+    ].filter(b => !!b);
+    
+    return (
       <ButtonRow
-        actionButtons={[{
-          variant: "contained",
-          color: "primary",
-          onClick: this.openCreateForm,
-          label: "Create New Invoice"
-        }, {
-          variant: "outlined",
-          color: "primary",
-          disabled: !selectedId,
-          onClick: this.openUpdateForm,
-          label: "Edit Invoice"
-        }, {
-          variant: "outlined",
-          color: "primary",
-          disabled: !selectedId,
-          onClick: this.openDeleteInvoice,
-          label: "Delete Invoice"
-        }]}
+        actionButtons={actionButtons}
       />
     )
   }
@@ -199,11 +219,20 @@ class InvoicesList extends React.Component<Props, State> {
 
   // Only select one at a time
   private onSelect = (id: string, selected: boolean) => {
-      this.setState({ selectedId: selected ? id : undefined });
+    this.setState(currentState => {
+      const updatedIds = currentState.selectedIds.slice();
+      const existingIndex = currentState.selectedIds.indexOf(id);
+      if (existingIndex > -1) {
+        updatedIds.splice(existingIndex, 1)
+      } else {
+        updatedIds.push(id)
+      }
+      this.setState({ selectedIds: updatedIds });
+    })
   }
 
   private renderInvoiceForms = () => {
-    const { selectedId, openCreateForm, openUpdateForm, openSettleForm, openDeleteConfirm } = this.state;
+    const { selectedIds, openCreateForm, openUpdateForm, openSettleForm, openDeleteConfirm } = this.state;
     const { invoices, member, admin } = this.props;
 
     const editForm = (renderProps: UpdateInvoiceRenderProps) => (
@@ -244,7 +273,7 @@ class InvoicesList extends React.Component<Props, State> {
 
     const deleteModal = (renderProps: UpdateInvoiceRenderProps) => {
       const close = () => {
-        this.setState({ selectedId: undefined });
+        this.setState({ selectedIds: undefined });
         renderProps.closeHandler();
       }
       return (
@@ -280,7 +309,7 @@ class InvoicesList extends React.Component<Props, State> {
           operation={CrudOperation.Update}
           isOpen={openSettleForm}
           invoice={{
-            ...invoices[selectedId],
+            ...invoices[selectedIds[0]],
             settled: true
           }}
           closeHandler={this.closeSettleInvoice}
@@ -289,7 +318,7 @@ class InvoicesList extends React.Component<Props, State> {
          <UpdateInvoiceContainer
           operation={CrudOperation.Delete}
           isOpen={openDeleteConfirm}
-          invoice={invoices[selectedId]}
+          invoice={invoices[selectedIds[0]]}
           closeHandler={this.closeDeleteInvoice}
           render={deleteModal}
         />
@@ -312,6 +341,33 @@ class InvoicesList extends React.Component<Props, State> {
     )
   }
 
+  private getFields = () => {
+    return [
+      ...this.props.fields || this.fields,
+      ...[this.props.admin && {
+        id: "settled",
+        label: "Paid?",
+        cell: (row: Invoice) => {
+          const settleInvoice = () => {
+            this.onSelect(this.rowId(row), true);
+            this.openSettleInvoice();
+          }
+          return (row.settled ? "Yes" :
+            <Button
+              variant="outlined"
+              color="primary"
+              disabled={this.props.isUpdating}
+              onClick={settleInvoice}
+            >
+              Settle Invoice
+            </Button>
+          )
+        },
+        defaultSortDirection: SortDirection.Desc
+      }]
+    ].filter(f => !!f);
+  }
+
   public render(): JSX.Element {
     const {
       invoices,
@@ -322,7 +378,7 @@ class InvoicesList extends React.Component<Props, State> {
     } = this.props;
 
     const {
-      selectedId,
+      selectedIds,
       pageNum,
       order,
       orderBy,
@@ -338,9 +394,9 @@ class InvoicesList extends React.Component<Props, State> {
           data={Object.values(invoices)}
           error={error}
           totalItems={totalItems}
-          selectedIds={[selectedId]}
+          selectedIds={selectedIds}
           pageNum={pageNum}
-          columns={this.fields}
+          columns={this.getFields()}
           order={order}
           orderBy={orderBy}
           onSort={this.onSort}
@@ -377,8 +433,7 @@ const mapStateToProps = (
       error: updateError
     }
   } = state.invoice;
-  const { currentUser } = state.auth;
-  const admin = currentUser && currentUser.role.includes(MemberRole.Admin);
+  const { currentUser: { isAdmin: admin, id: currentUserId } } = state.auth;
   return {
     admin,
     invoices,
@@ -389,6 +444,7 @@ const mapStateToProps = (
     updateError,
     isCreating,
     createError,
+    currentUserId,
   }
 }
 

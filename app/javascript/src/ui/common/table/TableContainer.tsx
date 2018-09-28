@@ -4,7 +4,6 @@ import Table, { Column } from "ui/common/table/Table";
 import { SortDirection } from "ui/common/table/constants";
 import { TablePagination, Toolbar, Typography, TextField } from "@material-ui/core";
 import { defaultItemsPerPage } from "ui/constants";
-import LoadingOverlay from "ui/common/LoadingOverlay";
 
 interface Props<T> {
   id: string;
@@ -76,7 +75,6 @@ class TableContainer<T> extends React.Component<Props<T>, {}> {
           }
         </Toolbar>
         <div className="table-wrapper">
-          {loading &&  <LoadingOverlay id={id}/>}
           <Table
             id={id}
             page={pageNum}
@@ -90,9 +88,10 @@ class TableContainer<T> extends React.Component<Props<T>, {}> {
             onSort={onSort}
             onSelectAll={onSelectAll}
             error={error}
+            loading={loading}
           >
           </Table>
-          {onPageChange && <TablePagination
+          {totalItems > defaultItemsPerPage && onPageChange && <TablePagination
             component="div"
             count={totalItems || 0}
             rowsPerPage={defaultItemsPerPage}

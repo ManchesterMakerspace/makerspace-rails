@@ -30,7 +30,9 @@ export type AuthMember = Pick<MemberDetails,
                         MemberProperties.Firstname |
                         MemberProperties.Expiration |
                         MemberProperties.Role
-                      >;
+                      > & {
+  isAdmin: boolean;
+};
 
 type NewUserSignUp = Pick<MemberDetails,
                           MemberProperties.Email |

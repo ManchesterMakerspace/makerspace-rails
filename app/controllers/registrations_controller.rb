@@ -9,7 +9,7 @@ class RegistrationsController < Devise::RegistrationsController
       @member = Member.new(member_params)
       if @member.save
         create_initial_membership_invoice
-        invite_gdrive
+        invite_gdrive if Rails.env == "production"
         @notifier.ping(format_slack_messages(@messages)) unless @messages.empty?
         MemberMailer.member_registered(@member).deliver_now
         sign_in(@member)
@@ -35,7 +35,7 @@ class RegistrationsController < Devise::RegistrationsController
 
     def create_initial_membership_invoice
       plan = ::BraintreeService::Plan.get_plan_by_id(@gateway, ENV["MONTHLY_SUBSCRIPTION_ID"])
-      invoice = plan.build_invoice
+      invoice = plan.build_invoice(@member.id, Time.now.change(hour: 0, min: 1))
       unless invoice.save
         @notifier.ping("Error creating initial membership invoice for new member: #{@member.email}")
       end

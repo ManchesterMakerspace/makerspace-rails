@@ -7,15 +7,16 @@ import { Action as RentalsAction } from "ui/rentals/constants";
 import { handleApiError } from "app/utils";
 import { RentalsState } from "ui/rentals/interfaces";
 import { QueryParams } from "app/interfaces";
-import { Rental } from "app/entities/rental";
+import { Rental, RentalQueryParams } from "app/entities/rental";
 
 export const readRentalsAction = (
-  queryParams?: QueryParams
+  isUserAdmin: boolean,
+  queryParams?: RentalQueryParams
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
   dispatch({ type: RentalsAction.StartReadRequest });
 
   try {
-    const response = await getRentals(queryParams);
+    const response = await getRentals(isUserAdmin, queryParams);
     const {rentals} = response.data;
     const totalItems = response.headers[("total-items")];
     dispatch({

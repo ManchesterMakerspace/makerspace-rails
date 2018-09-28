@@ -8,6 +8,7 @@ import { postLogin, deleteLogin, postSignUp } from "api/auth/transactions";
 import { Action as AuthAction } from "ui/auth/constants";
 import { InvoiceableResource } from "app/entities/invoice";
 import { Action as InvoiceAction } from "ui/invoice/constants";
+import { memberIsAdmin } from "ui/member/utils";
 
 export const loginUserAction = (
   loginForm?: AuthForm
@@ -97,6 +98,7 @@ const defaultState: AuthState = {
     email: undefined,
     expirationTime: undefined,
     role: undefined,
+    isAdmin: false,
   },
   isRequesting: false,
   error: ""
@@ -113,7 +115,10 @@ export const authReducer = (state: AuthState = defaultState, action: AnyAction) 
       const { data: newUser } = action;
       return {
         ...state,
-        currentUser: newUser,
+        currentUser: {
+          ...newUser,
+          isAdmin: memberIsAdmin(newUser)
+        },
         isRequesting: false,
         error: ""
       };

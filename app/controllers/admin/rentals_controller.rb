@@ -2,6 +2,13 @@ class Admin::RentalsController < AdminController
   before_action :set_rental, only: [:update, :destroy]
   before_action :slack_connect, only: [:update]
 
+  def index
+    rentals = params[:memberId] ? Rental.where(member_id: params[:memberId]) : Rental
+    rentals = query_resource(rentals)
+
+    return render_with_total_items(rentals)
+  end
+
   def create
     @rental = Rental.new(rental_params)
     if @rental.save
