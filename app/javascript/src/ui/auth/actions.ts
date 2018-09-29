@@ -18,10 +18,9 @@ export const loginUserAction = (
   let member;
   try {
     const response = await postLogin(loginForm);
-    member = response.data.member;
     dispatch({
       type: AuthAction.AuthUserSuccess,
-      data: member
+      data: response.data.member
     });
   } catch (e) {
     const { errorMessage } = e;
@@ -68,7 +67,7 @@ export const submitSignUpAction = (
     const response = await postSignUp(rest);
     dispatch({
       type: AuthAction.AuthUserSuccess,
-      data: response.data
+      data: response.data.member
     });
     if (!isUndefined(membershipId)) {
       dispatch({ type: InvoiceAction.ResetStagedInvoice });

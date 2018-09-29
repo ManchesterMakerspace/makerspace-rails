@@ -9,6 +9,7 @@ import { uploadMemberSignature } from "api/members/transactions";
 import { Invoice } from "app/entities/invoice";
 import { Column } from "ui/common/table/Table";
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
+import { displayMemberExpiration } from "ui/member/utils";
 import { timeToDate } from "ui/utils/timeToDate";
 import LoadingOverlay from "ui/common/LoadingOverlay";
 import KeyValueItem from "ui/common/KeyValueItem";
@@ -29,6 +30,8 @@ import RentalsList from "ui/rentals/RentalsList";
 import { Rental } from "app/entities/rental";
 import { Status } from "ui/constants";
 import StatusLabel from "ui/common/StatusLabel";
+import { Routing } from "app/constants";
+import { numberAsCurrency } from "ui/utils/numberToCurrency";
 
 interface DispatchProps {
   getMember: () => Promise<void>;
@@ -64,8 +67,16 @@ const defaultState = {
   submitSignatureError: ""
 }
 
+const allowedResources = new Set(["dues, rentals"]);
+
 class MemberDetail extends React.Component<Props, State> {
   private invoiceFields: Column<Invoice>[] = [
+    {
+      id: "description",
+      label: "Description",
+      cell: (row: Invoice) => row.description,
+      defaultSortDirection: SortDirection.Desc,
+    },
     {
       id: "dueDate",
       label: "Due Date",
@@ -82,45 +93,10 @@ class MemberDetail extends React.Component<Props, State> {
     {
       id: "amount",
       label: "Amount",
-      cell: (row: Invoice) => `$${row.amount}`,
+      cell: (row: Invoice) => numberAsCurrency(row.amount),
       defaultSortDirection: SortDirection.Desc
     },
   ];
-
-  private rentalFields: Column<Rental>[] = [
-    {
-      id: "number",
-      label: "Number",
-      cell: (row: Rental) => row.number,
-      defaultSortDirection: SortDirection.Desc,
-    },
-    {
-      id: "expiration",
-      label: "Expiration Date",
-      cell: (row: Rental) => `${moment(row.expiration).format("DD MMM YYYY")}`,
-      defaultSortDirection: SortDirection.Desc,
-    }, 
-    ...this.props.admin && [{
-      id: "member",
-      label: "Member",
-      cell: (row: Rental) => row.member,
-      defaultSortDirection: SortDirection.Desc,
-      width: 200
-    }], 
-    {
-      id: "status",
-      label: "Status",
-      cell: (row: Rental) => {
-        const current = row.expiration > Date.now();
-        const statusColor = current ? Status.Success : Status.Danger;
-        const label = current ? "Active" : "Expired";
-  
-        return (
-          <StatusLabel label={label} color={statusColor}/>
-        );
-      },
-    }
-  ].filter(f => !!f);
 
   constructor(props: Props) {
     super(props);
@@ -136,10 +112,20 @@ class MemberDetail extends React.Component<Props, State> {
 
   public componentDidUpdate(prevProps: Props) {
     const oldMemberId = prevProps.match.params.memberId;
-    const { isRequestingMember, match, getMember } = this.props;
+    const { isRequestingMember: wasRequesting } = prevProps;
+    const { currentUserId, admin, isRequestingMember, match, getMember, member, history, match: { params: { resource } } } = this.props;
     const { memberId } = match.params;
     if (oldMemberId !== memberId && !isRequestingMember) {
       getMember();
+    }
+    if (wasRequesting && !isRequestingMember) {
+      if (member) {
+        if (resource && !allowedResources.has(resource)) {
+          history.push(Routing.Profile.replace(Routing.PathPlaceholder.MemberId, currentUserId))
+        }
+      } else {
+        history.push(Routing.Members);
+      }
     }
   }
 
@@ -160,7 +146,7 @@ class MemberDetail extends React.Component<Props, State> {
           {member.email ? <a href={`mailto:${member.email}`}>{member.email}</a> : "N/A"}
         </KeyValueItem>
         <KeyValueItem label="Membership Expiration">
-          {timeToDate(member.expirationTime)}
+          {displayMemberExpiration(member)}
         </KeyValueItem>
         <KeyValueItem label="Membership Status">
           <MemberStatusLabel member={member} />
@@ -210,7 +196,7 @@ class MemberDetail extends React.Component<Props, State> {
           information={this.renderMemberInfo()}
           resources={!isWelcomeOpen && this.allowViewProfile() && [
             {
-              name: "invoices",
+              name: "dues",
               content: (
                 <InvoicesList
                   member={member}
@@ -223,7 +209,6 @@ class MemberDetail extends React.Component<Props, State> {
               content: (
                 <RentalsList
                   member={member}
-                  fields={this.rentalFields}
                 />
               )
             }

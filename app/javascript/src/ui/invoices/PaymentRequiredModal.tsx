@@ -25,6 +25,7 @@ interface OwnProps {
   isRequesting: boolean;
   error: string;
   onClose: () => void;
+  resetCart?: boolean;
 }
 
 interface DispatchProps {
@@ -77,6 +78,22 @@ class PaymentRequiredModal extends React.Component<Props, State> {
     };
   }
 
+  public componentDidMount() {
+    this.props.resetCart && this.props.resetStagedInvoices();
+  }
+
+  public componentDidUpdate(prevProps: Props) {
+    const { isOpen: wasOpen } = prevProps;
+    const { isOpen } = this.props;
+
+    // Select all invoices on open
+    // This modal should be used to preview their 'cart' so should be expected to
+    // move all invoices to checkout if no action is taken
+    if (!wasOpen && isOpen) {
+      this.setState({ selectedIds: Object.keys(this.props.invoices) });
+    }
+  }
+
   public validate = async (_form: Form): Promise<MemberDetails> => (
     this.formRef.simpleValidate<MemberDetails>(fields)
   );
@@ -86,6 +103,7 @@ class PaymentRequiredModal extends React.Component<Props, State> {
     const { invoices } = this.props;
 
     const invoicesToPay = pick(invoices, selectedIds);
+    console.log(invoicesToPay);
     this.props.stageInvoices(invoicesToPay);
     this.setState({ redirect: true})
   }
@@ -124,6 +142,7 @@ class PaymentRequiredModal extends React.Component<Props, State> {
 
     // Pay Now directs to the checkout flow
     if (redirect) {
+      console.log("redirect from modal")
       return (
         <Redirect to={Routing.Checkout} />
       );

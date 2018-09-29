@@ -4,10 +4,11 @@ import { Url } from "app/constants";
 import { QueryParams } from "app/interfaces";
 import { MemberDetails } from "app/entities/member";
 import { buildMemberUrl } from "api/members/utils";
+import { encodeQueryParams } from "api/utils/encodeQueryParams";
 
 export const getMembers = async (queryParams?: QueryParams) => {
   try {
-    return await axios.get(buildJsonUrl(Url.Members), { params: queryParams });
+    return await axios.get(buildJsonUrl(Url.Members), { params: encodeQueryParams(queryParams) });
   } catch (e) {
     const error = handleApiError(e);
     throw error;

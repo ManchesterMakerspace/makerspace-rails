@@ -1,5 +1,6 @@
 import { RenewalEntity } from "ui/common/RenewalForm";
 import { Properties, MemberDetails, MemberRole } from "app/entities/member";
+import { timeToDate } from "ui/utils/timeToDate";
 
 export const memberToRenewal = (member: MemberDetails): RenewalEntity => {
   return {
@@ -11,4 +12,8 @@ export const memberToRenewal = (member: MemberDetails): RenewalEntity => {
 
 export const memberIsAdmin = (member: Partial<MemberDetails>): boolean => {
   return member && member.role &&  member.role.includes(MemberRole.Admin);
+}
+
+export const displayMemberExpiration = (member: Partial<MemberDetails>) => {
+  return member.expirationTime ? timeToDate(member.expirationTime) : "N/A";
 }

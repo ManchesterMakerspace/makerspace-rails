@@ -92,6 +92,7 @@ class DetailView extends React.Component<OwnProps, State> {
               value={activeResource.name}
               indicatorColor="primary"
               textColor="primary"
+              style={{marginBottom: "1em"}}
               onChange={this.changeResource}
             >
               {resources.map(resource => {

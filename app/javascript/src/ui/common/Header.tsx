@@ -18,8 +18,12 @@ import { ScopedThunkDispatch, State as ReduxState } from "ui/reducer";
 import { logoutUserAction } from "ui/auth/actions";
 import { AuthMember } from "ui/auth/interfaces";
 import { memberIsAdmin } from "ui/member/utils";
+import { Routing } from "app/constants";
+import { Location } from "history";
 
-interface OwnProps {}
+interface OwnProps {
+  location: Location<any>;
+}
 interface StateProps {
   currentUser: AuthMember;
 }
@@ -53,9 +57,10 @@ class Header extends React.Component<Props, State> {
   };
 
   private renderMenuNavLink = (path: string, label: string) => {
+    const match = this.props.location && this.props.location.pathname === path;
     return (
-      <Link to={path} style={{ textDecoration: 'none', color: 'unset' }} onClick={this.detachMenu}>
-        <MenuItem>
+      <Link to={path} style={{ outline: 'none',textDecoration: 'none', color: 'unset' }} onClick={this.detachMenu}>
+        <MenuItem selected={match}>
           {label}
         </MenuItem>
       </Link>
@@ -90,11 +95,11 @@ class Header extends React.Component<Props, State> {
           open={menuOpen}
           onClose={this.detachMenu}
         >
-          {this.renderMenuNavLink("/members", memberIsAdmin(currentUser) ? "Member Management" : "Members List")}
-          {memberIsAdmin(currentUser) && this.renderMenuNavLink("/rentals", "Rental Management")}
-          {memberIsAdmin(currentUser) && this.renderMenuNavLink("/subscriptions", "Subscription Management")}
-          {memberIsAdmin(currentUser) && this.renderMenuNavLink("/billing", "View Billing Plans")}
-          {this.renderMenuNavLink(`/members/${currentUser.id}`, "Profile")}
+          {this.renderMenuNavLink(Routing.Profile.replace(Routing.PathPlaceholder.MemberId, currentUser.id), "Profile")}
+          {this.renderMenuNavLink(Routing.Members, memberIsAdmin(currentUser) ? "Member Management" : "Members List")}
+          {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Rentals, "Rental Management")}
+          {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Subscriptions, "Subscription Management")}
+          {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Billing, "View Billing Plans")}
           <MenuItem onClick={this.logoutUser}>Logout</MenuItem>
         </Menu>
       </>

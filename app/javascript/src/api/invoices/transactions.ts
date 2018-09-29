@@ -4,10 +4,11 @@ import { Invoice, InvoiceQueryParams } from "app/entities/invoice";
 
 import { buildInvoicesUrl, buildInvoiceUrl, buildInvoiceOptionsUrl } from "api/invoices/utils";
 import { InvoiceOptionTypes } from "api/invoices/constants";
+import { encodeQueryParams } from "api/utils/encodeQueryParams";
 
 export const getInvoices = async (isUserAdmin: boolean, queryParams?: InvoiceQueryParams) => {
   try {
-    return await axios.get(buildInvoicesUrl(isUserAdmin), { params: queryParams });
+    return await axios.get(buildInvoicesUrl(isUserAdmin), { params: encodeQueryParams(queryParams) });
   } catch (e) {
     const error = handleApiError(e);
     throw error;
@@ -61,7 +62,7 @@ export const getMembershipOptions = async () => {
     types: [InvoiceOptionTypes.Membership]
   }
   try {
-    return await axios.get(buildInvoiceOptionsUrl(), { params: options });
+    return await axios.get(buildInvoiceOptionsUrl(), { params: encodeQueryParams(options) });
   } catch (e) {
     const error = handleApiError(e);
     throw error;

@@ -9,6 +9,7 @@ export interface ActionButton {
   disabled?: boolean;
   onClick: () => void;
   label: string;
+  style?: { [key: string]: string }
 }
 
 const ButtonRow: React.SFC<{ actionButtons: ActionButton[] }> = (props) => {
@@ -17,7 +18,7 @@ const ButtonRow: React.SFC<{ actionButtons: ActionButton[] }> = (props) => {
       {Array.isArray(props.actionButtons) && props.actionButtons.map((action, index) => (
         <Button
           key={`${kebabCase(action.label)}-${index}`}
-          style={{ marginRight: ".25em" }}
+          style={{ marginRight: ".25em", ...action.style }}
           color={action.color}
           variant={action.variant}
           disabled={action.disabled}

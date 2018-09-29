@@ -1,5 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import { Redirect } from "react-router";
 import { Grid, Card, CardContent, Typography } from "@material-ui/core";
 
 import { Invoice } from "app/entities/invoice";
@@ -11,20 +12,31 @@ import TableContainer from "ui/common/table/TableContainer";
 import { Column } from "ui/common/table/Table";
 import { timeToDate } from "ui/utils/timeToDate";
 import { numberAsCurrency } from "ui/utils/numberToCurrency";
+import { Routing } from "app/constants";
+import { isEmpty } from "lodash-es";
 
 interface OwnProps {}
 interface StateProps {
   invoices: CollectionOf<Invoice>;
+  auth: string;
 }
 interface DispatchProps {}
 interface Props extends OwnProps, StateProps, DispatchProps {}
 interface State {
   total: number;
+  redirect: string;
 }
 class CheckoutContainer extends React.Component<Props,State>{
   constructor(props: Props){
     super(props);
-    this.state = ({ total: 0 });
+    // Redirect if there are no invoices to checkout
+    const { auth, invoices } = props;
+    const redirectPath = auth ? Routing.Profile.replace(Routing.PathPlaceholder.MemberId, auth) : Routing.Login;
+    const redirect = invoices && isEmpty(invoices) ? redirectPath : undefined;
+    this.state = ({ 
+      redirect,
+      total: this.props.invoices && Object.values(invoices).reduce((a, b) => a + Number(b.amount), 0)
+    });
   }
   
   private fields: Column<Invoice>[] = [
@@ -39,16 +51,6 @@ class CheckoutContainer extends React.Component<Props,State>{
       cell: (row: Invoice) => numberAsCurrency(row.amount),
     },
   ];
-
-  public componentDidUpdate(prevProps: Props) {
-    const { invoices: oldInvoices } = prevProps;
-    const { invoices } = this.props;
-
-    if (invoices !== oldInvoices) {
-      const total = Object.values(invoices).reduce((a, b) => a + Number(b.value), 0);
-      this.setState({ total });
-    }
-  }
 
   private renderTotal = () => { 
     const { invoices } = this.props;
@@ -78,9 +80,14 @@ class CheckoutContainer extends React.Component<Props,State>{
 
   private rowId = (row: Invoice) => row.id;
   public render(): JSX.Element {
+    const { redirect } = this.state;
+
+    if (redirect) {
+      return <Redirect to={redirect}/>
+    }
     return (
       <Grid container spacing={16}>
-        <Grid item md={9} sm={7} xs={12}>
+        <Grid item md={8} sm={7} xs={12}>
           <Grid container spacing={16}>
             <Grid item xs={12}>
               <Card style={{minWidth: 275}}>
@@ -101,9 +108,8 @@ class CheckoutContainer extends React.Component<Props,State>{
         </Grid>
 
 
-        <Grid item md={3} sm={5} xs={12}>
+        <Grid item md={4} sm={5} xs={12}>
           {this.renderTotal()}
-
         </Grid>
       </Grid>
     )
@@ -112,9 +118,10 @@ class CheckoutContainer extends React.Component<Props,State>{
 
 const mapStateToProps = (state: ReduxState, _ownProps: OwnProps): StateProps => {
   const { invoices } = state.checkout;
-
+  const { currentUser: { id: userId } } = state.auth;
   return {
     invoices,
+    auth: userId
   }
 }
 

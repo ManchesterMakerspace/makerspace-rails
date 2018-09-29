@@ -20,7 +20,6 @@ interface OwnProps extends RouteComponentProps<any> {}
 
 interface State {
   attemptingLogin: boolean;
-  redirect: boolean;
 }
 
 interface Props extends StateProps, DispatchProps, OwnProps { }
@@ -31,7 +30,6 @@ class App extends React.Component<Props, State> {
     super(props);
     this.state = {
       attemptingLogin: true,
-      redirect: true,
     }
   }
 
@@ -46,7 +44,7 @@ class App extends React.Component<Props, State> {
 
     const { attemptingLogin } = this.state;
     if (wasRequesting && !isRequesting && attemptingLogin) {
-      this.setState({ attemptingLogin: false, redirect: !!this.props.auth });
+      this.setState({ attemptingLogin: false});
     }
   }
 
@@ -60,9 +58,10 @@ class App extends React.Component<Props, State> {
     }
   }
   public render(): JSX.Element {
+    console.log(this.props.location);
     return (
       <div className="root">
-        <Header/>
+        <Header location={this.props.location}/>
         {this.renderBody()}
       </div>
     )

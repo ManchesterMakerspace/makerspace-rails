@@ -7,7 +7,7 @@ import { MemberDetails } from "app/entities/member";
 import { QueryParams, CollectionOf } from "app/interfaces";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
-import { timeToDate } from "ui/utils/timeToDate";
+import { displayMemberExpiration } from "ui/member/utils";
 import Form from "ui/common/Form";
 import ButtonRow from "ui/common/ButtonRow";
 import { SortDirection } from "ui/common/table/constants";
@@ -56,7 +56,7 @@ const fields: Column<MemberDetails>[] = [
   {
     id: "expirationTime",
     label: "Expiration",
-    cell: (row: MemberDetails) => timeToDate(row.expirationTime),
+    cell: displayMemberExpiration,
     defaultSortDirection: SortDirection.Desc
   },
   {

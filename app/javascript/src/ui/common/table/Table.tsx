@@ -53,6 +53,7 @@ class EnhancedTable<T> extends React.Component<Props<T>, {}> {
           indeterminate={numSelected > 0 && numSelected < rowCount}
           checked={numSelected > 0 && numSelected === rowCount}
           onChange={onSelectAll}
+          disabled={!Array.isArray(data) || !data.length}
         />
       </TableCell>
     )

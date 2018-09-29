@@ -1,7 +1,7 @@
 # Extends Braintree::Plan to incorporate with Rails
 class BraintreeService::Plan < Braintree::Plan
   include ImportResource
-  include ActiveModel::Serialization
+  include ActiveModel::Serializers::JSON
 
   # Braintree::Plan (https://developers.braintreepayments.com/reference/response/plan/ruby)
   # billing_day_of_month

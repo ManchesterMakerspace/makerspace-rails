@@ -19,6 +19,10 @@ import { MemberDetails } from "app/entities/member";
 import ButtonRow, { ActionButton } from "ui/common/ButtonRow";
 import { CrudOperation } from "app/constants";
 import PaymentRequiredModal from "ui/invoices/PaymentRequiredModal";
+import { pick } from "lodash-es";
+import { numberAsCurrency } from "ui/utils/numberToCurrency";
+import { Status } from "ui/common/constants";
+import StatusLabel from "ui/common/StatusLabel";
 
 interface OwnProps {
   member?: MemberDetails;
@@ -66,20 +70,13 @@ class InvoicesList extends React.Component<Props, State> {
     {
       id: "dueDate",
       label: "Due Date",
-      cell: (row: Invoice) => {
-        const textColor = row.pastDue ? "red" : "black"
-        return (
-          <span style={{ color: textColor }}>
-            {timeToDate(row.dueDate)}
-          </span>
-        )
-      },
+      cell: (row: Invoice) => timeToDate(row.dueDate),
       defaultSortDirection: SortDirection.Desc
     },
     {
       id: "amount",
       label: "Amount",
-      cell: (row: Invoice) => `$${row.amount}`,
+      cell: (row: Invoice) => numberAsCurrency(row.amount),
       defaultSortDirection: SortDirection.Desc
     },
     {
@@ -102,14 +99,28 @@ class InvoicesList extends React.Component<Props, State> {
         )
       },
       defaultSortDirection: SortDirection.Desc
+    },
+    {
+      id: "status",
+      label: "Status",
+      cell: (row: Invoice) => {
+        const statusColor = row.pastDue ? Status.Danger : Status.Success;
+        const label = row.pastDue ? "Past Due" : "Upcoming";
+  
+        return (
+          <StatusLabel label={label} color={statusColor}/>
+        );
+      },
     }
   ];
 
   constructor(props: Props) {
     super(props);
     const { invoices } = props;
+    // Select all invoices if viewing your own invoices page for quick checkout
+
     this.state = {
-      selectedIds: undefined,
+      selectedIds: [],
       pageNum: 0,
       orderBy: "",
       search: "",
@@ -131,18 +142,15 @@ class InvoicesList extends React.Component<Props, State> {
   private openDeleteInvoice = () => { this.setState({ openDeleteConfirm: true });}
   private closeDeleteInvoice = () => { this.setState({ openDeleteConfirm: false });}
   private closePaymentNotification = () => { this.setState({ openPaymentNotification: false });}
+  private openPaymentPreview = () => { this.setState({ openPaymentNotification: true });}
 
   private getActionButtons = () => {
     const { selectedIds } = this.state;
     const { admin, currentUserId, invoices } = this.props;
-    const invoiceList = (Array.isArray(selectedIds) && selectedIds.length  ? 
-      selectedIds.map(id => invoices[id]) : Object.values(invoices)) || [];
-    const payNow = (invoiceList).every(invoice => {
-      console.log(invoice);
-      return invoice.memberId === currentUserId
-    })
+    const selectedInvoices = Object.values(pick(invoices, selectedIds));
+    const payNow = (selectedInvoices).every(invoice => invoice.memberId === currentUserId)
 
-    const payLabel = `Pay Invoice${(invoiceList).length > 1 ? `s` : ''} (${invoiceList.length})`
+    const payLabel = `Pay Selected Invoice${(selectedInvoices).length > 1 ? `s` : ''}${selectedInvoices.length ? ` ${selectedInvoices.length}` : ""}`;
     const actionButtons: ActionButton[] = [
       ...(admin && [{
         variant: "contained",
@@ -163,9 +171,11 @@ class InvoicesList extends React.Component<Props, State> {
         label: "Delete Invoice"
       }] as ActionButton[] || []),
     ...[payNow && {
+        style: { float: "right" },
         variant: "contained",
         color: "primary",
-        onClick: this.openCreateForm,
+        disabled: !Array.isArray(selectedIds) || !selectedIds.length,
+        onClick: this.openPaymentPreview,
         label: payLabel
       }]  as ActionButton[]
     ].filter(b => !!b);
@@ -186,9 +196,19 @@ class InvoicesList extends React.Component<Props, State> {
     this.getInvoices();
   }
 
-  public componentDidUpdate(prevProps: Props) {
-    const { isCreating: wasCreating } = prevProps;
-    const { isCreating, createError } = this.props;
+  public componentDidUpdate(prevProps: Props, prevState: State) {
+    const { isCreating: wasCreating, invoices: priorInvoices, loading: wasLoading } = prevProps;
+    const { isCreating, createError, invoices, currentUserId, loading } = this.props;
+
+    // Set initial selection on initial load
+    if (
+        (wasLoading && !loading ) && // Has finished reading
+        (prevState === this.state) // State is static - Nothing can happen during initial load
+      ) {
+      const viewingOwnInvoices = (Object.values(invoices)).every(invoice => invoice.memberId === currentUserId);
+      this.setState({ selectedIds: viewingOwnInvoices ? Object.keys(invoices) : [] });
+    }
+
     if (wasCreating && !isCreating && !createError) {
       this.getInvoices();
     }
@@ -218,7 +238,7 @@ class InvoicesList extends React.Component<Props, State> {
   }
 
   // Only select one at a time
-  private onSelect = (id: string, selected: boolean) => {
+  private onSelect = (id: string, _selected: boolean) => {
     this.setState(currentState => {
       const updatedIds = currentState.selectedIds.slice();
       const existingIndex = currentState.selectedIds.indexOf(id);
@@ -227,7 +247,18 @@ class InvoicesList extends React.Component<Props, State> {
       } else {
         updatedIds.push(id)
       }
-      this.setState({ selectedIds: updatedIds });
+      return { selectedIds: updatedIds };
+    })
+  }
+
+  private onSelectAll = () => {
+    this.setState(currentState => {
+      const allIds = Object.keys(this.props.invoices);
+      if (currentState.selectedIds.length === allIds.length) {
+        return { selectedIds: [] };
+      } else {
+        return { selectedIds: allIds };
+      }
     })
   }
 
@@ -328,7 +359,8 @@ class InvoicesList extends React.Component<Props, State> {
 
   private renderPaymentNotifiation = () => {
     const { loading, error, invoices } = this.props;
-    const { openPaymentNotification } = this.state;
+    const { openPaymentNotification, selectedIds } = this.state;
+    const selectedInvoices = (({ ...selectedIds }) => ({ ...selectedIds }))(invoices)
 
     return (
       <PaymentRequiredModal
@@ -336,7 +368,7 @@ class InvoicesList extends React.Component<Props, State> {
         onClose={this.closePaymentNotification}
         isRequesting={loading}
         error={error}
-        invoices={invoices}
+        invoices={selectedInvoices}
       />
     )
   }
@@ -402,7 +434,8 @@ class InvoicesList extends React.Component<Props, State> {
           onSort={this.onSort}
           rowId={this.rowId}
           onPageChange={this.onPageChange}
-          onSelect={admin && this.onSelect}
+          onSelect={this.onSelect}
+          onSelectAll={this.onSelectAll}
         />
         {this.renderInvoiceForms()}
         {this.renderPaymentNotifiation()}
@@ -453,6 +486,7 @@ const mapDispatchToProps = (
   ownProps: OwnProps
 ): DispatchProps => {
   const { member } = ownProps;
+  console.log(member);
   return {
     getInvoices: (queryParams, admin) => dispatch(readInvoicesAction(admin, {
       ...queryParams,

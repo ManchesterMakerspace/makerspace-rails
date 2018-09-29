@@ -38,39 +38,41 @@ interface State {
   order: SortDirection;
 }
 
-const fields: Column<Rental>[] = [
-  {
-    id: "number",
-    label: "Number",
-    cell: (row: Rental) => row.number,
-    defaultSortDirection: SortDirection.Desc,
-  },{
-    id: "expiration",
-    label: "Expiration Date",
-    cell: (row: Rental) => `${moment(row.expiration).format("DD MMM YYYY")}`,
-    defaultSortDirection: SortDirection.Desc,
-  }, {
-    id: "member",
-    label: "Member",
-    cell: (row: Rental) => row.member,
-    defaultSortDirection: SortDirection.Desc,
-    width: 200
-  }, {
-    id: "status",
-    label: "Status",
-    cell: (row: Rental) => {
-      const current = row.expiration > Date.now();
-      const statusColor = current ? Status.Success : Status.Danger;
-      const label = current ? "Active" : "Expired";
-
-      return (
-        <StatusLabel label={label} color={statusColor}/>
-      );
-    },
-  }
-];
-
 class RentalsList extends React.Component<Props, State> {
+  private fields: Column<Rental>[] = [
+    {
+      id: "number",
+      label: "Number",
+      cell: (row: Rental) => row.number,
+      defaultSortDirection: SortDirection.Desc,
+    },
+    {
+      id: "expiration",
+      label: "Expiration Date",
+      cell: (row: Rental) => `${moment(row.expiration).format("DD MMM YYYY")}`,
+      defaultSortDirection: SortDirection.Desc,
+    }, 
+    ...this.props.admin && [{
+      id: "member",
+      label: "Member",
+      cell: (row: Rental) => row.member,
+      defaultSortDirection: SortDirection.Desc,
+      width: 200
+    }], 
+    {
+      id: "status",
+      label: "Status",
+      cell: (row: Rental) => {
+        const current = row.expiration > Date.now();
+        const statusColor = current ? Status.Success : Status.Danger;
+        const label = current ? "Active" : "Expired";
+  
+        return (
+          <StatusLabel label={label} color={statusColor}/>
+        );
+      },
+    }
+  ].filter(f => !!f);
 
   constructor(props: Props) {
     super(props);
@@ -135,9 +137,7 @@ class RentalsList extends React.Component<Props, State> {
       <>
         {
           admin && (
-            <Grid style={{ paddingTop: 20 }}>
-              {this.getActionButton()}
-            </Grid>
+            this.getActionButton()
           )
         }
         <TableContainer
@@ -149,7 +149,7 @@ class RentalsList extends React.Component<Props, State> {
           totalItems={totalItems}
           selectedIds={selectedIds}
           pageNum={pageNum}
-          columns={fields}
+          columns={this.fields}
           order={order}
           orderBy={orderBy}
           onSort={this.onSort}

@@ -21,10 +21,10 @@ const circleStyle = {
 
 const StatusLabel: React.SFC<StatusLabelProps> = (props) => {
   return (
-    <>
+    <span style={{whiteSpace: "nowrap"}}>
       <span style={{...circleStyle, ...statusToStyleMap[props.color]}}>&nbsp;</span>
       <span>{props.label}</span>
-    </>
+    </span>
   );
 }
 
