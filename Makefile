@@ -5,7 +5,8 @@ DC_TEST=docker-compose -f Docker/docker-compose/test.yml -p $(PROJECT_NAME)
 
 start-dev: build-up-dev
 start-unit: clean-test test-up
-start-integration: clean-test integration-up
+start-functional: clean-test integration-up
+rebuild-functional: clean-test build-up-integration
 test: clean-test test-up integration-up
 
 build-up-dev:
@@ -20,5 +21,7 @@ clean-test:
 test-up:
 	@${DC_TEST} up --exit-code-from interface
 
+build-up-integration:
+	@${DC_INTEGRATION} up --build --exit-code-from tester
 integration-up:
 	@${DC_INTEGRATION} up --exit-code-from tester

@@ -39,7 +39,9 @@
     "**/*.spec.(t|j)s",
     "node_modules",
     "vendor",
-    "public"
+    "public",
+    "tests",
+    "spec"
   ],
   "compileOnSave": false
 }

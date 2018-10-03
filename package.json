@@ -15,7 +15,6 @@
     "@types/react-redux": "^6.0.6",
     "@types/react-router": "^4.0.30",
     "@types/react-router-dom": "^4.3.0",
-    "@types/redux-thunk": "^2.1.0",
     "axios": "^0.18.0",
     "babel-preset-react": "^6.24.1",
     "braintree-web": "^3.36.0",
@@ -39,15 +38,11 @@
   },
   "devDependencies": {
     "@types/jest": "^23.3.2",
-    "cheerio": "latest",
     "chromedriver": "^2.42.0",
     "jest": "^23.6.0",
     "jest-environment-webdriver": "lynch16/jest-environment-webdriver#master",
     "mockserver-client": "^5.3.0",
     "mockserver-node": "^5.3.0",
-    "phantom": "^4.0.12",
-    "protractor": "^5.3.0",
-    "protractor-jasmine2-screenshot-reporter": "^0.4.0",
     "react-hot-loader": "^4.3.4",
     "redux-mock-store": "^1.5.3",
     "ts-jest": "^23.10.1",
@@ -81,7 +76,8 @@
     ],
     "testEnvironment": "jest-environment-webdriver",
     "testEnvironmentOptions": {
-      "browser": "chrome"
+      "browser": "chrome",
+      "seleniumAddress": "http://selenium:4444/wd/hub"
     }
   }
 }

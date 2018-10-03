@@ -1,7 +1,6 @@
 require("./locators");
-
-const mockserver = require('mockserver-client').mockServerClient("localhost", 1080);
-const rootURL = 'http://www.localhost:3002/';
+import { mockRequests, mock } from "./mockserver-client-helpers";
+const rootURL = 'http://interface:3002/';
 
 it('initialises the context', async () => {
   await browser.manage().window().setPosition(0, 0);
@@ -16,40 +15,19 @@ it('should load the landing page', async () => {
 
 describe("API Mocking", () => {
   it("Mocks sign in request", async () => {
-    await mockserver.mockAnyResponse({
-        "httpRequest": {
-          "method": "POST",
-          "path": "/api/members/sign_in.json",
-        },
-        "httpResponse": {
-          "body": JSON.stringify({
-            member: {
-              id: "test_member",
-              firstname: "Test",
-              lastname: "Member",
-              email: "test_member@test.com",
-              role: ["member"]
-            }
-          })
-        }
-      })
-    await mockserver.mockAnyResponse({
-      "httpRequest": {
-        "method": "GET",
-        "path": "/api/members/test_member.json",
-      },
-      "httpResponse": {
-        "body": JSON.stringify({
-          member: {
-            id: "test_member",
-            firstname: "Test",
-            lastname: "Member",
-            email: "test_member@test.com",
-            role: ["member"]
-          }
-        })
+    const memberId = "test_member"
+    const memberPayload = {
+      member: {
+        id: "test_member",
+        firstname: "Test",
+        lastname: "Member",
+        email: "test_member@test.com",
+        role: ["member"]
       }
-    })
+    }
+    await mock(mockRequests.signIn.ok(memberPayload));
+    await mock(mockRequests.member.get.ok(memberId, memberPayload));
+
     await browser.get(rootURL);
     waitForPageChange()
     const url = await browser.getCurrentUrl();
