@@ -1,8 +1,12 @@
 import * as React from "react";
 import { RouteComponentProps, Redirect } from "react-router";
 
-import { TextField, Grid, InputAdornment, Card, CardContent, Typography } from "@material-ui/core";
-import { RemoveRedEye } from "@material-ui/icons";
+import TextField from "@material-ui/core/TextField";
+import Grid from "@material-ui/core/Grid";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
 
 import { Routing } from "app/constants";
 import { putPassword } from "api/auth/transactions";

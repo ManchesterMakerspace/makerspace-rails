@@ -1,11 +1,11 @@
 import * as React from "react";
-import { TextField } from "@material-ui/core";
+import TextField from "@material-ui/core/TextField";
+import isEmpty from "lodash-es/isEmpty";
 
 import { Invoice } from "app/entities/invoice";
 import FormModal from "ui/common/FormModal";
 import Form from "ui/common/Form";
 import { fields } from "ui/invoice/constants";
-import { isEmpty } from "lodash-es";
 
 interface OwnProps {
   invoice?: Partial<Invoice>;

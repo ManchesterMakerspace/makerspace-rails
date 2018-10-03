@@ -1,7 +1,11 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router";
-import { Grid, Card, CardContent, Typography } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import Typography from "@material-ui/core/Typography";
+import isEmpty from "lodash-es/isEmpty";
 
 import { Invoice } from "app/entities/invoice";
 import { CollectionOf } from "app/interfaces";
@@ -10,10 +14,8 @@ import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import CheckoutForm from "ui/checkout/CheckoutForm";
 import TableContainer from "ui/common/table/TableContainer";
 import { Column } from "ui/common/table/Table";
-import { timeToDate } from "ui/utils/timeToDate";
 import { numberAsCurrency } from "ui/utils/numberToCurrency";
 import { Routing } from "app/constants";
-import { isEmpty } from "lodash-es";
 
 interface OwnProps {}
 interface StateProps {

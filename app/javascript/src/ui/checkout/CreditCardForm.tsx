@@ -1,12 +1,12 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import Grid from "@material-ui/core/Grid";
 
 //@ts-ignore
 import * as Braintree from "braintree-web";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { submitPaymentAction } from "ui/checkout/actions";
-import { Grid } from "@material-ui/core";
 import Form from "ui/common/Form";
 import { CheckoutFields } from "ui/checkout/constants";
 import ErrorMessage from "ui/common/ErrorMessage";

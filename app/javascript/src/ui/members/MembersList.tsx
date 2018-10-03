@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link } from 'react-router-dom';
-import { Grid } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
 
 import { MemberDetails } from "app/entities/member";
 import { QueryParams, CollectionOf } from "app/interfaces";

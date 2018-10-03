@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { Button, Grid } from "@material-ui/core";
-import * as moment from "moment";
+import Button from "@material-ui/core/Button";
+
 
 import { Rental, Properties } from "app/entities/rental";
 import { QueryParams } from "app/interfaces";
@@ -14,7 +14,7 @@ import { Column } from "ui/common/table/Table";
 import { readRentalsAction } from "ui/rentals/actions";
 import { Status } from "ui/constants";
 import StatusLabel from "ui/common/StatusLabel";
-
+import { timeToDate } from "ui/utils/timeToDate";
 
 interface OwnProps {
   member?: MemberDetails;
@@ -49,7 +49,7 @@ class RentalsList extends React.Component<Props, State> {
     {
       id: "expiration",
       label: "Expiration Date",
-      cell: (row: Rental) => `${moment(row.expiration).format("DD MMM YYYY")}`,
+      cell: (row: Rental) => timeToDate(row.expiration),
       defaultSortDirection: SortDirection.Desc,
     }, 
     ...this.props.admin && [{

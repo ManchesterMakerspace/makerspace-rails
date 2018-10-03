@@ -2,7 +2,9 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router";
 
-import { TextField, Typography, Grid } from "@material-ui/core";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
+import Grid from "@material-ui/core/Grid";
 
 import { Routing } from "app/constants";
 import { emailValid } from "app/utils";

@@ -1,6 +1,9 @@
 import * as React from "react";
-import { capitalize } from "lodash-es";
-import { Grid, Typography, Tabs, Tab } from "@material-ui/core";
+import capitalize from "lodash-es/capitalize";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
 import ButtonRow, { ActionButton } from "ui/common/ButtonRow";
 import LoadingOverlay from "ui/common/LoadingOverlay";
 

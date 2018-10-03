@@ -1,5 +1,7 @@
 import * as React from "react";
-import { FormControl, FormLabel } from "@material-ui/core";
+import FormControl from "@material-ui/core/FormControl";
+import FormLabel from "@material-ui/core/FormLabel";
+
 interface Props {
   label: string;
   id: string;

@@ -1,15 +1,14 @@
 import * as React from "react";
-import {
-  Table,
-  TableCell,
-  Tooltip,
-  TableSortLabel,
-  Checkbox,
-  TableRow,
-  TableHead,
-  TableBody,
-  Typography,
-} from '@material-ui/core';
+import Table from '@material-ui/core/Table';
+import TableCell from '@material-ui/core/TableCell';
+import Tooltip from '@material-ui/core/Tooltip';
+import TableSortLabel from '@material-ui/core/TableSortLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import TableRow from '@material-ui/core/TableRow';
+import TableHead from '@material-ui/core/TableHead';
+import TableBody from '@material-ui/core/TableBody';
+import Typography from '@material-ui/core/Typography';
+
 import { SortDirection } from 'ui/common/table/constants';
 import ErrorMessage from "ui/common/ErrorMessage";
 import LoadingOverlay from "ui/common/LoadingOverlay";

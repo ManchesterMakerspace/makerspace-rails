@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Button, Grid } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
 
 interface FieldRow {
   name: string;

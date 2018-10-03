@@ -2,12 +2,10 @@ import * as React from "react";
 import mapValues from "lodash-es/mapValues";
 import isEmpty from "lodash-es/isEmpty";
 import omit from "lodash-es/omit";
-import {
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-} from "@material-ui/core";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import Button from "@material-ui/core/Button";
 
 import { CollectionOf } from "app/interfaces";
 

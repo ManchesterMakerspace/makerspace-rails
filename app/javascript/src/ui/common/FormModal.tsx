@@ -1,7 +1,5 @@
 import * as React from "react";
-import {
-  Dialog,
-} from "@material-ui/core";
+import Dialog from "@material-ui/core/Dialog";
 
 import Form from "ui/common/Form";
 

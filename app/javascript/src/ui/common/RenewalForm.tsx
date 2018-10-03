@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Select, Typography, InputLabel } from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
+import Select from "@material-ui/core/Select";
 import toNumber from "lodash-es/toNumber";
 
 import FormModal from "ui/common/FormModal";

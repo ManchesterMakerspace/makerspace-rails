@@ -1,7 +1,6 @@
 import * as React from "react";
-import { Button } from "@material-ui/core";
-import { ButtonProps } from "@material-ui/core/Button";
-import { kebabCase } from "lodash-es";
+import Button, { ButtonProps } from "@material-ui/core/Button";
+import kebabCase from "lodash-es/kebabCase";
 
 export interface ActionButton {
   color: ButtonProps["color"];

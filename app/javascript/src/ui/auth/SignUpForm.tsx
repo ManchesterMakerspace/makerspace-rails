@@ -2,10 +2,17 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router";
 
-import { FormControlLabel, TextField, Grid, InputAdornment, Card, CardContent, FormLabel, Select, Checkbox } from "@material-ui/core";
-import { RemoveRedEye } from "@material-ui/icons";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import TextField from "@material-ui/core/TextField";
+import Grid from "@material-ui/core/Grid";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import FormLabel from "@material-ui/core/FormLabel";
+import Select from "@material-ui/core/Select";
+import Checkbox from "@material-ui/core/Checkbox";
+import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
 
-import { Routing } from "app/constants";
 import { CollectionOf } from "app/interfaces";
 import { InvoiceOption } from "app/entities/invoice";
 

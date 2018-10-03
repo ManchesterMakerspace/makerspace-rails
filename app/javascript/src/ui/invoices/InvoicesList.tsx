@@ -1,6 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { Button } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import pick from "lodash-es/pick";
 
 import { Invoice, Properties } from "app/entities/invoice";
 import { QueryParams, CollectionOf } from "app/interfaces";
@@ -19,7 +20,6 @@ import { MemberDetails } from "app/entities/member";
 import ButtonRow, { ActionButton } from "ui/common/ButtonRow";
 import { CrudOperation } from "app/constants";
 import PaymentRequiredModal from "ui/invoices/PaymentRequiredModal";
-import { pick } from "lodash-es";
 import { numberAsCurrency } from "ui/utils/numberToCurrency";
 import { Status } from "ui/common/constants";
 import StatusLabel from "ui/common/StatusLabel";

@@ -58,7 +58,6 @@ class App extends React.Component<Props, State> {
     }
   }
   public render(): JSX.Element {
-    console.log(this.props.location);
     return (
       <div className="root">
         <Header location={this.props.location}/>

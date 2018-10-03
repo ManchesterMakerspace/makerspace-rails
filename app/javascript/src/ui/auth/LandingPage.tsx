@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from "react-router";
 
-import { Grid, Card, CardContent, Button, Typography, Hidden } from '@material-ui/core';
+import Grid from '@material-ui/core/Grid';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import Hidden from '@material-ui/core/Hidden';
 
 import { Routing } from "app/constants";
 import Login from 'ui/auth/Login';

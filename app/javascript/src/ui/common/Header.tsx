@@ -2,17 +2,13 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 
-import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  Typography,
-  Menu,
-  MenuItem
-} from "@material-ui/core";
-import {
-  Menu as MenuIcon,
-} from "@material-ui/icons";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import IconButton from "@material-ui/core/IconButton";
+import Typography from "@material-ui/core/Typography";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import MenuIcon from "@material-ui/icons/Menu";
 
 import { ScopedThunkDispatch, State as ReduxState } from "ui/reducer";
 import { logoutUserAction } from "ui/auth/actions";

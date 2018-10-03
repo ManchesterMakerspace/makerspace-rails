@@ -1,8 +1,11 @@
 import * as React from "react";
+import TablePagination from "@material-ui/core/TablePagination";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import TextField from "@material-ui/core/TextField";
 
 import Table, { Column } from "ui/common/table/Table";
 import { SortDirection } from "ui/common/table/constants";
-import { TablePagination, Toolbar, Typography, TextField } from "@material-ui/core";
 import { defaultItemsPerPage } from "ui/constants";
 
 interface Props<T> {

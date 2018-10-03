@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Status } from "ui/common/constants";
-import { Chip } from "@material-ui/core";
 
 interface StatusLabelProps {
   label: string;
