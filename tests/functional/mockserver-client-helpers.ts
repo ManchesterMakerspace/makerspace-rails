@@ -1,4 +1,4 @@
-const mockserver = require('mockserver-client').mockServerClient("mockserver", 1080);
+const mockserver = require('mockserver-client').mockServerClient(process.env.MOCKSERVER_DOMAIN || 'localhost', 1080);
 import { Url } from "app/constants";
 import { QueryParams } from "app/interfaces";
 import { Rental } from "app/entities/rental";

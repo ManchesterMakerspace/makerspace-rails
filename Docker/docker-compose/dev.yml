@@ -1,17 +1,27 @@
 version: '2'
 services:
+  webpack:
+    build:
+      context: ../..
+      dockerfile: Docker/Dockerfiles/webpack
+    volumes_from:
+      - interface
+    links:
+      - interface
+    environment:
+      - WEBPACKER_DEV_SERVER_HOST=0.0.0.0
+    command: bash -c "/usr/src/app/bin/webpack-dev-server"
+    ports:
+      - 3035:3035
+    tty: true
   interface:
     extends:
       file: app.yml
       service: interface
-    environment:
-     - RAILS_ENV=development
     ports:
       - 3002:3002
-    volumes_from:
-      - bundle
-    command: bash -c "chmod +x Docker/scripts/start.sh && Docker/scripts/start.sh"
-  bundle:
-    image: mmsinterface_interface
+    environment:
+      - WEBPACKER_DEV_SERVER_HOST=webpack
     volumes:
       - /box
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3002 -b '0.0.0.0'"

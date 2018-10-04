@@ -13,7 +13,8 @@ class Invoice
       description:  "One month, non-recurring membership",
       amount: 80.00,
       operation_string: "member.renewal = 1"
-    }]
+    }],
+    rentals: []
   }.freeze
 
   field :description, type: String

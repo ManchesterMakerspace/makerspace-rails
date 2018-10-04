@@ -1,6 +1,6 @@
 Rails.application.configure do
   # Verifies that versions and hashed value of the package contents in the project's package.json
-config.webpacker.check_yarn_integrity = true
+config.webpacker.check_yarn_integrity = false
 
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -31,7 +31,7 @@ config.webpacker.check_yarn_integrity = true
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.default_url_options = { host: 'localhost', port: 3002 }
+  config.action_mailer.default_url_options = { host: ENV["APP_DOMAIN"] || "localhost", port: ENV["PORT"] || 3002  }
   config.action_mailer.perform_caching = false
   config.action_mailer.perform_deliveries = true
 
@@ -41,7 +41,7 @@ config.webpacker.check_yarn_integrity = true
     :enable_starttls_auto => true,
     address: 'smtp.gmail.com',
     port: 587,
-    domain: 'localhost:3002',
+    domain: "#{ENV['APP_DOMAIN'] || 'localhost'}:#{ENV['PORT'] || 3002}",
     user_name: ENV['GMAIL_USERNAME'],
     password: ENV['GMAIL_PASSWORD']
   }

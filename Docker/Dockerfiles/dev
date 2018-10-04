@@ -9,7 +9,7 @@ RUN npm install -g yarn
 
 # Create application directories
 # tmp may not exist in local and must be created explicitly
-ENV app /myapp
+ENV app /usr/src/app
 RUN mkdir $app
 RUN mkdir $app/tmp
 

@@ -6,21 +6,15 @@ services:
       service: interface
     environment:
      - RAILS_ENV=test
-     - DOCKER_HOST=interface
+     - APP_DOMAIN=interface
+     - PORT=3002
+     - SELENIUM_DOMAIN=selenium
+     - MOCKSERVER_DOMAIN=mockserver
     ports:
      - 3002:3002
     volumes:
-      - /myapp
       - /box
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails assets:precompile && bundle exec rails s -p 3002 -b '0.0.0.0'"
-  selenium:
-    image: selenium/standalone-chrome:latest
-    ports:
-    - 4444:4444
-    - 5900
-    links:
-      - interface
-    tty: false
   tester:
     build:
       context: ../..
@@ -34,11 +28,21 @@ services:
     depends_on:
       - interface
     environment:
-      - MLAB_URI
-      - API_DOMAIN
+      - RAILS_ENV=test
+      - APP_DOMAIN=interface
+      - PORT=3002
+      - SELENIUM_DOMAIN=selenium
+      - MOCKSERVER_DOMAIN=mockserver
   mockserver:
     image: jamesdbloom/mockserver:mockserver-5.3.0
     ports:
       - 1080:1080
-    environment:
-      - LOG_LEVEL=INFO
+    tty: false
+  selenium:
+    image: selenium/standalone-chrome:latest
+    ports:
+    - 4444:4444
+    - 5900
+    links:
+      - interface
+    tty: false

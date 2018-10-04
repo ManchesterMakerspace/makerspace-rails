@@ -21,7 +21,7 @@ class InvoicesController < ApplicationController
 
   def validate_params
     @invoice_options = params[:types].nil? || !params[:types].is_a?(Array) ? Invoice::OPTION_TYPES : params[:types].map { |t| t.to_sym }
-    if !@invoice_options.nil? && !Invoice::OPTION_TYPES.include?(*@invoice_options) 
+    if !@invoice_options.nil? && !@invoice_options.all? { |o| Invoice::OPTION_TYPES.include?(o) } 
       raise Exception.new("Invalid invoice option type")
     end
   end

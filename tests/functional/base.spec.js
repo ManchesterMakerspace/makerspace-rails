@@ -1,6 +1,6 @@
 require("./locators");
 import { mockRequests, mock } from "./mockserver-client-helpers";
-const rootURL = 'http://interface:3002/';
+const rootURL = `http://${process.env.APP_DOMAIN || 'localhost'}:${process.env.PORT || 3002}/`;
 
 it('initialises the context', async () => {
   await browser.manage().window().setPosition(0, 0);
