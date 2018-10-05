@@ -41,13 +41,14 @@ interface Props<T> {
 class EnhancedTable<T> extends React.Component<Props<T>, {}> {
 
   private getHeaderRow = () => {
-    const { onSelect, onSelectAll, selectedIds, data } = this.props;
+    const { onSelect, onSelectAll, selectedIds, data, id } = this.props;
     const numSelected = selectedIds && selectedIds.length;
     const rowCount = data.length;
 
     const checkbox = (
       <TableCell padding="checkbox">
         <Checkbox
+          id={`${id}-select-all`}
           color="primary"
           indeterminate={numSelected > 0 && numSelected < rowCount}
           checked={numSelected > 0 && numSelected === rowCount}
@@ -166,7 +167,7 @@ class EnhancedTable<T> extends React.Component<Props<T>, {}> {
         checkbox = (
           <TableCell padding="checkbox">
             <Checkbox
-              id={id}
+              id={`${id}-select`}
               color="primary"
               checked={checked}
               onChange={checkHandler}
@@ -211,7 +212,7 @@ class EnhancedTable<T> extends React.Component<Props<T>, {}> {
 
     return (
       <>
-        {loading &&  <LoadingOverlay id={id}/>}
+        {loading && <LoadingOverlay id={`${id}-loading`}/>}
         <Table>
           {this.getHeaderRow()}
           <TableBody>

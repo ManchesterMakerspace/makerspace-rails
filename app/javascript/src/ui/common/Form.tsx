@@ -246,8 +246,8 @@ class Form extends React.Component<FormModalProps, State> {
         </DialogContent>
 
         <DialogActions>
-          {onSubmit && <Button variant="contained" color="primary" type="submit">{submitText || "Submit"}</Button>}
-          {onCancel && <Button variant="outlined" onClick={this.closeForm}>{cancelText || "Cancel"}</Button>}
+          {onSubmit && <Button variant="contained" id={`${id}-submit`} color="primary" type="submit">{submitText || "Submit"}</Button>}
+          {onCancel && <Button variant="outlined" id={`${id}-cancel`}  onClick={this.closeForm}>{cancelText || "Cancel"}</Button>}
         </DialogActions>
       </>
     )

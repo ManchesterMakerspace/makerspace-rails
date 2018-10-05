@@ -113,11 +113,13 @@ class MembersList extends React.Component<Props, State> {
     return (
       <ButtonRow
         actionButtons={[{
+          id: "members-list-create",
           variant: "contained",
           color: "primary",
           onClick: this.openCreateForm,
           label: "Create New Member"
         }, {
+          id: "members-list-renew",
           variant: "outlined",
           color: "primary",
           disabled: !selectedId,

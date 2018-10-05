@@ -17,7 +17,7 @@ import { CollectionOf } from "app/interfaces";
 import { InvoiceOption } from "app/entities/invoice";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
-import { SignUpFields, EmailExistsError } from "ui/auth/constants";
+import { SignUpFields, EmailExistsError, signUpPrefix } from "ui/auth/constants";
 import { SignUpForm } from "ui/auth/interfaces";
 import { submitSignUpAction } from "ui/auth/actions";
 import { buildProfileRouting } from "ui/auth/utils";
@@ -94,6 +94,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
           required
           label={SignUpFields.password.label}
           name={SignUpFields.password.name}
+          id={SignUpFields.password.name}
           placeholder={SignUpFields.password.placeholder}
           type={passwordMask ? 'password' : 'text'}
           InputProps={{
@@ -110,12 +111,12 @@ class SignUpFormComponent extends React.Component<Props, State> {
 
   private submit = async (form: Form) => {
     const validSignUp: SignUpForm = await form.simpleValidate<SignUpForm>(SignUpFields);
-    
+
     if (!form.isValid()) return;
 
     this.props.submitSignUp({
       ...validSignUp,
-      discount: !!validSignUp.discount 
+      discount: !!validSignUp.discount
     });
   }
 
@@ -153,7 +154,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
       amount: 0
     });
     const selectOptions = options.map((option) => (
-      <option key={option.id} value={option.id}>
+      <option id={`${signUpPrefix}-${option.id}`} key={option.id} value={option.id}>
         {option.description}{!!option.amount && ` ($${option.amount})`}
       </option>
     ));
@@ -163,7 +164,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
           <FormLabel>{SignUpFields.membershipId.label}</FormLabel>
           <Select
             fullWidth
-            id="renewal-term"
+            id={SignUpFields.membershipId.name}
             native
             required
             placeholder={SignUpFields.membershipId.placeholder}
@@ -177,7 +178,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
             name={SignUpFields.discount.name}
             label={SignUpFields.discount.label}
             control={
-              <Checkbox color="primary" value={SignUpFields.discount.name}/>
+              <Checkbox color="primary" id={SignUpFields.discount.name} value={SignUpFields.discount.name}/>
             }
           />
         </Grid>
@@ -196,7 +197,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
     return (
       <Form
         ref={this.setFormRef}
-        id="sign-up"
+        id={signUpPrefix}
         loading={isRequesting}
         title="Become a Member"
         onSubmit={this.submit}
@@ -209,6 +210,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
               required
               label={SignUpFields.firstname.label}
               name={SignUpFields.firstname.name}
+              id={SignUpFields.firstname.name}
               placeholder={SignUpFields.firstname.placeholder}
             />
           </Grid>
@@ -218,6 +220,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
               required
               label={SignUpFields.lastname.label}
               name={SignUpFields.lastname.name}
+              id={SignUpFields.lastname.name}
               placeholder={SignUpFields.lastname.placeholder}
             />
           </Grid>
@@ -227,6 +230,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
               required
               label={SignUpFields.email.label}
               name={SignUpFields.email.name}
+              id={SignUpFields.email.name}
               placeholder={SignUpFields.email.placeholder}
               type="email"
             />
@@ -235,7 +239,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
           {this.renderMembershipSelect()}
         </Grid>
 
-        {!isRequesting && error && <ErrorMessage error={error} />}
+        {!isRequesting && error && <ErrorMessage id={`${signUpPrefix}-error`} error={error} />}
         {emailExists && this.renderEmailNotification()}
       </Form>
     );

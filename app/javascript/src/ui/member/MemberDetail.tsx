@@ -141,13 +141,13 @@ class MemberDetail extends React.Component<Props, State> {
 
     return (
       <>
-        <KeyValueItem label="Email">
+        <KeyValueItem id="member-detail-email" label="Email">
           {member.email ? <a href={`mailto:${member.email}`}>{member.email}</a> : "N/A"}
         </KeyValueItem>
-        <KeyValueItem label="Membership Expiration">
+        <KeyValueItem id="member-detail-expiration" label="Membership Expiration">
           {displayMemberExpiration(member)}
         </KeyValueItem>
-        <KeyValueItem label="Membership Status">
+        <KeyValueItem id="member-detail-status" label="Membership Status">
           <MemberStatusLabel member={member} />
         </KeyValueItem>
       </>
@@ -171,6 +171,7 @@ class MemberDetail extends React.Component<Props, State> {
           basePath={`/members/${memberId}`}
           actionButtons={admin && [
             {
+              id: "member-detail-open-renew-modal",
               color: "primary",
               variant: "contained",
               disabled: loading,
@@ -178,6 +179,7 @@ class MemberDetail extends React.Component<Props, State> {
               onClick: this.openRenewModal
             },
             {
+              id: "member-detail-open-edit-modal",
               color: "primary",
               variant: "outlined",
               disabled: loading,
@@ -185,6 +187,7 @@ class MemberDetail extends React.Component<Props, State> {
               onClick: this.openEditModal
             },
             {
+              id: "member-detail-open-card-modal",
               color: "primary",
               variant: "outlined",
               disabled: loading,
@@ -253,7 +256,7 @@ class MemberDetail extends React.Component<Props, State> {
         }
       })
     }
-  } 
+  }
 
   private renderMemberForms = () => {
     const { member, admin } = this.props;

@@ -80,6 +80,7 @@ class PasswordReset extends React.Component<Props, State> {
                   required
                   label={PasswordFields.password.label}
                   name={PasswordFields.password.name}
+                  id={PasswordFields.password.name}
                   placeholder={PasswordFields.password.placeholder}
                   type={passwordMask ? 'password' : 'text'}
                   InputProps={{

@@ -122,6 +122,7 @@ class AccessCardForm extends React.Component<OwnProps,State> {
           <div>Click the following button to import the new key fob's ID</div>
           <div>
             <Button
+              id="card-form-import-new-key"
               color="primary"
               variant="contained"
               onClick={this.fetchRejectionCard}
@@ -130,7 +131,7 @@ class AccessCardForm extends React.Component<OwnProps,State> {
             </Button>
           </div>
         </li>
-        <li>Confirm new ID is displayed here: {
+        <li id="card-form-key-confirmation">Confirm new ID is displayed here: {
           rejectionCardId ? <span style={{color: "green"}}>{rejectionCardId}</span>
           : <span style={{color: "red"}}>No Card Found</span>}
         </li>
@@ -161,6 +162,7 @@ class AccessCardForm extends React.Component<OwnProps,State> {
                 <ButtonRow
                   actionButtons={[
                     {
+                      id: "card-form-lost",
                       color: "primary",
                       variant: "contained",
                       onClick: this.reportLost,
@@ -168,6 +170,7 @@ class AccessCardForm extends React.Component<OwnProps,State> {
                       disabled
                     },
                     {
+                      id: "card-form-stolen",
                       color: "primary",
                       variant: "outlined",
                       onClick: this.reportStolen,

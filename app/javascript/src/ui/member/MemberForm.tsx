@@ -48,6 +48,7 @@ class MemberForm extends React.Component<OwnProps, {}> {
               value={member.firstname}
               label={fields.firstname.label}
               name={fields.firstname.name}
+              id={fields.firstname.name}
               placeholder={fields.firstname.placeholder}
             />
           </Grid>
@@ -58,6 +59,7 @@ class MemberForm extends React.Component<OwnProps, {}> {
               value={member.lastname}
               label={fields.lastname.label}
               name={fields.lastname.name}
+              id={fields.lastname.name}
               placeholder={fields.lastname.placeholder}
             />
           </Grid>
@@ -69,6 +71,7 @@ class MemberForm extends React.Component<OwnProps, {}> {
           value={member.email}
           label={fields.email.label}
           name={fields.email.name}
+          id={fields.email.name}
           placeholder={fields.email.placeholder}
           type="email"
         />

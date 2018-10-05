@@ -11,7 +11,7 @@ import { emailValid } from "app/utils";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { loginUserAction } from "ui/auth/actions";
-import { LoginFields } from "ui/auth/constants";
+import { LoginFields, loginPrefix } from "ui/auth/constants";
 import { AuthForm } from "ui/auth/interfaces";
 import ErrorMessage from "ui/common/ErrorMessage";
 import Form from "ui/common/Form";
@@ -90,7 +90,7 @@ class Login extends React.Component<Props, State> {
 
   private submitPasswordRequest = async (form: Form) => {
     const { email } = await form.simpleValidate<AuthForm>(PasswordFields);
-    
+
     if (!form.isValid()) return;
 
     this.setState({ requestingPassword: true}, async () => {
@@ -126,6 +126,7 @@ class Login extends React.Component<Props, State> {
               required
               label={PasswordFields.email.label}
               name={PasswordFields.email.name}
+              id={PasswordFields.email.name}
               placeholder={PasswordFields.email.placeholder}
               type="email"
             />
@@ -152,7 +153,7 @@ class Login extends React.Component<Props, State> {
       <>
         <Form
           ref={this.setFormRef}
-          id="sign-in"
+          id={loginPrefix}
           loading={isRequesting}
           title="Please Sign In"
           onSubmit={this.submitLogin}
@@ -178,10 +179,10 @@ class Login extends React.Component<Props, State> {
               />
             </Grid>
             <Grid item xs={12} style={{textAlign: "center"}}>
-              <a href="#" onClick={this.openPasswordReset}>Forgot your password?</a>
+              <a id="forgot-password" href="#" onClick={this.openPasswordReset}>Forgot your password?</a>
             </Grid>
           </Grid>
-          { !isRequesting && error && <ErrorMessage error={error}/>}
+          {!isRequesting && error && <ErrorMessage id={`${loginPrefix}-email`} error={error}/>}
         </Form>
         {this.renderPasswordReset()}
       </>

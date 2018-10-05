@@ -19,60 +19,61 @@ export enum AuthDisplayOption {
 
 export const EmailExistsError = "Email already exists";
 
-const formPrefix = "auth-modal";
+export const loginPrefix = "login-modal";
 export const LoginFields: FormFields = {
   email: {
     label: "Email",
-    name: `${formPrefix}-email`,
+    name: `${loginPrefix}-email`,
     placeholder: "Enter email",
     error: "Invalid email",
     validate: (val: string) => emailValid(val)
   },
   password: {
     label: "Password",
-    name: `${formPrefix}-password`,
+    name: `${loginPrefix}-password`,
     placeholder: "Enter Password",
     error: "Invalid password",
     validate: (val) => !!val
   }
 }
 
+export const signUpPrefix = "sign-up-modal";
 export const SignUpFields: FormFields = {
   firstname: {
     label: "First Name",
-    name: `${formPrefix}-firstname`,
+    name: `${signUpPrefix}-firstname`,
     placeholder: "Enter first name",
     validate: (val) => !!val,
     error: "Invalid first name",
   },
   lastname: {
     label: "Last Name",
-    name: `${formPrefix}-lastname`,
+    name: `${signUpPrefix}-lastname`,
     placeholder: "Enter last name",
     validate: (val) => !!val,
     error: "Invalid last name"
   },
   email: {
     label: "Email",
-    name: `${formPrefix}-email`,
+    name: `${signUpPrefix}-email`,
     placeholder: "Enter email",
     validate: (val: string) => val && emailValid(val),
     error: "Invalid email"
   },
   password: {
     label: "Password",
-    name: `${formPrefix}-password`,
+    name: `${signUpPrefix}-password`,
     placeholder: "Enter password",
     validate: (val) => isString(val) && val.length > 7,
     error: "Password must be 8 characters minimum"
   },
   membershipId: {
     label: "Membership Option",
-    name: `${formPrefix}-membership-id`,
+    name: `${signUpPrefix}-membership-id`,
     placeholder: "Select a Membership Option",
   },
   discount: {
     label: "Apply 10% Student, Senior and Military discount (ID required at orientation)",
-    name: `${formPrefix}-discount`,
+    name: `${signUpPrefix}-discount`,
   },
 }

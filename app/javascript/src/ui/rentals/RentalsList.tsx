@@ -51,14 +51,14 @@ class RentalsList extends React.Component<Props, State> {
       label: "Expiration Date",
       cell: (row: Rental) => timeToDate(row.expiration),
       defaultSortDirection: SortDirection.Desc,
-    }, 
+    },
     ...this.props.admin && [{
       id: "member",
       label: "Member",
       cell: (row: Rental) => row.member,
       defaultSortDirection: SortDirection.Desc,
       width: 200
-    }], 
+    }],
     {
       id: "status",
       label: "Status",
@@ -66,7 +66,7 @@ class RentalsList extends React.Component<Props, State> {
         const current = row.expiration > Date.now();
         const statusColor = current ? Status.Success : Status.Danger;
         const label = current ? "Active" : "Expired";
-  
+
         return (
           <StatusLabel label={label} color={statusColor}/>
         );
@@ -90,7 +90,7 @@ class RentalsList extends React.Component<Props, State> {
 
   private getActionButton = () => {
     return (
-      <Button variant="contained" color="primary" onClick={(this.openNewRentalModal)}>
+      <Button id="rentals-list-create" variant="contained" color="primary" onClick={(this.openNewRentalModal)}>
         Create New Rental
       </Button>
     )

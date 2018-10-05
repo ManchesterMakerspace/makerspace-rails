@@ -65,11 +65,12 @@ class TableContainer<T> extends React.Component<Props<T>, {}> {
     return (
       <div className="table-container-wrapper">
         <Toolbar>
-          <Typography variant="title" color="inherit" className="flex">
+          <Typography id={`${id}-title`} variant="title" color="inherit" className="flex">
             {title}
           </Typography>
           { onSearchEnter &&
             <TextField
+              id={`${id}-search-input`}
               type="text"
               disabled={loading}
               placeholder="Search..."

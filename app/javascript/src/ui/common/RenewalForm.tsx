@@ -74,7 +74,7 @@ class RenewalForm extends React.Component<OwnProps, {}> {
 
     return (
       <>
-       <Typography gutterBottom variant="subheading" align="center" color="primary">
+       <Typography id="renwal-form-entity-name" gutterBottom variant="subheading" align="center" color="primary">
           {entity.name}
         </Typography>
         <KeyValueItem label="Expiration" align="left">
@@ -88,7 +88,7 @@ class RenewalForm extends React.Component<OwnProps, {}> {
             placeholder="Select an option"
             name={renewalSelectName}
           >
-            {renewalOptions.map((option) => <option key={kebabCase(option.label)} value={option.value}>{option.label}</option>)}
+            {renewalOptions.map((option) => <option id={`renewal-option-${kebabCase(option.label)}`} key={kebabCase(option.label)} value={option.value}>{option.label}</option>)}
           </Select>
         </KeyValueItem>
       </>
@@ -110,7 +110,7 @@ class RenewalForm extends React.Component<OwnProps, {}> {
         submitText="Submit"
         error={error}
       >
-        {entity ? this.renderForm() :  <ErrorMessage error="Nothing to renew"/>}
+        {entity ? this.renderForm() :  <ErrorMessage id="renewal-form-error" error="Nothing to renew"/>}
       </FormModal>
     );
   }

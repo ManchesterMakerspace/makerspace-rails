@@ -31,7 +31,7 @@ class DetailView extends React.Component<OwnProps, State> {
 
   constructor(props: OwnProps) {
     super(props);
-    this.state = { 
+    this.state = {
       activeResource: undefined
     };
   }
@@ -70,7 +70,7 @@ class DetailView extends React.Component<OwnProps, State> {
     return (
       <>
         <Grid item xs={10}>
-          <Typography gutterBottom variant="title">{title}</Typography>
+          <Typography id="detail-view-title" gutterBottom variant="title">{title}</Typography>
           <ButtonRow actionButtons={actionButtons} />
         </Grid>
         <Grid item xs={10} style={sectionBorderStyle}>
@@ -86,7 +86,7 @@ class DetailView extends React.Component<OwnProps, State> {
 
   private renderResources = (): JSX.Element => {
     const { activeResource } = this.state;
-    const { resources } = this.props; 
+    const { resources } = this.props;
     return (
       <Grid item xs={10} style={{ ...sectionBorderStyle, marginTop: "0.5em"}}>
         {activeResource && (
@@ -100,7 +100,7 @@ class DetailView extends React.Component<OwnProps, State> {
             >
               {resources.map(resource => {
                 return (
-                  <Tab 
+                  <Tab
                     label={resource.displayName || capitalize(resource.name)}
                     value={resource.name}
                     key={resource.name}
