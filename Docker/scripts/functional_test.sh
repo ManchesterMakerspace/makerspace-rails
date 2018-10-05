@@ -1,33 +1,29 @@
 #!/bin/bash
-# set -e
+PROJECT_NAME=mmsinterface
+INTERACTIVE=FALSE
+start() {
+  INTERACTIVE=${INTERACTIVE} docker-compose -f Docker/docker-compose/functional.yml -p ${PROJECT_NAME} ${@}
+}
 
-max_wait_seconds=100
-echo "Waiting.."
-echo "Waiting for selenium to start..."
-while true; do
-  if ! curl --output /dev/null --silent --head --fail "http://${SELENIUM_DOMAIN}:4444/wd/hub" > /dev/null 2>&1; then
-    sleep 1;
-    ((max_wait_seconds--))
-    ((max_wait_seconds%15==0)) && echo "...waiting for selenium"
-    ((max_wait_seconds == 0)) && echo "FAILED waiting for selenium" && exit 1
-  else
-    echo "Selenium ready"
-    break
-  fi
+for argument in "$@"; do
+    case $argument in
+        --build)
+            BUILD=TRUE
+            shift
+            ;;
+        --interactive)
+            INTERACTIVE=TRUE
+            shift
+            ;;
+        *)
+            echo "# ERROR: invalid argument $argument"
+            exit 1
+            ;;
+    esac
 done
 
-echo "Waiting for application to start..."
-while true; do
-  if ! curl --output /dev/null --silent --head --fail "http://${APP_DOMAIN}:${PORT}" > /dev/null 2>&1; then
-    sleep 5;
-    ((max_wait_seconds-=5))
-    ((max_wait_seconds%15==0)) && echo "...waiting for application"
-    ((max_wait_seconds == 0)) && echo "FAILED waiting for application" && exit 1
-  else
-    echo "Application ready"
-    break
-  fi
-done
-
-echo "# All containers ready. Starting testing..."
-yarn install && yarn test-functional
+if [ -z ${BUILD} ]; then
+  start up --build --exit-code-from tester
+else
+  start up --exit-code-from tester
+fi

@@ -15,7 +15,7 @@ ENV BUNDLE_GEMFILE=$app/Gemfile \
   BUNDLE_PATH=/box
 
 RUN yarn install
-COPY Docker/scripts/functional_test.sh /bin/functional_test.sh
-RUN chmod +x /bin/functional_test.sh
+COPY Docker/scripts/wait_to_test.sh /bin/wait_to_test.sh
+RUN chmod +x /bin/wait_to_test.sh
 
-CMD ["/bin/functional_test.sh"]
+CMD ["/bin/wait_to_test.sh"]

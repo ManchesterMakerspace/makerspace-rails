@@ -3,15 +3,24 @@ DC_FUNCTIONAL=docker-compose -f Docker/docker-compose/functional.yml -p $(PROJEC
 DC_DEV=docker-compose -f Docker/docker-compose/dev.yml -p $(PROJECT_NAME)
 DC_TEST=docker-compose -f Docker/docker-compose/test.yml -p $(PROJECT_NAME)
 
-start-dev: build-up-dev
-start-unit: clean-test test-up
-start-functional: clean-test functional-up
-rebuild-functional: clean-test build-up-functional
+start: clean-dev dev-up
 test: clean-test test-up functional-up
 
-build-up-dev:
+rebuild-dev: clean-dev build-up-dev
+start-unit: clean-test test-up
+start-functional: clean-test functional-up
+start-functional-interactive: clean-test functional-up-interactive
+rebuild-functional: clean-test build-up-functional
+rebuild-functional-interactive: clean-test build-up-functional-interactive
+
+clean-dev:
 	${DC_DEV} rm -f
+
+build-up-dev:
 	${DC_DEV} build
+	${DC_DEV} up
+
+dev-up:
 	${DC_DEV} up
 
 clean-test:
@@ -19,9 +28,13 @@ clean-test:
 	${DC_INTEGRATION} rm -f
 
 test-up:
-	@${DC_TEST} up --exit-code-from interface
+	${DC_TEST} up --exit-code-from interface
 
 build-up-functional:
-	@${DC_FUNCTIONAL} up --build --exit-code-from tester
+	./Docker/scripts/functional_test.sh --build
+build-up-functional-interactive:
+	./Docker/scripts/functional_test.sh --build --interactive
 functional-up:
-	@${DC_FUNCTIONAL} up --exit-code-from tester
+	./Docker/scripts/functional_test.sh
+functional-up-interactive:
+	./Docker/scripts/functional_test.sh --interactive
