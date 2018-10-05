@@ -28,16 +28,20 @@ services:
     depends_on:
       - interface
     environment:
+      - INTERACTIVE
       - RAILS_ENV=test
       - APP_DOMAIN=interface
       - PORT=3002
       - SELENIUM_DOMAIN=selenium
       - MOCKSERVER_DOMAIN=mockserver
+    tty: true
   mockserver:
     image: jamesdbloom/mockserver:mockserver-5.3.0
     ports:
       - 1080:1080
     tty: false
+    logging:
+      driver: "none"
   selenium:
     image: selenium/standalone-chrome:latest
     ports:
@@ -46,3 +50,5 @@ services:
     links:
       - interface
     tty: false
+    logging:
+      driver: "none"

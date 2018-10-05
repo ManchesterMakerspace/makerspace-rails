@@ -12,6 +12,7 @@ for argument in "$@"; do
             shift
             ;;
         --interactive)
+            echo "interactive"
             INTERACTIVE=TRUE
             shift
             ;;
@@ -22,7 +23,14 @@ for argument in "$@"; do
     esac
 done
 
-if [ -z ${BUILD} ]; then
+cleanup(){
+    exit_code=$?
+    echo "# Closing docker" && start down -v --rmi all --remove-orphans
+    exit $exit_code
+}
+
+trap 'cleanup' EXIT
+if [ "${BUILD}" == "TRUE" ]; then
   start up --build --exit-code-from tester
 else
   start up --exit-code-from tester

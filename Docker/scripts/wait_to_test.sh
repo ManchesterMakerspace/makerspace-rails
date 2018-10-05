@@ -3,7 +3,7 @@
 
 max_wait_seconds=300
 echo "Waiting.."
-if [ -z ${SELENIUM_DOMAIN} ]; then
+if [ ${SELENIUM_DOMAIN} ]; then
   echo "Waiting for selenium to start..."
   while true; do
     if ! curl --output /dev/null --silent --head --fail "http://${SELENIUM_DOMAIN}:4444/wd/hub" > /dev/null 2>&1; then
@@ -31,11 +31,16 @@ while true; do
   fi
 done
 
-echo "# All containers ready. Starting testing..."
-if [ -z ${INTERACTIVE} ]; then
+echo "# All containers ready."
+if [ "${INTERACTIVE}" == "TRUE" ]; then
+  echo "Dev available"
+  if [ ${SELENIUM_DOMAIN} ]; then
+    echo "Selenium: 0.0.0.0:4444/wd/hub"
+  fi
+  echo "App: 0.0.0.0:${PORT}"
   /bin/bash
-elif [ -z ${SELENIUM_DOMAIN} ]
-  yarn test-functional
+elif [ ${SELENIUM_DOMAIN} ]; then
+  yarn install && echo "Starting testing..." && yarn test-functional
 else
-  yarn test
+  yarn install && echo "Starting testing..." && yarn test
 fi
