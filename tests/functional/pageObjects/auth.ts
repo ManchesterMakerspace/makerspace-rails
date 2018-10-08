@@ -23,4 +23,12 @@ export class AuthPageObject {
     id: "#password-reset",
     passwordInput: "#reset-password-input",
   }
+
+  public signInUser = async (user, error = false) => {
+    await utils.fillInput(this.loginModal.emailInput, user.email);
+    await utils.fillInput(this.loginModal.passwordInput, user.password);
+    const signInFunc = error ? mockRequests.signIn.error : mockRequests.signIn.ok;
+    await mock(signInFunc(user));
+    await utils.clickElement(this.loginModal.submitButton);
+  }
 }

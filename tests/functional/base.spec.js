@@ -29,7 +29,7 @@ describe("API Mocking", () => {
     await mock(mockRequests.member.get.ok(memberId, memberPayload));
 
     await browser.get(rootURL);
-    waitForPageChange()
+    await waitForPageChange()
     const url = await browser.getCurrentUrl();
     expect(url).not.toEqual(rootURL);    
   });
