@@ -5,16 +5,15 @@ services:
       file: app.yml
       service: interface
     environment:
-     - RAILS_ENV=test
-     - APP_DOMAIN=interface
-     - PORT=3002
-     - SELENIUM_DOMAIN=selenium
-     - MOCKSERVER_DOMAIN=mockserver
+      - INTERACTIVE
+      - RAILS_ENV=test
+      - APP_DOMAIN=interface
+      - API_DOMAIN=http://mockserver:1080
+      - PORT=3002
     ports:
-     - 3002:3002
+      - 3002:3002
     volumes:
       - /box
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails assets:precompile && bundle exec rails s -p 3002 -b '0.0.0.0'"
   tester:
     build:
       context: ../..
@@ -36,12 +35,10 @@ services:
       - MOCKSERVER_DOMAIN=mockserver
     tty: true
   mockserver:
-    image: jamesdbloom/mockserver:mockserver-5.3.0
+    image: jamesdbloom/mockserver:mockserver-5.4.1
     ports:
       - 1080:1080
     tty: false
-    logging:
-      driver: "none"
   selenium:
     image: selenium/standalone-chrome:latest
     ports:

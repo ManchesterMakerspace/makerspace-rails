@@ -9,8 +9,8 @@ if [ ${SELENIUM_DOMAIN} ]; then
     if ! curl --output /dev/null --silent --head --fail "http://${SELENIUM_DOMAIN}:4444/wd/hub" > /dev/null 2>&1; then
       sleep 1;
       ((max_wait_seconds--))
-      ((max_wait_seconds%15==0)) && echo "...waiting for selenium"
-      ((max_wait_seconds == 0)) && echo "FAILED waiting for selenium" && exit 1
+      ((max_wait_seconds%15==0)) && echo "...waiting for selenium at http://${SELENIUM_DOMAIN}:4444/wd/hub"
+      ((max_wait_seconds == 0)) && echo "FAILED waiting for selenium at http://${SELENIUM_DOMAIN}:4444/wd/hub" && exit 1
     else
       echo "Selenium ready"
       break
@@ -23,8 +23,8 @@ while true; do
   if ! curl --output /dev/null --silent --head --fail "http://${APP_DOMAIN}:${PORT}" > /dev/null 2>&1; then
     sleep 5;
     ((max_wait_seconds-=5))
-    ((max_wait_seconds%15==0)) && echo "...waiting for application"
-    ((max_wait_seconds == 0)) && echo "FAILED waiting for application" && exit 1
+    ((max_wait_seconds%15==0)) && echo "...waiting for application at http://${APP_DOMAIN}:${PORT}"
+    ((max_wait_seconds == 0)) && echo "FAILED waiting for application at http://${APP_DOMAIN}:${PORT}" && exit 1
   else
     echo "Application ready"
     break
@@ -34,13 +34,11 @@ done
 echo "# All containers ready."
 if [ "${INTERACTIVE}" == "TRUE" ]; then
   echo "Dev available"
-  if [ ${SELENIUM_DOMAIN} ]; then
-    echo "Selenium: 0.0.0.0:4444/wd/hub"
-  fi
+  echo "Selenium: 0.0.0.0:4444/wd/hub"
   echo "App: 0.0.0.0:${PORT}"
   /bin/bash
 elif [ ${SELENIUM_DOMAIN} ]; then
-  yarn install && echo "Starting testing..." && yarn test-functional
+  cd /usr/src/app && echo "Starting testing..." && yarn test-functional
 else
-  yarn install && echo "Starting testing..." && yarn test
+  cd /usr/src/app && echo "Starting testing..." && yarn test
 fi

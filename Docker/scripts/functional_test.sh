@@ -12,7 +12,6 @@ for argument in "$@"; do
             shift
             ;;
         --interactive)
-            echo "interactive"
             INTERACTIVE=TRUE
             shift
             ;;
@@ -25,7 +24,7 @@ done
 
 cleanup(){
     exit_code=$?
-    echo "# Closing docker" && start down -v --rmi all --remove-orphans
+    echo "# Closing docker" && start down -v --remove-orphans
     exit $exit_code
 }
 

@@ -26,3 +26,8 @@ WORKDIR $app
 # Install js & ruby libraries
 RUN bundle check || bundle install
 RUN yarn install
+
+COPY Docker/scripts/start_dev.sh /bin/start_dev.sh
+RUN chmod +x /bin/start_dev.sh
+
+CMD ["/bin/start_dev.sh"]
