@@ -1,4 +1,3 @@
-const mockserver = require('mockserver-client').mockServerClient(process.env.MOCKSERVER_DOMAIN || 'localhost', 1080);
 import { Url } from "app/constants";
 import { QueryParams } from "app/interfaces";
 import { Rental } from "app/entities/rental";
@@ -18,16 +17,27 @@ interface HttpRequest {
   method: Method;
   path: string;
   body?: string;
-  queryStringParameters: { [key: string]: any }[]
+  queryStringParameters?: { [key: string]: any }[]
 }
 interface HttpResponse {
   statusCode: number;
-  body: string;
+  body?: string;
+  headers?: {
+    name: string;
+    value: string
+  }[]
 }
-interface MockRequest {
+export interface MockRequest {
   httpRequest: HttpRequest;
   httpResponse: HttpResponse;
 }
+
+const mockserver = require('mockserver-client').mockServerClient(process.env.MOCKSERVER_DOMAIN || 'localhost', 1080);
+mockserver.setDefaultHeaders([
+  { "name": "Content-Type", "values": ["application/json; charset=utf-8"] },
+  { "name": "Cache-Control", "values": ["no-cache, no-store"] },
+  { "name": "Access-Control-Allow-Origin", "values": [`http://${process.env.APP_DOMAIN}:${process.env.PORT}`]},
+]);
 
 export const mockRequests = {
   accessCard: {
@@ -35,7 +45,7 @@ export const mockRequests = {
       ok: (id: string, accessCard: Partial<AccessCard>) => ({
         httpRequest: {
           method: "GET",
-          path: `api/admin/cards/${id}.json`,
+          path: `/api/admin/cards/${id}.json`,
         },
         httpResponse: {
           statusCode: 200,
@@ -47,7 +57,7 @@ export const mockRequests = {
       ok: (id: string, accessCard: Partial<AccessCard>) => ({
         httpRequest: {
           method: "PUT",
-          path: `api/admin/cards/${id}.json`,
+          path: `/api/admin/cards/${id}.json`,
           body: JSON.stringify(accessCard)
         },
         httpResponse: {
@@ -62,7 +72,7 @@ export const mockRequests = {
       ok: (plans: Partial<BillingPlan>) => ({
         httpRequest: {
           method: "GET",
-          path: `${Url.Billing.Plans}.json`,
+          path: `/${Url.Billing.Plans}.json`,
         },
         httpResponse: {
           statusCode: 200,
@@ -76,7 +86,7 @@ export const mockRequests = {
       ok: (members: Partial<MemberDetails>[], queryParams?: QueryParams) => ({
         httpRequest: {
           method: "GET",
-          path: `${Url.Members}.json`,
+          path: `/${Url.Members}.json`,
           queryStringParameters: Object.entries(queryParams).map(([name, values]) => ({ name, values }))
         },
         httpResponse: {
@@ -91,11 +101,11 @@ export const mockRequests = {
       ok: (id: string, member: Partial<MemberDetails>) => ({
         httpRequest: {
           method: "GET",
-          path: `api/admin/members/${id}.json`,
+          path: `/api/admin/members/${id}.json`,
         },
         httpResponse: {
           statusCode: 200,
-          body: JSON.stringify(member)
+          body: JSON.stringify({member})
         }
       })
     },
@@ -103,7 +113,7 @@ export const mockRequests = {
       ok: (id: string, member: Partial<MemberDetails>) => ({
         httpRequest: {
           method: "PUT",
-          path: `api/admin/members/${id}.json`,
+          path: `/api/admin/members/${id}.json`,
           body: JSON.stringify(member)
         },
         httpResponse: {
@@ -118,7 +128,7 @@ export const mockRequests = {
       ok: (rentals: Partial<Rental>[], queryParams?: QueryParams) => ({
         httpRequest: {
           method: "GET",
-          path: `${Url.Rentals}.json`,
+          path: `/${Url.Rentals}.json`,
           queryStringParameters: JSON.stringify(Object.entries(queryParams).map(([name, values]) => ({ name, values })))
         },
         httpResponse: {
@@ -129,20 +139,20 @@ export const mockRequests = {
     },
   },
   signIn: {
-    ok: (authMember: Partial<MemberDetails>) => ({
+    ok: (member: Partial<MemberDetails>): MockRequest => ({
       httpRequest: {
-        method: "POST",
-        path: `${Url.Auth.SignIn}.json`,
+        method: Method.Post,
+        path: `/${Url.Auth.SignIn}.json`,
       },
       httpResponse: {
         statusCode: 200,
-        body: JSON.stringify(authMember)
+        body: JSON.stringify({ member })
       }
     }),
     error: () => ({
       httpRequest: {
-        method: "POST",
-        path: `${Url.Auth.SignIn}.json`,
+        method: Method.Post,
+        path: `/${Url.Auth.SignIn}.json`,
       },
       httpResponse: {
         statusCode: 400,
@@ -153,7 +163,7 @@ export const mockRequests = {
     ok: () => ({
       httpRequest: {
         method: "DELETE",
-        path: `${Url.Auth.SignIn}.json`,
+        path: `/${Url.Auth.SignIn}.json`,
       },
       httpResponse: {
         statusCode: 200,
@@ -161,15 +171,14 @@ export const mockRequests = {
     }),
   },
   signUp: {
-    ok: (authMember: Partial<MemberDetails>) => ({
+    ok: (member: Partial<MemberDetails>) => ({
       httpRequest: {
         method: "POST",
-        path: `${Url.Auth.SignIn}.json`,
-        body: JSON.stringify(authMember),
+        path: `/${Url.Auth.SignIn}.json`,
       },
       httpResponse: {
         statusCode: 200,
-        body: JSON.stringify(authMember),
+        body: JSON.stringify({ member }),
       }
     }),
   },
@@ -178,7 +187,7 @@ export const mockRequests = {
       ok: (subscriptions: Partial<Subscription>[], queryParams?: QueryParams) => ({
         httpRequest: {
           method: "GET",
-          path: `${Url.Billing.Subscriptions}.json`,
+          path: `/${Url.Billing.Subscriptions}.json`,
           queryStringParameters: JSON.stringify(Object.entries(queryParams).map(([name, values]) => ({ name, values })))
         },
         httpResponse: {
@@ -190,6 +199,17 @@ export const mockRequests = {
   }
 }
 
-export const mock = async (requestObject: MockRequest) => {
-  await mockserver.mockAnyResponse(requestObject);
+
+// By default, mocks 1 response, but can be configured to mock unlimited or specified num
+export const mock = (requestObject: MockRequest, times: number = 1, unlimited: boolean = false) => {
+  const configuredRequest = {
+    ...requestObject,
+    times: {
+      unlimited,
+      remainingTimes: times,
+    }
+  };
+  return mockserver.mockAnyResponse(configuredRequest);
 }
+
+export const reset = () => mockserver.reset();

@@ -1,3 +1,9 @@
+import { PageUtils } from "./common";
+import { mock, mockRequests, MockRequest } from "../mockserver-client-helpers";
+import { MemberDetails } from "app/entities/member";
+
+const utils = new PageUtils();
+
 export class AuthPageObject {
   private authToggleButton = "#auth-toggle";
   private emailExistsModal = "#email-exists";
@@ -18,17 +24,20 @@ export class AuthPageObject {
     passwordInput: "#login-modal-password",
     forgotPasswordLink: "#forgot-password",
     error: "#login-modal-error",
+    submitButton: "#login-modal-submit"
   };
   private passwordResetModal = {
     id: "#password-reset",
     passwordInput: "#reset-password-input",
   }
 
-  public signInUser = async (user, error = false) => {
+  public goToLogin = async () => {
+    await utils.clickElement(this.authToggleButton);
+  }
+
+  public signInUser = async (user: { email: string, password: string }, error: boolean = false) => {
     await utils.fillInput(this.loginModal.emailInput, user.email);
     await utils.fillInput(this.loginModal.passwordInput, user.password);
-    const signInFunc = error ? mockRequests.signIn.error : mockRequests.signIn.ok;
-    await mock(signInFunc(user));
     await utils.clickElement(this.loginModal.submitButton);
   }
 }

@@ -1,6 +1,27 @@
-require("./locators");
-import { mockRequests, mock } from "./mockserver-client-helpers";
-const rootURL = `http://${process.env.APP_DOMAIN || 'localhost'}:${process.env.PORT || 3002}/`;
+import { mockRequests, mock, reset as resetMockserver } from "./mockserver-client-helpers";
+import { AuthPageObject } from "./pageObjects/auth";
+import { PageUtils } from "./pageObjects/common";
+import { Routing } from "app/constants";
+const rootURL = `http://${process.env.APP_DOMAIN || 'localhost'}:${process.env.PORT || 3002}`;
+const auth = new AuthPageObject();
+const utils = new PageUtils();
+
+// Set locating timeout to 10s
+utils.setLocatorTimeout(10000);
+// Set Jest timeout to 2m
+// Since this is for functional testing, these tests may take several minutes to complete
+// Make sure enough time is allowed so that test can complete
+// Locator timeout should fail these tests before this timeout is reached
+// if tests are setup correctly
+jest.setTimeout(120000);
+
+beforeEach(async () => {
+  return resetMockserver().then(() => {
+    return mock(mockRequests.signIn.error()).then(() => {
+      return browser.get(rootURL);
+    });
+  });
+});
 
 it('initialises the context', async () => {
   await browser.manage().window().setPosition(0, 0);
@@ -9,28 +30,32 @@ it('initialises the context', async () => {
 });
 
 it('should load the landing page', async () => {
-  const el = await getElementByCss('[id="landing-page-graphic"]');
+  const el = await utils.getElementByCss('[id="landing-page-graphic"]');
   expect(await el.getText()).toEqual("Manchester Makerspace");
 });
 
 describe("API Mocking", () => {
   it("Mocks sign in request", async () => {
     const memberId = "test_member"
-    const memberPayload = {
-      member: {
-        id: "test_member",
-        firstname: "Test",
-        lastname: "Member",
-        email: "test_member@test.com",
-        role: ["member"]
-      }
+    const member = {
+      id: "test_member",
+      firstname: "Test",
+      lastname: "Member",
+      email: "test_member@test.com",
+      role: ["member"]
     }
-    await mock(mockRequests.signIn.ok(memberPayload));
-    await mock(mockRequests.member.get.ok(memberId, memberPayload));
-
-    await browser.get(rootURL);
-    await waitForPageChange()
+    await mock(mockRequests.signIn.ok({
+      ...member,
+      password: "password"
+    }));
+    await mock(mockRequests.member.get.ok(memberId, member));
+    await auth.goToLogin();
+    await auth.signInUser({
+      email: member.email,
+      password: "password"
+    });
+    await utils.waitForPageChange(`${rootURL}${Routing.Login}`);
     const url = await browser.getCurrentUrl();
-    expect(url).not.toEqual(rootURL);    
+    expect(url).not.toEqual(`${rootURL}${Routing.Login}`);
   });
 })
