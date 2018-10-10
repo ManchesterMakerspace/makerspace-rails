@@ -38,3 +38,7 @@ functional-up:
 	./Docker/scripts/functional_test.sh
 functional-up-interactive:
 	./Docker/scripts/functional_test.sh --interactive
+
+FUNCTIONAL_WITH_ARGS=bash -c "MOCKSERVER_DOMAIN=0.0.0.0 APP_DOMAIN=0.0.0.0 yarn test-functional"
+test-functional:
+	${FUNCTIONAL_WITH_ARGS}
