@@ -62,7 +62,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
   }
 
   public componentDidMount() {
-    this.props.getMembershipOptions();
+    // this.props.getMembershipOptions();
     this.props.resetStagedInvoice();
   }
 

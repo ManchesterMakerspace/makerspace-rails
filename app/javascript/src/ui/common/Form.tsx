@@ -216,7 +216,7 @@ class Form extends React.Component<FormModalProps, State> {
     const { id: formId, } = this.props;
     const { values, errors, touched, isDirty } = this.state;
     const fieldName = input.props.name;
-    const id = input.props.id || `${formId}-${fieldName}`;
+    const id = input.props.id || fieldName;
     const error = errors[fieldName];
     const value = values[fieldName];
     return (
