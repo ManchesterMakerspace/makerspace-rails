@@ -3,14 +3,14 @@
 
 max_wait_seconds=300
 echo "Waiting.."
-if [ ${SELENIUM_DOMAIN} ]; then
+if [ ${SELENIUM_ADDRESS} ]; then
   echo "Waiting for selenium to start..."
   while true; do
-    if ! curl --output /dev/null --silent --head --fail "http://${SELENIUM_DOMAIN}:4444/wd/hub" > /dev/null 2>&1; then
+    if ! curl --output /dev/null --silent --head --fail "${SELENIUM_ADDRESS}" > /dev/null 2>&1; then
       sleep 1;
       ((max_wait_seconds--))
-      ((max_wait_seconds%15==0)) && echo "...waiting for selenium at http://${SELENIUM_DOMAIN}:4444/wd/hub"
-      ((max_wait_seconds == 0)) && echo "FAILED waiting for selenium at http://${SELENIUM_DOMAIN}:4444/wd/hub" && exit 1
+      ((max_wait_seconds%15==0)) && echo "...waiting for selenium at ${SELENIUM_ADDRESS}"
+      ((max_wait_seconds == 0)) && echo "FAILED waiting for selenium at ${SELENIUM_ADDRESS}" && exit 1
     else
       echo "Selenium ready"
       break
@@ -37,7 +37,7 @@ if [ "${INTERACTIVE}" == "TRUE" ]; then
   echo "Selenium: 0.0.0.0:4444/wd/hub"
   echo "App: 0.0.0.0:${PORT}"
   /bin/bash
-elif [ ${SELENIUM_DOMAIN} ]; then
+elif [ ${SELENIUM_ADDRESS} ]; then
   cd /usr/src/app && echo "Starting testing..." && yarn test-functional
 else
   cd /usr/src/app && echo "Starting testing..." && yarn test

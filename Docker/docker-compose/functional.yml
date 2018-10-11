@@ -6,9 +6,12 @@ services:
       service: interface
     environment:
       - INTERACTIVE
+      - LOCAL
+      - SELENIUM_ADDRESS=http://selenium:4444/wd/hub
       - RAILS_ENV=test
       - APP_DOMAIN=interface
       - API_DOMAIN=http://mockserver:1080
+      - MOCKSERVER_DOMAIN=mockserver
       - PORT=3002
     ports:
       - 3002:3002
@@ -27,11 +30,12 @@ services:
     depends_on:
       - interface
     environment:
+      - LOCAL
       - INTERACTIVE
       - RAILS_ENV=test
       - APP_DOMAIN=interface
       - PORT=3002
-      - SELENIUM_DOMAIN=selenium
+      - SELENIUM_ADDRESS=http://selenium:4444/wd/hub
       - MOCKSERVER_DOMAIN=mockserver
     tty: true
   mockserver:

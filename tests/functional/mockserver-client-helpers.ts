@@ -36,7 +36,7 @@ const mockserver = require('mockserver-client').mockServerClient(process.env.MOC
 mockserver.setDefaultHeaders([
   { "name": "Content-Type", "values": ["application/json; charset=utf-8"] },
   { "name": "Cache-Control", "values": ["no-cache, no-store"] },
-  { "name": "Access-Control-Allow-Origin", "values": [`http://${process.env.APP_DOMAIN}:${process.env.PORT}`]},
+  { "name": "Access-Control-Allow-Origin", "values": [`http://${process.env.APP_DOMAIN || 'localhost'}:${process.env.PORT || 3002}`]},
 ]);
 
 export const mockRequests = {

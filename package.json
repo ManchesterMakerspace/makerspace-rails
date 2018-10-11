@@ -76,8 +76,7 @@
     ],
     "testEnvironment": "jest-environment-webdriver",
     "testEnvironmentOptions": {
-      "browser": "chrome",
-      "seleniumAddress": "http://selenium:4444/wd/hub"
+      "browser": "chrome"
     }
   }
 }

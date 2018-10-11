@@ -30,14 +30,14 @@ export function PageUtils() {
   * Wait for the page to change to something different. Inverse of waitForPageLoad
   */
   this.waitForPageChange = async (currentUrl, timeout = undefined) => {
+    const waitTime = timeout || this.waitUntilTime;
     if (!currentUrl) {
       throw new Error("Current url required to watch for page change");
     }
     try {
       await browser.wait(() => {
         return browser.getCurrentUrl().then((url) => url !== currentUrl);
-      });
-      // await browser.wait(until.urlMatches(new RegExp(`(?!${currentUrl})`)), timeout || this.waitUntilTime);
+      }, waitTime);
     } catch {
       throw new Error(`Page never changed from ${currentUrl}`);
     }

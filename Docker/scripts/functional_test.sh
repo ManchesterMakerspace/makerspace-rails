@@ -1,8 +1,11 @@
 #!/bin/bash
+# set -e
+
 PROJECT_NAME=mmsinterface
 INTERACTIVE=FALSE
+LOCAL=FALSE
 start() {
-  INTERACTIVE=${INTERACTIVE} docker-compose -f Docker/docker-compose/functional.yml -p ${PROJECT_NAME} ${@}
+  INTERACTIVE=${INTERACTIVE} LOCAL=${LOCAL} docker-compose -f Docker/docker-compose/functional.yml -p ${PROJECT_NAME} ${@}
 }
 
 for argument in "$@"; do
@@ -13,6 +16,10 @@ for argument in "$@"; do
             ;;
         --interactive)
             INTERACTIVE=TRUE
+            shift
+            ;;
+        --local)
+            LOCAL=TRUE
             shift
             ;;
         *)
