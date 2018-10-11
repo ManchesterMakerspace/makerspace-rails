@@ -102,10 +102,10 @@ export const mockRequests = {
   },
   member: {
     get: {
-      ok: (id: string, member: Partial<MemberDetails>): MockRequest => ({
+      ok: (id: string, member: Partial<MemberDetails>, admin: boolean = false): MockRequest => ({
         httpRequest: {
           method: Method.Get,
-          path: `/api/admin/members/${id}.json`,
+          path: `/api${admin ? '/admin' : ''}/members/${id}.json`,
         },
         httpResponse: {
           statusCode: 200,

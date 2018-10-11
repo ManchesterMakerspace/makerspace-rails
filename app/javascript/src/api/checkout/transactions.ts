@@ -1,7 +1,8 @@
 import axios from "axios";
 import { Url } from "app/constants";
-import { buildJsonUrl, handleApiError } from "app/utils";
+import { buildJsonUrl } from "app/utils";
 import { Checkout } from "app/entities/checkout";
+import { handleApiError } from "api/utils/handleApiError";
 
 export const getClientToken = async () => {
   try {

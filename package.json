@@ -51,7 +51,7 @@
   "scripts": {
     "test": "$(npm bin)/jest --no-cache",
     "test-watch": "yarn test --watch",
-    "test-functional": "yarn test --testRegex='/tests/functional/.*\\.spec\\.(j|t)sx?$'"
+    "test-functional": "yarn test --testRegex='/tests/functional/runner.spec.ts'"
   },
   "jest": {
     "collectCoverage": false,

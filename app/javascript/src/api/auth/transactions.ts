@@ -1,7 +1,8 @@
 import axios from "axios";
 
 import { Url } from "app/constants";
-import { buildJsonUrl, handleApiError } from "app/utils";
+import { buildJsonUrl } from "app/utils";
+import { handleApiError } from "api/utils/handleApiError";
 import { AuthForm, MemberSignUpForm } from "ui/auth/interfaces";
 
 export const postLogin = async (creds?: AuthForm) => {

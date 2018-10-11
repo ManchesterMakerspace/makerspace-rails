@@ -1,7 +1,7 @@
 import axios from "axios";
-import { handleApiError } from "app/utils";
-import { buildAccessCardUrl } from "api/accessCards/utils";
 import { AccessCard } from "app/entities/card";
+import { handleApiError } from "api/utils/handleApiError";
+import { buildAccessCardUrl } from "api/accessCards/utils";
 
 export const getCard = async (id: string) => {
   try {

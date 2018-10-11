@@ -182,7 +182,7 @@ class Login extends React.Component<Props, State> {
               <a id="forgot-password" href="#" onClick={this.openPasswordReset}>Forgot your password?</a>
             </Grid>
           </Grid>
-          {!isRequesting && error && <ErrorMessage id={`${loginPrefix}-email`} error={error}/>}
+          {!isRequesting && error && <ErrorMessage id={`${loginPrefix}-error`} error={error}/>}
         </Form>
         {this.renderPasswordReset()}
       </>

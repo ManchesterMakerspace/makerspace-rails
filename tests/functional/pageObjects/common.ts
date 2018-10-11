@@ -1,3 +1,5 @@
+export const rootURL = `http://${process.env.APP_DOMAIN || 'localhost'}:${process.env.PORT || 3002}`;
+
 export class PageUtils {
   private waitUntilTime = 10 * 1000;
 
@@ -5,6 +7,8 @@ export class PageUtils {
   public setLocatorTimeout = (number: number) => {
     this.waitUntilTime = number;
   }
+
+  public buildUrl = (path: string) => `${rootURL}${path}`;
 
   public getElementById = async (id: string, timeout: number = undefined) => {
     const waitTime = timeout || this.waitUntilTime;
@@ -77,8 +81,12 @@ export class PageUtils {
     }
   }
   public scrollToElement = async (elementLocator: string) => {
-    const element = await this.getElementByCss(elementLocator);
-    await browser.executeScript("arguments[0].scrollIntoView()", element)
+    try {
+      const element = await this.getElementByCss(elementLocator);
+      await browser.executeScript("arguments[0].scrollIntoView()", element)
+    } catch {
+      throw new Error(`Unable to scroll to element ${elementLocator}`);
+    }
   }
   public getElementText = async (elementLocator: string) => {
     const element = await this.getElementByCss(elementLocator);
@@ -94,6 +102,47 @@ export class PageUtils {
       return await element.getAttribute(attribute);
     } catch {
       throw new Error(`Unable to read attribute: ${attribute} from: ${elementLocator}`);
+    }
+  }
+  public isElementDisplayed = (elementLocator: string) => {
+    return this.getElementByCss(elementLocator).then(() => {
+      return true;
+    }).catch(() => {
+      return false;
+    });
+  }
+  public assertInputError = async (elementLocator: string, errorMsg?: string) => {
+    try {
+      const errorInput = await this.getElementByCss(`${elementLocator}-error`);
+      const errorText = await errorInput.getText();
+      if (errorMsg) {
+        expect(errorText).toEqual(errorMsg);
+      } else {
+        expect(errorText).toBeTruthy();
+      }
+    } catch {
+      throw new Error(`Unable to locate error element or element text using input locator ${elementLocator}-error`)
+    }
+  }
+  public assertNoInputError = async (elementLocator: string) => {
+    const errorLocator = `${elementLocator}-error`;
+    try {
+      return this.isElementDisplayed(errorLocator).then((displayed) => {
+        if (displayed) {
+          return this.getElementText(errorLocator).then((text) => expect(text).toBeFalsy());
+        }
+        expect(displayed).toBeFalsy();
+      });
+    } catch {
+      throw new Error(`Error for input locator ${errorLocator} displayed`);
+    }
+  }
+  public assertElementHasText = async (elementLocator: string, text: string) => {
+    try {
+      const elementText = await this.getElementText(elementLocator);
+      expect(elementText).toEqual(text);
+    } catch {
+      throw new Error(`Unable to locate element ${elementLocator} to assert text`);
     }
   }
 }

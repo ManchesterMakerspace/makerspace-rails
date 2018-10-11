@@ -1,10 +1,10 @@
 import axios from "axios";
-import { handleApiError } from "app/utils";
 import { Invoice, InvoiceQueryParams } from "app/entities/invoice";
 
 import { buildInvoicesUrl, buildInvoiceUrl, buildInvoiceOptionsUrl } from "api/invoices/utils";
 import { InvoiceOptionTypes } from "api/invoices/constants";
 import { encodeQueryParams } from "api/utils/encodeQueryParams";
+import { handleApiError } from "api/utils/handleApiError";
 
 export const getInvoices = async (isUserAdmin: boolean, queryParams?: InvoiceQueryParams) => {
   try {

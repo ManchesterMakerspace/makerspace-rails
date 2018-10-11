@@ -1,10 +1,11 @@
 import axios from "axios";
-import { buildJsonUrl, handleApiError } from "app/utils";
+import { buildJsonUrl } from "app/utils";
 import { Url } from "app/constants";
 import { QueryParams } from "app/interfaces";
 import { MemberDetails } from "app/entities/member";
 import { buildMemberUrl } from "api/members/utils";
 import { encodeQueryParams } from "api/utils/encodeQueryParams";
+import { handleApiError } from "api/utils/handleApiError";
 
 export const getMembers = async (queryParams?: QueryParams) => {
   try {

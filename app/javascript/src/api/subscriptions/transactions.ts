@@ -1,8 +1,9 @@
 import axios from "axios";
 import { Url } from "app/constants";
-import { buildJsonUrl, handleApiError } from "app/utils";
+import { buildJsonUrl } from "app/utils";
 import { QueryParams } from "app/interfaces";
 import { encodeQueryParams } from "api/utils/encodeQueryParams";
+import { handleApiError } from "api/utils/handleApiError";
 
 export const getSubscriptions = async (queryParams?: QueryParams) => {
   try {
