@@ -2,6 +2,7 @@ import { mockRequests, mock, reset as resetMockserver } from "./mockserver-clien
 import { AuthPageObject } from "./pageObjects/auth";
 import { PageUtils } from "./pageObjects/common";
 import { Routing } from "app/constants";
+import { MemberRole } from "app/entities/member";
 const rootURL = `http://${process.env.APP_DOMAIN || 'localhost'}:${process.env.PORT || 3002}`;
 const auth = new AuthPageObject();
 const utils = new PageUtils();
@@ -17,9 +18,7 @@ jest.setTimeout(120000);
 
 beforeEach(async () => {
   return resetMockserver().then(() => {
-    return mock(mockRequests.signIn.error()).then(() => {
-      return browser.get(rootURL);
-    });
+    return browser.get(rootURL);
   });
 });
 
@@ -42,7 +41,7 @@ describe("API Mocking", () => {
       firstname: "Test",
       lastname: "Member",
       email: "test_member@test.com",
-      role: ["member"]
+      role: [MemberRole.Member]
     }
     await mock(mockRequests.signIn.ok({
       ...member,

@@ -33,14 +33,13 @@
     "jsx": "react",
     "typeRoots": [
       "node_modules/@types",
+      "tests/functional/webdriverTypings"
     ]
   },
   "exclude": [
-    "**/*.spec.(t|j)s",
     "node_modules",
     "vendor",
     "public",
-    "tests",
     "spec"
   ],
   "compileOnSave": false

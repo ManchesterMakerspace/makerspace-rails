@@ -1,6 +1,4 @@
 import { PageUtils } from "./common";
-import { mock, mockRequests, MockRequest } from "../mockserver-client-helpers";
-import { MemberDetails } from "app/entities/member";
 
 const utils = new PageUtils();
 
@@ -35,7 +33,7 @@ export class AuthPageObject {
     await utils.clickElement(this.authToggleButton);
   }
 
-  public signInUser = async (user: { email: string, password: string }, error: boolean = false) => {
+  public signInUser = async (user: { email: string, password: string }) => {
     await utils.fillInput(this.loginModal.emailInput, user.email);
     await utils.fillInput(this.loginModal.passwordInput, user.password);
     await utils.clickElement(this.loginModal.submitButton);

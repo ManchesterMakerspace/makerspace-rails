@@ -5,6 +5,7 @@ import { AccessCard } from "app/entities/card";
 import { BillingPlan } from "app/entities/billingPlan";
 import { MemberDetails } from "app/entities/member";
 import { Subscription } from "app/entities/subscription";
+import { AuthForm } from "ui/auth/interfaces";
 
 enum Method {
   Get = "GET",
@@ -17,7 +18,10 @@ interface HttpRequest {
   method: Method;
   path: string;
   body?: string;
-  queryStringParameters?: { [key: string]: any }[]
+  queryStringParameters?: {
+    name: string,
+    values: string[]
+  }[]
 }
 interface HttpResponse {
   statusCode: number;
@@ -42,9 +46,9 @@ mockserver.setDefaultHeaders([
 export const mockRequests = {
   accessCard: {
     get: {
-      ok: (id: string, accessCard: Partial<AccessCard>) => ({
+      ok: (id: string, accessCard: Partial<AccessCard>): MockRequest => ({
         httpRequest: {
-          method: "GET",
+          method: Method.Get,
           path: `/api/admin/cards/${id}.json`,
         },
         httpResponse: {
@@ -54,9 +58,9 @@ export const mockRequests = {
       })
     },
     put: {
-      ok: (id: string, accessCard: Partial<AccessCard>) => ({
+      ok: (id: string, accessCard: Partial<AccessCard>): MockRequest => ({
         httpRequest: {
-          method: "PUT",
+          method: Method.Put,
           path: `/api/admin/cards/${id}.json`,
           body: JSON.stringify(accessCard)
         },
@@ -69,9 +73,9 @@ export const mockRequests = {
   },
   billingPlans: {
     get: {
-      ok: (plans: Partial<BillingPlan>) => ({
+      ok: (plans: Partial<BillingPlan>): MockRequest => ({
         httpRequest: {
-          method: "GET",
+          method: Method.Get,
           path: `/${Url.Billing.Plans}.json`,
         },
         httpResponse: {
@@ -83,9 +87,9 @@ export const mockRequests = {
   },
   members: {
     get: {
-      ok: (members: Partial<MemberDetails>[], queryParams?: QueryParams) => ({
+      ok: (members: Partial<MemberDetails>[], queryParams?: QueryParams): MockRequest => ({
         httpRequest: {
-          method: "GET",
+          method: Method.Get,
           path: `/${Url.Members}.json`,
           queryStringParameters: Object.entries(queryParams).map(([name, values]) => ({ name, values }))
         },
@@ -98,9 +102,9 @@ export const mockRequests = {
   },
   member: {
     get: {
-      ok: (id: string, member: Partial<MemberDetails>) => ({
+      ok: (id: string, member: Partial<MemberDetails>): MockRequest => ({
         httpRequest: {
-          method: "GET",
+          method: Method.Get,
           path: `/api/admin/members/${id}.json`,
         },
         httpResponse: {
@@ -110,9 +114,9 @@ export const mockRequests = {
       })
     },
     put: {
-      ok: (id: string, member: Partial<MemberDetails>) => ({
+      ok: (id: string, member: Partial<MemberDetails>): MockRequest => ({
         httpRequest: {
-          method: "PUT",
+          method: Method.Put,
           path: `/api/admin/members/${id}.json`,
           body: JSON.stringify(member)
         },
@@ -125,11 +129,11 @@ export const mockRequests = {
   },
   rentals: {
     get: {
-      ok: (rentals: Partial<Rental>[], queryParams?: QueryParams) => ({
+      ok: (rentals: Partial<Rental>[], queryParams?: QueryParams): MockRequest => ({
         httpRequest: {
-          method: "GET",
+          method: Method.Get,
           path: `/${Url.Rentals}.json`,
-          queryStringParameters: JSON.stringify(Object.entries(queryParams).map(([name, values]) => ({ name, values })))
+          queryStringParameters: (Object.entries(queryParams).map(([name, values]) => ({ name, values })))
         },
         httpResponse: {
           statusCode: 200,
@@ -139,7 +143,7 @@ export const mockRequests = {
     },
   },
   signIn: {
-    ok: (member: Partial<MemberDetails>): MockRequest => ({
+    ok: (member: Partial<AuthForm | MemberDetails>): MockRequest => ({
       httpRequest: {
         method: Method.Post,
         path: `/${Url.Auth.SignIn}.json`,
@@ -162,7 +166,7 @@ export const mockRequests = {
   signOut: {
     ok: () => ({
       httpRequest: {
-        method: "DELETE",
+        method: Method.Delete,
         path: `/${Url.Auth.SignIn}.json`,
       },
       httpResponse: {
@@ -171,9 +175,9 @@ export const mockRequests = {
     }),
   },
   signUp: {
-    ok: (member: Partial<MemberDetails>) => ({
+    ok: (member: Partial<AuthForm | MemberDetails>): MockRequest => ({
       httpRequest: {
-        method: "POST",
+        method: Method.Post,
         path: `/${Url.Auth.SignIn}.json`,
       },
       httpResponse: {
@@ -184,11 +188,11 @@ export const mockRequests = {
   },
   subscriptions: {
     get: {
-      ok: (subscriptions: Partial<Subscription>[], queryParams?: QueryParams) => ({
+      ok: (subscriptions: Partial<Subscription>[], queryParams?: QueryParams): MockRequest => ({
         httpRequest: {
-          method: "GET",
+          method: Method.Get,
           path: `/${Url.Billing.Subscriptions}.json`,
-          queryStringParameters: JSON.stringify(Object.entries(queryParams).map(([name, values]) => ({ name, values })))
+          queryStringParameters: (Object.entries(queryParams).map(([name, values]) => ({ name, values })))
         },
         httpResponse: {
           statusCode: 200,

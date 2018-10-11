@@ -1,12 +1,12 @@
-export function PageUtils() {
-  this.waitUntilTime = 10 * 1000;
+export class PageUtils {
+  private waitUntilTime = 10 * 1000;
 
   // programatically set timeout for locating functions
-  this.setLocatorTimeout = (number) => {
+  public setLocatorTimeout = (number: number) => {
     this.waitUntilTime = number;
   }
 
-  this.getElementById = async (id, timeout = undefined) => {
+  public getElementById = async (id: string, timeout: number = undefined) => {
     const waitTime = timeout || this.waitUntilTime;
     try {
       const el = await browser.wait(until.elementLocated(by.id(id)), waitTime);
@@ -16,7 +16,7 @@ export function PageUtils() {
     }
   }
 
-  this.getElementByCss = async (css, timeout = undefined) => {
+  public getElementByCss = async (css: string, timeout: number = undefined) => {
     const waitTime = timeout || this.waitUntilTime;
     try {
       const el = await browser.wait(until.elementLocated(by.css(css)), waitTime)
@@ -29,14 +29,14 @@ export function PageUtils() {
   /*
   * Wait for the page to change to something different. Inverse of waitForPageLoad
   */
-  this.waitForPageChange = async (currentUrl, timeout = undefined) => {
+  public waitForPageChange = async (currentUrl: string, timeout: number = undefined) => {
     const waitTime = timeout || this.waitUntilTime;
     if (!currentUrl) {
       throw new Error("Current url required to watch for page change");
     }
     try {
       await browser.wait(() => {
-        return browser.getCurrentUrl().then((url) => url !== currentUrl);
+        return browser.getCurrentUrl().then((url: string) => url !== currentUrl);
       }, waitTime);
     } catch {
       throw new Error(`Page never changed from ${currentUrl}`);
@@ -46,7 +46,7 @@ export function PageUtils() {
   /*
   * Wait for the page to equal a specific URL.  Inverse of waitForPageChange
   */
-  this.waitForPageLoad = async (targetUrl, exact =false, timeout = undefined) => {
+  public waitForPageLoad = async (targetUrl: string, exact: boolean = false, timeout: number = undefined) => {
     const waitTime = timeout || this.waitUntilTime;
     try {
       if (exact) {
@@ -59,7 +59,7 @@ export function PageUtils() {
     }
   }
 
-  this.clickElement = async (elementLocator) => {
+  public clickElement = async (elementLocator: string) => {
     const element = await this.getElementByCss(elementLocator);
     try {
       await element.click();
@@ -68,7 +68,7 @@ export function PageUtils() {
     }
   }
 
-  this.fillInput = async (elementLocator, input) => {
+  public fillInput = async (elementLocator: string, input: string) => {
     const element = await this.getElementByCss(elementLocator);
     try {
       await element.sendKeys(input);
@@ -76,11 +76,11 @@ export function PageUtils() {
       throw new Error(`Unable to enter keys: ${input} in input: ${elementLocator}`);
     }
   }
-  this.scrollToElement = async (elementLocator) => {
+  public scrollToElement = async (elementLocator: string) => {
     const element = await this.getElementByCss(elementLocator);
     await browser.executeScript("arguments[0].scrollIntoView()", element)
   }
-  this.getElementText = async (elementLocator) => {
+  public getElementText = async (elementLocator: string) => {
     const element = await this.getElementByCss(elementLocator);
     try {
       return await element.getText();
@@ -88,7 +88,7 @@ export function PageUtils() {
       throw new Error(`Unable to read text from: ${elementLocator}`);
     }
   };
-  this.getElementAttribute = async (elementLocator, attribute) => {
+  public getElementAttribute = async (elementLocator: string, attribute: string) => {
     const element = await this.getElementByCss(elementLocator);
     try {
       return await element.getAttribute(attribute);
