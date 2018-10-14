@@ -17,6 +17,7 @@ services:
       - 3002:3002
     volumes:
       - /box
+    env_file: ../../test.env
   tester:
     build:
       context: ../..
@@ -38,6 +39,7 @@ services:
       - SELENIUM_ADDRESS=http://selenium:4444/wd/hub
       - MOCKSERVER_DOMAIN=mockserver
     tty: true
+    env_file: ../../test.env
   mockserver:
     image: jamesdbloom/mockserver:mockserver-5.4.1
     ports:
