@@ -32,6 +32,7 @@ export type AuthMember = Pick<MemberDetails,
                         MemberProperties.Role
                       > & {
   isAdmin: boolean;
+  isNewMember: boolean;
 };
 
 type NewUserSignUp = Pick<MemberDetails,

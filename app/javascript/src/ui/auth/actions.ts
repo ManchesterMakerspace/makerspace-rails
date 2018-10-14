@@ -67,7 +67,10 @@ export const submitSignUpAction = (
     const response = await postSignUp(rest);
     dispatch({
       type: AuthAction.AuthUserSuccess,
-      data: response.data.member
+      data: {
+        ...response.data.member,
+        isNewMember: true,
+      }
     });
     if (!isUndefined(membershipId)) {
       dispatch({ type: InvoiceAction.ResetStagedInvoice });
@@ -98,6 +101,7 @@ const defaultState: AuthState = {
     expirationTime: undefined,
     role: undefined,
     isAdmin: false,
+    isNewMember: undefined,
   },
   isRequesting: false,
   error: ""

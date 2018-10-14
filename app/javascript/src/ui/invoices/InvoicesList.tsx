@@ -106,7 +106,7 @@ class InvoicesList extends React.Component<Props, State> {
       cell: (row: Invoice) => {
         const statusColor = row.pastDue ? Status.Danger : Status.Success;
         const label = row.pastDue ? "Past Due" : "Upcoming";
-  
+
         return (
           <StatusLabel label={label} color={statusColor}/>
         );
@@ -179,7 +179,7 @@ class InvoicesList extends React.Component<Props, State> {
         label: payLabel
       }]  as ActionButton[]
     ].filter(b => !!b);
-    
+
     return (
       <ButtonRow
         actionButtons={actionButtons}
@@ -486,7 +486,6 @@ const mapDispatchToProps = (
   ownProps: OwnProps
 ): DispatchProps => {
   const { member } = ownProps;
-  console.log(member);
   return {
     getInvoices: (queryParams, admin) => dispatch(readInvoicesAction(admin, {
       ...queryParams,

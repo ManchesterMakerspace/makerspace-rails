@@ -1,8 +1,10 @@
+import { Routing } from "app/constants";
+
 export class MemberPageObject {
-  private welcomeModal = {
-    id: "#welcome-modal",
+  public welcomeModal = {
+    id: "#welcome-modal-form-modal",
   };
-  private memberForm = {
+  public memberForm = {
     id: "#member-form",
     firstname: "#member-form-firstname",
     lastname: "#member-form-lastname",
@@ -11,7 +13,7 @@ export class MemberPageObject {
     submit: "#member-form-submit",
     cancel: "#member-form-cancel",
   }
-  private memberDetail = {
+  public memberDetail = {
     email: "#member-detail-email",
     expiration: "#member-detail-expiration",
     status: "#member-detail-status",
@@ -19,7 +21,7 @@ export class MemberPageObject {
     openEditButton: "#member-detail-open-edit-modal",
     openCardButton: "#member-detail-open-card-modal",
   }
-  private renewalForm = {
+  public renewalForm = {
     id: "#renewal-form",
     entity: "#renwal-form-entity-name",
     renewalSelect: "#renewal-term",
@@ -28,7 +30,7 @@ export class MemberPageObject {
     submit: "#renewal-form-submit",
     cancel: "#renewal-form-cancel",
   }
-  private accessCardForm = {
+  public accessCardForm = {
     id: "#card-form",
     error: "#card-form-error",
     lostButton: "#card-form-lost",
@@ -38,7 +40,7 @@ export class MemberPageObject {
     submit: "#card-form-submit",
     cancel: "#card-form-cancel",
   }
-  private membersList = {
+  public membersList = {
     id: "#members-table",
     createMemberButton: "#members-list-create",
     renewMemberButton: "#members-list-renew",
@@ -60,7 +62,7 @@ export class MemberPageObject {
     noData: "#members-table-no-data-row",
     loading: "#members-table-loading",
   }
-  private paymentRequiredForm = {
+  public paymentRequiredForm = {
     id: "#payment-required-modal",
     invoiceList: {
       id: "#payment-invoices-table",
@@ -83,4 +85,6 @@ export class MemberPageObject {
     submit: "#payment-required-modal-submit",
     cancel: "#payment-required-modal-cancel",
   }
+
+  public getProfileUrl = (memberId: string) => Routing.Profile.replace(Routing.PathPlaceholder.MemberId, memberId);
 }

@@ -1,6 +1,5 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router";
 
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import TextField from "@material-ui/core/TextField";
@@ -20,7 +19,6 @@ import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { SignUpFields, EmailExistsError, signUpPrefix } from "ui/auth/constants";
 import { SignUpForm } from "ui/auth/interfaces";
 import { submitSignUpAction } from "ui/auth/actions";
-import { buildProfileRouting } from "ui/auth/utils";
 import ErrorMessage from "ui/common/ErrorMessage";
 import Form from "ui/common/Form";
 import { getMembershipOptionsAction } from "ui/invoices/actions";
@@ -43,7 +41,6 @@ interface StateProps {
 interface State {
   passwordMask: boolean;
   emailExists: boolean;
-  redirect: string;
 }
 
 interface Props extends OwnProps, DispatchProps, StateProps { }
@@ -57,25 +54,21 @@ class SignUpFormComponent extends React.Component<Props, State> {
     this.state = {
       passwordMask: true,
       emailExists: false,
-      redirect: ""
     };
   }
 
   public componentDidMount() {
-    // this.props.getMembershipOptions();
+    this.props.getMembershipOptions();
     this.props.resetStagedInvoice();
   }
 
   public componentDidUpdate(prevProps: Props) {
     const { isRequesting: wasRequesting } = prevProps;
-    const { isRequesting, error, memberId } = this.props;
+    const { isRequesting, error } = this.props;
 
     if (wasRequesting && !isRequesting) {
       if (error === EmailExistsError) {
         this.setState({ emailExists: true });
-      }
-      if (!error && memberId) {
-        this.setState({ redirect: buildProfileRouting(memberId) })
       }
     }
   }
@@ -188,11 +181,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
 
   public render(): JSX.Element {
     const { isRequesting, error } = this.props;
-    const { emailExists, redirect } = this.state;
-
-    if (!error && redirect) {
-      return <Redirect to={`${redirect}/welcome`}/>
-    }
+    const { emailExists } = this.state;
 
     return (
       <Form

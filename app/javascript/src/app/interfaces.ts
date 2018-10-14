@@ -12,8 +12,8 @@ export interface RequestStatus {
 
 export interface QueryParams extends AxiosRequestConfig {
   pageNum?: number;
-  order: SortDirection;
-  orderBy: string;
+  order?: SortDirection;
+  orderBy?: string;
   search?: string;
 }
 

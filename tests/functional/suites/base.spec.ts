@@ -12,9 +12,7 @@ utils.setLocatorTimeout(10000);
 jest.setTimeout(120000);
 
 beforeEach(async () => {
-  return resetMockserver().then(() => {
-    return browser.get(rootURL);
-  });
+  return resetMockserver();
 });
 
 // Initialize browser context
@@ -26,6 +24,7 @@ it('initialises the context', async () => {
 
 // Smoke test that app is running
 it('should load the landing page', async () => {
+  await browser.get(rootURL);
   const el = await utils.getElementByCss('[id="landing-page-graphic"]');
   expect(await el.getText()).toEqual("Manchester Makerspace");
 });

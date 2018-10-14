@@ -4,9 +4,7 @@ import toNumber from "lodash-es/toNumber";
 
 import { getRentals } from "api/rentals/transactions";
 import { Action as RentalsAction } from "ui/rentals/constants";
-import { handleApiError } from "app/utils";
 import { RentalsState } from "ui/rentals/interfaces";
-import { QueryParams } from "app/interfaces";
 import { Rental, RentalQueryParams } from "app/entities/rental";
 
 export const readRentalsAction = (

@@ -55,7 +55,7 @@ class RentalsList extends React.Component<Props, State> {
     ...this.props.admin && [{
       id: "member",
       label: "Member",
-      cell: (row: Rental) => row.member,
+      cell: (row: Rental) => row.memberId,
       defaultSortDirection: SortDirection.Desc,
       width: 200
     }],

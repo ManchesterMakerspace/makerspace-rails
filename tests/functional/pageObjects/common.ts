@@ -8,7 +8,7 @@ export class PageUtils {
     this.waitUntilTime = number;
   }
 
-  public buildUrl = (path: string) => `${rootURL}${path}`;
+  public buildUrl = (path?: string) => `${rootURL}${path ? path : ""}`;
 
   public getElementById = async (id: string, timeout: number = undefined) => {
     const waitTime = timeout || this.waitUntilTime;
@@ -110,6 +110,17 @@ export class PageUtils {
     }).catch(() => {
       return false;
     });
+  }
+  public selectDropdownByValue = async (selectLocator: string, optionValue: any) => {
+    const select = await this.getElementByCss(selectLocator);
+    await select.click();
+    return select.findElements(by.css('option')).then((options: any) => {
+      const matchingOptions = options.filter(async (option: any) => {
+        const value = await option.getAttribute('value');
+        return value === optionValue;
+      });
+      return matchingOptions[0].click();
+    })
   }
   public assertInputError = async (elementLocator: string, errorMsg?: string) => {
     try {

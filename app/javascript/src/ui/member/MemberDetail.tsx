@@ -26,9 +26,6 @@ import { membershipRenewalOptions } from "ui/members/constants";
 import AccessCardForm from "ui/accessCards/AccessCardForm";
 import InvoicesList from "ui/invoices/InvoicesList";
 import RentalsList from "ui/rentals/RentalsList";
-import { Rental } from "app/entities/rental";
-import { Status } from "ui/constants";
-import StatusLabel from "ui/common/StatusLabel";
 import { Routing } from "app/constants";
 import { numberAsCurrency } from "ui/utils/numberToCurrency";
 
@@ -37,6 +34,7 @@ interface DispatchProps {
 }
 interface StateProps {
   admin: boolean;
+  isNewMember: boolean;
   requestingError: string;
   isRequestingMember: boolean;
   isUpdatingMember: boolean;
@@ -99,9 +97,10 @@ class MemberDetail extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
+
     this.state = {
       ...defaultState,
-      isWelcomeOpen: props.match.params.resource === "welcome"
+      isWelcomeOpen: props.isNewMember || false
     };
   }
 
@@ -252,7 +251,7 @@ class MemberDetail extends React.Component<Props, State> {
           this.setState({ submittingSignature: false });
         } catch (e) {
           const { errorMessage } = e;
-          this.setState({ submittingSignature: false, submitSignatureError: errorMessage });
+          this.setState({ submittingSignature: false, submitSignatureError: errorMessage || "There was an error saving your signature." });
         }
       })
     }
@@ -341,7 +340,7 @@ const mapStateToProps = (
   const { isRequesting, error: requestingError } = state.member.read;
   const { isRequesting: isUpdating } = state.member.update
   const { entity: member } = state.member;
-  const { currentUser: { isAdmin: admin, id: currentUserId } } = state.auth;
+  const { currentUser: { isAdmin: admin, id: currentUserId, isNewMember } } = state.auth;
 
   return {
     admin,
@@ -349,7 +348,8 @@ const mapStateToProps = (
     requestingError,
     currentUserId,
     isRequestingMember: isRequesting,
-    isUpdatingMember: isUpdating
+    isUpdatingMember: isUpdating,
+    isNewMember
   }
 }
 

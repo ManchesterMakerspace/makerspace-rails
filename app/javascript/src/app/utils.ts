@@ -8,7 +8,7 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import { rootReducer } from 'ui/reducer';
 import { State as ReduxState } from "ui/reducer";
 
-const basePath = (process as any).env.API_DOMAIN || 'localhost';
+const basePath = (process as any).env.API_DOMAIN || '';
 export const buildJsonUrl = (pathFragments: string | string[], includeBase: boolean = true) => {
   let path: string = includeBase ? `${basePath}/` : "";
   if (Array.isArray(pathFragments)) {

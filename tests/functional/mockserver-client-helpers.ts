@@ -6,6 +6,8 @@ import { BillingPlan } from "app/entities/billingPlan";
 import { MemberDetails } from "app/entities/member";
 import { Subscription } from "app/entities/subscription";
 import { AuthForm } from "ui/auth/interfaces";
+import { Invoice, InvoiceQueryParams } from "app/entities/invoice";
+import { MembershipOptionQueryParams } from "api/invoices/interfaces";
 
 enum Method {
   Get = "GET",
@@ -42,6 +44,17 @@ mockserver.setDefaultHeaders([
   { "name": "Cache-Control", "values": ["no-cache, no-store"] },
   { "name": "Access-Control-Allow-Origin", "values": [`http://${process.env.APP_DOMAIN || 'localhost'}:${process.env.PORT || 3002}`]},
 ]);
+
+type AnyQueryParam = QueryParams;
+const objectToQueryParams = (params: AnyQueryParam) => {
+  if (!(params)) { return; }
+  return Object.entries(params).map(([name, values]) => {
+    return {
+      name,
+      values: Array.isArray(values) ? values : [values]
+    }
+  })
+}
 
 export const mockRequests = {
   accessCard: {
@@ -178,13 +191,23 @@ export const mockRequests = {
     ok: (member: Partial<AuthForm | MemberDetails>): MockRequest => ({
       httpRequest: {
         method: Method.Post,
-        path: `/${Url.Auth.SignIn}.json`,
+        path: `/${Url.Auth.SignUp}.json`,
       },
       httpResponse: {
         statusCode: 200,
         body: JSON.stringify({ member }),
       }
     }),
+    error: (statusCode?: string): MockRequest => ({
+      httpRequest: {
+        method: Method.Post,
+        path: `/${Url.Auth.SignUp}.json`,
+      },
+      httpResponse: {
+        statusCode: 400,
+        body: "Email already exists"
+      }
+    })
   },
   subscriptions: {
     get: {
@@ -197,6 +220,36 @@ export const mockRequests = {
         httpResponse: {
           statusCode: 200,
           body: JSON.stringify(subscriptions)
+        }
+      })
+    }
+  },
+  invoices: {
+    get: {
+      ok: (invoices: Partial<Invoice>[], queryParams?: InvoiceQueryParams): MockRequest => ({
+        httpRequest: {
+          method: Method.Get,
+          path: `/${Url.Invoices}.json`,
+          queryStringParameters: objectToQueryParams(queryParams)
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({invoices})
+        }
+      })
+    }
+  },
+  invoiceOptions: {
+    get: {
+      ok: (invoices: Partial<Invoice>[], queryParams?: MembershipOptionQueryParams): MockRequest => ({
+        httpRequest: {
+          method: Method.Get,
+          path: `/${Url.InvoiceOptions}.json`,
+          queryStringParameters: objectToQueryParams(queryParams)
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({invoices})
         }
       })
     }
