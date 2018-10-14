@@ -1,7 +1,7 @@
 /**
  * Main injection point for application.  Webpacker compiles everything in this folder by default.
  */
-
+import "./stylesheets/application";
 import * as React from 'react';
 import { Store } from 'redux';
 import { Provider } from "react-redux";
