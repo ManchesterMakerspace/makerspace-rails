@@ -74,8 +74,6 @@ describe("Authentication", () => {
     });
   });
   describe("Signing up", () => {
-    beforeEach(() => browser.get(rootURL));
-
     it("User can sign up with a selected membership option", async () => {
       /* 1. Setup mocks
           - Load membership options
@@ -110,6 +108,7 @@ describe("Authentication", () => {
          TODO
          5. Assert Invoice is Listed as due in invoice list
       */
+      await browser.get(utils.buildUrl());
       await mock(mockRequests.signUp.ok(member));
       await mock(mockRequests.member.get.ok(memberId, member));
       await auth.signUpUser(member);

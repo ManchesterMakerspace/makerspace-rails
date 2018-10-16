@@ -217,6 +217,8 @@ GEM
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
     ruby_dep (1.5.0)
+    shoulda-callback-matchers (1.1.4)
+      activesupport (>= 3)
     signet (0.7.3)
       addressable (~> 2.3)
       faraday (~> 0.9)
@@ -279,6 +281,7 @@ DEPENDENCIES
   rails (~> 5.0.0, >= 5.0.0.1)
   rails-controller-testing
   rspec-rails
+  shoulda-callback-matchers
   simplecov
   slack-notifier
   spring
@@ -287,4 +290,4 @@ DEPENDENCIES
   webpacker
 
 BUNDLED WITH
-   1.16.4
+   1.16.5
