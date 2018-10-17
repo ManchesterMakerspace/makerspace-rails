@@ -263,7 +263,7 @@ class Form extends React.Component<FormModalProps, State> {
           onSubmit={this.handleSubmit}
           onChange={this.handleChange}
           noValidate
-          id={`${id}-form-modal`}
+          id={id}
           style={{width: "100%"}}
         >
           {loading &&  <LoadingOverlay id={id}/>}

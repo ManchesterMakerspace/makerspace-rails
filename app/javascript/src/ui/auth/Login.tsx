@@ -98,7 +98,8 @@ class Login extends React.Component<Props, State> {
         await requestNewPassword(email);
         this.setState({ requestingPassword: false, passwordError: "", email });
       } catch (e) {
-        this.setState({ requestingPassword: false, passwordError: e });
+        const { errorMessage } = e;
+        this.setState({ requestingPassword: false, passwordError: errorMessage });
       }
     });
   }
@@ -133,7 +134,7 @@ class Login extends React.Component<Props, State> {
           )
         }
 
-        { !requestingPassword && passwordError && <ErrorMessage error={passwordError}/>}
+        {!requestingPassword && passwordError && <ErrorMessage id={`${formPrefix}-error`} error={passwordError}/>}
       </FormModal>
     )
   }

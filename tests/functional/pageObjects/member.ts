@@ -2,7 +2,7 @@ import { Routing } from "app/constants";
 
 export class MemberPageObject {
   public welcomeModal = {
-    id: "#welcome-modal-form-modal",
+    id: "#welcome-modal",
   };
   public memberForm = {
     id: "#member-form",

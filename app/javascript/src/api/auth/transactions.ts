@@ -53,7 +53,7 @@ export const putPassword = async (token: string, password: string) => {
   try {
     return await axios.put(buildJsonUrl(Url.Auth.Password), {
       member: {
-        passwordResetToken: token,
+        resetPasswordToken: token,
         password
       }
     });

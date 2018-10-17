@@ -14,6 +14,7 @@ export interface LoginMember extends Partial<MemberDetails> {
 
 export class AuthPageObject {
   public redirectUrl = Routing.Profile;
+  public passwordResetUrl = `${Routing.PasswordReset}/${Routing.PathPlaceholder.Resource}`
 
   public authToggleButton = "#auth-toggle";
   public emailExistsModal = "#email-exists";
@@ -40,6 +41,14 @@ export class AuthPageObject {
   public passwordResetModal = {
     id: "#password-reset",
     passwordInput: "#reset-password-input",
+    error: "#password-reset-error",
+    submitButton: "#password-reset-submit",
+  };
+  public passwordResetRequestModal = {
+    id: "#request-password-reset",
+    emailInput: "#request-password-reset-email",
+    error: "#request-password-reset-error",
+    submitButton: "#request-password-reset-submit",
   }
 
   /*
