@@ -131,11 +131,44 @@ export const mockRequests = {
         httpRequest: {
           method: Method.Put,
           path: `/api/admin/members/${id}.json`,
-          body: JSON.stringify(member)
+          body: JSON.stringify({member})
         },
         httpResponse: {
           statusCode: 200,
-          body: JSON.stringify(member)
+          body: JSON.stringify({member})
+        }
+      })
+    }
+  },
+  passwordReset: {
+    requestReset: {
+      ok: (email: string): MockRequest => ({
+        httpRequest: {
+          method: Method.Post,
+          path: "/api/members/password.json",
+          body: JSON.stringify({ member: { email } })
+        },
+        httpResponse: {
+          statusCode: 200,
+        }
+      })
+    },
+    updatePassword: {
+      ok: (token: string, password: string): MockRequest => ({
+        httpRequest: {
+          method: Method.Put,
+          path: "/api/members/password.json",
+          body: JSON.stringify(
+            {
+              member: {
+                resetPasswordToken: token,
+                password
+              }
+            }
+          )
+        },
+        httpResponse: {
+          statusCode: 200,
         }
       })
     }

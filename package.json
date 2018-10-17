@@ -40,6 +40,7 @@
     "@types/jest": "^23.3.2",
     "chromedriver": "^2.42.0",
     "jest": "^23.6.0",
+    "cheerio": "latest",
     "jest-environment-webdriver": "lynch16/jest-environment-webdriver#master",
     "mockserver-client": "^5.3.0",
     "mockserver-node": "^5.3.0",
@@ -51,7 +52,7 @@
   "scripts": {
     "test": "$(npm bin)/jest --no-cache",
     "test-watch": "yarn test --watch",
-    "test-functional": "yarn test --testRegex='/tests/functional/runner.spec.ts'"
+    "test-functional": "yarn test --testRegex='/tests/functional/runner.spec.ts' --setupTestFrameworkScriptFile='<rootDir>/tests/functional/setup.js'"
   },
   "jest": {
     "collectCoverage": false,
