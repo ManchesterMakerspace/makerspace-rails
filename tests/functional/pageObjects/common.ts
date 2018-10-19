@@ -1,3 +1,5 @@
+import { Key } from "selenium-webdriver";
+
 export const rootURL = `http://${process.env.APP_DOMAIN || 'localhost'}:${process.env.PORT || 3002}`;
 
 export class PageUtils {
@@ -75,8 +77,13 @@ export class PageUtils {
   public fillInput = async (elementLocator: string, input: string) => {
     const element = await this.getElementByCss(elementLocator);
     try {
-      await element.sendKeys(input);
-    } catch {
+      if (!input) {
+        return element.getAttribute("value").then((text: string) => Promise.all(text.split("").map(() => element.sendKeys(Key.BACK_SPACE))));
+      } else {
+        await element.clear();
+        await element.sendKeys(input);
+      }
+    } catch (e) {
       throw new Error(`Unable to enter keys: ${input} in input: ${elementLocator}`);
     }
   }
@@ -124,8 +131,7 @@ export class PageUtils {
   }
   public assertInputError = async (elementLocator: string, errorMsg?: string) => {
     try {
-      const errorInput = await this.getElementByCss(`${elementLocator}-error`);
-      const errorText = await errorInput.getText();
+      const errorText = await this.getElementText(`${elementLocator}-error`)
       if (errorMsg) {
         expect(errorText).toEqual(errorMsg);
       } else {
@@ -154,6 +160,16 @@ export class PageUtils {
       expect(elementText).toEqual(text);
     } catch {
       throw new Error(`Unable to locate element ${elementLocator} to assert text`);
+    }
+  }
+  public waitForLoadingComplete = async (elementLocator: string) => {
+    try {
+      await browser.wait(() => {
+        return this.isElementDisplayed(elementLocator).then((displayed) => !displayed);
+      }, this.waitUntilTime);
+      await browser.sleep(200);
+    } catch {
+      throw new Error(`Error waiting for loading to complete for: ${elementLocator}`);
     }
   }
 }

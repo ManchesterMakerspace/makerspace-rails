@@ -11,7 +11,7 @@ export const basicUser: LoginMember = {
   role: [MemberRole.Member],
   status: MemberStatus.Active,
   cardId: "test_member_card_1",
-  expirationTime: parseInt(moment().add(1, "months").calendar().valueOf()),
+  expirationTime: (moment().add(1, "months").valueOf()),
 };
 export const adminUser: LoginMember = {
   id: "admin_member",
@@ -22,19 +22,19 @@ export const adminUser: LoginMember = {
   role: [MemberRole.Member, MemberRole.Admin],
   status: MemberStatus.Active,
   cardId: "admin_member_card_1",
-  expirationTime: parseInt(moment().add(1, "months").calendar().valueOf()),
+  expirationTime: (moment().add(1, "months").valueOf()),
 };
 export const defaultMembers: LoginMember[] = new Array(20).fill(undefined).map((_v, index) => {
   const expirationNum = (Date.now() % 6);
   let expirationTime: number;
   switch (expirationNum) {
     case 0:
-      expirationTime = parseInt(moment().subtract(1, "months").calendar().valueOf())
+      expirationTime = (moment().subtract(1, "months").valueOf())
     case (4 || 5):
-      expirationTime = parseInt(moment().add(3, "months").calendar().valueOf())
+      expirationTime = (moment().add(3, "months").valueOf())
       break;
     case (1 || 2 || 3):
-      expirationTime = parseInt(moment().add(1, "months").calendar().valueOf())
+      expirationTime = (moment().add(1, "months").valueOf())
       break;
   }
   if (index%5 === 0){
@@ -57,4 +57,7 @@ export const defaultMembers: LoginMember[] = new Array(20).fill(undefined).map((
     cardId: `test_member_${index}_card 1`,
     expirationTime
   }
-})
+});
+
+export const basicMembers = defaultMembers.filter((member) => member.role.includes(MemberRole.Member) && member.role.length === 1);
+export const adminMembers = defaultMembers.filter((member) => member.role.includes(MemberRole.Admin));

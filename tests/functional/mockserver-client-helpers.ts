@@ -75,7 +75,6 @@ export const mockRequests = {
         httpRequest: {
           method: Method.Put,
           path: `/api/admin/cards/${id}.json`,
-          body: JSON.stringify(accessCard)
         },
         httpResponse: {
           statusCode: 200,
@@ -131,7 +130,6 @@ export const mockRequests = {
         httpRequest: {
           method: Method.Put,
           path: `/api/admin/members/${id}.json`,
-          body: JSON.stringify({member})
         },
         httpResponse: {
           statusCode: 200,
@@ -169,6 +167,20 @@ export const mockRequests = {
         },
         httpResponse: {
           statusCode: 200,
+        }
+      })
+    }
+  },
+  rejectionCard: {
+    get: {
+      ok: (card: any) => ({
+        httpRequest: {
+          method: Method.Get,
+          path: `/${Url.Admin.AccessCards}/new.json`,
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify(card)
         }
       })
     }

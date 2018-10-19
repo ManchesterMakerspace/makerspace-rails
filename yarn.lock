@@ -195,6 +195,10 @@
     "@types/prop-types" "*"
     csstype "^2.2.0"
 
+"@types/selenium-webdriver@^3.0.12":
+  version "3.0.12"
+  resolved "https://registry.yarnpkg.com/@types/selenium-webdriver/-/selenium-webdriver-3.0.12.tgz#6affe5aed1ba379175075a889adbe2bc3aa62159"
+
 Base64@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/Base64/-/Base64-1.0.1.tgz#def45cc50c961bcc9bf2321d0f52bcbfec1f1bb1"
@@ -6822,6 +6826,15 @@ select-hose@^2.0.0:
 selenium-webdriver@^3.6.0:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/selenium-webdriver/-/selenium-webdriver-3.6.0.tgz#2ba87a1662c020b8988c981ae62cb2a01298eafc"
+  dependencies:
+    jszip "^3.1.3"
+    rimraf "^2.5.4"
+    tmp "0.0.30"
+    xml2js "^0.4.17"
+
+selenium-webdriver@latest:
+  version "4.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/selenium-webdriver/-/selenium-webdriver-4.0.0-alpha.1.tgz#cc93415e21d2dc1dfd85dfc5f6b55f3ac53933b1"
   dependencies:
     jszip "^3.1.3"
     rimraf "^2.5.4"

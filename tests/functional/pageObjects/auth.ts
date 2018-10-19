@@ -10,6 +10,7 @@ const memberPO = new MemberPageObject();
 export interface LoginMember extends Partial<MemberDetails> {
   email: string;
   password: string;
+  expirationTime: any;
 }
 
 export class AuthPageObject {

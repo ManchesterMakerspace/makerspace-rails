@@ -4,6 +4,7 @@ import { Status } from "ui/common/constants";
 interface StatusLabelProps {
   label: string;
   color: Status;
+  id?: string;
 }
 const statusToStyleMap = {
   [Status.Danger]: {backgroundColor: "rgba(255, 0, 0, 0.4)"},
@@ -22,7 +23,7 @@ const StatusLabel: React.SFC<StatusLabelProps> = (props) => {
   return (
     <span style={{whiteSpace: "nowrap"}}>
       <span style={{...circleStyle, ...statusToStyleMap[props.color]}}>&nbsp;</span>
-      <span>{props.label}</span>
+      <span id={props.id}>{props.label}</span>
     </span>
   );
 }

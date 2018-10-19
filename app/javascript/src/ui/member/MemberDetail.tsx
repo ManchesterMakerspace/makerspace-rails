@@ -140,14 +140,14 @@ class MemberDetail extends React.Component<Props, State> {
 
     return (
       <>
-        <KeyValueItem id="member-detail-email" label="Email">
-          {member.email ? <a href={`mailto:${member.email}`}>{member.email}</a> : "N/A"}
+        <KeyValueItem label="Email">
+          {member.email ? <a id="member-detail-email" href={`mailto:${member.email}`}>{member.email}</a> : "N/A"}
         </KeyValueItem>
-        <KeyValueItem id="member-detail-expiration" label="Membership Expiration">
-          {displayMemberExpiration(member)}
+        <KeyValueItem  label="Membership Expiration">
+          <span id="member-detail-expiration">{displayMemberExpiration(member)}</span>
         </KeyValueItem>
-        <KeyValueItem id="member-detail-status" label="Membership Status">
-          <MemberStatusLabel member={member} />
+        <KeyValueItem label="Membership Status">
+          <MemberStatusLabel id="member-detail-status" member={member} />
         </KeyValueItem>
       </>
     )
@@ -288,7 +288,7 @@ class MemberDetail extends React.Component<Props, State> {
     const accessCardForm = (renderProps:UpdateMemberRenderProps) => (
       <AccessCardForm
         ref={renderProps.setRef}
-        cardId={renderProps.member.cardId}
+        member={renderProps.member}
         isOpen={renderProps.isOpen}
         isRequesting={renderProps.isUpdating}
         error={renderProps.error}

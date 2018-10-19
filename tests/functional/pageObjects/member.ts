@@ -12,8 +12,10 @@ export class MemberPageObject {
     error: "#member-form-error",
     submit: "#member-form-submit",
     cancel: "#member-form-cancel",
+    loading: "#member-form-loading",
   }
   public memberDetail = {
+    title: "#detail-view-title",
     email: "#member-detail-email",
     expiration: "#member-detail-expiration",
     status: "#member-detail-status",
@@ -29,16 +31,19 @@ export class MemberPageObject {
     error: "#renewal-form-error",
     submit: "#renewal-form-submit",
     cancel: "#renewal-form-cancel",
+    loading: "#renewal-form-loading",
   }
   public accessCardForm = {
     id: "#card-form",
     error: "#card-form-error",
+    deactivateButton: "#card-form-deactivate",
     lostButton: "#card-form-lost",
     stolenButton: "#card-form-stolen",
     importButton: "#card-form-import-new-key",
     importConfirmation: "#card-form-key-confirmation",
     submit: "#card-form-submit",
     cancel: "#card-form-cancel",
+    loading: "#card-form-loading",
   }
   public membersList = {
     id: "#members-table",

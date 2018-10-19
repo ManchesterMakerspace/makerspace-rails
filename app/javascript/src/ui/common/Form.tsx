@@ -11,6 +11,7 @@ import { CollectionOf } from "app/interfaces";
 
 import ErrorMessage from "ui/common/ErrorMessage";
 import LoadingOverlay from "ui/common/LoadingOverlay";
+import { isUndefined } from "lodash-es";
 
 
 export interface FormField {
@@ -148,7 +149,7 @@ class Form extends React.Component<FormModalProps, State> {
       return {
         values: {
           ...state.values,
-          [fieldName]: fieldValue
+          [fieldName]: isUndefined(fieldValue) ? null : fieldValue
         },
         touched: {
           ...state.touched,
@@ -242,7 +243,7 @@ class Form extends React.Component<FormModalProps, State> {
         {title && <DialogTitle id={`${id}-title`}>{title}</DialogTitle>}
         <DialogContent>
           {this.renderChildren(children)}
-          {isDirty && !loading && error && <ErrorMessage error={error} />}
+          {isDirty && !loading && error && <ErrorMessage error={error} id={`${id}-error`}/>}
         </DialogContent>
 
         <DialogActions>
@@ -263,6 +264,7 @@ class Form extends React.Component<FormModalProps, State> {
           onSubmit={this.handleSubmit}
           onChange={this.handleChange}
           noValidate
+          autoComplete="off"
           id={id}
           style={{width: "100%"}}
         >

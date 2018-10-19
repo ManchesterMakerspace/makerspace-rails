@@ -1,27 +1,27 @@
 import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 
-import { getCard, putCard } from "api/accessCards/transactions";
+import { getCards, putCard } from "api/accessCards/transactions";
 import { Action as CardAction } from "ui/accessCards/constants";
 import { CardState } from "ui/accessCards/interfaces";
 import { AccessCard } from "app/entities/card";
 
-export const readCardAction = (
+export const readCardsAction = (
   cardId: string
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
   dispatch({ type: CardAction.StartReadRequest });
 
   try {
-    const response = await getCard(cardId);
+    const response = await getCards(cardId);
     const { data } = response;
     dispatch({
-      type: CardAction.GetCardSuccess,
+      type: CardAction.GetCardsSuccess,
       data: data.cards
     });
   } catch (e) {
     const { errorMessage } = e;
     dispatch({
-      type: CardAction.GetCardFailure,
+      type: CardAction.GetCardsFailure,
       error: errorMessage
     });
   }
@@ -50,7 +50,7 @@ export const updateCardAction = (
 }
 
 const defaultState: CardState = {
-  entity: undefined,
+  entities: undefined,
   read: {
     isRequesting: false,
     error: "",
@@ -73,19 +73,19 @@ export const cardReducer = (state: CardState = defaultState, action: AnyAction) 
           isRequesting: true
         }
       };
-    case CardAction.GetCardSuccess:
+    case CardAction.GetCardsSuccess:
       const { data } = action;
 
       return {
         ...state,
-        entity: data,
+        entities: data,
         read: {
           ...state.read,
           isRequesting: false,
           error: ""
         }
       };
-    case CardAction.GetCardFailure:
+    case CardAction.GetCardsFailure:
       error = action.error;
 
       return {

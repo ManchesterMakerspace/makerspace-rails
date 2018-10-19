@@ -9,7 +9,7 @@ export const memberStatusLabelMap = {
   [MemberStatus.NonMember]: "Non-Member",
 };
 
-const MemberStatusLabel: React.SFC<{ member: MemberDetails }> = (props) => {
+const MemberStatusLabel: React.SFC<{ member: MemberDetails, id?: string }> = (props) => {
   const { member } = props;
   const inActive = member.status !== MemberStatus.Active;
   const current = member.expirationTime > Date.now();
@@ -23,7 +23,7 @@ const MemberStatusLabel: React.SFC<{ member: MemberDetails }> = (props) => {
   }
 
   return (
-    <StatusLabel label={label} color={statusColor} />
+    <StatusLabel id={props.id} label={label} color={statusColor} />
   );
 }
 

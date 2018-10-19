@@ -1,8 +1,8 @@
-import { RequestStatus } from "app/interfaces";
+import { RequestStatus, CollectionOf } from "app/interfaces";
 import { AccessCard } from "app/entities/card";
 
 export interface CardState {
-  entity: AccessCard;
+  entities: CollectionOf<AccessCard>;
   read: RequestStatus;
   update: RequestStatus;
 }

@@ -8,10 +8,12 @@ import { getRejectionCard, putCard } from "api/accessCards/transactions";
 import FormModal from "ui/common/FormModal";
 import Form from "ui/common/Form";
 import ButtonRow from "ui/common/ButtonRow";
-
+import { Column } from "ui/common/table/Table";
+import { timeToDate } from "ui/utils/timeToDate";
+import { MemberDetails } from "app/entities/member";
 
 interface OwnProps {
-  cardId: string;
+  member: MemberDetails;
   isOpen: boolean;
   isRequesting: boolean;
   error: string;
@@ -19,6 +21,7 @@ interface OwnProps {
   onSubmit: (form: Form) => void;
 }
 
+interface Props extends OwnProps {}
 interface State {
   rejectionCardId: string;
   loading: boolean;
@@ -26,19 +29,56 @@ interface State {
   cardDisabled: boolean;
 }
 
-class AccessCardForm extends React.Component<OwnProps,State> {
+const defaultState = {
+  rejectionCardId: "",
+  loading: false,
+  error: "",
+  cardDisabled: false,
+};
+const InactiveCardStatuses = [CardStatus.Lost, CardStatus.Stolen, CardStatus.Revoked];
+export class AccessCardForm extends React.Component<Props,State> {
   public formRef: Form;
   private setFormRef = (ref: Form) => this.formRef = ref;
+  private fields: Column<AccessCard>[] = [
+    {
+      id: "uid",
+      label: "UID",
+      cell: (row: AccessCard) => row.uid,
+    },
+    {
+      id: "expiry",
+      label: "Expiration",
+      cell: (row: AccessCard) => row.expiry ? timeToDate(row.expiry) : "N/A",
+    },
+    {
+      id: "validity",
+      label: "Status",
+      cell: (row: AccessCard) => {
+        switch (row.validity) {
+          case (CardStatus.Active || CardStatus.NonMember):
+            return "Active";
+          case CardStatus.Expired:
+            return "Expired";
+          default:
+            return "Inactive";
+        }
+      }
+    }
+  ];
+  private rowId = (row: AccessCard) => row.id;
 
-  constructor(props: OwnProps) {
+  constructor(props: Props) {
     super(props);
 
-    this.state = {
-      rejectionCardId: "",
-      loading: false,
-      error: "",
-      cardDisabled: false,
-    };
+    this.state = defaultState;
+  }
+
+  public componentDidUpdate(prevProps: Props) {
+    const { isOpen } = this.props;
+    const { isOpen: wasOpen } = prevProps;
+    if (!wasOpen && isOpen) {
+      this.setState(defaultState);
+    }
   }
 
   private fetchRejectionCard = () => {
@@ -65,18 +105,18 @@ class AccessCardForm extends React.Component<OwnProps,State> {
   }
 
   private reportLost = () => {
-    const { cardId } = this.props;
+    const { member } = this.props;
     const cardDetails: Partial<AccessCard> = {
-      id: cardId,
+      id: member.cardId,
       validity: CardStatus.Lost
     };
     this.reportCard(cardDetails);
   }
 
   private reportStolen = () => {
-    const { cardId } = this.props;
+    const { member } = this.props;
     const cardDetails: Partial<AccessCard> = {
-      id: cardId,
+      id: member.cardId,
       validity: CardStatus.Stolen
     };
     this.reportCard(cardDetails);
@@ -131,9 +171,14 @@ class AccessCardForm extends React.Component<OwnProps,State> {
             </Button>
           </div>
         </li>
-        <li id="card-form-key-confirmation">Confirm new ID is displayed here: {
-          rejectionCardId ? <span style={{color: "green"}}>{rejectionCardId}</span>
-          : <span style={{color: "red"}}>No Card Found</span>}
+        <li>Confirm new ID is displayed here:
+          <span id="card-form-key-confirmation">
+            {
+              rejectionCardId ?
+              <span style={{ color: "green" }}>{rejectionCardId}</span>
+              : <span style={{ color: "red" }}>No Card Found</span>
+            }
+          </span>
         </li>
         <ul>
           <li>If 'No Card Found', check for error message in this form.  If no error, try steps again</li>
@@ -156,25 +201,17 @@ class AccessCardForm extends React.Component<OwnProps,State> {
             <li>
               <div>
                 A member can only have 1 key fob active at a time.
-                Before you can issue a new fob, please mark the current one as Lost or Stolen with the following buttons:
+                Before you can issue a new fob, the current fob must be deactivated:
               </div>
               <div>
                 <ButtonRow
                   actionButtons={[
                     {
-                      id: "card-form-lost",
+                      id: "card-form-deactivate",
                       color: "primary",
                       variant: "contained",
                       onClick: this.reportLost,
-                      label: "Lost",
-                      disabled
-                    },
-                    {
-                      id: "card-form-stolen",
-                      color: "primary",
-                      variant: "outlined",
-                      onClick: this.reportStolen,
-                      label: "Stolen",
+                      label: "Deactivate",
                       disabled
                     }
                   ]}
@@ -193,6 +230,31 @@ class AccessCardForm extends React.Component<OwnProps,State> {
     )
   }
 
+  // private renderAllCards = () => {
+  //   const { isRequesting, error, accessCards } = this.props;
+  //   return (
+  //     <TableContainer
+  //       id="access-cards-table"
+  //       title="Access Cards"
+  //       loading={isRequesting}
+  //       data={Object.values(accessCards)}
+  //       error={error}
+  //       totalItems={Object.values(accessCards).length}
+  //       columns={this.fields}
+  //       rowId={this.rowId}
+  //     />
+  //   )
+  // }
+
+  public validate = (form: Form): MemberDetails => {
+    const { member } = this.props;
+    const { rejectionCardId } = this.state;
+    return {
+      ...member,
+      cardId: rejectionCardId
+    };
+  }
+
   private onSubmit = (form: Form) => {
     const { onSubmit } = this.props;
     const { rejectionCardId } = this.state;
@@ -204,9 +266,12 @@ class AccessCardForm extends React.Component<OwnProps,State> {
   }
 
   public render(): JSX.Element {
-    const { isOpen, onClose, isRequesting, error, cardId } = this.props;
+    const { isOpen, onClose, isRequesting, error, member } = this.props;
     const { loading, error: stateError } = this.state;
-
+    const cardId = member.cardId;
+    //TODO: Setup Basic/Advanced tabs in this modal
+    // If advanced, display a table with all the member's cards
+    // Basic is existing functionality
     return (
       <FormModal
         formRef={this.setFormRef}

@@ -8,7 +8,7 @@ import Form from "ui/common/Form";
 import RenewalForm from "ui/common/RenewalForm"
 import { updateMemberAction } from "ui/member/actions";
 import MemberForm from "ui/member/MemberForm"
-import AccessCardForm from "ui/accessCards/AccessCardForm"
+import { AccessCardForm } from "ui/accessCards/AccessCardForm"
 
 export interface UpdateMemberRenderProps extends Props {
   submit: (form: Form) => void;

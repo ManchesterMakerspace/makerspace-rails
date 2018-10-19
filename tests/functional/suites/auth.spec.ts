@@ -129,7 +129,7 @@ describe("Authentication", () => {
          5. Login successfully
       */
     });
-    xit("Form validation", async () => {
+    it("Form validation", async () => {
       /* 1. Submit form
          2. Assert errors for fields
          3. Fill email with invalid value. Fill other fields with valid values
@@ -140,6 +140,29 @@ describe("Authentication", () => {
          8. Submit form (no mock setup so request will fail)
          9. Assert form displays API error
       */
+      await browser.get(utils.buildUrl());
+      const { emailInput, firstnameInput, passwordInput, lastnameInput, error, submitButton } = auth.signUpModal;
+      await utils.clickElement(submitButton);
+      expect(await utils.assertInputError(firstnameInput));
+      expect(await utils.assertInputError(lastnameInput));
+      expect(await utils.assertInputError(emailInput));
+      expect(await utils.assertInputError(passwordInput));
+      await utils.fillInput(firstnameInput, member.firstname);
+      await utils.fillInput(lastnameInput, member.lastname);
+      await utils.fillInput(passwordInput, member.password);
+      await utils.fillInput(emailInput, "foo");
+      await utils.clickElement(submitButton);
+      expect(await utils.assertNoInputError(firstnameInput));
+      expect(await utils.assertNoInputError(lastnameInput));
+      expect(await utils.assertInputError(emailInput));
+      expect(await utils.assertNoInputError(passwordInput));
+      await utils.fillInput(emailInput, member.email);
+      await utils.clickElement(submitButton);
+      expect(await utils.getElementText(error)).toBeTruthy();
+      await mock(mockRequests.signUp.ok(member));
+      await mock(mockRequests.member.get.ok(memberId, member));
+      await utils.clickElement(submitButton);
+      await utils.waitForPageLoad(utils.buildUrl(profileUrl), true);
     });
   });
 

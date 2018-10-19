@@ -3,9 +3,9 @@ import { AccessCard } from "app/entities/card";
 import { handleApiError } from "api/utils/handleApiError";
 import { buildAccessCardUrl } from "api/accessCards/utils";
 
-export const getCard = async (id: string) => {
+export const getCards = async (member_id?: string) => {
   try {
-    return await axios.get(`${buildAccessCardUrl(id)}`);
+    return await axios.get(`${buildAccessCardUrl()}`, { params: { card: member_id }});
   } catch (e) {
     const error = handleApiError(e);
     throw error;

@@ -14,6 +14,25 @@ class Card
 
   belongs_to :member, class_name: 'Member', inverse_of: :access_cards
 
+  @@memberStatuses = {
+    active: "activeMember",
+    revoked: "revoked",
+    nonMember: "nonMember",
+    lost: "lost",
+    stoken: "stolen",
+    expired: "expired"
+  }
+
+  @@activeStatuses = [
+    @@memberStatuses[:active],
+    @@memberStatuses[:nonMember],
+    @@memberStatuses[:expired],
+  ]
+
+  def isActive
+    @@activeStatuses.include?(self.validity)
+  end
+
   private
   def set_holder
     self.holder = self.member.fullname
@@ -23,7 +42,7 @@ class Card
     self.expiry = self.member.expirationTime
     if (!!self.card_location)
       self.validity = self.card_location
-    elsif (self.validity != 'lost' && self.validity != 'stolen')
+    elsif (self.validity != @@memberStatuses[:lost] && self.validity != @@memberStatuses[:stolen])
       self.validity = self.member.status
     end
   end

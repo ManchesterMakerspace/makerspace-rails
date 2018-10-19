@@ -3,7 +3,7 @@ const path = require('path');
 const mkdirp = require('mkdirp');
 const screenshotDir = path.resolve(__dirname, '../../tmp/screenshots');
 
-class ScreenshotReporter {
+export class ScreenshotReporter {
   constructor({ browser }) {
     this.browser = browser;
     this.cleanScreenshots();
