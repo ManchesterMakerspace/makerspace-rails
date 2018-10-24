@@ -162,14 +162,26 @@ export class PageUtils {
       throw new Error(`Unable to locate element ${elementLocator} to assert text`);
     }
   }
-  public waitForLoadingComplete = async (elementLocator: string) => {
+  public waitForNotVisible = async (elementLocator: string) => {
     try {
       await browser.wait(() => {
         return this.isElementDisplayed(elementLocator).then((displayed) => !displayed);
       }, this.waitUntilTime);
       await browser.sleep(200);
     } catch {
-      throw new Error(`Error waiting for loading to complete for: ${elementLocator}`);
+      throw new Error(`Error waiting for element to not be visible: ${elementLocator}`);
+    }
+  }
+
+  public waitForVisisble = async (elementLocator: string) => {
+    try {
+      await browser.wait(() => {
+        return this.isElementDisplayed(elementLocator).then((displayed) => displayed);
+      }, this.waitUntilTime);
+    } catch {
+      throw new Error(`Error waiting for element to be visible: ${elementLocator}`);
     }
   }
 }
+
+export default new PageUtils();

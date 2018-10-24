@@ -64,7 +64,18 @@ class MemberForm extends React.Component<OwnProps, {}> {
             />
           </Grid>
         </Grid>
-        Expiration (Date Picker)
+        <TextField
+          fullWidth
+          required
+          value={member.expirationTime}
+          label={fields.expirationTime.label}
+          name={fields.expirationTime.name}
+          placeholder={fields.expirationTime.placeholder}
+          type="date"
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
         <TextField
           fullWidth
           required
@@ -75,8 +86,8 @@ class MemberForm extends React.Component<OwnProps, {}> {
           placeholder={fields.email.placeholder}
           type="email"
         />
-        Status (Select)
-        Permissions (Select)
+        {/* Status (Select) */}
+        {/* Permissions (Select) */}
       </FormModal>
     )
   }

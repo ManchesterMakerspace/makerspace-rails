@@ -12,7 +12,7 @@ const utils = new PageUtils();
 const memberPO = new MemberPageObject();
 const member = Object.assign({}, basicUser);
 const memberId = member.id;
-const profileUrl = memberPO.getProfileUrl(memberId);
+const profileUrl = memberPO.getProfilePath(memberId);
 
 describe("Authentication", () => {
   describe("Logging in", () => {
@@ -33,7 +33,7 @@ describe("Authentication", () => {
       await mock(mockRequests.signIn.ok(member));
       await mock(mockRequests.member.get.ok(memberId, member));
       await auth.signInUser(member);
-      await utils.waitForPageLoad(memberPO.getProfileUrl(member.id));
+      await utils.waitForPageLoad(memberPO.getProfilePath(member.id));
       const url = await browser.getCurrentUrl();
       expect(url).toEqual(utils.buildUrl(profileUrl));
     });
@@ -74,7 +74,7 @@ describe("Authentication", () => {
       await mock(mockRequests.signIn.ok(member));
       await mock(mockRequests.member.get.ok(memberId, member));
       await utils.clickElement(auth.loginModal.submitButton);
-      await utils.waitForPageLoad(memberPO.getProfileUrl(member.id));
+      await utils.waitForPageLoad(memberPO.getProfilePath(member.id));
     });
   });
   describe("Signing up", () => {
@@ -196,7 +196,7 @@ describe("Authentication", () => {
       await mock(mockRequests.passwordReset.updatePassword.ok("token", "new password"));
       await mock(mockRequests.signIn.ok(member));
       await utils.clickElement(auth.passwordResetModal.submitButton);
-      await utils.waitForPageLoad(memberPO.getProfileUrl(basicUser.id));
+      await utils.waitForPageLoad(memberPO.getProfilePath(basicUser.id));
     });
     it("Form validation", async () => {
       /* 1. Go to login page
@@ -241,7 +241,7 @@ describe("Authentication", () => {
       await mock(mockRequests.signIn.ok(member));
       await mock(mockRequests.member.get.ok(basicUser.id, basicUser));
       await utils.clickElement(auth.passwordResetModal.submitButton);
-      await utils.waitForPageLoad(memberPO.getProfileUrl(basicUser.id));
+      await utils.waitForPageLoad(memberPO.getProfilePath(basicUser.id));
     });
   });
 });

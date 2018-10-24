@@ -42,26 +42,26 @@ export const fields = {
     label: "Due Date",
     name: `${formPrefix}-due-date`,
     placeholder: "Select a due date",
-    validate: (val: string) => !!val,
+    validate: (val: string) => true,
     error: "Due date required"
   },
   amount: {
     label: "Amount",
-    name: `${formPrefix}-item-amount`,
+    name: `${formPrefix}-amount`,
     placeholder: "Enter amount",
     validate: (val: number) => (!!val && val > 0),
     error: "Invoice amount required"
   },
   resource: {
     label: "Invoice For",
-    name: `${formPrefix}-item-resource`,
+    name: `${formPrefix}-resource`,
     placeholder: "Select an item to invoice for",
     validate: (val: InvoiceableResource) => val && Object.values(InvoiceableResource).includes(val),
     error: "Invalid selection"
   },
   term: {
     label: "Renewal Length",
-    name: `${formPrefix}-item-value`,
+    name: `${formPrefix}-term`,
     placeholder: "Select a term to renew",
     validate: (val: string) => !!val,
     error: "Invalid selection"

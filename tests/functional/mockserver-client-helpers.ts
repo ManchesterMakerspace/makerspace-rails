@@ -271,15 +271,27 @@ export const mockRequests = {
   },
   invoices: {
     get: {
-      ok: (invoices: Partial<Invoice>[], queryParams?: InvoiceQueryParams): MockRequest => ({
+      ok: (invoices: Partial<Invoice>[], queryParams?: InvoiceQueryParams, admin?: boolean): MockRequest => ({
         httpRequest: {
           method: Method.Get,
-          path: `/${Url.Invoices}.json`,
+          path: `/${admin ? Url.Admin.Invoices : Url.Invoices}.json`,
           queryStringParameters: objectToQueryParams(queryParams)
         },
         httpResponse: {
           statusCode: 200,
           body: JSON.stringify({invoices})
+        }
+      })
+    },
+    post: {
+      ok: (invoice: Invoice): MockRequest => ({
+        httpRequest: {
+          method: Method.Post,
+          path: `/${Url.Invoices}.json`,
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({ invoice })
         }
       })
     }

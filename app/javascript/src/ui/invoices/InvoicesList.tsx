@@ -153,17 +153,20 @@ class InvoicesList extends React.Component<Props, State> {
     const payLabel = `Pay Selected Invoice${(selectedInvoices).length > 1 ? `s` : ''}${selectedInvoices.length ? ` ${selectedInvoices.length}` : ""}`;
     const actionButtons: ActionButton[] = [
       ...(admin && [{
+        id: "invoices-list-create",
         variant: "contained",
         color: "primary",
         onClick: this.openCreateForm,
         label: "Create New Invoice"
       }, {
+        id: "invoices-list-edit",
         variant: "outlined",
         color: "primary",
         disabled: !Array.isArray(selectedIds) || selectedIds.length !== 1,
         onClick: this.openUpdateForm,
         label: "Edit Invoice"
       }, {
+        id: "invoices-list-delete",
         variant: "outlined",
         color: "primary",
         disabled: !Array.isArray(selectedIds) || selectedIds.length !== 1,
@@ -171,6 +174,7 @@ class InvoicesList extends React.Component<Props, State> {
         label: "Delete Invoice"
       }] as ActionButton[] || []),
     ...[payNow && {
+        id: "invoices-list-payNow",
         style: { float: "right" },
         variant: "contained",
         color: "primary",
@@ -320,9 +324,11 @@ class InvoicesList extends React.Component<Props, State> {
       );
     }
 
+    const selectedId = selectedIds.length === 1 && selectedIds[0];
+
     return (admin &&
       <>
-        {/* <UpdateInvoiceContainer
+        <UpdateInvoiceContainer
           operation={CrudOperation.Update}
           isOpen={openUpdateForm}
           invoice={invoices[selectedId]}
@@ -335,7 +341,7 @@ class InvoicesList extends React.Component<Props, State> {
           invoice={member && { resourceId: member.id, contact: member.email }}
           closeHandler={this.closeCreateForm}
           render={createForm}
-        /> */}
+        />
         <UpdateInvoiceContainer
           operation={CrudOperation.Update}
           isOpen={openSettleForm}

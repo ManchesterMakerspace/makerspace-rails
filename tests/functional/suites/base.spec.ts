@@ -1,7 +1,5 @@
 import { reset as resetMockserver } from "../mockserver-client-helpers";
-import { PageUtils, rootURL } from "../pageObjects/common";
-
-const utils = new PageUtils();
+import utils, { rootURL } from "../pageObjects/common";
 
 // Set locating timeout to 10s
 utils.setLocatorTimeout(10000);

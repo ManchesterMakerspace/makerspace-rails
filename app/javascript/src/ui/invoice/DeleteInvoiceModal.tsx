@@ -40,13 +40,13 @@ class DeleteInvoiceModal extends React.Component<OwnProps, {}> {
           Are you sure you want to delete this invoice?
         </Typography>
         <KeyValueItem label="Contact">
-          {invoice.contact}
+          <span id="delete-invoice-contact">{invoice.contact}</span>
         </KeyValueItem>
         <KeyValueItem label="Amount">
-          {`$${invoice.amount}`}
+          <span id="delete-invoice-amount">{`$${invoice.amount}`}</span>
         </KeyValueItem>
         <KeyValueItem label="Due Date">
-          {timeToDate(invoice.dueDate)}
+          <span id="delete-invoice-due-date">{timeToDate(invoice.dueDate)}</span>
         </KeyValueItem>
       </FormModal>
     ) : null;

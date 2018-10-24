@@ -58,7 +58,7 @@ export class AuthPageObject {
   * and skips the landing page
   */
   public autoLogin = async (user: LoginMember, destination?: string) => {
-    const profileUrl = memberPO.getProfileUrl(user.id);
+    const profileUrl = memberPO.getProfilePath(user.id);
     const destinationUrl = destination || profileUrl;
     await mock(mockRequests.signIn.ok(user));
     // If no destination, mock default member profile redirect
@@ -89,3 +89,5 @@ export class AuthPageObject {
     await utils.clickElement(this.signUpModal.submitButton);
   }
 }
+
+export default new AuthPageObject();

@@ -1,12 +1,10 @@
 import { basicUser, adminUser } from "../constants/member";
 import { mockRequests, mock } from "../mockserver-client-helpers";
 
-import { AuthPageObject } from "../pageObjects/auth";
-import { PageUtils } from "../pageObjects/common";
-import { MemberPageObject } from "../pageObjects/member";
-const auth = new AuthPageObject();
-const utils = new PageUtils();
-const memberPO = new MemberPageObject();
+import auth from "../pageObjects/auth";
+import utils from "../pageObjects/common";
+import memberPO from "../pageObjects/member";
+
 
 xdescribe("Rentals", () => {
   describe("Basic user", () => {
@@ -21,7 +19,7 @@ xdescribe("Rentals", () => {
     });
   });
   describe("Admin user", () => {
-    const targetUrl = memberPO.getProfileUrl(basicUser.id);
+    const targetUrl = memberPO.getProfilePath(basicUser.id);
     beforeEach(async () => {
       await mock(mockRequests.invoices.get.ok([]));
       await mock(mockRequests.member.get.ok(basicUser.id, basicUser));

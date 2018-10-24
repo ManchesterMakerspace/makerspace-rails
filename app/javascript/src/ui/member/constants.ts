@@ -40,13 +40,13 @@ export const fields: FormFields = {
   //   validate: (val) => !!val,
   //   error: "Invalid status"
   // },
-  // expiration: {
-  //   label: "Expiration Date",
-  //   name: `${formPrefix}-expiration`,
-  //   placeholder: "Membership Expiration",
-  //   validate: (val) => !!val,
-  //   error: "Invalid expiration"
-  // },
+  expiration: {
+    label: "Expiration Date",
+    name: `${formPrefix}-expiration`,
+    placeholder: "Membership Expiration",
+    validate: (val) => !!val,
+    error: "Invalid expiration"
+  },
   // role: {
   //   label: "Role",
   //   name: `${formPrefix}-role`,

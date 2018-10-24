@@ -8,6 +8,7 @@ export class MemberPageObject {
     id: "#member-form",
     firstname: "#member-form-firstname",
     lastname: "#member-form-lastname",
+    expiration: "#member-form-expiration",
     email: "#member-form-email",
     error: "#member-form-error",
     submit: "#member-form-submit",
@@ -67,29 +68,8 @@ export class MemberPageObject {
     noData: "#members-table-no-data-row",
     loading: "#members-table-loading",
   }
-  public paymentRequiredForm = {
-    id: "#payment-required-modal",
-    invoiceList: {
-      id: "#payment-invoices-table",
-      headers: {
-        description: "#payment-invoices-table-description-header",
-        dueDate: "#payment-invoices-table-dueDate-header",
-        amount: "#payment-invoices-table-amount-header",
-      },
-      row: {
-        id: "#payment-invoices-table-{ID}",
-        select: "#payment-invoices-table-{ID}-select",
-        description: "#payment-invoices-table-{ID}-description",
-        dueDate: "#payment-invoices-table-{ID}-dueDate",
-        amount: "#payment-invoices-table-{ID}-amount",
-      },
-      error: "#payment-invoices-table-error-row",
-      noData: "#payment-invoices-table-no-data-row",
-      loading: "#payment-invoices-table-loading",
-    },
-    submit: "#payment-required-modal-submit",
-    cancel: "#payment-required-modal-cancel",
-  }
 
-  public getProfileUrl = (memberId: string) => Routing.Profile.replace(Routing.PathPlaceholder.MemberId, memberId);
+  public getProfilePath = (memberId: string) => Routing.Profile.replace(Routing.PathPlaceholder.MemberId, memberId);
 }
+
+export default new MemberPageObject();

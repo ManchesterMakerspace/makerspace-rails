@@ -40,13 +40,13 @@ class SettleInvoiceModal extends React.Component<OwnProps, {}> {
           Are you sure you want to manually settle this invoice?  This action cannot be reversed.
         </Typography>
         <KeyValueItem label="Contact">
-          {invoice.contact}
+          <span id="settle-invoice-contact">{invoice.contact}</span>
         </KeyValueItem>
         <KeyValueItem label="Amount">
-          {`$${invoice.amount}`}
+          <span id="settle-invoice-amount">{`$${invoice.amount}`}</span>
         </KeyValueItem>
         <KeyValueItem label="Due Date">
-          {timeToDate(invoice.dueDate)}
+          <span id="settle-invoice-due-date">{timeToDate(invoice.dueDate)}</span>
         </KeyValueItem>
       </FormModal>
     ) : null;
