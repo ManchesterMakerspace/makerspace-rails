@@ -3,19 +3,21 @@ import { connect } from "react-redux";
 import { Redirect } from "react-router";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
+import Button from "@material-ui/core/Button";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import isEmpty from "lodash-es/isEmpty";
 
 import { Invoice } from "app/entities/invoice";
+import { Routing } from "app/constants";
 import { CollectionOf } from "app/interfaces";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
-import CheckoutForm from "ui/checkout/CheckoutForm";
 import TableContainer from "ui/common/table/TableContainer";
 import { Column } from "ui/common/table/Table";
 import { numberAsCurrency } from "ui/utils/numberToCurrency";
-import { Routing } from "app/constants";
+import PaymentMethodsContainer from "ui/checkout/PaymentMethodsContainer";
+import ErrorMessage from "ui/common/ErrorMessage";
 
 interface OwnProps {}
 interface StateProps {
@@ -27,6 +29,8 @@ interface Props extends OwnProps, StateProps, DispatchProps {}
 interface State {
   total: number;
   redirect: string;
+  paymentMethodId: string;
+  error: string;
 }
 class CheckoutContainer extends React.Component<Props,State>{
   constructor(props: Props){
@@ -35,12 +39,14 @@ class CheckoutContainer extends React.Component<Props,State>{
     const { auth, invoices } = props;
     const redirectPath = auth ? Routing.Profile.replace(Routing.PathPlaceholder.MemberId, auth) : Routing.Login;
     const redirect = invoices && isEmpty(invoices) ? redirectPath : undefined;
-    this.state = ({ 
+    this.state = ({
       redirect,
+      error: "",
+      paymentMethodId: undefined,
       total: this.props.invoices && Object.values(invoices).reduce((a, b) => a + Number(b.amount), 0)
     });
   }
-  
+
   private fields: Column<Invoice>[] = [
     {
       id: "description",
@@ -54,9 +60,9 @@ class CheckoutContainer extends React.Component<Props,State>{
     },
   ];
 
-  private renderTotal = () => { 
+  private renderTotal = () => {
     const { invoices } = this.props;
-    const { total } = this.state;
+    const { total, paymentMethodId, error } = this.state;
     return (
       <Card style={{height: "100%"}}>
         <CardContent>
@@ -64,7 +70,7 @@ class CheckoutContainer extends React.Component<Props,State>{
             <Grid item xs={12}>
               <TableContainer
                 id="checkout-invoices-table"
-                title="Dues"
+                title="Review Items Before Purchase"
                 data={Object.values(invoices)}
                 totalItems={Object.values(invoices).length}
                 columns={this.fields}
@@ -74,15 +80,34 @@ class CheckoutContainer extends React.Component<Props,State>{
             <Grid item xs={12} style={{textAlign: "right"}}>
               <Typography variant="title" color="inherit">Total {numberAsCurrency(total)}</Typography>
             </Grid>
+            <Grid item xs={12} style={{ textAlign: "left" }}>
+              <Button variant="raised" disabled={!paymentMethodId} onClick={this.submitPayment}>Submit Payment</Button>
+              {error && <ErrorMessage error={error}/>}
+            </Grid>
           </Grid>
         </CardContent>
       </Card>
     )
   }
 
+  private submitPayment = () => {
+    const { paymentMethodId } = this.state;
+    const { invoices } = this.props;
+    if (!paymentMethodId) {
+      this.setState({ error: "Payment method required before continuing."});
+      return;
+    }
+    console.log(invoices);
+
+  }
+
+  private selectPaymentMethod = (event: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({ paymentMethodId: event.currentTarget.value });
+  }
+
   private rowId = (row: Invoice) => row.id;
   public render(): JSX.Element {
-    const { redirect } = this.state;
+    const { redirect, paymentMethodId } = this.state;
 
     if (redirect) {
       return <Redirect to={redirect}/>
@@ -91,18 +116,23 @@ class CheckoutContainer extends React.Component<Props,State>{
       <Grid container spacing={16}>
         <Grid item md={8} sm={7} xs={12}>
           <Grid container spacing={16}>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <Card style={{minWidth: 275}}>
                 <CardContent>
-                  
+                  <Typography variant="title" color="inherit">Checkout</Typography>
+                  {this.renderInvoiceResults()}
+
                 </CardContent>
               </Card>
-            </Grid>
+            </Grid> */}
 
             <Grid item xs={12}>
               <Card>
                 <CardContent>
-                  <CheckoutForm/>
+                  <PaymentMethodsContainer
+                    onPaymentMethodChange={this.selectPaymentMethod}
+                    selectedPaymentMethodId={paymentMethodId}
+                  />
                 </CardContent>
               </Card>
             </Grid>

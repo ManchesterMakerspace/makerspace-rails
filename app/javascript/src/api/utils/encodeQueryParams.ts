@@ -1,5 +1,3 @@
-import { QueryParams } from "app/interfaces";
-
 export const encodeQueryParams = (queryParms: { [key: string]: any }) => {
   const params = Object.entries(queryParms).reduce((params, [key, param]) => {
     if (param) {
@@ -7,6 +5,5 @@ export const encodeQueryParams = (queryParms: { [key: string]: any }) => {
     }
     return params;
   }, {});
-  console.log(params);
   return params;
 }

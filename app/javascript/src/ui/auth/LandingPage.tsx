@@ -73,7 +73,7 @@ class LandingPage extends React.Component<Props, State> {
         </Hidden>
 
 
-        <Grid item container md={6} sm={12} justify="center" spacing={24}>
+        <Grid container md={6} sm={12} justify="center" spacing={24}>
           <Grid item xs={12}>
             <Card style={{minWidth: 275}}>
               <CardContent>

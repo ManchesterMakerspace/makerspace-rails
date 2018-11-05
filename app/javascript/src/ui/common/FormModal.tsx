@@ -27,6 +27,7 @@ const FormModal: React.SFC<FormModalProps> = (props: FormModalProps) => {
       aria-labelledby={`${id}-title`}
       open={isOpen}
       onClose={closeHandler}
+      disableBackdropClick={true}
     >
       <Form
         ref={formRef}

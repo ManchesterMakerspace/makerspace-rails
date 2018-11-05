@@ -68,9 +68,9 @@ class MemberForm extends React.Component<OwnProps, {}> {
           fullWidth
           required
           value={member.expirationTime}
-          label={fields.expirationTime.label}
-          name={fields.expirationTime.name}
-          placeholder={fields.expirationTime.placeholder}
+          label={fields.expiration.label}
+          name={fields.expiration.name}
+          placeholder={fields.expiration.placeholder}
           type="date"
           InputLabelProps={{
             shrink: true,

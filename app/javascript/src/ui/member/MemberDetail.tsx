@@ -28,6 +28,8 @@ import InvoicesList from "ui/invoices/InvoicesList";
 import RentalsList from "ui/rentals/RentalsList";
 import { Routing } from "app/constants";
 import { numberAsCurrency } from "ui/utils/numberToCurrency";
+import StatusLabel from "ui/common/StatusLabel";
+import { Status } from "ui/common/constants";
 
 interface DispatchProps {
   getMember: () => Promise<void>;
@@ -93,6 +95,27 @@ class MemberDetail extends React.Component<Props, State> {
       cell: (row: Invoice) => numberAsCurrency(row.amount),
       defaultSortDirection: SortDirection.Desc
     },
+    {
+      id: "status",
+      label: "Status",
+      cell: (row: Invoice) => {
+        const statusColor = row.pastDue ? Status.Danger : Status.Success;
+        let label;
+        if (row.pastDue) {
+          label = "Past Due";
+        } else {
+          if (row.subscriptionId) {
+            label = "Upcoming - Automatic"
+          } else {
+            label = "Due";
+          }
+        }
+
+        return (
+          <StatusLabel label={label} color={statusColor} />
+        );
+      },
+    }
   ];
 
   constructor(props: Props) {

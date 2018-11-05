@@ -13,6 +13,7 @@ interface BaseInvoice {
   pastDue?: boolean;
   resourceId: string;
   memberId: string;
+  subscriptionId?: string;
 }
 
 export interface ApiInvoice extends BaseInvoice {
@@ -54,7 +55,7 @@ export enum Properties {
   ResourceId = "resourceId",
 }
 
-export enum PaymentMethod {
+export enum PaymentMethodType {
   PayPal = "paypal",
   Cash = "cash",
   CreditCard = "cc",

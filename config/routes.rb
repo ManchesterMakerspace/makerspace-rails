@@ -15,6 +15,11 @@ Rails.application.routes.draw do
       resources :rentals, only: [:show, :index]
       resources :invoices, only: [:index]
 
+      namespace :billing do
+        resources :plans, only: [:index]
+        resources :payment_methods, only: [:create, :index]
+      end
+
       namespace :admin  do
         resources :cards, only: [:new, :create, :index, :update]
         resources :invoices, only: [:index, :create, :update, :destroy]
@@ -25,9 +30,7 @@ Rails.application.routes.draw do
 
     namespace :billing do
       resources :checkout, only: [:new, :create]
-      resources :plans, only: [:index]
       resources :subscriptions, only: [:index]
-      resources :customer, only: [:create]
     end
   end
 

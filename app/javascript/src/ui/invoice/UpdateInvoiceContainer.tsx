@@ -79,7 +79,6 @@ const mapStateToProps = (
 ): StateProps => {
   let stateProps: Partial<StateProps> = {};
   const { operation } = ownProps;
-
   switch (operation) {
     case CrudOperation.Update:
       stateProps = state.invoice.update;
@@ -119,7 +118,7 @@ const mapDispatchToProps = (
           break;
       }
       dispatch(action);
-    } ,
+    },
   }
 }
 

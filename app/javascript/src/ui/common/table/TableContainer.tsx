@@ -10,7 +10,7 @@ import { defaultItemsPerPage } from "ui/constants";
 
 interface Props<T> {
   id: string;
-  title: string;
+  title?: string;
   columns: Column<T>[];
   data: T[];
   rowId: (row: T) => string;
@@ -65,9 +65,9 @@ class TableContainer<T> extends React.Component<Props<T>, {}> {
     return (
       <div className="table-container-wrapper">
         <Toolbar>
-          <Typography id={`${id}-title`} variant="title" color="inherit" className="flex">
+          {title && <Typography id={`${id}-title`} variant="title" color="inherit" className="flex">
             {title}
-          </Typography>
+          </Typography>}
           { onSearchEnter &&
             <TextField
               id={`${id}-search-input`}

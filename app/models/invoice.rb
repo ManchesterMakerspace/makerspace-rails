@@ -32,8 +32,15 @@ class Invoice
 
   validates :payment_type, inclusion: { in: PAYMENT_TYPES }, allow_nil: true
   validates_numericality_of :amount, greater_than: 0
+  validates_presence_of :due_date
 
   belongs_to :member, optional: true
+
+  before_validation :set_due_date
+
+  def set_due_date
+    self.due_date = Time.parse(self.due_date).in_time_zone('Eastern Time (US & Canada') if self.due_date.kind_of?(String)
+  end
 
   def settled
     !!self.settled_at

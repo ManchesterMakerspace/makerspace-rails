@@ -28,6 +28,8 @@ class Member
   ## Rememberable - Handles cookies
   field :remember_created_at, type: Time
 
+  field :customer_id, type: String # Braintree customer relation
+
   search_in :email, :lastname, :firstname
 
   validates :firstname, presence: true

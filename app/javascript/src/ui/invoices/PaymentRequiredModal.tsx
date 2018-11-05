@@ -13,7 +13,7 @@ import { ScopedThunkDispatch } from "ui/reducer";
 import FormModal from "ui/common/FormModal";
 import { fields } from "ui/member/constants";
 import Form from "ui/common/Form";
-import TableContainer from "ui/common/table/TableContainer";
+import Table from "ui/common/table/Table";
 import { Column } from "ui/common/table/Table";
 import { timeToDate } from "ui/utils/timeToDate";
 import { Action as CheckoutAction } from "ui/checkout/constants";
@@ -36,7 +36,6 @@ interface DispatchProps {
 interface Props extends OwnProps, DispatchProps {}
 
 interface State {
-  submitText: string;
   redirect: boolean;
   selectedIds: string[];
 }
@@ -71,8 +70,7 @@ class PaymentRequiredModal extends React.Component<Props, State> {
 
   constructor(props: Props){
     super(props);
-    this.state = { 
-      submitText: "Continue", 
+    this.state = {
       redirect: false,
       selectedIds: Object.keys(props.invoices)
     };
@@ -119,7 +117,7 @@ class PaymentRequiredModal extends React.Component<Props, State> {
       }
     });
   }
-  
+
   private onSelect = (selectedId: string) => {
     this.setState((state) => {
       const { selectedIds } = state;
@@ -140,9 +138,7 @@ class PaymentRequiredModal extends React.Component<Props, State> {
     const { redirect, selectedIds } = this.state;
     const invoicesList = Object.values(invoices);
 
-    // Pay Now directs to the checkout flow
     if (redirect) {
-      console.log("redirect from modal")
       return (
         <Redirect to={Routing.Checkout} />
       );
@@ -155,18 +151,16 @@ class PaymentRequiredModal extends React.Component<Props, State> {
         loading={isRequesting}
         isOpen={isOpen}
         closeHandler={onClose}
-        title="Payment Required"
+        title="Review items before continuing"
         onSubmit={this.onSubmit}
-        submitText="Pay Now"
+        submitText="Proceed to Checkout"
         error={error}
       >
-        <TableContainer
+        <Table
           id="payment-invoices-table"
-          title="Dues"
           loading={isRequesting}
           data={invoicesList}
           error={error}
-          totalItems={invoicesList.length}
           selectedIds={selectedIds}
           columns={this.fields}
           rowId={this.rowId}

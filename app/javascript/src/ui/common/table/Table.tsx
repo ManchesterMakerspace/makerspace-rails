@@ -24,18 +24,18 @@ export interface Column<T> {
 
 interface Props<T> {
   id: string;
-  page: number;
+  page?: number;
   data: T[];
   columns: Column<T>[];
   selectedIds: string[];
-  order: SortDirection;
-  orderBy: string;
+  order?: SortDirection;
+  orderBy?: string;
   error: string;
   loading: boolean;
-  onSelectAll: () => void;
-  onSelect: (id: string, direction: boolean) => void;
+  onSelectAll?: () => void;
+  onSelect?: (id: string, direction: boolean) => void;
   rowId: (row: T) => string;
-  onSort: (property: string) => void;
+  onSort?: (property: string) => void;
 }
 
 class EnhancedTable<T> extends React.Component<Props<T>, {}> {

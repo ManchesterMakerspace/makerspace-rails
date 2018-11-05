@@ -6,16 +6,19 @@ import Typography from "@material-ui/core/Typography";
 
 //@ts-ignore
 import * as Braintree from "braintree-web";
-import { PaymentMethod } from "app/entities/invoice";
+import { PaymentMethodType } from "app/entities/invoice";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { getClientTokenAction } from "ui/checkout/actions";
 import CreditCardForm from "ui/checkout/CreditCardForm";
 import PaypalButton from "ui/checkout/PaypalButton";
 import ErrorMessage from "ui/common/ErrorMessage";
+import LoadingOverlay from "ui/common/LoadingOverlay";
 
 
-interface OwnProps {}
+interface OwnProps {
+  closeHandler: () => void;
+}
 interface StateProps {
   clientToken: string;
   isRequesting: boolean;
@@ -29,10 +32,10 @@ interface State {
   braintreeInstance: any;
   braintreeError: Braintree.BraintreeError;
   paymentMethodNonce: string;
-  paymentMethod: PaymentMethod;
+  paymentMethodType: PaymentMethodType;
 }
 
-class CheckoutForm extends React.Component<Props, State> {
+class PaymentMethodForm extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
@@ -41,7 +44,7 @@ class CheckoutForm extends React.Component<Props, State> {
       braintreeError: undefined,
       paymentMethodNonce: undefined,
       braintreeInstance: undefined,
-      paymentMethod: undefined,
+      paymentMethodType: undefined,
     }
   }
   public componentDidMount() {
@@ -72,53 +75,58 @@ class CheckoutForm extends React.Component<Props, State> {
     }
   }
 
-  private selectPaypal = () => this.setState({ paymentMethod: PaymentMethod.PayPal });
-  private selectCC = () => this.setState({ paymentMethod: PaymentMethod.CreditCard });
-  private selectCash = () => this.setState({ paymentMethod: PaymentMethod.Cash });
+  private selectPaypal = () => this.setState({ paymentMethodType: PaymentMethodType.PayPal });
+  private selectCC = () => this.setState({ paymentMethodType: PaymentMethodType.CreditCard });
+  private selectCash = () => this.setState({ paymentMethodType: PaymentMethodType.Cash });
 
-  private renderPaymentMethod = () => { 
-    const { braintreeInstance, paymentMethod } = this.state;
-    if (braintreeInstance) {
-      switch (paymentMethod) {
-        case PaymentMethod.CreditCard:
-          return (
-            <CreditCardForm
-              braintreeInstance={braintreeInstance}
-            />
-          );
-        case PaymentMethod.PayPal:
-          return (
-            <PaypalButton
-              braintreeInstance={braintreeInstance}
-            />
-          );
-      }
+  private renderPaymentMethod = () => {
+    const { braintreeInstance, paymentMethodType } = this.state;
+    switch (paymentMethodType) {
+      case PaymentMethodType.CreditCard:
+        return (
+          <CreditCardForm
+            closeHandler={this.props.closeHandler}
+            braintreeInstance={braintreeInstance}
+          />
+        );
+      case PaymentMethodType.PayPal:
+        return (
+          <PaypalButton
+            braintreeInstance={braintreeInstance}
+          />
+        );
+      default:
+        return <></>;
     }
   }
 
   private renderMethodRequest = () => {
-    const { braintreeError } = this.state;
+    const { braintreeError, braintreeInstance } = this.state;
     const { isRequesting } = this.props;
+
     return (
       <Grid container justify="center" spacing={16}>
         <Grid item xs={12} style={{textAlign:"center"}}>
           <Typography variant="subheading">Select Payment Method</Typography>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={6} md={4}>
           <Button fullWidth variant="outlined" onClick={this.selectCC}>Credit Card</Button>
         </Grid>
         <Grid item xs={12}>
-          <Button fullWidth variant="outlined" onClick={this.selectPaypal}>PayPal</Button>
+          <PaypalButton
+            braintreeInstance={braintreeInstance}
+          />
         </Grid>
+        {(isRequesting || !braintreeInstance) && <LoadingOverlay id="payment-method-loading"/>}
         {!isRequesting && braintreeError && braintreeError.message && <ErrorMessage error={braintreeError.message} />}
       </Grid>
     );
   }
 
   public render(): JSX.Element {
-    const { paymentMethod } = this.state;
+    const { paymentMethodType } = this.state;
 
-    return paymentMethod ? this.renderPaymentMethod() : this.renderMethodRequest();
+    return paymentMethodType ? this.renderPaymentMethod() : this.renderMethodRequest();
   }
 }
 
@@ -139,4 +147,4 @@ const mapDispatchToProps = (
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CheckoutForm);
+export default connect(mapStateToProps, mapDispatchToProps)(PaymentMethodForm);

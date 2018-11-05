@@ -1,10 +1,13 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import { Redirect } from "react-router";
 import Button from "@material-ui/core/Button";
 import pick from "lodash-es/pick";
 
 import { Invoice, Properties } from "app/entities/invoice";
 import { QueryParams, CollectionOf } from "app/interfaces";
+import { MemberDetails } from "app/entities/member";
+import { CrudOperation, Routing } from "app/constants";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { timeToDate } from "ui/utils/timeToDate";
@@ -16,13 +19,12 @@ import SettleInvoiceModal from "ui/invoice/SettleInvoiceModal";
 import DeleteInvoiceModal from "ui/invoice/DeleteInvoiceModal";
 import { readInvoicesAction } from "ui/invoices/actions";
 import UpdateInvoiceContainer, { UpdateInvoiceRenderProps } from "ui/invoice/UpdateInvoiceContainer";
-import { MemberDetails } from "app/entities/member";
 import ButtonRow, { ActionButton } from "ui/common/ButtonRow";
-import { CrudOperation } from "app/constants";
 import PaymentRequiredModal from "ui/invoices/PaymentRequiredModal";
 import { numberAsCurrency } from "ui/utils/numberToCurrency";
 import { Status } from "ui/common/constants";
 import StatusLabel from "ui/common/StatusLabel";
+import { Action as CheckoutAction } from "ui/checkout/constants";
 
 interface OwnProps {
   member?: MemberDetails;
@@ -70,7 +72,14 @@ class InvoicesList extends React.Component<Props, State> {
     {
       id: "dueDate",
       label: "Due Date",
-      cell: (row: Invoice) => timeToDate(row.dueDate),
+      cell: (row: Invoice) => {
+        const dueDate = timeToDate(row.dueDate);
+        if (row.subscriptionId) {
+          return `Automatic Payment on ${dueDate}`
+        } else {
+          return dueDate;
+        }
+      },
       defaultSortDirection: SortDirection.Desc
     },
     {
@@ -79,7 +88,7 @@ class InvoicesList extends React.Component<Props, State> {
       cell: (row: Invoice) => numberAsCurrency(row.amount),
       defaultSortDirection: SortDirection.Desc
     },
-    {
+    ...this.props.admin && [{
       id: "settled",
       label: "Paid?",
       cell: (row: Invoice) => {
@@ -99,7 +108,7 @@ class InvoicesList extends React.Component<Props, State> {
         )
       },
       defaultSortDirection: SortDirection.Desc
-    },
+    }],
     {
       id: "status",
       label: "Status",
@@ -142,7 +151,7 @@ class InvoicesList extends React.Component<Props, State> {
   private openDeleteInvoice = () => { this.setState({ openDeleteConfirm: true });}
   private closeDeleteInvoice = () => { this.setState({ openDeleteConfirm: false });}
   private closePaymentNotification = () => { this.setState({ openPaymentNotification: false });}
-  private openPaymentPreview = () => { this.setState({ openPaymentNotification: true });}
+  private openPaymentPreview = () => this.setState({ openPaymentNotification: true });
 
   private getActionButtons = () => {
     const { selectedIds } = this.state;
@@ -150,7 +159,7 @@ class InvoicesList extends React.Component<Props, State> {
     const selectedInvoices = Object.values(pick(invoices, selectedIds));
     const payNow = (selectedInvoices).every(invoice => invoice.memberId === currentUserId)
 
-    const payLabel = `Pay Selected Invoice${(selectedInvoices).length > 1 ? `s` : ''}${selectedInvoices.length ? ` ${selectedInvoices.length}` : ""}`;
+    const payLabel = `Pay Selected Invoice${(selectedInvoices).length > 1 ? `s` : ''}${selectedInvoices.length ? ` (${selectedInvoices.length})` : ""}`;
     const actionButtons: ActionButton[] = [
       ...(admin && [{
         id: "invoices-list-create",
@@ -179,7 +188,7 @@ class InvoicesList extends React.Component<Props, State> {
         variant: "contained",
         color: "primary",
         disabled: !Array.isArray(selectedIds) || !selectedIds.length,
-        onClick: this.openPaymentPreview,
+      onClick: this.openPaymentPreview,
         label: payLabel
       }]  as ActionButton[]
     ].filter(b => !!b);
@@ -338,7 +347,7 @@ class InvoicesList extends React.Component<Props, State> {
         <UpdateInvoiceContainer
           operation={CrudOperation.Create}
           isOpen={openCreateForm}
-          invoice={member && { resourceId: member.id, contact: member.email }}
+          invoice={member && { memberId: member.id, contact: member.email }}
           closeHandler={this.closeCreateForm}
           render={createForm}
         />
@@ -366,7 +375,7 @@ class InvoicesList extends React.Component<Props, State> {
   private renderPaymentNotifiation = () => {
     const { loading, error, invoices } = this.props;
     const { openPaymentNotification, selectedIds } = this.state;
-    const selectedInvoices = (({ ...selectedIds }) => ({ ...selectedIds }))(invoices)
+    const selectedInvoices = pick(invoices, selectedIds);
 
     return (
       <PaymentRequiredModal
@@ -382,27 +391,6 @@ class InvoicesList extends React.Component<Props, State> {
   private getFields = () => {
     return [
       ...this.props.fields || this.fields,
-      ...[this.props.admin && {
-        id: "settled",
-        label: "Paid?",
-        cell: (row: Invoice) => {
-          const settleInvoice = () => {
-            this.onSelect(this.rowId(row), true);
-            this.openSettleInvoice();
-          }
-          return (row.settled ? "Yes" :
-            <Button
-              variant="outlined"
-              color="primary"
-              disabled={this.props.isUpdating}
-              onClick={settleInvoice}
-            >
-              Settle Invoice
-            </Button>
-          )
-        },
-        defaultSortDirection: SortDirection.Desc
-      }]
     ].filter(f => !!f);
   }
 
