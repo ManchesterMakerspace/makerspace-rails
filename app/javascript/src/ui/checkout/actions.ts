@@ -28,11 +28,12 @@ export const getClientTokenAction = (
 };
 
 export const submitPaymentAction = (
-  nonce: string
+  paymentMethodToken: string,
+  invoices: Invoice[],
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
   dispatch({ type: CheckoutAction.StartAsyncRequest });
   try {
-    const response = await postCheckout(nonce);
+    const response = await postCheckout(paymentMethodToken, invoices);
     dispatch({
       type: CheckoutAction.PostCheckoutSuccess,
     });

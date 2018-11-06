@@ -89,12 +89,6 @@ class PaymentMethodForm extends React.Component<Props, State> {
             braintreeInstance={braintreeInstance}
           />
         );
-      case PaymentMethodType.PayPal:
-        return (
-          <PaypalButton
-            braintreeInstance={braintreeInstance}
-          />
-        );
       default:
         return <></>;
     }

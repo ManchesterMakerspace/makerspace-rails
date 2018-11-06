@@ -8,21 +8,26 @@ class Billing::CheckoutController < ApplicationController
     end
 
     def create
-      checkout = params[:checkout]
-      customer_response = create_customer
-      if customer_response.success?
-        customer = customer_response.customer
-        payment_token = customer.payment_methods.first.token
-        subscription_result = create_subscription(payment_token, checkout[:plan_id])
-        if subscription_result.success?
-          render json: {}, status: 200 and return
-        else
-          error = "failed subscription"
-        end
-      else
-        error = "failed customer"
+      if checkout_params[:payment_method_id].nil?
+        render json: {error: "Payment method required" }, status: 400 and return
       end
-      render json: {error: error}, status: 400 and return
+      begin
+        verify_token
+      rescue Braintree::NotFoundError => e
+        render json: {error: e.message }, status: 500 and return
+      rescue ArgumentError => e
+        render json: {error: e.message }, status: 500 and return
+      end
+      invoices = Invoice.where(id: checkout_params[:invoice_ids])
+      results = settle_invoices(invoices)
+      # Email user a receipt
+      if results.all?(&:success?)
+        render json: { }, status: 200 and return
+        # Good to go
+      else
+        error = result.errors.map { |e| e.message }
+        render json: {error: error }, status: 500 and return
+      end
     end
 
     private
@@ -30,23 +35,57 @@ class Billing::CheckoutController < ApplicationController
       return @gateway.client_token.generate
     end
 
-    def create_subscription(token, plan_id)
-      @gateway.subscription.create(
-        :payment_method_token => token,
-        :plan_id => plan_id
-      )
+    def verify_token
+      if current_member.customer_id.nil?
+        # TODO: Figure out guest checkout process
+      else
+        payment_method = ::BraintreeService::PaymentMethod.find_payment_method_for_customer(@gateway, checkout_params[:payment_method_id], current_member.customer_id)
+      end
     end
 
-    def create_customer
-      checkout = params[:checkout]
-      result = @gateway.customer.create(
-        :first_name => checkout[:firstname],
-        :last_name => checkout[:lastname],
-        :payment_method_nonce => checkout[:payment_method_nonce]
+    def settle_invoices(invoices)
+      single_transactions, new_subscriptions = invoices.partition { |invoice| invoice.plan_id.nil? }
+      subscription_results = new_subscriptions.map { |invoice| create_subscription(invoice) }
+      result = submit_transaction(single_transactions)
+      subscription_results.concat(result)
+    end
+
+    def create_subscription(invoice)
+      result = @gateway.subscription.create(
+        payment_method_token: checkout_params[:payment_method_id],
+        plan_id: invoice.plan_id
       )
+      if result.success?
+        invoice.update_attribute({ settled_at: Time.now })
+      end
+      result
+    end
+
+    def submit_transaction(invoices)
+      line_items = invoices.map do |invoice|
+        {
+          kind: "debit",
+          name: invoice.description
+          quantity: 1
+          total_amount: invoice.amount
+          unit_amount: invoice.amount
+        }
+      end
+      result = @gateway.transaction.sale(
+        amount: line_items.map(&:total_amount),
+        payment_method_token: checkout_params[:payment_method_id],
+        line_items: line_items,
+        options: {
+          submit_for_settlement: true
+        },
+      )
+      if result.success?
+        invoices.update_all({ settled_at: Time.now })
+      end
+      result
     end
 
     def checkout_params
-      params.require(:checkout).permit(:payment_method_nonce, :plan_Id, :firstname, :lastname, :email)
+      params.require(:checkout).permit(:payment_method_id, invoice_ids: [])
     end
   end

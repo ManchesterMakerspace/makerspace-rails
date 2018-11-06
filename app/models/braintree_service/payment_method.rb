@@ -5,12 +5,23 @@ class BraintreeService::PaymentMethod < Braintree::PaymentMethodNonce
   def self.get_payment_methods_for_customer(gateway, customer_id)
     customer = gateway.customer.find(customer_id)
     customer.payment_methods.map do |payment_method|
-      if payment_method.kind_of?(Braintree::CreditCard)
-        normalized_payment_method = ::BraintreeService::CreditCard._new(gateway, instance_to_hash(payment_method))
-      elsif payment_method.kind_of?(Braintree::PayPalAccount)
-        normalized_payment_method = ::BraintreeService::PaypalAccount._new(gateway, instance_to_hash(payment_method))
-      end
-      normalized_payment_method
+      normalize_payment_method(payment_method)
     end
+  end
+
+  def self.find_payment_method_for_customer(gateway, payment_method_id, customer_id)
+    payment_method = gateway.payment_method.find(payment_method_id)
+    raise ArgumentError, "Payment method not for customer" if payment_method.customer_id != customer_id
+    normalize_payment_method(payment_method)
+  end
+
+  private
+  def normalize_payment_method(payment_method)
+    if payment_method.kind_of?(Braintree::CreditCard)
+      normalized_payment_method = ::BraintreeService::CreditCard._new(gateway, instance_to_hash(payment_method))
+    elsif payment_method.kind_of?(Braintree::PayPalAccount)
+      normalized_payment_method = ::BraintreeService::PaypalAccount._new(gateway, instance_to_hash(payment_method))
+    end
+    normalized_payment_method
   end
 end

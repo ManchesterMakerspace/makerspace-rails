@@ -52,19 +52,28 @@ class Billing::PaymentMethodsController < ApplicationController
 
   def index
     if current_member.customer_id.nil?
-      @payment_methods = []
+      payment_methods = []
     else
       begin
-        @payment_methods = ::BraintreeService::PaymentMethod.get_payment_methods_for_customer(@gateway, current_member.customer_id)
-      rescue Braintree::NotFoundError
-        render json: {error: "Error communicating with Braintree" }, status: 500 and return
+        payment_methods = ::BraintreeService::PaymentMethod.get_payment_methods_for_customer(@gateway, current_member.customer_id)
+      rescue Braintree::NotFoundError => e
+        render json: {error: e.message }, status: 500 and return
       end
     end
-    render json: @payment_methods, each_serializer: Braintree::PaymentMethodSerializer, status: 200, root: :payment_methods and return
+    render json: payment_methods, each_serializer: Braintree::PaymentMethodSerializer, status: 200, root: :payment_methods and return
+  end
+
+  def delete
+    # Fetch current member as customer
+    # If on subscription, check if this token is being used for subscription
+    # If yes, throw error that must cancel subscription or update payment method first
+    # If not on subscription or this isn't the payment method used for it,
+    # Make sure it is a payment method registered to customer
+    # Then delete it
   end
 
   private
   def payment_method_params
-    params.require(:payment_method).permit(:payment_method_nonce, :make_default)
+    params.require(:payment_method).permit(:payment_method_nonce, :make_default, :payment_method_token)
   end
 end

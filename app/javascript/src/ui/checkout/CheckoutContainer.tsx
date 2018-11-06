@@ -12,19 +12,26 @@ import { Invoice } from "app/entities/invoice";
 import { Routing } from "app/constants";
 import { CollectionOf } from "app/interfaces";
 
+import { submitPaymentAction } from "ui/checkout/actions";
+
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import TableContainer from "ui/common/table/TableContainer";
 import { Column } from "ui/common/table/Table";
 import { numberAsCurrency } from "ui/utils/numberToCurrency";
 import PaymentMethodsContainer from "ui/checkout/PaymentMethodsContainer";
 import ErrorMessage from "ui/common/ErrorMessage";
+import LoadingOverlay from "ui/common/LoadingOverlay";
 
 interface OwnProps {}
 interface StateProps {
   invoices: CollectionOf<Invoice>;
   auth: string;
+  error: string;
+  isRequesting: boolean;
 }
-interface DispatchProps {}
+interface DispatchProps {
+  submitCheckout: (invoices: Invoice[], paymentMethodToken: string) => void;
+}
 interface Props extends OwnProps, StateProps, DispatchProps {}
 interface State {
   total: number;
@@ -59,6 +66,14 @@ class CheckoutContainer extends React.Component<Props,State>{
       cell: (row: Invoice) => numberAsCurrency(row.amount),
     },
   ];
+
+  public componentDidUpdate(prevProps: Props) {
+    const { isRequesting, error } = this.props;
+    const { isRequesting: wasRequesting } = prevProps;
+    if (wasRequesting && !isRequesting && !error) {
+      console.log("SUCCESS, redirect to receipt page")
+    }
+  }
 
   private renderTotal = () => {
     const { invoices } = this.props;
@@ -97,8 +112,7 @@ class CheckoutContainer extends React.Component<Props,State>{
       this.setState({ error: "Payment method required before continuing."});
       return;
     }
-    console.log(invoices);
-
+    this.props.submitCheckout(Object.values(invoices), paymentMethodId);
   }
 
   private selectPaymentMethod = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,6 +121,7 @@ class CheckoutContainer extends React.Component<Props,State>{
 
   private rowId = (row: Invoice) => row.id;
   public render(): JSX.Element {
+    const { isRequesting, error } = this.props;
     const { redirect, paymentMethodId } = this.state;
 
     if (redirect) {
@@ -114,6 +129,7 @@ class CheckoutContainer extends React.Component<Props,State>{
     }
     return (
       <Grid container spacing={16}>
+        {isRequesting && <LoadingOverlay id="checkout-submitting-overlay" />}
         <Grid item md={8} sm={7} xs={12}>
           <Grid container spacing={16}>
             {/* <Grid item xs={12}>
@@ -142,6 +158,7 @@ class CheckoutContainer extends React.Component<Props,State>{
 
         <Grid item md={4} sm={5} xs={12}>
           {this.renderTotal()}
+          {!isRequesting && error && <ErrorMessage id="checkout-submitting-error" error={error}/>}
         </Grid>
       </Grid>
     )
@@ -149,11 +166,13 @@ class CheckoutContainer extends React.Component<Props,State>{
 }
 
 const mapStateToProps = (state: ReduxState, _ownProps: OwnProps): StateProps => {
-  const { invoices } = state.checkout;
+  const { invoices, isRequesting, error } = state.checkout;
   const { currentUser: { id: userId } } = state.auth;
   return {
     invoices,
-    auth: userId
+    auth: userId,
+    isRequesting,
+    error
   }
 }
 
@@ -161,7 +180,8 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch
 ): DispatchProps => {
   return {
-  }
+    submitCheckout: (invoices, paymentMethodToken) => dispatch(submitPaymentAction(paymentMethodToken, invoices)),
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(CheckoutContainer);
