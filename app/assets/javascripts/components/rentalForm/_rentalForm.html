@@ -15,6 +15,14 @@
   </div>
   <div class="col-xs-4 col-xs-offset-4">
     <md-input-container class="md-block">
+      <label for="description">Description</label>
+      <input id="description" type="text" name="description"
+        ng-model="rentalFormCtrl.rentalForm.description"
+      />
+    </md-input-container>
+  </div>
+  <div class="col-xs-4 col-xs-offset-4">
+    <md-input-container class="md-block">
       <label for="member">Select a Member</label>
       <md-select id="member" ng-model="rentalFormCtrl.rentalForm.member_id"
         name="member"

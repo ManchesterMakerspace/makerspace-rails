@@ -36,7 +36,7 @@ group :test do
   gem 'mongoid-rspec'
   gem 'factory_bot'
   gem 'database_cleaner'
-  gem 'shoulda-callback-matchers'
+  # gem 'shoulda-callback-matchers'
   gem 'rails-controller-testing'
   gem 'simplecov'
 end

@@ -22,17 +22,20 @@ class Payment
 
   private
   def configure_subscription_status
-    true_types = ['subscr_signup', 'subscr_payment']
-    false_types = ['subscr_eot', 'subscr_cancel', 'subscr_failed']
-    #use specific false types so other donations/payments don't invalidate subscription
-    if true_types.include?(self.txn_type)
-        self.member.subscription = true
-    elsif false_types.include?(self.txn_type)
-        self.member.subscription = false
+    rental_product_match = /(plot|rental|locker)/i.match?(self.product)
+    unless rental_product_match
+      true_types = ['subscr_signup', 'subscr_payment']
+      false_types = ['subscr_eot', 'subscr_cancel', 'subscr_failed']
+      #use specific false types so other donations/payments don't invalidate subscription
+      if true_types.include?(self.txn_type)
+          self.member.subscription = true
+      elsif false_types.include?(self.txn_type)
+          self.member.subscription = false
+      end
+      self.member.save
     end
-    self.member.save
   end
-
+  
   def find_member
     return unless self.valid?
     unless !!self.member
