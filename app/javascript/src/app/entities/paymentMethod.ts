@@ -1,7 +1,6 @@
 export interface PaymentMethod {
   id: string;
   customerId: string;
-  token: string;
   paymentType: string;
 }
 

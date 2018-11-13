@@ -1,5 +1,15 @@
 class InvoiceSerializer < ApplicationSerializer
-  attributes :id, :description, :notes, :contact, :settled, :created_at, :due_date, :past_due, :amount, :member_id
+  attributes :id,
+             :name,
+             :description,
+             :contact,
+             :settled,
+             :past_due,
+             :created_at,
+             :due_date,
+             :amount,
+             :subscription_id,
+
   def member_id
     object.member.id
   end

@@ -17,18 +17,17 @@ export const invoiceOptions: InvoiceOption[] = [
 ];
 export const baseInvoice: Invoice = {
   id: "foo",
-  description: "random membership invoice",
-  notes: "Wrote some notes",
+  name: "random membership invoice",
+  description: "Some more details about this membership invoice",
   contact: "test_member@test.com",
   amount: 50,
-  discount: false,
+  quantity: 1,
   settled: false,
   pastDue: false,
-  resourceId: "foobar",
   resource: InvoiceableResource.Membership,
   memberId: "test_member",
   operation: InvoiceOperation.Renew,
-  value: 1,
+  resourceId: "123",
   createdAt: "Some time",
   dueDate: "Another time",
 }
@@ -47,12 +46,6 @@ export const settledInvoice: Invoice = {
   id: "foo-settled",
   description: "settled membership invoice",
   settled: true,
-};
-export const discountedInvoice: Invoice = {
-  ...baseInvoice,
-  id: "foo-discount",
-  description: "discounted membership invoice",
-  discount: true,
 };
 export const defaultInvoices: Invoice[] = new Array(20).fill(undefined).map((_v, index) => {
   return {

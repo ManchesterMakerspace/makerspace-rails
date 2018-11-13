@@ -12,18 +12,17 @@ class Billing::CheckoutController < ApplicationController
         render json: {error: "Payment method required" }, status: 400 and return
       end
       begin
-        verify_token
+        @payment_method = verify_token
       rescue Braintree::NotFoundError => e
         render json: {error: e.message }, status: 500 and return
       rescue ArgumentError => e
         render json: {error: e.message }, status: 500 and return
       end
-      invoices = Invoice.where(id: checkout_params[:invoice_ids])
+      invoices = Invoice.any_in(id: checkout_params[:invoice_ids] )
       results = settle_invoices(invoices)
-      # Email user a receipt
+      # TODO Email user a receipt
       if results.all?(&:success?)
         render json: { }, status: 200 and return
-        # Good to go
       else
         error = result.errors.map { |e| e.message }
         render json: {error: error }, status: 500 and return
@@ -47,7 +46,7 @@ class Billing::CheckoutController < ApplicationController
       single_transactions, new_subscriptions = invoices.partition { |invoice| invoice.plan_id.nil? }
       subscription_results = new_subscriptions.map { |invoice| create_subscription(invoice) }
       result = submit_transaction(single_transactions)
-      subscription_results.concat(result)
+      subscription_results.concat([result])
     end
 
     def create_subscription(invoice)
@@ -65,14 +64,14 @@ class Billing::CheckoutController < ApplicationController
       line_items = invoices.map do |invoice|
         {
           kind: "debit",
-          name: invoice.description
-          quantity: 1
-          total_amount: invoice.amount
+          name: invoice.description,
+          quantity: 1,
+          total_amount: invoice.amount,
           unit_amount: invoice.amount
         }
       end
       result = @gateway.transaction.sale(
-        amount: line_items.map(&:total_amount),
+        amount: line_items.inject(0){ |sum,item| sum + item[:total_amount] },
         payment_method_token: checkout_params[:payment_method_id],
         line_items: line_items,
         options: {
@@ -80,7 +79,16 @@ class Billing::CheckoutController < ApplicationController
         },
       )
       if result.success?
-        invoices.update_all({ settled_at: Time.now })
+        # Settle invoices in DB
+        invoice_settlements = invoices.map { |i| i.settle_invoice(result) }
+        if invoice_settlements.any? { |i| !i }
+          # TODO: Send email letting us know of failure
+        end
+        # Generate new ones
+        new_invoices = invoices.map { |i| i.build_next_invoice }
+        if new_invoices.any? { |i| !i }
+          # TODO: Send email letting us know of failure
+        end
       end
       result
     end

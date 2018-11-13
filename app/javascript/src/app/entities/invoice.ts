@@ -2,16 +2,14 @@ import { QueryParams } from "app/interfaces";
 
 interface BaseInvoice {
   id: string;
+  name: string;
   description: string;
-  notes: string;
   contact: string;
+  settled: boolean;
+  pastDue: boolean;
   createdAt: string;
   dueDate: string;
   amount: number;
-  discount: boolean;
-  settled?: boolean;
-  pastDue?: boolean;
-  resourceId: string;
   memberId: string;
   subscriptionId?: string;
 }
@@ -23,7 +21,8 @@ export interface ApiInvoice extends BaseInvoice {
 export interface Invoice extends BaseInvoice {
   resource: InvoiceableResource;
   operation: InvoiceOperation,
-  value: string | number;
+  resourceId: string;
+  quantity: number;
 }
 
 export interface InvoiceOption {
@@ -44,15 +43,19 @@ export enum InvoiceableResource {
 
 export enum Properties {
   Id = "id",
+  Name = "name",
   Description = "description",
-  Notes = "notes",
   Contact = "contact",
-  CreatedAt = "created_at",
-  DueDate = "due_date",
+  CreatedAt = "createdAt",
+  DueDate = "dueDate",
   Amount = "amount",
+  Quantity = "quantity",
+  Operation = "operation",
   Settled = "settled",
-  PastDue = "Past Due",
+  PastDue = "pastDue",
   ResourceId = "resourceId",
+  MemberId = "memberId",
+  SubscriptionId = "subscriptionId"
 }
 
 export enum PaymentMethodType {

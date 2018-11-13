@@ -159,7 +159,7 @@ class InvoicesList extends React.Component<Props, State> {
     const selectedInvoices = Object.values(pick(invoices, selectedIds));
     const payNow = (selectedInvoices).every(invoice => invoice.memberId === currentUserId)
 
-    const payLabel = `Pay Selected Invoice${(selectedInvoices).length > 1 ? `s` : ''}${selectedInvoices.length ? ` (${selectedInvoices.length})` : ""}`;
+    const payLabel = `Pay Selected Due${(selectedInvoices).length > 1 ? `s` : ''}${selectedInvoices.length ? ` (${selectedInvoices.length})` : ""}`;
     const actionButtons: ActionButton[] = [
       ...(admin && [{
         id: "invoices-list-create",

@@ -13,10 +13,10 @@ export const getClientToken = async () => {
   }
 }
 
-export const postCheckout = async (payment_method_token: string, invoices: Invoice[]) => {
+export const postCheckout = async (payment_method_id: string, invoices: Invoice[]) => {
   const invoice_ids = invoices.map(invoice => invoice.id);
   try {
-    return await axios.post(buildJsonUrl(Url.Billing.Checkout), { checkout: { payment_method_token, invoice_ids } });
+    return await axios.post(buildJsonUrl(Url.Billing.Checkout), { checkout: { payment_method_id, invoice_ids } });
   } catch (e) {
     const error = handleApiError(e);
     throw error;

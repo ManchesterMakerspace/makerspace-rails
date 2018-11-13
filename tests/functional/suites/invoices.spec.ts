@@ -83,7 +83,6 @@ describe("Invoicing and Dues", () => {
       await utils.fillInput(description, defaultInvoice.description);
       await utils.fillInput(contact, defaultInvoice.contact);
       await utils.fillInput(amount, `${defaultInvoice.amount}`);
-      await utils.fillInput(notes, defaultInvoice.notes);
 
       await mock(mockRequests.invoices.get.ok([defaultInvoice]));
       await utils.clickElement(submit);

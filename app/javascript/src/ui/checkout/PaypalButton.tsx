@@ -11,7 +11,6 @@ import * as checkoutJs from "paypal-checkout";
 import { postPaymentMethod } from "api/paymentMethods/transactions";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
-import { submitPaymentAction } from "ui/checkout/actions";
 import ErrorMessage from "ui/common/ErrorMessage";
 import LoadingOverlay from "ui/common/LoadingOverlay";
 import Typography from "@material-ui/core/Typography";
@@ -26,7 +25,6 @@ interface StateProps {
   isRequesting: boolean;
 }
 interface DispatchProps {
-  submitPayment: (nonce: string) => void;
 }
 interface Props extends DispatchProps, OwnProps, StateProps {}
 
@@ -140,7 +138,6 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch
 ): DispatchProps => {
   return {
-    submitPayment: (nonce) => dispatch(submitPaymentAction(nonce)),
   }
 }
 

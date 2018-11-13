@@ -33,7 +33,7 @@ export const submitPaymentAction = (
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
   dispatch({ type: CheckoutAction.StartAsyncRequest });
   try {
-    const response = await postCheckout(paymentMethodToken, invoices);
+    await postCheckout(paymentMethodToken, invoices);
     dispatch({
       type: CheckoutAction.PostCheckoutSuccess,
     });
@@ -87,6 +87,19 @@ export const checkoutReducer = (state: CheckoutState = defaultState, action: Any
       return {
         ...state,
         invoices: defaultState.invoices
+      }
+    case CheckoutAction.PostCheckoutSuccess:
+      return {
+        ...state,
+        invoice: {},
+        isRequesting: false,
+        error: ""
+      }
+    case CheckoutAction.PostCheckoutFailure:
+      return {
+        ...state,
+        isRequesting: false,
+        error: action.error
       }
     default:
       return state;

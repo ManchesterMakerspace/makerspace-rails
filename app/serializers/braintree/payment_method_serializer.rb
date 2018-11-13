@@ -2,7 +2,7 @@ class Braintree::PaymentMethodSerializer < ActiveModel::Serializer
   private
   def common_attributes
     [
-      :customer_id, :token
+      :customer_id
     ]
   end
 

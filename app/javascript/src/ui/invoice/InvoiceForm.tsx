@@ -76,14 +76,6 @@ class InvoiceForm extends React.Component<OwnProps, {}> {
             shrink: true,
           }}
         />
-        <TextField
-          fullWidth
-          value={invoice && invoice.notes}
-          label={fields.notes.label}
-          name={fields.notes.name}
-          placeholder={fields.notes.placeholder}
-          multiline={true}
-        />
       </FormModal>
     )
   }

@@ -1,5 +1,6 @@
 class Rental
   include Mongoid::Document
+  extend InvoiceableResource
 
   belongs_to :member, optional: true
 
@@ -33,5 +34,14 @@ class Rental
         return "#{self.member.fullname}'s rental of Locker/Plot # #{self.number} updated.  Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}"
       end
     end
+  end
+
+  private
+  def expiration_attr
+    :expiration
+  end
+
+  def default_invoice_amount
+    25
   end
 end

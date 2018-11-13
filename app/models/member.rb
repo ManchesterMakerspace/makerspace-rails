@@ -2,6 +2,7 @@ class Member
   include Mongoid::Document
   include Mongoid::Search
   include ActiveModel::Serializers::JSON
+  extend InvoiceableResource
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -105,20 +106,15 @@ class Member
     end
   end
 
-  def renewal=(num_months)
-    now_in_ms = (Time.now.strftime('%s').to_i * 1000)
-
-    if (!!self.expirationTime && self.try(:expirationTime) > now_in_ms && self.persisted?) #if renewing
-      newExpTime = prettyTime + num_months.to_i.months
-      write_attribute(:expirationTime, (newExpTime.to_i * 1000) )
-    else
-      newExpTime = Time.now + num_months.to_i.months
-      write_attribute(:expirationTime,  (newExpTime.to_i * 1000) )
-    end
-    self.save
+  private
+  def default_invoice_amount
+    80
   end
 
-  private
+  def expiration_attr
+    :expirationTime
+  end
+
   def update_card
     self.access_cards.each do |c|
       c.update(expiry: self.expirationTime)

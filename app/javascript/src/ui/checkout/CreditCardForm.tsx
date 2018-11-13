@@ -10,7 +10,6 @@ import * as Braintree from "braintree-web";
 import { postPaymentMethod } from "api/paymentMethods/transactions";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
-import { submitPaymentAction } from "ui/checkout/actions";
 import Form from "ui/common/Form";
 import { CheckoutFields } from "ui/checkout/constants";
 import ErrorMessage from "ui/common/ErrorMessage";
@@ -27,7 +26,6 @@ interface StateProps {
   isRequesting: boolean;
 }
 interface DispatchProps {
-  submitPayment: (nonce: string) => void;
 }
 interface Props extends DispatchProps, OwnProps, StateProps {}
 
@@ -171,7 +169,6 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch
 ): DispatchProps => {
   return {
-    submitPayment: (nonce) => dispatch(submitPaymentAction(nonce)),
   }
 }
 

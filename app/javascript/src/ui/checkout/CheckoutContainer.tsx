@@ -30,7 +30,7 @@ interface StateProps {
   isRequesting: boolean;
 }
 interface DispatchProps {
-  submitCheckout: (invoices: Invoice[], paymentMethodToken: string) => void;
+  submitCheckout: (invoices: Invoice[], paymentMethodId: string) => void;
 }
 interface Props extends OwnProps, StateProps, DispatchProps {}
 interface State {
@@ -180,7 +180,7 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch
 ): DispatchProps => {
   return {
-    submitCheckout: (invoices, paymentMethodToken) => dispatch(submitPaymentAction(paymentMethodToken, invoices)),
+    submitCheckout: (invoices, paymentMethodId) => dispatch(submitPaymentAction(paymentMethodId, invoices)),
   };
 }
 
