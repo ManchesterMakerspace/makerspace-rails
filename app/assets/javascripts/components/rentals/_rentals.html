@@ -32,13 +32,16 @@
   <div class="row">
     <div class="col-xs-12 rentals-table">
       <div class="row rentals-table-header">
-        <div ng-class="::rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-4'">
+        <div ng-class="::rentalsCtrl.isUserAdmin() ? 'col-xs-2': 'col-xs-3'">
           Number
         </div>
-        <div ng-class="::rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-4'">
+        <div ng-class="::rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-3'">
+          Description
+        </div>
+        <div ng-class="::rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-3'">
           Member
         </div>
-        <div ng-class="::rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-4'">
+        <div ng-class="::rentalsCtrl.isUserAdmin() ? 'col-xs-2': 'col-xs-3'">
           Exp. Date
         </div>
       </div>
@@ -48,15 +51,17 @@
           </div>
         </div>
         <div class="row rental" ng-class="::rentalsCtrl.checkExp(rental) ? 'success' : 'danger'" ng-repeat="rental in rentalsCtrl.rentals | orderBy : rentalsCtrl.sort : rentalsCtrl.reverseSort">
-          <div ng-bind="::rental.number" ng-class="::rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-4'">
+          <div ng-bind="::rental.number" ng-class="::rentalsCtrl.isUserAdmin() ? 'col-xs-2': 'col-xs-3'">
           </div>
-          <div class="member-name" ng-class="::rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-4'">
+          <div ng-bind="::rental.description" ng-class="::rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-3'">
+          </div>
+          <div class="member-name" ng-class="::rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-3'">
             <span ng-if="::rental.member" ng-bind="rental.member.firstname + ' ' + rental.member.lastname"></span>
             <span ng-if="::!rental.member">Available for Rent</span>
           </div>
-          <div ng-bind="::rental.expiration | date: shortDate: EST" ng-class="::rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-4'">
+          <div ng-bind="::rental.expiration | date: shortDate: EST" ng-class="::rentalsCtrl.isUserAdmin() ? 'col-xs-2': 'col-xs-3'">
           </div>
-          <div ng-class="::rentalsCtrl.isUserAdmin() ? 'col-xs-3': 'col-xs-4'" ng-if="::rentalsCtrl.isUserAdmin()">
+          <div class="col-xs-2" ng-if="::rentalsCtrl.isUserAdmin()">
             <a type="button" class="btn btn-primary"
              ui-sref="root.admin.rentals.edit({id: rental.id})">Edit/Renew</a>
           </div>

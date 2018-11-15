@@ -94,6 +94,10 @@ FactoryBot.define do
     trait :subscr_failed do
       txn_type "subscr_failed"
     end
+    trait :rental_sub do
+      product "Plot Rental"
+      txn_type "subscr_payment"
+    end
   end
 
   sequence :time_of do |n|

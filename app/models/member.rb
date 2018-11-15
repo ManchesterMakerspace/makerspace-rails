@@ -12,7 +12,7 @@ class Member
   #split first and last
   field :firstname
   field :lastname
-  field :status,                         default: "activeMember" # activeMember, nonMember, revoked
+  field :status,                         default: "activeMember" # activeMember, nonMember, revoked, inactive
   field :expirationTime,   type: Integer #pre-calcualted time of expiration
   field :startDate, default: Time.now
   field :groupName #potentially member is in a group/partner membership

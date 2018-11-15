@@ -24,11 +24,7 @@ class Card
     if (!!self.card_location)
       self.validity = self.card_location
     elsif (self.validity != 'lost' && self.validity != 'stolen')
-      if (self.member.membership_status != 'expired')
-        self.validity = self.member.status
-      else
-        self.validity = 'expired'
-      end
+      self.validity = self.member.status
     end
   end
 end

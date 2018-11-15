@@ -35,7 +35,6 @@ RSpec.configure do |config|
   config.extend ControllerMacros, :type => :controller
   config.include TestHelpers, :type => :controller
   config.include FactoryBot::Syntax::Methods
-  config.include(Shoulda::Callback::Matchers::ActiveModel)
   config.include Mongoid::Matchers, type: :model
   # Clean/Reset Mongoid DB prior to running each test.
   config.use_transactional_fixtures = false
