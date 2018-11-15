@@ -19,11 +19,11 @@ RSpec.describe Payment, type: :model do
     expect(build(:payment)).to be_valid
   end
 
-  context "callbacks" do
-    let(:payment) { create(:payment) }
+  # context "callbacks" do
+  #   let(:payment) { create(:payment) }
 
-    it { expect(payment).to callback(:find_member).after(:initialize) }
-  end
+  #   it { expect(payment).to callback(:find_member).after(:initialize) }
+  # end
 
   context "private methods" do
     it "Finds member from payment email or name" do
@@ -39,6 +39,13 @@ RSpec.describe Payment, type: :model do
     end
     it "Properly sets subscription based on subscription_status" do
       member = create(:member, firstname: "Test", lastname: 'Member')
+
+      rental_payment = create(:payment, :rental_sub, lastname: 'Member')
+      rental_payment.reload
+      expect(rental_payment.member).to eq(member)
+      member.reload
+      expect(member.subscription).to be_falsey
+
       name_payment = create(:payment, :sub_payment, lastname: 'Member')
       name_payment.reload
       expect(name_payment.member).to eq(member)
