@@ -22,7 +22,7 @@ class Payment
 
   private
   def configure_subscription_status
-    rental_product_match = /(plot|rental|locker)/i.match?(self.product)
+    rental_product_match = /(plot|rental|locker)/i.match(self.product)
     unless rental_product_match
       true_types = ['subscr_signup', 'subscr_payment']
       false_types = ['subscr_eot', 'subscr_cancel', 'subscr_failed']
