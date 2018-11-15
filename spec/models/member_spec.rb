@@ -35,11 +35,11 @@ RSpec.describe Member, type: :model do
     expect(build(:member)).to be_valid
   end
 
-  context "callbacks" do
-    it { expect(member).to callback(:update_allowed_workshops).before(:save) }
-    it { expect(member).to callback(:verify_group_expiry).after(:initialize) }
-    it { expect(member).to callback(:update_card).after(:update) }
-  end
+  # context "callbacks" do
+  #   it { expect(member).to callback(:update_allowed_workshops).before(:save) }
+  #   it { expect(member).to callback(:verify_group_expiry).after(:initialize) }
+  #   it { expect(member).to callback(:update_card).after(:update) }
+  # end
 
   context "public methods" do
     let(:expired_member) { create(:member, :expired) }

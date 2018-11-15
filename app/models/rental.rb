@@ -4,6 +4,7 @@ class Rental
   belongs_to :member, optional: true
 
   field :number
+  field :description
   field :expiration
 
   validates :number, presence: true, uniqueness: true

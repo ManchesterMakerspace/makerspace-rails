@@ -15,7 +15,7 @@ function memberEditController(cardService, memberService, $state, $filter, alert
     memberEditCtrl.editForm = {};
     angular.copy(memberEditCtrl.member, memberEditCtrl.editForm);
     memberEditCtrl.editForm.expirationTime = new Date(memberEditCtrl.editForm.expirationTime);
-    memberEditCtrl.statuses = ["activeMember", "nonMember", "revoked"];
+    memberEditCtrl.statuses = ["activeMember", "nonMember", "revoked", "inactive"];
     memberEditCtrl.roles = ["member", "officer", "admin"];
   };
 

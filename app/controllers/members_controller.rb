@@ -5,11 +5,11 @@ class MembersController < ApplicationController
       if (params[:search]) then
         @members = Member.rough_search_members(params[:search])
       else
-        @members = Member.all.sort_by(&:lastname)
+        @members = Member.asc(&:lastname)
       end
       if current_member.try(:role) != 'admin'
         @members = @members.select do |m|
-          Time.at(m.expirationTime/1000) - Time.now > 0
+          Time.at(m.expirationTime/1000) - Time.now > 0 unless m.expirationTime.nil?
         end
       end
       render json: @members and return
