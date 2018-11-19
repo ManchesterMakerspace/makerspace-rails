@@ -77,10 +77,15 @@ export const checkoutReducer = (state: CheckoutState = defaultState, action: Any
       }
     case CheckoutAction.StageInvoicesForPayment:
       const invoices = action.data;
+      const newInvoices = {};
+      invoices.forEach((invoice: Invoice) => {
+        newInvoices[invoice.id] = invoice;
+      });
       return {
         ...state,
         invoices: {
-          ...invoices,
+          ...state.invoices,
+          ...newInvoices,
         }
       }
     case CheckoutAction.ResetStagedInvoices:

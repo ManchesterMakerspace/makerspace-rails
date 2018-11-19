@@ -72,17 +72,6 @@ export const submitSignUpAction = (
         isNewMember: true,
       }
     });
-    if (!isUndefined(membershipId)) {
-      dispatch({ type: InvoiceAction.ResetStagedInvoice });
-      dispatch({
-        type: InvoiceAction.StageInvoice,
-        data: {
-          invoiceId: membershipId,
-          type: InvoiceableResource.Membership,
-          discount
-        }
-      });
-    }
   } catch(e) {
     const { errorMessage } = e;
     dispatch({

@@ -3,11 +3,10 @@ import { ThunkAction } from "redux-thunk";
 import toNumber from "lodash-es/toNumber";
 import omit from "lodash-es/omit";
 
-import { Invoice, InvoiceQueryParams, InvoiceOption } from "app/entities/invoice";
+import { Invoice, InvoiceQueryParams } from "app/entities/invoice";
 import { getInvoices, postInvoices, getMembershipOptions } from "api/invoices/transactions";
 import { Action as InvoicesAction } from "ui/invoices/constants";
 import { InvoicesState } from "ui/invoices/interfaces";
-import { CollectionOf } from "app/interfaces";
 
 export const readInvoicesAction = (
   isUserAdmin: boolean,
@@ -56,19 +55,19 @@ export const createInvoiceAction = (
 
 export const getMembershipOptionsAction = (
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
-  dispatch({ type: InvoicesAction.StartMembershipOptionsRequest });
+  dispatch({ type: InvoicesAction.StartReadRequest });
 
   try {
     const response = await getMembershipOptions();
     const { invoices } = response.data;
     dispatch({
-      type: InvoicesAction.GetMembershipOptionsSuccess,
-      data: invoices
+      type: InvoicesAction.GetInvoicesSuccess,
+      data: { invoices }
     })
   } catch (e) {
     const { errorMessage } = e;
     dispatch({
-      type: InvoicesAction.GetMembershipOptionsFailure,
+      type: InvoicesAction.GetInvoicesFailure,
       error: errorMessage
     });
   }
@@ -76,10 +75,6 @@ export const getMembershipOptionsAction = (
 
 const defaultState: InvoicesState = {
   entities: {},
-  invoiceOptions: {
-    membership: {},
-    rentals: {},
-  },
   read: {
     isRequesting: false,
     error: "",
@@ -185,40 +180,11 @@ export const invoicesReducer = (state: InvoicesState = defaultState, action: Any
           error: createError
         }
       }
-    case InvoicesAction.StartMembershipOptionsRequest:
+    case InvoicesAction.ClearInvoices:
       return {
         ...state,
-        options: {
-          ...state.options,
-          isRequesting: true,
-        }
-      }
-    case InvoicesAction.GetMembershipOptionsSuccess:
-      const { data: membershipOptions } = action;
-      const membershipCollection = membershipOptions.reduce((membershipCollection: CollectionOf<InvoiceOption>, option: InvoiceOption) => {
-        membershipCollection[option.id] = option;
-        return membershipCollection;
-      }, {});
-      return {
-        ...state,
-        invoiceOptions: {
-          ...state.invoiceOptions,
-          membership: {
-            ...state.invoiceOptions.membership,
-            ...membershipCollection
-          }
-        }
-      }
-    case InvoicesAction.GetMembershipOptionsFailure:
-      const { error: optionError } = action;
-      return {
-        ...state,
-        invoiceOptions: {
-          ...state.invoiceOptions,
-          isRequesting: false,
-          error: optionError
-        }
-      }
+        entities: {}
+      };
     default:
       return state;
   }

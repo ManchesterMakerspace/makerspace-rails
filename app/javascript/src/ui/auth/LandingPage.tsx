@@ -5,14 +5,12 @@ import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
 import Hidden from '@material-ui/core/Hidden';
 
 import Login from 'ui/auth/Login';
-import SignUpForm from 'ui/auth/SignUpForm';
 import { AuthDisplayOption, AuthRouting } from 'ui/auth/constants';
 import { Location } from 'history';
-const Logo = require("images/FilledLaserableLogo.svg");
+import MembershipSelectForm from 'ui/auth/MembershipSelectForm';
 
 interface State {
   authDisplay: AuthDisplayOption;
@@ -63,10 +61,6 @@ class LandingPage extends React.Component<Props, State> {
     }
   }
 
-  private goToLogin = () => {
-    this.toggleDisplay(null, AuthDisplayOption.Login);
-  }
-
   public render(): JSX.Element {
     const { authDisplay } = this.state;
     const { defaultView } = this.props;
@@ -76,9 +70,9 @@ class LandingPage extends React.Component<Props, State> {
     return (
       <Grid container spacing={24}>
           <Hidden smDown>
-        <Grid item md={6} sm={12} >
-            <Grid id="landing-page-graphic"></Grid>
-        </Grid>
+            <Grid item md={6} sm={12} style={{ padding: '3em', height: '350px' }}>
+              <Grid id="landing-page-graphic"></Grid>
+            </Grid>
           </Hidden>
 
         <Grid item md={6} sm={12}>
@@ -88,7 +82,7 @@ class LandingPage extends React.Component<Props, State> {
                 <CardContent>
                   {display === AuthDisplayOption.Login ?
                     <Login/> :
-                    <SignUpForm goToLogin={this.goToLogin}/>
+                    <MembershipSelectForm/>
                   }
                 </CardContent>
               </Card>

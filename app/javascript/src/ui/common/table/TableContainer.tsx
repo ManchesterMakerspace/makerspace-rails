@@ -20,7 +20,7 @@ interface Props<T> {
   order?: SortDirection;
   loading?: boolean;
   totalItems?: number;
-  error?: string;
+  error?: string | JSX.Element;
   onPageChange?: (pageNum: number) => void;
   onSearchEnter?: (searchTerm: string) => void;
   onSort?: (columnName: string) => void;

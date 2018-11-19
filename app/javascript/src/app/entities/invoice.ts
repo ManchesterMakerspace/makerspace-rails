@@ -25,12 +25,6 @@ export interface Invoice extends BaseInvoice {
   quantity: number;
 }
 
-export interface InvoiceOption {
-  id: string;
-  description: string;
-  amount: number;
-}
-
 
 export enum InvoiceOperation {
   Renew = "renew"

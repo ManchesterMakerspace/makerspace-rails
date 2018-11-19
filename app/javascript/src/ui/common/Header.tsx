@@ -121,7 +121,6 @@ class Header extends React.Component<Props, State> {
 
   public render(): JSX.Element {
     const { currentUser } = this.props;
-    console.log(Logo);
     return (
       <AppBar style={{ marginBottom: "1em" }} position="static" color="default" title={Logo}>
         <Toolbar>

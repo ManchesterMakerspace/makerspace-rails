@@ -30,7 +30,7 @@ interface Props<T> {
   selectedIds: string[];
   order?: SortDirection;
   orderBy?: string;
-  error: string;
+  error: string | JSX.Element;
   loading: boolean;
   onSelectAll?: () => void;
   onSelect?: (id: string, direction: boolean) => void;

@@ -187,20 +187,6 @@ export const invoiceReducer = (state: InvoiceState = defaultState, action: AnyAc
           error
         }
       }
-    case InvoiceAction.StageInvoice:
-      const { data: stagedInvoice } = action;
-      return {
-        ...state,
-        stagedEntity: {
-          ...state.stagedEntity,
-          ...stagedInvoice
-        }
-      }
-    case InvoiceAction.ResetStagedInvoice:
-      return {
-        ...state,
-        stagedEntity: defaultState.stagedEntity,
-      }
     default:
       return state;
   }

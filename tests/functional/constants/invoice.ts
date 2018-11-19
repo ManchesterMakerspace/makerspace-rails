@@ -1,6 +1,6 @@
 import { InvoiceOptionTypes } from "api/invoices/constants";
-import { InvoiceOption, Invoice, InvoiceOperation, InvoiceableResource } from "app/entities/invoice";
-export const invoiceOptions: InvoiceOption[] = [
+import { Invoice, InvoiceOperation, InvoiceableResource } from "app/entities/invoice";
+export const invoiceOptions: Partial<Invoice>[] = [
   {
     id: "standard_membership",
     description: "Standard Membership Subscription",

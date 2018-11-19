@@ -2,7 +2,7 @@ import * as React from "react";
 import Typography from "@material-ui/core/Typography";
 
 interface ErrorProps {
-  error: string;
+  error: string | JSX.Element;
   id?: string;
 }
 

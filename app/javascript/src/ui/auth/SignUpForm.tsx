@@ -1,19 +1,12 @@
 import * as React from "react";
 import { connect } from "react-redux";
 
-import FormControlLabel from "@material-ui/core/FormControlLabel";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
-import FormLabel from "@material-ui/core/FormLabel";
-import Select from "@material-ui/core/Select";
-import Checkbox from "@material-ui/core/Checkbox";
 import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
-
-import { CollectionOf } from "app/interfaces";
-import { InvoiceOption } from "app/entities/invoice";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { SignUpFields, EmailExistsError, signUpPrefix } from "ui/auth/constants";
@@ -21,19 +14,14 @@ import { SignUpForm } from "ui/auth/interfaces";
 import { submitSignUpAction } from "ui/auth/actions";
 import ErrorMessage from "ui/common/ErrorMessage";
 import Form from "ui/common/Form";
-import { getMembershipOptionsAction } from "ui/invoices/actions";
-import { Action as InvoiceAction } from "ui/invoice/constants";
 
 interface OwnProps {
   goToLogin: () => void;
 }
 interface DispatchProps {
   submitSignUp: (signUpForm: SignUpForm) => void;
-  getMembershipOptions: () => void;
-  resetStagedInvoice: () => void;
 }
 interface StateProps {
-  membershipOptions: CollectionOf<InvoiceOption>;
   memberId: string;
   isRequesting: boolean;
   error: string;
@@ -55,11 +43,6 @@ class SignUpFormComponent extends React.Component<Props, State> {
       passwordMask: true,
       emailExists: false,
     };
-  }
-
-  public componentDidMount() {
-    this.props.getMembershipOptions();
-    this.props.resetStagedInvoice();
   }
 
   public componentDidUpdate(prevProps: Props) {
@@ -138,47 +121,6 @@ class SignUpFormComponent extends React.Component<Props, State> {
     )
   }
 
-  private renderMembershipSelect = (): JSX.Element => {
-    const { membershipOptions } = this.props;
-    const options = Object.values(membershipOptions).slice();
-    options.push({
-      id: null,
-      description: "Do later",
-      amount: 0
-    });
-    const selectOptions = options.map((option) => (
-      <option id={`${signUpPrefix}-${option.id}`} key={option.id} value={option.id}>
-        {option.description}{!!option.amount && ` ($${option.amount})`}
-      </option>
-    ));
-    return (
-      <>
-        <Grid item xs={12}>
-          <FormLabel>{SignUpFields.membershipId.label}</FormLabel>
-          <Select
-            fullWidth
-            id={SignUpFields.membershipId.name}
-            native
-            required
-            placeholder={SignUpFields.membershipId.placeholder}
-            name={SignUpFields.membershipId.name}
-          >
-            {selectOptions}
-          </Select>
-        </Grid>
-        <Grid item xs={12}>
-          <FormControlLabel
-            name={SignUpFields.discount.name}
-            label={SignUpFields.discount.label}
-            control={
-              <Checkbox color="primary" id={SignUpFields.discount.name} value={SignUpFields.discount.name}/>
-            }
-          />
-        </Grid>
-      </>
-    );
-  }
-
   public render(): JSX.Element {
     const { isRequesting, error } = this.props;
     const { emailExists } = this.state;
@@ -225,7 +167,6 @@ class SignUpFormComponent extends React.Component<Props, State> {
             />
           </Grid>
           {this.renderPasswordInput()}
-          {this.renderMembershipSelect()}
         </Grid>
 
         {!isRequesting && error && <ErrorMessage id={`${signUpPrefix}-error`} error={error} />}
@@ -247,12 +188,7 @@ const mapStateToProps = (
     error
   } = state.auth;
 
-  const { invoiceOptions: {
-    membership: membershipOptions
-  } } = state.invoices;
-
   return {
-    membershipOptions,
     memberId,
     isRequesting,
     error
@@ -264,8 +200,6 @@ const mapDispatchToProps = (
 ): DispatchProps => {
   return {
     submitSignUp: (signUpForm) => dispatch(submitSignUpAction(signUpForm)),
-    getMembershipOptions: () => dispatch(getMembershipOptionsAction()),
-    resetStagedInvoice: () => dispatch({ type: InvoiceAction.ResetStagedInvoice })
   };
 }
 export default connect(mapStateToProps, mapDispatchToProps)(SignUpFormComponent);

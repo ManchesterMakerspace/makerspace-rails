@@ -2,7 +2,6 @@
  * Main injection point for application.  Webpacker compiles everything in this folder by default.
  */
 import "./stylesheets/application";
-import Logo from "images/FilledLaserableLogo.svg";
 import * as React from 'react';
 import { Store } from 'redux';
 import { Provider } from "react-redux";
@@ -21,7 +20,6 @@ const history: History = getHistory();
 const store: Store<ReduxState> = getStore();
 const theme: Theme = getTheme();
 
-console.log(Logo);
 ReactDOM.render(
   <Provider store={store}>
   { /* ConnectedRouter will use the store from Provider automatically */}

@@ -46,11 +46,12 @@ class CheckoutContainer extends React.Component<Props,State>{
     const { auth, invoices } = props;
     const redirectPath = auth ? Routing.Profile.replace(Routing.PathPlaceholder.MemberId, auth) : Routing.Login;
     const redirect = invoices && isEmpty(invoices) ? redirectPath : undefined;
+    console.log(invoices);
     this.state = ({
       redirect,
       error: "",
       paymentMethodId: undefined,
-      total: this.props.invoices && Object.values(invoices).reduce((a, b) => a + Number(b.amount), 0)
+      total: invoices && Object.values(invoices).reduce((a, b) => a + Number(b.amount), 0)
     });
   }
 
