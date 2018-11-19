@@ -82,7 +82,7 @@ class LandingPage extends React.Component<Props, State> {
                 <CardContent>
                   {display === AuthDisplayOption.Login ?
                     <Login/> :
-                    <MembershipSelectForm/>
+                    <MembershipSelectForm redirectOnSelect={true}/>
                   }
                 </CardContent>
               </Card>

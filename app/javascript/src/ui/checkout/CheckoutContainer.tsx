@@ -1,7 +1,9 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router";
+
 import Grid from "@material-ui/core/Grid";
+import Dialog from "@material-ui/core/Dialog";
 import Card from "@material-ui/core/Card";
 import Button from "@material-ui/core/Button";
 import CardContent from "@material-ui/core/CardContent";
@@ -21,6 +23,8 @@ import { numberAsCurrency } from "ui/utils/numberToCurrency";
 import PaymentMethodsContainer from "ui/checkout/PaymentMethodsContainer";
 import ErrorMessage from "ui/common/ErrorMessage";
 import LoadingOverlay from "ui/common/LoadingOverlay";
+import SignUpForm from "ui/auth/SignUpForm";
+import Login from "ui/auth/Login";
 
 interface OwnProps {}
 interface StateProps {
@@ -38,6 +42,7 @@ interface State {
   redirect: string;
   paymentMethodId: string;
   error: string;
+  openLoginModal: boolean;
 }
 class CheckoutContainer extends React.Component<Props,State>{
   constructor(props: Props){
@@ -46,12 +51,12 @@ class CheckoutContainer extends React.Component<Props,State>{
     const { auth, invoices } = props;
     const redirectPath = auth ? Routing.Profile.replace(Routing.PathPlaceholder.MemberId, auth) : Routing.Login;
     const redirect = invoices && isEmpty(invoices) ? redirectPath : undefined;
-    console.log(invoices);
     this.state = ({
       redirect,
+      total: invoices && Object.values(invoices).reduce((a, b) => a + Number(b.amount), 0),
       error: "",
       paymentMethodId: undefined,
-      total: invoices && Object.values(invoices).reduce((a, b) => a + Number(b.amount), 0)
+      openLoginModal: false,
     });
   }
 
@@ -120,9 +125,27 @@ class CheckoutContainer extends React.Component<Props,State>{
     this.setState({ paymentMethodId: event.currentTarget.value });
   }
 
+  private openLoginModal = () => {
+    this.setState({ openLoginModal: true });
+  }
+  private closeLoginModal = () => {
+    this.setState({ openLoginModal: false });
+  }
+  private renderLoginModal = () => {
+    return (
+      <Dialog
+        fullWidth={true}
+        open={this.state.openLoginModal}
+        onClose={this.closeLoginModal}
+        disableBackdropClick={true}
+      >
+        <Login />
+      </Dialog>
+    );
+  }
   private rowId = (row: Invoice) => row.id;
   public render(): JSX.Element {
-    const { isRequesting, error } = this.props;
+    const { isRequesting, error, auth } = this.props;
     const { redirect, paymentMethodId } = this.state;
 
     if (redirect) {
@@ -133,16 +156,18 @@ class CheckoutContainer extends React.Component<Props,State>{
         {isRequesting && <LoadingOverlay id="checkout-submitting-overlay" />}
         <Grid item md={8} sm={7} xs={12}>
           <Grid container spacing={16}>
-            {/* <Grid item xs={12}>
-              <Card style={{minWidth: 275}}>
-                <CardContent>
-                  <Typography variant="title" color="inherit">Checkout</Typography>
-                  {this.renderInvoiceResults()}
 
+            {!auth && <Grid item xs={12}>
+              <Card style={{ minWidth: 275 }}>
+                <CardContent>
+                  <SignUpForm goToLogin={this.openLoginModal} />
+
+                  <Button id="auth-toggle" variant="outlined" color="secondary" fullWidth onClick={this.openLoginModal}>
+                    Already a Member? Login
+                  </Button>
                 </CardContent>
               </Card>
-            </Grid> */}
-
+            </Grid>}
             <Grid item xs={12}>
               <Card>
                 <CardContent>
@@ -161,6 +186,7 @@ class CheckoutContainer extends React.Component<Props,State>{
           {this.renderTotal()}
           {!isRequesting && error && <ErrorMessage id="checkout-submitting-error" error={error}/>}
         </Grid>
+        {this.renderLoginModal()}
       </Grid>
     )
   }

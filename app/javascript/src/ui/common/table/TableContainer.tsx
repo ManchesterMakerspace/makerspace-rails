@@ -63,21 +63,23 @@ class TableContainer<T> extends React.Component<Props<T>, {}> {
     } = this.props;
 
     return (
-      <div className="table-container-wrapper">
-        <Toolbar>
-          {title && <Typography id={`${id}-title`} variant="title" color="inherit" className="flex">
-            {title}
-          </Typography>}
-          { onSearchEnter &&
-            <TextField
-              id={`${id}-search-input`}
-              type="text"
-              disabled={loading}
-              placeholder="Search..."
-              onKeyPress={this.onSearchEnter}
-            />
-          }
-        </Toolbar>
+      <div className="table-container-wrapper" style={{width: "100%"}}>
+        { (title || onSearchEnter) && (
+          <Toolbar>
+            {title && <Typography id={`${id}-title`} variant="title" color="inherit" className="flex">
+              {title}
+            </Typography>}
+            {onSearchEnter &&
+              <TextField
+                id={`${id}-search-input`}
+                type="text"
+                disabled={loading}
+                placeholder="Search..."
+                onKeyPress={this.onSearchEnter}
+              />
+            }
+          </Toolbar>
+        )}
         <div className="table-wrapper">
           <Table
             id={id}

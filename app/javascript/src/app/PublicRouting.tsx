@@ -7,6 +7,7 @@ import CheckoutContainer from 'ui/checkout/CheckoutContainer';
 import { AuthDisplayOption } from 'ui/auth/constants';
 import PasswordReset from 'ui/auth/PasswordReset';
 import { Location } from 'history';
+import SignUpContainer from 'ui/auth/SignUpContainer';
 
 const PublicRouting: React.SFC<{ location: Location<any> }> = () => {
   // Redirect to root if not authed and somewhere else
@@ -16,8 +17,7 @@ const PublicRouting: React.SFC<{ location: Location<any> }> = () => {
       <Route exact path={Routing.Checkout} component={CheckoutContainer} />
       <Route exact path={Routing.Login}
         render={(props) => <LandingPage {...props} defaultView={AuthDisplayOption.Login} />} />
-      <Route exact path={Routing.SignUp}
-        render={(props) => <LandingPage {...props} defaultView={AuthDisplayOption.SignUp} />} />
+      <Route exact path={Routing.SignUp} component={SignUpContainer}/>
       <Route exact path={Routing.Root} component={LandingPage} />
       <Redirect to="/"/>
     </Switch>

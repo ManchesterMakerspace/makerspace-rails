@@ -2,8 +2,6 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router";
 
-import Grid from "@material-ui/core/Grid";
-
 import { CollectionOf } from "app/interfaces";
 import { Routing } from "app/constants";
 import { Invoice } from "app/entities/invoice";
@@ -18,6 +16,8 @@ import { numberAsCurrency } from "ui/utils/numberToCurrency";
 import { Button } from "@material-ui/core";
 
 interface OwnProps {
+  onSelect?: (membershipOption: Invoice) => void;
+  redirectOnSelect?: boolean;
 }
 interface DispatchProps {
   stageInvoice: (membershipOption: Invoice) => void;
@@ -28,8 +28,10 @@ interface StateProps {
   membershipOptions: CollectionOf<Invoice>;
   invoiceOptionsLoading: boolean;
   invoiceOptionsError: string;
+  stagedInvoices: CollectionOf<Invoice>;
 }
 interface State {
+  membershipOption: Invoice;
   passwordMask: boolean;
   emailExists: boolean;
   redirect: boolean;
@@ -44,6 +46,8 @@ class MembershipSelectComponent extends React.Component<Props, State> {
       passwordMask: true,
       emailExists: false,
       redirect: false,
+      //TODO Update to actually find the chosen memberhip options
+      membershipOption: this.props.stagedInvoices ? Object.values(this.props.stagedInvoices)[0] : undefined,
     };
   }
 
@@ -67,7 +71,15 @@ class MembershipSelectComponent extends React.Component<Props, State> {
     {
       id: "select",
       label: "",
-      cell: (row: Invoice) => <Button id={row.id} variant="raised" color="primary" onClick={this.selectMembershipOption}>Select</Button>
+      cell: (row: Invoice) => {
+        const selected = this.state.membershipOption && this.state.membershipOption.id === row.id;
+        const variant = selected ? "contained" : "outlined";
+        const label = selected ? "Selected" : "Select";
+
+        return (
+          <Button id={row.id} variant={variant} color="primary" onClick={this.selectMembershipOption}>{label}</Button>
+        )
+      }
     }
   ]
   private renderMembershipSelect = (): JSX.Element => {
@@ -79,7 +91,7 @@ class MembershipSelectComponent extends React.Component<Props, State> {
       </>
     );
     return (
-      <Grid item xs={12}>
+      <>
         <TableContainer
           id="membership-select-table"
           title="Select a Membership"
@@ -89,20 +101,24 @@ class MembershipSelectComponent extends React.Component<Props, State> {
           loading={invoiceOptionsLoading}
         />
         <ErrorMessage error={normalizedError} />
-      </Grid>
-    );
+      </>
+        );
   }
 
   private selectMembershipOption = (event: React.MouseEvent<HTMLElement>) => {
     const membershipOption = this.props.membershipOptions[event.currentTarget.id]
-    this.props.resetStagedInvoice();
-    this.props.stageInvoice(membershipOption);
-    this.setState({ redirect: true });
+    if (membershipOption) {
+      this.setState({ membershipOption });
+      this.props.resetStagedInvoice();
+      this.props.stageInvoice(membershipOption);
+      this.props.onSelect && this.props.onSelect(membershipOption);
+      this.props.redirectOnSelect && this.setState({ redirect: true });
+    }
   }
 
   public render(): JSX.Element {
     if (this.state.redirect) {
-      return <Redirect to={Routing.Checkout} />
+      return <Redirect to={Routing.SignUp} />
     }
 
     return this.renderMembershipSelect();
@@ -121,10 +137,15 @@ const mapStateToProps = (
     }
   } = state.invoices;
 
+  const {
+    invoices: stagedInvoices
+  } = state.checkout;
+
   return {
     membershipOptions,
     invoiceOptionsLoading,
-    invoiceOptionsError
+    invoiceOptionsError,
+    stagedInvoices
   }
 }
 

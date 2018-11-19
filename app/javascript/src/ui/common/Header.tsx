@@ -81,6 +81,9 @@ class Header extends React.Component<Props, State> {
 
     return (
       <>
+      <Typography variant="body1" color="secondary">
+        {currentUser.firstname}
+      </Typography>
         <IconButton
           className="menu-button"
           color="inherit" aria-label="Menu"

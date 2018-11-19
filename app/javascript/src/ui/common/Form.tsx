@@ -92,6 +92,10 @@ class Form extends React.Component<FormModalProps, State> {
     this.state = this.getDefaultState(props);
   }
 
+  public componentDidMount() {
+    this.setState({...this.getDefaultState(this.props)});
+  }
+
   public getValues = (): CollectionOf<string> => {
     return this.state.values;
   };
@@ -102,6 +106,10 @@ class Form extends React.Component<FormModalProps, State> {
 
   public isValid = (): boolean => {
     return isEmpty(this.state.errors);
+  }
+
+  public isDirty = (): boolean => {
+    return this.state.isDirty;
   }
 
   public simpleValidate = async <T extends object>(fields: FormFields) => {

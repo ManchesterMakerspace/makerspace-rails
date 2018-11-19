@@ -7,7 +7,9 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
+import MembershipSelectForm from "ui/auth/MembershipSelectForm";
 
+import { Invoice } from "app/entities/invoice";
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { SignUpFields, EmailExistsError, signUpPrefix } from "ui/auth/constants";
 import { SignUpForm } from "ui/auth/interfaces";
@@ -17,6 +19,8 @@ import Form from "ui/common/Form";
 
 interface OwnProps {
   goToLogin: () => void;
+  renderMembershipOptions?: boolean;
+  onSubmit?: () => void;
 }
 interface DispatchProps {
   submitSignUp: (signUpForm: SignUpForm) => void;
@@ -27,6 +31,8 @@ interface StateProps {
   error: string;
 }
 interface State {
+  membershipSelectionId?: string;
+  membershipSelectionError?: string;
   passwordMask: boolean;
   emailExists: boolean;
 }
@@ -45,7 +51,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
     };
   }
 
-  public componentDidUpdate(prevProps: Props) {
+  public componentDidUpdate(prevProps: Props, prevState: State) {
     const { isRequesting: wasRequesting } = prevProps;
     const { isRequesting, error } = this.props;
 
@@ -53,6 +59,12 @@ class SignUpFormComponent extends React.Component<Props, State> {
       if (error === EmailExistsError) {
         this.setState({ emailExists: true });
       }
+      if (!error) {
+        this.props.onSubmit && this.props.onSubmit();
+      }
+    }
+    if (this.state.membershipSelectionId !== prevState.membershipSelectionId) {
+      this.setState({ membershipSelectionError: "" });
     }
   }
 
@@ -90,6 +102,11 @@ class SignUpFormComponent extends React.Component<Props, State> {
 
     if (!form.isValid()) return;
 
+    if (this.props.renderMembershipOptions && !this.state.membershipSelectionId) {
+      this.setState({ membershipSelectionError: SignUpFields.membershipId.error })
+      return;
+    }
+
     this.props.submitSignUp({
       ...validSignUp,
       discount: !!validSignUp.discount
@@ -121,16 +138,20 @@ class SignUpFormComponent extends React.Component<Props, State> {
     )
   }
 
+  private updateMembershipSelection = (membershipOption: Invoice) => {
+    this.setState({ membershipSelectionId: membershipOption.id });
+  }
+
   public render(): JSX.Element {
     const { isRequesting, error } = this.props;
-    const { emailExists } = this.state;
+    const { emailExists, membershipSelectionError } = this.state;
 
     return (
       <Form
         ref={this.setFormRef}
         id={signUpPrefix}
         loading={isRequesting}
-        title="Become a Member"
+        title="Create an Account"
         onSubmit={this.submit}
         submitText="Sign Up"
       >
@@ -166,10 +187,18 @@ class SignUpFormComponent extends React.Component<Props, State> {
               type="email"
             />
           </Grid>
-          {this.renderPasswordInput()}
+          <Grid item xs={12}>
+            {this.renderPasswordInput()}
+          </Grid>
+          {this.props.renderMembershipOptions && (
+            <Grid item xs={12}>
+              <MembershipSelectForm onSelect={this.updateMembershipSelection}/>
+              {membershipSelectionError && <ErrorMessage error={membershipSelectionError}/>}
+            </Grid>
+          )}
+          {!isRequesting && error && <ErrorMessage id={`${signUpPrefix}-error`} error={error} />}
         </Grid>
 
-        {!isRequesting && error && <ErrorMessage id={`${signUpPrefix}-error`} error={error} />}
         {emailExists && this.renderEmailNotification()}
       </Form>
     );

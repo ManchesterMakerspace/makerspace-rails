@@ -77,6 +77,7 @@ export const SignUpFields: FormFields = {
     label: "Membership Option",
     name: `${signUpPrefix}-membership-id`,
     placeholder: "Select a Membership Option",
+    error: "Please select a membership option",
   },
   discount: {
     label: "Apply 10% Student, Senior and Military discount (ID required at orientation)",
