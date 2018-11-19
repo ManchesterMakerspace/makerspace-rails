@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { withRouter, RouteComponentProps } from "react-router";
 import { connect } from "react-redux";
 
 import AppBar from "@material-ui/core/AppBar";
@@ -10,15 +11,15 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import MenuIcon from "@material-ui/icons/Menu";
 
+const Logo = require("images/FilledLaserableLogo.svg");
+
 import { ScopedThunkDispatch, State as ReduxState } from "ui/reducer";
 import { logoutUserAction } from "ui/auth/actions";
 import { AuthMember } from "ui/auth/interfaces";
 import { memberIsAdmin } from "ui/member/utils";
 import { Routing } from "app/constants";
-import { Location } from "history";
 
-interface OwnProps {
-  location: Location<any>;
+interface OwnProps extends RouteComponentProps<any> {
 }
 interface StateProps {
   currentUser: AuthMember;
@@ -58,6 +59,16 @@ class Header extends React.Component<Props, State> {
       <Link to={path} style={{ outline: 'none',textDecoration: 'none', color: 'unset' }} onClick={this.detachMenu}>
         <MenuItem selected={match}>
           {label}
+        </MenuItem>
+      </Link>
+    )
+  }
+
+  private renderLoginLink = () => {
+    return (
+      <Link to={Routing.Login} style={{ outline: 'none', textDecoration: 'none', color: 'unset' }}>
+        <MenuItem component={Typography}>
+          Already a member? Login
         </MenuItem>
       </Link>
     )
@@ -110,14 +121,14 @@ class Header extends React.Component<Props, State> {
 
   public render(): JSX.Element {
     const { currentUser } = this.props;
-
+    console.log(Logo);
     return (
-      <AppBar style={{marginBottom: "1em"}} position="static">
+      <AppBar style={{ marginBottom: "1em" }} position="static" color="default" title={Logo}>
         <Toolbar>
           <Typography variant="title" color="inherit" className="flex">
-            Manchester Makerspace
+            <img src={Logo} alt="Manchester Makerspace" height={60} />
           </Typography>
-          { currentUser.id && this.renderHambMenu() }
+          { currentUser.id ? this.renderHambMenu() : this.renderLoginLink() }
         </Toolbar>
       </AppBar>
     )
@@ -142,4 +153,4 @@ const mapDispatchToProps = (
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header));

@@ -38,14 +38,9 @@ class BraintreeService::Plan < Braintree::Plan
       amount: self.amount,
       description: self.description,
       discounts: self.discounts,
-      operation_string: self.build_operation_string,
       due_date: due_date,
       member_id: member_id
     }
     Invoice.new(invoice_args)
-  end
-
-  def build_operation_string
-    "#{Invoice::OPERATION_RESOURCE_PLACEHOLDER}.renewal = #{self.billing_frequency}"
   end
 end

@@ -122,13 +122,14 @@ class Invoice
       self.payment_type = :paypal
     else
       self.payment_type = :cash
+    end
   end
 
   def execute_invoice_operation
-    resource_class = OPERATION_RESOURCES.find({ |c| c == self.resource_class}).constantize
+    resource_class = OPERATION_RESOURCES.find{ |c| c == self.resource_class}.constantize
     if resource_class
       resource = resource_class.find(self.resource_id)
-      operation = OPERATION_FUNCTIONS.find({ |f| f == self.operation })
+      operation = OPERATION_FUNCTIONS.find{ |f| f == self.operation }
       if operation
         if resource.execute_operation(operation, self)
           self.executed_at = Time.now

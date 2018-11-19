@@ -57,6 +57,12 @@
   margin-right: 20;
 }
 
+#landing-page-graphic {
+  background: url("../../src/images/FilledLaserableLogo.svg") no-repeat center;
+  background-size: contain;
+  height: 100%;
+}
+
 .hosted-field {
   height: 32px;
   margin-bottom: 1em;

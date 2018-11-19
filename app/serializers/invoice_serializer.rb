@@ -11,7 +11,7 @@ class InvoiceSerializer < ApplicationSerializer
              :subscription_id,
 
   def member_id
-    object.member.id
+    object.member && object.member.id
   end
 
   # def amount

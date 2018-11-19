@@ -54,13 +54,13 @@ class App extends React.Component<Props, State> {
     if (attemptingLogin) {
       return <LoadingOverlay id="body"/>;
     } else {
-      return auth ? <PrivateRouting auth={auth} /> : <PublicRouting/>;
+      return auth ? <PrivateRouting auth={auth} /> : <PublicRouting location={this.props.location}/>;
     }
   }
   public render(): JSX.Element {
     return (
       <div className="root">
-        <Header location={this.props.location}/>
+        <Header/>
         {this.renderBody()}
       </div>
     )

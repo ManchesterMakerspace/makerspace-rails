@@ -15,8 +15,8 @@ module InvoiceableResource
         resource_class: self.class.name,
         member: member,
         contact: member.email,
-        due_date: Time.now
-        quantity: 1
+        due_date: Time.now,
+        quantity: 1,
         amount: self.default_invoice_amount
       }
     )

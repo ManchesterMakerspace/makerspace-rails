@@ -33,7 +33,8 @@
     "jsx": "react",
     "typeRoots": [
       "node_modules/@types",
-      "tests/functional/webdriverTypings"
+      "tests/functional/webdriverTypings",
+      "app/javascript/src/app/typings"
     ]
   },
   "exclude": [

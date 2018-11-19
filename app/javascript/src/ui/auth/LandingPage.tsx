@@ -8,16 +8,18 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Hidden from '@material-ui/core/Hidden';
 
-import { Routing } from "app/constants";
 import Login from 'ui/auth/Login';
 import SignUpForm from 'ui/auth/SignUpForm';
-import { AuthDisplayOption } from 'ui/auth/constants';
+import { AuthDisplayOption, AuthRouting } from 'ui/auth/constants';
+import { Location } from 'history';
+const Logo = require("images/FilledLaserableLogo.svg");
 
 interface State {
   authDisplay: AuthDisplayOption;
 }
 interface OwnProps extends RouteComponentProps<any> {
   defaultView?: AuthDisplayOption;
+  location: Location<any>;
 }
 interface StateProps {}
 interface DispatchProps {}
@@ -31,24 +33,33 @@ class LandingPage extends React.Component<Props, State> {
     }
   }
 
-  public componentDidUpdate(_prevProps: Props, prevState: State): void {
-    const { authDisplay: prevDisplay } = prevState;
+  public componentDidUpdate(prevProps: Props, prevState: State): void {
+    const { history, location } = this.props;
+    const { location: oldLocation } = prevProps;
+    if (location !== oldLocation) {
+      const newDisplay = Object.keys(AuthRouting).find(display => AuthRouting[display] === history.location.pathname) as AuthDisplayOption;
+      this.setState({ authDisplay: newDisplay });
+    }
+  }
+
+  private alignHistory = () => {
+    const { history } = this.props;
     const { authDisplay } = this.state;
-    if (authDisplay && authDisplay !== prevDisplay) {
-      authDisplay === AuthDisplayOption.Login ? this.props.history.push(Routing.Login) : this.props.history.push(Routing.SignUp);
+    if (history.location.pathname !== AuthRouting[authDisplay]) {
+      this.props.history.push(AuthRouting[authDisplay]);
     }
   }
 
   private toggleDisplay = (_event: React.MouseEvent<HTMLElement>, targetDisplay?: AuthDisplayOption) => {
     if (targetDisplay) {
-      this.setState({ authDisplay: targetDisplay });
+      this.setState({ authDisplay: targetDisplay }, this.alignHistory);
     } else {
       this.setState((state) => {
         const { authDisplay } = state;
         const currentDisplay = authDisplay || this.props.defaultView;
         const newDisplay = Object.values(AuthDisplayOption).find((opt) => opt !== currentDisplay);
         return { authDisplay: newDisplay };
-      });
+      }, this.alignHistory);
     }
   }
 
@@ -64,30 +75,29 @@ class LandingPage extends React.Component<Props, State> {
 
     return (
       <Grid container spacing={24}>
-        <Hidden smDown>
-          <Grid item container md={6} justify="center" alignItems="center">
-            <Typography id="landing-page-graphic" variant="display1" color="primary" gutterBottom>
-              Manchester Makerspace
-            </Typography>
-          </Grid>
-        </Hidden>
+          <Hidden smDown>
+        <Grid item md={6} sm={12} >
+            <Grid id="landing-page-graphic"></Grid>
+        </Grid>
+          </Hidden>
 
-
-        <Grid container md={6} sm={12} justify="center" spacing={24}>
-          <Grid item xs={12}>
-            <Card style={{minWidth: 275}}>
-              <CardContent>
-                {display === AuthDisplayOption.Login ?
-                  <Login/> :
-                  <SignUpForm goToLogin={this.goToLogin}/>
-                }
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item container xs={12} justify="center" alignItems="center">
-            <Button id="auth-toggle" variant="outlined" color="primary" fullWidth onClick={this.toggleDisplay}>
-              {display === AuthDisplayOption.Login ? "Register" : "Already a Member? Login"}
-            </Button>
+        <Grid item md={6} sm={12}>
+          <Grid container justify="center" spacing={24}>
+              <Grid item xs={12}>
+              <Card style={{minWidth: 275}}>
+                <CardContent>
+                  {display === AuthDisplayOption.Login ?
+                    <Login/> :
+                    <SignUpForm goToLogin={this.goToLogin}/>
+                  }
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item container xs={12} justify="center" alignItems="center">
+              <Button id="auth-toggle" variant="outlined" color="secondary" fullWidth onClick={this.toggleDisplay}>
+                {display === AuthDisplayOption.Login ? "Register" : "Already a Member? Login"}
+              </Button>
+            </Grid>
           </Grid>
         </Grid>
       </Grid>

@@ -1,6 +1,7 @@
 import { emailValid } from "app/utils";
 import isString from "lodash-es/isString";
 import { FormFields } from "ui/common/Form";
+import { Routing } from "app/constants";
 
 export enum Action {
   StartAuthRequest = "AUTH/START_REQUEST",
@@ -15,6 +16,11 @@ export enum Action {
 export enum AuthDisplayOption {
   Login = "login",
   SignUp = "signUp"
+}
+
+export const AuthRouting = {
+  [AuthDisplayOption.Login]: Routing.Login,
+  [AuthDisplayOption.SignUp]: Routing.Root,
 }
 
 export const EmailExistsError = "Email already exists";

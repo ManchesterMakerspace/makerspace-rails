@@ -51,7 +51,7 @@ export const getTheme = () => {
   if (theme) return theme;
   theme = createMuiTheme({
     palette: {
-      primary: {
+      secondary: {
         light: '#9E3321',
         main: '#791100',
         dark: '#510B00',
