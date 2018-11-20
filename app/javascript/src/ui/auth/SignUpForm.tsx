@@ -109,6 +109,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
 
     this.props.submitSignUp({
       ...validSignUp,
+      membershipId: this.state.membershipSelectionId,
       discount: !!validSignUp.discount
     });
   }

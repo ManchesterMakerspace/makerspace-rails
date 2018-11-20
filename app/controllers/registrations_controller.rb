@@ -21,7 +21,7 @@ class RegistrationsController < Devise::RegistrationsController
 
     private
     def member_params
-      params.require(:member).permit(:firstname, :lastname, :email, :password)
+      params.require(:member).permit(:firstname, :lastname, :email, :password, :membership_id)
     end
 
     def invite_gdrive
@@ -34,33 +34,10 @@ class RegistrationsController < Devise::RegistrationsController
     end
 
     def create_initial_membership_invoice
-      plan = ::BraintreeService::Plan.get_plan_by_id(@gateway, ENV["MONTHLY_SUBSCRIPTION_ID"])
+      plan = ::BraintreeService::Plan.get_plan_by_id(@gateway, member_params[:membership_id])
       invoice = plan.build_invoice(@member.id, Time.now.change(hour: 0, min: 1))
       unless invoice.save
         @notifier.ping("Error creating initial membership invoice for new member: #{@member.email}")
-      end
-    end
-
-    def upload_signature
-      encoded_img = params[:member][:signature].split(",")[1]
-      File.open("dump/signature.png", 'wb') do |f|
-        f.write(Base64.decode64(encoded_img))
-      end
-      signature_meta = {
-        name: "#{@member.fullname}_signature.png",
-        parents: [ENV['SIGNATURES_FOLDER']]
-      }
-      @service.create_file(signature_meta,
-                          fields: 'id',
-                          upload_source: Rails.root.join("dump/signature.png").to_s,
-                          content_type: 'image/png'
-                          ) do |result, err|
-
-        @messages.push("Error uploading #{@member.fullname}'s signature'. Error: #{err}") unless err.nil?
-        if result && result.id then
-            @messages.push("New member #{@member.fullname}'s Member Contract signature uploaded.'")
-            File.delete("dump/signature.png")
-        end
       end
     end
 

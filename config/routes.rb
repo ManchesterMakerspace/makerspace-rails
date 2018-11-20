@@ -11,7 +11,7 @@ Rails.application.routes.draw do
     get "/invoices/options", to: "invoices#options"
 
     authenticate :member do
-      resources :members, only: [:show, :index]
+      resources :members, only: [:show, :index, :update]
       resources :rentals, only: [:show, :index]
       resources :invoices, only: [:index]
 

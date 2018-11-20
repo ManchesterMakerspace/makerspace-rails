@@ -239,46 +239,46 @@ class MemberDetail extends React.Component<Props, State> {
           ].filter(r => !!r)}
         />
         {this.renderMemberForms()}
-        {this.renderNotifications()}
+        {/* {this.renderNotifications()} */}
       </>
     )
   }
 
-  private renderNotifications = () => {
-    const { isWelcomeOpen, submittingSignature, submitSignatureError } = this.state;
+  // private renderNotifications = () => {
+  //   const { isWelcomeOpen, submittingSignature, submitSignatureError } = this.state;
 
-    return (
-      <WelcomeModal
-        isOpen={isWelcomeOpen}
-        isRequesting={submittingSignature}
-        error={submitSignatureError}
-        onSubmit={this.saveSignature}
-      />
-    );
-  }
+  //   return (
+  //     <WelcomeModal
+  //       isOpen={isWelcomeOpen}
+  //       isRequesting={submittingSignature}
+  //       error={submitSignatureError}
+  //       onSubmit={this.saveSignature}
+  //     />
+  //   );
+  // }
 
-  private saveSignature = (form: Form) => {
-    const { submitSignatureError, submittingSignature } = this.state;
+  // private saveSignature = (form: Form) => {
+  //   const { submitSignatureError, submittingSignature } = this.state;
 
-    // Allow member to continue past modal if error submitting signature
-    // Backend will send a slack notifiation if it errors so we can contact them directly
-    if (!submittingSignature && submitSignatureError) {
-      this.closeWelcomeModal();
-    }
+  //   // Allow member to continue past modal if error submitting signature
+  //   // Backend will send a slack notifiation if it errors so we can contact them directly
+  //   if (!submittingSignature && submitSignatureError) {
+  //     this.closeWelcomeModal();
+  //   }
 
-    // Don't request if already in progress
-    if (!submittingSignature) {
-      this.setState({ submittingSignature: true }, async () => {
-        try {
-          const response = await uploadMemberSignature();
-          this.setState({ submittingSignature: false });
-        } catch (e) {
-          const { errorMessage } = e;
-          this.setState({ submittingSignature: false, submitSignatureError: errorMessage || "There was an error saving your signature." });
-        }
-      })
-    }
-  }
+  //   // Don't request if already in progress
+  //   if (!submittingSignature) {
+  //     this.setState({ submittingSignature: true }, async () => {
+  //       try {
+  //         const response = await uploadMemberSignature();
+  //         this.setState({ submittingSignature: false });
+  //       } catch (e) {
+  //         const { errorMessage } = e;
+  //         this.setState({ submittingSignature: false, submitSignatureError: errorMessage || "There was an error saving your signature." });
+  //       }
+  //     })
+  //   }
+  // }
 
   private renderMemberForms = () => {
     const { member, admin } = this.props;

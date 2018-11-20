@@ -14,6 +14,7 @@ import { CollectionOf } from "app/interfaces";
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import SignUpForm from "ui/auth/SignUpForm";
 import SignDocuments from "ui/auth/SignDocuments";
+import Form from "ui/common/Form";
 
 interface OwnProps { }
 interface StateProps {
@@ -24,6 +25,7 @@ interface DispatchProps {
 interface Props extends OwnProps, StateProps, DispatchProps { }
 interface State {
   openLoginModal: boolean;
+  displayDocuments: boolean;
   redirect: string;
 }
 class SignUpContainer extends React.Component<Props, State>{
@@ -32,6 +34,7 @@ class SignUpContainer extends React.Component<Props, State>{
     this.state = ({
       openLoginModal: false,
       redirect: undefined,
+      displayDocuments: false,
     });
   }
 
@@ -43,29 +46,40 @@ class SignUpContainer extends React.Component<Props, State>{
     this.setState({ redirect: Routing.Checkout });
   }
 
+  private goToDocuments = () => {
+    this.setState({ displayDocuments: true });
+  }
+
   public render(): JSX.Element {
-    const { redirect } = this.state;
+    const { redirect, displayDocuments } = this.state;
     if (redirect) {
       return <Redirect to={redirect} />
     }
 
     return (
-      <Grid container spacing={16}>
-        <Grid item xs={12}>
-          <Card style={{ minWidth: 275 }}>
-            <CardContent>
-              <SignUpForm goToLogin={this.goToLogin} onSubmit={this.goToCheckout} renderMembershipOptions={true}/>
-
+      <Grid container justify="center" spacing={16}>
+        <Grid item md={6} xs={12}>
+          <Grid container justify="center" spacing={16}>
+            <Grid item xs={12}>
+              <Card style={{ minWidth: 275 }}>
+                <CardContent>
+                  {displayDocuments ?
+                    <SignDocuments onSubmit={this.goToCheckout} />
+                    : (
+                      <>
+                        <SignUpForm goToLogin={this.goToLogin} onSubmit={this.goToDocuments} renderMembershipOptions={true} />
+                      </>
+                    )
+                  }
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12}>
               <Button id="auth-toggle" variant="outlined" color="secondary" fullWidth onClick={this.goToLogin}>
                 Already a Member? Login
               </Button>
-            </CardContent>
-          </Card>
-          <Card style={{ minWidth: 275 }}>
-            <CardContent>
-              <SignDocuments/>
-            </CardContent>
-          </Card>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     )

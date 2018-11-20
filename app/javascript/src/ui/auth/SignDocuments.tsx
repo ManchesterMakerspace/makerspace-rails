@@ -1,8 +1,15 @@
 import * as React from "react";
 import { connect } from "react-redux";
+
+import SignatureCanvas from "react-signature-canvas";
+
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+import Grid from "@material-ui/core/Grid";
+import Checkbox from "@material-ui/core/Checkbox";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 import { AuthMember } from "ui/auth/interfaces";
@@ -10,11 +17,12 @@ import { timeToDate } from "ui/utils/timeToDate";
 const codeOfConduct = require('code_of_conduct.html') as string;
 const memberContract = require('member_contract.html') as string;
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
-import { Button, Checkbox } from "@material-ui/core";
 import Form from "ui/common/Form";
-import ErrorMessage from "ui/common/ErrorMessage";
+import { uploadMemberSignature } from "api/members/transactions";
 
-interface OwnProps {}
+interface OwnProps {
+  onSubmit: () => void;
+}
 interface StateProps {
   currentUser: AuthMember;
 }
@@ -38,6 +46,9 @@ type DocumentForm = {
 }
 
 class SignDocuments extends React.Component<Props, State>{
+  private signatureRef: any;
+  private setSignatureRef = (ref: any) => this.signatureRef = ref;
+
   public constructor(props: Props) {
     super(props);
     this.state = {
@@ -109,8 +120,25 @@ class SignDocuments extends React.Component<Props, State>{
             label={document.label}
           />
         </div>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography variant="subheading" align="left">Please sign below</Typography>
+          </Grid>
+          <Grid item xs={12} style={{ border: "1px solid black", borderRadius: "4px" }}>
+            <SignatureCanvas ref={this.setSignatureRef} canvasProps={{ height: "250", width: "1000" }} />
+            <Grid container justify="flex-end">
+              <Grid item xs={12}>
+                <Button variant="flat" color="secondary" onClick={this.clearSignature}>Reset Signature</Button>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
       </Form>
     );
+  }
+
+  private clearSignature = () => {
+    this.signatureRef && this.signatureRef.clear();
   }
 
   private acceptDocument = (acceptedDoc: Documents) => (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
@@ -120,15 +148,26 @@ class SignDocuments extends React.Component<Props, State>{
       this.setState({ acceptMemberContract: checked });
     }
   }
-  private completeDocuments = (form: Form) => {
-    const values = form.getValues();
-    console.log(values);
-    const { acceptCodeOfConduct, acceptMemberContract } = this.state;
-    if (acceptCodeOfConduct && acceptMemberContract) {
-      // Success
-    } else if (acceptCodeOfConduct) {
+  private completeDocuments = async (form: Form) => {
+    const documentField = this.documents()[Documents.memberContract];
 
+    await form.simpleValidate({ [Documents.memberContract]: documentField });
+    if (!form.isValid()) {
+      this.setState({ documentError: documentField.error });
+      return;
     }
+    const signature = this.signatureRef && this.signatureRef.toDataUrl();
+    if (!signature) {
+      this.setState({ documentError: "Signature required to proceed" });
+      return;
+    }
+    try {
+      await uploadMemberSignature(this.props.currentUser.id, signature);
+    } catch (e) {
+      this.setState({ documentError: e });
+      return;
+    }
+    this.props.onSubmit();
   }
 
   private documents = () => ({

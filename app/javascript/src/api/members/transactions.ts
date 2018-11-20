@@ -34,6 +34,11 @@ export const putMember = async (id: string, details: Partial<MemberDetails>) => 
   }
 }
 
-export const uploadMemberSignature = async () => {
-  console.log("Save that signature. No route currently");
+export const uploadMemberSignature = async (id: string, signature: WindowBase64) => {
+  try {
+    return await axios.put(`${buildMemberUrl(id)}`, { member: { signature }});
+  } catch (e) {
+    const error = handleApiError(e);
+    throw error;
+  }
 }
