@@ -1,6 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router";
+import isUndefined from "lodash-es/isUndefined";
 
 import { CollectionOf } from "app/interfaces";
 import { Routing } from "app/constants";
@@ -16,6 +17,7 @@ import { numberAsCurrency } from "ui/utils/numberToCurrency";
 import { Button } from "@material-ui/core";
 
 interface OwnProps {
+  title?: string;
   onSelect?: (membershipOption: Invoice) => void;
   redirectOnSelect?: boolean;
 }
@@ -94,7 +96,7 @@ class MembershipSelectComponent extends React.Component<Props, State> {
       <>
         <TableContainer
           id="membership-select-table"
-          title="Select a Membership"
+          title={isUndefined(this.props.title) && "Select a Membership"}
           data={Object.values(membershipOptions)}
           columns={this.membershipColumns}
           rowId={this.rowId}

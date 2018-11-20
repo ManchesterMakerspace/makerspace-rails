@@ -47,7 +47,7 @@ interface State {
 }
 interface Props extends OwnProps, DispatchProps, StateProps {}
 
-class Login extends React.Component<Props, State> {
+class LoginForm extends React.Component<Props, State> {
   private formRef: Form;
   private passwordRef: Form;
   private setFormRef = (ref: Form) => this.formRef = ref;
@@ -211,4 +211,4 @@ const mapDispatchToProps = (
     loginUser: (authForm) => dispatch(loginUserAction(authForm))
   };
 }
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);

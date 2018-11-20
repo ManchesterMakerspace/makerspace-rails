@@ -24,7 +24,7 @@ import PaymentMethodsContainer from "ui/checkout/PaymentMethodsContainer";
 import ErrorMessage from "ui/common/ErrorMessage";
 import LoadingOverlay from "ui/common/LoadingOverlay";
 import SignUpForm from "ui/auth/SignUpForm";
-import Login from "ui/auth/Login";
+import LoginForm from "ui/auth/LoginForm";
 
 interface OwnProps {}
 interface StateProps {
@@ -139,7 +139,7 @@ class CheckoutContainer extends React.Component<Props,State>{
         onClose={this.closeLoginModal}
         disableBackdropClick={true}
       >
-        <Login />
+        <LoginForm />
       </Dialog>
     );
   }
