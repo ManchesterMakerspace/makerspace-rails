@@ -8,7 +8,7 @@ default: &default
 
   # Additional paths webpack should lookup modules
   # ['app/assets', 'engine/foo/app/assets']
-  resolved_paths: ['app/javascript/src']
+  resolved_paths: ['app/javascript/src', 'app/views/documents']
 
   # Reload manifest.json on all requests so we reload latest compiled packs
   cache_manifest: false
@@ -29,6 +29,7 @@ default: &default
     - .gif
     - .jpeg
     - .jpg
+    - .html
 
 development:
   <<: *default

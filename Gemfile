@@ -17,7 +17,7 @@ gem 'mongoid_search'
 gem 'paypal-sdk-rest'
 gem "braintree"
 gem "slack-notifier"
-gem 'google-api-client', require: ['google/apis/calendar_v3', 'google/apis/drive_v3']
+gem 'google-api-client', require: ['google/apis/drive_v3']
 gem 'mini_magick'
 
 group :development do

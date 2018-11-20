@@ -13,6 +13,7 @@ import { CollectionOf } from "app/interfaces";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import SignUpForm from "ui/auth/SignUpForm";
+import SignDocuments from "ui/auth/SignDocuments";
 
 interface OwnProps { }
 interface StateProps {
@@ -58,6 +59,11 @@ class SignUpContainer extends React.Component<Props, State>{
               <Button id="auth-toggle" variant="outlined" color="secondary" fullWidth onClick={this.goToLogin}>
                 Already a Member? Login
               </Button>
+            </CardContent>
+          </Card>
+          <Card style={{ minWidth: 275 }}>
+            <CardContent>
+              <SignDocuments/>
             </CardContent>
           </Card>
         </Grid>

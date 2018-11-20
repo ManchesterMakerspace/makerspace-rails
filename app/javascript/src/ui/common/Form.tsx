@@ -18,9 +18,10 @@ export interface FormField {
   label?: string;
   name: string;
   placeholder?: string;
-  validate?: (val: string | number | Date) => boolean;
+  validate?: (val: any) => boolean;
   error?: string;
   render?: (value: string | number | object) => string | JSX.Element;
+  [key: string]: any;
 }
 
 export interface FormFields {
@@ -37,6 +38,7 @@ interface FormModalProps {
   loading?: boolean;
   children?: React.ReactNode;
   error?: string;
+  submitDisabled?: boolean;
 }
 interface State {
   values: CollectionOf<string>;
@@ -148,7 +150,7 @@ class Form extends React.Component<FormModalProps, State> {
   private handleChange = (event: React.ChangeEvent<HTMLFormElement>) => {
     const fieldName = event.target.name;
     // Set value depending on checked state for checkboxes and radios
-    const fieldValue = event.target.hasOwnProperty("checked") ? (event.target.checked ? event.target.value : "") : event.target.value;
+    const fieldValue = event.target.hasOwnProperty("checked") ? (!!event.target.checked) : event.target.value;
     const { isDirty } = this.state;
     if (!isDirty) {
       this.setState({ isDirty: true });
@@ -244,7 +246,7 @@ class Form extends React.Component<FormModalProps, State> {
   }
 
   private renderFormContent = (): JSX.Element => {
-    const { onSubmit, submitText, cancelText, title, id, onCancel, children, error, loading } = this.props;
+    const { onSubmit, submitText, cancelText, title, id, onCancel, children, error, loading, submitDisabled } = this.props;
     const { isDirty } = this.state;
     return (
       <>
@@ -255,7 +257,7 @@ class Form extends React.Component<FormModalProps, State> {
         </DialogContent>
 
         <DialogActions>
-          {onSubmit && <Button variant="contained" id={`${id}-submit`} color="primary" type="submit">{submitText || "Submit"}</Button>}
+          {onSubmit && <Button variant="contained" id={`${id}-submit`} color="primary" type="submit" disabled={submitDisabled}>{submitText || "Submit"}</Button>}
           {onCancel && <Button variant="outlined" id={`${id}-cancel`}  onClick={this.closeForm}>{cancelText || "Cancel"}</Button>}
         </DialogActions>
       </>
