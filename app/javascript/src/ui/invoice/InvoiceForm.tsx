@@ -6,6 +6,7 @@ import { Invoice } from "app/entities/invoice";
 import FormModal from "ui/common/FormModal";
 import Form from "ui/common/Form";
 import { fields } from "ui/invoice/constants";
+import { toDatePicker } from "ui/utils/timeToDate";
 
 interface OwnProps {
   invoice?: Partial<Invoice>;
@@ -23,7 +24,7 @@ class InvoiceForm extends React.Component<OwnProps, {}> {
 
   public validate = async (_form: Form): Promise<Invoice> => (
     this.formRef.simpleValidate<Invoice>(fields)
-  );
+  )
 
   public render(): JSX.Element {
     const { isOpen, onClose, isRequesting, error, onSubmit, invoice } = this.props;
@@ -67,7 +68,7 @@ class InvoiceForm extends React.Component<OwnProps, {}> {
         <TextField
           fullWidth
           required
-          value={invoice && invoice.dueDate}
+          value={invoice && invoice.dueDate && toDatePicker(invoice.dueDate)}
           label={fields.dueDate.label}
           name={fields.dueDate.name}
           placeholder={fields.dueDate.placeholder}

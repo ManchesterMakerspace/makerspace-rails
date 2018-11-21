@@ -143,6 +143,12 @@
   version "4.14.116"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.116.tgz#5ccf215653e3e8c786a58390751033a9adca0eb9"
 
+"@types/moment-timezone@^0.5.9":
+  version "0.5.9"
+  resolved "https://registry.yarnpkg.com/@types/moment-timezone/-/moment-timezone-0.5.9.tgz#1a34ef6ba2e4578b9ca399ed5eec57525ad1d4a7"
+  dependencies:
+    moment ">=2.14.0"
+
 "@types/node@*":
   version "10.5.7"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.5.7.tgz#960d9feb3ade2233bcc9843c918d740b4f78a7cf"
@@ -4955,7 +4961,13 @@ mockserver-node@^5.3.0:
     glob "~7.1"
     q "~2.0"
 
-moment@^2.22.2:
+moment-timezone@^0.5.23:
+  version "0.5.23"
+  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.23.tgz#7cbb00db2c14c71b19303cb47b0fb0a6d8651463"
+  dependencies:
+    moment ">= 2.9.0"
+
+"moment@>= 2.9.0", moment@>=2.14.0, moment@^2.22.2:
   version "2.22.2"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.2.tgz#3c257f9839fc0e93ff53149632239eb90783ff66"
 
@@ -6425,10 +6437,6 @@ react-signature-canvas@^1.0.0-alpha.1:
   dependencies:
     signature_pad "^2.3.2"
     trim-canvas "^0.1.0"
-
-react-signature-pad@^0.0.6:
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/react-signature-pad/-/react-signature-pad-0.0.6.tgz#335547c1f523a36b8396e5365e2f49521e56b9cf"
 
 react-transition-group@^2.2.1:
   version "2.4.0"

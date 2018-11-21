@@ -7,9 +7,11 @@ import { MemberDetails } from "app/entities/member";
 import FormModal from "ui/common/FormModal";
 import { fields } from "ui/member/constants";
 import Form from "ui/common/Form";
+import { toDatePicker, dateToTime } from "ui/utils/timeToDate";
 
 interface OwnProps {
   member: MemberDetails;
+  isAdmin: boolean;
   isOpen: boolean;
   isRequesting: boolean;
   error: string;
@@ -21,12 +23,16 @@ class MemberForm extends React.Component<OwnProps, {}> {
   public formRef: Form;
   private setFormRef = (ref: Form) => this.formRef = ref;
 
-  public validate = async (_form: Form): Promise<MemberDetails> => (
-    this.formRef.simpleValidate<MemberDetails>(fields)
-  );
+  public validate = async (_form: Form): Promise<MemberDetails> => {
+    const details = await this.formRef.simpleValidate<MemberDetails>(fields);
+    return {
+      ...details,
+      expirationTime: dateToTime(details.expirationTime)
+    }
+  }
 
   public render(): JSX.Element {
-    const { isOpen, onClose, isRequesting, error, onSubmit, member } = this.props;
+    const { isOpen, onClose, isRequesting, error, onSubmit, member, isAdmin } = this.props;
 
     return (
       <FormModal
@@ -35,7 +41,7 @@ class MemberForm extends React.Component<OwnProps, {}> {
         loading={isRequesting}
         isOpen={isOpen}
         closeHandler={onClose}
-        title={`Edit ${member ? `${member.firstname} ${member.lastname}` : "Member"}`}
+        title={`Update ${member ? `${member.firstname} ${member.lastname}` : "Member"}`}
         onSubmit={onSubmit}
         submitText="Save"
         error={error}
@@ -64,18 +70,18 @@ class MemberForm extends React.Component<OwnProps, {}> {
             />
           </Grid>
         </Grid>
-        <TextField
+        {isAdmin && <TextField
           fullWidth
           required
-          value={member.expirationTime}
-          label={fields.expiration.label}
-          name={fields.expiration.name}
-          placeholder={fields.expiration.placeholder}
+          value={toDatePicker(member.expirationTime)}
+          label={fields.expirationTime.label}
+          name={fields.expirationTime.name}
+          placeholder={fields.expirationTime.placeholder}
           type="date"
           InputLabelProps={{
             shrink: true,
           }}
-        />
+        />}
         <TextField
           fullWidth
           required

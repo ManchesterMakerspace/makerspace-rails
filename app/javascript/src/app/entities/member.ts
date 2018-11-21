@@ -22,7 +22,8 @@ export enum Properties {
 export enum MemberStatus {
   Active = "activeMember",
   Revoked = "revoked",
-  NonMember = "nonMember"
+  NonMember = "nonMember",
+  Inactive = "inactive"
 }
 
 export enum MemberRole {

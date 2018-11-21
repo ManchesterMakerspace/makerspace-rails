@@ -29,12 +29,13 @@ export const readMemberAction = (
 
 export const updateMemberAction = (
   memberId: string,
-  updateDetails: Partial<MemberDetails>
+  updateDetails: Partial<MemberDetails>,
+  isAdmin: boolean = false
 ): ThunkAction<Promise<void>, {}, {}, AnyAction > => async (dispatch) => {
   dispatch({ type: MemberAction.StartUpdateRequest });
 
   try {
-    const response = await putMember(memberId, updateDetails);
+    const response = await putMember(memberId, updateDetails, isAdmin);
     const { data } = response;
     dispatch({
       type: MemberAction.UpdateMemberSuccess,

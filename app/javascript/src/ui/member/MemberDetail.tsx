@@ -30,6 +30,7 @@ import { Routing } from "app/constants";
 import { numberAsCurrency } from "ui/utils/numberToCurrency";
 import StatusLabel from "ui/common/StatusLabel";
 import { Status } from "ui/common/constants";
+import { ActionButton } from "ui/common/ButtonRow";
 
 interface DispatchProps {
   getMember: () => Promise<void>;
@@ -191,15 +192,7 @@ class MemberDetail extends React.Component<Props, State> {
         <DetailView
           title={`${member.firstname} ${member.lastname}`}
           basePath={`/members/${memberId}`}
-          actionButtons={admin && [
-            {
-              id: "member-detail-open-renew-modal",
-              color: "primary",
-              variant: "contained",
-              disabled: loading,
-              label: "Renew",
-              onClick: this.openRenewModal
-            },
+          actionButtons={[
             {
               id: "member-detail-open-edit-modal",
               color: "primary",
@@ -208,14 +201,22 @@ class MemberDetail extends React.Component<Props, State> {
               label: "Edit",
               onClick: this.openEditModal
             },
-            {
-              id: "member-detail-open-card-modal",
+            ...admin ? [{
+              id: "member-detail-open-renew-modal",
               color: "primary",
-              variant: "outlined",
+              variant: "contained",
               disabled: loading,
-              label: member && member.cardId ? "Replace Fob" : "Register Fob",
-              onClick: this.openCardModal
-            }
+              label: "Renew",
+              onClick: this.openRenewModal
+            },
+              {
+                id: "member-detail-open-card-modal",
+                color: "primary",
+                variant: "outlined",
+                disabled: loading,
+                label: member && member.cardId ? "Replace Fob" : "Register Fob",
+                onClick: this.openCardModal
+              }] as ActionButton[]: []
           ]}
           information={this.renderMemberInfo()}
           resources={!isWelcomeOpen && this.allowViewProfile() && [
@@ -288,6 +289,7 @@ class MemberDetail extends React.Component<Props, State> {
       <MemberForm
         ref={renderProps.setRef}
         member={renderProps.member}
+        isAdmin={admin}
         isOpen={renderProps.isOpen}
         isRequesting={renderProps.isUpdating}
         error={renderProps.error}

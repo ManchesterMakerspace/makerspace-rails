@@ -43,7 +43,7 @@ export const fields = {
     error: "Due date required"
   },
   amount: {
-    label: "Amount",
+    label: "Amount ($)",
     name: `${formPrefix}-amount`,
     placeholder: "Enter amount",
     validate: (val: number) => (!!val && val > 0),

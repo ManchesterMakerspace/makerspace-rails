@@ -19,6 +19,7 @@ export interface FormField {
   name: string;
   placeholder?: string;
   validate?: (val: any) => boolean;
+  transform?: (val: any) => any;
   error?: string;
   render?: (value: string | number | object) => string | JSX.Element;
   [key: string]: any;
@@ -119,7 +120,7 @@ class Form extends React.Component<FormModalProps, State> {
     const errors: CollectionOf<string> = {};
     const validatedForm: Partial<T> = {};
     Object.entries(fields).forEach(([key, field]) => {
-      const value = values[field.name];
+      const value = field.transform ? field.transform(values[field.name]) : values[field.name];
       if (field.validate && !field.validate(value)) {
         errors[field.name] = field.error;
       } else {

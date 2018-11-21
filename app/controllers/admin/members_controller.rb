@@ -3,7 +3,7 @@ class Admin::MembersController < AdminController
   before_action :slack_connect, only: [:update, :renew]
 
   def create
-    @member = Member.new(member_params)
+    @member = Member.new(get_camel_case_params)
     if @member.save
       if @member.cardID
         Card.create(uid: @member.cardID, member: @member)
@@ -18,7 +18,7 @@ class Admin::MembersController < AdminController
 
   def update
     date = @member.expirationTime
-    if @member.update(member_params)
+    if @member.update(get_camel_case_params)
       if @member.expirationTime && date && @member.expirationTime > date
         @messages.push("#{@member.fullname} renewed. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}")
       elsif @member.expirationTime != date
@@ -34,11 +34,19 @@ class Admin::MembersController < AdminController
 
   private
   def member_params
-    if params[:member][:renewal]
-      params.require(:member).permit(:firstname, :lastname, :renewal)
-    else 
-      params.require(:member).permit(:firstname, :lastname, :cardID, :groupName, :memberContractOnFile, :role, :email, :slackHandle, :password, :password_confirmation, :status, :expirationTime, :renewal)
+    params.require(:member).permit(:firstname, :lastname, :group_name, :role, :email, :status, :expiration_time, :renewal)
+  end
+
+  def get_camel_case_params
+    camel_case_props = {
+      group_name: :groupName,
+      expiration_time: :expirationTime,
+    }
+    params = member_params()
+    camel_case_props.each do | key, value|
+      params[value] = params.delete(key) unless params[key].nil?
     end
+    params
   end
 
   def set_member

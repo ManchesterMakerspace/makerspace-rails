@@ -7,11 +7,12 @@ export const memberStatusLabelMap = {
   [MemberStatus.Active]: "Active",
   [MemberStatus.Revoked]: "Revoked",
   [MemberStatus.NonMember]: "Non-Member",
+  [MemberStatus.Inactive]: "Inactive"
 };
 
 const MemberStatusLabel: React.SFC<{ member: MemberDetails, id?: string }> = (props) => {
   const { member } = props;
-  const inActive = member.status !== MemberStatus.Active;
+  const inActive = ![MemberStatus.Active, MemberStatus.NonMember].includes(member.status);
   const current = member.expirationTime > Date.now();
   const statusColor = current && !inActive ? Status.Success : Status.Danger;
 

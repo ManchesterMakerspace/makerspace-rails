@@ -25,9 +25,9 @@ export const getMember = async (id: string) => {
   }
 }
 
-export const putMember = async (id: string, details: Partial<MemberDetails>) => {
+export const putMember = async (id: string, details: Partial<MemberDetails>, isAdmin: boolean) => {
   try {
-    return await axios.put(`${buildMemberUrl(id, true)}`, { member: details });
+    return await axios.put(`${buildMemberUrl(id, isAdmin)}`, { member: details });
   } catch (e) {
     const error = handleApiError(e);
     throw error;

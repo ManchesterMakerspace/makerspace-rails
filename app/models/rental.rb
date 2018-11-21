@@ -1,6 +1,5 @@
 class Rental
   include Mongoid::Document
-  extend InvoiceableResource
 
   belongs_to :member, optional: true
 

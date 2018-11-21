@@ -21,11 +21,12 @@ interface OwnProps {
   render: (renderPayload: UpdateMemberRenderProps) => JSX.Element;
 }
 interface StateProps {
+  isAdmin: boolean;
   error: string;
   isUpdating: boolean;
 }
 interface DispatchProps {
-  updateMember: (updatedMember: MemberDetails) => void;
+  updateMember: (updatedMember: MemberDetails, isAdmin: boolean) => void;
 }
 interface Props extends OwnProps, StateProps, DispatchProps {}
 
@@ -46,7 +47,7 @@ class EditMember extends React.Component<Props, {}> {
 
     if (!form.isValid()) return;
 
-    await this.props.updateMember(validUpdate);
+    await this.props.updateMember(validUpdate, this.props.isAdmin);
   }
 
   public render(): JSX.Element {
@@ -67,7 +68,9 @@ const mapStateToProps = (
   _ownProps: OwnProps
 ): StateProps => {
   const { isRequesting: isUpdating, error } = state.member.update
+  const { currentUser: { isAdmin } } = state.auth;
   return {
+    isAdmin,
     error,
     isUpdating
   }
@@ -78,7 +81,7 @@ const mapDispatchToProps = (
   ownProps: OwnProps,
 ): DispatchProps => {
   return {
-    updateMember: (memberDetails) => dispatch(updateMemberAction(ownProps.member.id, memberDetails)),
+    updateMember: (memberDetails, isAdmin) => dispatch(updateMemberAction(ownProps.member.id, memberDetails, isAdmin)),
   }
 }
 

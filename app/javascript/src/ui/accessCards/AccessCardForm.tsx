@@ -189,9 +189,9 @@ export class AccessCardForm extends React.Component<Props,State> {
   }
 
   private renderCardReplacement = () => {
-    const { loading, error: stateError, cardDisabled } = this.state;
-    const { isRequesting, error } = this.props;
-    const disabled = loading || isRequesting || !!error || !!stateError;
+    const { loading, cardDisabled } = this.state;
+    const { isRequesting } = this.props;
+    const disabled = loading || isRequesting;
 
     return (
       <>
@@ -256,10 +256,14 @@ export class AccessCardForm extends React.Component<Props,State> {
   }
 
   private onSubmit = (form: Form) => {
-    const { onSubmit } = this.props;
+    const { onSubmit, member } = this.props;
     const { rejectionCardId } = this.state;
     if (!rejectionCardId) {
-      this.setState({ error: "Import new key fob before proceeding." });
+      if (member.cardId) {
+        this.setState({ error: "Deactivate current fob before proceeding." });
+      } else {
+        this.setState({ error: "Import new key fob before proceeding." });
+      }
       return;
     }
     onSubmit(form);
