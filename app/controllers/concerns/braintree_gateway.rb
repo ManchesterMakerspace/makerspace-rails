@@ -7,7 +7,7 @@ module BraintreeGateway
 
   def init_gateway
     @gateway = Braintree::Gateway.new(
-      :environment => :sandbox,
+      :environment => ENV["BT_ENV"],
       :merchant_id => ENV["BT_MERCHANT_ID"],
       :public_key => ENV["BT_PUBLIC_KEY"],
       :private_key => ENV['BT_PRIVATE_KEY'],

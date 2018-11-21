@@ -39,6 +39,7 @@ class Member
   validates_inclusion_of :status, in: ["activeMember", "nonMember", "revoked"]
 
   before_save :update_allowed_workshops
+  before_save :update_braintree_customer_info
   after_initialize :verify_group_expiry
   after_update :update_card
 
@@ -117,6 +118,19 @@ class Member
 
   def expiration_attr
     :expirationTime
+  end
+
+  protected
+  def update_braintree_customer_info
+    if self.customer_id && self.changed.any? { |attr| [:firstname, :lastname].include(attr) }
+      gateway = Braintree::Gateway.new(
+        :environment => ENV["BT_ENV"],
+        :merchant_id => ENV["BT_MERCHANT_ID"],
+        :public_key => ENV["BT_PUBLIC_KEY"],
+        :private_key => ENV['BT_PRIVATE_KEY'],
+      )
+      customer = gateway.customer.update(self.customer_id, firstname: self.firstname, lastname: self.lastname)
+    end
   end
 
   private

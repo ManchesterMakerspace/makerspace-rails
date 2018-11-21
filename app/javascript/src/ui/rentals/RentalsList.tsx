@@ -48,6 +48,11 @@ class RentalsList extends React.Component<Props, State> {
       defaultSortDirection: SortDirection.Desc,
     },
     {
+      id: "description",
+      label: "Description",
+      cell: (row: Rental) => row.description,
+    },
+    {
       id: "expiration",
       label: "Expiration Date",
       cell: (row: Rental) => timeToDate(row.expiration),
