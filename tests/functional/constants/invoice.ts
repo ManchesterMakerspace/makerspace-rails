@@ -24,7 +24,7 @@ export const baseInvoice: Invoice = {
   quantity: 1,
   settled: false,
   pastDue: false,
-  resource: InvoiceableResource.Membership,
+  resourceClass: InvoiceableResource.Membership,
   memberId: "test_member",
   operation: InvoiceOperation.Renew,
   resourceId: "123",

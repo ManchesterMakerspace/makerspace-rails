@@ -33,7 +33,6 @@
     "jsx": "react",
     "typeRoots": [
       "node_modules/@types",
-      "tests/functional/webdriverTypings",
       "app/javascript/src/app/typings"
     ]
   },
@@ -41,7 +40,8 @@
     "node_modules",
     "vendor",
     "public",
-    "spec"
+    "spec",
+    "tests"
   ],
   "compileOnSave": false
 }

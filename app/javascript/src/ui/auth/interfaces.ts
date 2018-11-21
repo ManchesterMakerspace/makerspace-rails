@@ -30,7 +30,7 @@ export type AuthMember = Pick<MemberDetails,
                         MemberProperties.Firstname |
                         MemberProperties.Expiration |
                         MemberProperties.Role
-                      > & {
+                      > & Partial<MemberDetails> & {
   isAdmin: boolean;
   isNewMember: boolean;
 };

@@ -19,7 +19,7 @@ export interface ApiInvoice extends BaseInvoice {
 }
 
 export interface Invoice extends BaseInvoice {
-  resource: InvoiceableResource;
+  resourceClass: InvoiceableResource;
   operation: InvoiceOperation,
   resourceId: string;
   quantity: number;
@@ -48,6 +48,7 @@ export enum Properties {
   Settled = "settled",
   PastDue = "pastDue",
   ResourceId = "resourceId",
+  ResourceClass = "resourceClass",
   MemberId = "memberId",
   SubscriptionId = "subscriptionId"
 }

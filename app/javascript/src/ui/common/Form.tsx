@@ -2,6 +2,8 @@ import * as React from "react";
 import mapValues from "lodash-es/mapValues";
 import isEmpty from "lodash-es/isEmpty";
 import omit from "lodash-es/omit";
+import isUndefined from "lodash-es/isUndefined";
+
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -11,7 +13,6 @@ import { CollectionOf } from "app/interfaces";
 
 import ErrorMessage from "ui/common/ErrorMessage";
 import LoadingOverlay from "ui/common/LoadingOverlay";
-import { isUndefined } from "lodash-es";
 
 
 export interface FormField {
@@ -107,6 +108,15 @@ class Form extends React.Component<FormModalProps, State> {
     return new Promise((resolve) => this.setState(state => ({ ...state, ...newState }), resolve))
   };
 
+  public setValue = (fieldName: string, value: any) => {
+    return new Promise((resolve) => this.setState(state => ({
+      values: {
+          ...state.values,
+          [fieldName]: isUndefined(value) ? null : value
+        }
+      }), resolve))
+  }
+
   public isValid = (): boolean => {
     return isEmpty(this.state.errors);
   }
@@ -151,7 +161,7 @@ class Form extends React.Component<FormModalProps, State> {
   private handleChange = (event: React.ChangeEvent<HTMLFormElement>) => {
     const fieldName = event.target.name;
     // Set value depending on checked state for checkboxes and radios
-    const fieldValue = event.target.hasOwnProperty("checked") ? (!!event.target.checked) : event.target.value;
+    const fieldValue = event.target.hasOwnProperty("checked") ? (isUndefined(event.target.value) ? event.target.checked : event.target.value) : event.target.value;
     const { isDirty } = this.state;
     if (!isDirty) {
       this.setState({ isDirty: true });

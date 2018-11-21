@@ -29,10 +29,13 @@ export const fields = {
     validate: (_val: string) => true,
   },
   contact: {
-    label: "Contact Info",
+    label: "Contact Info (Select a member or enter an email)",
     name: `${formPrefix}-contact`,
-    placeholder: "Enter Member's email",
-    validate: (val: string) => !!val,
+    placeholder: `Search by name or email`,
+    validate: (val: string) => {
+      console.log(val);
+      return !!val
+    },
     error: "Contact info required"
   },
   dueDate: {
@@ -49,13 +52,10 @@ export const fields = {
     validate: (val: number) => (!!val && val > 0),
     error: "Invoice amount required"
   },
-  // resource: {
-  //   label: "Invoice For",
-  //   name: `${formPrefix}-resource`,
-  //   placeholder: "Select an item to invoice for",
-  //   validate: (val: InvoiceableResource) => val && Object.values(InvoiceableResource).includes(val),
-  //   error: "Invalid selection"
-  // },
+  type: {
+    label: "Invoice Type",
+    name: `${formPrefix}-type`,
+  },
   // term: {
   //   label: "Renewal Length",
   //   name: `${formPrefix}-term`,

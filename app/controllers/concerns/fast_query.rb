@@ -3,6 +3,7 @@ module FastQuery
   @@items_per_page = 20
 
   def query_resource(current_query, custom_query = nil)
+    return current_query unless current_query.class == Mongoid::Criteria
     query = custom_query || query_params
     items_per_page = @@items_per_page
     page_num = query[:pageNum].to_i || 0

@@ -7,6 +7,7 @@ export interface MemberDetails {
   status: MemberStatus;
   cardId: string;
   role: MemberRole[];
+  subscriptionId: string;
 }
 
 export enum Properties {

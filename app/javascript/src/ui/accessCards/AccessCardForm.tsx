@@ -3,7 +3,7 @@ import * as React from "react";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 
-import { AccessCard, CardStatus } from "app/entities/card";
+import { AccessCard, CardStatus, CardLocation } from "app/entities/card";
 import { getRejectionCard, putCard } from "api/accessCards/transactions";
 import FormModal from "ui/common/FormModal";
 import Form from "ui/common/Form";
@@ -35,7 +35,7 @@ const defaultState = {
   error: "",
   cardDisabled: false,
 };
-const InactiveCardStatuses = [CardStatus.Lost, CardStatus.Stolen, CardStatus.Revoked];
+const InactiveCardStatuses = [CardLocation.Lost, CardLocation.Stolen, CardStatus.Revoked, CardStatus.Inactive];
 export class AccessCardForm extends React.Component<Props,State> {
   public formRef: Form;
   private setFormRef = (ref: Form) => this.formRef = ref;
@@ -108,7 +108,7 @@ export class AccessCardForm extends React.Component<Props,State> {
     const { member } = this.props;
     const cardDetails: Partial<AccessCard> = {
       id: member.cardId,
-      validity: CardStatus.Lost
+      cardLocation: CardLocation.Lost
     };
     this.reportCard(cardDetails);
   }
@@ -117,7 +117,7 @@ export class AccessCardForm extends React.Component<Props,State> {
     const { member } = this.props;
     const cardDetails: Partial<AccessCard> = {
       id: member.cardId,
-      validity: CardStatus.Stolen
+      validity: CardLocation.Stolen
     };
     this.reportCard(cardDetails);
   }

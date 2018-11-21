@@ -4,7 +4,7 @@ class Admin::RentalsController < AdminController
   before_action :slack_connect, only: [:update]
 
   def index
-    rentals = params[:memberId] ? Rental.where(member_id: params[:memberId]) : Rental
+    rentals = params[:memberId] ? Rental.where(member_id: params[:memberId]) : Rental.all
     return render_with_total_items(query_resource(rentals))
   end
 

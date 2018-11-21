@@ -161,37 +161,37 @@ class InvoicesList extends React.Component<Props, State> {
 
     const payLabel = `Pay Selected Due${(selectedInvoices).length > 1 ? `s` : ''}${selectedInvoices.length ? ` (${selectedInvoices.length})` : ""}`;
     const actionButtons: ActionButton[] = [
-      ...(admin && [{
-        id: "invoices-list-create",
-        variant: "contained",
-        color: "primary",
-        onClick: this.openCreateForm,
-        label: "Create New Invoice"
-      }, {
-        id: "invoices-list-edit",
-        variant: "outlined",
-        color: "primary",
-        disabled: !Array.isArray(selectedIds) || selectedIds.length !== 1,
-        onClick: this.openUpdateForm,
-        label: "Edit Invoice"
-      }, {
-        id: "invoices-list-delete",
-        variant: "outlined",
-        color: "primary",
-        disabled: !Array.isArray(selectedIds) || selectedIds.length !== 1,
-        onClick: this.openDeleteInvoice,
-        label: "Delete Invoice"
-      }] as ActionButton[] || []),
-    ...[payNow && {
-        id: "invoices-list-payNow",
-        style: { float: "right" },
-        variant: "contained",
-        color: "primary",
-        disabled: !Array.isArray(selectedIds) || !selectedIds.length,
-      onClick: this.openPaymentPreview,
-        label: payLabel
-      }]  as ActionButton[]
-    ].filter(b => !!b);
+      ...admin ? [{
+            id: "invoices-list-create",
+            variant: "contained",
+            color: "primary",
+            onClick: this.openCreateForm,
+            label: "Create New Invoice"
+          }, {
+            id: "invoices-list-edit",
+            variant: "outlined",
+            color: "primary",
+            disabled: !Array.isArray(selectedIds) || selectedIds.length !== 1,
+            onClick: this.openUpdateForm,
+            label: "Edit Invoice"
+          }, {
+            id: "invoices-list-delete",
+            variant: "outlined",
+            color: "primary",
+            disabled: !Array.isArray(selectedIds) || selectedIds.length !== 1,
+            onClick: this.openDeleteInvoice,
+            label: "Delete Invoice"
+          }] as ActionButton[] : [],
+    ...payNow ? [{
+            id: "invoices-list-payNow",
+            style: { float: "right" },
+            variant: "contained",
+            color: "primary",
+            disabled: !Array.isArray(selectedIds) || !selectedIds.length,
+            onClick: this.openPaymentPreview,
+            label: payLabel
+          }]  as ActionButton[] : []
+    ];
 
     return (
       <ButtonRow
@@ -391,7 +391,7 @@ class InvoicesList extends React.Component<Props, State> {
   private getFields = () => {
     return [
       ...this.props.fields || this.fields,
-    ].filter(f => !!f);
+    ];
   }
 
   public render(): JSX.Element {

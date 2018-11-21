@@ -43,6 +43,7 @@ interface StateProps {
   isUpdatingMember: boolean;
   member: MemberDetails,
   currentUserId: string;
+  subscriptionId: string;
 }
 interface OwnProps extends RouteComponentProps<any> {
 }
@@ -173,6 +174,9 @@ class MemberDetail extends React.Component<Props, State> {
         <KeyValueItem label="Membership Status">
           <MemberStatusLabel id="member-detail-status" member={member} />
         </KeyValueItem>
+        <KeyValueItem label="Membership Type">
+          <span id="member-detail-type">{member.subscriptionId ? "Subscription" : "Monthly"}</span>
+        </KeyValueItem>
       </>
     )
   }
@@ -237,7 +241,7 @@ class MemberDetail extends React.Component<Props, State> {
                 />
               )
             }
-          ].filter(r => !!r)}
+          ]}
         />
         {this.renderMemberForms()}
         {/* {this.renderNotifications()} */}
@@ -365,7 +369,7 @@ const mapStateToProps = (
   const { isRequesting, error: requestingError } = state.member.read;
   const { isRequesting: isUpdating } = state.member.update
   const { entity: member } = state.member;
-  const { currentUser: { isAdmin: admin, id: currentUserId, isNewMember } } = state.auth;
+  const { currentUser: { isAdmin: admin, id: currentUserId, isNewMember, subscriptionId } } = state.auth;
 
   return {
     admin,
@@ -374,7 +378,8 @@ const mapStateToProps = (
     currentUserId,
     isRequestingMember: isRequesting,
     isUpdatingMember: isUpdating,
-    isNewMember
+    isNewMember,
+    subscriptionId,
   }
 }
 

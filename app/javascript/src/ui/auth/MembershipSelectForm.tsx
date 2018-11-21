@@ -89,7 +89,7 @@ class MembershipSelectComponent extends React.Component<Props, State> {
 
     let normalizedError: JSX.Element = invoiceOptionsError && (
       <>
-        Error reading membership options. <a href={`mailto: contact@manchestermakerspace.org`}>Email contact@manchestermakerspace.org</a> if your desired membership option is not present
+        Error reading membership options. Email <a href={`mailto: contact@manchestermakerspace.org`}>contact@manchestermakerspace.org</a> if your desired membership option is not present
       </>
     );
     return (

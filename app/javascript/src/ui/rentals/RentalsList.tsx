@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as moment from "moment";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 
@@ -52,18 +53,18 @@ class RentalsList extends React.Component<Props, State> {
       cell: (row: Rental) => timeToDate(row.expiration),
       defaultSortDirection: SortDirection.Desc,
     },
-    ...this.props.admin && [{
+    ...this.props.admin ? [{
       id: "member",
       label: "Member",
-      cell: (row: Rental) => row.memberId,
+      cell: (row: Rental) => row.memberName,
       defaultSortDirection: SortDirection.Desc,
       width: 200
-    }],
+    }] : [],
     {
       id: "status",
       label: "Status",
       cell: (row: Rental) => {
-        const current = row.expiration > Date.now();
+        const current = moment(row.expiration).valueOf() > Date.now();
         const statusColor = current ? Status.Success : Status.Danger;
         const label = current ? "Active" : "Expired";
 
@@ -72,7 +73,7 @@ class RentalsList extends React.Component<Props, State> {
         );
       },
     }
-  ].filter(f => !!f);
+  ];
 
   constructor(props: Props) {
     super(props);

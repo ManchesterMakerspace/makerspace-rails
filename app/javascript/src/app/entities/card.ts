@@ -3,9 +3,10 @@
     uid: string;
     holder: string;
     expiry: number;
-    validity: CardStatus;
+    validity: CardStatus | CardLocation;
+    cardLocation: CardLocation
   }
-  
+
   export enum Properties {
     Id = "id",
     Uid = "uid",
@@ -14,11 +15,14 @@
     Validity = "validity",
   }
 
+  export enum CardLocation {
+    Lost = "lost",
+    Stolen = "stolen",
+  }
   export enum CardStatus {
     Active = "activeMember",
     Revoked = "revoked",
     NonMember = "nonMember",
-    Lost = "lost",
-    Stolen = "stolen",
+    Inactive = "inactive",
     Expired = "expired",
   }
