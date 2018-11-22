@@ -34,6 +34,7 @@ export namespace Url {
     Invoices: `${baseAdminPath}/invoices`,
     Invoice: `${baseAdminPath}/invoices/${PathPlaceholder.InvoiceId}`,
     Rentals: `${baseAdminPath}/rentals`,
+    Rental: `${baseAdminPath}/rentals/${PathPlaceholder.RentalId}`,
   }
 
   export const Billing = {

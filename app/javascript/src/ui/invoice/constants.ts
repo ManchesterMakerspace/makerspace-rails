@@ -1,5 +1,3 @@
-import { InvoiceableResource } from "app/entities/invoice";
-
 export enum Action {
   StartReadRequest = "INVOICE/START_READ_REQUEST",
   GetInvoiceSuccess = "INVOICE/GET_INVOICE_SUCCESS",
@@ -29,13 +27,10 @@ export const fields = {
     validate: (_val: string) => true,
   },
   contact: {
-    label: "Contact Info (Select a member or enter an email)",
+    label: "Select a member",
     name: `${formPrefix}-contact`,
     placeholder: `Search by name or email`,
-    validate: (val: string) => {
-      console.log(val);
-      return !!val
-    },
+    validate: (val: string) => !!val,
     error: "Contact info required"
   },
   dueDate: {

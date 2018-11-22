@@ -1,5 +1,5 @@
 import * as React from "react";
-import AsyncCreatableSelect from 'react-select/lib/AsyncCreatable';
+import AsyncSelect from 'react-select/lib/Async';
 import isEmpty from "lodash-es/isEmpty";
 
 import TextField from "@material-ui/core/TextField";
@@ -55,8 +55,8 @@ class InvoiceForm extends React.Component<OwnProps, State> {
     }
   }
 
-  public validate = async (_form: Form): Promise<Invoice> => {
-    const updatedInvoice = await this.formRef.simpleValidate<Invoice>(fields);
+  public validate = async (form: Form): Promise<Invoice> => {
+    const updatedInvoice = await form.simpleValidate<Invoice>(fields);
     const { contact } = this.state;
     return {
       ...updatedInvoice,
@@ -88,7 +88,7 @@ class InvoiceForm extends React.Component<OwnProps, State> {
   // Need to update internal state and set form value since input is otherwise a controleld input
   private updateContactValue = (newContact: SelectOption) => {
     this.setState({ contact: newContact });
-    this.formRef.setValue(fields.contact.name, newContact);
+    this.formRef && this.formRef.setValue(fields.contact.name, newContact);
   }
 
   private memberOptions = async (searchValue: string) => {
@@ -130,7 +130,15 @@ class InvoiceForm extends React.Component<OwnProps, State> {
           </RadioGroup>
         </FormControl>
         <FormLabel component="legend">{fields.contact.label}</FormLabel>
-        <AsyncCreatableSelect isClearable name={fields.contact.name} value={this.state.contact} onChange={this.updateContactValue} placeholder={fields.contact.placeholder} id={fields.contact.name} loadOptions={this.memberOptions} />
+        <AsyncSelect
+          isClearable
+          name={fields.contact.name}
+          value={this.state.contact}
+          onChange={this.updateContactValue}
+          placeholder={fields.contact.placeholder}
+          id={fields.contact.name}
+          loadOptions={this.memberOptions}
+        />
         {/* Who's it form - Member search */}
         {/* If can find resource, ask how long to renew for
         Else, display sub form to create the resource */}

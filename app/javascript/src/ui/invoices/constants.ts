@@ -7,8 +7,8 @@ export enum Action {
   CreateInvoiceSuccess = "INVOICES/CREATE_INVOICE_SUCCESS",
   CreateInvoiceFailure = "INVOICES/CREATE_INVOICES_FAILURE",
 
-  UpdateInvoiceSuccess = "INVOICES/UPDATE_INVOICE_SUCCESS",
-  DeleteInvoiceSuccess = "INVOICES/DELETE_INVOICE_SUCCESS",
+  UpdateInvoiceSuccess = "INVOICES/UPDATE_INVOICES_SUCCESS",
+  DeleteInvoiceSuccess = "INVOICES/DELETE_INVOICES_SUCCESS",
 
   ClearInvoices = "INVOICES/CLEAR",
 }

@@ -16,13 +16,8 @@ export const getInvoices = async (isUserAdmin: boolean, queryParams?: InvoiceQue
 };
 
 export const postInvoices = async (invoiceForm: Invoice) => {
-  const invoice = {
-    ...invoiceForm,
-    resource_id: invoiceForm.resourceId
-  };
-  delete invoice.resourceId;
   try {
-    return await axios.post(buildInvoicesUrl(true), { invoice });
+    return await axios.post(buildInvoicesUrl(true), { invoice: invoiceForm });
   } catch (e) {
     const error = handleApiError(e);
     throw error;

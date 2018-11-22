@@ -2,4 +2,46 @@ export enum Action {
   StartReadRequest = "RENTALS/START_READ_REQUEST",
   GetRentalsSuccess = "RENTALS/GET_RENTALS_SUCCESS",
   GetRentalsFailure = "RENTALS/GET_RENTALS_FAILURE",
+
+  StartCreateRequest = "RENTALS/START_CREATE_REQUEST",
+  CreateRentalSuccess = "RENTALS/CREATE_RENTAL_SUCCESS",
+  CreateRentalFailure = "RENTALS/CREATE_RENTAL_FAILURE",
+
+  StartUpdateRequest = "RENTAL/START_UPDATE_REQUEST",
+  UpdateRentalSuccess = "RENTAL/UPDATE_RENTAL_SUCCESS",
+  UpdateRentalFailure = "RENTAL/UPDATE_RENTAL_FAILURE",
+
+  StartDeleteRequest = "RENTAL/START_DELETE_REQUEST",
+  DeleteRentalSuccess = "RENTAL/DELETE_RENTAL_SUCCESS",
+  DeleteRentalFailure = "RENTAL/DELETE_RENTAL_FAILURE",
+}
+
+const formPrefix = "rental-form";
+export const fields = {
+  number: {
+    label: "Number",
+    name: `${formPrefix}-number`,
+    placeholder: "Enter number",
+    validate: (val: string) => !!val,
+  },
+  description: {
+    label: "Description",
+    name: `${formPrefix}-description`,
+    placeholder: "Enter description",
+    validate: (val: string) => !!val,
+  },
+  expiration: {
+    label: "Expiration",
+    name: `${formPrefix}-expiration`,
+    placeholder: "Select an expiration date",
+    validate: (val: string) => true,
+    error: "Expiration date required"
+  },
+  member: {
+    label: "Select a member",
+    name: `${formPrefix}-member`,
+    placeholder: `Search by name or email`,
+    validate: (val: string) => !!val,
+    error: "Member required"
+  },
 }

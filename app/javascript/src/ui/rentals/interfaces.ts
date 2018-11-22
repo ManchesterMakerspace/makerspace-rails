@@ -6,4 +6,7 @@ export interface RentalsState {
   read: RequestStatus & {
     totalItems: number;
   };
+  update: RequestStatus;
+  delete: RequestStatus;
+  create: RequestStatus;
 }

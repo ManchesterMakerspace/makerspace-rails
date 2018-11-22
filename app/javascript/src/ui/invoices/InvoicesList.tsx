@@ -1,6 +1,5 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router";
 import Button from "@material-ui/core/Button";
 import pick from "lodash-es/pick";
 
@@ -24,7 +23,7 @@ import PaymentRequiredModal from "ui/invoices/PaymentRequiredModal";
 import { numberAsCurrency } from "ui/utils/numberToCurrency";
 import { Status } from "ui/common/constants";
 import StatusLabel from "ui/common/StatusLabel";
-import { Action as CheckoutAction } from "ui/checkout/constants";
+import Form from "ui/common/Form";
 
 interface OwnProps {
   member?: MemberDetails;
@@ -316,9 +315,9 @@ class InvoicesList extends React.Component<Props, State> {
     );
 
     const deleteModal = (renderProps: UpdateInvoiceRenderProps) => {
-      const close = () => {
-        this.setState({ selectedIds: undefined });
-        renderProps.closeHandler();
+      const submit = (form: Form) => {
+        this.setState({ selectedIds: [] });
+        renderProps.submit(form);
       }
       return (
         <DeleteInvoiceModal
@@ -327,13 +326,13 @@ class InvoicesList extends React.Component<Props, State> {
           isOpen={renderProps.isOpen}
           isRequesting={renderProps.isRequesting}
           error={renderProps.error}
-          onClose={close}
-          onSubmit={renderProps.submit}
+          onClose={renderProps.closeHandler}
+          onSubmit={submit}
         />
       );
     }
 
-    const selectedId = selectedIds.length === 1 && selectedIds[0];
+    const selectedId = Array.isArray(selectedIds) && selectedIds.length === 1 && selectedIds[0];
 
     return (admin &&
       <>
@@ -355,7 +354,7 @@ class InvoicesList extends React.Component<Props, State> {
           operation={CrudOperation.Update}
           isOpen={openSettleForm}
           invoice={{
-            ...invoices[selectedIds[0]],
+            ...invoices[selectedId],
             settled: true
           }}
           closeHandler={this.closeSettleInvoice}
@@ -364,7 +363,7 @@ class InvoicesList extends React.Component<Props, State> {
          <UpdateInvoiceContainer
           operation={CrudOperation.Delete}
           isOpen={openDeleteConfirm}
-          invoice={invoices[selectedIds[0]]}
+          invoice={invoices[selectedId]}
           closeHandler={this.closeDeleteInvoice}
           render={deleteModal}
         />
@@ -400,7 +399,6 @@ class InvoicesList extends React.Component<Props, State> {
       totalItems,
       loading,
       error,
-      admin
     } = this.props;
 
     const {

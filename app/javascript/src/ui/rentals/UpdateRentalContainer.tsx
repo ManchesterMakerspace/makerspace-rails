@@ -1,41 +1,39 @@
 import * as React from "react";
 import { connect } from "react-redux";
 
-import { Invoice } from "app/entities/invoice";
+import { Rental } from "app/entities/rental";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import Form from "ui/common/Form";
-import InvoiceForm from "ui/invoice/InvoiceForm"
-import SettleInvoiceModal from "ui/invoice/SettleInvoiceModal"
-import { updateInvoiceAction, deleteInvoiceAction } from "ui/invoice/actions";
-import { createInvoiceAction } from "ui/invoices/actions";
-import DeleteInvoiceModal from "ui/invoice/DeleteInvoiceModal";
+import RenewalForm from "ui/common/RenewalForm"
+import { updateRentalAction, createRentalAction, deleteRentalAction } from "ui/rentals/actions";
 import { CrudOperation } from "app/constants";
+import RentalForm from "ui/rentals/RentalForm";
+import DeleteRentalModal from "ui/rentals/DeleteRentalModal";
 
-
-export interface UpdateInvoiceRenderProps extends Props {
+export interface UpdateRentalRenderProps extends Props {
   submit: (form: Form) => void;
-  setRef: (ref: InvoiceForm | SettleInvoiceModal | DeleteInvoiceModal) => void;
+  setRef: (ref: RentalForm | RenewalForm | DeleteRentalModal) => void;
 }
 interface OwnProps {
-  invoice?: Partial<Invoice>;
-  isOpen: boolean;
+  rental: Partial<Rental>;
   operation: CrudOperation;
+  isOpen: boolean;
   closeHandler: () => void;
-  render: (renderPayload: UpdateInvoiceRenderProps) => JSX.Element;
+  render: (renderPayload: UpdateRentalRenderProps) => JSX.Element;
 }
 interface StateProps {
   error: string;
   isRequesting: boolean;
 }
 interface DispatchProps {
-  dispatchInvoice: (updatedInvoice: Invoice) => void;
+  dispatchRental: (updateRental: Rental) => void;
 }
 interface Props extends OwnProps, StateProps, DispatchProps { }
 
-class UpdateInvoice extends React.Component<Props, {}> {
-  private formRef: InvoiceForm;
-  private setFormRef = (ref: InvoiceForm) => this.formRef = ref;
+class UpdateRental extends React.Component<Props, {}> {
+  private formRef: RentalForm;
+  private setFormRef = (ref: RentalForm) => this.formRef = ref;
 
   public componentDidUpdate(prevProps: Props) {
     const { isRequesting: wasRequesting } = prevProps;
@@ -45,26 +43,19 @@ class UpdateInvoice extends React.Component<Props, {}> {
     }
   }
 
-  private submit = async (form: Form) => {
-    const { invoice } = this.props;
-    let validUpdate: Invoice;
-    if (this.formRef.validate) {
-      validUpdate = this.formRef.validate && await this.formRef.validate(form);
-    }
-    const updatedInvoice = {
-      ...invoice,
-      ...validUpdate
-    }
+  private submitRentalForm = async (form: Form) => {
+    const validUpdate: Rental = this.formRef.validate && await this.formRef.validate(form);
+
     if (!form.isValid()) return;
 
-    await this.props.dispatchInvoice(updatedInvoice);
+    await this.props.dispatchRental(validUpdate);
   }
 
   public render(): JSX.Element {
     const { render } = this.props;
     const renderPayload = {
       ...this.props,
-      submit: this.submit,
+      submit: this.submitRentalForm,
       setRef: this.setFormRef,
     }
     return (
@@ -72,6 +63,7 @@ class UpdateInvoice extends React.Component<Props, {}> {
     )
   }
 }
+
 
 const mapStateToProps = (
   state: ReduxState,
@@ -81,13 +73,13 @@ const mapStateToProps = (
   const { operation } = ownProps;
   switch (operation) {
     case CrudOperation.Update:
-      stateProps = state.invoice.update;
+      stateProps = state.rentals.update;
       break;
     case CrudOperation.Create:
-      stateProps = state.invoices.create;
+      stateProps = state.rentals.create;
       break;
     case CrudOperation.Delete:
-      stateProps = state.invoice.delete;
+      stateProps = state.rentals.delete;
       break;
   }
 
@@ -98,23 +90,24 @@ const mapStateToProps = (
   }
 }
 
+
 const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch,
   ownProps: OwnProps,
 ): DispatchProps => {
-  const { invoice, operation } = ownProps;
+  const { rental, operation } = ownProps;
   return {
-    dispatchInvoice: (invoiceDetails) => {
+    dispatchRental: (rentalDetails) => {
       let action;
       switch (operation) {
-        case CrudOperation.Update:
-          action = (updateInvoiceAction(invoice.id, invoiceDetails));
+        case CrudOperation.Update:rental
+          action = (updateRentalAction(rental.id, rentalDetails));
           break;
         case CrudOperation.Create:
-          action = (createInvoiceAction(invoiceDetails));
+          action = (createRentalAction(rentalDetails));
           break;
         case CrudOperation.Delete:
-          action = (deleteInvoiceAction(invoice.id));
+          action = (deleteRentalAction(rental.id));
           break;
       }
       dispatch(action);
@@ -122,4 +115,4 @@ const mapDispatchToProps = (
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UpdateInvoice);
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateRental);
