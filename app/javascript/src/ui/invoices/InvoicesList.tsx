@@ -209,8 +209,8 @@ class InvoicesList extends React.Component<Props, State> {
   }
 
   public componentDidUpdate(prevProps: Props, prevState: State) {
-    const { isCreating: wasCreating, invoices: priorInvoices, loading: wasLoading } = prevProps;
-    const { isCreating, createError, invoices, currentUserId, loading } = this.props;
+    const { isCreating: wasCreating, invoices: priorInvoices, loading: wasLoading, member: oldMember } = prevProps;
+    const { isCreating, createError, invoices, currentUserId, loading, member } = this.props;
 
     // Set initial selection on initial load
     if (
@@ -221,7 +221,9 @@ class InvoicesList extends React.Component<Props, State> {
       this.setState({ selectedIds: viewingOwnInvoices ? Object.keys(invoices) : [] });
     }
 
-    if (wasCreating && !isCreating && !createError) {
+    if ((wasCreating && !isCreating && !createError) || // refresh list on create
+        (oldMember !== member) // or member change
+       ) {
       this.getInvoices();
     }
   }

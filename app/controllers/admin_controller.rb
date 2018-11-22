@@ -3,7 +3,7 @@ class AdminController < ApplicationController
 
   private
   def authorized?
-    unless current_member.try(:role) == 'admin'
+    unless is_admin?
       render json: {}, status: 401 and return
     end
   end

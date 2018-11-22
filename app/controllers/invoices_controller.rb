@@ -1,10 +1,13 @@
 class InvoicesController < ApplicationController
+  include FastQuery
   include BraintreeGateway
-    before_action :validate_params, only: [:options]
+  before_action :validate_params, only: [:options]
 
   def index
-    invoices = Invoice.where(member_id: current_member.id)
-    render json: invoices and return
+    invoices =  Invoice.where(member_id: current_member.id)
+    invoices = query_resource(invoices)
+
+    return render_with_total_items(invoices)
   end
 
   def options
@@ -21,7 +24,7 @@ class InvoicesController < ApplicationController
 
   def validate_params
     @invoice_options = params[:types].nil? || !params[:types].is_a?(Array) ? Invoice::OPTION_TYPES : params[:types].map { |t| t.to_sym }
-    if !@invoice_options.nil? && !@invoice_options.all? { |o| Invoice::OPTION_TYPES.include?(o) } 
+    if !@invoice_options.nil? && !@invoice_options.all? { |o| Invoice::OPTION_TYPES.include?(o) }
       raise Exception.new("Invalid invoice option type")
     end
   end

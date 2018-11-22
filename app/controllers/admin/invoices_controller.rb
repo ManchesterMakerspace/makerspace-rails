@@ -1,8 +1,8 @@
 class Admin::InvoicesController < ApplicationController
-    include FastQuery
+  include FastQuery
 
   def index
-    invoices = params[:resourceId] ? Invoice.where(member_id: params[:resourceId]) : Invoice
+    invoices = admin_index_params.key?(:resourceId) ? Invoice.where(resource_id: admin_index_params[:resourceId]) : Invoice.all
     invoices = query_resource(invoices)
 
     return render_with_total_items(invoices)
@@ -38,5 +38,8 @@ class Admin::InvoicesController < ApplicationController
   private
   def invoice_params
     params.require(:invoice).permit(:description, :contact, :items, :settled, :amount, :payment_type, :resource_id, :due_date, :member_id)
+  end
+  def admin_index_params
+    params.permit(:resourceId)
   end
 end

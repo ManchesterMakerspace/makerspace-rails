@@ -33,8 +33,10 @@ interface DispatchProps {
 interface StateProps {
   rentals: CollectionOf<Rental>;
   totalItems: number;
-  loading: boolean;
-  error: string;
+  isReading: boolean;
+  readError: string;
+  isCreating: boolean;
+  createError: string;
   admin: boolean;
 }
 interface Props extends OwnProps, DispatchProps, StateProps { }
@@ -147,6 +149,18 @@ class RentalsList extends React.Component<Props, State> {
 
   public componentDidMount() {
     this.getRentals();
+  }
+
+  public componentDidUpdate(prevProps: Props) {
+    const { isCreating: wasCreating,member: oldMember } = prevProps;
+    const { isCreating, createError, member } = this.props;
+
+
+    if ((wasCreating && !isCreating && !createError) || // refresh list on create
+      (oldMember !== member) // or member change
+    ) {
+      this.getRentals();
+    }
   }
 
   private getRentals = () => {
@@ -278,7 +292,7 @@ class RentalsList extends React.Component<Props, State> {
 
 
   public render(): JSX.Element {
-    const { rentals, totalItems, loading, error, admin } = this.props;
+    const { rentals, totalItems, isReading, readError, admin } = this.props;
 
     const { selectedIds, pageNum, order, orderBy } = this.state;
 
@@ -292,9 +306,9 @@ class RentalsList extends React.Component<Props, State> {
         <TableContainer
           id="rentals-table"
           title="Rentals"
-          loading={loading}
+          loading={isReading}
           data={Object.values(rentals)}
-          error={error}
+          error={readError}
           totalItems={totalItems}
           selectedIds={selectedIds}
           pageNum={pageNum}
@@ -321,8 +335,12 @@ const mapStateToProps = (
     entities: rentals,
     read: {
       totalItems,
-      isRequesting: loading,
-      error
+      isRequesting: isReading,
+      error: readError
+    },
+    create: {
+      isRequesting: isCreating,
+      error: createError
     }
   } = state.rentals;
 
@@ -330,8 +348,10 @@ const mapStateToProps = (
   return {
     rentals,
     totalItems,
-    loading,
-    error,
+    isReading,
+    isCreating,
+    createError,
+    readError,
     admin,
   }
 }
