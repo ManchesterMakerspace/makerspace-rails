@@ -2,31 +2,36 @@ import * as React from "react";
 import { connect } from "react-redux";
 
 import { MemberDetails } from "app/entities/member";
+import { CrudOperation } from "app/constants";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import Form from "ui/common/Form";
 import RenewalForm from "ui/common/RenewalForm"
 import { updateMemberAction } from "ui/member/actions";
+import { createMembersAction } from "ui/members/actions";
 import MemberForm from "ui/member/MemberForm"
 import { AccessCardForm } from "ui/accessCards/AccessCardForm"
 
 export interface UpdateMemberRenderProps extends Props {
-  submit: (form: Form) => void;
+  submit: (form: Form) => Promise<MemberDetails>;
   setRef: (ref: MemberForm | RenewalForm | AccessCardForm) => void;
 }
 interface OwnProps {
-  member: MemberDetails;
+  member: Partial<MemberDetails>;
   isOpen: boolean;
+  operation: CrudOperation;
   closeHandler: () => void;
   render: (renderPayload: UpdateMemberRenderProps) => JSX.Element;
 }
 interface StateProps {
   isAdmin: boolean;
-  error: string;
+  updateError: string;
   isUpdating: boolean;
+  isCreating: boolean;
+  createError: string;
 }
 interface DispatchProps {
-  updateMember: (updatedMember: MemberDetails, isAdmin: boolean) => void;
+  dispatchMember: (updatedMember: MemberDetails, isAdmin: boolean) => Promise<MemberDetails>;
 }
 interface Props extends OwnProps, StateProps, DispatchProps {}
 
@@ -35,9 +40,12 @@ class EditMember extends React.Component<Props, {}> {
   private setFormRef = (ref: MemberForm) => this.formRef = ref;
 
   public componentDidUpdate(prevProps: Props){
-    const { isUpdating: wasUpdating } = prevProps;
-    const { isOpen, isUpdating, closeHandler, error } = this.props;
-    if (isOpen && wasUpdating && !isUpdating && !error) {
+    const { isUpdating: wasUpdating, isCreating: wasCreating } = prevProps;
+    const { isOpen, isUpdating, isCreating, closeHandler, updateError, createError } = this.props;
+    const isRequesting = (isCreating || isUpdating);
+    const wasRequesting = (wasCreating || wasUpdating);
+    const error = (createError || updateError)
+    if (isOpen && wasRequesting && !isRequesting && !error) {
       closeHandler();
     }
   }
@@ -47,7 +55,7 @@ class EditMember extends React.Component<Props, {}> {
 
     if (!form.isValid()) return;
 
-    await this.props.updateMember(validUpdate, this.props.isAdmin);
+    return await this.props.dispatchMember(validUpdate, this.props.isAdmin);
   }
 
   public render(): JSX.Element {
@@ -67,11 +75,14 @@ const mapStateToProps = (
   state: ReduxState,
   _ownProps: OwnProps
 ): StateProps => {
-  const { isRequesting: isUpdating, error } = state.member.update
+  const { isRequesting: isUpdating, error: updateError } = state.member.update
+  const { isRequesting: isCreating, error: createError } = state.members.create
   const { currentUser: { isAdmin } } = state.auth;
   return {
     isAdmin,
-    error,
+    createError,
+    isCreating,
+    updateError,
     isUpdating
   }
 }
@@ -80,8 +91,20 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch,
   ownProps: OwnProps,
 ): DispatchProps => {
+  const { member, operation } = ownProps;
   return {
-    updateMember: (memberDetails, isAdmin) => dispatch(updateMemberAction(ownProps.member.id, memberDetails, isAdmin)),
+    dispatchMember: (memberDetails, isAdmin) => {
+      let action;
+      switch (operation) {
+        case CrudOperation.Update:
+          action = (updateMemberAction(member.id, memberDetails, isAdmin));
+          break;
+        case CrudOperation.Create:
+          action = (createMembersAction(memberDetails));
+          break;
+      }
+      return dispatch(action);
+    }
   }
 }
 

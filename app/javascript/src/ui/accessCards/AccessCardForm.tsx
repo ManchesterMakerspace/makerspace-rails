@@ -13,7 +13,7 @@ import { timeToDate } from "ui/utils/timeToDate";
 import { MemberDetails } from "app/entities/member";
 
 interface OwnProps {
-  member: MemberDetails;
+  member: Partial<MemberDetails>;
   isOpen: boolean;
   isRequesting: boolean;
   error: string;
@@ -246,7 +246,7 @@ export class AccessCardForm extends React.Component<Props,State> {
   //   )
   // }
 
-  public validate = (form: Form): MemberDetails => {
+  public validate = (form: Form) => {
     const { member } = this.props;
     const { rejectionCardId } = this.state;
     return {

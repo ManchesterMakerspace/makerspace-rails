@@ -110,7 +110,7 @@ class RenewalForm extends React.Component<OwnProps, {}> {
         submitText="Submit"
         error={error}
       >
-        {entity ? this.renderForm() :  <ErrorMessage id="renewal-form-error" error="Nothing to renew"/>}
+        {entity ? this.renderForm() : (this.formRef && this.formRef.isDirty() && <ErrorMessage id="renewal-form-error" error="Nothing to renew"/>)}
       </FormModal>
     );
   }

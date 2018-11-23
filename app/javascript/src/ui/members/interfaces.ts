@@ -6,4 +6,5 @@ export interface MembersState {
   read: RequestStatus & {
     totalItems: number;
   };
+  create: RequestStatus;
 }

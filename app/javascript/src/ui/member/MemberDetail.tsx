@@ -26,7 +26,7 @@ import { membershipRenewalOptions } from "ui/members/constants";
 import AccessCardForm from "ui/accessCards/AccessCardForm";
 import InvoicesList from "ui/invoices/InvoicesList";
 import RentalsList from "ui/rentals/RentalsList";
-import { Routing } from "app/constants";
+import { Routing, CrudOperation } from "app/constants";
 import { numberAsCurrency } from "ui/utils/numberToCurrency";
 import StatusLabel from "ui/common/StatusLabel";
 import { Status } from "ui/common/constants";
@@ -296,7 +296,7 @@ class MemberDetail extends React.Component<Props, State> {
         isAdmin={admin}
         isOpen={renderProps.isOpen}
         isRequesting={renderProps.isUpdating}
-        error={renderProps.error}
+        error={renderProps.updateError}
         onClose={renderProps.closeHandler}
         onSubmit={renderProps.submit}
       />
@@ -309,7 +309,7 @@ class MemberDetail extends React.Component<Props, State> {
         entity={memberToRenewal(renderProps.member)}
         isOpen={renderProps.isOpen}
         isRequesting={renderProps.isUpdating}
-        error={renderProps.error}
+        error={renderProps.updateError}
         onClose={renderProps.closeHandler}
         onSubmit={renderProps.submit}
         />
@@ -320,7 +320,7 @@ class MemberDetail extends React.Component<Props, State> {
         member={renderProps.member}
         isOpen={renderProps.isOpen}
         isRequesting={renderProps.isUpdating}
-        error={renderProps.error}
+        error={renderProps.updateError}
         onClose={renderProps.closeHandler}
         onSubmit={renderProps.submit}
       />
@@ -329,18 +329,21 @@ class MemberDetail extends React.Component<Props, State> {
     return (admin &&
       <>
         <UpdateMemberContainer
+          operation={CrudOperation.Update}
           isOpen={isRenewOpen}
           member={member}
           closeHandler={this.closeRenewModal}
           render={renewForm}
         />
         <UpdateMemberContainer
+          operation={CrudOperation.Update}
           isOpen={isEditOpen}
           member={member}
           closeHandler={this.closeEditModal}
           render={editForm}
         />
         <UpdateMemberContainer
+          operation={CrudOperation.Update}
           isOpen={isCardOpen}
           member={member}
           closeHandler={this.closeCardModal}

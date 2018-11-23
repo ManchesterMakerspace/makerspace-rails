@@ -175,8 +175,8 @@ class InvoicesList extends React.Component<Props, State> {
             label: "Edit Invoice"
           }, {
             id: "invoices-list-delete",
-            variant: "outlined",
-            color: "primary",
+            variant: "contained",
+            color: "secondary",
             disabled: !Array.isArray(selectedIds) || selectedIds.length !== 1,
             onClick: this.openDeleteInvoice,
             label: "Delete Invoice"

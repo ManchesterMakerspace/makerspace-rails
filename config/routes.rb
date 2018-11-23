@@ -14,6 +14,7 @@ Rails.application.routes.draw do
       resources :members, only: [:show, :index, :update]
       resources :rentals, only: [:show, :index]
       resources :invoices, only: [:index]
+      resources :groups, only: [:index]
 
       namespace :billing do
         resources :plans, only: [:index]

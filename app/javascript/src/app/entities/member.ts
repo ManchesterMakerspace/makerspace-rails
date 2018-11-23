@@ -6,6 +6,7 @@ export interface MemberDetails {
   expirationTime: number;
   status: MemberStatus;
   cardId: string;
+  groupName: string;
   role: MemberRole[];
   subscriptionId: string;
 }

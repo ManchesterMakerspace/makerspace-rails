@@ -31,16 +31,16 @@ export const updateMemberAction = (
   memberId: string,
   updateDetails: Partial<MemberDetails>,
   isAdmin: boolean = false
-): ThunkAction<Promise<void>, {}, {}, AnyAction > => async (dispatch) => {
+): ThunkAction<Promise<MemberDetails>, {}, {}, AnyAction > => async (dispatch) => {
   dispatch({ type: MemberAction.StartUpdateRequest });
-
   try {
     const response = await putMember(memberId, updateDetails, isAdmin);
-    const { data } = response;
+    const { member } = response.data;
     dispatch({
       type: MemberAction.UpdateMemberSuccess,
-      data: data.member
+      data: member
     });
+    return member;
   } catch (e) {
     const { errorMessage } = e;
     dispatch({

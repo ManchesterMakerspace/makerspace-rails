@@ -5,6 +5,10 @@ export enum Action {
   StartReadRequest = "MEMBERS/START_READ_REQUEST",
   GetMembersSuccess = "MEMBERS/GET_MEMBERS_SUCCESS",
   GetMembersFailure = "MEMBERS/GET_MEMBERS_FAILURE",
+
+  StartCreateRequest = "MEMBERS/START_CREATE_REQUEST",
+  CreateMembersSuccess = "MEMBERS/CREATE_MEMBERS_SUCCESS",
+  CreateMembersFailure = "MEMBERS/CREATE_MEMBERS_FAILURE",
 }
 
   export const membershipRenewalOptions: SelectOption[] = [

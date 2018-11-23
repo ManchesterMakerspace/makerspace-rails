@@ -37,6 +37,8 @@ interface StateProps {
   readError: string;
   isCreating: boolean;
   createError: string;
+  isUpdating: boolean;
+  updateError: string;
   admin: boolean;
 }
 interface Props extends OwnProps, DispatchProps, StateProps { }
@@ -127,8 +129,8 @@ class RentalsList extends React.Component<Props, State> {
         label: "Edit Rental"
       }, {
         id: "rentals-list-delete",
-        variant: "outlined",
-        color: "primary",
+        variant: "contained",
+        color: "secondary",
         disabled: !Array.isArray(selectedIds) || selectedIds.length !== 1,
           onClick: this.openDeleteModal,
         label: "Delete Rental"
@@ -152,12 +154,13 @@ class RentalsList extends React.Component<Props, State> {
   }
 
   public componentDidUpdate(prevProps: Props) {
-    const { isCreating: wasCreating,member: oldMember } = prevProps;
-    const { isCreating, createError, member } = this.props;
+    const { isCreating: wasCreating, isUpdating: wasUpdating, member: oldMember } = prevProps;
+    const { isCreating, createError, isUpdating, updateError, member } = this.props;
 
 
     if ((wasCreating && !isCreating && !createError) || // refresh list on create
-      (oldMember !== member) // or member change
+        (wasUpdating && !isUpdating && !updateError) ||  // or update
+        (oldMember !== member) // or member change
     ) {
       this.getRentals();
     }
@@ -341,6 +344,10 @@ const mapStateToProps = (
     create: {
       isRequesting: isCreating,
       error: createError
+    },
+    update: {
+      isRequesting: isUpdating,
+      error: updateError
     }
   } = state.rentals;
 
@@ -349,9 +356,11 @@ const mapStateToProps = (
     rentals,
     totalItems,
     isReading,
+    readError,
     isCreating,
     createError,
-    readError,
+    isUpdating,
+    updateError,
     admin,
   }
 }

@@ -34,6 +34,15 @@ export const putMember = async (id: string, details: Partial<MemberDetails>, isA
   }
 }
 
+export const postMembers = async (details: Partial<MemberDetails>) => {
+  try {
+    return await axios.post(buildJsonUrl(Url.Admin.Members), { member: details });
+  } catch (e) {
+    const error = handleApiError(e);
+    throw error;
+  }
+}
+
 export const uploadMemberSignature = async (id: string, signature: WindowBase64) => {
   try {
     return await axios.put(`${buildMemberUrl(id)}`, { member: { signature }});

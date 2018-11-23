@@ -5,7 +5,7 @@ import toNumber from "lodash-es/toNumber";
 import { QueryParams } from "app/interfaces";
 import { MemberDetails } from "app/entities/member";
 
-import { getMembers } from "api/members/transactions";
+import { getMembers, postMembers } from "api/members/transactions";
 import { Action as MembersAction } from "ui/members/constants";
 import { MembersState } from "ui/members/interfaces";
 
@@ -35,12 +35,38 @@ export const readMembersAction = (
   }
 };
 
+
+export const createMembersAction = (
+  memberForm: MemberDetails
+): ThunkAction<Promise<MemberDetails>, {}, {}, AnyAction> => async (dispatch) => {
+  dispatch({ type: MembersAction.StartCreateRequest });
+
+  try {
+    const response = await postMembers(memberForm);
+    const { member: newMember } = response.data;
+    dispatch({
+      type: MembersAction.CreateMembersSuccess,
+    })
+    return newMember;
+  } catch (e) {
+    const { errorMessage } = e;
+    dispatch({
+      type: MembersAction.CreateMembersFailure,
+      error: errorMessage
+    });
+  }
+};
+
 const defaultState: MembersState = {
   entities: {},
   read: {
     isRequesting: false,
     error: "",
     totalItems: 0,
+  },
+  create: {
+    isRequesting: false,
+    error: ""
   }
 }
 
@@ -85,6 +111,33 @@ export const membersReducer = (state: MembersState = defaultState, action: AnyAc
           ...state.read,
           isRequesting: false,
           error
+        }
+      }
+    case MembersAction.StartCreateRequest:
+      return {
+        ...state,
+        create: {
+          ...state.create,
+          isRequesting: true
+        }
+      };
+    case MembersAction.CreateMembersSuccess:
+      return {
+        ...state,
+        create: {
+          ...state.create,
+          isRequesting: false,
+          error: ""
+        }
+      };
+    case MembersAction.CreateMembersFailure:
+      const { error: createError } = action;
+      return {
+        ...state,
+        create: {
+          ...state.create,
+          isRequesting: false,
+          error: createError
         }
       }
     default:

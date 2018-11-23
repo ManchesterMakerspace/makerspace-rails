@@ -1,5 +1,6 @@
 import { emailValid } from "app/utils";
 import { FormFields } from "ui/common/Form";
+import { MemberStatus } from "app/entities/member";
 
 export enum Action {
   StartReadRequest = "MEMBER/START_READ_REQUEST",
@@ -33,13 +34,18 @@ export const fields: FormFields = {
     validate: (val: string) => val && emailValid(val),
     error: "Invalid email"
   },
-  // status: {
-  //   label: "Status",
-  //   name: `${formPrefix}-status`,
-  //   placeholder: "Select one",
-  //   validate: (val) => !!val,
-  //   error: "Invalid status"
-  // },
+  status: {
+    label: "Status",
+    name: `${formPrefix}-status`,
+    placeholder: "Select one",
+    validate: (val) => !!val,
+    error: "Invalid status"
+  },
+  groupName: {
+    label: "Group Name (optional)",
+    name: `${formPrefix}-groupName`,
+    placeholder: "Select one",
+  },
   expirationTime: {
     label: "Expiration Date",
     name: `${formPrefix}-expirationTime`,
@@ -55,4 +61,11 @@ export const fields: FormFields = {
   //   validate: (val) => !!val,
   //   error: "Invalid role"
   // },
+}
+
+export const MemberStatusOptions = {
+  [MemberStatus.Active]: "Active",
+  [MemberStatus.Revoked]: "Revoked",
+  [MemberStatus.NonMember]: "Non-Member",
+  [MemberStatus.Inactive]: "Inactive",
 }

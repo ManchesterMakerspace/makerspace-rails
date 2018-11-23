@@ -7,7 +7,8 @@ class MemberSerializer < ActiveModel::Serializer
              :status,
              :role,
              :groupName,
-             :card_id
+             :card_id,
+             :groupName,
   # has_many :learned_skills
   # has_many :allowed_workshops
   # has_many :access_cards

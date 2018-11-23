@@ -1,29 +1,32 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import Grid from "@material-ui/core/Grid";
-
-import { MemberDetails } from "app/entities/member";
+import isUndefined from "lodash-es/isUndefined";
+import { MemberDetails, MemberStatus } from "app/entities/member";
 import { QueryParams, CollectionOf } from "app/interfaces";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
-import { displayMemberExpiration } from "ui/member/utils";
-import Form from "ui/common/Form";
+import { displayMemberExpiration, buildProfileRouting } from "ui/member/utils";
 import ButtonRow from "ui/common/ButtonRow";
 import { SortDirection } from "ui/common/table/constants";
 import TableContainer from "ui/common/table/TableContainer";
 import { Column } from "ui/common/table/Table";
-import RenewalForm, { RenewalEntity, RenewForm } from "ui/common/RenewalForm";
+import RenewalForm from "ui/common/RenewalForm";
+import Form from "ui/common/Form";
 import { readMembersAction } from "ui/members/actions";
 import { membershipRenewalOptions } from "ui/members/constants";
 import MemberStatusLabel from "ui/member/MemberStatusLabel";
 import { updateMemberAction } from "ui/member/actions";
+import MemberForm from "ui/member/MemberForm";
 import { memberToRenewal } from "ui/member/utils";
+import UpdateMemberContainer, { UpdateMemberRenderProps } from "ui/member/UpdateMemberContainer";
+import { CrudOperation } from "app/constants";
 
 interface OwnProps {}
 interface DispatchProps {
   getMembers: (queryParams?: QueryParams) => void;
-  updateMember: (id: string, details: Partial<MemberDetails>) => void;
+  updateMember: (id: string, details: Partial<MemberDetails>, isAdmin: boolean) => void;
 }
 interface StateProps {
   admin: boolean;
@@ -33,6 +36,8 @@ interface StateProps {
   error: string;
   isUpdating: boolean;
   updateError: string;
+  isCreating: boolean;
+  createError: string;
 }
 interface Props extends OwnProps, DispatchProps, StateProps {}
 interface State {
@@ -41,9 +46,9 @@ interface State {
   orderBy: string;
   search: string;
   order: SortDirection;
-  renewalEntity: RenewalEntity;
   openRenewalForm: boolean;
   openCreateForm: boolean;
+  redirect: string;
 }
 
 const fields: Column<MemberDetails>[] = [
@@ -78,9 +83,9 @@ class MembersList extends React.Component<Props, State> {
       orderBy: "",
       search: "",
       order: SortDirection.Asc,
-      renewalEntity: undefined,
       openRenewalForm: false,
-      openCreateForm: true,
+      openCreateForm: false,
+      redirect: undefined,
     };
   }
 
@@ -91,22 +96,79 @@ class MembersList extends React.Component<Props, State> {
     this.setState({ openCreateForm: false });
   }
   private openRenewalForm = () => {
-    const { members } = this.props;
-    const { selectedId } = this.state;
-    const renewalEntity = memberToRenewal(members[selectedId]);
-    this.setState({ openRenewalForm: true, renewalEntity });
+    this.setState({ openRenewalForm: true });
   }
   private closeRenewalForm = () => {
     this.setState({ openRenewalForm: false });
   }
 
-  private submitRenewalForm = async (form: Form) => {
-    const validRenewal: RenewForm = await this.renewFormRef.validate(form);
+  // private submitRenewalForm = async (form: Form) => {
+  //   const validRenewal: RenewForm = await this.renewFormRef.validate(form);
 
-    if (!form.isValid()) return;
+  //   if (!form.isValid()) return;
 
-    await this.props.updateMember(validRenewal.id, validRenewal);
+  //   await this.props.updateMember(validRenewal.id, validRenewal);
+  // }
+
+  private renderMemberForms = () => {
+    const { admin, members } = this.props;
+    const { selectedId, openRenewalForm, openCreateForm } = this.state;
+
+
+    const createForm = (renderProps: UpdateMemberRenderProps) => {
+      const submitCreate = async (form: Form) => {
+        const newMember = await renderProps.submit(form);
+        if (newMember) {
+          this.setState({ redirect: buildProfileRouting(newMember.id) });
+        }
+      }
+      return (<MemberForm
+        ref={renderProps.setRef}
+        member={renderProps.member}
+        isAdmin={admin}
+        isOpen={renderProps.isOpen}
+        isRequesting={renderProps.isCreating}
+        error={renderProps.createError}
+        onClose={renderProps.closeHandler}
+        onSubmit={submitCreate}
+        title="Create New Member"
+      />)
+    }
+
+    const renewForm = (renderProps: UpdateMemberRenderProps) => (
+      <RenewalForm
+        ref={renderProps.setRef}
+        renewalOptions={membershipRenewalOptions}
+        title="Renew Membership"
+        entity={memberToRenewal(renderProps.member)}
+        isOpen={renderProps.isOpen}
+        isRequesting={renderProps.isUpdating}
+        error={renderProps.updateError}
+        onClose={renderProps.closeHandler}
+        onSubmit={renderProps.submit}
+      />
+    )
+
+    return (admin &&
+      <>
+        <UpdateMemberContainer
+          isOpen={openRenewalForm}
+          member={!isUndefined(selectedId) && members[selectedId]}
+          closeHandler={this.closeRenewalForm}
+          render={renewForm}
+          operation={CrudOperation.Update}
+        />
+        <UpdateMemberContainer
+          isOpen={openCreateForm}
+          member={{ status: MemberStatus.Active } as Partial<MemberDetails>}
+          closeHandler={this.closeCreateForm}
+          render={createForm}
+          operation={CrudOperation.Create}
+        />
+      </>
+    )
   }
+
 
   private getActionButtons = () => {
     const { selectedId } = this.state;
@@ -149,7 +211,20 @@ class MembersList extends React.Component<Props, State> {
     this.getMembers();
   }
 
+  public componentDidUpdate(prevProps: Props) {
+    const { isCreating: wasCreating, isUpdating: wasUpdating } = prevProps;
+    const { isCreating, createError, isUpdating, updateError } = this.props;
+
+
+    if ((wasCreating && !isCreating && !createError) || // refresh list on create or update
+      (wasUpdating && !isUpdating && !updateError)) {
+      this.getMembers();
+    }
+  }
+
   private getMembers = () => {
+    console.log("Fetching members");
+    this.setState({ selectedId: undefined });
     this.props.getMembers(this.getQueryParams());
   }
   private rowId = (row: MemberDetails) => row.id;
@@ -192,8 +267,6 @@ class MembersList extends React.Component<Props, State> {
       totalItems,
       loading,
       error,
-      isUpdating,
-      updateError,
       admin,
     } = this.props;
 
@@ -202,9 +275,13 @@ class MembersList extends React.Component<Props, State> {
       pageNum,
       order,
       orderBy,
-      renewalEntity,
-      openRenewalForm,
+      redirect
     } = this.state;
+
+    if (redirect) {
+      console.log(redirect);
+      return <Redirect to={redirect}/>;
+    }
 
     return (
       <>
@@ -231,17 +308,7 @@ class MembersList extends React.Component<Props, State> {
           onPageChange={this.onPageChange}
           onSelect={admin && this.onSelect}
         />
-        <RenewalForm
-          ref={this.setFormRef}
-          renewalOptions={membershipRenewalOptions}
-          title="Renew Membership"
-          entity={renewalEntity}
-          isOpen={openRenewalForm}
-          isRequesting={isUpdating}
-          error={updateError}
-          onClose={this.closeRenewalForm}
-          onSubmit={this.submitRenewalForm}
-        />
+        {this.renderMemberForms()}
       </>
     );
   }
@@ -257,6 +324,10 @@ const mapStateToProps = (
       totalItems,
       isRequesting: loading,
       error
+    },
+    create: {
+      isRequesting: isCreating,
+      error: createError,
     },
   } = state.members;
   const {
@@ -274,6 +345,8 @@ const mapStateToProps = (
     error,
     isUpdating,
     updateError,
+    isCreating,
+    createError,
     admin
   }
 }
@@ -283,7 +356,7 @@ const mapDispatchToProps = (
 ): DispatchProps => {
   return {
     getMembers: (queryParams) => dispatch(readMembersAction(queryParams)),
-    updateMember: (id, memberDetails) => dispatch(updateMemberAction(id, memberDetails)),
+    updateMember: (id, memberDetails, admin) => dispatch(updateMemberAction(id, memberDetails, admin)),
   }
 }
 

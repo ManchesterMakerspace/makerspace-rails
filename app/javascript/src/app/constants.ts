@@ -17,6 +17,8 @@ export namespace Url {
 
   export const Rentals = `${baseApiPath}/rentals`;
 
+  export const Groups = `${baseApiPath}/groups`;
+
   export const Invoices = `${baseApiPath}/invoices`;
   export const InvoiceOptions = `${Invoices}/options`;
 
@@ -28,6 +30,7 @@ export namespace Url {
   }
 
   export const Admin = {
+    Members: `${baseAdminPath}/members`,
     Member: `${baseAdminPath}/members/${PathPlaceholder.MemberId}`,
     AccessCards: `${baseAdminPath}/cards`,
     AccessCard: `${baseAdminPath}/cards/${PathPlaceholder.CardId}`,

@@ -4,7 +4,7 @@ export enum Action {
   GetInvoicesFailure = "INVOICES/GET_INVOICES_FAILURE",
 
   StartCreateRequest = "INVOICES/START_CREATE_REQUEST",
-  CreateInvoiceSuccess = "INVOICES/CREATE_INVOICE_SUCCESS",
+  CreateInvoiceSuccess = "INVOICES/CREATE_INVOICES_SUCCESS",
   CreateInvoiceFailure = "INVOICES/CREATE_INVOICES_FAILURE",
 
   UpdateInvoiceSuccess = "INVOICES/UPDATE_INVOICES_SUCCESS",

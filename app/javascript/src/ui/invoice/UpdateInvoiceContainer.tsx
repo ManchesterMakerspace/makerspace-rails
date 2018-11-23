@@ -2,6 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 
 import { Invoice } from "app/entities/invoice";
+import { CrudOperation } from "app/constants";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import Form from "ui/common/Form";
@@ -10,7 +11,6 @@ import SettleInvoiceModal from "ui/invoice/SettleInvoiceModal"
 import { updateInvoiceAction, deleteInvoiceAction } from "ui/invoice/actions";
 import { createInvoiceAction } from "ui/invoices/actions";
 import DeleteInvoiceModal from "ui/invoice/DeleteInvoiceModal";
-import { CrudOperation } from "app/constants";
 
 
 export interface UpdateInvoiceRenderProps extends Props {
