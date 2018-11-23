@@ -3,6 +3,7 @@ import kebabCase from "lodash-es/kebabCase";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Select from "@material-ui/core/Select";
+import FormLabel from "@material-ui/core/FormLabel";
 
 import { getGroups } from "api/groups/transactions";
 import { Group } from "app/entities/group";
@@ -10,7 +11,7 @@ import { Group } from "app/entities/group";
 import { MemberDetails } from "app/entities/member";
 
 import FormModal from "ui/common/FormModal";
-import { fields, MemberStatusOptions } from "ui/member/constants";
+import { fields, MemberStatusOptions, MemberRoleOptions } from "ui/member/constants";
 import Form from "ui/common/Form";
 import { toDatePicker, dateToTime } from "ui/utils/timeToDate";
 
@@ -120,54 +121,78 @@ class MemberForm extends React.Component<OwnProps, State> {
               placeholder={fields.lastname.placeholder}
             />
           </Grid>
-        </Grid>
-        <TextField
-          fullWidth
-          required
-          value={member.email}
-          label={fields.email.label}
-          name={fields.email.name}
-          id={fields.email.name}
-          placeholder={fields.email.placeholder}
-          type="email"
-        />
-        {isAdmin && (
-          <>
+          <Grid item xs={12}>
             <TextField
               fullWidth
               required
-              value={toDatePicker(member.expirationTime)}
-              label={fields.expirationTime.label}
-              name={fields.expirationTime.name}
-              placeholder={fields.expirationTime.placeholder}
-              type="date"
-              InputLabelProps={{
-                shrink: true,
-              }}
+              value={member.email}
+              label={fields.email.label}
+              name={fields.email.name}
+              id={fields.email.name}
+              placeholder={fields.email.placeholder}
+              type="email"
             />
-            <Select
-              name={fields.status.name}
-              value={member.status}
-              fullWidth
-              native
-              required
-              placeholder={fields.status.placeholder}
-            >
-              {Object.entries(MemberStatusOptions).map(
-                ([key, value]) => <option id={`${fields.status.name}-option-${kebabCase(key)}`} key={kebabCase(key)} value={key}>{value}</option>)}
-            </Select>
-            <Select
-              name={fields.groupName.name}
-              value={member.groupName}
-              fullWidth
-              native
-              placeholder={fields.groupName.placeholder}
-            >
-              {readGroupsError || groupOptions}
-            </Select>
-          </>
-        )}
+          </Grid>
+          {isAdmin && (
+            <>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  required
+                  value={toDatePicker(member.expirationTime)}
+                  label={fields.expirationTime.label}
+                  name={fields.expirationTime.name}
+                  placeholder={fields.expirationTime.placeholder}
+                  type="date"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <FormLabel component="legend">{fields.status.label}</FormLabel>
+                <Select
+                  name={fields.status.name}
+                  value={member.status}
+                  fullWidth
+                  native
+                  required
+                  placeholder={fields.status.placeholder}
+                >
+                  {Object.entries(MemberStatusOptions).map(
+                    ([key, value]) => <option id={`${fields.status.name}-option-${kebabCase(key)}`} key={kebabCase(key)} value={key}>{value}</option>)}
+                </Select>
+              </Grid>
+              <Grid item xs={12}>
+                <FormLabel component="legend">{fields.groupName.label}</FormLabel>
+                <Select
+                  name={fields.groupName.name}
+                  value={member.groupName}
+                  fullWidth
+                  native
+                  placeholder={fields.groupName.placeholder}
+                >
+                  {readGroupsError || groupOptions}
+                </Select>
+              </Grid>
+              <Grid item xs={12}>
+                <FormLabel component="legend">{fields.role.label}</FormLabel>
+                <Select
+                  name={fields.role.name}
+                  value={member.role}
+                  fullWidth
+                  native
+                  required
+                  placeholder={fields.role.placeholder}
+                >
+                  {Object.entries(MemberRoleOptions).map(
+                    ([key, value]) => <option id={`${fields.role.name}-option-${kebabCase(key)}`} key={kebabCase(key)} value={key}>{value}</option>)}
+                </Select>
+              </Grid>
+            </>
+          )}
         {/* TODO Permissions (Select) */}
+        </Grid>
       </FormModal>
     )
   }

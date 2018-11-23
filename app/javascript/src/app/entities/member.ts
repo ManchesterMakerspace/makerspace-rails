@@ -7,7 +7,7 @@ export interface MemberDetails {
   status: MemberStatus;
   cardId: string;
   groupName: string;
-  role: MemberRole[];
+  role: MemberRole;
   subscriptionId: string;
 }
 
@@ -30,6 +30,6 @@ export enum MemberStatus {
 
 export enum MemberRole {
   Admin = "admin",
-  Officer = "officer",
+  // Officer = "officer",
   Member = "member"
 }

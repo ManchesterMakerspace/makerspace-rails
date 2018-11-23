@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Link, Redirect } from 'react-router-dom';
 import Grid from "@material-ui/core/Grid";
 import isUndefined from "lodash-es/isUndefined";
-import { MemberDetails, MemberStatus } from "app/entities/member";
+import { MemberDetails, MemberStatus, MemberRole } from "app/entities/member";
 import { QueryParams, CollectionOf } from "app/interfaces";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
@@ -160,7 +160,7 @@ class MembersList extends React.Component<Props, State> {
         />
         <UpdateMemberContainer
           isOpen={openCreateForm}
-          member={{ status: MemberStatus.Active } as Partial<MemberDetails>}
+          member={{ status: MemberStatus.Active, role: MemberRole.Admin } as Partial<MemberDetails>}
           closeHandler={this.closeCreateForm}
           render={createForm}
           operation={CrudOperation.Create}

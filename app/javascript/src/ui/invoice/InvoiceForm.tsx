@@ -8,6 +8,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormLabel from "@material-ui/core/FormLabel";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Radio from "@material-ui/core/Radio";
+import Grid from "@material-ui/core/Grid";
 
 import { Invoice, InvoiceableResource } from "app/entities/invoice";
 import FormModal from "ui/common/FormModal";
@@ -117,59 +118,71 @@ class InvoiceForm extends React.Component<OwnProps, State> {
         submitText="Save"
         error={error}
       >
-        <FormControl component="fieldset">
-          <FormLabel component="legend">{fields.type.label}</FormLabel>
-          <RadioGroup
-            aria-label={fields.type.label}
-            name={fields.type.name}
-            value={this.state.invoiceType as string}
-            onChange={this.updateType}
-          >
-            <FormControlLabel value={InvoiceableResource.Membership} control={<Radio />} label="Membership" />
-            <FormControlLabel value={InvoiceableResource.Rental} control={<Radio />} label="Rental" />
-          </RadioGroup>
-        </FormControl>
-        <FormLabel component="legend">{fields.contact.label}</FormLabel>
-        <AsyncSelect
-          isClearable
-          name={fields.contact.name}
-          value={this.state.contact}
-          onChange={this.updateContactValue}
-          placeholder={fields.contact.placeholder}
-          id={fields.contact.name}
-          loadOptions={this.memberOptions}
-        />
+        <Grid container spacing={24}>
+          <Grid item xs={12}>
+            <FormControl component="fieldset">
+              <FormLabel component="legend">{fields.type.label}</FormLabel>
+              <RadioGroup
+                aria-label={fields.type.label}
+                name={fields.type.name}
+                value={this.state.invoiceType as string}
+                onChange={this.updateType}
+              >
+                <FormControlLabel value={InvoiceableResource.Membership} control={<Radio />} label="Membership" />
+                <FormControlLabel value={InvoiceableResource.Rental} control={<Radio />} label="Rental" />
+              </RadioGroup>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <FormLabel component="legend">{fields.contact.label}</FormLabel>
+            <AsyncSelect
+              isClearable
+              name={fields.contact.name}
+              value={this.state.contact}
+              onChange={this.updateContactValue}
+              placeholder={fields.contact.placeholder}
+              id={fields.contact.name}
+              loadOptions={this.memberOptions}
+            />
+          </Grid>
         {/* Who's it form - Member search */}
         {/* If can find resource, ask how long to renew for
         Else, display sub form to create the resource */}
-        <TextField
-          fullWidth
-          required
-          value={invoice && invoice.description}
-          label={fields.description.label}
-          name={fields.description.name}
-          placeholder={fields.description.placeholder}
-        />
-        <TextField
-          fullWidth
-          required
-          value={invoice && invoice.amount}
-          label={fields.amount.label}
-          name={fields.amount.name}
-          placeholder={fields.amount.placeholder}
-        />
-        <TextField
-          fullWidth
-          required
-          value={invoice && invoice.dueDate && toDatePicker(invoice.dueDate)}
-          label={fields.dueDate.label}
-          name={fields.dueDate.name}
-          placeholder={fields.dueDate.placeholder}
-          type="date"
-          InputLabelProps={{
-            shrink: true,
-          }}
-        />
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              required
+              value={invoice && invoice.description}
+              label={fields.description.label}
+              name={fields.description.name}
+              placeholder={fields.description.placeholder}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              required
+              value={invoice && invoice.amount}
+              label={fields.amount.label}
+              name={fields.amount.name}
+              placeholder={fields.amount.placeholder}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              required
+              value={invoice && invoice.dueDate && toDatePicker(invoice.dueDate)}
+              label={fields.dueDate.label}
+              name={fields.dueDate.name}
+              placeholder={fields.dueDate.placeholder}
+              type="date"
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </Grid>
+        </Grid>
       </FormModal>
     )
   }

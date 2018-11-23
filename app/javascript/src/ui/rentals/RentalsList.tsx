@@ -240,6 +240,7 @@ class RentalsList extends React.Component<Props, State> {
         error={renderProps.error}
         onClose={renderProps.closeHandler}
         onSubmit={renderProps.submit}
+        title="Create Rental"
       />
     );
 
