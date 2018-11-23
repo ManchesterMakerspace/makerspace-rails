@@ -317,9 +317,9 @@ class InvoicesList extends React.Component<Props, State> {
     );
 
     const deleteModal = (renderProps: UpdateInvoiceRenderProps) => {
-      const submit = (form: Form) => {
-        this.setState({ selectedIds: [] });
-        renderProps.submit(form);
+      const submit = async (form: Form) => {
+        const success = await renderProps.submit(form);
+        success && this.setState({ selectedIds: [] });
       }
       return (
         <DeleteInvoiceModal

@@ -105,9 +105,9 @@ class Header extends React.Component<Props, State> {
           open={menuOpen}
           onClose={this.detachMenu}
         >
-          {this.renderMenuNavLink(Routing.Profile.replace(Routing.PathPlaceholder.MemberId, currentUser.id), "Profile")}
-          {this.renderMenuNavLink(Routing.Members, memberIsAdmin(currentUser) ? "Member Management" : "Members List")}
-          {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Rentals, "Rental Management")}
+          {this.renderMenuNavLink(Routing.Profile.replace(Routing.PathPlaceholder.MemberId, currentUser.id), "My Profile")}
+          {this.renderMenuNavLink(Routing.Members, "Members")}
+          {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Rentals, "Rentals")}
           {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Subscriptions, "Subscription Management")}
           {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Billing, "View Billing Plans")}
           <MenuItem onClick={this.logoutUser}>Logout</MenuItem>

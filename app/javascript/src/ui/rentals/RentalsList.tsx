@@ -108,7 +108,7 @@ class RentalsList extends React.Component<Props, State> {
   private openUpdateModal = () => this.openRentalModal(CrudOperation.Update);
   private openDeleteModal = () => this.openRentalModal(CrudOperation.Delete);
   private openRentalModal = (operation: CrudOperation) => this.setState({ openRentalForm: true, modalOperation: operation });
-  private closeRentalModal = () => this.setState({ openRentalForm: false });
+  private closeRentalModal = () => { console.log("CLosing"); this.setState({ openRentalForm: false }); };
 
   private getActionButtons = () => {
     const { selectedIds } = this.state;
@@ -245,9 +245,9 @@ class RentalsList extends React.Component<Props, State> {
 
 
     const deleteModal = (renderProps: UpdateRentalRenderProps) => {
-      const submit = (form: Form) => {
-        this.setState({ selectedIds: [] });
-        renderProps.submit(form);
+      const submit = async (form: Form) => {
+        const success = await renderProps.submit(form);
+        success && this.setState({ selectedIds: [] });
       }
       return (
         <DeleteRentalModal
@@ -263,8 +263,7 @@ class RentalsList extends React.Component<Props, State> {
     }
 
     const selectedId = selectedIds.length === 1 && selectedIds[0];
-    console.log(selectedId);
-    console.log(rentals[selectedId]);
+
     return (admin &&
       <>
         <UpdateRentalContainer
@@ -277,7 +276,7 @@ class RentalsList extends React.Component<Props, State> {
         <UpdateRentalContainer
           operation={CrudOperation.Create}
           isOpen={openRentalForm && modalOperation === CrudOperation.Create}
-          rental={member && { memberId: member.id, memberName: `${member.firstname} ${member.lastname}` }}
+          rental={member ?{ memberId: member.id, memberName: `${member.firstname} ${member.lastname}` } : {}}
           closeHandler={this.closeRentalModal}
           render={createForm}
         />

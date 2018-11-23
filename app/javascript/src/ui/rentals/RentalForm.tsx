@@ -21,6 +21,7 @@ interface OwnProps {
   error: string;
   onClose: () => void;
   onSubmit: (form: Form) => void;
+  title?: string;
 }
 interface State {
   member: SelectOption;
@@ -49,10 +50,11 @@ class RentalForm extends React.Component<OwnProps, State> {
 
   public validate = async (form: Form): Promise<Rental> => {
     const details = await form.simpleValidate<Rental>(fields);
+    console.log(details);
     return {
       ...details,
       expiration: dateToTime(details.expiration),
-      memberId: this.state.member.id,
+      memberId: this.state.member && this.state.member.id,
     }
   }
 
@@ -69,6 +71,8 @@ class RentalForm extends React.Component<OwnProps, State> {
       } catch (e) {
         console.log(e);
       }
+    } else {
+      this.updateMemberValue({ value: "", label: "None", id: undefined });
     }
   }
 
@@ -99,7 +103,7 @@ class RentalForm extends React.Component<OwnProps, State> {
         loading={isRequesting}
         isOpen={isOpen}
         closeHandler={onClose}
-        title="Update Rental"
+        title={this.props.title || "Update Rental"}
         onSubmit={onSubmit}
         submitText="Submit"
         error={error}
@@ -127,29 +131,33 @@ class RentalForm extends React.Component<OwnProps, State> {
               placeholder={fields.description.placeholder}
             />
           </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              required
+              value={toDatePicker(rental.expiration)}
+              label={fields.expiration.label}
+              name={fields.expiration.name}
+              placeholder={fields.expiration.placeholder}
+              type="date"
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormLabel component="legend">{fields.member.label}</FormLabel>
+            <AsyncCreatableSelect
+              isClearable
+              name={fields.member.name}
+              value={this.state.member}
+              onChange={this.updateMemberValue}
+              placeholder={fields.member.placeholder}
+              id={fields.member.name}
+              loadOptions={this.memberOptions}
+            />
+          </Grid>
         </Grid>
-        <TextField
-          fullWidth
-          required
-          value={toDatePicker(rental.expiration)}
-          label={fields.expiration.label}
-          name={fields.expiration.name}
-          placeholder={fields.expiration.placeholder}
-          type="date"
-          InputLabelProps={{
-            shrink: true,
-          }}
-        />
-        <FormLabel component="legend">{fields.member.label}</FormLabel>
-        <AsyncCreatableSelect
-          isClearable
-          name={fields.member.name}
-          value={this.state.member}
-          onChange={this.updateMemberValue}
-          placeholder={fields.member.placeholder}
-          id={fields.member.name}
-          loadOptions={this.memberOptions}
-        />
       </FormModal>
     )
   }

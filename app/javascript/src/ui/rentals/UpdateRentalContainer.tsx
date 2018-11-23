@@ -47,8 +47,10 @@ class UpdateRental extends React.Component<Props, {}> {
     const validUpdate: Rental = this.formRef.validate && await this.formRef.validate(form);
 
     if (!form.isValid()) return;
-
     await this.props.dispatchRental(validUpdate);
+    if (!this.props.error) {
+      return true;
+    }
   }
 
   public render(): JSX.Element {
@@ -110,7 +112,7 @@ const mapDispatchToProps = (
           action = (deleteRentalAction(rental.id));
           break;
       }
-      dispatch(action);
+      return dispatch(action);
     },
   }
 }

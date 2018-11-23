@@ -58,6 +58,9 @@ class UpdateInvoice extends React.Component<Props, {}> {
     if (!form.isValid()) return;
 
     await this.props.dispatchInvoice(updatedInvoice);
+    if (!this.props.error) {
+      return true;
+    }
   }
 
   public render(): JSX.Element {

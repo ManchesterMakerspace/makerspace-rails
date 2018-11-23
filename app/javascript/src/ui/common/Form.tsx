@@ -41,6 +41,7 @@ interface FormModalProps {
   children?: React.ReactNode;
   error?: string;
   submitDisabled?: boolean;
+  style?: { [key: string]: string }
 }
 interface State {
   values: CollectionOf<string>;
@@ -277,8 +278,7 @@ class Form extends React.Component<FormModalProps, State> {
 
   // Wrap form in loading icon w/ background blocker if loading
   public render(): JSX.Element {
-    const { id, loading } = this.props;
-
+    const { id, loading, style } = this.props;
     return (
       <div style={{position: "relative", overflow: "hidden"}}>
         <form
@@ -287,7 +287,7 @@ class Form extends React.Component<FormModalProps, State> {
           noValidate
           autoComplete="off"
           id={id}
-          style={{width: "100%"}}
+          style={{ width: "100%", ...style}}
         >
           {loading &&  <LoadingOverlay id={id}/>}
           {this.renderFormContent()}

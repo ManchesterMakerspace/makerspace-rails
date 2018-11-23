@@ -98,11 +98,4 @@ const mapStateToProps = (
   }
 }
 
-const mapDispatchToProps = (
-  dispatch: ScopedThunkDispatch
-): DispatchProps => {
-  return {
-  };
-}
-
 export default connect(mapStateToProps)(SignUpContainer);

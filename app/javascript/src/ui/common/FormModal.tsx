@@ -15,11 +15,12 @@ interface FormModalProps {
   loading: boolean;
   children?: React.ReactNode;
   error?: string;
+  style?: { [key: string]: string }
 }
 
 const FormModal: React.SFC<FormModalProps> = (props: FormModalProps) => {
   const { formRef, isOpen, id, loading, title, closeHandler, cancelText,
-    submitText, onSubmit, children, error } = props;
+    submitText, onSubmit, children, error, style } = props;
 
   return (
     <Dialog
@@ -39,6 +40,7 @@ const FormModal: React.SFC<FormModalProps> = (props: FormModalProps) => {
         onSubmit={onSubmit}
         submitText={submitText}
         error={error}
+        style={style}
       >
         {children}
       </Form>
