@@ -14,15 +14,22 @@ interface BaseInvoice {
   subscriptionId?: string;
 }
 
-export interface ApiInvoice extends BaseInvoice {
-  operationString: string;
-}
-
 export interface Invoice extends BaseInvoice {
   resourceClass: InvoiceableResource;
   operation: InvoiceOperation,
   resourceId: string;
   quantity: number;
+}
+
+export interface InvoiceOption {
+  id: string;
+  name: string;
+  description: string;
+  amount: number;
+  quantity: number;
+  operation: InvoiceOperation,
+  resourceClass: InvoiceableResource;
+  planId: string;
 }
 
 

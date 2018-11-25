@@ -6,7 +6,7 @@ import pick from "lodash-es/pick";
 import { Invoice, Properties } from "app/entities/invoice";
 import { QueryParams, CollectionOf } from "app/interfaces";
 import { MemberDetails } from "app/entities/member";
-import { CrudOperation, Routing } from "app/constants";
+import { CrudOperation } from "app/constants";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { timeToDate } from "ui/utils/timeToDate";

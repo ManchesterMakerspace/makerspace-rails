@@ -20,7 +20,6 @@ export namespace Url {
   export const Groups = `${baseApiPath}/groups`;
 
   export const Invoices = `${baseApiPath}/invoices`;
-  export const InvoiceOptions = `${Invoices}/options`;
 
   export const Auth = {
     SignIn: `${Members}/sign_in`,
@@ -36,6 +35,8 @@ export namespace Url {
     AccessCard: `${baseAdminPath}/cards/${PathPlaceholder.CardId}`,
     Invoices: `${baseAdminPath}/invoices`,
     Invoice: `${baseAdminPath}/invoices/${PathPlaceholder.InvoiceId}`,
+    InvoiceOptions: `${baseAdminPath}/invoice_options`,
+    InvoiceOption: `${baseAdminPath}/invoice_options/${PathPlaceholder.InvoiceId}`,
     Rentals: `${baseAdminPath}/rentals`,
     Rental: `${baseAdminPath}/rentals/${PathPlaceholder.RentalId}`,
   }

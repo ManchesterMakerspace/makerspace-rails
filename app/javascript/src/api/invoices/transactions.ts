@@ -1,8 +1,8 @@
 import axios from "axios";
-import { Invoice, InvoiceQueryParams } from "app/entities/invoice";
+import { Invoice, InvoiceQueryParams, InvoiceOption } from "app/entities/invoice";
 
 import { buildInvoicesUrl, buildInvoiceUrl, buildInvoiceOptionsUrl } from "api/invoices/utils";
-import { InvoiceOptionTypes } from "api/invoices/constants";
+import { InvoiceOptionQueryParams } from "api/invoices/interfaces";
 import { encodeQueryParams } from "api/utils/encodeQueryParams";
 import { handleApiError } from "api/utils/handleApiError";
 
@@ -52,14 +52,48 @@ export const deleteInvoice = async (invoiceId: string) => {
   }
 };
 
-export const getMembershipOptions = async () => {
-  const options = {
-    types: [InvoiceOptionTypes.Membership]
-  }
+export const getInvoiceOptions = async (queryParams?: InvoiceOptionQueryParams) => {
   try {
-    return await axios.get(buildInvoiceOptionsUrl(), { params: encodeQueryParams(options) });
+    return await axios.get(buildInvoiceOptionsUrl(), { params: encodeQueryParams(queryParams) });
   } catch (e) {
     const error = handleApiError(e);
     throw error;
   }
-}
+};
+
+export const postInvoiceOptions = async (invoiceOptionForm: InvoiceOption) => {
+  try {
+    return await axios.post(buildInvoiceOptionsUrl(), { invoiceOption: invoiceOptionForm });
+  } catch (e) {
+    const error = handleApiError(e);
+    throw error;
+  }
+};
+
+
+export const getInvoiceOption = async (invoiceOptionId: string) => {
+  try {
+    return await axios.get(buildInvoiceOptionsUrl(invoiceOptionId));
+  } catch (e) {
+    const error = handleApiError(e);
+    throw error;
+  }
+};
+
+export const putInvoiceOption = async (invoiceOptionId: string, invoiceOptionForm: Partial<InvoiceOption>) => {
+  try {
+    return await axios.put(buildInvoiceOptionsUrl(invoiceOptionId), { invoiceOption: invoiceOptionForm });
+  } catch (e) {
+    const error = handleApiError(e);
+    throw error;
+  }
+};
+
+export const deleteInvoiceOption = async (invoiceOptionId: string) => {
+  try {
+    return await axios.delete(buildInvoiceOptionsUrl(invoiceOptionId));
+  } catch (e) {
+    const error = handleApiError(e);
+    throw error;
+  }
+};

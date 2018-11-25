@@ -108,8 +108,7 @@ class Header extends React.Component<Props, State> {
           {this.renderMenuNavLink(Routing.Profile.replace(Routing.PathPlaceholder.MemberId, currentUser.id), "My Profile")}
           {this.renderMenuNavLink(Routing.Members, "Members")}
           {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Rentals, "Rentals")}
-          {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Subscriptions, "Subscription Management")}
-          {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Billing, "View Billing Plans")}
+          {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Billing, "Billing")}
           <MenuItem onClick={this.logoutUser}>Logout</MenuItem>
         </Menu>
       </>

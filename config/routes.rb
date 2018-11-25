@@ -24,6 +24,7 @@ Rails.application.routes.draw do
       namespace :admin  do
         resources :cards, only: [:new, :create, :index, :update]
         resources :invoices, only: [:index, :create, :update, :destroy]
+        resources :invoice_options, only: [:index, :create, :update, :destroy]
         resources :rentals, only: [:create, :update, :destroy, :index]
         resources :members, only: [:create, :update]
       end

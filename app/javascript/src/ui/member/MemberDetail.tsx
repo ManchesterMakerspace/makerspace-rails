@@ -4,7 +4,6 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 
 import { MemberDetails } from "app/entities/member";
 
-import { uploadMemberSignature } from "api/members/transactions";
 import { Invoice } from "app/entities/invoice";
 import { Column } from "ui/common/table/Table";
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
@@ -16,10 +15,8 @@ import { SortDirection } from "ui/common/table/constants";
 import DetailView from "ui/common/DetailView";
 import { readMemberAction } from "ui/member/actions";
 import RenewalForm from "ui/common/RenewalForm";
-import Form from "ui/common/Form";
 import MemberForm from "ui/member/MemberForm";
 import MemberStatusLabel from "ui/member/MemberStatusLabel";
-import WelcomeModal from "ui/member/WelcomeModal";
 import UpdateMemberContainer, { UpdateMemberRenderProps } from "ui/member/UpdateMemberContainer";
 import { memberToRenewal } from "ui/member/utils";
 import { membershipRenewalOptions } from "ui/members/constants";

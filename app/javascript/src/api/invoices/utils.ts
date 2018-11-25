@@ -1,6 +1,5 @@
 import { buildJsonUrl } from "app/utils";
 import { Url } from "app/constants";
-import { Invoice, ApiInvoice, InvoiceOperation, InvoiceableResource } from "app/entities/invoice";
 
 export const buildInvoicesUrl = (admin: boolean = false): string => {
   return buildJsonUrl(admin ? Url.Admin.Invoices : Url.Invoices);
@@ -9,8 +8,13 @@ export const buildInvoicesUrl = (admin: boolean = false): string => {
 export const buildInvoiceUrl = (invoiceId: string) => {
   return buildJsonUrl(buildInvoicePath(invoiceId));
 }
-export const buildInvoiceOptionsUrl = () => {
-  return buildJsonUrl(Url.InvoiceOptions)
+
+export const buildInvoiceOptionsUrl = (invoiceOptionId?: string) => {
+  return buildJsonUrl(invoiceOptionId ? buildInvoiceOptionPath(invoiceOptionId) : Url.Admin.InvoiceOptions);
+}
+
+const buildInvoiceOptionPath = (optionId: string) => {
+  return Url.Admin.InvoiceOption.replace(Url.PathPlaceholder.InvoiceId, optionId);
 }
 
 const buildInvoicePath = (invoiceId: string) => {

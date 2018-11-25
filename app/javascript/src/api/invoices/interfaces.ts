@@ -1,6 +1,6 @@
 import { QueryParams } from "app/interfaces";
-import { InvoiceOptionTypes } from "api/invoices/constants";
+import { InvoiceableResource } from "app/entities/invoice";
 
-export interface MembershipOptionQueryParams extends QueryParams {
-  types: InvoiceOptionTypes[]
+export interface InvoiceOptionQueryParams extends QueryParams {
+  types: InvoiceableResource[]
 }

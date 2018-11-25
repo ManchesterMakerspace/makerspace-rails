@@ -7,8 +7,8 @@ import { membersReducer } from "ui/members/actions";
 import { MembersState } from "ui/members/interfaces";
 import { RentalsState } from "ui/rentals/interfaces";
 import { rentalsReducer } from "ui/rentals/actions";
-import { PlansState } from "ui/billingPlans/interfaces";
-import { plansReducer } from "ui/billingPlans/actions";
+import { BillingState } from "ui/billing/interfaces";
+import { billingReducer } from "ui/billing/actions";
 import { SubscriptionsState } from "ui/subscriptions/interfaces";
 import { subscriptionsReducer } from "ui/subscriptions/actions";
 import { MemberState } from "ui/member/interfaces";
@@ -29,7 +29,7 @@ export interface State {
   members: MembersState;
   member: MemberState;
   rentals: RentalsState;
-  plans: PlansState;
+  billing: BillingState;
   subscriptions: SubscriptionsState;
   checkout: CheckoutState;
   card: CardState;
@@ -42,7 +42,7 @@ export const rootReducer = combineReducers({
   members: membersReducer,
   member: memberReducer,
   rentals: rentalsReducer,
-  plans: plansReducer,
+  billing: billingReducer,
   subscriptions: subscriptionsReducer,
   checkout: checkoutReducer,
   card: cardReducer,

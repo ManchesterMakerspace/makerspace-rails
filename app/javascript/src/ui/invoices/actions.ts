@@ -3,8 +3,8 @@ import { ThunkAction } from "redux-thunk";
 import toNumber from "lodash-es/toNumber";
 import omit from "lodash-es/omit";
 
-import { Invoice, InvoiceQueryParams } from "app/entities/invoice";
-import { getInvoices, postInvoices, getMembershipOptions } from "api/invoices/transactions";
+import { Invoice, InvoiceQueryParams, InvoiceableResource } from "app/entities/invoice";
+import { getInvoices, postInvoices, getInvoiceOptions } from "api/invoices/transactions";
 import { Action as InvoicesAction } from "ui/invoices/constants";
 import { InvoicesState } from "ui/invoices/interfaces";
 
@@ -58,7 +58,7 @@ export const getMembershipOptionsAction = (
   dispatch({ type: InvoicesAction.StartReadRequest });
 
   try {
-    const response = await getMembershipOptions();
+    const response = await getInvoiceOptions({ types: [InvoiceableResource.Membership] });
     const { invoices } = response.data;
     dispatch({
       type: InvoicesAction.GetInvoicesSuccess,
