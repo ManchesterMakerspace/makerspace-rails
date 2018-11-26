@@ -1,7 +1,10 @@
+import { Properties, InvoiceableResource } from "app/entities/invoice"
 export enum Action {
   StartReadRequest = "BILLING/START_READ_REQUEST",
   GetOptionsSuccess = "BILLING/GET_OPTIONS_SUCCESS",
   GetOptionsFailure = "BILLING/GET_OPTIONS_FAILURE",
+  GetPlansSuccess = "BILLING/GET_PLANS_SUCCESS",
+  GetPlansFailure = "BILLING/GET_PLANS_FAILURE",
 
   StartCreateRequest = "BILLING/START_CREATE_REQUEST",
   CreateOptionSuccess = "BILLING/CREATE_OPTION_SUCCESS",
@@ -16,6 +19,49 @@ export enum Action {
   DeleteOptionFailure = "BILLING/DELETE_OPTION_FAILURE",
 }
 
+const formPrefix = "billing-form";
 export const fields = {
-
+  [Properties.ResourceClass]: {
+    label: "Type",
+    name: `${formPrefix}-type`,
+    placeholder: "Enter Name",
+    validate: (val: string) => Object.values(InvoiceableResource).includes(val),
+    error: "Name required"
+  },
+  [Properties.Name]: {
+    label: "Name",
+    name: `${formPrefix}-name`,
+    placeholder: "Enter Name",
+    validate: (val: string) => !!val,
+    error: "Name required"
+  },
+  [Properties.Description]: {
+    label: "Description",
+    name: `${formPrefix}-description`,
+    placeholder: "Enter Description",
+  },
+  [Properties.Amount]: {
+    label: "Amount ($)",
+    name: `${formPrefix}-amount`,
+    placeholder: "Enter amount",
+    validate: (val: number) => (!!val && val > 0),
+    error: "Amount required"
+  },
+  [Properties.Quantity]: {
+    label: "Length (months)",
+    name: `${formPrefix}-name`,
+    placeholder: "Number of months to renew",
+    validate: (val: string) => !!val,
+    error: "Number of months to renew is required"
+  },
+  [Properties.PlanId]: {
+    label: "Billing Plan (optional)",
+    name: `${formPrefix}-billing-plan`,
+    placeholder: "Select a billing plan",
+  },
+  [Properties.Operation]: {
+    label: "Operation on completion",
+    name: `${formPrefix}-operation`,
+    validate: (_val: string) => true,
+  }
 }

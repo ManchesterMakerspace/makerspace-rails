@@ -2,7 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 
-import { InvoiceOption } from "app/entities/invoice";
+import { InvoiceOption, InvoiceOperation, InvoiceableResource } from "app/entities/invoice";
 import { CrudOperation } from "app/constants";
 import { CollectionOf, QueryParams } from "app/interfaces";
 
@@ -11,17 +11,20 @@ import { SortDirection } from "ui/common/table/constants";
 import TableContainer from "ui/common/table/TableContainer";
 import Form from "ui/common/Form";
 import { Column } from "ui/common/table/Table";
-import { readOptionsAction } from "ui/billing/actions";
+import { readOptionsAction, readBillingPlansAction } from "ui/billing/actions";
 import ButtonRow from "ui/common/ButtonRow";
 import BillingForm from "ui/billing/BillingForm";
 import DeleteInvoiceOptionModal from "ui/billing/DeleteInvoiceOptionModal";
 import UpdateBillingContainer, { UpdateBillingRenderProps } from "ui/billing/UpdateBillingContainer";
+import { BillingPlan } from "app/entities/billingPlan";
 
 interface OwnProps { }
 interface DispatchProps {
   getOptions: (queryParams?: QueryParams) => void;
+  getBillingPlans: (type: InvoiceableResource) => void;
 }
 interface StateProps {
+  billingPlans: CollectionOf<BillingPlan>;
   options: CollectionOf<InvoiceOption>;
   totalItems: number;
   loading: boolean;
@@ -103,7 +106,7 @@ class OptionsList extends React.Component<Props, State> {
   private closeDeleteConfirm = () => this.setState({ openDeleteConfirm: false });
 
   private renderBillingForms = () => {
-    const { options } = this.props;
+    const { options, getBillingPlans, billingPlans, loading, error } = this.props;
     const { selectedId, openCreateForm, openEditForm, openDeleteConfirm } = this.state;
 
     const editForm = (renderProps: UpdateBillingRenderProps) => (
@@ -115,6 +118,10 @@ class OptionsList extends React.Component<Props, State> {
         error={renderProps.error}
         onClose={renderProps.closeHandler}
         onSubmit={renderProps.submit}
+        getBillingPlans={getBillingPlans}
+        billingPlans={billingPlans}
+        plansLoading={loading}
+        plansError={error}
       />
     );
 
@@ -127,6 +134,10 @@ class OptionsList extends React.Component<Props, State> {
         error={renderProps.error}
         onClose={renderProps.closeHandler}
         onSubmit={renderProps.submit}
+        getBillingPlans={getBillingPlans}
+        billingPlans={billingPlans}
+        plansLoading={loading}
+        plansError={error}
       />
     );
 
@@ -160,7 +171,7 @@ class OptionsList extends React.Component<Props, State> {
         <UpdateBillingContainer
           operation={CrudOperation.Create}
           isOpen={openCreateForm}
-          billingOption={{}}
+          billingOption={{ operation: InvoiceOperation.Renew }}
           closeHandler={this.closeCreateForm}
           render={createForm}
         />
@@ -273,6 +284,7 @@ const mapStateToProps = (
 ): StateProps => {
   const {
     entities: options,
+    billingPlans,
     read: {
       totalItems,
       isRequesting: loading,
@@ -281,6 +293,7 @@ const mapStateToProps = (
   } = state.billing;
   return {
     options,
+    billingPlans,
     totalItems,
     loading,
     error
@@ -291,7 +304,8 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch
 ): DispatchProps => {
   return {
-    getOptions: () => dispatch(readOptionsAction())
+    getOptions: () => dispatch(readOptionsAction()),
+    getBillingPlans: (type) => dispatch(readBillingPlansAction([type]))
   }
 }
 

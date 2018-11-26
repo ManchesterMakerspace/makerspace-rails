@@ -57,7 +57,8 @@ export enum Properties {
   ResourceId = "resourceId",
   ResourceClass = "resourceClass",
   MemberId = "memberId",
-  SubscriptionId = "subscriptionId"
+  SubscriptionId = "subscriptionId",
+  PlanId = "planId",
 }
 
 export enum PaymentMethodType {

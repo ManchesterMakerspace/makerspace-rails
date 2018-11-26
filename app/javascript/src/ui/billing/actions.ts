@@ -5,8 +5,34 @@ import toNumber from "lodash-es/toNumber";
 import { Action as BillingAction } from "ui/billing/constants";
 import { BillingState } from "ui/billing/interfaces";
 import { getInvoiceOptions, postInvoiceOptions, putInvoiceOption, deleteInvoiceOption } from "api/invoices/transactions";
-import { InvoiceOption, Invoice } from "app/entities/invoice";
+import { InvoiceOption, Invoice, InvoiceableResource } from "app/entities/invoice";
 import { omit } from "lodash-es";
+import { getPlans } from "api/billingPlans/transactions";
+import { BillingPlan } from "app/entities/billingPlan";
+
+export const readBillingPlansAction = (
+  types: InvoiceableResource[]
+): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
+  dispatch({ type: BillingAction.StartReadRequest });
+  try {
+    const response = await getPlans({ types });
+    const billingPlans = response.data;
+    const totalItems = response.headers[("total-items")];
+    dispatch({
+      type: BillingAction.GetPlansSuccess,
+      data: {
+        billingPlans,
+        totalItems: toNumber(totalItems)
+      }
+    });
+  } catch (e) {
+    const { errorMessage } = e;
+    dispatch({
+      type: BillingAction.GetPlansFailure,
+      error: errorMessage
+    });
+  }
+}
 
 export const readOptionsAction = (): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
   dispatch({ type: BillingAction.StartReadRequest });
@@ -94,6 +120,7 @@ export const deleteBillingAction = (
 
 const defaultState: BillingState = {
   entities: {},
+  billingPlans: {},
   read: {
     isRequesting: false,
     error: "",
@@ -154,6 +181,39 @@ export const billingReducer = (state: BillingState = defaultState, action: AnyAc
           ...state.read,
           isRequesting: false,
           error
+        }
+      }
+    case BillingAction.GetPlansSuccess:
+      const {
+        data: {
+          billingPlans,
+          totalItems: planTotalItems,
+        }
+      } = action;
+
+      const newPlans = {};
+      billingPlans.forEach((plan: BillingPlan) => {
+        newPlans[plan.id] = plan;
+      });
+
+      return {
+        ...state,
+        billingPlans: newPlans,
+        read: {
+          ...state.read,
+          totalItems: planTotalItems,
+          isRequesting: false,
+          error: ""
+        }
+      };
+    case BillingAction.GetPlansFailure:
+      const { planError } = action;
+      return {
+        ...state,
+        read: {
+          ...state.read,
+          isRequesting: false,
+          error: planError
         }
       }
     case BillingAction.StartCreateRequest:
