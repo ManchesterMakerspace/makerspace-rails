@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { withRouter, RouteComponentProps, Redirect } from "react-router";
+import { Redirect } from "react-router";
 
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';

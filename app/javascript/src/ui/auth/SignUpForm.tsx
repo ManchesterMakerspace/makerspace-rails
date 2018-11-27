@@ -1,5 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import { withRouter, RouteComponentProps } from "react-router";
 
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
@@ -9,15 +10,15 @@ import CardContent from "@material-ui/core/CardContent";
 import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
 import MembershipSelectForm from "ui/auth/MembershipSelectForm";
 
-import { InvoiceOption } from "app/entities/invoice";
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { SignUpFields, EmailExistsError, signUpPrefix } from "ui/auth/constants";
 import { SignUpForm } from "ui/auth/interfaces";
 import { submitSignUpAction } from "ui/auth/actions";
 import ErrorMessage from "ui/common/ErrorMessage";
 import Form from "ui/common/Form";
+import { getHistory } from "app/utils";
 
-interface OwnProps {
+interface OwnProps extends RouteComponentProps<any>{
   goToLogin: () => void;
   renderMembershipOptions?: boolean;
   onSubmit?: () => void;
@@ -31,8 +32,8 @@ interface StateProps {
   error: string;
 }
 interface State {
-  membershipSelectionId?: string;
-  membershipSelectionError?: string;
+  membershipSelectionId: string;
+  membershipSelectionError: string;
   passwordMask: boolean;
   emailExists: boolean;
 }
@@ -42,13 +43,16 @@ interface Props extends OwnProps, DispatchProps, StateProps { }
 class SignUpFormComponent extends React.Component<Props, State> {
   private formRef: Form;
   private setFormRef = (ref: Form) => this.formRef = ref;
-
   constructor(props: Props) {
     super(props);
     this.state = {
       passwordMask: true,
       emailExists: false,
+      membershipSelectionError: "",
+      membershipSelectionId: props.location.state && props.location.state.membershipOptionId
     };
+    // Clear history after reading state
+    getHistory().replace({ ...props.location, state: undefined });
   }
 
   public componentDidUpdate(prevProps: Props, prevState: State) {
@@ -109,7 +113,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
 
     this.props.submitSignUp({
       ...validSignUp,
-      membershipId: this.state.membershipSelectionId,
+      membershipSelectionId: this.state.membershipSelectionId,
       discount: !!validSignUp.discount
     });
   }
@@ -139,13 +143,13 @@ class SignUpFormComponent extends React.Component<Props, State> {
     )
   }
 
-  private updateMembershipSelection = (membershipOption: InvoiceOption) => {
-    this.setState({ membershipSelectionId: membershipOption.id });
+  private updateMembershipSelection = (membershipSelectionId: string) => {
+    this.setState({ membershipSelectionId });
   }
 
   public render(): JSX.Element {
     const { isRequesting, error } = this.props;
-    const { emailExists, membershipSelectionError } = this.state;
+    const { emailExists, membershipSelectionError, membershipSelectionId } = this.state;
 
     return (
       <Form
@@ -193,7 +197,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
           </Grid>
           {this.props.renderMembershipOptions && (
             <Grid item xs={12}>
-              <MembershipSelectForm onSelect={this.updateMembershipSelection}/>
+              <MembershipSelectForm membershipOptionId={membershipSelectionId} onSelect={this.updateMembershipSelection}/>
               {membershipSelectionError && <ErrorMessage error={membershipSelectionError}/>}
             </Grid>
           )}
@@ -232,4 +236,4 @@ const mapDispatchToProps = (
     submitSignUp: (signUpForm) => dispatch(submitSignUpAction(signUpForm)),
   };
 }
-export default connect(mapStateToProps, mapDispatchToProps)(SignUpFormComponent);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SignUpFormComponent));

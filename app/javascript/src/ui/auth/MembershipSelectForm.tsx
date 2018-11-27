@@ -1,15 +1,12 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router";
 import isUndefined from "lodash-es/isUndefined";
 
 import { CollectionOf } from "app/interfaces";
-import { Routing } from "app/constants";
-import { Invoice, InvoiceOption, InvoiceableResource } from "app/entities/invoice";
+import { InvoiceOption, InvoiceableResource } from "app/entities/invoice";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import ErrorMessage from "ui/common/ErrorMessage";
-import { Action as CheckoutAction } from "ui/checkout/constants";
 import TableContainer from "ui/common/table/TableContainer";
 import { Column } from "ui/common/table/Table";
 import { numberAsCurrency } from "ui/utils/numberToCurrency";
@@ -18,44 +15,27 @@ import { readOptionsAction } from "ui/billing/actions";
 
 interface OwnProps {
   title?: string;
-  onSelect?: (membershipOption: InvoiceOption) => void;
+  onSelect: (membershipOptionId: string) => void;
+  membershipOptionId: string;
   redirectOnSelect?: boolean;
 }
 interface DispatchProps {
-  stageInvoice: (membershipOption: InvoiceOption) => void;
   getMembershipOptions: () => void;
-  resetStagedInvoice: () => void;
 }
 interface StateProps {
   membershipOptions: CollectionOf<InvoiceOption>;
   invoiceOptionsLoading: boolean;
   invoiceOptionsError: string;
-  stagedInvoices: CollectionOf<Invoice>;
-}
-interface State {
-  membershipOption: InvoiceOption | Partial<Invoice>;
-  passwordMask: boolean;
-  emailExists: boolean;
-  redirect: boolean;
 }
 
 interface Props extends OwnProps, DispatchProps, StateProps { }
 
-class MembershipSelectComponent extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      passwordMask: true,
-      emailExists: false,
-      redirect: false,
-      //TODO Update to actually find the chosen memberhip options
-      membershipOption: this.props.stagedInvoices ? Object.values(this.props.stagedInvoices)[0] : undefined,
-    };
-  }
+class MembershipSelectComponent extends React.Component<Props, {}> {
+
+  private selectMembershipOption = (event: React.MouseEvent<HTMLTableElement>) => this.props.onSelect(event.currentTarget.id);
 
   public componentDidMount() {
     this.props.getMembershipOptions();
-    this.props.resetStagedInvoice();
   }
 
   private rowId = (row: InvoiceOption) => row.id;
@@ -74,7 +54,7 @@ class MembershipSelectComponent extends React.Component<Props, State> {
       id: "select",
       label: "",
       cell: (row: InvoiceOption) => {
-        const selected = this.state.membershipOption && this.state.membershipOption.id === row.id;
+        const selected = this.props.membershipOptionId === row.id;
         const variant = selected ? "contained" : "outlined";
         const label = selected ? "Selected" : "Select";
 
@@ -84,7 +64,8 @@ class MembershipSelectComponent extends React.Component<Props, State> {
       }
     }
   ]
-  private renderMembershipSelect = (): JSX.Element => {
+
+  public render(): JSX.Element {
     const { membershipOptions, invoiceOptionsError, invoiceOptionsLoading } = this.props;
 
     let normalizedError: JSX.Element = invoiceOptionsError && (
@@ -104,26 +85,7 @@ class MembershipSelectComponent extends React.Component<Props, State> {
         />
         <ErrorMessage error={normalizedError} />
       </>
-        );
-  }
-
-  private selectMembershipOption = (event: React.MouseEvent<HTMLElement>) => {
-    const membershipOption = this.props.membershipOptions[event.currentTarget.id]
-    if (membershipOption) {
-      this.setState({ membershipOption });
-      this.props.resetStagedInvoice();
-      this.props.stageInvoice(membershipOption);
-      this.props.onSelect && this.props.onSelect(membershipOption);
-      this.props.redirectOnSelect && this.setState({ redirect: true });
-    }
-  }
-
-  public render(): JSX.Element {
-    if (this.state.redirect) {
-      return <Redirect to={Routing.SignUp} />
-    }
-
-    return this.renderMembershipSelect();
+    );
   }
 }
 
@@ -139,15 +101,10 @@ const mapStateToProps = (
     }
   } = state.billing;
 
-  const {
-    invoices: stagedInvoices
-  } = state.checkout;
-
   return {
     membershipOptions,
     invoiceOptionsLoading,
     invoiceOptionsError,
-    stagedInvoices
   }
 }
 
@@ -155,12 +112,7 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch
 ): DispatchProps => {
   return {
-    stageInvoice: (membershipOption: InvoiceOption) => dispatch({
-      type: CheckoutAction.StageInvoicesForPayment,
-      data: [membershipOption],
-    }),
     getMembershipOptions: () => dispatch(readOptionsAction({ types: [InvoiceableResource.Membership] })),
-    resetStagedInvoice: () => dispatch({ type: CheckoutAction.ResetStagedInvoices })
   };
 }
 export default connect(mapStateToProps, mapDispatchToProps)(MembershipSelectComponent);

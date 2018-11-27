@@ -13,7 +13,12 @@ class RegistrationsController < Devise::RegistrationsController
         @notifier.ping(format_slack_messages(@messages)) unless @messages.empty?
         MemberMailer.member_registered(@member).deliver_now
         sign_in(@member)
-        render json: @member and return
+        member_response = ActiveModelSerializers::SerializableResource.new(@member).as_json
+        invoice_response = ActiveModelSerializers::SerializableResource.new(@invoice).as_json
+        render json: {
+          member: member_response[:member],
+          invoice: invoice_response[:invoice],
+        } and return
       else
         render json: { message: @member.errors.full_messages }, status: 400 and return
       end
@@ -21,7 +26,11 @@ class RegistrationsController < Devise::RegistrationsController
 
     private
     def member_params
-      params.require(:member).permit(:firstname, :lastname, :email, :password, :membership_id)
+      params.require(:member).permit(:firstname, :lastname, :email, :password)
+    end
+
+    def invoice_option_params
+      params.permit(:membership_selection_id, :discount)
     end
 
     def invite_gdrive
@@ -34,10 +43,12 @@ class RegistrationsController < Devise::RegistrationsController
     end
 
     def create_initial_membership_invoice
-      plan = ::BraintreeService::Plan.get_plan_by_id(@gateway, member_params[:membership_id])
-      invoice = plan.build_invoice(@member.id, Time.now.change(hour: 0, min: 1))
-      unless invoice.save
-        @notifier.ping("Error creating initial membership invoice for new member: #{@member.email}")
+      invoice_option = InvoiceOption.find_by(id: invoice_option_params[:membership_selection_id])
+      @invoice = invoice_option.build_invoice(@member.id, Time.now, @member.id, invoice_option_params[:discount])
+      unless @invoice.save
+        @messages.push("Error creating initial membership invoice for new member: #{@member.email}")
+        byebug
+        @messages.concat(@invoice.errors.full_messages)
       end
     end
 

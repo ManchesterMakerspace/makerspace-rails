@@ -11,16 +11,13 @@ export interface AuthForm {
   password: string;
 }
 
-export interface MemberSignUpForm {
+export interface SignUpForm {
   firstname: string;
   lastname: string;
   email: string;
   password: string;
-}
-
-export interface SignUpForm extends MemberSignUpForm {
-  membershipId: string;
-  discount: boolean;
+  membershipSelectionId?: string;
+  discount?: boolean;
 }
 
 export type AuthMember = Pick<MemberDetails,
@@ -28,8 +25,7 @@ export type AuthMember = Pick<MemberDetails,
                         MemberProperties.Email |
                         MemberProperties.Lastname |
                         MemberProperties.Firstname |
-                        MemberProperties.Expiration |
-                        MemberProperties.Role
+                        MemberProperties.Expiration
                       > & Partial<MemberDetails> & {
   isAdmin: boolean;
   isNewMember: boolean;

@@ -14,7 +14,6 @@ import { CollectionOf } from "app/interfaces";
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import SignUpForm from "ui/auth/SignUpForm";
 import SignDocuments from "ui/auth/SignDocuments";
-import Form from "ui/common/Form";
 
 interface OwnProps { }
 interface StateProps {

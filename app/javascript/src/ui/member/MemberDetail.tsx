@@ -122,7 +122,6 @@ class MemberDetail extends React.Component<Props, State> {
 
     this.state = {
       ...defaultState,
-      isWelcomeOpen: props.isNewMember || false
     };
   }
 

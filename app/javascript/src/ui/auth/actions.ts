@@ -1,13 +1,10 @@
 import { ThunkAction } from "redux-thunk";
 import { AnyAction } from "redux";
 
-import isUndefined from "lodash-es/isUndefined";
-
 import { AuthState, AuthForm, SignUpForm } from "ui/auth/interfaces";
 import { postLogin, deleteLogin, postSignUp } from "api/auth/transactions";
 import { Action as AuthAction } from "ui/auth/constants";
-import { InvoiceableResource } from "app/entities/invoice";
-import { Action as InvoiceAction } from "ui/invoice/constants";
+import { Action as CheckoutAction } from "ui/checkout/constants";
 import { memberIsAdmin } from "ui/member/utils";
 
 export const loginUserAction = (
@@ -15,7 +12,6 @@ export const loginUserAction = (
 ): ThunkAction<Promise<void>, {}, {}, AnyAction>  => async (dispatch) => {
   dispatch({ type: AuthAction.StartAuthRequest });
 
-  let member;
   try {
     const response = await postLogin(loginForm);
     dispatch({
@@ -60,15 +56,19 @@ export const logoutUserAction = (
 export const submitSignUpAction = (
   signUpForm: SignUpForm
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
-  const { membershipId, discount, ...rest } = signUpForm;
-
   dispatch({ type: AuthAction.StartAuthRequest });
+  dispatch({ type: CheckoutAction.ResetStagedInvoices });
   try {
-    const response = await postSignUp(rest);
+    const response = await postSignUp(signUpForm);
+    const { member, invoice } = response.data;
+    dispatch({
+      type: CheckoutAction.StageInvoicesForPayment,
+      data: [invoice]
+    });
     dispatch({
       type: AuthAction.AuthUserSuccess,
       data: {
-        ...response.data.member,
+        ...member,
         isNewMember: true,
       }
     });
@@ -88,7 +88,6 @@ const defaultState: AuthState = {
     lastname: undefined,
     email: undefined,
     expirationTime: undefined,
-    role: undefined,
     isAdmin: false,
     isNewMember: undefined,
   },

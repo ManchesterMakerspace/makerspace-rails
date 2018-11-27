@@ -3,7 +3,7 @@ import axios from "axios";
 import { Url } from "app/constants";
 import { buildJsonUrl } from "app/utils";
 import { handleApiError } from "api/utils/handleApiError";
-import { AuthForm, MemberSignUpForm } from "ui/auth/interfaces";
+import { AuthForm, SignUpForm } from "ui/auth/interfaces";
 
 export const postLogin = async (creds?: AuthForm) => {
   try {
@@ -25,10 +25,13 @@ export const deleteLogin = async () => {
   }
 };
 
-export const postSignUp = async (signUpForm: MemberSignUpForm) => {
+export const postSignUp = async (signUpForm: SignUpForm) => {
+  const { discount, membershipSelectionId, ...rest } = signUpForm;
   try {
     return await axios.post(buildJsonUrl(Url.Auth.SignUp), {
-      member: signUpForm
+      member: rest,
+      membershipSelectionId,
+      discount,
     });
   } catch (e) {
     const error = handleApiError(e);
