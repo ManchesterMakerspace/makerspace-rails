@@ -30,6 +30,7 @@ export interface InvoiceOption {
   operation: InvoiceOperation,
   resourceClass: InvoiceableResource;
   planId: string;
+  disabled: boolean;
 }
 
 
@@ -59,6 +60,7 @@ export enum Properties {
   MemberId = "memberId",
   SubscriptionId = "subscriptionId",
   PlanId = "planId",
+  Disabled = "disabled",
 }
 
 export enum PaymentMethodType {

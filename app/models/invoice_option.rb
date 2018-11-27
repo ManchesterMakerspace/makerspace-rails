@@ -3,8 +3,8 @@ class InvoiceOption
   include ActiveModel::Serializers::JSON
 
   OPERATION_RESOURCES = {
-    member: Member,
-    rental: Rental,
+    "member" => Member,
+    "rental" => Rental,
   }.freeze
   OPERATION_FUNCTIONS = [:renew].freeze
 
@@ -23,8 +23,9 @@ class InvoiceOption
   # ID of billing plan to/is subscribe(d) to.  May reference a DEFAULT_INVOICE
   field :plan_id, type: String
 
+  field :disabled, type: Boolean, default: false
+
   validates :resource_class, inclusion: { in: OPERATION_RESOURCES.keys }, allow_nil: false
-  validates :operation, inclusion: { in: OPERATION_FUNCTIONS }, allow_nil: false
   validates_numericality_of :amount, greater_than: 0
   validates_numericality_of :quantity, greater_than: 0
   validates_uniqueness_of :plan_id

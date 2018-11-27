@@ -53,26 +53,6 @@ export const createInvoiceAction = (
   }
 };
 
-export const getMembershipOptionsAction = (
-): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
-  dispatch({ type: InvoicesAction.StartReadRequest });
-
-  try {
-    const response = await getInvoiceOptions({ types: [InvoiceableResource.Membership] });
-    const { invoices } = response.data;
-    dispatch({
-      type: InvoicesAction.GetInvoicesSuccess,
-      data: { invoices }
-    })
-  } catch (e) {
-    const { errorMessage } = e;
-    dispatch({
-      type: InvoicesAction.GetInvoicesFailure,
-      error: errorMessage
-    });
-  }
-};
-
 const defaultState: InvoicesState = {
   entities: {},
   read: {

@@ -4,7 +4,9 @@ import { BillingPlan } from "app/entities/billingPlan";
 
 export interface BillingState {
   entities: CollectionOf<InvoiceOption>;
-  billingPlans: CollectionOf<BillingPlan>;
+  billingPlans: RequestStatus & {
+    entities: CollectionOf<BillingPlan>
+  };
   read: RequestStatus & {
     totalItems: number;
   };

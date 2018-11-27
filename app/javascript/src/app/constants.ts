@@ -20,6 +20,7 @@ export namespace Url {
   export const Groups = `${baseApiPath}/groups`;
 
   export const Invoices = `${baseApiPath}/invoices`;
+  export const InvoiceOptions = `${baseApiPath}/invoice_options`;
 
   export const Auth = {
     SignIn: `${Members}/sign_in`,

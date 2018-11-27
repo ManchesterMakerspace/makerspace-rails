@@ -3,6 +3,8 @@ export enum Action {
   StartReadRequest = "BILLING/START_READ_REQUEST",
   GetOptionsSuccess = "BILLING/GET_OPTIONS_SUCCESS",
   GetOptionsFailure = "BILLING/GET_OPTIONS_FAILURE",
+
+  StartPlansRequest = "BILLING/START_PLANS_REQUEST",
   GetPlansSuccess = "BILLING/GET_PLANS_SUCCESS",
   GetPlansFailure = "BILLING/GET_PLANS_FAILURE",
 
@@ -49,7 +51,7 @@ export const fields = {
   },
   [Properties.Quantity]: {
     label: "Length (months)",
-    name: `${formPrefix}-name`,
+    name: `${formPrefix}-quantity`,
     placeholder: "Number of months to renew",
     validate: (val: string) => !!val,
     error: "Number of months to renew is required"

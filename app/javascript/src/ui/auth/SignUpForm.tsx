@@ -9,7 +9,7 @@ import CardContent from "@material-ui/core/CardContent";
 import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
 import MembershipSelectForm from "ui/auth/MembershipSelectForm";
 
-import { Invoice } from "app/entities/invoice";
+import { InvoiceOption } from "app/entities/invoice";
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { SignUpFields, EmailExistsError, signUpPrefix } from "ui/auth/constants";
 import { SignUpForm } from "ui/auth/interfaces";
@@ -139,7 +139,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
     )
   }
 
-  private updateMembershipSelection = (membershipOption: Invoice) => {
+  private updateMembershipSelection = (membershipOption: InvoiceOption) => {
     this.setState({ membershipSelectionId: membershipOption.id });
   }
 

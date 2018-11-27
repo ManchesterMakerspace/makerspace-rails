@@ -9,14 +9,15 @@ import { InvoiceOption, Invoice, InvoiceableResource } from "app/entities/invoic
 import { omit } from "lodash-es";
 import { getPlans } from "api/billingPlans/transactions";
 import { BillingPlan } from "app/entities/billingPlan";
+import { InvoiceOptionQueryParams } from "api/invoices/interfaces";
 
 export const readBillingPlansAction = (
   types: InvoiceableResource[]
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
-  dispatch({ type: BillingAction.StartReadRequest });
+  dispatch({ type: BillingAction.StartPlansRequest });
   try {
     const response = await getPlans({ types });
-    const billingPlans = response.data;
+    const { plans: billingPlans } = response.data;
     const totalItems = response.headers[("total-items")];
     dispatch({
       type: BillingAction.GetPlansSuccess,
@@ -34,12 +35,14 @@ export const readBillingPlansAction = (
   }
 }
 
-export const readOptionsAction = (): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
+export const readOptionsAction = (
+  queryParams?: InvoiceOptionQueryParams,
+): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
   dispatch({ type: BillingAction.StartReadRequest });
 
   try {
-    const response = await getInvoiceOptions();
-    const options = response.data;
+    const response = await getInvoiceOptions(queryParams);
+    const { invoiceOptions: options } = response.data;
     const totalItems = response.headers[("total-items")];
     dispatch({
       type: BillingAction.GetOptionsSuccess,
@@ -87,7 +90,7 @@ export const updateBillingAction = (
     const { data } = response;
     dispatch({
       type: BillingAction.UpdateOptionSuccess,
-      data: data.invoice
+      data: data.invoiceOption
     });
   } catch (e) {
     const { errorMessage } = e;
@@ -120,7 +123,11 @@ export const deleteBillingAction = (
 
 const defaultState: BillingState = {
   entities: {},
-  billingPlans: {},
+  billingPlans: {
+    entities: {},
+    isRequesting: false,
+    error: "",
+  },
   read: {
     isRequesting: false,
     error: "",
@@ -183,6 +190,14 @@ export const billingReducer = (state: BillingState = defaultState, action: AnyAc
           error
         }
       }
+    case BillingAction.StartPlansRequest:
+    return {
+      ...state,
+      billingPlans: {
+        ...state.billingPlans,
+        isRequesting: true,
+      }
+    }
     case BillingAction.GetPlansSuccess:
       const {
         data: {
@@ -198,23 +213,20 @@ export const billingReducer = (state: BillingState = defaultState, action: AnyAc
 
       return {
         ...state,
-        billingPlans: newPlans,
-        read: {
-          ...state.read,
-          totalItems: planTotalItems,
+        billingPlans: {
+          entities: newPlans,
           isRequesting: false,
           error: ""
-        }
+        },
       };
     case BillingAction.GetPlansFailure:
       const { planError } = action;
       return {
         ...state,
-        read: {
-          ...state.read,
+        billingPlans: {
           isRequesting: false,
           error: planError
-        }
+        },
       }
     case BillingAction.StartCreateRequest:
       return {

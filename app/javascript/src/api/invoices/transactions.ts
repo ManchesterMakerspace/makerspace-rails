@@ -63,7 +63,7 @@ export const getInvoiceOptions = async (queryParams?: InvoiceOptionQueryParams) 
 
 export const postInvoiceOptions = async (invoiceOptionForm: InvoiceOption) => {
   try {
-    return await axios.post(buildInvoiceOptionsUrl(), { invoiceOption: invoiceOptionForm });
+    return await axios.post(buildInvoiceOptionsUrl(null, true), { invoiceOption: invoiceOptionForm });
   } catch (e) {
     const error = handleApiError(e);
     throw error;

@@ -29,6 +29,10 @@ interface StateProps {
   totalItems: number;
   loading: boolean;
   error: string;
+  isCreating: boolean;
+  createError: string;
+  plansLoading: boolean;
+  plansError: string;
 }
 interface Props extends OwnProps, DispatchProps, StateProps { }
 interface State {
@@ -80,6 +84,24 @@ class OptionsList extends React.Component<Props, State> {
     this.getOptions();
   }
 
+  public componentDidUpdate(prevProps: Props, prevState: State) {
+    const { isCreating: wasCreating, options: priorInvoices, loading: wasLoading } = prevProps;
+    const { isCreating, createError, options, loading } = this.props;
+
+    // Set initial selection on initial load
+    if (
+      (wasLoading && !loading) && // Has finished reading
+      (prevState === this.state) // State is static - Nothing can happen during initial load
+    ) {
+      this.setState({ selectedId: undefined });
+    }
+
+    if ((wasCreating && !isCreating && !createError) // refresh list on create
+    ) {
+      this.getOptions();
+    }
+  }
+
   private getQueryParams = (): QueryParams => {
     const {
       pageNum,
@@ -106,7 +128,7 @@ class OptionsList extends React.Component<Props, State> {
   private closeDeleteConfirm = () => this.setState({ openDeleteConfirm: false });
 
   private renderBillingForms = () => {
-    const { options, getBillingPlans, billingPlans, loading, error } = this.props;
+    const { options, getBillingPlans, billingPlans, plansLoading, plansError } = this.props;
     const { selectedId, openCreateForm, openEditForm, openDeleteConfirm } = this.state;
 
     const editForm = (renderProps: UpdateBillingRenderProps) => (
@@ -120,8 +142,8 @@ class OptionsList extends React.Component<Props, State> {
         onSubmit={renderProps.submit}
         getBillingPlans={getBillingPlans}
         billingPlans={billingPlans}
-        plansLoading={loading}
-        plansError={error}
+        plansLoading={plansLoading}
+        plansError={plansError}
       />
     );
 
@@ -136,8 +158,8 @@ class OptionsList extends React.Component<Props, State> {
         onSubmit={renderProps.submit}
         getBillingPlans={getBillingPlans}
         billingPlans={billingPlans}
-        plansLoading={loading}
-        plansError={error}
+        plansLoading={plansLoading}
+        plansError={plansError}
       />
     );
 
@@ -284,11 +306,19 @@ const mapStateToProps = (
 ): StateProps => {
   const {
     entities: options,
-    billingPlans,
+    billingPlans: {
+      entities: billingPlans,
+      isRequesting: plansLoading,
+      error: plansError,
+    },
     read: {
       totalItems,
       isRequesting: loading,
       error
+    },
+    create: {
+      isRequesting: isCreating,
+      error: createError
     }
   } = state.billing;
   return {
@@ -296,7 +326,11 @@ const mapStateToProps = (
     billingPlans,
     totalItems,
     loading,
-    error
+    error,
+    isCreating,
+    createError,
+    plansLoading,
+    plansError,
   }
 }
 

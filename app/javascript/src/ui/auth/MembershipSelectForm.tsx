@@ -5,35 +5,35 @@ import isUndefined from "lodash-es/isUndefined";
 
 import { CollectionOf } from "app/interfaces";
 import { Routing } from "app/constants";
-import { Invoice } from "app/entities/invoice";
+import { Invoice, InvoiceOption, InvoiceableResource } from "app/entities/invoice";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import ErrorMessage from "ui/common/ErrorMessage";
-import { getMembershipOptionsAction } from "ui/invoices/actions";
 import { Action as CheckoutAction } from "ui/checkout/constants";
 import TableContainer from "ui/common/table/TableContainer";
 import { Column } from "ui/common/table/Table";
 import { numberAsCurrency } from "ui/utils/numberToCurrency";
 import { Button } from "@material-ui/core";
+import { readOptionsAction } from "ui/billing/actions";
 
 interface OwnProps {
   title?: string;
-  onSelect?: (membershipOption: Invoice) => void;
+  onSelect?: (membershipOption: InvoiceOption) => void;
   redirectOnSelect?: boolean;
 }
 interface DispatchProps {
-  stageInvoice: (membershipOption: Invoice) => void;
+  stageInvoice: (membershipOption: InvoiceOption) => void;
   getMembershipOptions: () => void;
   resetStagedInvoice: () => void;
 }
 interface StateProps {
-  membershipOptions: CollectionOf<Invoice>;
+  membershipOptions: CollectionOf<InvoiceOption>;
   invoiceOptionsLoading: boolean;
   invoiceOptionsError: string;
   stagedInvoices: CollectionOf<Invoice>;
 }
 interface State {
-  membershipOption: Invoice;
+  membershipOption: InvoiceOption | Partial<Invoice>;
   passwordMask: boolean;
   emailExists: boolean;
   redirect: boolean;
@@ -58,22 +58,22 @@ class MembershipSelectComponent extends React.Component<Props, State> {
     this.props.resetStagedInvoice();
   }
 
-  private rowId = (row: Invoice) => row.id;
-  private membershipColumns: Column<Invoice>[] = [
+  private rowId = (row: InvoiceOption) => row.id;
+  private membershipColumns: Column<InvoiceOption>[] = [
     {
       id: "description",
       label: "Description",
-      cell: (row: Invoice) => row.description,
+      cell: (row: InvoiceOption) => row.description,
     },
     {
       id: "amount",
       label: "Amount",
-      cell: (row: Invoice) => numberAsCurrency(row.amount),
+      cell: (row: InvoiceOption) => numberAsCurrency(row.amount),
     },
     {
       id: "select",
       label: "",
-      cell: (row: Invoice) => {
+      cell: (row: InvoiceOption) => {
         const selected = this.state.membershipOption && this.state.membershipOption.id === row.id;
         const variant = selected ? "contained" : "outlined";
         const label = selected ? "Selected" : "Select";
@@ -137,7 +137,7 @@ const mapStateToProps = (
       isRequesting: invoiceOptionsLoading,
       error: invoiceOptionsError,
     }
-  } = state.invoices;
+  } = state.billing;
 
   const {
     invoices: stagedInvoices
@@ -155,11 +155,11 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch
 ): DispatchProps => {
   return {
-    stageInvoice: (membershipOption: Invoice) => dispatch({
+    stageInvoice: (membershipOption: InvoiceOption) => dispatch({
       type: CheckoutAction.StageInvoicesForPayment,
       data: [membershipOption],
     }),
-    getMembershipOptions: () => dispatch(getMembershipOptionsAction()),
+    getMembershipOptions: () => dispatch(readOptionsAction({ types: [InvoiceableResource.Membership] })),
     resetStagedInvoice: () => dispatch({ type: CheckoutAction.ResetStagedInvoices })
   };
 }

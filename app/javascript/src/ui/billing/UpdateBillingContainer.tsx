@@ -11,7 +11,7 @@ import BillingForm from "ui/billing/BillingForm"
 import DeleteInvoiceOptionModal from "ui/billing/DeleteInvoiceOptionModal";
 
 export interface UpdateBillingRenderProps extends Props {
-  submit: (form: Form) => Promise<void>;
+  submit: (form: Form) => Promise<boolean>;
   setRef: (ref: BillingForm | DeleteInvoiceOptionModal) => void;
 }
 interface OwnProps {
@@ -43,11 +43,14 @@ class EditBillingOption extends React.Component<Props, {}> {
   }
 
   private submitMemberForm = async (form: Form) => {
-    const validUpdate: InvoiceOption = await this.formRef.validate(form);
+    const validUpdate: InvoiceOption = await this.formRef.validate && await this.formRef.validate(form);
 
     if (!form.isValid()) return;
 
-    return await this.props.dispatchBilling(validUpdate);
+    await this.props.dispatchBilling(validUpdate);
+    if (!this.props.error) {
+      return true;
+    }
   }
 
   public render(): JSX.Element {

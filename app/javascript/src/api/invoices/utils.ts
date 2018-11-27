@@ -9,8 +9,8 @@ export const buildInvoiceUrl = (invoiceId: string) => {
   return buildJsonUrl(buildInvoicePath(invoiceId));
 }
 
-export const buildInvoiceOptionsUrl = (invoiceOptionId?: string) => {
-  return buildJsonUrl(invoiceOptionId ? buildInvoiceOptionPath(invoiceOptionId) : Url.Admin.InvoiceOptions);
+export const buildInvoiceOptionsUrl = (invoiceOptionId?: string, admin?: boolean) => {
+  return buildJsonUrl(invoiceOptionId ? buildInvoiceOptionPath(invoiceOptionId) : (admin ? Url.Admin.InvoiceOptions : Url.InvoiceOptions));
 }
 
 const buildInvoiceOptionPath = (optionId: string) => {

@@ -2,6 +2,7 @@ import * as React from "react";
 import mapValues from "lodash-es/mapValues";
 import isEmpty from "lodash-es/isEmpty";
 import omit from "lodash-es/omit";
+import merge from "lodash-es/merge";
 import isUndefined from "lodash-es/isUndefined";
 
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -106,7 +107,7 @@ class Form extends React.Component<FormModalProps, State> {
   };
 
   public setFormState = (newState: Partial<State>) => {
-    return new Promise((resolve) => this.setState(state => ({ ...state, ...newState }), resolve))
+    return new Promise((resolve) => this.setState(state => (merge({}, state, newState)), resolve))
   };
 
   public setValue = (fieldName: string, value: any) => {

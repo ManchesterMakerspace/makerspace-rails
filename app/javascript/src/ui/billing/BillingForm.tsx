@@ -13,7 +13,8 @@ import Select from "@material-ui/core/Select";
 import FormModal from "ui/common/FormModal";
 import Form from "ui/common/Form";
 
-import { InvoiceOption, InvoiceableResource } from "app/entities/invoice";
+import { InvoiceOption, InvoiceableResource, Properties as InvoiceOptionProps } from "app/entities/invoice";
+import { Properties as BillingPlanProps } from "app/entities/billingPlan";
 import { fields } from "ui/billing/constants";
 import { BillingPlan } from "app/entities/billingPlan";
 import { CollectionOf } from "app/interfaces";
@@ -37,48 +38,87 @@ interface State {
   planMatchError: string;
 }
 
+const defaultState = {
+  type: InvoiceableResource.Membership,
+  planId: "",
+  planMatchError: "",
+}
 class BillingForm extends React.Component<OwnProps, State>{
   public formRef: Form;
   private setFormRef = (ref: Form) => this.formRef = ref;
 
   public constructor(props: OwnProps) {
     super(props);
-    this.state = {
-      type: InvoiceableResource.Membership,
-      planId: "",
-      planMatchError: "",
-    }
+    this.state = defaultState;
   }
 
   public componentDidMount() {
-    this.props.getBillingPlans(this.state.type);
+    this.getBillingPlans();
   }
 
+  private getBillingPlans = () => this.props.getBillingPlans(this.state.type);
+
   public componentDidUpdate(prevProps: OwnProps, prevState: State) {
-    const { isOpen, option } = this.props;
-    const { isOpen: wasOpen, option: oldOption } = prevProps;
+    const { isOpen, option, billingPlans } = this.props;
+    const { isOpen: wasOpen, option: oldOption, billingPlans: oldPlans } = prevProps;
     const { type, planId } = this.state;
     const { type: oldType, planId: oldPlanId } = prevState;
-    if ((isOpen && !wasOpen) || //Reload plans on opening
-      (type && type !== oldType) || // or if type changes
-      (option && option.resourceClass !== oldOption.resourceClass && option.resourceClass !== type)) {// Or if option changed and resource doesn't match
-      this.props.getBillingPlans(type);
+    const optionType = option && option.resourceClass;
+    const oldOptionType = oldOption && oldOption.resourceClass;
+    // Reset on form open
+    if (isOpen && !wasOpen) {
+      this.setState(defaultState);
     }
-    if (planId && planId !== oldPlanId) { // Apply selected plan to form vlaues
+    // Reload plans if type changes
+    if (type && type !== oldType) {
+      this.getBillingPlans();
+    }
+    // Update form type if option changed and is out of sync
+    if (optionType && optionType !== oldOptionType && optionType !== type) {
+      this.setState({ type: optionType });
+    }
+    // Apply selected plan to form vlaues if a different plan was chosen
+    if (planId && planId !== oldPlanId && planId !== option.planId) {
       this.applyPlanToForm();
     }
+  }
+
+  // Map of editable plan props to copy to option if option doesn't have them already
+  private planToOptionMap = {
+    [BillingPlanProps.Name]: InvoiceOptionProps.Name,
+    [BillingPlanProps.Description]: InvoiceOptionProps.Description,
+  }
+  // Map of uneditable props to override option with
+  private planOverridesMap = {
+    [BillingPlanProps.Id]: InvoiceOptionProps.PlanId,
+    [BillingPlanProps.BillingFrequency]: InvoiceOptionProps.Quantity,
+    [BillingPlanProps.Amount]: InvoiceOptionProps.Amount,
   }
 
   private applyPlanToForm = () => {
     const { billingPlans } = this.props;
     const billingPlan = billingPlans[this.state.planId];
 
-    const planToValues = Object.entries(billingPlan).reduce((obj, [key, val]) => {
-      const field = fields[key];
-      if (field) {
-        obj[field.name] = val;
+    const planToValues = Object.entries(billingPlan).reduce((invoiceOptionForm, [key, val]) => {
+      // Convert billing plan key to option key
+      const optionMap = this.planToOptionMap[key];
+      const overrideMap = this.planOverridesMap[key];
+        // Find related form field
+      let field;
+      if (optionMap) {
+        const tmpField = fields[optionMap];
+        // Only apply option map if no value
+        if (tmpField && !this.formRef.getValues()[tmpField.name]) {
+          field = tmpField
+        }
+      } else if (overrideMap) {
+        field = fields[overrideMap];
       }
-      return obj;
+      if (field) {
+        // Apply to form values update object
+        invoiceOptionForm[field.name] = val;
+      }
+      return invoiceOptionForm;
     }, {});
     this.formRef.setFormState({ values: planToValues });
   }
@@ -97,7 +137,7 @@ class BillingForm extends React.Component<OwnProps, State>{
 
   private renderPlanOptions = () => {
     const { plansLoading, plansError, billingPlans } = this.props;
-    if (plansLoading) {
+    if (plansLoading || !billingPlans) {
       return this.renderPlanOption({ id: "loading", name: "Loading...", value: "" });
     } else if (plansError) {
       return this.renderPlanOption({ id: "error", name: plansError, value: "" });
@@ -112,8 +152,8 @@ class BillingForm extends React.Component<OwnProps, State>{
   )
 
   public render() {
-    const { isOpen, onClose, isRequesting, error, onSubmit, option, billingPlans } = this.props;
-    const { type } = this.state;
+    const { isOpen, onClose, isRequesting, error, onSubmit, option } = this.props;
+    const { type, planId } = this.state;
 
     return (
       <FormModal
@@ -161,7 +201,7 @@ class BillingForm extends React.Component<OwnProps, State>{
               fullWidth
               required
               value={option && option.name}
-              disabled={option && !isUndefined(option.planId)}
+              disabled={isRequesting}
               label={fields.name.label}
               name={fields.name.name}
               placeholder={fields.name.placeholder}
@@ -172,7 +212,7 @@ class BillingForm extends React.Component<OwnProps, State>{
               fullWidth
               required
               value={option && option.description}
-              disabled={option && !isUndefined(option.planId)}
+              disabled={isRequesting}
               label={fields.description.label}
               name={fields.description.name}
               placeholder={fields.description.placeholder}
@@ -183,7 +223,7 @@ class BillingForm extends React.Component<OwnProps, State>{
               fullWidth
               required
               value={option && option.amount}
-              disabled={option && !isUndefined(option.planId)}
+              disabled={isRequesting || !!planId || !!(option && option.planId)}
               label={fields.amount.label}
               name={fields.amount.name}
               placeholder={fields.amount.placeholder}
@@ -194,7 +234,7 @@ class BillingForm extends React.Component<OwnProps, State>{
               fullWidth
               required
               value={option && option.quantity}
-              disabled={option && !isUndefined(option.planId)}
+              disabled={isRequesting || !!planId || !!(option && option.planId)}
               label={fields.quantity.label}
               name={fields.quantity.name}
               placeholder={fields.quantity.placeholder}
