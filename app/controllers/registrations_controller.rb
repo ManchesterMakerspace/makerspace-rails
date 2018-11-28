@@ -11,8 +11,8 @@ class RegistrationsController < Devise::RegistrationsController
         create_initial_membership_invoice
         invite_gdrive if Rails.env == "production"
         @notifier.ping(format_slack_messages(@messages)) unless @messages.empty?
-        MemberMailer.member_registered(@member).deliver_now
         sign_in(@member)
+
         member_response = ActiveModelSerializers::SerializableResource.new(@member).as_json
         invoice_response = ActiveModelSerializers::SerializableResource.new(@invoice).as_json
         render json: {
@@ -47,7 +47,6 @@ class RegistrationsController < Devise::RegistrationsController
       @invoice = invoice_option.build_invoice(@member.id, Time.now, @member.id, invoice_option_params[:discount])
       unless @invoice.save
         @messages.push("Error creating initial membership invoice for new member: #{@member.email}")
-        byebug
         @messages.concat(@invoice.errors.full_messages)
       end
     end

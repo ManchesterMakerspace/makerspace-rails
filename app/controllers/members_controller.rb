@@ -19,6 +19,7 @@ class MembersController < ApplicationController
         render json: { message: "Missing parameter: signature" }, status: 400 and return
       end
       response = upload_signature()
+      @notifier.ping(format_slack_messages(@messages)) unless @messages.empty?
       if !response[:error].nil?
         render json: { message: response[:error] }, status: 500 and return
       else
