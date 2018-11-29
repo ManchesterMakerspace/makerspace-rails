@@ -4,7 +4,6 @@ import { Switch, Route, Redirect } from "react-router";
 import { Routing } from "app/constants";
 import LandingPage from 'ui/auth/LandingPage';
 import CheckoutContainer from 'ui/checkout/CheckoutContainer';
-import { AuthDisplayOption } from 'ui/auth/constants';
 import PasswordReset from 'ui/auth/PasswordReset';
 import { Location } from 'history';
 import SignUpContainer from 'ui/auth/SignUpContainer';

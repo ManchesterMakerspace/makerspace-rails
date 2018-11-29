@@ -101,7 +101,6 @@ class PaymentRequiredModal extends React.Component<Props, State> {
     const { invoices } = this.props;
 
     const invoicesToPay = pick(invoices, selectedIds);
-    console.log(invoicesToPay);
     this.props.stageInvoices(invoicesToPay);
     this.setState({ redirect: true})
   }

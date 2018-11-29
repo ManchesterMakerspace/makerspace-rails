@@ -74,8 +74,8 @@ class CheckoutContainer extends React.Component<Props,State>{
   ];
 
   public componentDidUpdate(prevProps: Props) {
-    const { isRequesting, error } = this.props;
-    const { isRequesting: wasRequesting } = prevProps;
+    const { isRequesting, error, auth } = this.props;
+    const { isRequesting: wasRequesting, auth: oldAuth } = prevProps;
     if (wasRequesting && !isRequesting && !error) {
       console.log("SUCCESS, redirect to receipt page")
     }
@@ -156,18 +156,6 @@ class CheckoutContainer extends React.Component<Props,State>{
         {isRequesting && <LoadingOverlay id="checkout-submitting-overlay" />}
         <Grid item md={8} sm={7} xs={12}>
           <Grid container spacing={16}>
-
-            {!auth && <Grid item xs={12}>
-              <Card style={{ minWidth: 275 }}>
-                <CardContent>
-                  <SignUpForm goToLogin={this.openLoginModal} />
-
-                  <Button id="auth-toggle" variant="outlined" color="secondary" fullWidth onClick={this.openLoginModal}>
-                    Already a Member? Login
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>}
             <Grid item xs={12}>
               <Card>
                 <CardContent>

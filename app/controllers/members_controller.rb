@@ -1,6 +1,8 @@
 class MembersController < ApplicationController
     include FastQuery
+    include GoogleService
     before_action :set_member, only: [:show, :update]
+    before_action :initalize_gdrive, only: [:create]
 
     def index
       @members = query_params[:search].nil? || query_params[:search].empty? ? Member.all : Member.rough_search_members(query_params[:search])
@@ -60,4 +62,15 @@ class MembersController < ApplicationController
         return { error: error, result: result }
       end
     end
+
+  def initalize_gdrive
+    @service = Google::Apis::DriveV3::DriveService.new
+    creds = Google::Auth::UserRefreshCredentials.new({
+      client_id: ENV['GOOGLE_ID'],
+      client_secret: ENV['GOOGLE_SECRET'],
+      refresh_token: ENV['GOOGLE_TOKEN'],
+      scope: ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/drive"]
+    })
+    @service.authorization = creds
+  end
 end

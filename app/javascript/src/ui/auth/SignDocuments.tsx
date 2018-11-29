@@ -1,11 +1,7 @@
 import * as React from "react";
-import { connect } from "react-redux";
 
 import SignatureCanvas from "react-signature-canvas";
 
-import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
 import Grid from "@material-ui/core/Grid";
 import Checkbox from "@material-ui/core/Checkbox";
 import Button from "@material-ui/core/Button";
@@ -16,17 +12,16 @@ import { AuthMember } from "ui/auth/interfaces";
 import { timeToDate } from "ui/utils/timeToDate";
 const codeOfConduct = require('code_of_conduct.html') as string;
 const memberContract = require('member_contract.html') as string;
-import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import Form from "ui/common/Form";
-import { uploadMemberSignature } from "api/members/transactions";
+import LoadingOverlay from "ui/common/LoadingOverlay";
 
 interface OwnProps {
-  onSubmit: () => void;
-}
-interface StateProps {
+  onSubmit: (signature: WindowBase64) => void;
+  uploadError: string;
+  uploadProcessing: boolean;
   currentUser: AuthMember;
 }
-interface Props extends OwnProps, StateProps {}
+interface Props extends OwnProps {}
 
 interface State {
   display: Documents;
@@ -38,11 +33,6 @@ interface State {
 enum Documents {
   codeOfConduct = "code_of_conduct",
   memberContract = "member_contract",
-}
-
-type DocumentForm = {
-  codeOfConduct?: boolean;
-  memberContract?: boolean;
 }
 
 class SignDocuments extends React.Component<Props, State>{
@@ -59,6 +49,7 @@ class SignDocuments extends React.Component<Props, State>{
     }
   }
 
+  // Make sure checkbox is checked, then switch to member contract
   private completeCodeOfConduct = async (form: Form) => {
     const documentField = this.documents()[Documents.codeOfConduct];
 
@@ -69,6 +60,7 @@ class SignDocuments extends React.Component<Props, State>{
     }
     this.setState({ display: Documents.memberContract })
   }
+
   private getCodeOfConduct = () => {
     const document = this.documents()[Documents.codeOfConduct];
     return (
@@ -84,6 +76,7 @@ class SignDocuments extends React.Component<Props, State>{
             control={
               <Checkbox
                 name={document.name}
+                value={document.name}
                 checked={document.value}
                 onChange={this.acceptDocument(document.name)}
                 color="primary"
@@ -97,14 +90,14 @@ class SignDocuments extends React.Component<Props, State>{
   }
   private getMemberContract = () => {
     const formattedMemberContract = memberContract.replace('[name]', `<b>${this.props.currentUser.firstname} ${this.props.currentUser.lastname}</b>`)
-      .replace('[today]', `<b>${timeToDate(new Date())}</b>`);
+                                                  .replace('[today]', `<b>${timeToDate(new Date())}</b>`);
     const document = this.documents()[Documents.memberContract];
     return (
       <Form
         id="member-contract-form"
         submitText="Proceed"
         onSubmit={this.completeDocuments}
-        error={this.state.documentError}
+        error={this.state.documentError || this.props.uploadError}
       >
         {this.renderDocument(formattedMemberContract)}
         <div key={document.name}>
@@ -113,6 +106,7 @@ class SignDocuments extends React.Component<Props, State>{
               <Checkbox
                 name={document.name}
                 checked={document.value}
+                value={document.name}
                 onChange={this.acceptDocument(document.name)}
                 color="primary"
               />
@@ -133,6 +127,7 @@ class SignDocuments extends React.Component<Props, State>{
             </Grid>
           </Grid>
         </Grid>
+        {this.props.uploadProcessing && <LoadingOverlay id="signature-loading-overlay"/> }
       </Form>
     );
   }
@@ -141,6 +136,7 @@ class SignDocuments extends React.Component<Props, State>{
     this.signatureRef && this.signatureRef.clear();
   }
 
+  // Handle checkbox state for document acceptance
   private acceptDocument = (acceptedDoc: Documents) => (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     if (acceptedDoc === Documents.codeOfConduct) {
       this.setState({ acceptCodeOfConduct: checked });
@@ -148,6 +144,7 @@ class SignDocuments extends React.Component<Props, State>{
       this.setState({ acceptMemberContract: checked });
     }
   }
+  // Verify signature and call submit callback
   private completeDocuments = async (form: Form) => {
     const documentField = this.documents()[Documents.memberContract];
 
@@ -156,18 +153,12 @@ class SignDocuments extends React.Component<Props, State>{
       this.setState({ documentError: documentField.error });
       return;
     }
-    const signature = this.signatureRef && this.signatureRef.toDataUrl();
+    const signature = this.signatureRef && this.signatureRef.toDataURL();
     if (!signature) {
       this.setState({ documentError: "Signature required to proceed" });
       return;
     }
-    try {
-      await uploadMemberSignature(this.props.currentUser.id, signature);
-    } catch (e) {
-      this.setState({ documentError: e });
-      return;
-    }
-    this.props.onSubmit();
+    this.props.onSubmit(signature);
   }
 
   private documents = () => ({
@@ -177,7 +168,7 @@ class SignDocuments extends React.Component<Props, State>{
       render: this.getCodeOfConduct,
       value: this.state.acceptCodeOfConduct,
       validate: (val: boolean) => !!val,
-      error: "You must accpet to continue",
+      error: "You must accept to continue",
       label: "I have read and agree to abide by the Manchester Makerspace Code of Conduct",
     },
     [Documents.memberContract]: {
@@ -186,7 +177,7 @@ class SignDocuments extends React.Component<Props, State>{
       render: this.getMemberContract,
       value: this.state.acceptMemberContract,
       validate: (val: boolean) => !!val,
-      error: "You must accpet to continue",
+      error: "You must accept to continue",
       label: "I have read and agree to the Manchester Makerspace Member Contract",
     }
   })
@@ -220,15 +211,4 @@ class SignDocuments extends React.Component<Props, State>{
   }
 }
 
-const mapStateToProps = (
-  state: ReduxState,
-  _ownProps: OwnProps
-): StateProps => {
-  const { currentUser } = state.auth;
-
-  return {
-    currentUser,
-  }
-}
-
-export default connect(mapStateToProps)(SignDocuments);
+export default SignDocuments;

@@ -23,6 +23,7 @@ interface OwnProps extends RouteComponentProps<any> {
 }
 interface StateProps {
   currentUser: AuthMember;
+  authRequesting: boolean;
 }
 interface DispatchProps {
   logout: () => void;
@@ -122,14 +123,14 @@ class Header extends React.Component<Props, State> {
   }
 
   public render(): JSX.Element {
-    const { currentUser } = this.props;
+    const { currentUser, authRequesting } = this.props;
     return (
       <AppBar style={{ marginBottom: "1em" }} position="static" color="default" title={Logo}>
         <Toolbar>
           <Typography variant="title" color="inherit" className="flex">
             <img src={Logo} alt="Manchester Makerspace" height={60} />
           </Typography>
-          { currentUser.id ? this.renderHambMenu() : this.renderLoginLink() }
+          {currentUser.id ? this.renderHambMenu() : (!authRequesting && this.renderLoginLink()) }
         </Toolbar>
       </AppBar>
     )
@@ -138,11 +139,12 @@ class Header extends React.Component<Props, State> {
 
 const mapStateToProps = (state: ReduxState, _ownProps: OwnProps): StateProps => {
   const {
-    auth: { currentUser }
+    auth: { currentUser, isRequesting }
   } = state;
 
   return {
     currentUser,
+    authRequesting: isRequesting
   }
 }
 

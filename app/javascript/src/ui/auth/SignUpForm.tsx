@@ -21,16 +21,11 @@ import { getHistory } from "app/utils";
 interface OwnProps extends RouteComponentProps<any>{
   goToLogin: () => void;
   renderMembershipOptions?: boolean;
-  onSubmit?: () => void;
-}
-interface DispatchProps {
-  submitSignUp: (signUpForm: SignUpForm) => void;
-}
-interface StateProps {
-  memberId: string;
+  onSubmit?: (validSignUp: SignUpForm) => void;
   isRequesting: boolean;
   error: string;
 }
+
 interface State {
   membershipSelectionId: string;
   membershipSelectionError: string;
@@ -38,7 +33,7 @@ interface State {
   emailExists: boolean;
 }
 
-interface Props extends OwnProps, DispatchProps, StateProps { }
+interface Props extends OwnProps { }
 
 class SignUpFormComponent extends React.Component<Props, State> {
   private formRef: Form;
@@ -62,9 +57,6 @@ class SignUpFormComponent extends React.Component<Props, State> {
     if (wasRequesting && !isRequesting) {
       if (error === EmailExistsError) {
         this.setState({ emailExists: true });
-      }
-      if (!error) {
-        this.props.onSubmit && this.props.onSubmit();
       }
     }
     if (this.state.membershipSelectionId !== prevState.membershipSelectionId) {
@@ -111,7 +103,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
       return;
     }
 
-    this.props.submitSignUp({
+    this.props.onSubmit && this.props.onSubmit({
       ...validSignUp,
       membershipSelectionId: this.state.membershipSelectionId,
       discount: !!validSignUp.discount
@@ -210,30 +202,4 @@ class SignUpFormComponent extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (
-  state: ReduxState,
-  _ownProps: OwnProps
-): StateProps => {
-  const {
-    currentUser: {
-      id: memberId,
-    },
-    isRequesting,
-    error
-  } = state.auth;
-
-  return {
-    memberId,
-    isRequesting,
-    error
-  }
-}
-
-const mapDispatchToProps = (
-  dispatch: ScopedThunkDispatch
-): DispatchProps => {
-  return {
-    submitSignUp: (signUpForm) => dispatch(submitSignUpAction(signUpForm)),
-  };
-}
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SignUpFormComponent));
+export default withRouter(SignUpFormComponent);

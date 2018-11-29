@@ -1,9 +1,8 @@
 import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
-
+import isObject from "lodash-es/isObject";
 import { getClientToken, postCheckout } from "api/checkout/transactions";
 
-import { CollectionOf } from "app/interfaces";
 import { Invoice } from "app/entities/invoice";
 
 import { Action as CheckoutAction } from "ui/checkout/constants";
@@ -77,15 +76,26 @@ export const checkoutReducer = (state: CheckoutState = defaultState, action: Any
       }
     case CheckoutAction.StageInvoicesForPayment:
       const invoices = action.data;
-      const newInvoices = {};
-      invoices.forEach((invoice: Invoice) => {
-        newInvoices[invoice.id] = invoice;
-      });
-      return {
-        ...state,
-        invoices: {
-          ...state.invoices,
-          ...newInvoices,
+      // Can accept array or collection of invoices to stage
+      if (Array.isArray(invoices)) {
+        const newInvoices = {};
+        invoices.forEach((invoice: Invoice) => {
+          newInvoices[invoice.id] = invoice;
+        });
+        return {
+          ...state,
+          invoices: {
+            ...state.invoices,
+            ...newInvoices,
+          }
+        }
+      } else if (isObject(invoices)) {
+        return {
+          ...state,
+          invoices: {
+            ...state.invoices,
+            ...invoices,
+          }
         }
       }
     case CheckoutAction.ResetStagedInvoices:
