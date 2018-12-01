@@ -37,7 +37,7 @@ class Billing::PaymentMethodsController < ApplicationController
         response[:success] = result.success?
         response[:data] = result.try(:payment_method) ? result.payment_method.token : result.customer.payment_methods[0].token
       else
-      response[:error] = result.errors.map { |e| e.message }
+        response[:error] = result.errors.map { |e| e.message }
       end
     else
       response[:error] = "Invalid payment method"
@@ -64,12 +64,26 @@ class Billing::PaymentMethodsController < ApplicationController
   end
 
   def delete
-    # Fetch current member as customer
-    # If on subscription, check if this token is being used for subscription
-    # If yes, throw error that must cancel subscription or update payment method first
-    # If not on subscription or this isn't the payment method used for it,
-    # Make sure it is a payment method registered to customer
-    # Then delete it
+    payment_method_token = payment_method_params[:payment_method_token]
+    if current_member.customer_id
+      # Only allowed to modify own payment methods
+      begin
+        payment_method = ::BraintreeService::PaymentMethod.find_payment_method_for_customer(@gateway, payment_method_token, current_member.customer_id)
+        result = ::BraintreeService::PaymentMethod.delete_payment_method(payment_method.token)
+        if result.success?
+          render json: {}, status: 204 and return
+        else
+          render json: { error: result.errors.map { |e| e.message } }, status: 500 and return
+        end
+
+      rescue ArgumentError => e
+        render json: { error: e.message }, status 401 and return
+      rescue Braintree::NotFoundError => e
+        render json: { error: e.message }, status 500 and return
+      end
+    else
+      render json: {}, status: 404 and return
+    end
   end
 
   private

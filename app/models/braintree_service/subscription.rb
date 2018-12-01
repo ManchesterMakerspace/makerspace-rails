@@ -9,4 +9,27 @@ class BraintreeService::Subscription < Braintree::Subscription
       self.new(gateway, instance_to_hash(subscription))
     end
   end
+
+  def self.get_subscription(gateway, id)
+    gateway.subscription.find(id)
+  end
+
+  def self.cancel(gateway, id)
+    gateway.subscription.cancel(id)
+  end
+
+  def self.update(gateway, subscription)
+    gateway.subscription.update(
+      subscription[:id], # id of subscription to update
+      :payment_method_token => subscription[:payment_method_token],
+      :plan_id => subscription[:plan_id],
+    )
+  end
+
+  def self.create(gateway, subscription)
+    gateway.subscription.create(
+      :payment_method_token => subscription[:payment_method_token],
+      :plan_id => subscription[:plan_id]
+    )
+  end
 end

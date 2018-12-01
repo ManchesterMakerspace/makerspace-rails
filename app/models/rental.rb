@@ -6,6 +6,7 @@ class Rental
   field :number
   field :description
   field :expiration
+  field :subscription_id, type: String # Braintree relation
 
   validates :number, presence: true, uniqueness: true
 
@@ -33,6 +34,11 @@ class Rental
         return "#{self.member.fullname}'s rental of Locker/Plot # #{self.number} updated.  Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}"
       end
     end
+  end
+
+  protected
+  def remove_subscription
+    self.update({ subscription_id: nil })
   end
 
   private

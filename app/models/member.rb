@@ -29,6 +29,7 @@ class Member
   field :remember_created_at, type: Time
 
   field :customer_id, type: String # Braintree customer relation
+  field :subscription_id, type: String # Braintree relation
 
   search_in :email, :lastname, :firstname
 
@@ -43,6 +44,7 @@ class Member
   after_initialize :verify_group_expiry
   after_update :update_card
 
+  has_many :rentals, class_name: 'Rental'
   has_many :offices, class_name: 'Workshop', inverse_of: :officer
   has_many :access_cards, class_name: "Card", inverse_of: :member
   belongs_to :group, class_name: "Group", inverse_of: :active_members, optional: true, primary_key: 'groupName', foreign_key: "groupName"
@@ -121,6 +123,10 @@ class Member
   end
 
   protected
+  def find_braintree_customer
+    gateway.customer.find(self.customer_id) unless self.customer_id.nil?
+  end
+
   def update_braintree_customer_info
     if self.customer_id && self.changed.any? { |attr| [:firstname, :lastname].include(attr) }
       gateway = Braintree::Gateway.new(
@@ -131,6 +137,16 @@ class Member
       )
       customer = gateway.customer.update(self.customer_id, firstname: self.firstname, lastname: self.lastname)
     end
+  end
+
+  def find_subscription_resource(id)
+    resource = self if self.subscription_id && self.subscription_id == id
+    resource = (self.rentals && self.rentals.find_by(subscription_id: subscription_id)) if resource.nil?
+    resource
+  end
+
+  def remove_subscription
+    self.update({ subscription_id: nil, subscription: false })
   end
 
   private

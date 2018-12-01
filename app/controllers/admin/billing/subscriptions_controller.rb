@@ -1,10 +1,14 @@
-class Billing::SubscriptionsController < ApplicationController
+class Admin::Billing::SubscriptionsController < ApplicationController
     include FastQuery
     include BraintreeGateway
-    before_action :verify_own_subscription, only: [:show, :update, :destroy]
+
+  def index
+    subs = ::BraintreeService::Subscription.get_subscriptions(@gateway)
+    return render_with_total_items(subs, { :each_serializer => Braintree::SubscriptionSerializer})
+  end
 
   def show
-    subscription = ::BraintreeService::Subscription.get_subscription(@gateway, subscription_id)
+    subscription = ::BraintreeService::Subscription.create(@gateway, subscription_params[:id])
     render json: subscription, serializer: Braintree::SubscriptionSerializer and return
   end
 
@@ -21,10 +25,10 @@ class Billing::SubscriptionsController < ApplicationController
   def destroy
     result = ::BraintreeService::Subscription.cancel(@gateway, subscription_params[:id])
     if result.success?
-      if @subscription_resource.remove_subscription()
+      if subscription_resource.remove_subscription()
         render json: {}, status: 204 and return
       else
-        render json: { error: @subscription_resource.errors.full_messages.join(". ") }, status: 500 and return
+        render json: { error: subscription_resource.errors.full_messages.join(". ") }, status: 500 and return
       end
     else
       render json: { error: result.errors.map { |e| e.message } }, status: 500 and return
@@ -34,13 +38,5 @@ class Billing::SubscriptionsController < ApplicationController
   private
   def subscription_params
     params.require(:subscription).permit(:id, :payment_method_token, :plan_id)
-  end
-
-  def verify_own_subscription
-    subscription_id = subscription_params[:id]
-    @subscription_resource = current_member.find_subscription_resource(subscription_id)
-    if @subscription_resource.nil?
-      render json: { error: "Unauthorized or not found" }, status: 404 and return
-    end
   end
 end
