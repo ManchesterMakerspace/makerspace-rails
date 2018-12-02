@@ -6,7 +6,8 @@ export namespace Url {
     Email = "{email}",
     CardId = "{cardId}",
     InvoiceId = "{invoiceId}",
-    SubscriptionId = "{subscriptionId}"
+    SubscriptionId = "{subscriptionId}",
+    PaymentMethodId = "{paymentMethodId}",
   }
 
   const baseApiPath = "api";
@@ -49,6 +50,7 @@ export namespace Url {
 
   export const Billing = {
     PaymentMethods: `${baseBillingPath}/payment_methods`,
+    PaymentMethod: `${baseBillingPath}/payment_method/${PathPlaceholder.PaymentMethodId}`,
     Plans: `${baseBillingPath}/plans`,
     Subscriptions: `${baseBillingPath}/subscriptions`,
     Subscription: `${baseBillingPath}/subscriptions/${PathPlaceholder.SubscriptionId}`,

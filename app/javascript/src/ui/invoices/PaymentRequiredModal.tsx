@@ -5,13 +5,11 @@ import { Redirect } from "react-router";
 import pick from "lodash-es/pick";
 
 import { Invoice } from "app/entities/invoice";
-import { MemberDetails } from "app/entities/member";
 import { CollectionOf } from "app/interfaces";
 import { Routing } from "app/constants";
 
 import { ScopedThunkDispatch } from "ui/reducer";
 import FormModal from "ui/common/FormModal";
-import { fields } from "ui/member/constants";
 import Form from "ui/common/Form";
 import Table from "ui/common/table/Table";
 import { Column } from "ui/common/table/Table";
@@ -91,10 +89,6 @@ class PaymentRequiredModal extends React.Component<Props, State> {
       this.setState({ selectedIds: Object.keys(this.props.invoices) });
     }
   }
-
-  public validate = async (_form: Form): Promise<MemberDetails> => (
-    this.formRef.simpleValidate<MemberDetails>(fields)
-  );
 
   private onSubmit = () => {
     const { selectedIds } = this.state;

@@ -28,6 +28,7 @@ import { numberAsCurrency } from "ui/utils/numberToCurrency";
 import StatusLabel from "ui/common/StatusLabel";
 import { Status } from "ui/common/constants";
 import { ActionButton } from "ui/common/ButtonRow";
+import SettingsContainer from "ui/member/Settings";
 
 interface DispatchProps {
   getMember: () => Promise<void>;
@@ -51,6 +52,7 @@ interface State {
   isRenewOpen: boolean;
   isCardOpen: boolean;
   isWelcomeOpen: boolean;
+  isSettingsOpen: boolean;
   isInvoiceNotificationOpen: boolean;
   submittingSignature: boolean;
   submitSignatureError: string;
@@ -60,6 +62,7 @@ const defaultState = {
   isRenewOpen: false,
   isCardOpen: false,
   isWelcomeOpen: false,
+  isSettingsOpen: false,
   isInvoiceNotificationOpen: false,
   submittingSignature: false,
   submitSignatureError: ""
@@ -156,6 +159,8 @@ class MemberDetail extends React.Component<Props, State> {
   private openCardModal = () => this.setState({ isCardOpen: true });
   private closeCardModal = () => this.setState({ isCardOpen: false });
   private closeWelcomeModal = () => this.setState({ isWelcomeOpen: false });
+  private openSettings = () => this.setState({ isSettingsOpen: true });
+  private closeSettings = () => this.setState({ isSettingsOpen: false });
 
   private renderMemberInfo = (): JSX.Element => {
     const { member } = this.props;
@@ -187,22 +192,29 @@ class MemberDetail extends React.Component<Props, State> {
     const { member, isUpdatingMember, isRequestingMember, match, admin } = this.props;
     const { memberId } = match.params;
     const loading = isUpdatingMember || isRequestingMember;
-    const { isWelcomeOpen } = this.state;
-    return (
+    const { isWelcomeOpen, isSettingsOpen } = this.state;
+    return isSettingsOpen ? this.renderSettings() : (
       <>
         <DetailView
           title={`${member.firstname} ${member.lastname}`}
           basePath={`/members/${memberId}`}
           actionButtons={[
-            {
+            ...!!this.allowViewProfile() && [{
+              id: "member-detail-open-settings",
+              color: "primary",
+              variant: "outlined",
+              disabled: loading,
+              label: "Settings",
+              onClick: this.openSettings
+            } as ActionButton],
+            ...admin ? [{
               id: "member-detail-open-edit-modal",
               color: "primary",
               variant: "outlined",
               disabled: loading,
               label: "Edit",
               onClick: this.openEditModal
-            },
-            ...admin ? [{
+            },{
               id: "member-detail-open-renew-modal",
               color: "primary",
               variant: "contained",
@@ -220,7 +232,7 @@ class MemberDetail extends React.Component<Props, State> {
               }] as ActionButton[]: []
           ]}
           information={this.renderMemberInfo()}
-          resources={!isWelcomeOpen && this.allowViewProfile() && [
+          resources={this.allowViewProfile() && [
             {
               name: "dues",
               content: (
@@ -243,6 +255,17 @@ class MemberDetail extends React.Component<Props, State> {
         {this.renderMemberForms()}
         {/* {this.renderNotifications()} */}
       </>
+    )
+  }
+
+  private renderSettings = () => {
+    const { member, admin } = this.props;
+    return !!this.allowViewProfile() &&  (
+      <SettingsContainer
+        member={member}
+        closeHandler={this.closeSettings}
+        isAdmin={admin}
+      />
     )
   }
 

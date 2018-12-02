@@ -23,11 +23,11 @@ import { numberAsCurrency } from "ui/utils/numberToCurrency";
 import PaymentMethodsContainer from "ui/checkout/PaymentMethodsContainer";
 import ErrorMessage from "ui/common/ErrorMessage";
 import LoadingOverlay from "ui/common/LoadingOverlay";
-import SignUpForm from "ui/auth/SignUpForm";
 import LoginForm from "ui/auth/LoginForm";
 
 interface OwnProps {}
 interface StateProps {
+  clientToken: string;
   invoices: CollectionOf<Invoice>;
   auth: string;
   error: string;
@@ -74,9 +74,9 @@ class CheckoutContainer extends React.Component<Props,State>{
   ];
 
   public componentDidUpdate(prevProps: Props) {
-    const { isRequesting, error, auth } = this.props;
-    const { isRequesting: wasRequesting, auth: oldAuth } = prevProps;
-    if (wasRequesting && !isRequesting && !error) {
+    const { isRequesting, error } = this.props;
+    const { isRequesting: wasRequesting, clientToken: hadClientToken } = prevProps;
+    if (wasRequesting && !isRequesting && !error && hadClientToken) {
       console.log("SUCCESS, redirect to receipt page")
     }
   }
@@ -102,7 +102,7 @@ class CheckoutContainer extends React.Component<Props,State>{
               <Typography variant="title" color="inherit">Total {numberAsCurrency(total)}</Typography>
             </Grid>
             <Grid item xs={12} style={{ textAlign: "left" }}>
-              <Button variant="raised" disabled={!paymentMethodId} onClick={this.submitPayment}>Submit Payment</Button>
+              <Button variant="contained" disabled={!paymentMethodId} onClick={this.submitPayment}>Submit Payment</Button>
               {error && <ErrorMessage error={error}/>}
             </Grid>
           </Grid>
@@ -181,9 +181,10 @@ class CheckoutContainer extends React.Component<Props,State>{
 }
 
 const mapStateToProps = (state: ReduxState, _ownProps: OwnProps): StateProps => {
-  const { invoices, isRequesting, error } = state.checkout;
+  const { invoices, isRequesting, error, clientToken } = state.checkout;
   const { currentUser: { id: userId } } = state.auth;
   return {
+    clientToken,
     invoices,
     auth: userId,
     isRequesting,

@@ -75,11 +75,10 @@ class Billing::PaymentMethodsController < ApplicationController
         else
           render json: { error: result.errors.map { |e| e.message } }, status: 500 and return
         end
-
       rescue ArgumentError => e
-        render json: { error: e.message }, status 401 and return
+        render json: { error: e.message }, status: 401 and return
       rescue Braintree::NotFoundError => e
-        render json: { error: e.message }, status 500 and return
+        render json: { error: e.message }, status: 500 and return
       end
     else
       render json: {}, status: 404 and return

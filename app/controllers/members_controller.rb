@@ -17,15 +17,25 @@ class MembersController < ApplicationController
     end
 
     def update
-      if !signature_params[:signature]
-        render json: { message: "Missing parameter: signature" }, status: 400 and return
+      # Non admins can only update themselves
+      if @member.id != current_member.id
+        render json: { message: "Unauthorized" }, status: 404 and return
       end
-      response = upload_signature()
-      @notifier.ping(format_slack_messages(@messages)) unless @messages.empty?
-      if !response[:error].nil?
-        render json: { message: response[:error] }, status: 500 and return
+
+      if signature_params[:signature]
+        response = upload_signature()
+        @notifier.ping(format_slack_messages(@messages)) unless @messages.empty?
+        if !response[:error].nil?
+          render json: { message: response[:error] }, status: 500 and return
+        else
+          render json: {}, status: 200 and return
+        end
+      end
+
+      if member_params && @member.update(member_params)
+        render json: @member and return
       else
-        render json: {}, status: 200 and return
+        render json: { message: @member.errors.full_messages }, status: 500 and return
       end
     end
 
@@ -36,6 +46,10 @@ class MembersController < ApplicationController
 
     def signature_params
       params.require(:member).permit(:signature)
+    end
+
+    def member_params
+      params.require(:member).permit(:firstname, :lastname, :email)
     end
 
     def upload_signature

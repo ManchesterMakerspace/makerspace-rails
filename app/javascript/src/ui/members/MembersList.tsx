@@ -72,9 +72,6 @@ const fields: Column<MemberDetails>[] = [
 ];
 
 class MembersList extends React.Component<Props, State> {
-  private renewFormRef: RenewalForm;
-  private setFormRef = (ref: RenewalForm) => this.renewFormRef = ref;
-
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -223,7 +220,6 @@ class MembersList extends React.Component<Props, State> {
   }
 
   private getMembers = () => {
-    console.log("Fetching members");
     this.setState({ selectedId: undefined });
     this.props.getMembers(this.getQueryParams());
   }
@@ -279,7 +275,6 @@ class MembersList extends React.Component<Props, State> {
     } = this.state;
 
     if (redirect) {
-      console.log(redirect);
       return <Redirect to={redirect}/>;
     }
 

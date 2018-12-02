@@ -12,7 +12,7 @@ export enum Action {
 }
 
 const formPrefix = "member-form";
-export const fields: FormFields = {
+export const fields = (admin: boolean): FormFields => ({
   firstname: {
     label: "First Name",
     name: `${formPrefix}-firstname`,
@@ -34,34 +34,36 @@ export const fields: FormFields = {
     validate: (val: string) => val && emailValid(val),
     error: "Invalid email"
   },
-  status: {
-    label: "Status",
-    name: `${formPrefix}-status`,
-    placeholder: "Select one",
-    validate: (val) => !!val,
-    error: "Invalid status"
+  ...admin && {
+    status: {
+      label: "Status",
+      name: `${formPrefix}-status`,
+      placeholder: "Select one",
+      validate: (val) => !!val,
+      error: "Invalid status"
+    },
+    groupName: {
+      label: "Group Name (optional)",
+      name: `${formPrefix}-groupName`,
+      placeholder: "Select one",
+    },
+    expirationTime: {
+      label: "Expiration Date",
+      name: `${formPrefix}-expirationTime`,
+      placeholder: "Membership Expiration",
+      validate: (val) => !!val,
+      // transform: (val) => new Date(val).getTime(),
+      error: "Invalid expiration"
+    },
+    role: {
+      label: "Role",
+      name: `${formPrefix}-role`,
+      placeholder: "Select one",
+      validate: (val) => !!val,
+      error: "Invalid role"
+    }
   },
-  groupName: {
-    label: "Group Name (optional)",
-    name: `${formPrefix}-groupName`,
-    placeholder: "Select one",
-  },
-  expirationTime: {
-    label: "Expiration Date",
-    name: `${formPrefix}-expirationTime`,
-    placeholder: "Membership Expiration",
-    validate: (val) => !!val,
-    // transform: (val) => new Date(val).getTime(),
-    error: "Invalid expiration"
-  },
-  role: {
-    label: "Role",
-    name: `${formPrefix}-role`,
-    placeholder: "Select one",
-    validate: (val) => !!val,
-    error: "Invalid role"
-  },
-}
+})
 
 export const MemberStatusOptions = {
   [MemberStatus.Active]: "Active",

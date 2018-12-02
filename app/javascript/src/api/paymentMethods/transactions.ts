@@ -2,6 +2,7 @@ import axios from "axios";
 import { Url } from "app/constants";
 import { buildJsonUrl } from "app/utils";
 import { handleApiError } from "api/utils/handleApiError";
+import { buildPaymentMethodUrl } from "api/paymentMethods/utils";
 
 export const getPaymentMethods = async () => {
   try {
@@ -20,6 +21,15 @@ export const postPaymentMethod = async (paymentMethodNonce: string, makeDefault:
         makeDefault
       }
     });
+  } catch (e) {
+    const error = handleApiError(e);
+    throw error;
+  }
+}
+
+export const deletePaymentMethod = async (paymentMethodToken: string) => {
+  try {
+    return await axios.get(buildPaymentMethodUrl(paymentMethodToken));
   } catch (e) {
     const error = handleApiError(e);
     throw error;

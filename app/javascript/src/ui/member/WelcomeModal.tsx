@@ -1,9 +1,6 @@
 import * as React from "react";
 
-import { MemberDetails } from "app/entities/member";
-
 import FormModal from "ui/common/FormModal";
-import { fields } from "ui/member/constants";
 import Form from "ui/common/Form";
 
 interface Props {
@@ -25,10 +22,6 @@ class WelcomeModal extends React.Component<Props, State> {
     super(props);
     this.state = { submitText: "Continue" };
   }
-
-  public validate = async (_form: Form): Promise<MemberDetails> => (
-    this.formRef.simpleValidate<MemberDetails>(fields)
-  );
 
   public render(): JSX.Element {
     const { isOpen, isRequesting, error, onSubmit } = this.props;
