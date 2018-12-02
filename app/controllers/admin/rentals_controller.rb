@@ -18,7 +18,7 @@ class Admin::RentalsController < AdminController
   end
 
   def update
-    initial_date = @rental.getExpiration
+    initial_date = @rental.get_expiration
     if @rental.update(rental_params)
       slack_msg = @rental.build_slack_msg(initial_date)
       @messages.push(slack_msg) unless slack_msg.nil?
@@ -41,7 +41,7 @@ class Admin::RentalsController < AdminController
 
   private
   def rental_params
-    params.require(:rental).permit(:number, :member_id, :expiration, :description)
+    params.require(:rental).permit(:number, :member_id, :expiration, :description, :renew)
   end
 
   def set_rental

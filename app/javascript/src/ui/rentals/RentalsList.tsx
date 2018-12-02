@@ -22,6 +22,9 @@ import UpdateRentalContainer, { UpdateRentalRenderProps } from "ui/rentals/Updat
 import DeleteRentalModal from "ui/rentals/DeleteRentalModal";
 import ButtonRow, { ActionButton } from "ui/common/ButtonRow";
 import Form from "ui/common/Form";
+import { rentalToRenewal } from "ui/rentals/utils";
+import { rentalRenewalOptions } from "ui/rentals/constants";
+import RenewalForm from "ui/common/RenewalForm";
 
 interface OwnProps {
   member?: MemberDetails;
@@ -49,6 +52,7 @@ interface State {
   order: SortDirection;
   modalOperation: CrudOperation;
   openRentalForm: boolean;
+  openRenewalForm: boolean;
 }
 
 class RentalsList extends React.Component<Props, State> {
@@ -101,6 +105,7 @@ class RentalsList extends React.Component<Props, State> {
       order: SortDirection.Asc,
       modalOperation: undefined,
       openRentalForm: false,
+      openRenewalForm: false,
     };
   }
 
@@ -108,7 +113,9 @@ class RentalsList extends React.Component<Props, State> {
   private openUpdateModal = () => this.openRentalModal(CrudOperation.Update);
   private openDeleteModal = () => this.openRentalModal(CrudOperation.Delete);
   private openRentalModal = (operation: CrudOperation) => this.setState({ openRentalForm: true, modalOperation: operation });
-  private closeRentalModal = () => { console.log("CLosing"); this.setState({ openRentalForm: false }); };
+  private closeRentalModal = () => { this.setState({ openRentalForm: false }); };
+  private openRenewalModal = () => this.setState({ openRenewalForm: true });
+  private closeRenewalModal = () => { this.setState({ openRenewalForm: false }); };
 
   private getActionButtons = () => {
     const { selectedIds } = this.state;
@@ -127,6 +134,13 @@ class RentalsList extends React.Component<Props, State> {
         disabled: !Array.isArray(selectedIds) || selectedIds.length !== 1,
           onClick: this.openUpdateModal,
         label: "Edit Rental"
+      }, {
+        id: "rentals-list-renew",
+        variant: "outlined",
+        color: "primary",
+        disabled: !Array.isArray(selectedIds) || selectedIds.length !== 1,
+        onClick: this.openRenewalModal,
+        label: "Renew Rental"
       }, {
         id: "rentals-list-delete",
         variant: "contained",
@@ -216,7 +230,7 @@ class RentalsList extends React.Component<Props, State> {
   }
 
   private renderInvoiceForms = () => {
-    const { selectedIds, openRentalForm, modalOperation } = this.state;
+    const { selectedIds, openRentalForm, modalOperation, openRenewalForm } = this.state;
     const { rentals, member, admin } = this.props;
 
     const editForm = (renderProps: UpdateRentalRenderProps) => (
@@ -244,6 +258,19 @@ class RentalsList extends React.Component<Props, State> {
       />
     );
 
+    const renewForm = (renderProps: UpdateRentalRenderProps) => (
+      <RenewalForm
+        ref={renderProps.setRef}
+        renewalOptions={rentalRenewalOptions}
+        title="Renew Rental"
+        entity={rentalToRenewal(renderProps.rental)}
+        isOpen={renderProps.isOpen}
+        isRequesting={renderProps.isRequesting}
+        error={renderProps.error}
+        onClose={renderProps.closeHandler}
+        onSubmit={renderProps.submit}
+      />
+    )
 
     const deleteModal = (renderProps: UpdateRentalRenderProps) => {
       const submit = async (form: Form) => {
@@ -267,27 +294,37 @@ class RentalsList extends React.Component<Props, State> {
 
     return (admin &&
       <>
-        <UpdateRentalContainer
-          operation={CrudOperation.Update}
-          isOpen={openRentalForm && modalOperation === CrudOperation.Update}
-          rental={rentals[selectedId]}
-          closeHandler={this.closeRentalModal}
-          render={editForm}
-        />
+        {!!selectedId && (
+          <>
+            <UpdateRentalContainer
+              operation={CrudOperation.Update}
+              isOpen={openRentalForm && modalOperation === CrudOperation.Update}
+              rental={rentals[selectedId]}
+              closeHandler={this.closeRentalModal}
+              render={editForm}
+            />
+            <UpdateRentalContainer
+              operation={CrudOperation.Update}
+              isOpen={openRenewalForm}
+              rental={rentals[selectedId]}
+              closeHandler={this.closeRenewalModal}
+              render={renewForm}
+            />
+            <UpdateRentalContainer
+              operation={CrudOperation.Delete}
+              isOpen={openRentalForm && modalOperation === CrudOperation.Delete}
+              rental={rentals[selectedId]}
+              closeHandler={this.closeRentalModal}
+              render={deleteModal}
+            />
+          </>
+        )}
         <UpdateRentalContainer
           operation={CrudOperation.Create}
           isOpen={openRentalForm && modalOperation === CrudOperation.Create}
           rental={member ?{ memberId: member.id, memberName: `${member.firstname} ${member.lastname}` } : {}}
           closeHandler={this.closeRentalModal}
           render={createForm}
-        />
-
-        <UpdateRentalContainer
-          operation={CrudOperation.Delete}
-          isOpen={openRentalForm && modalOperation === CrudOperation.Delete}
-          rental={rentals[selectedId]}
-          closeHandler={this.closeRentalModal}
-          render={deleteModal}
         />
       </>
     );

@@ -13,7 +13,7 @@ import { timeToDate } from "ui/utils/timeToDate";
 
 export interface RenewForm {
   id: string;
-  renewal: number;
+  renew: number;
 }
 export interface RenewalEntity {
   id: string;
@@ -57,7 +57,7 @@ class RenewalForm extends React.Component<OwnProps, {}> {
     }
 
     if (renewalMonths) {
-      validatedForm.renewal = toNumber(renewalMonths);
+      validatedForm.renew = toNumber(renewalMonths);
     } else {
       errors[renewalSelectName] = "Select a renewal term."
     }

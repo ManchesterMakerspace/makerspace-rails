@@ -1,3 +1,5 @@
+import { SelectOption } from "ui/common/RenewalForm";
+
 export enum Action {
   StartReadRequest = "RENTALS/START_READ_REQUEST",
   GetRentalsSuccess = "RENTALS/GET_RENTALS_SUCCESS",
@@ -15,6 +17,29 @@ export enum Action {
   DeleteRentalSuccess = "RENTAL/DELETE_RENTAL_SUCCESS",
   DeleteRentalFailure = "RENTAL/DELETE_RENTAL_FAILURE",
 }
+
+export const rentalRenewalOptions: SelectOption[] = [
+  {
+    label: "None",
+    value: undefined,
+  },
+  {
+    label: "1 month",
+    value: 1,
+  },
+  {
+    label: "3 months",
+    value: 3,
+  },
+  {
+    label: "6 months",
+    value: 6,
+  },
+  {
+    label: "12 months",
+    value: 12,
+  },
+]
 
 const formPrefix = "rental-form";
 export const fields = {

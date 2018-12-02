@@ -2,6 +2,7 @@ class Member
   include Mongoid::Document
   include Mongoid::Search
   include ActiveModel::Serializers::JSON
+  include InvoiceableResource
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -108,19 +109,7 @@ class Member
     end
   end
 
-  def renewal=(num_months)
-    now_in_ms = (Time.now.strftime('%s').to_i * 1000)
-    if (!!self.expirationTime && self.try(self.expiration_attr) > now_in_ms && self.persisted?) #if renewing
-      newExpTime = prettyTime + num_months.to_i.months
-    else
-      newExpTime = Time.now + num_months.to_i.months
-    end
-    self.update_attribute(self.expiration_attr,  (newExpTime.to_i * 1000) )
-  end
 
-  def expiration_attr
-    :expirationTime
-  end
 
   protected
   def find_braintree_customer
@@ -147,6 +136,18 @@ class Member
 
   def remove_subscription
     self.update({ subscription_id: nil, subscription: false })
+  end
+
+  def expiration_attr
+    :expirationTime
+  end
+
+  def update_expiration(new_expiration)
+    self.update_attribute(self.expiration_attr, new_expiration)
+  end
+
+  def get_expiration
+    self.expirationTIme
   end
 
   private
