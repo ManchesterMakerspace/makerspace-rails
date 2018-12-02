@@ -184,8 +184,8 @@ class MemberDetail extends React.Component<Props, State> {
   }
 
   private allowViewProfile = () => {
-    const { currentUserId, admin } = this.props;
-    return this.props.match.params.memberId === currentUserId || admin;
+    const { currentUserId } = this.props;
+    return this.props.match.params.memberId === currentUserId;
   }
 
   private renderMemberDetails = (): JSX.Element => {
@@ -199,14 +199,14 @@ class MemberDetail extends React.Component<Props, State> {
           title={`${member.firstname} ${member.lastname}`}
           basePath={`/members/${memberId}`}
           actionButtons={[
-            ...!!this.allowViewProfile() && [{
+            ...!!this.allowViewProfile() ? [{
               id: "member-detail-open-settings",
               color: "primary",
               variant: "outlined",
               disabled: loading,
               label: "Settings",
               onClick: this.openSettings
-            } as ActionButton],
+            } as ActionButton] : [],
             ...admin ? [{
               id: "member-detail-open-edit-modal",
               color: "primary",
@@ -232,7 +232,7 @@ class MemberDetail extends React.Component<Props, State> {
               }] as ActionButton[]: []
           ]}
           information={this.renderMemberInfo()}
-          resources={this.allowViewProfile() && [
+          resources={(this.allowViewProfile() || admin) && [
             {
               name: "dues",
               content: (

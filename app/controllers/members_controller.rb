@@ -1,5 +1,6 @@
 class MembersController < ApplicationController
     include FastQuery
+    include SlackService
     include GoogleService
     before_action :set_member, only: [:show, :update]
     before_action :initalize_gdrive, only: [:create]
@@ -24,7 +25,7 @@ class MembersController < ApplicationController
 
       if signature_params[:signature]
         response = upload_signature()
-        @notifier.ping(format_slack_messages(@messages)) unless @messages.empty?
+        send_slack_messages(@messages) unless @messages.empty?
         if !response[:error].nil?
           render json: { message: response[:error] }, status: 500 and return
         else

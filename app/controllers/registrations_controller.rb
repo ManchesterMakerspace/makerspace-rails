@@ -1,16 +1,17 @@
 class RegistrationsController < Devise::RegistrationsController
     include BraintreeGateway
     include ApplicationHelper
+    include SlackService
     before_action :initalize_gdrive, only: [:create]
-    before_action :slack_connect, only: [:create]
     respond_to :json
 
     def create
       @member = Member.new(member_params)
       if @member.save
         create_initial_membership_invoice
+        invite_to_slack(@member)
         invite_gdrive if Rails.env == "production"
-        @notifier.ping(format_slack_messages(@messages)) unless @messages.empty?
+        send_slack_messages(@messages)
         sign_in(@member)
 
         member_response = ActiveModelSerializers::SerializableResource.new(@member).as_json
@@ -60,18 +61,5 @@ class RegistrationsController < Devise::RegistrationsController
         scope: ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/drive"]
       })
       @service.authorization = creds
-    end
-
-    def slack_connect
-        @messages = []
-        if Rails.env.production?
-          @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
-            channel: 'members_relations',
-            icon_emoji: ':ghost:'
-        else
-          @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
-            channel: 'test_channel',
-            icon_emoji: ':ghost:'
-        end
     end
 end

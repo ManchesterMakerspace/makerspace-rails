@@ -1,6 +1,6 @@
 class PaypalController < ApplicationController
+  include SlackService
   protect_from_forgery except: [:notify]
-  before_action :slack_connect, only: [:notify]
   before_action :build_payment, only: [:notify]
 
   def notify
@@ -40,37 +40,24 @@ class PaypalController < ApplicationController
     end
   end
 
-  def slack_connect
-    if Rails.env.production?
-      @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
-            channel: 'members_relations',
-            icon_emoji: ':ghost:'
-    else
-      @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
-            channel: 'test_channel',
-            icon_emoji: ':ghost:'
-    end
-  end
-
   def save_and_notify
     unless @payment.save
       @messages.push("Error saving payment: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
       @messages.push("Messages related to error: ")
       @messages.concat(@payment.errors.full_messages)
-      @notifier.ping(format_slack_messages(@messages))
     end
-    @notifier.ping(format_slack_messages(@messages))
+    send_slack_messages(@messages)
   end
 
   def configure_messages
     @messages = [];
 
     if @payment.member
-        completed_message = "Payment Completed: $#{@payment.amount} for #{@payment.product} from  #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email} - Member found: #{@payment.member.fullname}. <a href='https://makerspace-interface.herokuapp.com/#/memberships/renew/#{@payment.member.id}'>Renew Member</a>"
+        completed_message = "Payment Completed: $#{@payment.amount} for #{@payment.product} from  #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email} - Member found: #{@payment.member.fullname}. <https://makerspace-interface.herokuapp.com/#/memberships/renew/#{@payment.member.id}|Renew Member>"
         failed_message = "Error completing payment: $#{@payment.amount} for #{@payment.product} from from  #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email} - Member found: #{@payment.member.fullname}"
     else
-        completed_message = "Payment Completed: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}. No member found. <a href='https://makerspace-interface.herokuapp.com/#/memberships/invite/#{@payment.payer_email}'>Send registration email to #{@payment.payer_email}</a>"
-        failed_message = "Error completing payment: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}. No member found. <a href='mailto:#{@payment.payer_email}'>Contact #{@payment.payer_email}</a>"
+        completed_message = "Payment Completed: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}. No member found. <https://makerspace-interface.herokuapp.com/#/memberships/invite/#{@payment.payer_email}|Send registration email to #{@payment.payer_email}>"
+        failed_message = "Error completing payment: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}. No member found. <mailto:#{@payment.payer_email}|Contact #{@payment.payer_email}>"
     end
 
     case @payment.txn_type

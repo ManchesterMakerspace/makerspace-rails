@@ -17,12 +17,6 @@ module ApplicationHelper
       current_member.try(:role) == 'admin'
   end
 
-  def format_slack_messages(messages)
-    msg_string = messages.join(" \n ");
-    Slack::Notifier::Util::LinkFormatter.format(msg_string)
-  end
-
-
   # def current_user
   #   unless session[:email].nil?
   #     Member.find_by(email: session[:email])

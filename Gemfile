@@ -16,7 +16,7 @@ gem 'mongoid_search'
 #Paypal IPN
 gem 'paypal-sdk-rest'
 gem "braintree"
-gem "slack-notifier"
+gem "slack-ruby-client"
 gem 'google-api-client', require: ['google/apis/drive_v3']
 gem 'mini_magick'
 

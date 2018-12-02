@@ -1,7 +1,7 @@
 class Admin::RentalsController < AdminController
+  include SlackService
   include FastQuery
   before_action :set_rental, only: [:update, :destroy]
-  before_action :slack_connect, only: [:update]
 
   def index
     rentals = params[:memberId] ? Rental.where(member_id: params[:memberId]) : Rental.all
@@ -22,7 +22,7 @@ class Admin::RentalsController < AdminController
     if @rental.update(rental_params)
       slack_msg = @rental.build_slack_msg(initial_date)
       @messages.push(slack_msg) unless slack_msg.nil?
-      @notifier.ping(format_slack_messages(@messages)) unless @messages.empty?
+      send_slack_messages(@messages) unless @messages.empty?
       @rental.reload
       render json: @rental and return
     else
@@ -46,18 +46,5 @@ class Admin::RentalsController < AdminController
 
   def set_rental
     @rental = Rental.find_by(id: params[:id])
-  end
-
-  def slack_connect
-    @messages = [];
-    if Rails.env.production?
-      @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
-              channel: 'membership',
-              icon_emoji: ':ghost:'
-    else
-      @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
-            channel: 'test_channel',
-            icon_emoji: ':ghost:'
-    end
   end
 end

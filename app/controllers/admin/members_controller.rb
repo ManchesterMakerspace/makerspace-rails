@@ -1,6 +1,6 @@
 class Admin::MembersController < AdminController
+  include SlackService
   before_action :set_member, only: [:update, :renew]
-  before_action :slack_connect, only: [:update, :renew]
 
   def create
     @member = Member.new(get_camel_case_params)
@@ -24,7 +24,7 @@ class Admin::MembersController < AdminController
       elsif @member.expirationTime != date
         @messages.push("#{@member.fullname} updated. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}")
       end
-      @notifier.ping(format_slack_messages(@messages)) unless @messages.empty?
+      send_slack_messages(@messages) unless @messages.empty?
       @member.reload
       render json: @member and return
     else
@@ -51,18 +51,5 @@ class Admin::MembersController < AdminController
 
   def set_member
     @member = Member.find_by(id: params[:id])
-  end
-
-  def slack_connect
-    @messages = [];
-    if Rails.env.production?
-      @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
-              channel: 'membership',
-              icon_emoji: ':ghost:'
-    else
-      @notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'], username: 'Management Bot',
-            channel: 'test_channel',
-            icon_emoji: ':ghost:'
-    end
   end
 end
