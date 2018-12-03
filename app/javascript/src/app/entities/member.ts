@@ -33,3 +33,5 @@ export enum MemberRole {
   // Officer = "officer",
   Member = "member"
 }
+
+export const isMember = (entity: any): entity is MemberDetails => entity.hasOwnProperty(Properties.Expiration) && entity.hasOwnProperty(Properties.Firstname);

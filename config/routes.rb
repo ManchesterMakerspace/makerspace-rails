@@ -29,7 +29,7 @@ Rails.application.routes.draw do
         resources :rentals, only: [:create, :update, :destroy, :index]
         resources :members, only: [:create, :update]
         namespace :billing do
-          resources :subscriptions, only: [:index, :show, :update, :destroy]
+          resources :subscriptions, only: [:index, :destroy]
         end
       end
     end

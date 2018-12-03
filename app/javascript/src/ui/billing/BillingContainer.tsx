@@ -21,10 +21,11 @@ class BillingContainer extends React.Component<Props, State> {
   private renderBillingInfo = () => {
     return (
       <>
-        <KeyValueItem label="Number of Members">100</KeyValueItem>
+        Statistics to be rendered here.
+        {/* <KeyValueItem label="Number of Members">100</KeyValueItem>
         <KeyValueItem label="Number of Members on Subscription">100</KeyValueItem>
         <KeyValueItem label="Number of Rentals">100</KeyValueItem>
-        <KeyValueItem label="Active Membership">100</KeyValueItem>
+        <KeyValueItem label="Active Membership">100</KeyValueItem> */}
       </>
     )
   }

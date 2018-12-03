@@ -7,6 +7,7 @@ export interface Rental {
   expiration: number;
   memberId: string;
   memberName: string;
+  subscriptionId: string;
 }
 
 export enum Properties {
@@ -16,7 +17,10 @@ export enum Properties {
   Expiration = "expiration",
   MemberId = "memberId",
   MemberName = "memberName",
+  SubscriptionId = "subscriptionId",
 }
 export interface RentalQueryParams extends QueryParams {
   [Properties.MemberId]: string;
 }
+
+export const isRental = (entity: any): entity is Rental => entity.hasOwnProperty(Properties.Expiration) && entity.hasOwnProperty(Properties.Number);

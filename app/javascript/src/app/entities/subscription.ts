@@ -1,6 +1,10 @@
 export interface Subscription {
   id: string;
-  plan_id: string;
+  planId: string;
+  memberName: string;
+  memberId: string;
+  resourceClass: string;
+  resourceId: string;
   amount: number;
   status: string;
   failureCount: number;

@@ -6,4 +6,5 @@ export interface SubscriptionsState {
   read: RequestStatus & {
     totalItems: number;
   };
+  delete: RequestStatus;
 }

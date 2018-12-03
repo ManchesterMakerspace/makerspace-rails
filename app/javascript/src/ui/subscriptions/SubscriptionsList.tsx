@@ -4,7 +4,7 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 
 import { Subscription } from "app/entities/subscription";
-import { QueryParams } from "app/interfaces";
+import { QueryParams, CollectionOf } from "app/interfaces";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { SortDirection } from "ui/common/table/constants";
@@ -12,6 +12,11 @@ import TableContainer from "ui/common/table/TableContainer";
 import { Column } from "ui/common/table/Table";
 import { readSubscriptionsAction } from "ui/subscriptions/actions";
 import { timeToDate } from "ui/utils/timeToDate";
+import ButtonRow from "ui/common/ButtonRow";
+import DeleteSubscription from "ui/subscriptions/DeleteSubscriptionModal";
+import { CrudOperation } from "app/constants";
+import Form from "ui/common/Form";
+import UpdateSubscriptionContainer, { UpdateSubscriptionRenderProps } from "ui/subscriptions/UpdateSubscriptionContainer";
 
 
 interface OwnProps { }
@@ -19,25 +24,31 @@ interface DispatchProps {
   getSubscriptions: (queryParams?: QueryParams) => void;
 }
 interface StateProps {
-  subscriptions: Subscription[];
+  subscriptions: CollectionOf<Subscription>;
   totalItems: number;
   loading: boolean;
   error: string;
 }
 interface Props extends OwnProps, DispatchProps, StateProps { }
 interface State {
-  selectedIds: string[];
+  selectedId: string;
   pageNum: number;
   orderBy: string;
   search: string;
   order: SortDirection;
+  openDeleteForm: boolean;
 }
 
 const fields: Column<Subscription>[] = [
   {
-    id: "id",
-    label: "Id",
-    cell: (row: Subscription) => row.id,
+    id: "memberName",
+    label: "Member",
+    cell: (row: Subscription) => row.memberName,
+  },
+  {
+    id: "resourceClass",
+    label: "Type",
+    cell: (row: Subscription) => row.resourceClass,
   }, {
     id: "amount",
     label: "Amount",
@@ -58,11 +69,12 @@ class SubscriptionsList extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      selectedIds: [],
+      selectedId: undefined,
       pageNum: 0,
       orderBy: "",
       search: "",
-      order: SortDirection.Asc
+      order: SortDirection.Asc,
+      openDeleteForm: false,
     };
   }
 
@@ -71,16 +83,76 @@ class SubscriptionsList extends React.Component<Props, State> {
   }
 
   private getActionButtons = (): JSX.Element => {
+    const { selectedId } = this.state;
+    const { loading, subscriptions } = this.props;
     return (
-      <Button>Action</Button>
+      <ButtonRow
+        actionButtons={[
+          {
+            id: "subscriptions-list-delete",
+            variant: "contained",
+            color: "secondary",
+            disabled: loading || !subscriptions[selectedId],
+            onClick: this.openDeleteForm,
+            label: "Cancel Subscriptoin"
+          }
+        ]}
+      />
     )
   }
 
+  // Only select one at a time
+  private onSelect = (id: string, selected: boolean) => {
+    if (selected) {
+      this.setState({ selectedId: id });
+    } else {
+      this.setState({ selectedId: undefined });
+    }
+  }
+
+  private openDeleteForm = () => this.setState({ openDeleteForm: true });
+  private closeDeleteForm = () => this.setState({ openDeleteForm: false });
+
   private rowId = (row: Subscription) => row.id;
+
+  private renderInvoiceForms = () => {
+    const { selectedId, openDeleteForm } = this.state;
+    const { subscriptions } = this.props;
+
+    const deleteModal = (renderProps: UpdateSubscriptionRenderProps) => {
+      const submit = async (form: Form) => {
+        const success = await renderProps.submit(form);
+        success && this.setState({ selectedId: undefined });
+      }
+      return (
+        <DeleteSubscription
+          ref={renderProps.setRef}
+          subscription={renderProps.subscription}
+          isOpen={renderProps.isOpen}
+          isRequesting={renderProps.isRequesting}
+          error={renderProps.error}
+          onClose={renderProps.closeHandler}
+          onSubmit={submit}
+        />
+      );
+    }
+
+    return (
+      <>
+        <UpdateSubscriptionContainer
+          operation={CrudOperation.Update}
+          isOpen={openDeleteForm}
+          subscription={subscriptions[selectedId]}
+          closeHandler={this.closeDeleteForm}
+          render={deleteModal}
+        />
+      </>
+    );
+  }
 
   public render(): JSX.Element {
     const { subscriptions: data, totalItems, loading, error } = this.props;
-
+    const { selectedId } = this.state;
 
     return (
       <>
@@ -91,12 +163,15 @@ class SubscriptionsList extends React.Component<Props, State> {
           id="subscriptions-table"
           title="Subscriptions"
           loading={loading}
-          data={data}
+          data={Object.values(data)}
           error={error}
+          selectedIds={[selectedId]}
           totalItems={totalItems}
           columns={fields}
           rowId={this.rowId}
+          onSelect={this.onSelect}
         />
+        {this.renderInvoiceForms()}
       </>
     );
   }
@@ -115,7 +190,7 @@ const mapStateToProps = (
     }
   } = state.subscriptions;
   return {
-    subscriptions: Object.values(subscriptions),
+    subscriptions: subscriptions,
     totalItems,
     loading,
     error

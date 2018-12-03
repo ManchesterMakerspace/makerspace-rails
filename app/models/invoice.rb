@@ -31,12 +31,11 @@ class Invoice
   field :quantity, type: Integer
   # What does this do to Resource. One of OPERATION_FUNCTIONS
   field :operation, type: String, default: "renew"
+  field :subscription_id, type: String
   # Resource (Member, Rental) id to apply operation to
   field :resource_id, type: String
   # Class name of resource, one of OPERATION_RESOURCES
   field :resource_class, type: String
-  # ID of subscription generating this invoice (if any)
-  field :subscription_id, type: String
   # ID of billing plan to/is subscribe(d) to.  May reference a DEFAULT_INVOICE
   field :plan_id, type: String
 
@@ -75,6 +74,14 @@ class Invoice
     next_invoice = self.clone
     next_invoice.due_date = self.due_date + self.quantity.months
     return next_invoice.save
+  end
+
+  def self.resource(class_name, id)
+    self.OPERATION_RESOURCES[class_name].find_by(subscription_ids: id)
+  end
+
+  def resource
+    self.class.resource(self.resource_class, self.resource_id)
   end
 
   private

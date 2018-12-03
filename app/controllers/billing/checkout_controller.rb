@@ -56,6 +56,7 @@ class Billing::CheckoutController < ApplicationController
       )
       if result.success?
         invoice.update_attribute({ settled_at: Time.now })
+        invoice.resource.update(subscription_id: result.subscription.id)
       end
       result
     end

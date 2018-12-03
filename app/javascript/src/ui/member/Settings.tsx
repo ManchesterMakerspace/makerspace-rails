@@ -14,6 +14,10 @@ import MemberForm from "ui/member/MemberForm";
 import { CrudOperation } from "app/constants";
 
 import PaymentMethodsContainer from "ui/checkout/PaymentMethodsContainer";
+import SubscriptionDetail from "ui/subscriptions/SubscriptionDetail";
+import MembershipSelectForm from "ui/auth/MembershipSelectForm";
+import { timeToDate } from "ui/utils/timeToDate";
+import KeyValueItem from "ui/common/KeyValueItem";
 
 interface Props {
   member: MemberDetails;
@@ -47,6 +51,9 @@ class SettingsContainer extends React.Component<Props, State> {
     const { selectedIndex, paymentMethodId } = this.state;
     const { member } = this.props;
     let form: JSX.Element;
+    if (!member) {
+      return;
+    }
     const memberForm = (renderProps: UpdateMemberRenderProps) => (
       <>
         <MemberForm
@@ -74,7 +81,9 @@ class SettingsContainer extends React.Component<Props, State> {
         />
       )
     } else if (selectedIndex === 1) {
-      form = <div>Membership form</div>
+      form =<SubscriptionDetail
+                resource={member}
+              />;
     } else if (selectedIndex === 2) {
       form = (<PaymentMethodsContainer
         onPaymentMethodChange={this.selectPaymentMethod}
