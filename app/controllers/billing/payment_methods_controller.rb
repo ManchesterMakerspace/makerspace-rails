@@ -19,7 +19,7 @@ class Billing::PaymentMethodsController < ApplicationController
           last_name: current_member.lastname,
           payment_method_nonce: payment_method_nonce,
         )
-        current_member.update_attributes({ customer_id: result.customer.id }) if result.success?
+        current_member.update({ customer_id: result.customer.id }) if result.success?
       # Add this payment method to customer
       else
         result = @gateway.payment_method.create(
@@ -63,13 +63,13 @@ class Billing::PaymentMethodsController < ApplicationController
     render json: payment_methods, each_serializer: Braintree::PaymentMethodSerializer, status: 200, root: :payment_methods and return
   end
 
-  def delete
-    payment_method_token = payment_method_params[:payment_method_token]
+  def destroy
+    payment_method_token = params[:id]
     if current_member.customer_id
       # Only allowed to modify own payment methods
       begin
         payment_method = ::BraintreeService::PaymentMethod.find_payment_method_for_customer(@gateway, payment_method_token, current_member.customer_id)
-        result = ::BraintreeService::PaymentMethod.delete_payment_method(payment_method.token)
+        result = ::BraintreeService::PaymentMethod.delete_payment_method(@gateway, payment_method.token)
         if result.success?
           render json: {}, status: 204 and return
         else
@@ -81,7 +81,7 @@ class Billing::PaymentMethodsController < ApplicationController
         render json: { error: e.message }, status: 500 and return
       end
     else
-      render json: {}, status: 404 and return
+      render json: {error: "Unauthorized"}, status: 401 and return
     end
   end
 

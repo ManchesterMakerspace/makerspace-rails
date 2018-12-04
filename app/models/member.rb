@@ -117,7 +117,7 @@ class Member
   end
 
   def update_braintree_customer_info
-    if self.customer_id && self.changed.any? { |attr| [:firstname, :lastname].include(attr) }
+    if self.customer_id && self.changed.any? { |attr| [:firstname, :lastname].include?(attr) }
       gateway = Braintree::Gateway.new(
         :environment => ENV["BT_ENV"].to_sym,
         :merchant_id => ENV["BT_MERCHANT_ID"],
@@ -147,7 +147,7 @@ class Member
   end
 
   def get_expiration
-    self.expirationTIme
+    self.expirationTime
   end
 
   private

@@ -23,7 +23,7 @@ import Form from "ui/common/Form";
 import ButtonRow, { ActionButton } from "ui/common/ButtonRow";
 
 interface OwnProps {
-  onPaymentMethodChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onPaymentMethodChange: (newId: string) => void;
   selectedPaymentMethodId: string;
   managingMethods?: boolean;
   title?: string;
@@ -58,11 +58,12 @@ class PaymentMethods extends React.Component<Props, State> {
     this.fetchPaymentMethods();
   }
 
+
   private fetchPaymentMethods = async () => {
-    this.setState({ isRequesting: true });
+    this.setState({ isRequesting: true, paymentMethods: [] });
     try {
       const { data } = await getPaymentMethods();
-      this.setState({ isRequesting: false, paymentMethods: data.paymentMethods });
+      this.setState({ isRequesting: false, paymentMethods: data.paymentMethods, error: "" });
     } catch (e) {
       this.setState({ isRequesting: false, error: e.errorMessage });
     }
@@ -74,6 +75,16 @@ class PaymentMethods extends React.Component<Props, State> {
 
   private closeAddPaymentMethod = () => {
     this.setState({ openAddPayment: false });
+  }
+
+  private onAddSuccess = (nonce: string) => {
+    this.props.onPaymentMethodChange && this.props.onPaymentMethodChange(nonce);
+    this.fetchPaymentMethods();
+    this.closeAddPaymentMethod();
+  }
+
+  private selectPaymentMethod = (event: React.ChangeEvent<HTMLInputElement>) => {
+    this.props.onPaymentMethodChange(event.currentTarget.value);
   }
 
   private renderAddPaymentForm = () => {
@@ -89,7 +100,7 @@ class PaymentMethods extends React.Component<Props, State> {
           <Grid item xs={12}>
             <Card>
               <CardContent>
-                <PaymentMethodForm closeHandler={this.closeAddPaymentMethod}/>
+                <PaymentMethodForm closeHandler={this.closeAddPaymentMethod} onSuccess={this.onAddSuccess}/>
                 {<Button variant="outlined" id={`payment-method-cancel`} onClick={this.closeAddPaymentMethod}>Cancel</Button>}
               </CardContent>
             </Card>
@@ -100,7 +111,7 @@ class PaymentMethods extends React.Component<Props, State> {
   }
 
   private renderDeletePaymentModal = () => {
-    const { isRequesting, error, openAddPayment, paymentMethods } = this.state;
+    const { isRequesting, isDeleting, error, openDeleteModal, paymentMethods } = this.state;
     const { selectedPaymentMethodId } = this.props;
     const selectedPaymentMethod = paymentMethods.find(method => method.id === selectedPaymentMethodId);
     if (!selectedPaymentMethod) {
@@ -108,14 +119,14 @@ class PaymentMethods extends React.Component<Props, State> {
     }
     const paymentMethodInfo = isCreditCard(selectedPaymentMethod) ?
       (<KeyValueItem label={selectedPaymentMethod.cardType}>
-        <span id="delete-invoice-contact">`${selectedPaymentMethod.cardType} ending in ${selectedPaymentMethod.last4}`</span>
+        <span id="delete-invoice-contact">{selectedPaymentMethod.cardType} ending in {selectedPaymentMethod.last4}</span>
       </KeyValueItem>) : <KeyValueItem label="PayPal">Username</KeyValueItem>
     return (
       <FormModal
         id="delete-invoice-confirm"
         formRef={this.setFormRef}
-        loading={isRequesting}
-        isOpen={openAddPayment}
+        loading={isRequesting || isDeleting}
+        isOpen={openDeleteModal}
         closeHandler={this.closeDeleteModal}
         title="Delete Payment Method"
         onSubmit={this.deletePaymentMethod}
@@ -138,7 +149,8 @@ class PaymentMethods extends React.Component<Props, State> {
     this.setState({ isDeleting: true });
     try {
       await deletePaymentMethod(selectedPaymentMethodId);
-      this.setState({ isDeleting: false });
+      this.setState({ isDeleting: false, error: "" });
+      this.props.onPaymentMethodChange && this.props.onPaymentMethodChange(null);
       this.closeDeleteModal();
       this.fetchPaymentMethods();
     } catch (e) {
@@ -183,30 +195,36 @@ class PaymentMethods extends React.Component<Props, State> {
 
   public render(): JSX.Element {
     const { isRequesting, paymentMethods, error } = this.state;
-    const { managingMethods, title } = this.props;
+    const { managingMethods, title, selectedPaymentMethodId } = this.props;
 
     return (
       <>
         <Grid container justify="center" spacing={16}>
           <Grid item xs={12}>
             <Typography variant="title" color="inherit">{title ? title : "Please Select a Payment Method"}</Typography>
-            {isRequesting && <LoadingOverlay id="get-payment-methods" contained={true} />}
-            <FormControl component="fieldset">
-              <RadioGroup
-                aria-label="Payment Method"
-                name="paymentMethodSelection"
-                value={this.props.selectedPaymentMethodId}
-                onChange={this.props.onPaymentMethodChange}
-              >
-                {Array.isArray(paymentMethods) && paymentMethods.map((paymentMethod) => (
-                  this.renderPaymentMethod(paymentMethod)
-                ))}
-              </RadioGroup>
-              <ErrorMessage id={`get-payment-methods-error`} error={!isRequesting && error} />
-            </FormControl>
           </Grid>
           <Grid item xs={12}>
-            <ButtonRow actionButtons={this.getActionButtons()}/>
+              {isRequesting && <LoadingOverlay id="get-payment-methods" contained={true} /> ||
+                Array.isArray(paymentMethods) && paymentMethods.length && (
+                  <FormControl component="fieldset">
+                    <RadioGroup
+                      aria-label="Payment Method"
+                      name="paymentMethodSelection"
+                      value={selectedPaymentMethodId}
+                      onChange={this.selectPaymentMethod}
+                    >
+                      {paymentMethods.map((paymentMethod) => (
+                        this.renderPaymentMethod(paymentMethod)
+                      ))}
+                    </RadioGroup>
+                    <ErrorMessage id={`get-payment-methods-error`} error={!isRequesting && error} />
+                  </FormControl>
+                ) ||
+                  <Typography variant="body1" color="inherit">No payment methods found.  Click "Add New Payment Method" to add one.</Typography>
+              }
+          </Grid>
+          <Grid item xs={12}>
+              <ButtonRow actionButtons={this.getActionButtons()} />
           </Grid>
         </Grid>
         {this.renderAddPaymentForm()}

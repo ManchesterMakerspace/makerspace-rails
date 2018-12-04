@@ -35,7 +35,8 @@ interface Props extends OwnProps, DispatchProps, StateProps {}
 class SubscriptionDetail extends React.Component<Props, {}> {
   public componentDidMount() {
     const { subscriptionId, resource } = this.props;
-    this.props.getSubscription(subscriptionId || resource.subscriptionId)
+    const subId = subscriptionId || resource.subscriptionId;
+    subId && this.props.getSubscription(subId);
   }
 
   private renderSubscriptionDetails = () => {

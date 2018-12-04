@@ -80,10 +80,12 @@ class InvoiceForm extends React.Component<OwnProps, State> {
       this.setState({ member: { value: invoice.memberId, label: invoice.memberName } })
       const response = await getMember(invoice.memberId);
       if (response.data && response.data.member) {
-        this.updateContactValue(response.data.member);
+        this.updateContactValue(this.memberToOption(response.data.member));
       }
+    }
   }
-}
+
+  private memberToOption = (member: MemberDetails) => ({ value: member.email, label: `${member.firstname} ${member.lastname}`, id: member.id });
 
   // Need to update internal state and set form value since input is otherwise a controleld input
   private updateContactValue = (newMember: SelectOption) => {
@@ -95,7 +97,7 @@ class InvoiceForm extends React.Component<OwnProps, State> {
     try {
       const membersResponse = await getMembers({ search: searchValue });
       const members: MemberDetails[] = membersResponse.data ? membersResponse.data.members : [];
-      const memberOptions = members.map(member => ({ value: member.email, label: `${member.firstname} ${member.lastname}`, id: member.id }));
+      const memberOptions = members.map(this.memberToOption);
       return memberOptions;
     } catch (e) {
       console.log(e);
@@ -120,10 +122,10 @@ class InvoiceForm extends React.Component<OwnProps, State> {
         <Grid container spacing={24}>
           <Grid item xs={12}>
             <FormControl component="fieldset">
-              <FormLabel component="legend">{fields.type.label}</FormLabel>
+              <FormLabel component="legend">{fields.resourceClass.label}</FormLabel>
               <RadioGroup
-                aria-label={fields.type.label}
-                name={fields.type.name}
+                aria-label={fields.resourceClass.label}
+                name={fields.resourceClass.name}
                 value={this.state.invoiceType as string}
                 onChange={this.updateType}
               >

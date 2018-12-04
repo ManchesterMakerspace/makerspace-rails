@@ -16,9 +16,9 @@ class BraintreeService::PaymentMethod < Braintree::PaymentMethodNonce
   end
 
   def self.delete_payment_method(gateway, payment_method_id)
-    gateway.payment_method.delete(payment_method_id)
+    gateway.payment_method.delete(payment_method_id, { revoke_all_grants: true })
   end
-  
+
   private
   def self.normalize_payment_method(gateway, payment_method)
     if payment_method.kind_of?(Braintree::CreditCard)

@@ -39,13 +39,9 @@ class SettingsContainer extends React.Component<Props, State> {
     };
   }
 
-  private toggleSettingsView = (event: any, index: number) => {
-    this.setState({ selectedIndex: index });
-  }
+  private toggleSettingsView = (_event: any, index: number) => this.setState({ selectedIndex: index });
 
-  private selectPaymentMethod = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ paymentMethodId: event.currentTarget.value });
-  }
+  private selectPaymentMethod = (paymentMethodId: string) => this.setState({ paymentMethodId });
 
   private renderForm = () => {
     const { selectedIndex, paymentMethodId } = this.state;

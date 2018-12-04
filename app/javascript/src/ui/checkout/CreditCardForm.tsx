@@ -18,7 +18,7 @@ import HostedInput from "ui/checkout/HostedInput";
 interface OwnProps {
   braintreeInstance: any;
   closeHandler: () => void;
-  paymentMethodCallback?: (paymentMethodNonce: string) => void;
+  onSuccess?: (paymentMethodNonce: string) => void;
 }
 
 interface StateProps {
@@ -96,18 +96,19 @@ class CreditCardForm extends React.Component<Props, State> {
   private requestPaymentMethod = () => {
     const { hostedFieldsInstance } = this.state;
     if (hostedFieldsInstance) {
-      this.setState({ isCreating: true, braintreeError: undefined });
+      this.setState({ isCreating: true });
       hostedFieldsInstance.tokenize(async (err: Braintree.BraintreeError, payload:{ [key: string]: string }) => {
-        this.setState({ isCreating: false });
         if (err) {
-          this.setState({ braintreeError: err });
+          this.setState({ braintreeError: err, isCreating: false });
         } else {
           try {
-            await postPaymentMethod(payload.nonce);
-            this.props.paymentMethodCallback && this.props.paymentMethodCallback(payload.nonce);
+            const response = await postPaymentMethod(payload.nonce);
+            const paymentMethodId = response.data;
+            this.props.onSuccess && this.props.onSuccess(paymentMethodId);
+            this.setState({ isCreating: false, braintreeError: undefined });
           } catch (e) {
             const { errorMessage } = e;
-            this.setState({ braintreeError: errorMessage });
+            this.setState({ braintreeError: errorMessage, isCreating: false });
           }
         }
       });

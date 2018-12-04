@@ -100,6 +100,7 @@ class PasswordReset extends React.Component<Props, State> {
                 <TextField
                   fullWidth
                   required
+                  autoComplete="new-password"
                   label={PasswordFields.password.label}
                   name={PasswordFields.password.name}
                   id={PasswordFields.password.name}

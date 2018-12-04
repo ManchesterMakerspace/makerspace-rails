@@ -28,7 +28,7 @@ class Invoice
 
   ## Admin/Operation Information
   # How many operations to perform (eg, num of months renewed)
-  field :quantity, type: Integer
+  field :quantity, type: Integer, default: 1
   # What does this do to Resource. One of OPERATION_FUNCTIONS
   field :operation, type: String, default: "renew"
   field :subscription_id, type: String

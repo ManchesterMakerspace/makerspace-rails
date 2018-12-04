@@ -50,7 +50,7 @@ export namespace Url {
 
   export const Billing = {
     PaymentMethods: `${baseBillingPath}/payment_methods`,
-    PaymentMethod: `${baseBillingPath}/payment_method/${PathPlaceholder.PaymentMethodId}`,
+    PaymentMethod: `${baseBillingPath}/payment_methods/${PathPlaceholder.PaymentMethodId}`,
     Plans: `${baseBillingPath}/plans`,
     Subscriptions: `${baseBillingPath}/subscriptions`,
     Subscription: `${baseBillingPath}/subscriptions/${PathPlaceholder.SubscriptionId}`,

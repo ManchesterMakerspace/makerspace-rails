@@ -29,7 +29,7 @@ export const postPaymentMethod = async (paymentMethodNonce: string, makeDefault:
 
 export const deletePaymentMethod = async (paymentMethodToken: string) => {
   try {
-    return await axios.get(buildPaymentMethodUrl(paymentMethodToken));
+    return await axios.delete(buildPaymentMethodUrl(paymentMethodToken));
   } catch (e) {
     const error = handleApiError(e);
     throw error;

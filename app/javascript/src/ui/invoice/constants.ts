@@ -47,7 +47,7 @@ export const fields = {
     validate: (val: number) => (!!val && val > 0),
     error: "Invoice amount required"
   },
-  type: {
+  resourceClass: {
     label: "Invoice Type",
     name: `${formPrefix}-type`,
   },

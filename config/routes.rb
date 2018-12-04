@@ -18,7 +18,7 @@ Rails.application.routes.draw do
 
       namespace :billing do
         resources :plans, only: [:index]
-        resources :payment_methods, only: [:create, :index]
+        resources :payment_methods, only: [:create, :index, :destroy]
         resources :subscriptions, only: [:show, :update, :destroy]
       end
 

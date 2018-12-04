@@ -13,7 +13,7 @@ class Admin::RentalsController < AdminController
     if @rental.save
       render json: @rental and return
     else
-      render json: {}, status: 500 and return
+      render json: {message: @rental.errors.full_messages}, status: 500 and return
     end
   end
 
@@ -35,7 +35,7 @@ class Admin::RentalsController < AdminController
       @rental.delete
       render json: {}, status: 204 and return
     else
-      render json: {}, status: 422 and return
+      render json: {message: @rental.errors.full_messages}, status: 422 and return
     end
   end
 

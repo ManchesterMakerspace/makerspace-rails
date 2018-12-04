@@ -18,6 +18,7 @@ import LoadingOverlay from "ui/common/LoadingOverlay";
 
 interface OwnProps {
   closeHandler: () => void;
+  onSuccess: (paymentMethodNonce: string) => void;
 }
 interface StateProps {
   clientToken: string;
@@ -87,6 +88,7 @@ class PaymentMethodForm extends React.Component<Props, State> {
           <CreditCardForm
             closeHandler={this.props.closeHandler}
             braintreeInstance={braintreeInstance}
+            onSuccess={this.props.onSuccess}
           />
         );
       default:
@@ -109,6 +111,7 @@ class PaymentMethodForm extends React.Component<Props, State> {
         <Grid item xs={12}>
           <PaypalButton
             braintreeInstance={braintreeInstance}
+            paymentMethodCallback={this.props.closeHandler}
           />
         </Grid>
         {(isRequesting || !braintreeInstance) && <LoadingOverlay id="payment-method-loading"/>}

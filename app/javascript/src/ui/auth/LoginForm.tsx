@@ -165,6 +165,7 @@ class LoginForm extends React.Component<Props, State> {
               <TextField
                 fullWidth
                 required
+                autoComplete="username"
                 label={LoginFields.email.label}
                 name={LoginFields.email.name}
                 placeholder={LoginFields.email.placeholder}
@@ -173,6 +174,7 @@ class LoginForm extends React.Component<Props, State> {
               <TextField
                 fullWidth
                 required
+                autoComplete="current-password"
                 label={LoginFields.password.label}
                 name={LoginFields.password.name}
                 placeholder={LoginFields.password.placeholder}

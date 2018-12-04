@@ -231,7 +231,6 @@ class Form extends React.Component<FormModalProps, State> {
   }
 
   private configureFormInput = (input: ChildNode) => {
-    const { id: formId, } = this.props;
     const { errors, touched, isDirty } = this.state;
     const fieldName = input.props.name;
     const id = input.props.id || fieldName;
@@ -246,8 +245,7 @@ class Form extends React.Component<FormModalProps, State> {
   }
 
   private cloneFormInput = (input: ChildNode, newChildren?: React.ReactNode) => {
-    const { id: formId, } = this.props;
-    const { values, errors, touched, isDirty } = this.state;
+    const { values, errors } = this.state;
     const fieldName = input.props.name;
     const id = input.props.id || fieldName;
     const error = errors[fieldName];
@@ -290,7 +288,7 @@ class Form extends React.Component<FormModalProps, State> {
   public render(): JSX.Element {
     const { id, loading, style } = this.props;
     return (
-      <div>
+      <div style={{ position: 'relative' }}>
         <form
           onSubmit={this.handleSubmit}
           onChange={this.handleChange}

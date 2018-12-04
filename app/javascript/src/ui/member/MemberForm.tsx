@@ -76,7 +76,7 @@ class MemberForm extends React.Component<OwnProps, State> {
     const details = await form.simpleValidate<MemberDetails>(fields);
     return {
       ...details,
-      expirationTime: dateToTime(details.expirationTime)
+      ...details.expirationTime && {expirationTime: dateToTime(details.expirationTime)}
     }
   }
 

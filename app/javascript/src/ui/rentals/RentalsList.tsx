@@ -46,7 +46,7 @@ interface StateProps {
 }
 interface Props extends OwnProps, DispatchProps, StateProps { }
 interface State {
-  selectedIds: string[];
+  selectedId: string;
   pageNum: number;
   orderBy: string;
   order: SortDirection;
@@ -99,7 +99,7 @@ class RentalsList extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      selectedIds: [],
+      selectedId: undefined,
       pageNum: 0,
       orderBy: "",
       order: SortDirection.Asc,
@@ -118,7 +118,7 @@ class RentalsList extends React.Component<Props, State> {
   private closeRenewalModal = () => { this.setState({ openRenewalForm: false }); };
 
   private getActionButtons = () => {
-    const { selectedIds } = this.state;
+    const { selectedId } = this.state;
     const { admin } = this.props;
     const actionButtons: ActionButton[] = [
       ...admin ? [{
@@ -131,21 +131,21 @@ class RentalsList extends React.Component<Props, State> {
         id: "rentals-list-edit",
         variant: "outlined",
         color: "primary",
-        disabled: !Array.isArray(selectedIds) || selectedIds.length !== 1,
+        disabled: !selectedId,
           onClick: this.openUpdateModal,
         label: "Edit Rental"
       }, {
         id: "rentals-list-renew",
         variant: "outlined",
         color: "primary",
-        disabled: !Array.isArray(selectedIds) || selectedIds.length !== 1,
+        disabled: !selectedId,
         onClick: this.openRenewalModal,
         label: "Renew Rental"
       }, {
         id: "rentals-list-delete",
         variant: "contained",
         color: "secondary",
-        disabled: !Array.isArray(selectedIds) || selectedIds.length !== 1,
+        disabled: !selectedId,
           onClick: this.openDeleteModal,
         label: "Delete Rental"
       }] as ActionButton[] : [],
@@ -205,32 +205,16 @@ class RentalsList extends React.Component<Props, State> {
 
 
   // Only select one at a time
-  private onSelect = (id: string, _selected: boolean) => {
-    this.setState(currentState => {
-      const updatedIds = currentState.selectedIds.slice();
-      const existingIndex = currentState.selectedIds.indexOf(id);
-      if (existingIndex > -1) {
-        updatedIds.splice(existingIndex, 1)
-      } else {
-        updatedIds.push(id)
-      }
-      return { selectedIds: updatedIds };
-    })
-  }
-
-  private onSelectAll = () => {
-    this.setState(currentState => {
-      const allIds = Object.keys(this.props.rentals);
-      if (currentState.selectedIds.length === allIds.length) {
-        return { selectedIds: [] };
-      } else {
-        return { selectedIds: allIds };
-      }
-    })
+  private onSelect = (id: string, selected: boolean) => {
+    if (selected) {
+      this.setState({ selectedId: id });
+    } else {
+      this.setState({ selectedId: undefined });
+    }
   }
 
   private renderInvoiceForms = () => {
-    const { selectedIds, openRentalForm, modalOperation, openRenewalForm } = this.state;
+    const { selectedId, openRentalForm, modalOperation, openRenewalForm } = this.state;
     const { rentals, member, admin } = this.props;
 
     const editForm = (renderProps: UpdateRentalRenderProps) => (
@@ -275,7 +259,7 @@ class RentalsList extends React.Component<Props, State> {
     const deleteModal = (renderProps: UpdateRentalRenderProps) => {
       const submit = async (form: Form) => {
         const success = await renderProps.submit(form);
-        success && this.setState({ selectedIds: [] });
+        success && this.setState({ selectedId: undefined });
       }
       return (
         <DeleteRentalModal
@@ -290,11 +274,11 @@ class RentalsList extends React.Component<Props, State> {
       );
     }
 
-    const selectedId = selectedIds.length === 1 && selectedIds[0];
+    const selectedRental = rentals[selectedId];
 
     return (admin &&
       <>
-        {!!selectedId && (
+        {!!selectedRental && (
           <>
             <UpdateRentalContainer
               operation={CrudOperation.Update}
@@ -322,7 +306,7 @@ class RentalsList extends React.Component<Props, State> {
         <UpdateRentalContainer
           operation={CrudOperation.Create}
           isOpen={openRentalForm && modalOperation === CrudOperation.Create}
-          rental={member ?{ memberId: member.id, memberName: `${member.firstname} ${member.lastname}` } : {}}
+          rental={member ? { memberId: member.id, memberName: `${member.firstname} ${member.lastname}` } : {}}
           closeHandler={this.closeRentalModal}
           render={createForm}
         />
@@ -334,7 +318,7 @@ class RentalsList extends React.Component<Props, State> {
   public render(): JSX.Element {
     const { rentals, totalItems, isReading, readError, admin } = this.props;
 
-    const { selectedIds, pageNum, order, orderBy } = this.state;
+    const { selectedId, pageNum, order, orderBy } = this.state;
 
     return (
       <>
@@ -350,7 +334,7 @@ class RentalsList extends React.Component<Props, State> {
           data={Object.values(rentals)}
           error={readError}
           totalItems={totalItems}
-          selectedIds={selectedIds}
+          selectedIds={[selectedId]}
           pageNum={pageNum}
           columns={this.fields}
           order={order}
@@ -359,7 +343,6 @@ class RentalsList extends React.Component<Props, State> {
           rowId={this.rowId}
           onPageChange={this.onPageChange}
           onSelect={this.onSelect}
-          onSelectAll={this.onSelectAll}
         />
         {this.renderInvoiceForms()}
       </>

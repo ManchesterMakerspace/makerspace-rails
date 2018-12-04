@@ -121,8 +121,8 @@ class CheckoutContainer extends React.Component<Props,State>{
     this.props.submitCheckout(Object.values(invoices), paymentMethodId);
   }
 
-  private selectPaymentMethod = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ paymentMethodId: event.currentTarget.value });
+  private selectPaymentMethod = (paymentMethodId: string) => {
+    this.setState({ paymentMethodId });
   }
 
   private openLoginModal = () => {
