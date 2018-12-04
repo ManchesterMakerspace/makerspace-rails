@@ -19,6 +19,7 @@ import SignDocuments from "ui/auth/SignDocuments";
 import { SignUpForm } from "ui/auth/interfaces";
 import { submitSignUpAction } from "ui/auth/actions";
 import { AuthMember } from "ui/auth/interfaces";
+import LoadingOverlay from "ui/common/LoadingOverlay";
 
 interface OwnProps { }
 interface StateProps {
@@ -102,6 +103,9 @@ class SignUpContainer extends React.Component<Props, State>{
       return <Redirect to={redirect} />
     }
 
+    const loading = isRequesting || signatureUploading;
+    const signUpError = error || signatureUploadError;
+
     return (
       <Grid container justify="center" spacing={16}>
         <Grid item md={6} xs={12}>
@@ -109,15 +113,16 @@ class SignUpContainer extends React.Component<Props, State>{
             <Grid item xs={12}>
               <Card style={{ minWidth: 275 }}>
                 <CardContent>
+                  {loading && <LoadingOverlay id="sign-up-loading" />}
                   {displayDocuments ?
-                    <SignDocuments currentUser={currentUser} uploadProcessing={signatureUploading} uploadError={signatureUploadError} onSubmit={this.submitSignupForm} />
+                    <SignDocuments currentUser={currentUser} onSubmit={this.submitSignupForm} />
                     : (
                       <>
                         <SignUpFormComponent
                           goToLogin={this.goToLogin}
                           onSubmit={this.goToDocuments}
-                          isRequesting={isRequesting}
-                          error={error}
+                          isRequesting={loading}
+                          error={signUpError}
                           renderMembershipOptions={true}
                         />
                       </>

@@ -4,13 +4,13 @@ interface BaseInvoice {
   id: string;
   name: string;
   description: string;
-  contact: string;
   settled: boolean;
   pastDue: boolean;
   createdAt: string;
   dueDate: string;
   amount: number;
   memberId: string;
+  memberName: string;
   subscriptionId?: string;
 }
 
