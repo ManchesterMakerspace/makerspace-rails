@@ -26,12 +26,12 @@ export const fields = {
     placeholder: "Enter notes",
     validate: (_val: string) => true,
   },
-  contact: {
+  member: {
     label: "Select a member",
-    name: `${formPrefix}-contact`,
+    name: `${formPrefix}-member`,
     placeholder: `Search by name or email`,
     validate: (val: string) => !!val,
-    error: "Contact info required"
+    error: "Member required"
   },
   dueDate: {
     label: "Due Date",

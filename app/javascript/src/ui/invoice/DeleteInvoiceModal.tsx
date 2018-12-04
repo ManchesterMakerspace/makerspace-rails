@@ -39,8 +39,8 @@ class DeleteInvoiceModal extends React.Component<OwnProps, {}> {
         <Typography gutterBottom>
           Are you sure you want to delete this invoice?
         </Typography>
-        <KeyValueItem label="Contact">
-          <span id="delete-invoice-contact">{invoice.contact}</span>
+        <KeyValueItem label="Member">
+          <span id="delete-invoice-member">{invoice.memberName}</span>
         </KeyValueItem>
         <KeyValueItem label="Amount">
           <span id="delete-invoice-amount">{`$${invoice.amount}`}</span>

@@ -63,9 +63,9 @@ class InvoicesList extends React.Component<Props, State> {
 
   private fields: Column<Invoice>[] = [
     {
-      id: "contact",
-      label: "Contact",
-      cell: (row: Invoice) => row.contact,
+      id: "member",
+      label: "Member",
+      cell: (row: Invoice) => row.memberName,
       defaultSortDirection: SortDirection.Desc,
     },
     {
@@ -348,7 +348,7 @@ class InvoicesList extends React.Component<Props, State> {
         <UpdateInvoiceContainer
           operation={CrudOperation.Create}
           isOpen={openCreateForm}
-          invoice={member && { memberId: member.id, contact: member.email }}
+          invoice={member && { memberId: member.id, memberName: `${member.firstname} ${member.lastname}` }}
           closeHandler={this.closeCreateForm}
           render={createForm}
         />

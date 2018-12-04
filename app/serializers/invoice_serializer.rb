@@ -20,4 +20,7 @@ class InvoiceSerializer < ApplicationSerializer
   def amount
     object.amount.truncate.to_s + '.' + sprintf('%02d', (BigDecimal(object.amount.to_s).frac * 100).truncate)
   end
+  def member_name
+    object.member && object.member.fullname
+  end
 end

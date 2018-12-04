@@ -15,14 +15,16 @@ module SlackService
   end
 
   def send_slack_messages(messages)
-    channel = Rails.env.production? ? 'members_relations' : 'test_channel'
-    @client.chat_postMessage(
-      channel: channel,
-      text: format_slack_messages(messages),
-      as_user: false,
-      username: 'Management Bot',
-      icon_emoji: ':ghost:'
-    )
+    if !messages.empty?
+      channel = Rails.env.production? ? 'members_relations' : 'test_channel'
+      @client.chat_postMessage(
+        channel: channel,
+        text: format_slack_messages(messages),
+        as_user: false,
+        username: 'Management Bot',
+        icon_emoji: ':ghost:'
+      )
+    end
   end
 
   def invite_to_slack(member)

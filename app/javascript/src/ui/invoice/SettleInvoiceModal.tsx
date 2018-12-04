@@ -39,8 +39,8 @@ class SettleInvoiceModal extends React.Component<OwnProps, {}> {
         <Typography gutterBottom>
           Are you sure you want to manually settle this invoice?  This action cannot be reversed.
         </Typography>
-        <KeyValueItem label="Contact">
-          <span id="settle-invoice-contact">{invoice.contact}</span>
+        <KeyValueItem label="Member">
+          <span id="settle-invoice-member">{invoice.memberName}</span>
         </KeyValueItem>
         <KeyValueItem label="Amount">
           <span id="settle-invoice-amount">{`$${invoice.amount}`}</span>

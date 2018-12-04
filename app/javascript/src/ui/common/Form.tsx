@@ -290,7 +290,7 @@ class Form extends React.Component<FormModalProps, State> {
   public render(): JSX.Element {
     const { id, loading, style } = this.props;
     return (
-      <div style={{position: "relative", overflow: "hidden"}}>
+      <div>
         <form
           onSubmit={this.handleSubmit}
           onChange={this.handleChange}

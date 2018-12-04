@@ -17,8 +17,8 @@ import LoadingOverlay from "ui/common/LoadingOverlay";
 
 interface OwnProps {
   onSubmit: (signature: WindowBase64) => void;
-  uploadError: string;
-  uploadProcessing: boolean;
+  uploadError?: string;
+  uploadProcessing?: boolean;
   currentUser: AuthMember;
 }
 interface Props extends OwnProps {}

@@ -15,7 +15,7 @@ import FormModal from "ui/common/FormModal";
 import Form from "ui/common/Form";
 import { fields } from "ui/invoice/constants";
 import { toDatePicker } from "ui/utils/timeToDate";
-import { getMembers } from "api/members/transactions";
+import { getMembers, getMember } from "api/members/transactions";
 import { MemberDetails } from "app/entities/member";
 
 interface OwnProps {
@@ -29,7 +29,7 @@ interface OwnProps {
 
 interface State {
   invoiceType: InvoiceableResource;
-  contact: SelectOption;
+  member: SelectOption;
 }
 
 type SelectOption = { label: string, value: string, id?: string };
@@ -42,7 +42,7 @@ class InvoiceForm extends React.Component<OwnProps, State> {
     super(props);
     this.state = {
       invoiceType: undefined,
-      contact: undefined,
+      member: undefined,
     }
   }
 
@@ -52,17 +52,16 @@ class InvoiceForm extends React.Component<OwnProps, State> {
     // Determine invoice type on open
     if (isOpen === !wasOpen) {
       this.resetInvoiceType();
-      this.initInvoiceContact();
+      this.initInvoiceMember();
     }
   }
 
   public validate = async (form: Form): Promise<Invoice> => {
     const updatedInvoice = await form.simpleValidate<Invoice>(fields);
-    const { contact } = this.state;
+    const { member } = this.state;
     return {
       ...updatedInvoice,
-      contact: contact.value,
-      memberId: contact.id || null,
+      memberId: member.id || null,
     }
   }
 
@@ -75,21 +74,21 @@ class InvoiceForm extends React.Component<OwnProps, State> {
     this.setState({ invoiceType: event.currentTarget.value as InvoiceableResource });
   }
 
-  private initInvoiceContact = async () => {
+  private initInvoiceMember = async () => {
     const { invoice } = this.props;
-    this.setState({ contact: { value: invoice.contact, label: invoice.contact } })
-    if (invoice && invoice.contact) {
-      const memberOptions = await this.memberOptions(invoice.contact);
-      if (Array.isArray(memberOptions) && memberOptions.length) {
-        this.updateContactValue(memberOptions[0]);
+    if (invoice && invoice.memberId) {
+      this.setState({ member: { value: invoice.memberId, label: invoice.memberName } })
+      const response = await getMember(invoice.memberId);
+      if (response.data && response.data.member) {
+        this.updateContactValue(response.data.member);
       }
-    }
   }
+}
 
   // Need to update internal state and set form value since input is otherwise a controleld input
-  private updateContactValue = (newContact: SelectOption) => {
-    this.setState({ contact: newContact });
-    this.formRef && this.formRef.setValue(fields.contact.name, newContact);
+  private updateContactValue = (newMember: SelectOption) => {
+    this.setState({ member: newMember });
+    this.formRef && this.formRef.setValue(fields.member.name, newMember);
   }
 
   private memberOptions = async (searchValue: string) => {
@@ -134,14 +133,14 @@ class InvoiceForm extends React.Component<OwnProps, State> {
             </FormControl>
           </Grid>
           <Grid item xs={12}>
-            <FormLabel component="legend">{fields.contact.label}</FormLabel>
+            <FormLabel component="legend">{fields.member.label}</FormLabel>
             <AsyncSelect
               isClearable
-              name={fields.contact.name}
-              value={this.state.contact}
+              name={fields.member.name}
+              value={this.state.member}
               onChange={this.updateContactValue}
-              placeholder={fields.contact.placeholder}
-              id={fields.contact.name}
+              placeholder={fields.member.placeholder}
+              id={fields.member.name}
               loadOptions={this.memberOptions}
             />
           </Grid>
