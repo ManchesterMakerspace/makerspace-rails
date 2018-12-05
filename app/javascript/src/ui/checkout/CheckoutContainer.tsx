@@ -151,6 +151,7 @@ class CheckoutContainer extends React.Component<Props,State>{
     if (redirect) {
       return <Redirect to={redirect}/>
     }
+    //TODO Make settings a link
     return (
       <Grid container spacing={16}>
         {isRequesting && <LoadingOverlay id="checkout-submitting-overlay" />}
@@ -163,6 +164,7 @@ class CheckoutContainer extends React.Component<Props,State>{
                     onPaymentMethodChange={this.selectPaymentMethod}
                     selectedPaymentMethodId={paymentMethodId}
                   />
+                  <p>*The payment method used when creating a subscription will be the default payment method unless changed through Settings.</p>
                 </CardContent>
               </Card>
             </Grid>
