@@ -1,15 +1,12 @@
 import axios from "axios";
-import { Url } from "app/constants";
-import { buildJsonUrl } from "app/utils";
 import { QueryParams } from "app/interfaces";
-import { encodeQueryParams } from "api/utils/encodeQueryParams";
 import { handleApiError } from "api/utils/handleApiError";
 import { Subscription } from "app/entities/subscription";
 import { buildSubscriptionUrl, buildSubscriptionsUrl } from "api/subscriptions/utils";
 
 export const getSubscriptions = async (queryParams?: QueryParams) => {
   try {
-    return await axios.get(buildSubscriptionsUrl(), { params: encodeQueryParams(queryParams) });
+    return await axios.get(buildSubscriptionsUrl(), { params: (queryParams) });
   } catch (e) {
     const error = handleApiError(e);
     throw error;

@@ -17,7 +17,7 @@ export interface SignUpForm {
   email: string;
   password: string;
   membershipSelectionId?: string;
-  discount?: boolean;
+  discountId: string;
 }
 
 export type AuthMember = Pick<MemberDetails,

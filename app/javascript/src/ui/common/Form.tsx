@@ -172,7 +172,7 @@ class Form extends React.Component<FormModalProps, State> {
   private handleChange = (event: React.ChangeEvent<HTMLFormElement>) => {
     const fieldName = event.target.name;
     // Set value depending on checked state for checkboxes and radios
-    const fieldValue = event.target.hasOwnProperty("checked") ? (isUndefined(event.target.value) ? !!event.target.checked : event.target.value) : event.target.value;
+    const fieldValue = event.target.hasOwnProperty("checked") ? (isUndefined(event.target.value) ? !!event.target.checked : (event.target.checked && event.target.value)) : event.target.value;
     const { isDirty } = this.state;
     if (!isDirty) {
       this.setState({ isDirty: true });

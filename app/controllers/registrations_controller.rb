@@ -31,7 +31,7 @@ class RegistrationsController < Devise::RegistrationsController
     end
 
     def invoice_option_params
-      params.permit(:membership_selection_id, :discount)
+      params.permit(:membership_selection_id, :discount_id)
     end
 
     def invite_gdrive
@@ -45,7 +45,7 @@ class RegistrationsController < Devise::RegistrationsController
 
     def create_initial_membership_invoice
       invoice_option = InvoiceOption.find_by(id: invoice_option_params[:membership_selection_id])
-      @invoice = invoice_option.build_invoice(@member.id, Time.now, @member.id, invoice_option_params[:discount])
+      @invoice = invoice_option.build_invoice(@member.id, Time.now, @member.id, invoice_option_params[:discount_id])
       unless @invoice.save
         @messages.push("Error creating initial membership invoice for new member: #{@member.email}")
         @messages.concat(@invoice.errors.full_messages)

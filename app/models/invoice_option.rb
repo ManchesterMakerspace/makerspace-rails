@@ -22,6 +22,8 @@ class InvoiceOption
   field :resource_class, type: String
   # ID of billing plan to/is subscribe(d) to.  May reference a DEFAULT_INVOICE
   field :plan_id, type: String
+  # ID of SSO discount that applies to this option
+  field :discount_id, type: String
 
   field :disabled, type: Boolean, default: false
 
@@ -41,7 +43,7 @@ class InvoiceOption
       resource_id: resource_id,
       resource_class: self.resource_class,
       quantity: self.quantity,
-      discounts: discount_id,
+      discount_id: discount_id,
       plan_id: self.id,
       operation: self.operation,
     }

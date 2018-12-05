@@ -50,10 +50,16 @@ class Billing::CheckoutController < ApplicationController
     end
 
     def create_subscription(invoice)
-      result = @gateway.subscription.create(
+      subscription_obj = {
         payment_method_token: checkout_params[:payment_method_id],
         plan_id: invoice.plan_id
-      )
+      }
+      if invoice.discount_id
+        subscription_obj[:discounts] = {
+          add: [{ inherited_from_id: invoice.discount_id }]
+        }
+      end
+      result = @gateway.subscription.create(subscription_obj)
       if result.success?
         invoice.update_attribute({ settled_at: Time.now })
         invoice.resource.update(subscription_id: result.subscription.id)

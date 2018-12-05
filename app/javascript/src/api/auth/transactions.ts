@@ -26,12 +26,12 @@ export const deleteLogin = async () => {
 };
 
 export const postSignUp = async (signUpForm: SignUpForm) => {
-  const { discount, membershipSelectionId, ...rest } = signUpForm;
+  const { discountId, membershipSelectionId, ...rest } = signUpForm;
   try {
     return await axios.post(buildJsonUrl(Url.Auth.SignUp), {
       member: rest,
       membershipSelectionId,
-      discount,
+      discountId,
     });
   } catch (e) {
     const error = handleApiError(e);

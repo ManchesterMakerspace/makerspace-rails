@@ -6,5 +6,6 @@ class InvoiceOptionSerializer < ApplicationSerializer
              :plan_id,
              :quantity,
              :resource_class,
-             :disabled
+             :disabled,
+             :discount_id
 end

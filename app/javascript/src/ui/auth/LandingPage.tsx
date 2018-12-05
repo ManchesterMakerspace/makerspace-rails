@@ -12,6 +12,7 @@ import { Redirect } from 'react-router';
 interface State {
   redirect: string;
   membershipOptionId: string;
+  discountId: string;
 }
 interface OwnProps  {}
 interface StateProps {}
@@ -24,6 +25,7 @@ class LandingPage extends React.Component<Props, State> {
     this.state = {
       redirect: undefined,
       membershipOptionId: undefined,
+      discountId: undefined,
     }
   }
 
@@ -32,13 +34,17 @@ class LandingPage extends React.Component<Props, State> {
     this.setState({ redirect: Routing.SignUp });
   }
 
+  private selectMembershipDiscount = (discountId: string) => {
+    this.setState({ discountId });
+  }
+
   public render(): JSX.Element {
-    const { membershipOptionId, redirect } = this.state;
+    const { membershipOptionId, redirect, discountId } = this.state;
     if (redirect) {
       return <Redirect to={{
         pathname: redirect,
         ...membershipOptionId && {
-          state: { membershipOptionId }
+          state: { membershipOptionId, discountId }
         }
       }}/>;
     }
@@ -63,7 +69,7 @@ class LandingPage extends React.Component<Props, State> {
                   <Typography variant="headline">
                     To get started, first select a membership option.
                   </Typography>
-                  <MembershipSelectForm title="" membershipOptionId={this.state.membershipOptionId} onSelect={this.selectMembershipOption} />
+                  <MembershipSelectForm title="" membershipOptionId={membershipOptionId} discountId={discountId} onSelect={this.selectMembershipOption} onDiscount={this.selectMembershipDiscount} />
                 </Grid>
               </Grid>
             </CardContent>

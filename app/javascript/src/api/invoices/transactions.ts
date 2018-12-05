@@ -3,12 +3,11 @@ import { Invoice, InvoiceQueryParams, InvoiceOption } from "app/entities/invoice
 
 import { buildInvoicesUrl, buildInvoiceUrl, buildInvoiceOptionsUrl } from "api/invoices/utils";
 import { InvoiceOptionQueryParams } from "api/invoices/interfaces";
-import { encodeQueryParams } from "api/utils/encodeQueryParams";
 import { handleApiError } from "api/utils/handleApiError";
 
 export const getInvoices = async (isUserAdmin: boolean, queryParams?: InvoiceQueryParams) => {
   try {
-    return await axios.get(buildInvoicesUrl(isUserAdmin), { params: encodeQueryParams(queryParams) });
+    return await axios.get(buildInvoicesUrl(isUserAdmin), { params: (queryParams) });
   } catch (e) {
     const error = handleApiError(e);
     throw error;
@@ -54,7 +53,7 @@ export const deleteInvoice = async (invoiceId: string) => {
 
 export const getInvoiceOptions = async (queryParams?: InvoiceOptionQueryParams) => {
   try {
-    return await axios.get(buildInvoiceOptionsUrl(), { params: encodeQueryParams(queryParams) });
+    return await axios.get(buildInvoiceOptionsUrl(), { params: (queryParams) });
   } catch (e) {
     const error = handleApiError(e);
     throw error;

@@ -108,7 +108,7 @@ class SignUpContainer extends React.Component<Props, State>{
 
     return (
       <Grid container justify="center" spacing={16}>
-        <Grid item md={6} xs={12}>
+        <Grid item md={10} xs={12}>
           <Grid container justify="center" spacing={16}>
             <Grid item xs={12}>
               <Card style={{ minWidth: 275 }}>

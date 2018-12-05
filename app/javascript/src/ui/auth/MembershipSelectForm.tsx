@@ -10,13 +10,15 @@ import ErrorMessage from "ui/common/ErrorMessage";
 import TableContainer from "ui/common/table/TableContainer";
 import { Column } from "ui/common/table/Table";
 import { numberAsCurrency } from "ui/utils/numberToCurrency";
-import { Button } from "@material-ui/core";
+import { Button, FormControlLabel, Checkbox } from "@material-ui/core";
 import { readOptionsAction } from "ui/billing/actions";
 
 interface OwnProps {
   title?: string;
   onSelect: (membershipOptionId: string) => void;
+  onDiscount: (discountId: string) => void;
   membershipOptionId: string;
+  discountId: string;
   redirectOnSelect?: boolean;
 }
 interface DispatchProps {
@@ -30,9 +32,17 @@ interface StateProps {
 
 interface Props extends OwnProps, DispatchProps, StateProps { }
 
-class MembershipSelectComponent extends React.Component<Props, {}> {
+class MembershipSelectComponent extends React.Component<Props> {
 
-  private selectMembershipOption = (event: React.MouseEvent<HTMLTableElement>) => this.props.onSelect(event.currentTarget.id);
+  private selectMembershipOption = (event: React.MouseEvent<HTMLTableElement>) => {
+    const optionId = event.currentTarget.id;
+    const option = this.getOption(optionId);
+    this.updateOptionDiscount(option);
+    this.props.onSelect(optionId)
+  };
+
+  private getOption = (id: string) => this.props.membershipOptions[id];
+  private updateOptionDiscount = (option: InvoiceOption) => (option.discountId && option.discountId !== this.props.discountId) && this.props.onDiscount(option.discountId);
 
   public componentDidMount() {
     this.props.getMembershipOptions();
@@ -40,6 +50,11 @@ class MembershipSelectComponent extends React.Component<Props, {}> {
 
   private rowId = (row: InvoiceOption) => row.id;
   private membershipColumns: Column<InvoiceOption>[] = [
+    {
+      id: "name",
+      label: "Name",
+      cell: (row: InvoiceOption) => row.name,
+    },
     {
       id: "description",
       label: "Description",
@@ -65,8 +80,13 @@ class MembershipSelectComponent extends React.Component<Props, {}> {
     }
   ]
 
+  // Pass checked as a string for now.  Until someone selects a membership, it will just act as an update trigger
+  // TODO: This sucks, do better.
+  private toggleDiscount = (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    this.props.onDiscount(`${checked}`)
+  };
   public render(): JSX.Element {
-    const { membershipOptions, invoiceOptionsError, invoiceOptionsLoading } = this.props;
+    const { membershipOptions, invoiceOptionsError, invoiceOptionsLoading, discountId } = this.props;
 
     let normalizedError: JSX.Element = invoiceOptionsError && (
       <>
@@ -82,6 +102,18 @@ class MembershipSelectComponent extends React.Component<Props, {}> {
           columns={this.membershipColumns}
           rowId={this.rowId}
           loading={invoiceOptionsLoading}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              name="discount-select"
+              value="discount-select"
+              checked={!!discountId}
+              onChange={this.toggleDiscount}
+              color="default"
+            />
+          }
+          label="Apply 10% Discount for all student, senior (+65) and military. Proof of applicable affiliation may be required during orientation."
         />
         <ErrorMessage error={normalizedError} />
       </>

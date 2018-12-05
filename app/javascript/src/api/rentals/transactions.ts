@@ -1,12 +1,11 @@
 import axios from "axios";
 import { RentalQueryParams, Rental } from "app/entities/rental";
 import { buildRentalsUrl, buildRentalUrl } from "api/rentals/utils";
-import { encodeQueryParams } from "api/utils/encodeQueryParams";
 import { handleApiError } from "api/utils/handleApiError";
 
 export const getRentals = async (isUserAdmin: boolean, queryParams?: RentalQueryParams) => {
   try {
-    return await axios.get(buildRentalsUrl(isUserAdmin), { params: encodeQueryParams(queryParams) });
+    return await axios.get(buildRentalsUrl(isUserAdmin), { params: (queryParams) });
   } catch (e) {
     const error = handleApiError(e);
     throw error;

@@ -24,7 +24,7 @@ class Invoice
   field :due_date, type: Time
   field :payment_type, type: String
   field :amount, type: Float
-  field :discounts, type: Array
+  field :discount_id, type: String
 
   ## Admin/Operation Information
   # How many operations to perform (eg, num of months renewed)

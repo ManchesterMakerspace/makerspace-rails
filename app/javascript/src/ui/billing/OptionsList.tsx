@@ -17,10 +17,13 @@ import BillingForm from "ui/billing/BillingForm";
 import DeleteInvoiceOptionModal from "ui/billing/DeleteInvoiceOptionModal";
 import UpdateBillingContainer, { UpdateBillingRenderProps } from "ui/billing/UpdateBillingContainer";
 import { BillingPlan } from "app/entities/billingPlan";
+import { InvoiceOptionQueryParams } from "api/invoices/interfaces";
+import StatusLabel from "ui/common/StatusLabel";
+import { Status } from "ui/common/constants";
 
 interface OwnProps { }
 interface DispatchProps {
-  getOptions: (queryParams?: QueryParams) => void;
+  getOptions: (queryParams?: InvoiceOptionQueryParams) => void;
   getBillingPlans: (type: InvoiceableResource) => void;
 }
 interface StateProps {
@@ -63,6 +66,12 @@ const fields: Column<InvoiceOption>[] = [
     id: "amount",
     label: "Amount",
     cell: (row: InvoiceOption) => row.amount,
+  },
+  {
+    id: "disabled",
+    label: "Disabled",
+    cell: (row: InvoiceOption) => row.disabled ? <StatusLabel label="Disabled" color={Status.Default}/>
+                                                : <StatusLabel label="Enabled" color={Status.Success} />,
   }
 ];
 
@@ -102,7 +111,7 @@ class OptionsList extends React.Component<Props, State> {
     }
   }
 
-  private getQueryParams = (): QueryParams => {
+  private getQueryParams = (): InvoiceOptionQueryParams => {
     const {
       pageNum,
       orderBy,
@@ -113,7 +122,8 @@ class OptionsList extends React.Component<Props, State> {
       pageNum,
       orderBy,
       order,
-      search
+      search,
+      types: Object.values(InvoiceableResource)
     };
   }
   private getOptions = () => {
@@ -338,7 +348,7 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch
 ): DispatchProps => {
   return {
-    getOptions: () => dispatch(readOptionsAction()),
+    getOptions: (queryParams) => dispatch(readOptionsAction(queryParams)),
     getBillingPlans: (type) => dispatch(readBillingPlansAction([type]))
   }
 }

@@ -12,6 +12,7 @@ interface BaseInvoice {
   memberId: string;
   memberName: string;
   subscriptionId?: string;
+  discountId?: string;
 }
 
 export interface Invoice extends BaseInvoice {
@@ -31,6 +32,7 @@ export interface InvoiceOption {
   resourceClass: InvoiceableResource;
   planId: string;
   disabled: boolean;
+  discountId: string;
 }
 
 
@@ -61,6 +63,7 @@ export enum Properties {
   SubscriptionId = "subscriptionId",
   PlanId = "planId",
   Disabled = "disabled",
+  DiscountId = "discountId",
 }
 
 export enum PaymentMethodType {

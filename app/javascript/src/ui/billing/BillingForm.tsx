@@ -18,6 +18,7 @@ import { Properties as BillingPlanProps } from "app/entities/billingPlan";
 import { fields } from "ui/billing/constants";
 import { BillingPlan } from "app/entities/billingPlan";
 import { CollectionOf } from "app/interfaces";
+import { Checkbox } from "@material-ui/core";
 
 interface OwnProps {
   getBillingPlans: (type: InvoiceableResource) => void;
@@ -36,12 +37,14 @@ interface State {
   type: InvoiceableResource;
   planId: string;
   planMatchError: string;
+  disableOption: boolean;
 }
 
 const defaultState = {
   type: InvoiceableResource.Membership,
   planId: "",
   planMatchError: "",
+  disableOption: false
 }
 class BillingForm extends React.Component<OwnProps, State>{
   public formRef: Form;
@@ -68,6 +71,9 @@ class BillingForm extends React.Component<OwnProps, State>{
     // Reset on form open
     if (isOpen && !wasOpen) {
       this.setState(defaultState);
+      if (option) {
+        this.setState({ disableOption: option.disabled });
+      }
     }
     // Reload plans if type changes
     if (type && type !== oldType) {
@@ -135,26 +141,52 @@ class BillingForm extends React.Component<OwnProps, State>{
     return await form.simpleValidate<InvoiceOption>(fields);
   }
 
+  private toggleDisableOption = (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => this.setState({ disableOption: checked });
+
   private renderPlanOptions = () => {
     const { plansLoading, plansError, billingPlans } = this.props;
-    if (plansLoading || !billingPlans) {
-      return this.renderPlanOption({ id: "loading", name: "Loading...", value: "" });
-    } else if (plansError) {
-      return this.renderPlanOption({ id: "error", name: plansError, value: "" });
-    }
-    const plans = Object.entries(billingPlans);
-    return plans.length ? [this.renderPlanOption({ id: "none", name: "None", value: "" })].concat(plans.map(
-      ([key, plan]) => this.renderPlanOption({ id: key, name: plan.name, value: key }))) : this.renderPlanOption({ id: "no-items", name: "No plans available", value: "" })
+    return this.renderOptions(plansLoading, plansError, billingPlans);
   }
 
   private renderPlanOption = (field: { id: string, name: string, value: string }) => (
     <option id={`${fields.planId.name}-option-${field.id}`} key={field.id} value={field.value}>{field.name}</option>
   )
 
+  private getActivePlanId = () => {
+    const { option } = this.props;
+    const { planId } = this.state;
+    return planId || (option && option.planId);
+  }
+
+  private renderDiscountOptions = () => {
+    const { plansLoading, plansError, billingPlans } = this.props;
+    const activePlanId = this.getActivePlanId()
+    const foundPlan = billingPlans && billingPlans[activePlanId];
+    if (!foundPlan) {
+      return [];
+    }
+    const discounts = foundPlan.discounts.reduce((discounts, discount) => {
+      discounts[discount.id] = discount;
+      return discounts;
+    }, {});
+    return this.renderOptions(plansLoading, plansError, discounts);
+  }
+
+  private renderOptions = (loading: boolean, error: string, options: CollectionOf<any>) => {
+    if (loading || !options) {
+      return this.renderPlanOption({ id: "loading", name: "Loading...", value: "" });
+    } else if (error) {
+      return this.renderPlanOption({ id: "error", name: error, value: "" });
+    }
+    const plans = Object.entries(options);
+    return plans.length ? [this.renderPlanOption({ id: "none", name: "None", value: "" })].concat(plans.map(
+      ([key, plan]) => this.renderPlanOption({ id: key, name: plan.name, value: key }))) : this.renderPlanOption({ id: "no-items", name: "None available", value: "" })
+  }
+
   public render() {
     const { isOpen, onClose, isRequesting, error, onSubmit, option } = this.props;
-    const { type, planId } = this.state;
-
+    const { type, planId, disableOption } = this.state;
+    console.log(this.formRef && this.formRef.getValues());
     return (
       <FormModal
         formRef={this.setFormRef}
@@ -196,6 +228,21 @@ class BillingForm extends React.Component<OwnProps, State>{
               {this.renderPlanOptions()}
             </Select>
           </Grid>
+          {!!this.getActivePlanId() && (
+            <Grid item xs={12}>
+              <FormLabel component="legend">{fields.discountId.label}</FormLabel>
+              <Select
+                name={fields.discountId.name}
+                value={option && option.discountId}
+                fullWidth
+                native
+                required
+                placeholder={fields.discountId.placeholder}
+              >
+                {this.renderDiscountOptions()}
+              </Select>
+            </Grid>
+          )}
           <Grid item xs={12}>
             <TextField
               fullWidth
@@ -238,6 +285,21 @@ class BillingForm extends React.Component<OwnProps, State>{
               label={fields.quantity.label}
               name={fields.quantity.name}
               placeholder={fields.quantity.placeholder}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name={fields.disabled.name}
+                  value={fields.disabled.name}
+                  checked={disableOption}
+                  onChange={this.toggleDisableOption}
+                  disabled={isRequesting}
+                  color="default"
+                />
+              }
+              label={fields.disabled.label}
             />
           </Grid>
         </Grid>

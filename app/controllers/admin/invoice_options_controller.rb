@@ -30,6 +30,6 @@ class Admin::InvoiceOptionsController < ApplicationController
 
   private
   def invoice_params
-    params.require(:invoice_option).permit(:description, :name, :resource_class, :amount, :plan_id, :quantity)
+    params.require(:invoice_option).permit(:description, :name, :resource_class, :amount, :plan_id, :quantity, :discount_id, :disabled)
   end
 end

@@ -8,7 +8,8 @@ interface StatusLabelProps {
 }
 const statusToStyleMap = {
   [Status.Danger]: {backgroundColor: "rgba(255, 0, 0, 0.4)"},
-  [Status.Success]: {backgroundColor: "rgba(88, 227, 111, 0.4)"},
+  [Status.Success]: { backgroundColor: "rgba(88, 227, 111, 0.4)" },
+  [Status.Default]: { backgroundColor: "rgba(0, 0, 0, 0.12)"},
 }
 
 const circleStyle = {

@@ -28,6 +28,7 @@ interface OwnProps extends RouteComponentProps<any>{
 
 interface State {
   membershipSelectionId: string;
+  discountId: string;
   membershipSelectionError: string;
   passwordMask: boolean;
   emailExists: boolean;
@@ -44,7 +45,8 @@ class SignUpFormComponent extends React.Component<Props, State> {
       passwordMask: true,
       emailExists: false,
       membershipSelectionError: "",
-      membershipSelectionId: props.location.state && props.location.state.membershipOptionId
+      membershipSelectionId: props.location.state && props.location.state.membershipOptionId,
+      discountId: props.location.state && props.location.state.discountId,
     };
     // Clear history after reading state
     getHistory().replace({ ...props.location, state: undefined });
@@ -106,7 +108,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
     this.props.onSubmit && this.props.onSubmit({
       ...validSignUp,
       membershipSelectionId: this.state.membershipSelectionId,
-      discount: !!validSignUp.discount
+      discountId: this.state.discountId
     });
   }
 
@@ -139,9 +141,13 @@ class SignUpFormComponent extends React.Component<Props, State> {
     this.setState({ membershipSelectionId });
   }
 
+  private selectMembershipDiscount = (discountId: string) => {
+    this.setState({ discountId });
+  }
+
   public render(): JSX.Element {
     const { isRequesting, error } = this.props;
-    const { emailExists, membershipSelectionError, membershipSelectionId } = this.state;
+    const { emailExists, membershipSelectionError, membershipSelectionId, discountId } = this.state;
 
     return (
       <Form
@@ -189,7 +195,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
           </Grid>
           {this.props.renderMembershipOptions && (
             <Grid item xs={12}>
-              <MembershipSelectForm membershipOptionId={membershipSelectionId} onSelect={this.updateMembershipSelection}/>
+              <MembershipSelectForm membershipOptionId={membershipSelectionId} discountId={discountId} onDiscount={this.selectMembershipDiscount} onSelect={this.updateMembershipSelection}/>
               {membershipSelectionError && <ErrorMessage error={membershipSelectionError}/>}
             </Grid>
           )}

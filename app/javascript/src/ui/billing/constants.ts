@@ -65,5 +65,15 @@ export const fields = {
     label: "Operation on completion",
     name: `${formPrefix}-operation`,
     validate: (_val: string) => true,
-  }
+  },
+  [Properties.DiscountId]: {
+    label: "Discount (optional)",
+    name: `${formPrefix}-discount`,
+    placeholder: "Select a discount",
+  },
+  [Properties.Disabled]: {
+    label: "Disable Invoice Option",
+    name: `${formPrefix}-disabled`,
+    transform: (val: string) => !!val,
+  },
 }

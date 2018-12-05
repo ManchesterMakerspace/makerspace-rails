@@ -9,7 +9,7 @@ import { handleApiError } from "api/utils/handleApiError";
 
 export const getMembers = async (queryParams?: QueryParams) => {
   try {
-    return await axios.get(buildJsonUrl(Url.Members), { params: encodeQueryParams(queryParams) });
+    return await axios.get(buildJsonUrl(Url.Members), { params: (queryParams) });
   } catch (e) {
     const error = handleApiError(e);
     throw error;
