@@ -20,11 +20,12 @@ class Billing::CheckoutController < ApplicationController
       end
       invoices = Invoice.any_in(id: checkout_params[:invoice_ids] )
       results = settle_invoices(invoices)
+      byebug
       # TODO Email user a receipt
       if results.all?(&:success?)
         render json: { }, status: 200 and return
       else
-        error = result.errors.map { |e| e.message }
+        error = results.errors.map { |e| e.message }
         render json: {error: error }, status: 500 and return
       end
     end
@@ -44,8 +45,8 @@ class Billing::CheckoutController < ApplicationController
 
     def settle_invoices(invoices)
       single_transactions, new_subscriptions = invoices.partition { |invoice| invoice.plan_id.nil? }
-      subscription_results = new_subscriptions.map { |invoice| create_subscription(invoice) }
-      result = submit_transaction(single_transactions)
+      subscription_results = new_subscriptions.map { |invoice| create_subscription(invoice) } unless new_subscriptions.empty?
+      result = submit_transaction(single_transactions) unless single_transactions.empty?
       subscription_results.concat([result])
     end
 

@@ -40,6 +40,7 @@ class LandingPage extends React.Component<Props, State> {
 
   public render(): JSX.Element {
     const { membershipOptionId, redirect, discountId } = this.state;
+    console.log(discountId);
     if (redirect) {
       return <Redirect to={{
         pathname: redirect,

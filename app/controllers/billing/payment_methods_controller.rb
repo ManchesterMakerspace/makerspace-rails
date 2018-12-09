@@ -26,7 +26,7 @@ class Billing::PaymentMethodsController < ApplicationController
           customer_id: current_member.customer_id,
           payment_method_nonce: payment_method_nonce,
           options: {
-            fail_on_duplicate_payment_method: true,
+            fail_on_duplicate_payment_method: Rails.env.production?,
             make_default: payment_method_params[:make_default] || false
           }
         )

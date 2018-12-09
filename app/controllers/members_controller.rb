@@ -3,7 +3,6 @@ class MembersController < ApplicationController
     include SlackService
     include GoogleService
     before_action :set_member, only: [:show, :update]
-    before_action :initalize_gdrive, only: [:create]
 
     def index
       @members = query_params[:search].nil? || query_params[:search].empty? ? Member.all : Member.rough_search_members(query_params[:search])

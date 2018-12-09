@@ -17,6 +17,7 @@ import DeleteSubscription from "ui/subscriptions/DeleteSubscriptionModal";
 import { CrudOperation } from "app/constants";
 import Form from "ui/common/Form";
 import UpdateSubscriptionContainer, { UpdateSubscriptionRenderProps } from "ui/subscriptions/UpdateSubscriptionContainer";
+import { numberAsCurrency } from "ui/utils/numberToCurrency";
 
 
 interface OwnProps { }
@@ -52,7 +53,7 @@ const fields: Column<Subscription>[] = [
   }, {
     id: "amount",
     label: "Amount",
-    cell: (row: Subscription) => row.amount,
+    cell: (row: Subscription) => numberAsCurrency(row.amount),
   }, {
     id: "status",
     label: "Status",

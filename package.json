@@ -58,6 +58,7 @@
     "webpack-dev-server": "2.11.2"
   },
   "scripts": {
+    "start": "webpack-dev-server",
     "test": "$(npm bin)/jest --no-cache",
     "test-watch": "yarn test --watch",
     "test-functional": "yarn test --testRegex='/tests/functional/runner.spec.ts' --setupTestFrameworkScriptFile='<rootDir>/tests/functional/setup.js'"

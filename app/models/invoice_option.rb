@@ -44,7 +44,7 @@ class InvoiceOption
       resource_class: self.resource_class,
       quantity: self.quantity,
       discount_id: discount_id,
-      plan_id: self.id,
+      plan_id: self.plan_id,
       operation: self.operation,
     }
     Invoice.new(invoice_args)

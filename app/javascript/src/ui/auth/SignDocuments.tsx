@@ -122,7 +122,7 @@ class SignDocuments extends React.Component<Props, State>{
             <SignatureCanvas ref={this.setSignatureRef} canvasProps={{ height: "250", width: "1000" }} />
             <Grid container justify="flex-end">
               <Grid item xs={12}>
-                <Button variant="flat" color="secondary" onClick={this.clearSignature}>Reset Signature</Button>
+                <Button variant="contained" color="secondary" onClick={this.clearSignature}>Reset Signature</Button>
               </Grid>
             </Grid>
           </Grid>

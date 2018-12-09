@@ -48,6 +48,8 @@ class SignUpFormComponent extends React.Component<Props, State> {
       membershipSelectionId: props.location.state && props.location.state.membershipOptionId,
       discountId: props.location.state && props.location.state.discountId,
     };
+    console.log(this.state);
+    console.log(props.location)
     // Clear history after reading state
     getHistory().replace({ ...props.location, state: undefined });
   }

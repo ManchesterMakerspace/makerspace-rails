@@ -42,7 +42,11 @@ class MembershipSelectComponent extends React.Component<Props> {
   };
 
   private getOption = (id: string) => this.props.membershipOptions[id];
-  private updateOptionDiscount = (option: InvoiceOption) => (option.discountId && option.discountId !== this.props.discountId) && this.props.onDiscount(option.discountId);
+  private updateOptionDiscount = (option: InvoiceOption) => {
+    if (this.props.discountId) { // Only want to update if
+      (option.discountId && option.discountId !== this.props.discountId) && this.props.onDiscount(option.discountId);
+    }
+  }
 
   public componentDidMount() {
     this.props.getMembershipOptions();
@@ -80,10 +84,18 @@ class MembershipSelectComponent extends React.Component<Props> {
     }
   ]
 
-  // Pass checked as a string for now.  Until someone selects a membership, it will just act as an update trigger
-  // TODO: This sucks, do better.
   private toggleDiscount = (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-    this.props.onDiscount(`${checked}`)
+    const { membershipOptionId, onDiscount, membershipOptions } = this.props;
+    let discountId;
+    if (checked) { // Apply discount
+      if (membershipOptionId) { // If option is already selected, find related discount and apply
+        const membershipOption = membershipOptions[membershipOptionId];
+        discountId = membershipOption.discountId;
+      } else { // Otherwise just make it truthy to be updated when membership is actually selected
+        discountId = "apply";
+      }
+    }
+    onDiscount(discountId)
   };
   public render(): JSX.Element {
     const { membershipOptions, invoiceOptionsError, invoiceOptionsLoading, discountId } = this.props;

@@ -20,6 +20,7 @@ import { BillingPlan } from "app/entities/billingPlan";
 import { InvoiceOptionQueryParams } from "api/invoices/interfaces";
 import StatusLabel from "ui/common/StatusLabel";
 import { Status } from "ui/common/constants";
+import { numberAsCurrency } from "ui/utils/numberToCurrency";
 
 interface OwnProps { }
 interface DispatchProps {
@@ -60,12 +61,12 @@ const fields: Column<InvoiceOption>[] = [
     cell: (row: InvoiceOption) => row.description,
   }, {
     id: "quantity",
-    label: "Billing Frequency",
+    label: "Billing Frequency (# months)",
     cell: (row: InvoiceOption) => row.quantity,
   }, {
     id: "amount",
     label: "Amount",
-    cell: (row: InvoiceOption) => row.amount,
+    cell: (row: InvoiceOption) => numberAsCurrency(row.amount),
   },
   {
     id: "disabled",
