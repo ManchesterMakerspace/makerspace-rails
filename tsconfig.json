@@ -41,7 +41,8 @@
     "node_modules",
     "vendor",
     "public",
-    "spec"
+    "spec",
+    "tests",
   ],
   "compileOnSave": false
 }
