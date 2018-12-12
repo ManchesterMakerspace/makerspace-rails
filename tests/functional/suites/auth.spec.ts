@@ -1,17 +1,13 @@
 import { Routing } from "app/constants";
-import { AuthPageObject } from "../pageObjects/auth";
-import { PageUtils, rootURL } from "../pageObjects/common";
+import auth from "../pageObjects/auth";
+import utils from "../pageObjects/common";
 import { mockRequests, mock } from "../mockserver-client-helpers";
-import { MemberPageObject } from "../pageObjects/member";
+import memberPO from "../pageObjects/member";
 import { basicUser } from "../constants/member";
 import { extractLinkFromEmail } from "../../helpers/mailHelpers";
 import { invoiceOptions, membershipOptionQueryParams } from "../constants/invoice";
-import { SignUpPageObject } from "../pageObjects/signup";
+import signup from "../pageObjects/signup";
 
-const auth = new AuthPageObject();
-const signup = new SignUpPageObject();
-const utils = new PageUtils();
-const memberPO = new MemberPageObject();
 const member = Object.assign({}, basicUser);
 const memberId = member.id;
 const profileUrl = memberPO.getProfilePath(memberId);
@@ -84,11 +80,17 @@ describe("Authentication", () => {
           - Sign up
           - Load profile
           - Load invoices
-         2. Fill out and submit sign in form
-         3. Wait for profile page to load
-         4. Assert welcome modal displayed
-         TODO
-         5. Assert Invoice is staged for checkout
+         2. Go to home page & select a membership option
+         3. Verify directed to sign up form
+         4. Fill out sign up form & submit
+         5. Verify document pages & error fields
+         6. Accept & sign both documents
+         7. Verify directed to checkout form
+         8. Verify no payment methods are available & selected membership option is in receipt area
+         9. Add a CC payment method
+         10. Submit form
+         11. Verify directed to receipt page
+         12. Click 'Go to My Profile' & verify directed to profile page
       */
       const membershipId = "foo";
       const membershipOption = invoiceOptions.find((io) => io.id === membershipId);
@@ -96,28 +98,25 @@ describe("Authentication", () => {
       await mock(mockRequests.signUp.ok(member));
       await mock(mockRequests.member.get.ok(memberId, member));
       await browser.get(utils.buildUrl());
-      expect(await utils.getElementAttribute(signup.signUpForm.membershipSelect, 'value')).toEqual(membershipId);
+      await signup.selectMembershipOption(membershipId);
+      await utils.waitForPageLoad(signup.signupUrl);
       await signup.signUpUser(member);
-      await utils.waitForPageLoad(utils.buildUrl(profileUrl), true);
-      expect(await utils.isElementDisplayed(memberPO.welcomeModal.id)).toBeTruthy();
-    });
-    it("User can sign up without a chosen membership option", async () => {
-      /* 1. Setup mocks
-          - Sign up
-          - Load profile
-          - Load invoices
-         2. Fill out and submit sign in form
-         3. Wait for profile page to load
-         4. Assert welcome modal displayed
-         TODO
-         5. Assert Invoice is Listed as due in invoice list
-      */
-      await browser.get(utils.buildUrl());
-      await mock(mockRequests.signUp.ok(member));
-      await mock(mockRequests.member.get.ok(memberId, member));
-      await signup.signUpUser(member);
-      await utils.waitForPageLoad(utils.buildUrl(profileUrl), true);
-      expect(await utils.isElementDisplayed(memberPO.welcomeModal.id)).toBeTruthy();
+      expect(await utils.isElementDisplayed(signup.documentsSigning.codeOfConductCheckbox)).toBeTruthy();
+      await utils.clickElement(signup.documentsSigning.codeOfConductSubmit);
+      expect(await utils.isElementDisplayed(signup.documentsSigning.codeOfConductError)).toBeTruthy();
+      await utils.clickElement(signup.documentsSigning.codeOfConductCheckbox);
+      expect(await utils.isElementDisplayed(signup.documentsSigning.codeOfConductError)).toBeFalsy();
+      await utils.clickElement(signup.documentsSigning.codeOfConductSubmit);
+      expect(await utils.isElementDisplayed(signup.documentsSigning.memberContractCheckbox)).toBeTruthy();
+      await utils.clickElement(signup.documentsSigning.memberContractSubmit);
+      expect(await utils.isElementDisplayed(signup.documentsSigning.memberContractError)).toBeTruthy();
+      await utils.clickElement(signup.documentsSigning.codeOfConductCheckbox);
+      expect(await utils.isElementDisplayed(signup.documentsSigning.memberContractError)).toBeFalsy();
+      await utils.clickElement(signup.documentsSigning.memberContractSubmit);
+      expect(await utils.isElementDisplayed(signup.documentsSigning.memberContractError)).toBeTruthy();
+      await signup.signContract();
+      await utils.clickElement(signup.documentsSigning.memberContractSubmit);
+      // TODO: Step 7-12
     });
     xit("User notified if they have an account with the attempted sign up email", async () => {
       /* 1. Setup mocks

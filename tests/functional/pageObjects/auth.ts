@@ -1,11 +1,8 @@
 import { Routing } from "app/constants";
 import { MemberDetails } from "app/entities/member";
-import { PageUtils, rootURL } from "./common";
+import utils from "./common";
 import { mock, mockRequests } from "../mockserver-client-helpers";
-import { MemberPageObject } from "../pageObjects/member";
-
-const utils = new PageUtils();
-const memberPO = new MemberPageObject();
+import memberPO from "../pageObjects/member";
 
 export interface LoginMember extends Partial<MemberDetails> {
   email: string;

@@ -33,7 +33,7 @@ export const LoginFields: FormFields = {
   }
 }
 
-export const signUpPrefix = "sign-up-modal";
+export const signUpPrefix = "sign-up-form";
 export const SignUpFields: FormFields = {
   firstname: {
     label: "First Name",

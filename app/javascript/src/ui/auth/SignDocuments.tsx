@@ -78,7 +78,7 @@ class SignDocuments extends React.Component<Props, State>{
                 name={document.name}
                 value={document.name}
                 checked={document.value}
-                onChange={this.acceptDocument(document.name)}
+                onChange={this.acceptDocument(Documents.codeOfConduct)}
                 color="primary"
               />
             }
@@ -107,7 +107,7 @@ class SignDocuments extends React.Component<Props, State>{
                 name={document.name}
                 checked={document.value}
                 value={document.name}
-                onChange={this.acceptDocument(document.name)}
+                onChange={this.acceptDocument(Documents.memberContract)}
                 color="primary"
               />
             }
@@ -164,7 +164,7 @@ class SignDocuments extends React.Component<Props, State>{
   private documents = () => ({
     [Documents.codeOfConduct]: {
       displayName: "Code of Conduct",
-      name: Documents.codeOfConduct,
+      name: `${Documents.codeOfConduct}-checkbox`,
       render: this.getCodeOfConduct,
       value: this.state.acceptCodeOfConduct,
       validate: (val: boolean) => !!val,
@@ -173,7 +173,7 @@ class SignDocuments extends React.Component<Props, State>{
     },
     [Documents.memberContract]: {
       displayName: "Member Contract",
-      name: Documents.memberContract,
+      name: `${Documents.memberContract}-checkbox`,
       render: this.getMemberContract,
       value: this.state.acceptMemberContract,
       validate: (val: boolean) => !!val,
