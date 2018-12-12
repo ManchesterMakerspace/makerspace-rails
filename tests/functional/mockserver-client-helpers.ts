@@ -7,7 +7,7 @@ import { MemberDetails } from "app/entities/member";
 import { Subscription } from "app/entities/subscription";
 import { AuthForm } from "ui/auth/interfaces";
 import { Invoice, InvoiceQueryParams } from "app/entities/invoice";
-import { MembershipOptionQueryParams } from "api/invoices/interfaces";
+import { InvoiceOptionQueryParams } from "api/invoices/interfaces";
 
 enum Method {
   Get = "GET",
@@ -298,7 +298,7 @@ export const mockRequests = {
   },
   invoiceOptions: {
     get: {
-      ok: (invoices: Partial<Invoice>[], queryParams?: MembershipOptionQueryParams): MockRequest => ({
+      ok: (invoices: Partial<Invoice>[], queryParams?: InvoiceOptionQueryParams): MockRequest => ({
         httpRequest: {
           method: Method.Get,
           path: `/${Url.InvoiceOptions}.json`,

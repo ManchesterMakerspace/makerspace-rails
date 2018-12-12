@@ -205,7 +205,7 @@ describe("Member Profiles", () => {
         const currentCard = {
           id: "abc",
           uid: "1234",
-          validity: CardStatus.Lost
+          validity: CardStatus.Inactive
         }
         const fobbedMember: LoginMember = {
           ...viewingMember,
