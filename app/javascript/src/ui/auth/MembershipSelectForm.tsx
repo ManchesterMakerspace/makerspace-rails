@@ -97,6 +97,9 @@ class MembershipSelectComponent extends React.Component<Props> {
     }
     onDiscount(discountId)
   };
+
+  private byAmount = (a: InvoiceOption, b: InvoiceOption) =>  a.amount - b.amount;
+
   public render(): JSX.Element {
     const { membershipOptions, invoiceOptionsError, invoiceOptionsLoading, discountId } = this.props;
 
@@ -110,7 +113,7 @@ class MembershipSelectComponent extends React.Component<Props> {
         <TableContainer
           id="membership-select-table"
           title={isUndefined(this.props.title) && "Select a Membership"}
-          data={Object.values(membershipOptions)}
+          data={Object.values(membershipOptions).sort(this.byAmount)}
           columns={this.membershipColumns}
           rowId={this.rowId}
           loading={invoiceOptionsLoading}

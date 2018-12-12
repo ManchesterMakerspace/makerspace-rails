@@ -1,4 +1,3 @@
-import { InvoiceOptionTypes } from "api/invoices/constants";
 import { Invoice, InvoiceOperation, InvoiceableResource } from "app/entities/invoice";
 export const invoiceOptions: Partial<Invoice>[] = [
   {
@@ -19,7 +18,7 @@ export const baseInvoice: Invoice = {
   id: "foo",
   name: "random membership invoice",
   description: "Some more details about this membership invoice",
-  contact: "test_member@test.com",
+  memberName: "Some dude",
   amount: 50,
   quantity: 1,
   settled: false,
@@ -56,5 +55,5 @@ export const defaultInvoices: Invoice[] = new Array(20).fill(undefined).map((_v,
   }
 })
 export const membershipOptionQueryParams = {
-  types: [InvoiceOptionTypes.Membership]
+  types: [InvoiceableResource.Membership]
 };

@@ -63,7 +63,7 @@ describe("Invoicing and Dues", () => {
       }
     }
 
-    fit("Can create new invoices for members", async () => {
+    it("Can create new invoices for members", async () => {
       /* 1. Login as admin and nav to basic user's profile
          2. Setup mocks
           - Load invoices (0 results)
@@ -75,13 +75,12 @@ describe("Invoicing and Dues", () => {
       */
       await mock(mockRequests.invoices.post.ok(defaultInvoice));
       await loadInvoices([], true);
-      const { submit, description, contact, amount, notes, loading, id: invoiceForm } = invoicePo.invoiceForm;
+      const { submit, description, amount, notes, loading, id: invoiceForm } = invoicePo.invoiceForm;
       expect(await utils.isElementDisplayed(invoicePo.getErrorRowId())).toBeFalsy();
       expect(await utils.isElementDisplayed(invoicePo.getNoDataRowId())).toBeTruthy();
       await utils.clickElement(invoicePo.actionButtons.create);
       await utils.waitForVisisble(submit);
       await utils.fillInput(description, defaultInvoice.description);
-      await utils.fillInput(contact, defaultInvoice.contact);
       await utils.fillInput(amount, `${defaultInvoice.amount}`);
 
       await mock(mockRequests.invoices.get.ok([defaultInvoice]));

@@ -33,15 +33,15 @@
     "jsx": "react",
     "typeRoots": [
       "node_modules/@types",
-      "app/javascript/src/app/typings"
+      "app/javascript/src/app/typings",
+      "tests/webdriverTypings"
     ]
   },
   "exclude": [
     "node_modules",
     "vendor",
     "public",
-    "spec",
-    "tests"
+    "spec"
   ],
   "compileOnSave": false
 }

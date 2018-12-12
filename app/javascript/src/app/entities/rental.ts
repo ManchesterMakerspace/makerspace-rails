@@ -7,7 +7,7 @@ export interface Rental {
   expiration: number;
   memberId: string;
   memberName: string;
-  subscriptionId: string;
+  subscriptionId?: string;
 }
 
 export enum Properties {

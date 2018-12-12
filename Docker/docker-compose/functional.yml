@@ -13,10 +13,6 @@ services:
       - API_DOMAIN=http://mockserver:1080
       - MOCKSERVER_DOMAIN=mockserver
       - PORT=3002
-    ports:
-      - 3002:3002
-    volumes:
-      - /box
     env_file: ../../test.env
   tester:
     build:

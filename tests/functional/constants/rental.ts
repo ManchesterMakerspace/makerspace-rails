@@ -5,7 +5,9 @@ export const defaultRental: Rental = {
   id: "test-rental",
   number: "test",
   expiration: parseInt(moment().add(1, "months").calendar().valueOf()),
-  memberId: "test_member"
+  memberId: "test_member",
+  description: "foo",
+  memberName: "Some Member",
 };
 
 export const defaultRentals: Rental[] = new Array(20).fill(undefined).map((_v, index) => {
