@@ -1,4 +1,5 @@
 import { Routing } from "app/constants";
+import utils from "./common";
 
 export class MemberPageObject {
   public welcomeModal = {
@@ -27,6 +28,15 @@ export class MemberPageObject {
     openRenewButton: `${this.memberDetailId}-open-renew-modal`,
     openEditButton: `${this.memberDetailId}-open-edit-modal`,
     openCardButton: `${this.memberDetailId}-open-card-modal`,
+    duesTab: "#dues-tab",
+    rentalsTab: "#rentals-tab",
+  }
+
+  public goToMemberRentals = () => {
+    utils.clickElement(this.memberDetail.rentalsTab);
+  }
+  public gotToMemberDues = () => {
+    utils.clickElement(this.memberDetail.duesTab);
   }
 
   private cardFormId = "#card-form";

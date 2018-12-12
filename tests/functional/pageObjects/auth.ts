@@ -23,7 +23,7 @@ export class AuthPageObject {
     id: this.loginFormId,
     emailInput: `${this.loginFormId}-email`,
     passwordInput: `${this.loginFormId}-password`,
-    forgotPasswordLink: `${this.loginFormId}word`,
+    forgotPasswordLink: `${this.loginFormId}-forgot-password`,
     error: `${this.loginFormId}-error`,
     submitButton: `${this.loginFormId}-submit`,
   };
@@ -63,7 +63,7 @@ export class AuthPageObject {
   }
 
   public goToLogin = async () => {
-    await browser.get(this.loginUrl);
+    await browser.get(utils.buildUrl(this.loginUrl));
   }
 
   public signInUser = async (user: { email: string, password: string }) => {

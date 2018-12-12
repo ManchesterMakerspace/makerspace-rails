@@ -103,7 +103,9 @@ export const mockRequests = {
         httpRequest: {
           method: Method.Get,
           path: `/${Url.Members}.json`,
-          queryStringParameters: Object.entries(queryParams).map(([name, values]) => ({ name, values }))
+          ...queryParams && {
+            queryStringParameters: objectToQueryParams(queryParams)
+          }
         },
         httpResponse: {
           statusCode: 200,
@@ -187,11 +189,13 @@ export const mockRequests = {
   },
   rentals: {
     get: {
-      ok: (rentals: Partial<Rental>[], queryParams?: QueryParams): MockRequest => ({
+      ok: (rentals: Partial<Rental>[], queryParams: QueryParams = {}): MockRequest => ({
         httpRequest: {
           method: Method.Get,
           path: `/${Url.Rentals}.json`,
-          queryStringParameters: (Object.entries(queryParams).map(([name, values]) => ({ name, values })))
+          ...queryParams && {
+            queryStringParameters: objectToQueryParams(queryParams)
+          }
         },
         httpResponse: {
           statusCode: 200,
@@ -199,6 +203,41 @@ export const mockRequests = {
         }
       })
     },
+    post: {
+      ok: (rental: Partial<Rental>): MockRequest => ({
+        httpRequest: {
+          method: Method.Post,
+          path: `/${Url.Rentals}.json`,
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify(rental)
+        }
+      })
+    },
+    put: {
+      ok: (rental: Partial<Rental>): MockRequest => ({
+        httpRequest: {
+          method: Method.Put,
+          path: `/${Url.Rentals}/${rental.id}.json`,
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify(rental)
+        }
+      })
+    },
+    delete: {
+      ok: (id: string): MockRequest => ({
+        httpRequest: {
+          method: Method.Delete,
+          path: `/${Url.Rentals}/${id}.json`,
+        },
+        httpResponse: {
+          statusCode: 204,
+        }
+      })
+    }
   },
   signIn: {
     ok: (member: Partial<AuthForm | MemberDetails>): MockRequest => ({
@@ -260,7 +299,9 @@ export const mockRequests = {
         httpRequest: {
           method: Method.Get,
           path: `/${Url.Billing.Subscriptions}.json`,
-          queryStringParameters: (Object.entries(queryParams).map(([name, values]) => ({ name, values })))
+          ...queryParams && {
+            queryStringParameters: objectToQueryParams(queryParams)
+          }
         },
         httpResponse: {
           statusCode: 200,
@@ -275,7 +316,9 @@ export const mockRequests = {
         httpRequest: {
           method: Method.Get,
           path: `/${admin ? Url.Admin.Invoices : Url.Invoices}.json`,
-          queryStringParameters: objectToQueryParams(queryParams)
+          ...queryParams && {
+            queryStringParameters: objectToQueryParams(queryParams)
+          }
         },
         httpResponse: {
           statusCode: 200,
@@ -302,7 +345,9 @@ export const mockRequests = {
         httpRequest: {
           method: Method.Get,
           path: `/${Url.InvoiceOptions}.json`,
-          queryStringParameters: objectToQueryParams(queryParams)
+          ...queryParams && {
+            queryStringParameters: objectToQueryParams(queryParams)
+          }
         },
         httpResponse: {
           statusCode: 200,

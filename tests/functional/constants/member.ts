@@ -59,5 +59,5 @@ export const defaultMembers: LoginMember[] = new Array(20).fill(undefined).map((
   }
 });
 
-export const basicMembers = defaultMembers.filter((member) => member.role.includes(MemberRole.Member) && member.role.length === 1);
-export const adminMembers = defaultMembers.filter((member) => member.role.includes(MemberRole.Admin));
+export const basicMembers = defaultMembers.filter((member) => member.role == MemberRole.Member);
+export const adminMembers = defaultMembers.filter((member) => member.role == MemberRole.Admin);

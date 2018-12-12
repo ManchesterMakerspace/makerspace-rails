@@ -238,12 +238,6 @@ describe("Member Profiles", () => {
         await utils.clickElement(memberPO.memberDetail.openCardButton);
         await utils.waitForVisisble(memberPO.accessCardForm.deactivateButton);
       });
-      xit("Can leave comments about member connected to Slack", async () => {
-        /* 1. Login as admin and nav to basic user's profile
-           2. Click 'Notes' tab
-           3. Assert slack comments displayed
-        */
-      });
     });
   });
 });

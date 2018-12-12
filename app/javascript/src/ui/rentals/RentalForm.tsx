@@ -76,7 +76,7 @@ class RentalForm extends React.Component<OwnProps, State> {
     }
   }
 
-  // Need to update internal state and set form value since input is otherwise a controleld input
+  // Need to update internal state and set form value since input is otherwise a controlled input
   private updateMemberValue = (newMember: SelectOption) => {
     this.setState({ member: newMember });
     this.formRef && this.formRef.setValue(fields.member.name, newMember);

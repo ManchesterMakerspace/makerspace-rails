@@ -64,7 +64,7 @@ export class SignUpPageObject {
     memberContractSignature: "IDK",
   }
 
-  public goToSignup = () => browser.get(this.signupUrl);
+  public goToSignup = () => browser.get(utils.buildUrl(this.signupUrl));
 
   public signUpUser = async (user: Partial<LoginMember>) => {
     await utils.fillInput(this.signUpForm.firstnameInput, user.firstname);

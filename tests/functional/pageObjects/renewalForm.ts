@@ -12,3 +12,5 @@ export class RenewalPageObject {
     loading: `${this.renewalFormId}-loading`,
   }
 }
+
+export default new RenewalPageObject();

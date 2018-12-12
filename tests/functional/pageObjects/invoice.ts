@@ -36,6 +36,10 @@ export class InvoicePageObject extends TablePageObject {
     contact: `${this.settleInvoiceFormId}-contact`,
     amount: `${this.settleInvoiceFormId}-amount`,
     dueDate: `${this.settleInvoiceFormId}-due-date`,
+    submit: `${this.settleInvoiceFormId}-submit`,
+    cancel: `${this.settleInvoiceFormId}-cancel`,
+    error: `${this.settleInvoiceFormId}-error`,
+    loading: `${this.settleInvoiceFormId}-loading`,
   }
 
   private deleteInvoiceModalId = "#delete-invoice";
@@ -44,6 +48,10 @@ export class InvoicePageObject extends TablePageObject {
     contact: `${this.deleteInvoiceModalId}-contact`,
     amount: `${this.deleteInvoiceModalId}-amount`,
     dueDate: `${this.deleteInvoiceModalId}-due-date`,
+    submit: `${this.deleteInvoiceModalId}-submit`,
+    cancel: `${this.deleteInvoiceModalId}-cancel`,
+    error: `${this.deleteInvoiceModalId}-error`,
+    loading: `${this.deleteInvoiceModalId}-loading`,
   }
 
   private paymentRequiredTableId = "#payment-invoices-table";

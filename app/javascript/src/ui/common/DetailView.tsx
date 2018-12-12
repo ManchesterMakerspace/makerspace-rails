@@ -101,6 +101,7 @@ class DetailView extends React.Component<OwnProps, State> {
               {resources.map(resource => {
                 return (
                   <Tab
+                    id={`${resource.name}-tab`}
                     label={resource.displayName || capitalize(resource.name)}
                     value={resource.name}
                     key={resource.name}
