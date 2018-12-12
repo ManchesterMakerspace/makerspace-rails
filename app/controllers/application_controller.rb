@@ -34,4 +34,8 @@ class ApplicationController < ActionController::Base
   def is_admin?
     current_member.try(:role) == 'admin'
   end
+
+  def braintree_production?
+    ENV['BT_ENV'].to_sym == :production
+  end
 end

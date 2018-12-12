@@ -16,7 +16,7 @@ module SlackService
 
   def send_slack_messages(messages)
     if !messages.empty?
-      channel = Rails.env.production? ? 'members_relations' : 'test_channel'
+      channel = Rails.env.production? && braintree_production? == :production ? 'members_relations' : 'test_channel'
       @client.chat_postMessage(
         channel: channel,
         text: format_slack_messages(messages),
