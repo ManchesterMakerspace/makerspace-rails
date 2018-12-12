@@ -6,8 +6,10 @@ import { MemberPageObject } from "../pageObjects/member";
 import { basicUser } from "../constants/member";
 import { extractLinkFromEmail } from "../../helpers/mailHelpers";
 import { invoiceOptions, membershipOptionQueryParams } from "../constants/invoice";
+import { SignUpPageObject } from "../pageObjects/signup";
 
 const auth = new AuthPageObject();
+const signup = new SignUpPageObject();
 const utils = new PageUtils();
 const memberPO = new MemberPageObject();
 const member = Object.assign({}, basicUser);
@@ -17,9 +19,7 @@ const profileUrl = memberPO.getProfilePath(memberId);
 describe("Authentication", () => {
   describe("Logging in", () => {
     beforeEach(() => {
-      return browser.get(rootURL).then(() => {
-        return auth.goToLogin();
-      });
+      return auth.goToLogin();
     });
     it("User can sign in and be directed to their profile", async () => {
       /* 1. Setup mocks
@@ -96,8 +96,8 @@ describe("Authentication", () => {
       await mock(mockRequests.signUp.ok(member));
       await mock(mockRequests.member.get.ok(memberId, member));
       await browser.get(utils.buildUrl());
-      expect(await utils.getElementAttribute(auth.signUpModal.membershipSelect, 'value')).toEqual(membershipId);
-      await auth.signUpUser(member);
+      expect(await utils.getElementAttribute(signup.signUpForm.membershipSelect, 'value')).toEqual(membershipId);
+      await signup.signUpUser(member);
       await utils.waitForPageLoad(utils.buildUrl(profileUrl), true);
       expect(await utils.isElementDisplayed(memberPO.welcomeModal.id)).toBeTruthy();
     });
@@ -115,7 +115,7 @@ describe("Authentication", () => {
       await browser.get(utils.buildUrl());
       await mock(mockRequests.signUp.ok(member));
       await mock(mockRequests.member.get.ok(memberId, member));
-      await auth.signUpUser(member);
+      await signup.signUpUser(member);
       await utils.waitForPageLoad(utils.buildUrl(profileUrl), true);
       expect(await utils.isElementDisplayed(memberPO.welcomeModal.id)).toBeTruthy();
     });
@@ -141,7 +141,7 @@ describe("Authentication", () => {
          9. Assert form displays API error
       */
       await browser.get(utils.buildUrl());
-      const { emailInput, firstnameInput, passwordInput, lastnameInput, error, submitButton } = auth.signUpModal;
+      const { emailInput, firstnameInput, passwordInput, lastnameInput, error, submitButton } = signup.signUpForm;
       await utils.clickElement(submitButton);
       expect(await utils.assertInputError(firstnameInput));
       expect(await utils.assertInputError(lastnameInput));
@@ -167,6 +167,9 @@ describe("Authentication", () => {
   });
 
   describe("Resetting Password", () => {
+    beforeEach(() => {
+      return auth.goToLogin();
+    })
     it("User can reset their password", async () => {
       /* 1. Setup mocks
           - Password reset request
@@ -182,8 +185,6 @@ describe("Authentication", () => {
          9. Assert logged in and on profile page
       */
       await mock(mockRequests.passwordReset.requestReset.ok(basicUser.email));
-      await browser.get(utils.buildUrl());
-      await auth.goToLogin();
       await utils.clickElement(auth.loginModal.forgotPasswordLink);
       expect(await utils.isElementDisplayed(auth.passwordResetRequestModal.id)).toBeTruthy();
       await utils.fillInput(auth.passwordResetRequestModal.emailInput, basicUser.email);
@@ -216,8 +217,6 @@ describe("Authentication", () => {
          13. Mock & submit
          14. Verify profile page loads
       */
-      await browser.get(utils.buildUrl());
-      await auth.goToLogin();
       await utils.clickElement(auth.loginModal.forgotPasswordLink);
       expect(await utils.isElementDisplayed(auth.passwordResetRequestModal.id)).toBeTruthy();
       await utils.clickElement(auth.passwordResetRequestModal.submitButton);

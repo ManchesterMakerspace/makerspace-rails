@@ -14,42 +14,36 @@ export interface LoginMember extends Partial<MemberDetails> {
 }
 
 export class AuthPageObject {
+  public loginUrl = Routing.Login;
   public redirectUrl = Routing.Profile;
   public passwordResetUrl = `${Routing.PasswordReset}/${Routing.PathPlaceholder.Resource}`
 
   public authToggleButton = "#auth-toggle";
   public emailExistsModal = "#email-exists";
-  public signUpModal = {
-    id: "#sign-up-modal",
-    membershipSelect: "#sign-up-modal-membership-id",
-    membershipOptions: "#sign-up-modal-{ID}",
-    discountCheckbox: "#sign-up-modal-discount",
-    firstnameInput: "#sign-up-modal-firstname",
-    lastnameInput: "#sign-up-modal-lastname",
-    emailInput: "#sign-up-modal-email",
-    passwordInput: "#sign-up-modal-password",
-    submitButton: "#sign-up-modal-submit",
-    error: "#sign-up-modal-error",
-  };
+
+  private loginFormId = "#login-modal";
   public loginModal = {
-    id: "#login-modal",
-    emailInput: "#login-modal-email",
-    passwordInput: "#login-modal-password",
-    forgotPasswordLink: "#forgot-password",
-    error: "#login-modal-error",
-    submitButton: "#login-modal-submit"
+    id: this.loginFormId,
+    emailInput: `${this.loginFormId}-email`,
+    passwordInput: `${this.loginFormId}-password`,
+    forgotPasswordLink: `${this.loginFormId}word`,
+    error: `${this.loginFormId}-error`,
+    submitButton: `${this.loginFormId}-submit`,
   };
+
+  private passwordResetModalId = "#password-reset";
   public passwordResetModal = {
-    id: "#password-reset",
-    passwordInput: "#reset-password-input",
-    error: "#password-reset-error",
-    submitButton: "#password-reset-submit",
+    id: this.passwordResetModalId,
+    passwordInput:`${this.passwordResetModalId}-input`,
+    error: `${this.passwordResetModalId}-error`,
+    submitButton: `${this.passwordResetModalId}-submit`,
   };
+  private passwordResetRequestModalId = "#request-password-reset";
   public passwordResetRequestModal = {
-    id: "#request-password-reset",
-    emailInput: "#request-password-reset-email",
-    error: "#request-password-reset-error",
-    submitButton: "#request-password-reset-submit",
+    id: this.passwordResetRequestModalId,
+    emailInput: `${this.passwordResetRequestModalId}-email`,
+    error: `${this.passwordResetRequestModalId}-error`,
+    submitButton: `${this.passwordResetRequestModalId}-submit`,
   }
 
   /*
@@ -72,21 +66,13 @@ export class AuthPageObject {
   }
 
   public goToLogin = async () => {
-    await utils.clickElement(this.authToggleButton);
+    await browser.get(this.loginUrl);
   }
 
   public signInUser = async (user: { email: string, password: string }) => {
     await utils.fillInput(this.loginModal.emailInput, user.email);
     await utils.fillInput(this.loginModal.passwordInput, user.password);
     await utils.clickElement(this.loginModal.submitButton);
-  }
-
-  public signUpUser = async (user: Partial<LoginMember>) => {
-    await utils.fillInput(this.signUpModal.firstnameInput, user.firstname);
-    await utils.fillInput(this.signUpModal.lastnameInput, user.lastname);
-    await utils.fillInput(this.signUpModal.emailInput, user.email);
-    await utils.fillInput(this.signUpModal.passwordInput, user.password);
-    await utils.clickElement(this.signUpModal.submitButton);
   }
 }
 

@@ -4,69 +4,67 @@ export class MemberPageObject {
   public welcomeModal = {
     id: "#welcome-modal",
   };
+
+  private memberFormId = "#member-form";
   public memberForm = {
-    id: "#member-form",
-    firstname: "#member-form-firstname",
-    lastname: "#member-form-lastname",
-    expiration: "#member-form-expiration",
-    email: "#member-form-email",
-    error: "#member-form-error",
-    submit: "#member-form-submit",
-    cancel: "#member-form-cancel",
-    loading: "#member-form-loading",
+    id: `${this.memberFormId}`,
+    firstname: `${this.memberFormId}-firstname`,
+    lastname: `${this.memberFormId}-lastname`,
+    expiration: `${this.memberFormId}-expiration`,
+    email: `${this.memberFormId}-email`,
+    error: `${this.memberFormId}-error`,
+    submit: `${this.memberFormId}-submit`,
+    cancel: `${this.memberFormId}-cancel`,
+    loading: `${this.memberFormId}-loading`,
   }
+
+  private memberDetailId = "#member-detail";
   public memberDetail = {
     title: "#detail-view-title",
-    email: "#member-detail-email",
-    expiration: "#member-detail-expiration",
-    status: "#member-detail-status",
-    openRenewButton: "#member-detail-open-renew-modal",
-    openEditButton: "#member-detail-open-edit-modal",
-    openCardButton: "#member-detail-open-card-modal",
+    email: `${this.memberDetailId}-email`,
+    expiration: `${this.memberDetailId}-expiration`,
+    status: `${this.memberDetailId}-status`,
+    openRenewButton: `${this.memberDetailId}-open-renew-modal`,
+    openEditButton: `${this.memberDetailId}-open-edit-modal`,
+    openCardButton: `${this.memberDetailId}-open-card-modal`,
   }
-  public renewalForm = {
-    id: "#renewal-form",
-    entity: "#renwal-form-entity-name",
-    renewalSelect: "#renewal-term",
-    renewalOption: "#renewal-option-{OPTION}",
-    error: "#renewal-form-error",
-    submit: "#renewal-form-submit",
-    cancel: "#renewal-form-cancel",
-    loading: "#renewal-form-loading",
-  }
+
+  private cardFormId = "#card-form";
   public accessCardForm = {
-    id: "#card-form",
-    error: "#card-form-error",
-    deactivateButton: "#card-form-deactivate",
-    lostButton: "#card-form-lost",
-    stolenButton: "#card-form-stolen",
-    importButton: "#card-form-import-new-key",
-    importConfirmation: "#card-form-key-confirmation",
-    submit: "#card-form-submit",
-    cancel: "#card-form-cancel",
-    loading: "#card-form-loading",
+    id: `${this.cardFormId}`,
+    error: `${this.cardFormId}-error`,
+    deactivateButton: `${this.cardFormId}-deactivate`,
+    lostButton: `${this.cardFormId}-lost`,
+    stolenButton: `${this.cardFormId}-stolen`,
+    importButton: `${this.cardFormId}-import-new-key`,
+    importConfirmation: `${this.cardFormId}-key-confirmation`,
+    submit: `${this.cardFormId}-submit`,
+    cancel: `${this.cardFormId}-cancel`,
+    loading: `${this.cardFormId}-loading`,
   }
+
+  private membersListTableId = "#members-table";
   public membersList = {
-    id: "#members-table",
+    id: this.membersListTableId,
     createMemberButton: "#members-list-create",
     renewMemberButton: "#members-list-renew",
-    searchInput: "#members-table-search-input",
-    selectAllCheckbox: "#members-table-select-all",
+    searchInput: `${this.membersListTableId}-search-input`,
+    selectAllCheckbox: `${this.membersListTableId}-select-all`,
     headers: {
-      lastname: "#members-table-lastname-header",
-      expirationTime: "#members-table-expirationTime-header",
-      status: "#members-table-status-header",
+      lastname: `${this.membersListTableId}-lastname-header`,
+      expirationTime: `${this.membersListTableId}-expirationTime-header`,
+      status: `${this.membersListTableId}-status-header`,
     },
     row: {
-      id: "#members-table-{ID}",
-      select: "#members-table-{ID}-select",
-      lastname: "#members-table-{ID}-lastname",
-      expirationTime: "#members-table-{ID}-expirationTime",
-      status: "#members-table-{ID}-status",
+      id: `${this.membersListTableId}-{ID}`,
+      select: `${this.membersListTableId}-{ID}-select`,
+      lastname: `${this.membersListTableId}-{ID}-lastname`,
+      expirationTime: `${this.membersListTableId}-{ID}-expirationTime`,
+      status: `${this.membersListTableId}-{ID}-status`,
     },
-    error: "#members-table-error-row",
-    noData: "#members-table-no-data-row",
-    loading: "#members-table-loading",
+    error: `${this.membersListTableId}-error-row`,
+    noData: `${this.membersListTableId}-no-data-row`,
+    loading: `${this.membersListTableId}-loading`,
   }
 
   public getProfilePath = (memberId: string) => Routing.Profile.replace(Routing.PathPlaceholder.MemberId, memberId);

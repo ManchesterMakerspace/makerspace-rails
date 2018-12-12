@@ -13,58 +13,63 @@ export class InvoicePageObject extends TablePageObject {
     payNow: "#invoices-list-payNow",
   }
 
+  private invoiceFormId = "#invoice-form";
   public invoiceForm = {
-    id: "#invoice-form",
-    description: "#invoice-form-description",
-    notes: "#invoice-form-notes",
-    contact: "#invoice-form-contact",
-    dueDate: "#invoice-form-due-date",
-    amount: "#invoice-form-amount",
+    id: `${this.invoiceFormId}`,
+    description: `${this.invoiceFormId}-description`,
+    notes: `${this.invoiceFormId}-notes`,
+    contact: `${this.invoiceFormId}-contact`,
+    dueDate: `${this.invoiceFormId}-due-date`,
+    amount: `${this.invoiceFormId}-amount`,
 
-    resource: "#invoice-form-resource",
-    term: "#invoice-form-term",
-    submit: "#invoice-form-submit",
-    cancel: "#invoice-form-cancel",
-    error: "#invoice-form-error",
-    loading: "#invoice-form-loading",
+    resource: `${this.invoiceFormId}-resource`,
+    term: `${this.invoiceFormId}-term`,
+    submit: `${this.invoiceFormId}-submit`,
+    cancel: `${this.invoiceFormId}-cancel`,
+    error: `${this.invoiceFormId}-error`,
+    loading: `${this.invoiceFormId}-loading`,
   }
 
+  private settleInvoiceFormId = "#settle-invoice";
   public settleInvoiceModal = {
-    id: "#settle-invoice-confirm",
-    contact: "#settle-invoice-contact",
-    amount: "#settle-invoice-amount",
-    dueDate: "#settle-invoice-due-date",
+    id: `${this.settleInvoiceFormId}-confirm`,
+    contact: `${this.settleInvoiceFormId}-contact`,
+    amount: `${this.settleInvoiceFormId}-amount`,
+    dueDate: `${this.settleInvoiceFormId}-due-date`,
   }
 
+  private deleteInvoiceModalId = "#delete-invoice";
   public deleteInvoiceModal = {
-    id: "#delete-invoice-confirm",
-    contact: "#delete-invoice-contact",
-    amount: "#delete-invoice-amount",
-    dueDate: "#delete-invoice-due-date",
+    id: `${this.deleteInvoiceModalId}-confirm`,
+    contact: `${this.deleteInvoiceModalId}-contact`,
+    amount: `${this.deleteInvoiceModalId}-amount`,
+    dueDate: `${this.deleteInvoiceModalId}-due-date`,
   }
 
+  private paymentRequiredTableId = "#payment-invoices-table";
+  private paymentRequiredModalId = "#payment-invoices-modal";
   public paymentRequiredForm = {
-    id: "#payment-required-modal",
+    id: `${this.paymentRequiredModalId}`,
     invoiceList: {
-      id: "#payment-invoices-table",
+      id: `${this.paymentRequiredTableId}`,
       headers: {
-        description: "#payment-invoices-table-description-header",
-        dueDate: "#payment-invoices-table-dueDate-header",
-        amount: "#payment-invoices-table-amount-header",
+        description: `${this.paymentRequiredTableId}-description-header`,
+        dueDate: `${this.paymentRequiredTableId}-dueDate-header`,
+        amount: `${this.paymentRequiredTableId}-amount-header`,
       },
       row: {
-        id: "#payment-invoices-table-{ID}",
-        select: "#payment-invoices-table-{ID}-select",
-        description: "#payment-invoices-table-{ID}-description",
-        dueDate: "#payment-invoices-table-{ID}-dueDate",
-        amount: "#payment-invoices-table-{ID}-amount",
+        id: `${this.paymentRequiredTableId}-{ID}`,
+        select: `${this.paymentRequiredTableId}-{ID}-select`,
+        description: `${this.paymentRequiredTableId}-{ID}-description`,
+        dueDate: `${this.paymentRequiredTableId}-{ID}-dueDate`,
+        amount: `${this.paymentRequiredTableId}-{ID}-amount`,
       },
-      error: "#payment-invoices-table-error-row",
-      noData: "#payment-invoices-table-no-data-row",
-      loading: "#payment-invoices-table-loading",
+      error: `${this.paymentRequiredTableId}-error-row`,
+      noData: `${this.paymentRequiredTableId}-no-data-row`,
+      loading: `${this.paymentRequiredTableId}-loading`,
     },
-    submit: "#payment-required-modal-submit",
-    cancel: "#payment-required-modal-cancel",
+    submit: `${this.paymentRequiredModalId}-submit`,
+    cancel: `${this.paymentRequiredModalId}-cancel`,
   }
 }
 export default new InvoicePageObject(invoicesTableId);
