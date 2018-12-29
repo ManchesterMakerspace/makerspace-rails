@@ -37,8 +37,11 @@ if [ "${INTERACTIVE}" == "TRUE" ]; then
   echo "Selenium: 0.0.0.0:4444/wd/hub"
   echo "App: 0.0.0.0:${PORT}"
   /bin/bash
-elif [ ${SELENIUM_ADDRESS} ]; then
-  cd /usr/src/app && echo "Starting testing..." && yarn test-functional
 else
-  cd /usr/src/app && echo "Starting testing..." && yarn test
+  cd /usr/src/app && echo "Starting testing..."
+  if [ ${SELENIUM_ADDRESS} ]; then
+    yarn test-functional
+  else
+    yarn test
+  fi
 fi

@@ -87,6 +87,11 @@
     "testEnvironment": "jest-environment-webdriver",
     "testEnvironmentOptions": {
       "browser": "chrome"
+    },
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "tsconfig.test.json"
+      }
     }
   }
 }
