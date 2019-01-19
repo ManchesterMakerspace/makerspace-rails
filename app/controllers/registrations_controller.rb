@@ -9,8 +9,10 @@ class RegistrationsController < Devise::RegistrationsController
       @member = Member.new(member_params)
       if @member.save
         create_initial_membership_invoice
-        invite_to_slack(@member)
-        invite_gdrive if Rails.env == "production"
+        if Rails.env == "production"
+          invite_to_slack(@member)
+          invite_gdrive
+        end
         send_slack_messages(@messages)
         sign_in(@member)
 
@@ -45,7 +47,11 @@ class RegistrationsController < Devise::RegistrationsController
 
     def create_initial_membership_invoice
       invoice_option = InvoiceOption.find_by(id: invoice_option_params[:membership_selection_id])
-      @invoice = invoice_option.build_invoice(@member.id, Time.now, @member.id, invoice_option_params[:discount_id])
+      if (invoice_option_params[:discount_id])
+        discounts = ::BraintreeService::Discount.get_discounts(@gateway)
+        invoice_discount = discounts.find { |d| d.id == invoice_option_params[:discount_id]}
+      end
+      @invoice = invoice_option.build_invoice(@member.id, Time.now, @member.id, invoice_discount)
       unless @invoice.save
         @messages.push("Error creating initial membership invoice for new member: #{@member.email}")
         @messages.concat(@invoice.errors.full_messages)

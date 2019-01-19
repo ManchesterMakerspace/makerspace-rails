@@ -21,17 +21,18 @@ export class TablePageObject {
     }), {})
   });
 
-  public getRow = async (rowId: string) => await browser.findElement(By.id(`${this.tableId}-${rowId}`));
+  public getRowBaseId = (rowId: string) => `${this.tableId}-${rowId}`;
+  public getRow = async (rowId: string) => await browser.findElement(By.id(`${this.getRowBaseId(rowId)}-row`));
   public getAllRows = async () => await browser.findElements(By.css(`[id^="${this.tableId}-"][id$="-row"]`));
 
   public getColumnIds = (fields: string[], rowId: string): { [key: string]: string } => ({
     ...fields.reduce(async (columns: { [key: string]: string }, field) => ({
       ...columns,
-      [field]: `#${await this.getRow(rowId)}-${field}`
+      [field]: `#${this.getRowBaseId(rowId)}-${field}`
     }), {})
   });
   public getColumnText = async (field: string, rowId: string): Promise<string> => {
-    return await utils.getElementText(`#${await this.getRow(rowId)}-${field}`);
+    return await utils.getElementText(`#${this.getRowBaseId(rowId)}-${field}`);
   }
-  public selectRow = async (rowId: string) => await utils.clickElement(`#${await this.getRow(rowId)}-select`);
+  public selectRow = async (rowId: string) => await utils.clickElement(`#${this.getRowBaseId(rowId)}-select`);
 }

@@ -41,7 +41,7 @@ export class SignUpPageObject {
     },
     row: {
       id: `${this.membershipSelectTableId}-{ID}`,
-      select: `${this.membershipSelectTableId}-{ID}-select`,
+      select: `${this.membershipSelectTableId}-{ID}-select button`,
       name: `${this.membershipSelectTableId}-{ID}-name`,
       description: `${this.membershipSelectTableId}-{ID}-description`,
       amount: `${this.membershipSelectTableId}-{ID}-amount`,
@@ -52,16 +52,16 @@ export class SignUpPageObject {
     discountCheckbox: "#discount-select",
   };
 
-  private codeOfConductFormId = "#code-of-conduct"
-  private memberContractFormId = "#code-of-conduct"
+  private codeOfConductFormId = "#code-of-conduct-form";
+  private memberContractFormId = "#member-contract-form";
   public documentsSigning = {
-    codeOfConductCheckbox: `${this.codeOfConductFormId}-checkbox`,
+    codeOfConductCheckbox: `#code-of-conduct-checkbox`,
     codeOfConductSubmit: `${this.codeOfConductFormId}-submit`,
     codeOfConductError: `${this.codeOfConductFormId}-error`,
-    memberContractCheckbox: `${this.memberContractFormId}-checkbox`,
+    memberContractCheckbox: `#member-contract-checkbox`,
     memberContractSubmit: `${this.memberContractFormId}-submit`,
     memberContractError: `${this.memberContractFormId}-error`,
-    memberContractSignature: "IDK",
+    memberContractSignature: "canvas",
   }
 
   public goToSignup = () => browser.get(utils.buildUrl(this.signupUrl));
@@ -74,13 +74,13 @@ export class SignUpPageObject {
     await utils.clickElement(this.signUpForm.submitButton);
   }
 
-  public selectMembershipOption = async (optionId: string) => {
-    await utils.clickElement(this.getRow(optionId, this.membershipSelectForm.row.select))
-  }
+  public selectMembershipOption = (optionId: string) =>
+    utils.clickElement(this.getRow(optionId, this.membershipSelectForm.row.select))
 
-  public signContract = () => {
+  public signContract = async () => {
+    const signatureElement = await utils.getElementByCss(this.documentsSigning.memberContractSignature);
     return browser.actions(). //Should draw a square w/ X in it
-      mouseMove(this.documentsSigning.memberContractSignature).
+      mouseMove(signatureElement).
       mouseDown().
       mouseMove({ x: 10, y: 10 }).
       mouseMove({ x: -10, y: 0 }).

@@ -1,5 +1,4 @@
 import * as React from "react";
-import isUndefined from "lodash-es/isUndefined";
 
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
@@ -9,6 +8,7 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import Radio from "@material-ui/core/Radio";
 import Grid from "@material-ui/core/Grid";
 import Select from "@material-ui/core/Select";
+import Checkbox from "@material-ui/core/Checkbox";
 
 import FormModal from "ui/common/FormModal";
 import Form from "ui/common/Form";
@@ -16,21 +16,21 @@ import Form from "ui/common/Form";
 import { InvoiceOption, InvoiceableResource, Properties as InvoiceOptionProps } from "app/entities/invoice";
 import { Properties as BillingPlanProps } from "app/entities/billingPlan";
 import { fields } from "ui/billing/constants";
-import { BillingPlan } from "app/entities/billingPlan";
 import { CollectionOf } from "app/interfaces";
-import { Checkbox } from "@material-ui/core";
 
-interface OwnProps {
-  getBillingPlans: (type: InvoiceableResource) => void;
-  billingPlans: CollectionOf<BillingPlan>;
+import { BillingContext, Context } from "ui/billing/BillingContextContainer";
+
+interface Props {
   option?: Partial<InvoiceOption>;
   isOpen: boolean;
   isRequesting: boolean;
   error: string;
-  plansLoading: boolean;
-  plansError: string;
   onClose: () => void;
   onSubmit: (form: Form) => void;
+}
+
+interface OwnProps extends Props {
+  context: Context;
 }
 
 interface State {
@@ -46,7 +46,7 @@ const defaultState = {
   planMatchError: "",
   disableOption: false
 }
-class BillingForm extends React.Component<OwnProps, State>{
+export class BillingFormComponent extends React.Component<OwnProps, State>{
   public formRef: Form;
   private setFormRef = (ref: Form) => this.formRef = ref;
 
@@ -59,11 +59,19 @@ class BillingForm extends React.Component<OwnProps, State>{
     this.getBillingPlans();
   }
 
-  private getBillingPlans = () => this.props.getBillingPlans(this.state.type);
+  private getBillingPlans = () => {
+    const { context } = this.props;
+    if (!context.plans.loading) {
+      context.plans.refresh([this.state.type]);
+    }
+    if (!context.discounts.loading) {
+      context.discounts.refresh();
+    }
+  }
 
   public componentDidUpdate(prevProps: OwnProps, prevState: State) {
-    const { isOpen, option, billingPlans } = this.props;
-    const { isOpen: wasOpen, option: oldOption, billingPlans: oldPlans } = prevProps;
+    const { isOpen, option } = this.props;
+    const { isOpen: wasOpen, option: oldOption } = prevProps;
     const { type, planId } = this.state;
     const { type: oldType, planId: oldPlanId } = prevState;
     const optionType = option && option.resourceClass;
@@ -102,7 +110,7 @@ class BillingForm extends React.Component<OwnProps, State>{
   }
 
   private applyPlanToForm = () => {
-    const { billingPlans } = this.props;
+    const { plans: { data: billingPlans } } = this.props.context;
     const billingPlan = billingPlans[this.state.planId];
 
     const planToValues = Object.entries(billingPlan).reduce((invoiceOptionForm, [key, val]) => {
@@ -144,8 +152,8 @@ class BillingForm extends React.Component<OwnProps, State>{
   private toggleDisableOption = (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => this.setState({ disableOption: checked });
 
   private renderPlanOptions = () => {
-    const { plansLoading, plansError, billingPlans } = this.props;
-    return this.renderOptions(plansLoading, plansError, billingPlans);
+    const { plans } = this.props.context;
+    return this.renderOptions(plans.loading, plans.error, plans.data);
   }
 
   private renderPlanOption = (field: { id: string, name: string, value: string }) => (
@@ -159,17 +167,8 @@ class BillingForm extends React.Component<OwnProps, State>{
   }
 
   private renderDiscountOptions = () => {
-    const { plansLoading, plansError, billingPlans } = this.props;
-    const activePlanId = this.getActivePlanId()
-    const foundPlan = billingPlans && billingPlans[activePlanId];
-    if (!foundPlan) {
-      return [];
-    }
-    const discounts = foundPlan.discounts.reduce((discounts, discount) => {
-      discounts[discount.id] = discount;
-      return discounts;
-    }, {});
-    return this.renderOptions(plansLoading, plansError, discounts);
+    const { discounts } = this.props.context;
+    return this.renderOptions(discounts.loading, discounts.error, discounts.data);
   }
 
   private renderOptions = (loading: boolean, error: string, options: CollectionOf<any>) => {
@@ -186,11 +185,11 @@ class BillingForm extends React.Component<OwnProps, State>{
   public render() {
     const { isOpen, onClose, isRequesting, error, onSubmit, option } = this.props;
     const { type, planId, disableOption } = this.state;
-    console.log(this.formRef && this.formRef.getValues());
+
     return (
       <FormModal
         formRef={this.setFormRef}
-        id="invoice-form"
+        id="invoice-option-form"
         loading={isRequesting}
         isOpen={isOpen}
         closeHandler={onClose}
@@ -307,5 +306,13 @@ class BillingForm extends React.Component<OwnProps, State>{
     )
   }
 }
+
+const BillingForm = React.forwardRef(
+  (props: Props, ref: any) => (
+    <BillingContext.Consumer>
+      {context => <BillingFormComponent {...props} context={context} ref={ref} />}
+    </BillingContext.Consumer>
+  )
+);
 
 export default BillingForm;

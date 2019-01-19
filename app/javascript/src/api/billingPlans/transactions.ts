@@ -12,3 +12,12 @@ export const getPlans = async (queryparams?: InvoiceOptionQueryParams) => {
     throw error;
   }
 }
+
+export const getDiscounts = async (queryparams?: InvoiceOptionQueryParams) => {
+  try {
+    return await axios.get(buildJsonUrl(Url.Billing.Discounts), { params: queryparams });
+  } catch (e) {
+    const error = handleApiError(e);
+    throw error;
+  }
+}

@@ -4,9 +4,13 @@ import { handleApiError } from "api/utils/handleApiError";
 import { Subscription } from "app/entities/subscription";
 import { buildSubscriptionUrl, buildSubscriptionsUrl } from "api/subscriptions/utils";
 
-export const getSubscriptions = async (queryParams?: QueryParams) => {
+export interface SubscriptionQueryParams extends QueryParams {
+  hideCanceled: boolean;
+}
+
+export const getSubscriptions = async (queryParams?: SubscriptionQueryParams, admin: boolean = false) => {
   try {
-    return await axios.get(buildSubscriptionsUrl(), { params: (queryParams) });
+    return await axios.get(buildSubscriptionsUrl(admin), { params: (queryParams) });
   } catch (e) {
     const error = handleApiError(e);
     throw error;

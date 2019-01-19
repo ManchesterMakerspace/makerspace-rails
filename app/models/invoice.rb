@@ -6,10 +6,10 @@ class Invoice
     "member" => Member,
     "rental" => Rental,
   }.freeze
-  OPERATION_FUNCTIONS = ["renew"].freeze
+  OPERATION_FUNCTIONS = ["renew="].freeze
 
   # Accepted payment types
-  PAYMENT_TYPES = [:cash, :paypal, :credit_card, :other].freeze
+  PAYMENT_TYPES = ["cash", "paypal_account", "credit_card"].freeze
 
   ## Transaction Information
   # User friendly name for invoice displayed on receipt
@@ -30,7 +30,7 @@ class Invoice
   # How many operations to perform (eg, num of months renewed)
   field :quantity, type: Integer, default: 1
   # What does this do to Resource. One of OPERATION_FUNCTIONS
-  field :operation, type: String, default: "renew"
+  field :operation, type: String, default: "renew="
   field :subscription_id, type: String
   # Resource (Member, Rental) id to apply operation to
   field :resource_id, type: String
@@ -56,7 +56,7 @@ class Invoice
   end
 
   def settled=(value)
-    self.settled_at ||= Time.now if value
+    self.settled_at ||= Time.now if !!value
   end
 
   def past_due
@@ -65,7 +65,7 @@ class Invoice
 
   def settle_invoice(transaction_result)
     determine_payment_type(transaction_result)
-    self.execute_invoice_operation
+    execute_invoice_operation
     self.settled = true
     return self.save
   end
@@ -77,7 +77,7 @@ class Invoice
   end
 
   def self.resource(class_name, id)
-    self.OPERATION_RESOURCES[class_name].find_by(subscription_ids: id)
+    Invoice::OPERATION_RESOURCES[class_name].find_by(id: id)
   end
 
   def resource
@@ -90,14 +90,9 @@ class Invoice
   end
 
   def determine_payment_type(transaction_result)
-    case transaction_result
-    when !credit_card_details.nil?
-      self.payment_type = :credit_card
-    when !paypal_details.nil?
-      self.payment_type = :paypal
-    else
-      self.payment_type = :cash
-    end
+    transaction_details = transaction_result.transaction || (transaction_result.subscription.transactions.last if transaction_result.subscription)
+    self.payment_type = transaction_details ? transaction_details.payment_instrument_type.to_sym : :cash
+    print self.payment_type
   end
 
   def execute_invoice_operation

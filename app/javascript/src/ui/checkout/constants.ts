@@ -12,21 +12,21 @@ export enum Action {
   ResetStagedInvoices = "CHECKOUT/RESET_STAGED_INVOICES",
 }
 
-const formPrefix = "checkout-form";
-export const CheckoutFields: FormFields = {
+const formPrefix = "credit-card-form";
+export const CreditCardFields: FormFields = {
   cardNumber: {
-    label: "Card Number",
+    label: "Credit or debit card number",
     name: `${formPrefix}-cardNumber`,
     placeholder: "4111 1111 1111 1111",
     validate: (val) => !!val
   },
   csv: {
-    label: "CSV",
+    label: "Security code",
     name: `${formPrefix}-csv`,
     placeholder: "123"
   },
   expirationDate: {
-    label: "Expiration Date",
+    label: "Expiration date",
     name: `${formPrefix}-expirationDate`,
     placeholder: "MM/YYYY"
   },

@@ -11,15 +11,12 @@ import { Invoice } from "app/entities/invoice";
 import { Routing } from "app/constants";
 import { CollectionOf } from "app/interfaces";
 
-import { uploadMemberSignature } from "api/members/transactions";
-
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import SignUpFormComponent from "ui/auth/SignUpForm";
 import SignDocuments from "ui/auth/SignDocuments";
 import { SignUpForm } from "ui/auth/interfaces";
 import { submitSignUpAction } from "ui/auth/actions";
 import { AuthMember } from "ui/auth/interfaces";
-import LoadingOverlay from "ui/common/LoadingOverlay";
 
 interface OwnProps { }
 interface StateProps {
@@ -36,10 +33,6 @@ interface State {
   openLoginModal: boolean;
   displayDocuments: boolean;
   redirect: string;
-  signUpForm: SignUpForm;
-  signature: WindowBase64;
-  signatureUploadError: string;
-  signatureUploading: boolean;
 }
 class SignUpContainer extends React.Component<Props, State>{
   constructor(props: Props) {
@@ -48,20 +41,14 @@ class SignUpContainer extends React.Component<Props, State>{
       openLoginModal: false,
       redirect: undefined,
       displayDocuments: false,
-      signUpForm: undefined,
-      signature: undefined,
-      signatureUploadError: "",
-      signatureUploading: false,
     });
   }
 
   public componentDidUpdate(prevProps: Props) {
     const { isRequesting: wasRequesting } = prevProps;
     const { isRequesting, error } = this.props;
-    // Display checkout after sign up request completes
     if (wasRequesting && !isRequesting && !error) {
-      this.submitSignature();
-      this.goToCheckout();
+      this.setState({ displayDocuments: true });
     }
   }
 
@@ -70,41 +57,20 @@ class SignUpContainer extends React.Component<Props, State>{
     this.setState({ redirect: Routing.Login });
   }
 
-  private goToCheckout = async () => {
+  private goToCheckout = () => {
     this.setState({ redirect: Routing.Checkout });
   }
 
-  // Save sign up form & display documents
-  private goToDocuments = (validSignUp: SignUpForm) => {
-    this.setState({ displayDocuments: true, signUpForm: validSignUp });
-  }
-
-  // Upload signature, but don't block member from completing payment
-  // If signature upload fails for some reason, we'll get a Slack notification about it
-  private submitSignature = async () => {
-    try {
-      this.setState({ signatureUploading: true });
-      await uploadMemberSignature(this.props.currentUser && this.props.currentUser.id, this.state.signature);
-      this.setState({ signatureUploading: false, signatureUploadError: "" });
-    } catch (e) {
-      this.setState({ signatureUploading: false, signatureUploadError: e });
-    }
-  }
-  // Save signature for later & submit sign up form
-  private submitSignupForm = (signature: WindowBase64) => {
-    this.setState({ signature });
-    this.props.submitSignUp(this.state.signUpForm);
+  private submitSignupForm = async (validSignUp: SignUpForm) => {
+    this.props.submitSignUp(validSignUp);
   }
 
   public render(): JSX.Element {
-    const { redirect, displayDocuments, signatureUploadError, signatureUploading } = this.state;
+    const { redirect, displayDocuments } = this.state;
     const { isRequesting, error, currentUser  } = this.props;
     if (redirect) {
       return <Redirect to={redirect} />
     }
-
-    const loading = isRequesting || signatureUploading;
-    const signUpError = error || signatureUploadError;
 
     return (
       <Grid container justify="center" spacing={16}>
@@ -113,16 +79,15 @@ class SignUpContainer extends React.Component<Props, State>{
             <Grid item xs={12}>
               <Card style={{ minWidth: 275 }}>
                 <CardContent>
-                  {loading && <LoadingOverlay id="sign-up-loading" />}
                   {displayDocuments ?
-                    <SignDocuments currentUser={currentUser} onSubmit={this.submitSignupForm} />
+                    <SignDocuments currentUser={currentUser} onSubmit={this.goToCheckout} />
                     : (
                       <>
                         <SignUpFormComponent
                           goToLogin={this.goToLogin}
-                          onSubmit={this.goToDocuments}
-                          isRequesting={loading}
-                          error={signUpError}
+                          onSubmit={this.submitSignupForm}
+                          isRequesting={isRequesting}
+                          error={error}
                           renderMembershipOptions={true}
                         />
                       </>

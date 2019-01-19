@@ -26,7 +26,7 @@ class DeleteRentalModal extends React.Component<OwnProps, {}> {
     return rental ? (
       <FormModal
         formRef={this.setFormRef}
-        id="delete-rental-confirm"
+        id="delete-rental"
         loading={isRequesting}
         isOpen={isOpen}
         closeHandler={onClose}

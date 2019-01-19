@@ -12,6 +12,7 @@ class InvoiceSerializer < ApplicationSerializer
              :resource_class,
              :resource_id,
              :quantity,
+             :discount_id,
 
   def member_id
     object.member && object.member.id

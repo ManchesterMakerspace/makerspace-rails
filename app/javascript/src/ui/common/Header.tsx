@@ -79,6 +79,7 @@ class Header extends React.Component<Props, State> {
     const { currentUser } = this.props;
     const { anchorEl } = this.state;
     const menuOpen = Boolean(anchorEl);
+    const profileUrl = Routing.Profile.replace(Routing.PathPlaceholder.MemberId, currentUser.id);
 
     return (
       <>
@@ -106,10 +107,11 @@ class Header extends React.Component<Props, State> {
           open={menuOpen}
           onClose={this.detachMenu}
         >
-          {this.renderMenuNavLink(Routing.Profile.replace(Routing.PathPlaceholder.MemberId, currentUser.id), "My Profile")}
+          {this.renderMenuNavLink(profileUrl, "My Profile")}
           {this.renderMenuNavLink(Routing.Members, "Members")}
           {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Rentals, "Rentals")}
           {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Billing, "Billing")}
+          {this.renderMenuNavLink(Routing.Settings, "Settings")}
           <MenuItem onClick={this.logoutUser}>Logout</MenuItem>
         </Menu>
       </>

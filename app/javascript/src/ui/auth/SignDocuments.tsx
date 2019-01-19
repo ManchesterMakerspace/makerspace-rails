@@ -8,15 +8,16 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 
+import { uploadMemberSignature } from "api/members/transactions";
 import { AuthMember } from "ui/auth/interfaces";
 import { timeToDate } from "ui/utils/timeToDate";
+import Form from "ui/common/Form";
+
 const codeOfConduct = require('code_of_conduct.html') as string;
 const memberContract = require('member_contract.html') as string;
-import Form from "ui/common/Form";
-import LoadingOverlay from "ui/common/LoadingOverlay";
 
 interface OwnProps {
-  onSubmit: (signature: WindowBase64) => void;
+  onSubmit: () => void;
   uploadError?: string;
   uploadProcessing?: boolean;
   currentUser: AuthMember;
@@ -28,11 +29,13 @@ interface State {
   acceptCodeOfConduct: boolean;
   acceptMemberContract: boolean;
   documentError: string;
+  signatureUploadError: string;
+  signatureUploading: boolean;
 }
 
 enum Documents {
-  codeOfConduct = "code_of_conduct",
-  memberContract = "member_contract",
+  codeOfConduct = "code-of-conduct",
+  memberContract = "member-contract",
 }
 
 class SignDocuments extends React.Component<Props, State>{
@@ -45,7 +48,9 @@ class SignDocuments extends React.Component<Props, State>{
       display: Documents.codeOfConduct,
       acceptCodeOfConduct: false,
       acceptMemberContract: false,
-      documentError: ""
+      documentError: "",
+      signatureUploadError: "",
+      signatureUploading: false,
     }
   }
 
@@ -75,6 +80,7 @@ class SignDocuments extends React.Component<Props, State>{
           <FormControlLabel
             control={
               <Checkbox
+                id={document.name}
                 name={document.name}
                 value={document.name}
                 checked={document.value}
@@ -96,6 +102,7 @@ class SignDocuments extends React.Component<Props, State>{
       <Form
         id="member-contract-form"
         submitText="Proceed"
+        loading={this.state.signatureUploading}
         onSubmit={this.completeDocuments}
         error={this.state.documentError || this.props.uploadError}
       >
@@ -104,6 +111,7 @@ class SignDocuments extends React.Component<Props, State>{
           <FormControlLabel
             control={
               <Checkbox
+                id={document.name}
                 name={document.name}
                 checked={document.value}
                 value={document.name}
@@ -127,7 +135,6 @@ class SignDocuments extends React.Component<Props, State>{
             </Grid>
           </Grid>
         </Grid>
-        {this.props.uploadProcessing && <LoadingOverlay id="signature-loading-overlay"/> }
       </Form>
     );
   }
@@ -143,6 +150,10 @@ class SignDocuments extends React.Component<Props, State>{
     } else if (acceptedDoc === Documents.memberContract) {
       this.setState({ acceptMemberContract: checked });
     }
+    // Clear any errors if accepting the document
+    if (checked) {
+      this.setState({ documentError: "" });
+    }
   }
   // Verify signature and call submit callback
   private completeDocuments = async (form: Form) => {
@@ -153,12 +164,19 @@ class SignDocuments extends React.Component<Props, State>{
       this.setState({ documentError: documentField.error });
       return;
     }
-    const signature = this.signatureRef && this.signatureRef.toDataURL();
-    if (!signature) {
+    if (!this.signatureRef || this.signatureRef.isEmpty()) {
       this.setState({ documentError: "Signature required to proceed" });
       return;
     }
-    this.props.onSubmit(signature);
+    const signature = this.signatureRef.toDataURL();
+    try {
+      this.setState({ signatureUploading: true });
+      await uploadMemberSignature(this.props.currentUser && this.props.currentUser.id, signature);
+      this.setState({ signatureUploading: false, signatureUploadError: "" });
+    } catch (e) {
+      this.setState({ signatureUploading: false, signatureUploadError: e });
+    }
+    this.props.onSubmit();
   }
 
   private documents = () => ({
@@ -181,33 +199,13 @@ class SignDocuments extends React.Component<Props, State>{
       label: "I have read and agree to the Manchester Makerspace Member Contract",
     }
   })
+
   private renderDocument = (documentString: string) => (
     <div dangerouslySetInnerHTML={{ __html: documentString }} />
   )
   public render() {
     const activeDisplay = this.documents()[this.state.display];
     return activeDisplay.render();
-    // return (
-    //   <>
-    //     <Tabs
-    //       value={activeDisplay.name}
-    //       indicatorColor="primary"
-    //       fullWidth={true}
-    //       textColor="primary"
-    //       style={{ marginBottom: "1em" }}
-    //     >
-    //       {Object.values(this.documents()).map(document => (
-    //         <Tab
-    //           label={document.displayName}
-    //           value={document.name}
-    //           key={document.name}
-    //         />
-    //       ))}
-    //     </Tabs>
-    //     { activeDisplay.render()}
-
-    //   </>
-    // );
   }
 }
 

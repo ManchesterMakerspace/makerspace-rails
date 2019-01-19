@@ -36,7 +36,8 @@ interface OwnProps {
   onSubmit: (form: Form) => void;
 }
 
-const renewalSelectName = "renewal-form-renewal-length";
+const formId = "renewal-form";
+const renewalSelectName = `${formId}-renewal-length`;
 
 class RenewalForm extends React.Component<OwnProps, {}> {
   private formRef: Form;
@@ -74,7 +75,7 @@ class RenewalForm extends React.Component<OwnProps, {}> {
 
     return (
       <>
-       <Typography id="renwal-form-entity-name" gutterBottom variant="subheading" align="center" color="primary">
+        <Typography id={`${formId}-entity-name`} gutterBottom variant="subheading" align="center" color="primary">
           {entity.name}
         </Typography>
         <KeyValueItem label="Expiration" align="left">
@@ -101,7 +102,7 @@ class RenewalForm extends React.Component<OwnProps, {}> {
     return (
       <FormModal
         formRef={this.setFormRef}
-        id="renewal-form"
+        id={formId}
         loading={isRequesting}
         isOpen={isOpen}
         closeHandler={onClose}
@@ -110,7 +111,7 @@ class RenewalForm extends React.Component<OwnProps, {}> {
         submitText="Submit"
         error={error}
       >
-        {entity ? this.renderForm() : (this.formRef && this.formRef.isDirty() && <ErrorMessage id="renewal-form-error" error="Nothing to renew"/>)}
+        {entity ? this.renderForm() : (this.formRef && this.formRef.isDirty() && <ErrorMessage id={`${formId}-error`} error="Nothing to renew"/>)}
       </FormModal>
     );
   }

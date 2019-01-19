@@ -18,24 +18,31 @@ import { submitPaymentAction } from "ui/checkout/actions";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import TableContainer from "ui/common/table/TableContainer";
+import Table from "ui/common/table/Table";
 import { Column } from "ui/common/table/Table";
 import { numberAsCurrency } from "ui/utils/numberToCurrency";
 import PaymentMethodsContainer from "ui/checkout/PaymentMethodsContainer";
 import ErrorMessage from "ui/common/ErrorMessage";
 import LoadingOverlay from "ui/common/LoadingOverlay";
 import LoginForm from "ui/auth/LoginForm";
+import { BillingContext, Context } from "ui/billing/BillingContextContainer";
+import FormModal from "ui/common/FormModal";
+import Form from "ui/common/Form";
 
+interface ContextProps {
+  context: Context;
+}
 interface OwnProps {}
 interface StateProps {
-  clientToken: string;
   invoices: CollectionOf<Invoice>;
-  auth: string;
+  userId: string;
   error: string;
   isRequesting: boolean;
 }
 interface DispatchProps {
   submitCheckout: (invoices: Invoice[], paymentMethodId: string) => void;
 }
+interface ContextComponentProps extends Props, ContextProps { }
 interface Props extends OwnProps, StateProps, DispatchProps {}
 interface State {
   total: number;
@@ -43,13 +50,17 @@ interface State {
   paymentMethodId: string;
   error: string;
   openLoginModal: boolean;
+  openTransactionErrorModal: boolean;
 }
-class CheckoutContainer extends React.Component<Props,State>{
-  constructor(props: Props){
+class CheckoutContainer extends React.Component<ContextComponentProps,State> {
+  public formRef: Form;
+  private setFormRef = (ref: Form) => this.formRef = ref;
+
+  constructor(props: ContextComponentProps){
     super(props);
     // Redirect if there are no invoices to checkout
-    const { auth, invoices } = props;
-    const redirectPath = auth ? Routing.Profile.replace(Routing.PathPlaceholder.MemberId, auth) : Routing.Login;
+    const { userId, invoices } = props;
+    const redirectPath = userId ? Routing.Profile.replace(Routing.PathPlaceholder.MemberId, userId) : Routing.Login;
     const redirect = invoices && isEmpty(invoices) ? redirectPath : undefined;
     this.state = ({
       redirect,
@@ -57,14 +68,34 @@ class CheckoutContainer extends React.Component<Props,State>{
       error: "",
       paymentMethodId: undefined,
       openLoginModal: false,
+      openTransactionErrorModal: false,
     });
   }
 
-  private fields: Column<Invoice>[] = [
+  private getFields = (): Column<Invoice>[] => [
+    {
+      id: "name",
+      label: "Name",
+      cell: (row: Invoice) => row.name,
+    },
     {
       id: "description",
       label: "Description",
-      cell: (row: Invoice) => row.description,
+      cell: (row: Invoice) => {
+        const discounts = row.discountId && this.props.context.discounts.data;
+        const discount = discounts && discounts.find(discount => discount.id === row.discountId);
+        return (
+          <>
+            <div>{row.description}</div>
+            {discount && (
+              <>
+                <hr/>
+                <div id="discount">{discount.description}</div>
+              </>
+            )}
+          </>
+        )
+      },
     },
     {
       id: "amount",
@@ -74,11 +105,50 @@ class CheckoutContainer extends React.Component<Props,State>{
   ];
 
   public componentDidUpdate(prevProps: Props) {
-    const { isRequesting, error } = this.props;
-    const { isRequesting: wasRequesting, clientToken: hadClientToken } = prevProps;
-    if (wasRequesting && !isRequesting && !error && hadClientToken) {
-      console.log("SUCCESS, redirect to receipt page")
+    const { isRequesting, error, invoices, userId } = this.props;
+    const { isRequesting: wasRequesting } = prevProps;
+    if (wasRequesting && !isRequesting) {
+      // Open error modal if error exists after requests
+      if (error) {
+        this.setState({ openTransactionErrorModal: true });
+        return
+      }
+      // If there are no invoices, redirect to profile since there's nothing to do here
+      if (isEmpty(invoices)) {
+        this.setState({ redirect: Routing.Profile.replace(Routing.PathPlaceholder.MemberId, userId) });
+      }
     }
+  }
+
+  private closeErrorModal = () => this.setState({ openTransactionErrorModal: false });
+  private renderErrorModal = () => {
+    const { invoices, error } = this.props;
+
+    return (
+      <FormModal
+        formRef={this.setFormRef}
+        id="payment-error-modal"
+        title="Error processing transactions"
+        isOpen={this.state.openTransactionErrorModal}
+        onSubmit={this.closeErrorModal}
+        submitText="Okay"
+      >
+        <Grid container spacing={16}>
+          <Grid item xs={12}>
+            <Typography variant="body1">There was an error processing one or more transactions. Please review these errors and try again</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Table
+              id="payment-invoices-table"
+              error={error}
+              data={Object.values(invoices)}
+              columns={this.getFields()}
+              rowId={this.rowId}
+            />
+          </Grid>
+        </Grid>
+      </FormModal>
+    );
   }
 
   private renderTotal = () => {
@@ -94,16 +164,16 @@ class CheckoutContainer extends React.Component<Props,State>{
                 title="Review Items Before Purchase"
                 data={Object.values(invoices)}
                 totalItems={Object.values(invoices).length}
-                columns={this.fields}
+                columns={this.getFields()}
                 rowId={this.rowId}
               />
             </Grid>
             <Grid item xs={12} style={{textAlign: "right"}}>
-              <Typography variant="title" color="inherit">Total {numberAsCurrency(total)}</Typography>
+              <Typography id="total" variant="title" color="inherit">Total {numberAsCurrency(total)}</Typography>
             </Grid>
             <Grid item xs={12} style={{ textAlign: "left" }}>
               <Button variant="contained" disabled={!paymentMethodId} onClick={this.submitPayment}>Submit Payment</Button>
-              {error && <ErrorMessage error={error}/>}
+              {error && <ErrorMessage error={error} id="total-error"/>}
             </Grid>
           </Grid>
         </CardContent>
@@ -145,17 +215,17 @@ class CheckoutContainer extends React.Component<Props,State>{
   }
   private rowId = (row: Invoice) => row.id;
   public render(): JSX.Element {
-    const { isRequesting, error, auth } = this.props;
+    const { isRequesting, error } = this.props;
     const { redirect, paymentMethodId } = this.state;
 
     if (redirect) {
-      return <Redirect to={redirect}/>
+      return <Redirect to={redirect}/>;
     }
-    //TODO Make settings a link
+
     return (
       <Grid container spacing={16}>
         {isRequesting && <LoadingOverlay id="checkout-submitting-overlay" />}
-        <Grid item md={8} sm={7} xs={12}>
+        <Grid item sm={6} xs={12}>
           <Grid container spacing={16}>
             <Grid item xs={12}>
               <Card>
@@ -164,7 +234,7 @@ class CheckoutContainer extends React.Component<Props,State>{
                     onPaymentMethodChange={this.selectPaymentMethod}
                     selectedPaymentMethodId={paymentMethodId}
                   />
-                  <p>*The payment method used when creating a subscription will be the default payment method unless changed through Settings.</p>
+                  <p>*The payment method used when creating a subscription will be the default payment method used for subscription payments unless changed through Settings.</p>
                 </CardContent>
               </Card>
             </Grid>
@@ -172,23 +242,23 @@ class CheckoutContainer extends React.Component<Props,State>{
         </Grid>
 
 
-        <Grid item md={4} sm={5} xs={12}>
+        <Grid item sm={6} xs={12}>
           {this.renderTotal()}
           {!isRequesting && error && <ErrorMessage id="checkout-submitting-error" error={error}/>}
         </Grid>
         {this.renderLoginModal()}
+        {this.renderErrorModal()}
       </Grid>
     )
   }
 }
 
 const mapStateToProps = (state: ReduxState, _ownProps: OwnProps): StateProps => {
-  const { invoices, isRequesting, error, clientToken } = state.checkout;
+  const { invoices, isRequesting, error } = state.checkout;
   const { currentUser: { id: userId } } = state.auth;
   return {
-    clientToken,
     invoices,
-    auth: userId,
+    userId,
     isRequesting,
     error
   }
@@ -202,4 +272,12 @@ const mapDispatchToProps = (
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CheckoutContainer);
+const ConnectedContainer =  connect(mapStateToProps, mapDispatchToProps)(CheckoutContainer);
+
+export default React.forwardRef(
+  (props: Props, ref: any) => (
+    <BillingContext.Consumer>
+      {context => <ConnectedContainer {...props} context={context} ref={ref} />}
+    </BillingContext.Consumer>
+  )
+);

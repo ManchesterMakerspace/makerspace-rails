@@ -11,7 +11,7 @@ export class MemberPageObject {
     id: `${this.memberFormId}`,
     firstname: `${this.memberFormId}-firstname`,
     lastname: `${this.memberFormId}-lastname`,
-    expiration: `${this.memberFormId}-expiration`,
+    expiration: `${this.memberFormId}-expirationTime`,
     email: `${this.memberFormId}-email`,
     error: `${this.memberFormId}-error`,
     submit: `${this.memberFormId}-submit`,
@@ -32,12 +32,11 @@ export class MemberPageObject {
     rentalsTab: "#rentals-tab",
   }
 
-  public goToMemberRentals = () => {
+  public goToMemberRentals = () =>
     utils.clickElement(this.memberDetail.rentalsTab);
-  }
-  public gotToMemberDues = () => {
+
+  public gotToMemberDues = () =>
     utils.clickElement(this.memberDetail.duesTab);
-  }
 
   private cardFormId = "#card-form";
   public accessCardForm = {

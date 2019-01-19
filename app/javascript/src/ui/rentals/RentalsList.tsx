@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as moment from "moment";
 import { connect } from "react-redux";
-import Button from "@material-ui/core/Button";
+import { Link } from 'react-router-dom';
 
 
 import { Rental, Properties } from "app/entities/rental";
@@ -77,7 +77,7 @@ class RentalsList extends React.Component<Props, State> {
     ...this.props.admin ? [{
       id: "member",
       label: "Member",
-      cell: (row: Rental) => row.memberName,
+      cell: (row: Rental) => <Link to={`/members/${row.memberId}`}>{row.memberName}</Link>,
       defaultSortDirection: SortDirection.Desc,
       width: 200
     }] : [],

@@ -4,7 +4,6 @@ import utils from "../pageObjects/common";
 import { mockRequests, mock } from "../mockserver-client-helpers";
 import memberPO from "../pageObjects/member";
 import { basicUser } from "../constants/member";
-import { extractLinkFromEmail } from "../../helpers/mailHelpers";
 import { invoiceOptions, membershipOptionQueryParams } from "../constants/invoice";
 import signup from "../pageObjects/signup";
 
@@ -101,22 +100,14 @@ describe("Authentication", () => {
       await signup.selectMembershipOption(membershipId);
       await utils.waitForPageLoad(signup.signupUrl);
       await signup.signUpUser(member);
-      expect(await utils.isElementDisplayed(signup.documentsSigning.codeOfConductCheckbox)).toBeTruthy();
-      await utils.clickElement(signup.documentsSigning.codeOfConductSubmit);
-      expect(await utils.isElementDisplayed(signup.documentsSigning.codeOfConductError)).toBeTruthy();
+      await utils.waitForVisisble(signup.documentsSigning.codeOfConductSubmit);
       await utils.clickElement(signup.documentsSigning.codeOfConductCheckbox);
-      expect(await utils.isElementDisplayed(signup.documentsSigning.codeOfConductError)).toBeFalsy();
       await utils.clickElement(signup.documentsSigning.codeOfConductSubmit);
-      expect(await utils.isElementDisplayed(signup.documentsSigning.memberContractCheckbox)).toBeTruthy();
-      await utils.clickElement(signup.documentsSigning.memberContractSubmit);
-      expect(await utils.isElementDisplayed(signup.documentsSigning.memberContractError)).toBeTruthy();
-      await utils.clickElement(signup.documentsSigning.codeOfConductCheckbox);
-      expect(await utils.isElementDisplayed(signup.documentsSigning.memberContractError)).toBeFalsy();
-      await utils.clickElement(signup.documentsSigning.memberContractSubmit);
-      expect(await utils.isElementDisplayed(signup.documentsSigning.memberContractError)).toBeTruthy();
+      await utils.waitForVisisble(signup.documentsSigning.memberContractCheckbox);
+      await utils.clickElement(signup.documentsSigning.memberContractCheckbox);
       await signup.signContract();
       await utils.clickElement(signup.documentsSigning.memberContractSubmit);
-      // TODO: Step 7-12
+      // TODO: Await for checkout load
     });
     xit("User notified if they have an account with the attempted sign up email", async () => {
       /* 1. Setup mocks
@@ -139,30 +130,53 @@ describe("Authentication", () => {
          8. Submit form (no mock setup so request will fail)
          9. Assert form displays API error
       */
+      const membershipId = "foo";
+      const membershipOption = invoiceOptions.find((io) => io.id === membershipId);
+      await mock(mockRequests.invoiceOptions.get.ok([membershipOption], membershipOptionQueryParams));
       await browser.get(utils.buildUrl());
+      await signup.selectMembershipOption(membershipId);
+      await utils.waitForPageLoad(signup.signupUrl);
       const { emailInput, firstnameInput, passwordInput, lastnameInput, error, submitButton } = signup.signUpForm;
       await utils.clickElement(submitButton);
-      expect(await utils.assertInputError(firstnameInput));
-      expect(await utils.assertInputError(lastnameInput));
-      expect(await utils.assertInputError(emailInput));
-      expect(await utils.assertInputError(passwordInput));
+      await utils.assertInputError(firstnameInput);
+      await utils.assertInputError(lastnameInput);
+      await utils.assertInputError(emailInput);
+      await utils.assertInputError(passwordInput);
       await utils.fillInput(firstnameInput, member.firstname);
       await utils.fillInput(lastnameInput, member.lastname);
       await utils.fillInput(passwordInput, member.password);
       await utils.fillInput(emailInput, "foo");
       await utils.clickElement(submitButton);
-      expect(await utils.assertNoInputError(firstnameInput));
-      expect(await utils.assertNoInputError(lastnameInput));
+      await utils.assertNoInputError(firstnameInput);
+      await utils.assertNoInputError(lastnameInput);
       expect(await utils.assertInputError(emailInput));
-      expect(await utils.assertNoInputError(passwordInput));
+      await utils.assertNoInputError(passwordInput);
       await utils.fillInput(emailInput, member.email);
       await utils.clickElement(submitButton);
       expect(await utils.getElementText(error)).toBeTruthy();
       await mock(mockRequests.signUp.ok(member));
       await mock(mockRequests.member.get.ok(memberId, member));
       await utils.clickElement(submitButton);
-      await utils.waitForPageLoad(utils.buildUrl(profileUrl), true);
-    });
+
+      // Signed up, code of conduct validation
+      await utils.waitForVisisble(signup.documentsSigning.codeOfConductSubmit);
+      await utils.clickElement(signup.documentsSigning.codeOfConductSubmit);
+      await utils.assertInputError(signup.documentsSigning.codeOfConductError, true)
+      await utils.clickElement(signup.documentsSigning.codeOfConductCheckbox);
+      await utils.assertNoInputError(signup.documentsSigning.codeOfConductError, true)
+      await utils.clickElement(signup.documentsSigning.codeOfConductSubmit);
+
+      // Contract validation
+      await utils.waitForVisisble(signup.documentsSigning.memberContractCheckbox);
+      await utils.clickElement(signup.documentsSigning.memberContractSubmit);
+      await utils.assertInputError(signup.documentsSigning.memberContractError, true)
+      await utils.clickElement(signup.documentsSigning.memberContractCheckbox);
+      await utils.assertNoInputError(signup.documentsSigning.memberContractError, true)
+      await utils.clickElement(signup.documentsSigning.memberContractSubmit);
+      await utils.assertInputError(signup.documentsSigning.memberContractError, true)
+      await signup.signContract();
+      await utils.clickElement(signup.documentsSigning.memberContractSubmit);
+    }, 200000);
   });
 
   describe("Resetting Password", () => {
@@ -185,12 +199,12 @@ describe("Authentication", () => {
       */
       await mock(mockRequests.passwordReset.requestReset.ok(basicUser.email));
       await utils.clickElement(auth.loginModal.forgotPasswordLink);
-      expect(await utils.isElementDisplayed(auth.passwordResetRequestModal.id)).toBeTruthy();
+      expect(await utils.isElementDisplayed(auth.passwordResetRequestModal.submitButton)).toBeTruthy();
       await utils.fillInput(auth.passwordResetRequestModal.emailInput, basicUser.email);
       await utils.clickElement(auth.passwordResetRequestModal.submitButton);
       const emailLink = auth.passwordResetUrl.replace(Routing.PathPlaceholder.Resource, "token");
       await browser.get(utils.buildUrl(emailLink));
-      expect(await utils.isElementDisplayed(auth.passwordResetModal.id)).toBeTruthy();
+      expect(await utils.isElementDisplayed(auth.passwordResetModal.submitButton)).toBeTruthy();
       await utils.fillInput(auth.passwordResetModal.passwordInput, "new password");
       await mock(mockRequests.member.get.ok(basicUser.id, basicUser));
       await mock(mockRequests.passwordReset.updatePassword.ok("token", "new password"));
@@ -217,7 +231,7 @@ describe("Authentication", () => {
          14. Verify profile page loads
       */
       await utils.clickElement(auth.loginModal.forgotPasswordLink);
-      expect(await utils.isElementDisplayed(auth.passwordResetRequestModal.id)).toBeTruthy();
+      expect(await utils.isElementDisplayed(auth.passwordResetRequestModal.submitButton)).toBeTruthy();
       await utils.clickElement(auth.passwordResetRequestModal.submitButton);
       expect(await utils.assertInputError(auth.passwordResetRequestModal.emailInput));
       await utils.fillInput(auth.passwordResetRequestModal.emailInput, basicUser.email);
@@ -228,7 +242,7 @@ describe("Authentication", () => {
       await utils.clickElement(auth.passwordResetRequestModal.submitButton);
       const emailLink = auth.passwordResetUrl.replace(Routing.PathPlaceholder.Resource, "token");
       await browser.get(utils.buildUrl(emailLink));
-      expect(await utils.isElementDisplayed(auth.passwordResetModal.id)).toBeTruthy();
+      expect(await utils.isElementDisplayed(auth.passwordResetModal.submitButton)).toBeTruthy();
       await utils.clickElement(auth.passwordResetModal.submitButton);
       expect(await utils.assertInputError(auth.passwordResetModal.passwordInput));
       await utils.fillInput(auth.passwordResetModal.passwordInput, "new password");

@@ -8,6 +8,7 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
+import Typography from "@material-ui/core/Typography";
 
 import { Routing } from "app/constants";
 import { putPassword } from "api/auth/transactions";
@@ -28,10 +29,11 @@ interface State {
   passwordError: string;
 }
 
-const PasswordFields: FormFields = {
+const passwordId = "password-reset";
+const passwordFields: FormFields = {
   password: {
     label: "Enter New Password",
-    name: `reset-password-input`,
+    name: `${passwordId}-input`,
     placeholder: "Enter New Password",
     error: "Invalid password",
     validate: (val: string) => !!val
@@ -59,7 +61,7 @@ class PasswordReset extends React.Component<Props, State> {
   }
 
   private submit = async (form: Form) => {
-    const { password } = await this.formRef.simpleValidate<PasswordForm>(PasswordFields);
+    const { password } = await this.formRef.simpleValidate<PasswordForm>(passwordFields);
     const { token } = this.props.match.params;
 
     if (!form.isValid()) return;
@@ -92,28 +94,35 @@ class PasswordReset extends React.Component<Props, State> {
             <CardContent>
               <Form
                 ref={this.setFormRef}
-                id="password-reset"
+                id={passwordId}
                 title="Reset Password"
                 onSubmit={this.submit}
                 submitText="Save"
               >
-                <TextField
-                  fullWidth
-                  required
-                  autoComplete="new-password"
-                  label={PasswordFields.password.label}
-                  name={PasswordFields.password.name}
-                  id={PasswordFields.password.name}
-                  placeholder={PasswordFields.password.placeholder}
-                  type={passwordMask ? 'password' : 'text'}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <RemoveRedEye style={{cursor: 'pointer'}} onClick={this.togglePasswordMask} />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
+                <Grid container spacing={16}>
+                  <Grid item xs={12}>
+                    <Typography variant="body1">Please enter your new password.</Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      required
+                      autoComplete="new-password"
+                      label={passwordFields.password.label}
+                      name={passwordFields.password.name}
+                      id={passwordFields.password.name}
+                      placeholder={passwordFields.password.placeholder}
+                      type={passwordMask ? 'password' : 'text'}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <RemoveRedEye style={{ cursor: 'pointer' }} onClick={this.togglePasswordMask} />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                </Grid>
                 {!passwordRequesting && passwordError && <ErrorMessage id={"password-reset-error"} error={passwordError} />}
               </Form>
             </CardContent>

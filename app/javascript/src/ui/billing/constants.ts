@@ -4,10 +4,6 @@ export enum Action {
   GetOptionsSuccess = "BILLING/GET_OPTIONS_SUCCESS",
   GetOptionsFailure = "BILLING/GET_OPTIONS_FAILURE",
 
-  StartPlansRequest = "BILLING/START_PLANS_REQUEST",
-  GetPlansSuccess = "BILLING/GET_PLANS_SUCCESS",
-  GetPlansFailure = "BILLING/GET_PLANS_FAILURE",
-
   StartCreateRequest = "BILLING/START_CREATE_REQUEST",
   CreateOptionSuccess = "BILLING/CREATE_OPTION_SUCCESS",
   CreateOptionFailure = "BILLING/CREATE_OPTION_FAILURE",

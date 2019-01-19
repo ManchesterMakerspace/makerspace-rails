@@ -1,15 +1,19 @@
+import * as moment from "moment";
 import { Invoice, InvoiceOperation, InvoiceableResource } from "app/entities/invoice";
 export const invoiceOptions: Partial<Invoice>[] = [
   {
     id: "standard_membership",
+    name: "Standard",
     description: "Standard Membership Subscription",
     amount: 65
   }, {
     id: "foo",
+    name: "Foo",
     description: "Foo Membership",
     amount: 10000
   }, {
     id: "bar",
+    name: "Bar",
     description: "Bar Membership",
     amount: 45
   }
@@ -28,7 +32,7 @@ export const baseInvoice: Invoice = {
   operation: InvoiceOperation.Renew,
   resourceId: "123",
   createdAt: "Some time",
-  dueDate: "Another time",
+  dueDate: moment().add(1, "months").calendar(),
 }
 export const defaultInvoice: Invoice = {
   ...baseInvoice,

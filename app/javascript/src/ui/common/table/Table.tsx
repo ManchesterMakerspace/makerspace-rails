@@ -27,11 +27,11 @@ interface Props<T> {
   page?: number;
   data: T[];
   columns: Column<T>[];
-  selectedIds: string[];
+  selectedIds?: string[];
   order?: SortDirection;
   orderBy?: string;
-  error: string | JSX.Element;
-  loading: boolean;
+  error?: string | JSX.Element;
+  loading?: boolean;
   onSelectAll?: () => void;
   onSelect?: (id: string, direction: boolean) => void;
   rowId: (row: T) => string;
@@ -167,7 +167,7 @@ class EnhancedTable<T> extends React.Component<Props<T>, {}> {
         checkbox = (
           <TableCell padding="checkbox">
             <Checkbox
-              id={`${id}-select`}
+              id={`${tableRowId}-select`}
               color="primary"
               checked={checked}
               onChange={checkHandler}

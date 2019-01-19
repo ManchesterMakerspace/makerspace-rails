@@ -11,9 +11,10 @@ import { postPaymentMethod } from "api/paymentMethods/transactions";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import Form from "ui/common/Form";
-import { CheckoutFields } from "ui/checkout/constants";
+import { CreditCardFields } from "ui/checkout/constants";
 import ErrorMessage from "ui/common/ErrorMessage";
 import HostedInput from "ui/checkout/HostedInput";
+import { Typography } from "@material-ui/core";
 
 interface OwnProps {
   braintreeInstance: any;
@@ -68,20 +69,20 @@ class CreditCardForm extends React.Component<Props, State> {
         styles: {},
         fields: {
           number: {
-            selector: `#${CheckoutFields.cardNumber.name}`,
-            placeholder: CheckoutFields.cardNumber.placeholder
+            selector: `#${CreditCardFields.cardNumber.name}`,
+            placeholder: CreditCardFields.cardNumber.placeholder
           },
           cvv: {
-            selector: `#${CheckoutFields.csv.name}`,
-            placeholder: CheckoutFields.csv.placeholder
+            selector: `#${CreditCardFields.csv.name}`,
+            placeholder: CreditCardFields.csv.placeholder
           },
           expirationDate: {
-            selector: `#${CheckoutFields.expirationDate.name}`,
-            placeholder: CheckoutFields.expirationDate.placeholder,
+            selector: `#${CreditCardFields.expirationDate.name}`,
+            placeholder: CreditCardFields.expirationDate.placeholder,
           },
           postalCode: {
-            selector: `#${CheckoutFields.postalCode.name}`,
-            placeholder: CheckoutFields.postalCode.placeholder,
+            selector: `#${CreditCardFields.postalCode.name}`,
+            placeholder: CreditCardFields.postalCode.placeholder,
           },
         }
       }, (err, hostedFieldsInstance) => {
@@ -123,34 +124,34 @@ class CreditCardForm extends React.Component<Props, State> {
     return (
       <>
         <Form
-          id="checkout-form"
+          id="credit-card-form"
+          title="Enter your credit or debit card information"
           onSubmit={this.requestPaymentMethod}
-          onCancel={this.props.closeHandler}
           loading={isRequesting || isCreating || !braintreeInstance || !hostedFieldsInstance }
         >
           <HostedInput
-            label={CheckoutFields.cardNumber.label}
-            id={CheckoutFields.cardNumber.name}
+            label={CreditCardFields.cardNumber.label}
+            id={CreditCardFields.cardNumber.name}
           />
           <Grid container spacing={24}>
             <Grid item xs={6}>
               <HostedInput
-                label={CheckoutFields.expirationDate.label}
-                id={CheckoutFields.expirationDate.name}
+                label={CreditCardFields.expirationDate.label}
+                id={CreditCardFields.expirationDate.name}
               />
             </Grid>
             <Grid item xs={6}>
               <HostedInput
-                label={CheckoutFields.csv.label}
-                id={CheckoutFields.csv.name}
+                label={CreditCardFields.csv.label}
+                id={CreditCardFields.csv.name}
               />
             </Grid>
           </Grid>
           <HostedInput
-            label={CheckoutFields.postalCode.label}
-            id={CheckoutFields.postalCode.name}
+            label={CreditCardFields.postalCode.label}
+            id={CreditCardFields.postalCode.name}
           />
-          {!isRequesting && error && <ErrorMessage error={error} />}
+          {!isRequesting && error && <ErrorMessage error={error} id="credit-card-error"/>}
         </Form>
       </>
     )

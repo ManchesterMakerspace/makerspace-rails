@@ -66,8 +66,10 @@ class MembersController < ApplicationController
                           upload_source: Rails.root.join("dump/signature.png").to_s,
                           content_type: 'image/png'
                           ) do |result, err|
-        error = "Error uploading #{@member.fullname}'s signature'. Error: #{err}"
-        @messages.push(error) unless err.nil?
+        unless err.nil?
+          error = "Error uploading #{@member.fullname}'s signature'. Error: #{err}"
+          @messages.push(error)
+        end
         if result && result.id then
             @messages.push("New member #{@member.fullname}'s Member Contract signature uploaded.'")
             File.delete("dump/signature.png")

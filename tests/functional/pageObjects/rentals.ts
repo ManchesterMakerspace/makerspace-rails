@@ -11,7 +11,7 @@ class RentalsPageObject extends TablePageObject {
     renew: "#rentals-list-renew",
   }
 
-  private rentalFormId = "#invoice-form";
+  private rentalFormId = "#rental-form";
   public rentalForm = {
     id: `${this.rentalFormId}`,
     description: `${this.rentalFormId}-description`,
@@ -27,7 +27,7 @@ class RentalsPageObject extends TablePageObject {
 
   private deleteRentalModalId = "#delete-rental";
   public deleteRentalModal = {
-    id: `${this.deleteRentalModalId}-confirm`,
+    id: `${this.deleteRentalModalId}`,
     number: `${this.deleteRentalModalId}-number`,
     description: `${this.deleteRentalModalId}-description`,
     member: `${this.deleteRentalModalId}-member`,

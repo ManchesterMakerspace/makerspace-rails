@@ -9,6 +9,7 @@ import SubscriptionsList from 'ui/subscriptions/SubscriptionsList';
 import MemberDetail from 'ui/member/MemberDetail';
 import CheckoutContainer from 'ui/checkout/CheckoutContainer';
 import BillingContainer from 'ui/billing/BillingContainer';
+import SettingsContainer from 'ui/member/Settings';
 
 
 const PrivateRouting: React.SFC<{ auth: string }> = (props) => (
@@ -17,6 +18,7 @@ const PrivateRouting: React.SFC<{ auth: string }> = (props) => (
     <Route exact path={`${Routing.Profile}/${Routing.PathPlaceholder.Resource}${Routing.PathPlaceholder.Optional}`} component={MemberDetail} />
     <Route exact path={`${Routing.Billing}/${Routing.PathPlaceholder.Resource}${Routing.PathPlaceholder.Optional}`} component={BillingContainer} />
     <Route exact path={Routing.Subscriptions} component={SubscriptionsList} />
+    <Route exact path={Routing.Settings} component={SettingsContainer} />
     <Route exact path={Routing.Rentals} component={RentalsList} />
     <Route exact path={Routing.Checkout} component={CheckoutContainer} />
     <Redirect to={`${Routing.Members}/${props.auth}`}/>

@@ -18,6 +18,7 @@ export interface UpdateSubscriptionRenderProps extends Props {
 interface OwnProps {
   subscription?: Partial<Subscription>;
   isOpen: boolean;
+  isAdmin: boolean;
   operation: CrudOperation;
   closeHandler: () => void;
   render: (renderPayload: UpdateSubscriptionRenderProps) => JSX.Element;
@@ -88,16 +89,16 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch,
   ownProps: OwnProps,
 ): DispatchProps => {
-  const { subscription, operation } = ownProps;
+  const { isAdmin, operation } = ownProps;
   return {
-    dispatchSubscription: (id: string) => {
+    dispatchSubscription: async (id: string) => {
       let action;
       switch (operation) {
         case CrudOperation.Delete:
-          action = (deleteSubscriptionAction(id));
+          action = (deleteSubscriptionAction(id, isAdmin));
           break;
       }
-      dispatch(action);
+      await dispatch(action);
     },
   }
 }

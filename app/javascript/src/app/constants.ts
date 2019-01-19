@@ -52,6 +52,7 @@ export namespace Url {
     PaymentMethods: `${baseBillingPath}/payment_methods`,
     PaymentMethod: `${baseBillingPath}/payment_methods/${PathPlaceholder.PaymentMethodId}`,
     Plans: `${baseBillingPath}/plans`,
+    Discounts: `${baseBillingPath}/plans/discounts`,
     Subscriptions: `${baseBillingPath}/subscriptions`,
     Subscription: `${baseBillingPath}/subscriptions/${PathPlaceholder.SubscriptionId}`,
     Checkout: `${baseBillingPath}/checkout`
@@ -77,6 +78,7 @@ export namespace Routing {
   export const Rentals = "/rentals";
   export const Checkout = "/checkout";
   export const PasswordReset = "/resetPassword";
+  export const Settings = "/settings";
 }
 
 export enum ApiErrorStatus {

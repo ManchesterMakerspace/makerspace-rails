@@ -23,7 +23,7 @@ export class AuthPageObject {
     id: this.loginFormId,
     emailInput: `${this.loginFormId}-email`,
     passwordInput: `${this.loginFormId}-password`,
-    forgotPasswordLink: `${this.loginFormId}-forgot-password`,
+    forgotPasswordLink: `#forgot-password`,
     error: `${this.loginFormId}-error`,
     submitButton: `${this.loginFormId}-submit`,
   };

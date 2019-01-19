@@ -1,6 +1,6 @@
 import { Url } from "app/constants";
 import { QueryParams } from "app/interfaces";
-import { Rental } from "app/entities/rental";
+import { Rental, RentalQueryParams } from "app/entities/rental";
 import { AccessCard } from "app/entities/card";
 import { BillingPlan } from "app/entities/billingPlan";
 import { MemberDetails } from "app/entities/member";
@@ -29,9 +29,9 @@ interface HttpResponse {
   statusCode: number;
   body?: string;
   headers?: {
-    name: string;
-    value: string
-  }[]
+    name: string,
+    value: string,
+  }[];
 }
 export interface MockRequest {
   httpRequest: HttpRequest;
@@ -48,12 +48,10 @@ mockserver.setDefaultHeaders([
 type AnyQueryParam = QueryParams;
 const objectToQueryParams = (params: AnyQueryParam) => {
   if (!(params)) { return; }
-  return Object.entries(params).map(([name, values]) => {
-    return {
-      name,
-      values: Array.isArray(values) ? values : [values]
-    }
-  })
+  return Object.entries(params).map(([name, values]) => ({
+    values: Array.isArray(values) ? values : [values],
+    name: Array.isArray(values) ? `${name}[]` : name
+  }));
 }
 
 export const mockRequests = {
@@ -108,6 +106,7 @@ export const mockRequests = {
           }
         },
         httpResponse: {
+          headers: [{ name: "total-items", value: String(members.length) }],
           statusCode: 200,
           body: JSON.stringify(members)
         }
@@ -188,18 +187,34 @@ export const mockRequests = {
     }
   },
   rentals: {
-    get: {
-      ok: (rentals: Partial<Rental>[], queryParams: QueryParams = {}): MockRequest => ({
+    show: {
+      ok: (rental: Partial<Rental>, queryParams: RentalQueryParams = {}, admin?: boolean): MockRequest => ({
         httpRequest: {
           method: Method.Get,
-          path: `/${Url.Rentals}.json`,
+          path: `/${admin ? Url.Admin.Rentals : Url.Rentals}/${rental.id}.json`,
           ...queryParams && {
             queryStringParameters: objectToQueryParams(queryParams)
           }
         },
         httpResponse: {
           statusCode: 200,
-          body: JSON.stringify(rentals)
+          body: JSON.stringify({ rental })
+        }
+      })
+    },
+    get: {
+      ok: (rentals: Partial<Rental>[], queryParams: RentalQueryParams = {}, admin?: boolean): MockRequest => ({
+        httpRequest: {
+          method: Method.Get,
+          path: `/${admin ? Url.Admin.Rentals : Url.Rentals}.json`,
+          ...queryParams && {
+            queryStringParameters: objectToQueryParams(queryParams)
+          }
+        },
+        httpResponse: {
+          headers: [{ name: "total-items", value: String(rentals.length) }],
+          statusCode: 200,
+          body: JSON.stringify({ rentals })
         }
       })
     },
@@ -207,11 +222,11 @@ export const mockRequests = {
       ok: (rental: Partial<Rental>): MockRequest => ({
         httpRequest: {
           method: Method.Post,
-          path: `/${Url.Rentals}.json`,
+          path: `/${Url.Admin.Rentals}.json`,
         },
         httpResponse: {
           statusCode: 200,
-          body: JSON.stringify(rental)
+          body: JSON.stringify({ rental })
         }
       })
     },
@@ -219,11 +234,11 @@ export const mockRequests = {
       ok: (rental: Partial<Rental>): MockRequest => ({
         httpRequest: {
           method: Method.Put,
-          path: `/${Url.Rentals}/${rental.id}.json`,
+          path: `/${Url.Admin.Rentals}/${rental.id}.json`,
         },
         httpResponse: {
           statusCode: 200,
-          body: JSON.stringify(rental)
+          body: JSON.stringify({ rental })
         }
       })
     },
@@ -231,7 +246,7 @@ export const mockRequests = {
       ok: (id: string): MockRequest => ({
         httpRequest: {
           method: Method.Delete,
-          path: `/${Url.Rentals}/${id}.json`,
+          path: `/${Url.Admin.Rentals}/${id}.json`,
         },
         httpResponse: {
           statusCode: 204,
@@ -267,7 +282,7 @@ export const mockRequests = {
         path: `/${Url.Auth.SignIn}.json`,
       },
       httpResponse: {
-        statusCode: 200,
+        statusCode: 204,
       }
     }),
   },
@@ -321,6 +336,7 @@ export const mockRequests = {
           }
         },
         httpResponse: {
+          headers: [{ name: "total-items", value: String(invoices.length) }],
           statusCode: 200,
           body: JSON.stringify({invoices})
         }
@@ -330,18 +346,41 @@ export const mockRequests = {
       ok: (invoice: Invoice): MockRequest => ({
         httpRequest: {
           method: Method.Post,
-          path: `/${Url.Invoices}.json`,
+          path: `/${Url.Admin.Invoices}.json`,
         },
         httpResponse: {
           statusCode: 200,
           body: JSON.stringify({ invoice })
         }
       })
+    },
+    put: {
+      ok: (invoice: Invoice): MockRequest => ({
+        httpRequest: {
+          method: Method.Put,
+          path: `/${Url.Admin.Invoices}/${invoice.id}.json`,
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({ invoice })
+        }
+      })
+    },
+    delete: {
+      ok: (invoiceId: string): MockRequest => ({
+        httpRequest: {
+          method: Method.Post,
+          path: `/${Url.Admin.Invoices}/${invoiceId}.json`,
+        },
+        httpResponse: {
+          statusCode: 204,
+        }
+      })
     }
   },
   invoiceOptions: {
     get: {
-      ok: (invoices: Partial<Invoice>[], queryParams?: InvoiceOptionQueryParams): MockRequest => ({
+      ok: (invoiceOptions: Partial<Invoice>[], queryParams?: InvoiceOptionQueryParams): MockRequest => ({
         httpRequest: {
           method: Method.Get,
           path: `/${Url.InvoiceOptions}.json`,
@@ -350,8 +389,9 @@ export const mockRequests = {
           }
         },
         httpResponse: {
+          headers: [{ name: "total-items", value: String(invoiceOptions.length) }],
           statusCode: 200,
-          body: JSON.stringify({invoices})
+          body: JSON.stringify({invoiceOptions})
         }
       })
     }

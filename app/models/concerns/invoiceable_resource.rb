@@ -3,7 +3,7 @@ module InvoiceableResource
 
   included do
     def execute_operation(operation, invoice)
-      try(self.send(operation, invoice.quantity))
+      self.try(operation, invoice.quantity)
     end
 
     def renew=(num_months)

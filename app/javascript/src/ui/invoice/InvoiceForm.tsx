@@ -173,7 +173,7 @@ class InvoiceForm extends React.Component<OwnProps, State> {
             <TextField
               fullWidth
               required
-              value={invoice && invoice.dueDate && toDatePicker(invoice.dueDate)}
+              value={invoice && toDatePicker(invoice.dueDate)}
               label={fields.dueDate.label}
               name={fields.dueDate.name}
               placeholder={fields.dueDate.placeholder}

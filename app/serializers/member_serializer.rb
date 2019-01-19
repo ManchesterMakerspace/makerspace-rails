@@ -9,6 +9,7 @@ class MemberSerializer < ActiveModel::Serializer
              :groupName,
              :card_id,
              :groupName,
+             :subscription_id,
   # has_many :learned_skills
   # has_many :allowed_workshops
   # has_many :access_cards

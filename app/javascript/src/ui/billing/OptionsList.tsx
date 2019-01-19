@@ -4,19 +4,18 @@ import Grid from "@material-ui/core/Grid";
 
 import { InvoiceOption, InvoiceOperation, InvoiceableResource } from "app/entities/invoice";
 import { CrudOperation } from "app/constants";
-import { CollectionOf, QueryParams } from "app/interfaces";
+import { CollectionOf } from "app/interfaces";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { SortDirection } from "ui/common/table/constants";
 import TableContainer from "ui/common/table/TableContainer";
 import Form from "ui/common/Form";
 import { Column } from "ui/common/table/Table";
-import { readOptionsAction, readBillingPlansAction } from "ui/billing/actions";
+import { readOptionsAction } from "ui/billing/actions";
 import ButtonRow from "ui/common/ButtonRow";
 import BillingForm from "ui/billing/BillingForm";
 import DeleteInvoiceOptionModal from "ui/billing/DeleteInvoiceOptionModal";
 import UpdateBillingContainer, { UpdateBillingRenderProps } from "ui/billing/UpdateBillingContainer";
-import { BillingPlan } from "app/entities/billingPlan";
 import { InvoiceOptionQueryParams } from "api/invoices/interfaces";
 import StatusLabel from "ui/common/StatusLabel";
 import { Status } from "ui/common/constants";
@@ -25,18 +24,14 @@ import { numberAsCurrency } from "ui/utils/numberToCurrency";
 interface OwnProps { }
 interface DispatchProps {
   getOptions: (queryParams?: InvoiceOptionQueryParams) => void;
-  getBillingPlans: (type: InvoiceableResource) => void;
 }
 interface StateProps {
-  billingPlans: CollectionOf<BillingPlan>;
   options: CollectionOf<InvoiceOption>;
   totalItems: number;
   loading: boolean;
   error: string;
   isCreating: boolean;
   createError: string;
-  plansLoading: boolean;
-  plansError: string;
 }
 interface Props extends OwnProps, DispatchProps, StateProps { }
 interface State {
@@ -139,7 +134,7 @@ class OptionsList extends React.Component<Props, State> {
   private closeDeleteConfirm = () => this.setState({ openDeleteConfirm: false });
 
   private renderBillingForms = () => {
-    const { options, getBillingPlans, billingPlans, plansLoading, plansError } = this.props;
+    const { options } = this.props;
     const { selectedId, openCreateForm, openEditForm, openDeleteConfirm } = this.state;
 
     const editForm = (renderProps: UpdateBillingRenderProps) => (
@@ -151,10 +146,6 @@ class OptionsList extends React.Component<Props, State> {
         error={renderProps.error}
         onClose={renderProps.closeHandler}
         onSubmit={renderProps.submit}
-        getBillingPlans={getBillingPlans}
-        billingPlans={billingPlans}
-        plansLoading={plansLoading}
-        plansError={plansError}
       />
     );
 
@@ -167,10 +158,6 @@ class OptionsList extends React.Component<Props, State> {
         error={renderProps.error}
         onClose={renderProps.closeHandler}
         onSubmit={renderProps.submit}
-        getBillingPlans={getBillingPlans}
-        billingPlans={billingPlans}
-        plansLoading={plansLoading}
-        plansError={plansError}
       />
     );
 
@@ -238,7 +225,7 @@ class OptionsList extends React.Component<Props, State> {
           onClick: this.openEditForm,
           label: "Edit Billing Option"
         }, {
-          id: "billing-list-renew",
+          id: "billing-list-delete",
           variant: "contained",
           color: "secondary",
           disabled: !selectedId,
@@ -317,11 +304,6 @@ const mapStateToProps = (
 ): StateProps => {
   const {
     entities: options,
-    billingPlans: {
-      entities: billingPlans,
-      isRequesting: plansLoading,
-      error: plansError,
-    },
     read: {
       totalItems,
       isRequesting: loading,
@@ -332,16 +314,14 @@ const mapStateToProps = (
       error: createError
     }
   } = state.billing;
+
   return {
     options,
-    billingPlans,
     totalItems,
     loading,
     error,
     isCreating,
     createError,
-    plansLoading,
-    plansError,
   }
 }
 
@@ -350,7 +330,6 @@ const mapDispatchToProps = (
 ): DispatchProps => {
   return {
     getOptions: (queryParams) => dispatch(readOptionsAction(queryParams)),
-    getBillingPlans: (type) => dispatch(readBillingPlansAction([type]))
   }
 }
 

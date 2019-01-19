@@ -1,10 +1,12 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
+
 
 import { Subscription } from "app/entities/subscription";
-import { QueryParams, CollectionOf } from "app/interfaces";
+import { CollectionOf } from "app/interfaces";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { SortDirection } from "ui/common/table/constants";
@@ -18,13 +20,15 @@ import { CrudOperation } from "app/constants";
 import Form from "ui/common/Form";
 import UpdateSubscriptionContainer, { UpdateSubscriptionRenderProps } from "ui/subscriptions/UpdateSubscriptionContainer";
 import { numberAsCurrency } from "ui/utils/numberToCurrency";
+import { SubscriptionQueryParams } from "api/subscriptions/transactions";
 
 
 interface OwnProps { }
 interface DispatchProps {
-  getSubscriptions: (queryParams?: QueryParams) => void;
+  getSubscriptions: (queryParams?: SubscriptionQueryParams) => void;
 }
 interface StateProps {
+  isAdmin: boolean;
   subscriptions: CollectionOf<Subscription>;
   totalItems: number;
   loading: boolean;
@@ -32,6 +36,7 @@ interface StateProps {
 }
 interface Props extends OwnProps, DispatchProps, StateProps { }
 interface State {
+  hideCanceled: boolean;
   selectedId: string;
   pageNum: number;
   orderBy: string;
@@ -70,6 +75,7 @@ class SubscriptionsList extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
+      hideCanceled: true,
       selectedId: undefined,
       pageNum: 0,
       orderBy: "",
@@ -79,8 +85,17 @@ class SubscriptionsList extends React.Component<Props, State> {
     };
   }
 
+  private getSubscriptions = () => {
+    const { hideCanceled } = this.state;
+    this.props.getSubscriptions({
+      ...hideCanceled && {
+        hideCanceled
+      }
+    })
+  }
+
   public componentDidMount() {
-    this.props.getSubscriptions();
+    this.getSubscriptions();
   }
 
   private getActionButtons = (): JSX.Element => {
@@ -95,7 +110,7 @@ class SubscriptionsList extends React.Component<Props, State> {
             color: "secondary",
             disabled: loading || !subscriptions[selectedId],
             onClick: this.openDeleteForm,
-            label: "Cancel Subscriptoin"
+            label: "Cancel Subscription"
           }
         ]}
       />
@@ -118,7 +133,7 @@ class SubscriptionsList extends React.Component<Props, State> {
 
   private renderInvoiceForms = () => {
     const { selectedId, openDeleteForm } = this.state;
-    const { subscriptions } = this.props;
+    const { subscriptions, isAdmin } = this.props;
 
     const deleteModal = (renderProps: UpdateSubscriptionRenderProps) => {
       const submit = async (form: Form) => {
@@ -141,8 +156,9 @@ class SubscriptionsList extends React.Component<Props, State> {
     return (
       <>
         <UpdateSubscriptionContainer
-          operation={CrudOperation.Update}
+          operation={CrudOperation.Delete}
           isOpen={openDeleteForm}
+          isAdmin={isAdmin}
           subscription={subscriptions[selectedId]}
           closeHandler={this.closeDeleteForm}
           render={deleteModal}
@@ -151,14 +167,31 @@ class SubscriptionsList extends React.Component<Props, State> {
     );
   }
 
+  private toggleSubscriptionView = () =>
+    this.setState(state => ({ hideCanceled: !state.hideCanceled }), this.getSubscriptions)
+
   public render(): JSX.Element {
     const { subscriptions: data, totalItems, loading, error } = this.props;
-    const { selectedId } = this.state;
+    const { selectedId, hideCanceled } = this.state;
 
     return (
       <>
         <Grid style={{ paddingTop: 20 }}>
           {this.getActionButtons()}
+        </Grid>
+        <Grid>
+          <FormControlLabel
+            control={
+              <Checkbox
+                name="hide-canceled"
+                value="hide-canceled"
+                checked={!!hideCanceled}
+                onChange={this.toggleSubscriptionView}
+                color="default"
+              />
+            }
+            label="Hide cancelled subscriptions."
+          />
         </Grid>
         <TableContainer
           id="subscriptions-table"
@@ -190,8 +223,10 @@ const mapStateToProps = (
       error
     }
   } = state.subscriptions;
+  const { currentUser: { isAdmin } } = state.auth;
   return {
     subscriptions: subscriptions,
+    isAdmin,
     totalItems,
     loading,
     error

@@ -16,7 +16,6 @@ interface OwnProps {
   onSubmit: (form: Form) => void;
 }
 
-
 class DeleteSubscription extends React.Component<OwnProps, {}> {
   public formRef: Form;
   private setFormRef = (ref: Form) => this.formRef = ref;
@@ -33,7 +32,7 @@ class DeleteSubscription extends React.Component<OwnProps, {}> {
         closeHandler={onClose}
         title="Delete Subscription"
         onSubmit={onSubmit}
-        submitText="Delete"
+        submitText="Cancel Subscription"
         error={error}
       >
         <Typography gutterBottom>
@@ -43,10 +42,10 @@ class DeleteSubscription extends React.Component<OwnProps, {}> {
           <span id="delete-subscription-member">{subscription.memberName}</span>
         </KeyValueItem>
         <KeyValueItem label="Type">
-          <span id="delete-subscription-resource">{`$${subscription.resourceClass}`}</span>
+          <span id="delete-subscription-resource">{`${subscription.resourceClass}`}</span>
         </KeyValueItem>
         <KeyValueItem label="Status">
-          <span id="delete-subscription-status">{`$${subscription.resourceClass}`}</span>
+          <span id="delete-subscription-status">{`${subscription.status}`}</span>
         </KeyValueItem>
         <KeyValueItem label="Next Payment">
           <span id="delete-subscription-next-payment">{timeToDate(subscription.nextBillingDate)}</span>

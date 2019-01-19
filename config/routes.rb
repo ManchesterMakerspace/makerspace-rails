@@ -20,6 +20,7 @@ Rails.application.routes.draw do
         resources :plans, only: [:index]
         resources :payment_methods, only: [:create, :index, :destroy]
         resources :subscriptions, only: [:show, :update, :destroy]
+        get '/plans/discounts', to: "plans#discounts"
       end
 
       namespace :admin  do

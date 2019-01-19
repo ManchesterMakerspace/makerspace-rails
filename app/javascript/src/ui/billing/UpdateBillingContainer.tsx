@@ -7,12 +7,12 @@ import { CrudOperation } from "app/constants";
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import Form from "ui/common/Form";
 import { updateBillingAction, createBillingAction, deleteBillingAction } from "ui/billing/actions";
-import BillingForm from "ui/billing/BillingForm"
+import { BillingFormComponent } from "ui/billing/BillingForm"
 import DeleteInvoiceOptionModal from "ui/billing/DeleteInvoiceOptionModal";
 
 export interface UpdateBillingRenderProps extends Props {
   submit: (form: Form) => Promise<boolean>;
-  setRef: (ref: BillingForm | DeleteInvoiceOptionModal) => void;
+  setRef: (ref: BillingFormComponent | DeleteInvoiceOptionModal) => void;
 }
 interface OwnProps {
   billingOption: Partial<InvoiceOption>;
@@ -31,8 +31,8 @@ interface DispatchProps {
 interface Props extends OwnProps, StateProps, DispatchProps { }
 
 class EditBillingOption extends React.Component<Props, {}> {
-  private formRef: BillingForm;
-  private setFormRef = (ref: BillingForm) => this.formRef = ref;
+  private formRef: BillingFormComponent;
+  private setFormRef = (ref: BillingFormComponent) => this.formRef = ref;
 
   public componentDidUpdate(prevProps: Props) {
     const { isRequesting: wasRequesting } = prevProps;

@@ -73,5 +73,5 @@ export enum PaymentMethodType {
 }
 
 export interface InvoiceQueryParams extends QueryParams {
-  [Properties.ResourceId]: string;
+  [Properties.ResourceId]?: string;
 }

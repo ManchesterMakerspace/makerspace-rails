@@ -12,7 +12,7 @@ interface FormModalProps {
   cancelText?: string;
   onSubmit: (form: Form) => void;
   submitText?: string;
-  loading: boolean;
+  loading?: boolean;
   children?: React.ReactNode;
   error?: string;
   style?: { [key: string]: string }

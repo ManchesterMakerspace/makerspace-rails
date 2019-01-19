@@ -4,15 +4,15 @@ class Billing::SubscriptionsController < ApplicationController
     before_action :verify_own_subscription, only: [:show, :update, :destroy]
 
   def show
-    subscription = ::BraintreeService::Subscription.get_subscription(@gateway, subscription_id)
-    render json: subscription, serializer: Braintree::SubscriptionSerializer and return
+    subscription = ::BraintreeService::Subscription.get_subscription(@gateway, params[:id])
+    render json: subscription, serializer: Braintree::SubscriptionSerializer, root: "subscription" and return
   end
 
   def update
     # 2 different types of updates (payment method or plan)
     result = ::BraintreeService::Subscription.update(@gateway, subscription_params)
     if result.success?
-      render json: result.subscription, serializer: Braintree::SubscriptionSerializer and return
+      render json: subscription, serializer: Braintree::SubscriptionSerializer, root: "subscription" and return
     else
       render json: { error: result.errors.map { |e| e.message } }, status: 500 and return
     end
@@ -37,7 +37,7 @@ class Billing::SubscriptionsController < ApplicationController
   end
 
   def verify_own_subscription
-    subscription_id = subscription_params[:id]
+    subscription_id = params[:id] || subscription_params[:id]
     @subscription_resource = current_member.find_subscription_resource(subscription_id)
     if @subscription_resource.nil?
       render json: { error: "Unauthorized or not found" }, status: 404 and return

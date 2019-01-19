@@ -24,10 +24,14 @@ import { numberAsCurrency } from "ui/utils/numberToCurrency";
 import { Status } from "ui/common/constants";
 import StatusLabel from "ui/common/StatusLabel";
 import Form from "ui/common/Form";
+import { BillingContext, Context } from "ui/billing/BillingContextContainer";
 
 interface OwnProps {
   member?: MemberDetails;
-  fields?: Column<Invoice>[];
+}
+
+interface ContextProps {
+  context: Context;
 }
 interface DispatchProps {
   getInvoices: (queryParams: QueryParams, admin: boolean) => void;
@@ -45,7 +49,9 @@ interface StateProps {
   currentUserId: string;
 }
 interface Props extends OwnProps, DispatchProps, StateProps { }
+interface ContextComponentProps extends Props, ContextProps {}
 interface State {
+  ownAllInvoices: boolean;
   selectedIds: string[];
   pageNum: number;
   orderBy: string;
@@ -59,24 +65,60 @@ interface State {
 }
 
 
-class InvoicesList extends React.Component<Props, State> {
+class InvoicesListComponent extends React.Component<ContextComponentProps, State> {
+  constructor(props: ContextComponentProps) {
+    super(props);
+    const { invoices, member, currentUserId } = props;
+    // Select all invoices if viewing your own invoices page for quick checkout
+    const ownAllInvoices = Object.values(invoices).every(invoice => invoice.memberId === currentUserId);
+    this.state = {
+      ownAllInvoices,
+      selectedIds: ownAllInvoices ? Object.keys(invoices) : [],
+      pageNum: 0,
+      orderBy: "",
+      search: "",
+      order: SortDirection.Asc,
+      openUpdateForm: false,
+      openCreateForm: false,
+      openSettleForm: false,
+      openDeleteConfirm: false,
+      openPaymentNotification: member && Array.isArray(invoices) && invoices.length > 0,
+    };
+  }
 
-  private fields: Column<Invoice>[] = [
-    {
+  private getFields = (): Column<Invoice>[] => [
+    ...this.state.ownAllInvoices ? [] : [{
       id: "member",
       label: "Member",
       cell: (row: Invoice) => row.memberName,
+      defaultSortDirection: SortDirection.Desc,
+    }],
+    {
+      id: "name",
+      label: "Name",
+      cell: (row: Invoice) => row.name,
+      defaultSortDirection: SortDirection.Desc,
+    },
+    {
+      id: "description",
+      label: "Description",
+      cell: (row: Invoice) => row.description,
       defaultSortDirection: SortDirection.Desc,
     },
     {
       id: "dueDate",
       label: "Due Date",
       cell: (row: Invoice) => {
+        const { ownAllInvoices } = this.state;
         const dueDate = timeToDate(row.dueDate);
         if (row.subscriptionId) {
           return `Automatic Payment on ${dueDate}`
         } else {
-          return dueDate;
+          if (row.settled && ownAllInvoices) {
+            return "N/A"
+          } else {
+            return dueDate;
+          }
         }
       },
       defaultSortDirection: SortDirection.Desc
@@ -87,7 +129,7 @@ class InvoicesList extends React.Component<Props, State> {
       cell: (row: Invoice) => numberAsCurrency(row.amount),
       defaultSortDirection: SortDirection.Desc
     },
-    ...this.props.admin && [{
+    ...this.props.admin ? [{
       id: "settled",
       label: "Paid?",
       cell: (row: Invoice) => {
@@ -107,39 +149,19 @@ class InvoicesList extends React.Component<Props, State> {
         )
       },
       defaultSortDirection: SortDirection.Desc
-    }],
+    }] : [],
     {
       id: "status",
       label: "Status",
       cell: (row: Invoice) => {
-        const statusColor = row.pastDue ? Status.Danger : Status.Success;
-        const label = row.pastDue ? "Past Due" : "Upcoming";
-
+        const statusColor = (row.pastDue && !row.settled) ? Status.Danger : Status.Success;
+        const label = row.settled ? "Paid" : (row.pastDue ? "Past Due" : "Upcoming");
         return (
-          <StatusLabel label={label} color={statusColor}/>
+          <StatusLabel label={label} color={statusColor} />
         );
       },
     }
   ];
-
-  constructor(props: Props) {
-    super(props);
-    const { invoices } = props;
-    // Select all invoices if viewing your own invoices page for quick checkout
-
-    this.state = {
-      selectedIds: [],
-      pageNum: 0,
-      orderBy: "",
-      search: "",
-      order: SortDirection.Asc,
-      openUpdateForm: false,
-      openCreateForm: false,
-      openSettleForm: false,
-      openDeleteConfirm: false,
-      openPaymentNotification: props.member && Array.isArray(invoices) && invoices.length > 0,
-    };
-  }
 
   private openCreateForm = () => { this.setState({ openCreateForm: true });}
   private closeCreateForm = () => { this.setState({ openCreateForm: false });}
@@ -156,9 +178,10 @@ class InvoicesList extends React.Component<Props, State> {
     const { selectedIds } = this.state;
     const { admin, currentUserId, invoices } = this.props;
     const selectedInvoices = Object.values(pick(invoices, selectedIds));
-    const payNow = (selectedInvoices).every(invoice => invoice.memberId === currentUserId)
+    const viewingOwnInvoices = (Object.values(invoices)).every(invoice => invoice.memberId === currentUserId);
+    const payNow = viewingOwnInvoices && selectedInvoices.length;
 
-    const payLabel = `Pay Selected Due${(selectedInvoices).length > 1 ? `s` : ''}${selectedInvoices.length ? ` (${selectedInvoices.length})` : ""}`;
+    const payLabel = "Pay Selected Dues";
     const actionButtons: ActionButton[] = [
       ...admin ? [{
             id: "invoices-list-create",
@@ -222,7 +245,7 @@ class InvoicesList extends React.Component<Props, State> {
     }
 
     if ((wasCreating && !isCreating && !createError) || // refresh list on create
-        (oldMember !== member) // or member change
+        (oldMember.id !== member.id) // or member change
        ) {
       this.getInvoices();
     }
@@ -389,12 +412,6 @@ class InvoicesList extends React.Component<Props, State> {
     )
   }
 
-  private getFields = () => {
-    return [
-      ...this.props.fields || this.fields,
-    ];
-  }
-
   public render(): JSX.Element {
     const {
       invoices,
@@ -488,4 +505,15 @@ const mapDispatchToProps = (
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(InvoicesList);
+
+const ConnectedInvoicesListComponent = connect(mapStateToProps, mapDispatchToProps)(InvoicesListComponent);
+
+const InvoicesList = React.forwardRef(
+  (props: OwnProps, ref: any) => (
+    <BillingContext.Consumer>
+      {context => <ConnectedInvoicesListComponent {...props} context={context} ref={ref} />}
+    </BillingContext.Consumer>
+  )
+);
+
+export default InvoicesList;

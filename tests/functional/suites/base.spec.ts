@@ -23,6 +23,9 @@ it('initialises the context', async () => {
 // Smoke test that app is running
 it('should load the landing page', async () => {
   await browser.get(rootURL);
-  const el = await utils.getElementByCss('[id="landing-page-graphic"]');
-  expect(await el.getText()).toEqual("Manchester Makerspace");
+  expect(await utils.isElementDisplayed('[id="landing-page-graphic"]')).toBeTruthy();
+});
+
+afterAll(function (done) {
+  process.nextTick(done);
 });

@@ -30,6 +30,7 @@ export const defaultMembers: LoginMember[] = new Array(20).fill(undefined).map((
   switch (expirationNum) {
     case 0:
       expirationTime = (moment().subtract(1, "months").valueOf())
+      break;
     case (4 || 5):
       expirationTime = (moment().add(3, "months").valueOf())
       break;

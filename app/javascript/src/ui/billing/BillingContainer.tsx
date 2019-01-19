@@ -1,6 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { Routing } from "app/constants";
 import DetailView from "ui/common/DetailView";
 import SubscriptionsList from "ui/subscriptions/SubscriptionsList";
 import OptionsList from "ui/billing/OptionsList";
@@ -33,7 +34,7 @@ class BillingContainer extends React.Component<Props, State> {
     return (
       <DetailView
         title="Billing Central"
-        basePath="/billing"
+        basePath={Routing.Billing}
         information={this.renderBillingInfo()}
         actionButtons={[]}
         resources={[

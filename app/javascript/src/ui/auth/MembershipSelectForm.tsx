@@ -43,7 +43,7 @@ class MembershipSelectComponent extends React.Component<Props> {
 
   private getOption = (id: string) => this.props.membershipOptions[id];
   private updateOptionDiscount = (option: InvoiceOption) => {
-    if (this.props.discountId) { // Only want to update if
+    if (this.props.discountId) { // Only want to update if selected
       (option.discountId && option.discountId !== this.props.discountId) && this.props.onDiscount(option.discountId);
     }
   }
@@ -105,7 +105,7 @@ class MembershipSelectComponent extends React.Component<Props> {
 
     let normalizedError: JSX.Element = invoiceOptionsError && (
       <>
-        Error reading membership options. Email <a href={`mailto: contact@manchestermakerspace.org`}>contact@manchestermakerspace.org</a> if your desired membership option is not present
+        Error reading membership options: {invoiceOptionsError}. Email <a href={`mailto: contact@manchestermakerspace.org`}>contact@manchestermakerspace.org</a> if your desired membership option is not present
       </>
     );
     return (

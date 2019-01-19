@@ -106,7 +106,7 @@ class PaymentMethodForm extends React.Component<Props, State> {
           <Typography variant="subheading">Select Payment Method</Typography>
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
-          <Button fullWidth variant="outlined" onClick={this.selectCC}>Credit Card</Button>
+          <Button fullWidth variant="outlined" onClick={this.selectCC} id="card-payment">Credit or debit card</Button>
         </Grid>
         <Grid item xs={12}>
           <PaypalButton
@@ -115,7 +115,7 @@ class PaymentMethodForm extends React.Component<Props, State> {
           />
         </Grid>
         {(isRequesting || !braintreeInstance) && <LoadingOverlay id="payment-method-loading"/>}
-        {!isRequesting && braintreeError && braintreeError.message && <ErrorMessage error={braintreeError.message} />}
+        {!isRequesting && braintreeError && braintreeError.message && <ErrorMessage error={braintreeError.message} id="braintree-payment-method-error"/>}
       </Grid>
     );
   }

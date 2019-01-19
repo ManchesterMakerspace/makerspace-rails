@@ -5,35 +5,9 @@ import toNumber from "lodash-es/toNumber";
 import { Action as BillingAction } from "ui/billing/constants";
 import { BillingState } from "ui/billing/interfaces";
 import { getInvoiceOptions, postInvoiceOptions, putInvoiceOption, deleteInvoiceOption } from "api/invoices/transactions";
-import { InvoiceOption, Invoice, InvoiceableResource } from "app/entities/invoice";
+import { InvoiceOption } from "app/entities/invoice";
 import { omit } from "lodash-es";
-import { getPlans } from "api/billingPlans/transactions";
-import { BillingPlan } from "app/entities/billingPlan";
 import { InvoiceOptionQueryParams } from "api/invoices/interfaces";
-
-export const readBillingPlansAction = (
-  types: InvoiceableResource[]
-): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
-  dispatch({ type: BillingAction.StartPlansRequest });
-  try {
-    const response = await getPlans({ types });
-    const { plans: billingPlans } = response.data;
-    const totalItems = response.headers[("total-items")];
-    dispatch({
-      type: BillingAction.GetPlansSuccess,
-      data: {
-        billingPlans,
-        totalItems: toNumber(totalItems)
-      }
-    });
-  } catch (e) {
-    const { errorMessage } = e;
-    dispatch({
-      type: BillingAction.GetPlansFailure,
-      error: errorMessage
-    });
-  }
-}
 
 export const readOptionsAction = (
   queryParams?: InvoiceOptionQueryParams,
@@ -123,11 +97,6 @@ export const deleteBillingAction = (
 
 const defaultState: BillingState = {
   entities: {},
-  billingPlans: {
-    entities: {},
-    isRequesting: false,
-    error: "",
-  },
   read: {
     isRequesting: false,
     error: "",
@@ -189,44 +158,6 @@ export const billingReducer = (state: BillingState = defaultState, action: AnyAc
           isRequesting: false,
           error
         }
-      }
-    case BillingAction.StartPlansRequest:
-    return {
-      ...state,
-      billingPlans: {
-        ...state.billingPlans,
-        isRequesting: true,
-      }
-    }
-    case BillingAction.GetPlansSuccess:
-      const {
-        data: {
-          billingPlans,
-          totalItems: planTotalItems,
-        }
-      } = action;
-
-      const newPlans = {};
-      billingPlans.forEach((plan: BillingPlan) => {
-        newPlans[plan.id] = plan;
-      });
-
-      return {
-        ...state,
-        billingPlans: {
-          entities: newPlans,
-          isRequesting: false,
-          error: ""
-        },
-      };
-    case BillingAction.GetPlansFailure:
-      const { planError } = action;
-      return {
-        ...state,
-        billingPlans: {
-          isRequesting: false,
-          error: planError
-        },
       }
     case BillingAction.StartCreateRequest:
       return {

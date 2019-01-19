@@ -101,7 +101,7 @@ class PaymentMethods extends React.Component<Props, State> {
             <Card>
               <CardContent>
                 <PaymentMethodForm closeHandler={this.closeAddPaymentMethod} onSuccess={this.onAddSuccess}/>
-                {<Button variant="outlined" id={`payment-method-cancel`} onClick={this.closeAddPaymentMethod}>Cancel</Button>}
+                {<Button variant="outlined" id="payment-method-cancel" onClick={this.closeAddPaymentMethod}>Cancel</Button>}
               </CardContent>
             </Card>
           </Grid>
@@ -119,11 +119,11 @@ class PaymentMethods extends React.Component<Props, State> {
     }
     const paymentMethodInfo = isCreditCard(selectedPaymentMethod) ?
       (<KeyValueItem label={selectedPaymentMethod.cardType}>
-        <span id="delete-invoice-contact">{selectedPaymentMethod.cardType} ending in {selectedPaymentMethod.last4}</span>
+        <span id="payment-method-info">{selectedPaymentMethod.cardType} ending in {selectedPaymentMethod.last4}</span>
       </KeyValueItem>) : <KeyValueItem label="PayPal">Username</KeyValueItem>
     return (
       <FormModal
-        id="delete-invoice-confirm"
+        id="delete-payment-method-confirm"
         formRef={this.setFormRef}
         loading={isRequesting || isDeleting}
         isOpen={openDeleteModal}
@@ -166,7 +166,13 @@ class PaymentMethods extends React.Component<Props, State> {
       label = "PayPal";
     }
     return (
-      <FormControlLabel key={paymentMethod.id} value={paymentMethod.id} control={<Radio color="primary" />} label={label} />
+      <FormControlLabel
+        id={`select-payment-method-${paymentMethod.id}`}
+        key={paymentMethod.id}
+        value={paymentMethod.id}
+        control={<Radio color="primary" />}
+        label={label}
+      />
     )
   }
 
@@ -178,6 +184,7 @@ class PaymentMethods extends React.Component<Props, State> {
       ...managingMethods ? [{
         color: "secondary",
         variant: "outlined",
+        id: "delete-payment-button",
         disabled: isRequesting || !selectedPaymentMethodId,
         onClick: this.openDeleteModal,
         label: "Delete Payment Method"
@@ -186,6 +193,7 @@ class PaymentMethods extends React.Component<Props, State> {
         color: "primary",
         variant: "contained",
         disabled: isRequesting,
+        id: "add-payment-button",
         onClick: this.addNewPaymentMethod,
         label: "Add New Payment Method"
       }
@@ -220,7 +228,7 @@ class PaymentMethods extends React.Component<Props, State> {
                     <ErrorMessage id={`get-payment-methods-error`} error={!isRequesting && error} />
                   </FormControl>
                 ) ||
-                  <Typography variant="body1" color="inherit">No payment methods found.  Click "Add New Payment Method" to add one.</Typography>
+                  <Typography variant="body1" color="inherit" id="none-found">No payment methods found.  Click "Add New Payment Method" to add one.</Typography>
               }
           </Grid>
           <Grid item xs={12}>

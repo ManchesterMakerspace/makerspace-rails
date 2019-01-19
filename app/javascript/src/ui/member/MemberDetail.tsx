@@ -1,17 +1,14 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import { Redirect } from "react-router";
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 
 import { MemberDetails } from "app/entities/member";
 
-import { Invoice } from "app/entities/invoice";
-import { Column } from "ui/common/table/Table";
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { displayMemberExpiration } from "ui/member/utils";
-import { timeToDate } from "ui/utils/timeToDate";
 import LoadingOverlay from "ui/common/LoadingOverlay";
 import KeyValueItem from "ui/common/KeyValueItem";
-import { SortDirection } from "ui/common/table/constants";
 import DetailView from "ui/common/DetailView";
 import { readMemberAction } from "ui/member/actions";
 import RenewalForm from "ui/common/RenewalForm";
@@ -24,11 +21,7 @@ import AccessCardForm from "ui/accessCards/AccessCardForm";
 import InvoicesList from "ui/invoices/InvoicesList";
 import RentalsList from "ui/rentals/RentalsList";
 import { Routing, CrudOperation } from "app/constants";
-import { numberAsCurrency } from "ui/utils/numberToCurrency";
-import StatusLabel from "ui/common/StatusLabel";
-import { Status } from "ui/common/constants";
 import { ActionButton } from "ui/common/ButtonRow";
-import SettingsContainer from "ui/member/Settings";
 
 interface DispatchProps {
   getMember: () => Promise<void>;
@@ -52,74 +45,25 @@ interface State {
   isRenewOpen: boolean;
   isCardOpen: boolean;
   isWelcomeOpen: boolean;
-  isSettingsOpen: boolean;
   isInvoiceNotificationOpen: boolean;
   submittingSignature: boolean;
   submitSignatureError: string;
+  redirect: string;
 }
 const defaultState = {
   isEditOpen: false,
   isRenewOpen: false,
   isCardOpen: false,
   isWelcomeOpen: false,
-  isSettingsOpen: false,
   isInvoiceNotificationOpen: false,
   submittingSignature: false,
-  submitSignatureError: ""
+  submitSignatureError: "",
+  redirect: "",
 }
 
-const allowedResources = new Set(["dues, rentals"]);
+const allowedResources = new Set(["dues", "rentals"]);
 
 class MemberDetail extends React.Component<Props, State> {
-  private invoiceFields: Column<Invoice>[] = [
-    {
-      id: "description",
-      label: "Description",
-      cell: (row: Invoice) => row.description,
-      defaultSortDirection: SortDirection.Desc,
-    },
-    {
-      id: "dueDate",
-      label: "Due Date",
-      cell: (row: Invoice) => {
-        const textColor = row.pastDue ? "red" : "black"
-        return (
-          <span style={{ color: textColor }}>
-            {timeToDate(row.dueDate)}
-          </span>
-        )
-      },
-      defaultSortDirection: SortDirection.Desc
-    },
-    {
-      id: "amount",
-      label: "Amount",
-      cell: (row: Invoice) => numberAsCurrency(row.amount),
-      defaultSortDirection: SortDirection.Desc
-    },
-    {
-      id: "status",
-      label: "Status",
-      cell: (row: Invoice) => {
-        const statusColor = row.pastDue ? Status.Danger : Status.Success;
-        let label;
-        if (row.pastDue) {
-          label = "Past Due";
-        } else {
-          if (row.subscriptionId) {
-            label = "Upcoming - Automatic"
-          } else {
-            label = "Due";
-          }
-        }
-
-        return (
-          <StatusLabel label={label} color={statusColor} />
-        );
-      },
-    }
-  ];
-
   constructor(props: Props) {
     super(props);
 
@@ -136,15 +80,15 @@ class MemberDetail extends React.Component<Props, State> {
   public componentDidUpdate(prevProps: Props) {
     const oldMemberId = prevProps.match.params.memberId;
     const { isRequestingMember: wasRequesting } = prevProps;
-    const { currentUserId, admin, isRequestingMember, match, getMember, member, history, match: { params: { resource } } } = this.props;
+    const { currentUserId, isRequestingMember, match, getMember, member, history, match: { params: { resource } } } = this.props;
     const { memberId } = match.params;
     if (oldMemberId !== memberId && !isRequestingMember) {
       getMember();
     }
     if (wasRequesting && !isRequestingMember) {
       if (member) {
-        if (resource && !allowedResources.has(resource)) {
-          history.push(Routing.Profile.replace(Routing.PathPlaceholder.MemberId, currentUserId))
+        if (resource) {
+          !allowedResources.has(resource) && history.push(Routing.Profile.replace(Routing.PathPlaceholder.MemberId, currentUserId))
         }
       } else {
         history.push(Routing.Members);
@@ -159,8 +103,6 @@ class MemberDetail extends React.Component<Props, State> {
   private openCardModal = () => this.setState({ isCardOpen: true });
   private closeCardModal = () => this.setState({ isCardOpen: false });
   private closeWelcomeModal = () => this.setState({ isWelcomeOpen: false });
-  private openSettings = () => this.setState({ isSettingsOpen: true });
-  private closeSettings = () => this.setState({ isSettingsOpen: false });
 
   private renderMemberInfo = (): JSX.Element => {
     const { member } = this.props;
@@ -188,12 +130,19 @@ class MemberDetail extends React.Component<Props, State> {
     return this.props.match.params.memberId === currentUserId;
   }
 
+  private redirectToSettings = () => {
+    this.setState({ redirect: Routing.Settings });
+  }
+
   private renderMemberDetails = (): JSX.Element => {
     const { member, isUpdatingMember, isRequestingMember, match, admin } = this.props;
     const { memberId } = match.params;
+    const { redirect } = this.state;
     const loading = isUpdatingMember || isRequestingMember;
-    const { isWelcomeOpen, isSettingsOpen } = this.state;
-    return isSettingsOpen ? this.renderSettings() : (
+    if (redirect) {
+      return <Redirect to={redirect} />
+    }
+    return (
       <>
         <DetailView
           title={`${member.firstname} ${member.lastname}`}
@@ -205,7 +154,7 @@ class MemberDetail extends React.Component<Props, State> {
               variant: "outlined",
               disabled: loading,
               label: "Settings",
-              onClick: this.openSettings
+              onClick: this.redirectToSettings
             } as ActionButton] : [],
             ...admin ? [{
               id: "member-detail-open-edit-modal",
@@ -235,12 +184,7 @@ class MemberDetail extends React.Component<Props, State> {
           resources={(this.allowViewProfile() || admin) && [
             {
               name: "dues",
-              content: (
-                <InvoicesList
-                  member={member}
-                  fields={this.invoiceFields}
-                />
-              )
+              content: <InvoicesList member={member} />
             },
             {
               name: "rentals",
@@ -255,17 +199,6 @@ class MemberDetail extends React.Component<Props, State> {
         {this.renderMemberForms()}
         {/* {this.renderNotifications()} */}
       </>
-    )
-  }
-
-  private renderSettings = () => {
-    const { member, admin } = this.props;
-    return !!this.allowViewProfile() &&  (
-      <SettingsContainer
-        member={member}
-        closeHandler={this.closeSettings}
-        isAdmin={admin}
-      />
     )
   }
 

@@ -3,19 +3,18 @@ import { ThunkAction } from "redux-thunk";
 import toNumber from "lodash-es/toNumber";
 import omit from "lodash-es/omit";
 
-import { QueryParams } from "app/interfaces";
-import { getSubscriptions, deleteSubscription, getSubscription } from "api/subscriptions/transactions";
+import { getSubscriptions, deleteSubscription, getSubscription, SubscriptionQueryParams } from "api/subscriptions/transactions";
 import { Action as SubscriptionsAction } from "ui/subscriptions/constants";
 import { SubscriptionsState } from "ui/subscriptions/interfaces";
 import { Subscription } from "app/entities/subscription";
 
 export const readSubscriptionsAction = (
-  queryParams?: QueryParams
+  queryParams?: SubscriptionQueryParams
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
   dispatch({ type: SubscriptionsAction.StartReadRequest });
 
   try {
-    const response = await getSubscriptions(queryParams);
+    const response = await getSubscriptions(queryParams, true);
     const {subscriptions} = response.data;
     const totalItems = response.headers[("total-items")];
     dispatch({
@@ -41,10 +40,13 @@ export const readSubscriptionAction = (
 
   try {
     const response = await getSubscription(id);
-    const { data } = response;
+    const { subscription } = response.data;
     dispatch({
       type: SubscriptionsAction.GetSubscriptionsSuccess,
-      data: [data.subscription]
+      data: {
+        subscriptions: [subscription],
+        totalItems: 1
+      }
     });
   } catch (e) {
     const { errorMessage } = e;
@@ -57,11 +59,12 @@ export const readSubscriptionAction = (
 
 export const deleteSubscriptionAction = (
   invoiceId: string,
+  admin: boolean = false,
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
   dispatch({ type: SubscriptionsAction.StartDeleteRequest });
 
   try {
-    await deleteSubscription(invoiceId);
+    await deleteSubscription(invoiceId, admin);
     dispatch({
       type: SubscriptionsAction.DeleteSuccess,
       data: invoiceId
@@ -157,7 +160,7 @@ export const subscriptionsReducer = (state: SubscriptionsState = defaultState, a
         delete: {
           ...state.delete,
           isRequesting: false,
-          error
+          error: deleteError,
         }
       }
     default:

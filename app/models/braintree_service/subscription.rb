@@ -8,12 +8,13 @@ class BraintreeService::Subscription < Braintree::Subscription
   def self.get_subscriptions(gateway, &search_query)
     subscriptions = gateway.subscription.search { search_query && search_query.call }
     subscriptions.map do |subscription|
-      self.new(gateway, instance_to_hash(subscription))
+      normalize_subscription(gateway, subscription)
     end
   end
 
   def self.get_subscription(gateway, id)
-    gateway.subscription.find(id)
+    subscription = gateway.subscription.find(id)
+    normalize_subscription(gateway, subscription)
   end
 
   def self.cancel(gateway, id)
@@ -21,30 +22,46 @@ class BraintreeService::Subscription < Braintree::Subscription
   end
 
   def self.update(gateway, subscription)
-    gateway.subscription.update(
+    subscription = gateway.subscription.update(
       subscription[:id], # id of subscription to update
       :payment_method_token => subscription[:payment_method_token],
       :plan_id => subscription[:plan_id],
     )
+    normalize_subscription(gateway, subscription)
   end
 
   def self.create(gateway, subscription)
-    gateway.subscription.create(
+    subscription = gateway.subscription.create(
       :payment_method_token => subscription[:payment_method_token],
       :plan_id => subscription[:plan_id]
     )
+    normalize_subscription(gateway, subscription)
+  end
+
+  def self.generate_id(invoice)
+    "#{invoice.resource_class}_#{invoice.resource_id}_#{SecureRandom.hex[0...6]}"
+  end
+
+  def self.read_id(id)
+    resource_class, resource_id, hash = id.split("_")
+    [resource_class, resource_id]
   end
 
   def initialize(gateway, args)
     super(gateway, args)
-    self.set_resource
+    set_resource
+  end
+
+  private
+  def self.normalize_subscription(gateway, subscription)
+      self.new(gateway, instance_to_hash(subscription))
   end
 
   def set_resource
-    resource_class, resource_id = self.id.split("_")
+    resource_class, resource_id = self.class.read_id(id)
     if resource_class && resource_id
-      @resource = Invoice.find_resource(resource_class, resource_id)
-      self.set_member
+      @resource = Invoice.resource(resource_class, resource_id)
+      set_member
     end
   end
 

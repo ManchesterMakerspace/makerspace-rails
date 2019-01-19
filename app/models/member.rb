@@ -14,7 +14,7 @@ class Member
   field :firstname
   field :lastname
   field :status,                         default: "activeMember" # activeMember, nonMember, revoked, inactive
-  field :expirationTime,   type: Integer #pre-calcualted time of expiration
+  field :expirationTime,  type: Integer, default: Time.now #pre-calcualted time of expiration
   field :startDate, default: Time.now
   field :groupName #potentially member is in a group/partner membership
   field :role,                          default: "member" #admin,officer,member
@@ -109,7 +109,15 @@ class Member
     end
   end
 
+  def find_subscription_resource(id)
+    resource = self if self.subscription_id && self.subscription_id == id
+    resource = (self.rentals && self.rentals.find_by(subscription_id: subscription_id)) if resource.nil?
+    resource
+  end
 
+  def remove_subscription
+    self.update({ subscription_id: nil, subscription: false })
+  end
 
   protected
   def find_braintree_customer
@@ -126,16 +134,6 @@ class Member
       )
       customer = gateway.customer.update(self.customer_id, firstname: self.firstname, lastname: self.lastname)
     end
-  end
-
-  def find_subscription_resource(id)
-    resource = self if self.subscription_id && self.subscription_id == id
-    resource = (self.rentals && self.rentals.find_by(subscription_id: subscription_id)) if resource.nil?
-    resource
-  end
-
-  def remove_subscription
-    self.update({ subscription_id: nil, subscription: false })
   end
 
   def expiration_attr

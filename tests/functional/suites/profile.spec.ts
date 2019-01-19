@@ -4,9 +4,15 @@ import { timeToDate } from "ui/utils/timeToDate";
 import { basicUser, adminUser, basicMembers } from "../constants/member";
 import { mockRequests, mock } from "../mockserver-client-helpers";
 import { CardStatus } from "app/entities/card";
+import { Rental } from "app/entities/rental";
+import { Invoice } from "app/entities/invoice";
 import auth, { LoginMember } from "../pageObjects/auth";
 import utils from "../pageObjects/common";
 import memberPO from "../pageObjects/member";
+import rentalPO from "../pageObjects/rentals";
+import invoicePo from "../pageObjects/invoice";
+import { defaultRental } from "../constants/rental";
+import { defaultInvoice } from "../constants/invoice";
 
 const reviewMemberInfo = async (loggedInUser: LoginMember, viewingMember?: LoginMember, executeLogin: boolean = true) => {
   if (!viewingMember) viewingMember = loggedInUser;
@@ -16,10 +22,22 @@ const reviewMemberInfo = async (loggedInUser: LoginMember, viewingMember?: Login
     await mock(mockRequests.member.get.ok(viewingMember.id, viewingMember, true));
     await auth.autoLogin(loggedInUser, memberPO.getProfilePath(viewingMember.id));
   }
-  const { firstname, lastname, email, expirationTime, cardId } = viewingMember;
+  const { firstname, lastname, email, expirationTime } = viewingMember;
   expect(await utils.getElementText(memberPO.memberDetail.title)).toEqual(`${firstname} ${lastname}`);
   expect(await utils.getElementText(memberPO.memberDetail.email)).toEqual(email);
   expect(await utils.getElementText(memberPO.memberDetail.expiration)).toEqual(expirationTime ? timeToDate(expirationTime) : "N/A");
+}
+
+const reviewSubResource = async (member: LoginMember, rentals: Rental[], invoices: Invoice[], admin: boolean = false) => {
+  // Rentals displayed
+  await mock(mockRequests.rentals.get.ok(rentals, { memberId: member.id }, admin));
+  await memberPO.goToMemberRentals();
+  expect(await rentalPO.getColumnText("number", rentals[0].id)).toEqual(rentals[0].number);
+  // Go to rentals
+  // Invoices displayed
+  await mock(mockRequests.invoices.get.ok(invoices, { resourceId: member.id }, admin));
+  await memberPO.gotToMemberDues();
+  expect(await invoicePo.getColumnText("name", invoices[0].id)).toEqual(invoices[0].name);
 }
 
 describe("Member Profiles", () => {
@@ -31,12 +49,23 @@ describe("Member Profiles", () => {
         */
         await reviewMemberInfo(basicUser);
       });
-      xit("Displays sub-resources pertaining to you", async () => {
+      it("Displays sub-resources pertaining to you", async () => {
         /* 1. Login as basic user
            2. Assert profile shows tables for: Dues, Rentals,
         */
-        return auth.autoLogin(basicUser);
-        // TODO: Displays sub resources
+        const rental = {
+          ...defaultRental,
+          memberId: basicUser.id,
+          memberName: `${basicUser.firstname} ${basicUser.lastname}`,
+        };
+        const invoice = {
+          ...defaultInvoice,
+          memberId: basicUser.id,
+          memberName: `${basicUser.firstname} ${basicUser.lastname}`,
+        }
+        return auth.autoLogin(basicUser).then(() => {
+          return reviewSubResource(basicUser, [rental], [invoice]);
+        });
       });
     });
     describe("Other's Profile", () => {
@@ -48,7 +77,8 @@ describe("Member Profiles", () => {
         const loggedInUser = basicMembers[0];
         const viewingMember = basicMembers[1];
         await reviewMemberInfo(loggedInUser, viewingMember);
-        // TODO: Doesn't display sub resources
+        expect(await utils.isElementDisplayed(memberPO.memberDetail.duesTab)).toBeFalsy();
+        expect(await utils.isElementDisplayed(memberPO.memberDetail.rentalsTab)).toBeFalsy();
       });
     });
   });
@@ -60,12 +90,23 @@ describe("Member Profiles", () => {
         */
         await reviewMemberInfo(adminUser);
       });
-      xit("Displays sub-resources pertaining to you", async () => {
+      it("Displays sub-resources pertaining to you", async () => {
         /* 1. Login as admin
            2. Assert profile shows tables for: Dues, Rentals,
         */
-        return auth.autoLogin(adminUser);
-        // TODO: Displays sub resources
+        const rental = {
+          ...defaultRental,
+          memberId: adminUser.id,
+          memberName: `${adminUser.firstname} ${adminUser.lastname}`,
+        };
+        const invoice = {
+          ...defaultInvoice,
+          memberId: adminUser.id,
+          memberName: `${adminUser.firstname} ${adminUser.lastname}`,
+        }
+        return auth.autoLogin(adminUser).then(() => {
+          return reviewSubResource(adminUser, [rental], [invoice], true);
+        })
       });
     });
     describe("Other's Profile", () => {
@@ -77,13 +118,23 @@ describe("Member Profiles", () => {
         email: "updated_member@test.com",
       }
 
-      xit("Displays their membership information", async () => {
+      it("Displays their membership information and sub-resources", async () => {
         /* 1. Login as admin user
            2. Navigate to another user's profile
            2. Assert information block contains other member's info
         */
+        const rental = {
+          ...defaultRental,
+          memberId: viewingMember.id,
+          memberName: `${viewingMember.firstname} ${viewingMember.lastname}`,
+        };
+        const invoice = {
+          ...defaultInvoice,
+          memberId: viewingMember.id,
+          memberName: `${viewingMember.firstname} ${viewingMember.lastname}`,
+        }
         await reviewMemberInfo(adminUser, viewingMember);
-        // TODO: Displays sub resources
+        await reviewSubResource(viewingMember, [rental], [invoice], true);
       });
       it("Can edit member's information", async () => {
         /* 1. Login as admin and nav to basic user's profile
@@ -99,9 +150,11 @@ describe("Member Profiles", () => {
         await utils.clickElement(memberPO.memberDetail.openEditButton);
         await mock(mockRequests.member.put.ok(updatedMember.id, updatedMember));
         await mock(mockRequests.member.get.ok(updatedMember.id, updatedMember));
+        await utils.fillInput(memberPO.memberForm.email, "");
         await utils.fillInput(memberPO.memberForm.email, updatedMember.email);
         await utils.fillInput(memberPO.memberForm.firstname, updatedMember.firstname);
         await utils.fillInput(memberPO.memberForm.lastname, updatedMember.lastname);
+        await utils.fillInput(memberPO.memberForm.expiration, new Date(updatedMember.expirationTime).toDateString());
         await utils.clickElement(memberPO.memberForm.submit);
         await utils.waitForNotVisible(memberPO.memberForm.submit);
         await reviewMemberInfo(adminUser, updatedMember, false);
@@ -131,6 +184,7 @@ describe("Member Profiles", () => {
         await utils.fillInput(memberPO.memberForm.email, "foo");
         await utils.fillInput(memberPO.memberForm.firstname, updatedMember.firstname);
         await utils.fillInput(memberPO.memberForm.lastname, updatedMember.lastname);
+        await utils.fillInput(memberPO.memberForm.expiration, new Date(updatedMember.expirationTime).toDateString());
         await utils.clickElement(memberPO.memberForm.submit);
         await utils.assertInputError(memberPO.memberForm.email)
         await utils.assertNoInputError(memberPO.memberForm.firstname)

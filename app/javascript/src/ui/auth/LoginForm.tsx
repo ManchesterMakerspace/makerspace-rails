@@ -19,11 +19,11 @@ import FormModal from "ui/common/FormModal";
 import { requestNewPassword } from "api/auth/transactions";
 
 const formPrefix = "request-password-reset";
-const PasswordFields = {
+const passwordFields = {
   email: {
     label: "Email",
     name: `${formPrefix}-email`,
-    placeholder: "Enter email",
+    placeholder: "Enter email address",
     error: "Invalid email",
     validate: (val: string) => emailValid(val)
   },
@@ -89,7 +89,7 @@ class LoginForm extends React.Component<Props, State> {
   }
 
   private submitPasswordRequest = async (form: Form) => {
-    const { email } = await form.simpleValidate<AuthForm>(PasswordFields);
+    const { email } = await form.simpleValidate<AuthForm>(passwordFields);
 
     if (!form.isValid()) return;
 
@@ -120,17 +120,24 @@ class LoginForm extends React.Component<Props, State> {
         closeHandler={this.closePasswordReset}
       >
         { email ? (
-          <Typography >Check yo email</Typography>
+          <Typography>Instructions to reset your password have been sent to {email}</Typography>
           ) : (
-            <TextField
-              fullWidth
-              required
-              label={PasswordFields.email.label}
-              name={PasswordFields.email.name}
-              id={PasswordFields.email.name}
-              placeholder={PasswordFields.email.placeholder}
-              type="email"
-            />
+            <Grid container spacing={16}>
+              <Grid item xs={12}>
+                <Typography variant="body1">Please enter the email address associated with your account to receive an email with instructions to reset your password.</Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  required
+                  label={passwordFields.email.label}
+                  name={passwordFields.email.name}
+                  id={passwordFields.email.name}
+                  placeholder={passwordFields.email.placeholder}
+                  type="email"
+                />
+              </Grid>
+            </Grid>
           )
         }
 

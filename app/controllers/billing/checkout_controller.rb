@@ -19,18 +19,44 @@ class Billing::CheckoutController < ApplicationController
         render json: {error: e.message }, status: 500 and return
       end
       invoices = Invoice.any_in(id: checkout_params[:invoice_ids] )
+
       results = settle_invoices(invoices)
-      byebug
-      # TODO Email user a receipt
-      if results.all?(&:success?)
-        render json: { }, status: 200 and return
+      failures = results.select { |r| !r[:result].success? }
+
+      if results.any? { |r| r[:result].success? }
+        # TODO Email user a receipt
+
+        # All succeed, were good. Just return 200
+        if failures.size == 0
+          render json: { }, status: 200 and return
+
+        # Partial succeess.  Need to alert user what failed
+        else
+          checkout_failures = failures.map { |f| { invoice_ids: f[:invoice_ids], error: get_result_error(f[:result]) }}
+          render json: { failures: failures }, status: 200 and return
+        end
       else
-        error = results.errors.map { |e| e.message }
-        render json: {error: error }, status: 500 and return
+        error = failures.map { |f| get_result_error(f[:result]) }
+        render json: { error: error }, status: 500 and return
       end
     end
 
     private
+    def get_result_error(result)
+      error = "Unknown error"
+      if result.transaction && result.transaction.status === Braintree::Transaction::Status::GatewayRejected
+        error = "Braintree rejected transaction"
+      else
+        if result.errors && result.errors.size
+          error = result.errors.map { |e| e.message }.join("\n")
+        elsif result.error
+          error = result.error.message
+        end
+      end
+      # TODO: Slack notificsation of error result
+      error
+    end
+
     def generate_client_token
       return @gateway.client_token.generate
     end
@@ -45,15 +71,20 @@ class Billing::CheckoutController < ApplicationController
 
     def settle_invoices(invoices)
       single_transactions, new_subscriptions = invoices.partition { |invoice| invoice.plan_id.nil? }
-      subscription_results = new_subscriptions.map { |invoice| create_subscription(invoice) } unless new_subscriptions.empty?
-      result = submit_transaction(single_transactions) unless single_transactions.empty?
-      subscription_results.concat([result])
+      subscription_results = new_subscriptions.map { |invoice| { invoice_ids: [invoice.id], result: create_subscription(invoice)} } unless new_subscriptions.empty?
+      single_transaction_result = submit_transaction(single_transactions) unless single_transactions.empty?
+
+      settlement_results = []
+      settlement_results.concat(subscription_results) if subscription_results
+      settlement_results.push(single_transaction_result) if single_transaction_result
+      settlement_results
     end
 
     def create_subscription(invoice)
       subscription_obj = {
         payment_method_token: checkout_params[:payment_method_id],
-        plan_id: invoice.plan_id
+        plan_id: invoice.plan_id,
+        id: ::BraintreeService::Subscription.generate_id(invoice)
       }
       if invoice.discount_id
         subscription_obj[:discounts] = {
@@ -62,7 +93,7 @@ class Billing::CheckoutController < ApplicationController
       end
       result = @gateway.subscription.create(subscription_obj)
       if result.success?
-        invoice.update_attribute({ settled_at: Time.now })
+        invoice.settle_invoice(result)
         invoice.resource.update(subscription_id: result.subscription.id)
       end
       result
@@ -98,7 +129,7 @@ class Billing::CheckoutController < ApplicationController
           # TODO: Send email letting us know of failure
         end
       end
-      result
+      { invoice_ids: invoices.map(&:id), result: result }
     end
 
     def checkout_params

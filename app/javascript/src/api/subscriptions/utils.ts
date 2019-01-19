@@ -1,8 +1,8 @@
 import { buildJsonUrl } from "app/utils";
 import { Url } from "app/constants";
 
-export const buildSubscriptionsUrl = () => {
-  return buildJsonUrl(Url.Admin.Billing.Subscriptions)
+export const buildSubscriptionsUrl = (admin: boolean) => {
+  return buildJsonUrl(admin ? Url.Admin.Billing.Subscriptions : Url.Billing.Subscriptions)
 }
 
 export const buildSubscriptionUrl = (subId: string, admin: boolean) => {
@@ -10,6 +10,6 @@ export const buildSubscriptionUrl = (subId: string, admin: boolean) => {
 }
 
 const buildSubscriptionPath = (subId: string, admin: boolean) => {
-  const path = admin ? Url.Billing.Subscription : Url.Admin.Billing.Subscription;
+  const path = admin ? Url.Admin.Billing.Subscription : Url.Billing.Subscription;
   return path.replace(Url.PathPlaceholder.SubscriptionId, subId);
 }

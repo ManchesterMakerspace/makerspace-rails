@@ -1,4 +1,6 @@
 import * as React from "react";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
@@ -8,20 +10,16 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 
-import { MemberDetails } from "app/entities/member";
+import { Routing, CrudOperation } from "app/constants";
 import UpdateMemberContainer, { UpdateMemberRenderProps } from "ui/member/UpdateMemberContainer";
 import MemberForm from "ui/member/MemberForm";
-import { CrudOperation } from "app/constants";
-
+import { State as ReduxState } from "ui/reducer";
 import PaymentMethodsContainer from "ui/checkout/PaymentMethodsContainer";
-import SubscriptionDetail from "ui/subscriptions/SubscriptionDetail";
-import MembershipSelectForm from "ui/auth/MembershipSelectForm";
-import { timeToDate } from "ui/utils/timeToDate";
-import KeyValueItem from "ui/common/KeyValueItem";
+import { AuthMember } from "ui/auth/interfaces";
+import UpdateMembershipForm from "ui/member/UpdateMembershipForm";
 
-interface Props {
-  member: MemberDetails;
-  closeHandler: () => void;
+interface StateProps {
+  member: AuthMember;
   isAdmin: boolean;
 }
 
@@ -30,8 +28,8 @@ interface State {
   paymentMethodId: string;
 }
 
-class SettingsContainer extends React.Component<Props, State> {
-  constructor(props: Props) {
+class SettingsContainer extends React.Component<StateProps, State> {
+  constructor(props: StateProps) {
     super(props);
     this.state = {
       selectedIndex: 0,
@@ -77,9 +75,7 @@ class SettingsContainer extends React.Component<Props, State> {
         />
       )
     } else if (selectedIndex === 1) {
-      form =<SubscriptionDetail
-                resource={member}
-              />;
+      form = <UpdateMembershipForm subscriptionId={member.subscriptionId} />;
     } else if (selectedIndex === 2) {
       form = (<PaymentMethodsContainer
         onPaymentMethodChange={this.selectPaymentMethod}
@@ -127,7 +123,7 @@ class SettingsContainer extends React.Component<Props, State> {
   }
 
   public render(): JSX.Element {
-    const { closeHandler } = this.props;
+    const { member } = this.props;
     return (
       <Grid container spacing={16}>
         <Grid item md={4} sm={5} xs={12}>
@@ -144,9 +140,13 @@ class SettingsContainer extends React.Component<Props, State> {
                         style={{float: "right"}}
                         color="default"
                         variant="contained"
-                        onClick={closeHandler}
                       >
-                        Back to Profile
+                        <Link
+                          to={Routing.Profile.replace(Routing.PathPlaceholder.MemberId, member.id)}
+                          style={{ outline: 'none', textDecoration: 'none', color: 'unset' }}
+                        >
+                          Go to Profile
+                        </Link>
                       </Button>
                     </Grid>
                     <Grid item xs={12}>
@@ -163,4 +163,14 @@ class SettingsContainer extends React.Component<Props, State> {
   }
 }
 
-export default SettingsContainer;
+const mapStateToProps = (
+  state: ReduxState
+): StateProps => {
+  const { currentUser } = state.auth;
+  return {
+    member: currentUser,
+    isAdmin: currentUser.isAdmin,
+  }
+}
+
+export default connect(mapStateToProps)(SettingsContainer);

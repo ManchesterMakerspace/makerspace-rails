@@ -75,12 +75,13 @@ describe("Invoicing and Dues", () => {
       */
       await mock(mockRequests.invoices.post.ok(defaultInvoice));
       await loadInvoices([], true);
-      const { submit, description, amount, notes, loading, id: invoiceForm } = invoicePo.invoiceForm;
+      const { submit, description, amount, dueDate, loading, id: invoiceForm } = invoicePo.invoiceForm;
       expect(await utils.isElementDisplayed(invoicePo.getErrorRowId())).toBeFalsy();
       expect(await utils.isElementDisplayed(invoicePo.getNoDataRowId())).toBeTruthy();
       await utils.clickElement(invoicePo.actionButtons.create);
       await utils.waitForVisisble(submit);
       await utils.fillInput(description, defaultInvoice.description);
+      await utils.fillInput(dueDate, new Date(defaultInvoice.dueDate).toDateString());
       await utils.fillInput(amount, `${defaultInvoice.amount}`);
 
       await mock(mockRequests.invoices.get.ok([defaultInvoice]));
