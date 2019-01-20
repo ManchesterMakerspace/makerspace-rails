@@ -29,6 +29,8 @@ import { BillingContext, Context } from "ui/billing/BillingContextContainer";
 import FormModal from "ui/common/FormModal";
 import Form from "ui/common/Form";
 
+import { buildProfileRouting } from "ui/member/utils";
+
 interface ContextProps {
   context: Context;
 }
@@ -107,15 +109,17 @@ class CheckoutContainer extends React.Component<ContextComponentProps,State> {
   public componentDidUpdate(prevProps: Props) {
     const { isRequesting, error, invoices, userId } = this.props;
     const { isRequesting: wasRequesting } = prevProps;
+    const { paymentMethodId } = this.state;
     if (wasRequesting && !isRequesting) {
-      // Open error modal if error exists after requests
-      if (error) {
+      // Open error modal if error exists after submitting payment
+      if (error && paymentMethodId) {
         this.setState({ openTransactionErrorModal: true });
         return
       }
       // If there are no invoices, redirect to profile since there's nothing to do here
       if (isEmpty(invoices)) {
-        this.setState({ redirect: Routing.Profile.replace(Routing.PathPlaceholder.MemberId, userId) });
+        const profileUrl = buildProfileRouting(userId);
+        this.setState({ redirect: profileUrl });
       }
     }
   }
@@ -172,7 +176,7 @@ class CheckoutContainer extends React.Component<ContextComponentProps,State> {
               <Typography id="total" variant="title" color="inherit">Total {numberAsCurrency(total)}</Typography>
             </Grid>
             <Grid item xs={12} style={{ textAlign: "left" }}>
-              <Button variant="contained" disabled={!paymentMethodId} onClick={this.submitPayment}>Submit Payment</Button>
+              <Button id="submit-payment-button" variant="contained" disabled={!paymentMethodId} onClick={this.submitPayment}>Submit Payment</Button>
               {error && <ErrorMessage error={error} id="total-error"/>}
             </Grid>
           </Grid>

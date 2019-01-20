@@ -19,6 +19,7 @@ interface OwnProps {
   onDiscount: (discountId: string) => void;
   membershipOptionId: string;
   discountId: string;
+  subscriptionOnly?: boolean;
   redirectOnSelect?: boolean;
 }
 interface DispatchProps {
@@ -156,10 +157,12 @@ const mapStateToProps = (
 }
 
 const mapDispatchToProps = (
-  dispatch: ScopedThunkDispatch
+  dispatch: ScopedThunkDispatch,
+  ownProps: OwnProps,
 ): DispatchProps => {
+  const { subscriptionOnly } = ownProps;
   return {
-    getMembershipOptions: () => dispatch(readOptionsAction({ types: [InvoiceableResource.Membership] })),
+    getMembershipOptions: () => dispatch(readOptionsAction({ subscriptionOnly, types: [InvoiceableResource.Membership] })),
   };
 }
 export default connect(mapStateToProps, mapDispatchToProps)(MembershipSelectComponent);

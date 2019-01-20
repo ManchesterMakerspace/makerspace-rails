@@ -41,9 +41,7 @@ export const createRentalAction = (
 
   try {
     const response = await postRentals(rentalForm);
-    console.log(response);
     const { rental } = response.data;
-    console.log(rental);
     dispatch({
       type: RentalsAction.CreateRentalSuccess,
       data: rental

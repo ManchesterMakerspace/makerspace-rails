@@ -2,7 +2,6 @@ import * as React from "react";
 
 import Grid from "@material-ui/core/Grid";
 import Dialog from "@material-ui/core/Dialog";
-import List from "@material-ui/core/List";
 import FormControl from "@material-ui/core/FormControl";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Card from "@material-ui/core/Card";

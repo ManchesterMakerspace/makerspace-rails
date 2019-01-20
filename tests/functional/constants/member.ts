@@ -31,10 +31,13 @@ export const defaultMembers: LoginMember[] = new Array(20).fill(undefined).map((
     case 0:
       expirationTime = (moment().subtract(1, "months").valueOf())
       break;
-    case (4 || 5):
+    case 4:
+    case 5:
       expirationTime = (moment().add(3, "months").valueOf())
       break;
-    case (1 || 2 || 3):
+    case 1:
+    case 2:
+    case 3:
       expirationTime = (moment().add(1, "months").valueOf())
       break;
   }

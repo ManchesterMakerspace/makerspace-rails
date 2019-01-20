@@ -4,7 +4,7 @@ import { Rental } from "app/entities/rental";
 export const defaultRental: Rental = {
   id: "test-rental",
   number: "test",
-  expiration: parseInt(moment().add(1, "months").calendar().valueOf()),
+  expiration: (moment().add(1, "months").valueOf()),
   memberId: "test_member",
   description: "foo",
   memberName: "Some Member",
@@ -15,12 +15,12 @@ export const defaultRentals: Rental[] = new Array(20).fill(undefined).map((_v, i
   let expirationTime: number;
   switch (expirationNum) {
     case 0:
-      expirationTime = parseInt(moment().subtract(1, "months").calendar().valueOf())
+      expirationTime = (moment().subtract(1, "months").valueOf())
     case (4 || 5):
-      expirationTime = parseInt(moment().add(3, "months").calendar().valueOf())
+      expirationTime = (moment().add(3, "months").valueOf())
       break;
     case (1 || 2 || 3):
-      expirationTime = parseInt(moment().add(1, "months").calendar().valueOf())
+      expirationTime = (moment().add(1, "months").valueOf())
       break;
   }
   return {

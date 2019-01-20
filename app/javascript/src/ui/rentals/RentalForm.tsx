@@ -8,7 +8,7 @@ import { Rental } from "app/entities/rental";
 import FormModal from "ui/common/FormModal";
 import { fields } from "ui/rentals/constants";
 import Form from "ui/common/Form";
-import { toDatePicker, dateToTime } from "ui/utils/timeToDate";
+import { toDatePicker } from "ui/utils/timeToDate";
 import { getMember } from "api/members/transactions";
 import { getMembers } from "api/members/transactions";
 import { MemberDetails } from "app/entities/member";
@@ -50,10 +50,8 @@ class RentalForm extends React.Component<OwnProps, State> {
 
   public validate = async (form: Form): Promise<Rental> => {
     const details = await form.simpleValidate<Rental>(fields);
-    console.log(details);
     return {
       ...details,
-      expiration: dateToTime(details.expiration),
       memberId: this.state.member && this.state.member.id,
     }
   }

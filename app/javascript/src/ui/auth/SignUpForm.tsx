@@ -48,8 +48,6 @@ class SignUpFormComponent extends React.Component<Props, State> {
       membershipSelectionId: props.location.state && props.location.state.membershipOptionId,
       discountId: props.location.state && props.location.state.discountId,
     };
-    console.log(this.state);
-    console.log(props.location)
     // Clear history after reading state
     getHistory().replace({ ...props.location, state: undefined });
   }
@@ -107,7 +105,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
       return;
     }
 
-    this.props.onSubmit && this.props.onSubmit({
+    this.props.onSubmit && await this.props.onSubmit({
       ...validSignUp,
       membershipSelectionId: this.state.membershipSelectionId,
       discountId: this.state.discountId

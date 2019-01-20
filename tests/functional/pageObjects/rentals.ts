@@ -36,6 +36,8 @@ class RentalsPageObject extends TablePageObject {
     error: `${this.deleteRentalModalId}-error`,
     loading: `${this.deleteRentalModalId}-loading`,
   }
+
+  public rentalsListFields = ["number", "description", "member", "expiration", "status"];
 }
 
 export default new RentalsPageObject(tableId);

@@ -1,6 +1,7 @@
 import { emailValid } from "app/utils";
 import { FormFields } from "ui/common/Form";
 import { MemberStatus, MemberRole } from "app/entities/member";
+import { dateToTime } from "ui/utils/timeToDate";
 
 export enum Action {
   StartReadRequest = "MEMBER/START_READ_REQUEST",
@@ -52,7 +53,7 @@ export const fields = (admin: boolean): FormFields => ({
       name: `${formPrefix}-expirationTime`,
       placeholder: "Membership Expiration",
       validate: (val) => !!val,
-      // transform: (val) => new Date(val).getTime(),
+      transform: (val) => dateToTime(val),
       error: "Invalid expiration"
     },
     role: {

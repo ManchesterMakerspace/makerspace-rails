@@ -26,7 +26,7 @@ export class TablePageObject {
   public getAllRows = async () => await browser.findElements(By.css(`[id^="${this.tableId}-"][id$="-row"]`));
 
   public getColumnIds = (fields: string[], rowId: string): { [key: string]: string } => ({
-    ...fields.reduce(async (columns: { [key: string]: string }, field) => ({
+    ...fields.reduce((columns: { [key: string]: string }, field) => ({
       ...columns,
       [field]: `#${this.getRowBaseId(rowId)}-${field}`
     }), {})

@@ -75,7 +75,7 @@ class SettingsContainer extends React.Component<StateProps, State> {
         />
       )
     } else if (selectedIndex === 1) {
-      form = <UpdateMembershipForm subscriptionId={member.subscriptionId} />;
+      form = <UpdateMembershipForm subscriptionId={member.subscriptionId} member={member}/>;
     } else if (selectedIndex === 2) {
       form = (<PaymentMethodsContainer
         onPaymentMethodChange={this.selectPaymentMethod}

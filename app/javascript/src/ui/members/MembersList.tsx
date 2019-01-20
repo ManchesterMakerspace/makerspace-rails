@@ -157,7 +157,7 @@ class MembersList extends React.Component<Props, State> {
         />
         <UpdateMemberContainer
           isOpen={openCreateForm}
-          member={{ status: MemberStatus.Active, role: MemberRole.Admin } as Partial<MemberDetails>}
+          member={{ status: MemberStatus.Active, role: MemberRole.Member } as Partial<MemberDetails>}
           closeHandler={this.closeCreateForm}
           render={createForm}
           operation={CrudOperation.Create}

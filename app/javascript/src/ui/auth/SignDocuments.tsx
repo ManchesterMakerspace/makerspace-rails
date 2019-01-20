@@ -171,6 +171,8 @@ class SignDocuments extends React.Component<Props, State>{
     const signature = this.signatureRef.toDataURL();
     try {
       this.setState({ signatureUploading: true });
+      console.log(this.props.currentUser);
+      console.log(this.props.currentUser.id);
       await uploadMemberSignature(this.props.currentUser && this.props.currentUser.id, signature);
       this.setState({ signatureUploading: false, signatureUploadError: "" });
     } catch (e) {

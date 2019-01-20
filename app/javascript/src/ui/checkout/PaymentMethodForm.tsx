@@ -1,5 +1,4 @@
 import * as React from "react";
-import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
@@ -8,8 +7,8 @@ import Typography from "@material-ui/core/Typography";
 import * as Braintree from "braintree-web";
 import { PaymentMethodType } from "app/entities/invoice";
 
-import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
-import { getClientTokenAction } from "ui/checkout/actions";
+import { getClientToken } from "api/checkout/transactions";
+
 import CreditCardForm from "ui/checkout/CreditCardForm";
 import PaypalButton from "ui/checkout/PaypalButton";
 import ErrorMessage from "ui/common/ErrorMessage";
@@ -20,20 +19,17 @@ interface OwnProps {
   closeHandler: () => void;
   onSuccess: (paymentMethodNonce: string) => void;
 }
-interface StateProps {
-  clientToken: string;
-  isRequesting: boolean;
-}
-interface DispatchProps {
-  getClientToken: () => void;
-}
-interface Props extends DispatchProps, OwnProps, StateProps {}
+interface Props extends OwnProps {}
 
 interface State {
   braintreeInstance: any;
   braintreeError: Braintree.BraintreeError;
   paymentMethodNonce: string;
   paymentMethodType: PaymentMethodType;
+  clientToken: string;
+  requestingClientToken: boolean;
+  braintreeRequesting: boolean;
+  clientTokenError: string;
 }
 
 class PaymentMethodForm extends React.Component<Props, State> {
@@ -45,34 +41,54 @@ class PaymentMethodForm extends React.Component<Props, State> {
       braintreeError: undefined,
       paymentMethodNonce: undefined,
       braintreeInstance: undefined,
+      braintreeRequesting: false,
       paymentMethodType: undefined,
+      clientToken: undefined,
+      requestingClientToken: false,
+      clientTokenError: ""
     }
   }
   public componentDidMount() {
-    this.props.getClientToken();
+    this.getClientToken();
   }
 
-  public componentDidUpdate(prevProps: Props) {
-    const { isRequesting: wasRequesting } = prevProps;
-    const { isRequesting, clientToken } = this.props;
+  private getClientToken = async () => {
+    this.setState({
+      requestingClientToken: true
+    });
 
-    if (wasRequesting && !isRequesting && !!clientToken) {
+    let token;
+    let error = "";
+    try {
+      const response = await getClientToken();
+      token = response.data.client_token;
+    } catch (e) {
+      error = e.errorMessage;
+    }
+    this.setState({
+      requestingClientToken: false,
+      clientTokenError: error,
+      clientToken: token
+    });
+
+    if (token) {
       this.initBraintree();
     }
   }
 
   private initBraintree = async () => {
-    const { clientToken } = this.props;
+    const { clientToken } = this.state;
 
     try {
+      this.setState({ braintreeRequesting: true });
       await Braintree.client.create({
         authorization: clientToken,
       }, (err, clientInstance) => {
         if (err) throw err;
-        this.setState({ braintreeInstance: clientInstance });
+        this.setState({ braintreeInstance: clientInstance, braintreeRequesting: false });
       });
     } catch (err) {
-      this.setState({ braintreeError: err });
+      this.setState({ braintreeError: err, braintreeRequesting: false });
     }
   }
 
@@ -81,13 +97,14 @@ class PaymentMethodForm extends React.Component<Props, State> {
   private selectCash = () => this.setState({ paymentMethodType: PaymentMethodType.Cash });
 
   private renderPaymentMethod = () => {
-    const { braintreeInstance, paymentMethodType } = this.state;
+    const { braintreeInstance, paymentMethodType, clientToken } = this.state;
     switch (paymentMethodType) {
       case PaymentMethodType.CreditCard:
         return (
           <CreditCardForm
             closeHandler={this.props.closeHandler}
             braintreeInstance={braintreeInstance}
+            clientToken={clientToken}
             onSuccess={this.props.onSuccess}
           />
         );
@@ -97,8 +114,8 @@ class PaymentMethodForm extends React.Component<Props, State> {
   }
 
   private renderMethodRequest = () => {
-    const { braintreeError, braintreeInstance } = this.state;
-    const { isRequesting } = this.props;
+    const { braintreeError, braintreeInstance, clientToken, requestingClientToken, clientTokenError, braintreeRequesting } = this.state;
+    const error = clientTokenError || (braintreeError && braintreeError.message);
 
     return (
       <Grid container justify="center" spacing={16}>
@@ -110,12 +127,13 @@ class PaymentMethodForm extends React.Component<Props, State> {
         </Grid>
         <Grid item xs={12}>
           <PaypalButton
+            clientToken={clientToken}
             braintreeInstance={braintreeInstance}
             paymentMethodCallback={this.props.closeHandler}
           />
         </Grid>
-        {(isRequesting || !braintreeInstance) && <LoadingOverlay id="payment-method-loading"/>}
-        {!isRequesting && braintreeError && braintreeError.message && <ErrorMessage error={braintreeError.message} id="braintree-payment-method-error"/>}
+        {(requestingClientToken || braintreeRequesting) && <LoadingOverlay id="payment-method-loading" contained={true}/>}
+        {error && <ErrorMessage error={error} id="payment-method--form-error"/>}
       </Grid>
     );
   }
@@ -127,21 +145,4 @@ class PaymentMethodForm extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: ReduxState, _ownProps: OwnProps): StateProps => {
-  const { isRequesting, clientToken } = state.checkout;
-
-  return {
-    isRequesting,
-    clientToken
-  }
-}
-
-const mapDispatchToProps = (
-  dispatch: ScopedThunkDispatch
-): DispatchProps => {
-  return {
-    getClientToken: () => dispatch(getClientTokenAction()),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(PaymentMethodForm);
+export default PaymentMethodForm;

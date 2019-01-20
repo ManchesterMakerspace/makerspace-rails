@@ -8,6 +8,7 @@ import { Subscription } from "app/entities/subscription";
 import { AuthForm } from "ui/auth/interfaces";
 import { Invoice, InvoiceQueryParams } from "app/entities/invoice";
 import { InvoiceOptionQueryParams } from "api/invoices/interfaces";
+import { PaymentMethod } from "app/entities/paymentMethod";
 
 enum Method {
   Get = "GET",
@@ -64,7 +65,7 @@ export const mockRequests = {
         },
         httpResponse: {
           statusCode: 200,
-          body: JSON.stringify(accessCard)
+          body: JSON.stringify({ accessCard })
         }
       })
     },
@@ -76,7 +77,7 @@ export const mockRequests = {
         },
         httpResponse: {
           statusCode: 200,
-          body: JSON.stringify(accessCard)
+          body: JSON.stringify({ accessCard })
         }
       })
     }
@@ -90,7 +91,33 @@ export const mockRequests = {
         },
         httpResponse: {
           statusCode: 200,
-          body: JSON.stringify(plans)
+          body: JSON.stringify({ plans })
+        }
+      })
+    }
+  },
+  checkout: {
+    new: {
+      ok: (clientToken: string) => ({
+        httpRequest: {
+          method: Method.Get,
+          path: `/${Url.Billing.Checkout}/new.json`,
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({ clientToken })
+        }
+      })
+    },
+    post: {
+      ok: (invoiceIds: string[], paymentMethodId: string) => ({
+        httpRequest: {
+          method: Method.Post,
+          path: `/${Url.Billing.Checkout}.json`,
+          body: JSON.stringify({ checkout: { payment_method_id: paymentMethodId, invoice_ids: invoiceIds } }),
+        },
+        httpResponse: {
+          statusCode: 200,
         }
       })
     }
@@ -108,7 +135,19 @@ export const mockRequests = {
         httpResponse: {
           headers: [{ name: "total-items", value: String(members.length) }],
           statusCode: 200,
-          body: JSON.stringify(members)
+          body: JSON.stringify({ members })
+        }
+      })
+    },
+    post: {
+      ok: (member: Partial<MemberDetails>, memberId: string) => ({
+        httpRequest: {
+          method: Method.Post,
+          path: `/${Url.Admin.Members}.json`,
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({ ...member, id: memberId })
         }
       })
     },
@@ -118,7 +157,7 @@ export const mockRequests = {
       ok: (id: string, member: Partial<MemberDetails>, admin: boolean = false): MockRequest => ({
         httpRequest: {
           method: Method.Get,
-          path: `/api${admin ? '/admin' : ''}/members/${id}.json`,
+          path: `/${admin ? Url.Admin.Members : Url.Members}/${id}.json`,
         },
         httpResponse: {
           statusCode: 200,
@@ -127,10 +166,10 @@ export const mockRequests = {
       })
     },
     put: {
-      ok: (id: string, member: Partial<MemberDetails>): MockRequest => ({
+      ok: (id: string, member: Partial<MemberDetails>, admin: boolean = false): MockRequest => ({
         httpRequest: {
           method: Method.Put,
-          path: `/api/admin/members/${id}.json`,
+          path: `/${admin ? Url.Admin.Members : Url.Members}/${id}.json`,
         },
         httpResponse: {
           statusCode: 200,
@@ -170,6 +209,49 @@ export const mockRequests = {
           statusCode: 200,
         }
       })
+    }
+  },
+  paymentMethods: {
+    get: {
+      ok: (paymentMethods: PaymentMethod[]) => ({
+        httpRequest: {
+          method: Method.Get,
+          path: `/${Url.Billing.PaymentMethods}.json`,
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({ paymentMethods })
+        }
+      })
+    },
+    post: {
+      ok: (paymentMethodNonce: string, paymentMethodId: string, makeDefault = false) => ({
+        httpRequest: {
+          method: Method.Post,
+          path: `/${Url.Billing.PaymentMethods}.json`,
+          body: JSON.stringify({
+            paymentMethod: {
+              paymentMethodNonce,
+              makeDefault
+            }
+          })
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: paymentMethodId
+        }
+      })
+    },
+    delete: {
+      ok: (paymentMethodId: string) => ({
+        httpRequest: {
+          method: Method.Delete,
+          path: `/${Url.Billing.PaymentMethods}/${paymentMethodId}.json`,
+        },
+        httpResponse: {
+          statusCode: 204,
+        }
+      }),
     }
   },
   rejectionCard: {
@@ -287,14 +369,14 @@ export const mockRequests = {
     }),
   },
   signUp: {
-    ok: (member: Partial<AuthForm | MemberDetails>): MockRequest => ({
+    ok: (member: Partial<AuthForm | MemberDetails>, invoice: Partial<Invoice>): MockRequest => ({
       httpRequest: {
         method: Method.Post,
         path: `/${Url.Auth.SignUp}.json`,
       },
       httpResponse: {
         statusCode: 200,
-        body: JSON.stringify({ member }),
+        body: JSON.stringify({ member, invoice })
       }
     }),
     error: (statusCode?: string): MockRequest => ({

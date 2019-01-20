@@ -22,10 +22,11 @@ export class CheckoutPageObject extends TablePageObject {
     "name", "description", "amount"
   ]
 
-  public getDiscount = (rowId) => this.getColumnText("description #discount", rowId)
+  public getDiscount = (rowId: string) => this.getColumnText("description #discount", rowId)
   public total = "#total"
   public totalError = "#total-error"
   public checkoutError = "#checkout-submitting-error"
+  public submit = "#submit-payment-button"
 
 }
 

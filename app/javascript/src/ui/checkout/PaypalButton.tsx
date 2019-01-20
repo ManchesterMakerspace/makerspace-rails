@@ -17,20 +17,16 @@ import Typography from "@material-ui/core/Typography";
 
 interface OwnProps {
   braintreeInstance: any;
+  clientToken: string;
   paymentMethodCallback?: (paymentMethodNonce: string) => void;
 }
 
-interface StateProps {
-  clientToken: string;
-  isRequesting: boolean;
-}
-interface DispatchProps {
-}
-interface Props extends DispatchProps, OwnProps, StateProps {}
+interface Props extends OwnProps {}
 
 interface State {
   paypalInstance: any;
   braintreeError: Braintree.BraintreeError;
+  paypalRequesting: boolean;
 }
 
 class PaypalButton extends React.Component<Props, State> {
@@ -41,6 +37,7 @@ class PaypalButton extends React.Component<Props, State> {
     this.state = {
       paypalInstance: undefined,
       braintreeError: undefined,
+      paypalRequesting: false,
     }
   }
 
@@ -59,6 +56,7 @@ class PaypalButton extends React.Component<Props, State> {
   private initPaypal = async () => {
     const { braintreeInstance } = this.props;
     try {
+      this.setState({ paypalRequesting: true });
       await (Braintree as any).paypalCheckout.create({
         client: braintreeInstance
       }, (paypalCheckoutErr: any, paypalCheckoutInstance: any) => {
@@ -95,50 +93,34 @@ class PaypalButton extends React.Component<Props, State> {
             if (err) throw err;
           }
         }, '#paypal-button').then(() => {
-          this.setState({ paypalInstance: paypalCheckoutInstance });
+          this.setState({ paypalInstance: paypalCheckoutInstance, paypalRequesting: false });
         });
       });
     } catch (err) {
-      this.setState({ braintreeError: err });
+      this.setState({ braintreeError: err, paypalRequesting: false });
     }
   }
 
   public render(): JSX.Element {
-    const { braintreeError, paypalInstance } = this.state;
-    const { isRequesting, braintreeInstance } = this.props;
+    const { braintreeError, paypalRequesting } = this.state;
+    const { braintreeInstance } = this.props;
     const error = braintreeError && (isString(braintreeError) ? braintreeError : braintreeError.message);
 
     return (
       <Grid container spacing={16} style={{position: "relative", overflow: "hidden"}}>
         <Grid item xs={12} style={{textAlign: "center"}}>
             <button id="paypal-button" style={{ background: "none", border: "none" }} />
-            {braintreeInstance && !paypalInstance && isRequesting && (
+            {braintreeInstance && paypalRequesting && (
               <>
                 <Typography variant="body1">Contacting PayPal</Typography>
                 <LoadingOverlay id="paypal-button-loading" contained={true} />)
               </>
             )}
-            {!isRequesting && error && <ErrorMessage error={error} id="paypal-error"/>}
+            {error && <ErrorMessage error={error} id="paypal-error"/>}
         </Grid>
       </Grid>
     )
   }
 }
 
-const mapStateToProps = (state: ReduxState, _ownProps: OwnProps): StateProps => {
-  const { isRequesting, clientToken } = state.checkout;
-
-  return {
-    isRequesting,
-    clientToken
-  }
-}
-
-const mapDispatchToProps = (
-  dispatch: ScopedThunkDispatch
-): DispatchProps => {
-  return {
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(PaypalButton);
+export default PaypalButton;

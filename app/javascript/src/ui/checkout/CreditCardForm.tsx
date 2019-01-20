@@ -1,5 +1,4 @@
 import * as React from "react";
-import { connect } from "react-redux";
 import isString from "lodash-es/isString";
 
 import Grid from "@material-ui/core/Grid";
@@ -9,31 +8,25 @@ import * as Braintree from "braintree-web";
 
 import { postPaymentMethod } from "api/paymentMethods/transactions";
 
-import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import Form from "ui/common/Form";
 import { CreditCardFields } from "ui/checkout/constants";
 import ErrorMessage from "ui/common/ErrorMessage";
 import HostedInput from "ui/checkout/HostedInput";
-import { Typography } from "@material-ui/core";
 
 interface OwnProps {
   braintreeInstance: any;
+  clientToken: string;
   closeHandler: () => void;
   onSuccess?: (paymentMethodNonce: string) => void;
 }
 
-interface StateProps {
-  clientToken: string;
-  isRequesting: boolean;
-}
-interface DispatchProps {
-}
-interface Props extends DispatchProps, OwnProps, StateProps {}
+interface Props extends OwnProps {}
 
 interface State {
   hostedFieldsInstance: any;
   braintreeError: Braintree.BraintreeError;
   isCreating: boolean;
+  isLoading: boolean;
 }
 
 class CreditCardForm extends React.Component<Props, State> {
@@ -44,6 +37,7 @@ class CreditCardForm extends React.Component<Props, State> {
     this.state = {
       hostedFieldsInstance: undefined,
       braintreeError: undefined,
+      isLoading: false,
       isCreating: false,
     }
   }
@@ -62,7 +56,7 @@ class CreditCardForm extends React.Component<Props, State> {
 
   private initHostedFields = async () => {
     const { braintreeInstance } = this.props;
-
+    this.setState({ isLoading: true });
     try {
       await Braintree.hostedFields.create({
         client: braintreeInstance,
@@ -87,10 +81,10 @@ class CreditCardForm extends React.Component<Props, State> {
         }
       }, (err, hostedFieldsInstance) => {
         if (err) throw err;
-        this.setState({ hostedFieldsInstance: hostedFieldsInstance });
+        this.setState({ hostedFieldsInstance: hostedFieldsInstance, isLoading: false });
       });
     } catch (err) {
-      this.setState({ braintreeError: err });
+      this.setState({ braintreeError: err, isLoading: false });
     }
   }
 
@@ -117,8 +111,7 @@ class CreditCardForm extends React.Component<Props, State> {
   }
 
   public render(): JSX.Element {
-    const { braintreeError, hostedFieldsInstance, isCreating } = this.state;
-    const { isRequesting, braintreeInstance } = this.props;
+    const { braintreeError, isCreating, isLoading } = this.state;
     const error = braintreeError && (isString(braintreeError) ? braintreeError : braintreeError.message);
 
     return (
@@ -127,7 +120,7 @@ class CreditCardForm extends React.Component<Props, State> {
           id="credit-card-form"
           title="Enter your credit or debit card information"
           onSubmit={this.requestPaymentMethod}
-          loading={isRequesting || isCreating || !braintreeInstance || !hostedFieldsInstance }
+          loading={isCreating || isLoading }
         >
           <HostedInput
             label={CreditCardFields.cardNumber.label}
@@ -151,27 +144,11 @@ class CreditCardForm extends React.Component<Props, State> {
             label={CreditCardFields.postalCode.label}
             id={CreditCardFields.postalCode.name}
           />
-          {!isRequesting && error && <ErrorMessage error={error} id="credit-card-error"/>}
+          {error && <ErrorMessage error={error} id="credit-card-error"/>}
         </Form>
       </>
     )
   }
 }
 
-const mapStateToProps = (state: ReduxState, _ownProps: OwnProps): StateProps => {
-  const { isRequesting, clientToken } = state.checkout;
-
-  return {
-    isRequesting,
-    clientToken
-  }
-}
-
-const mapDispatchToProps = (
-  dispatch: ScopedThunkDispatch
-): DispatchProps => {
-  return {
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(CreditCardForm);
+export default CreditCardForm;

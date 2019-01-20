@@ -1,4 +1,6 @@
 import { Key } from "selenium-webdriver";
+import { toDatePicker, dateToTime } from "ui/utils/timeToDate";
+import * as moment from "moment";
 
 export const rootURL = `http://${process.env.APP_DOMAIN || 'localhost'}:${process.env.PORT || 3002}`;
 
@@ -203,6 +205,18 @@ export class PageUtils {
       }, this.waitUntilTime);
     } catch {
       throw new Error(`Error waiting for element to be visible: ${elementLocator}`);
+    }
+  }
+
+  public inputTime = async (elementLocator: string, timeInMs: number) => {
+    try {
+      const date = toDatePicker(timeInMs);
+      const [year, month, day] = date.split("-");
+      const dateString = `${month}${day}${year}`;
+      console.log(date);
+      await this.fillInput(elementLocator, dateString);
+    } catch {
+      throw new Error(`Error writing time: ${timeInMs} for element: ${elementLocator}`);
     }
   }
 }

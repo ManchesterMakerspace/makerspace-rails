@@ -1,31 +1,13 @@
 import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import isObject from "lodash-es/isObject";
-import { getClientToken, postCheckout } from "api/checkout/transactions";
+import { postCheckout } from "api/checkout/transactions";
 
 import { Invoice } from "app/entities/invoice";
 
 import { Action as CheckoutAction } from "ui/checkout/constants";
 import { CheckoutState } from "ui/checkout/interfaces";
 import { pick } from "lodash-es";
-
-export const getClientTokenAction = (
-): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
-  dispatch({ type: CheckoutAction.StartAsyncRequest });
-  try {
-    const response = await getClientToken();
-    dispatch({
-      type: CheckoutAction.GetClientTokenSuccess,
-      data: response.data.client_token
-    });
-  } catch (e) {
-    const { errorMessage } = e;
-    dispatch({
-      type: CheckoutAction.GetClientTokenFailure,
-      error: errorMessage
-    })
-  }
-};
 
 export const submitPaymentAction = (
   paymentMethodToken: string,
@@ -50,7 +32,6 @@ export const submitPaymentAction = (
 
 const defaultState: CheckoutState = {
   invoices: {},
-  clientToken: undefined,
   isRequesting: false,
   error: ""
 }
@@ -63,19 +44,6 @@ export const checkoutReducer = (state: CheckoutState = defaultState, action: Any
       return {
         ...state,
         isRequesting: true
-      }
-    case CheckoutAction.GetClientTokenSuccess:
-      return {
-        ...state,
-        clientToken: action.data,
-        isRequesting: false,
-        error: "",
-      }
-    case CheckoutAction.GetClientTokenFailure:
-      return {
-        ...state,
-        isRequesting: false,
-        error: action.error
       }
     case CheckoutAction.StageInvoicesForPayment:
       const invoices = action.data;

@@ -3,7 +3,6 @@ var http = require('http');
 exports.loadCoverage = function () {
 
   return browser.executeScript('return window.__coverage__;').then(function (result) {
-    console.log(result);
     var str = JSON.stringify(result);
     var options = {
       port: 6969,

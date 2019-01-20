@@ -1,7 +1,8 @@
 import { Routing } from "app/constants";
 import utils from "./common";
+import { TablePageObject } from "./table";
 
-export class MemberPageObject {
+export class MemberPageObject extends TablePageObject {
   public welcomeModal = {
     id: "#welcome-modal",
   };
@@ -52,7 +53,9 @@ export class MemberPageObject {
     loading: `${this.cardFormId}-loading`,
   }
 
+  public membersListUrl = Routing.Members;
   private membersListTableId = "#members-table";
+  public membersListFields = ["lastname", "expirationTime", "status"];
   public membersList = {
     id: this.membersListTableId,
     createMemberButton: "#members-list-create",
@@ -79,4 +82,4 @@ export class MemberPageObject {
   public getProfilePath = (memberId: string) => Routing.Profile.replace(Routing.PathPlaceholder.MemberId, memberId);
 }
 
-export default new MemberPageObject();
+export default new MemberPageObject("members-table");

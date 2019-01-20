@@ -72,7 +72,6 @@ export const submitSignUpAction = (
         isNewMember: true,
       }
     });
-    console.log('dispatch complete');
   } catch(e) {
     const { errorMessage } = e;
     dispatch({

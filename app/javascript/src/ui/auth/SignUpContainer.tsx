@@ -62,12 +62,12 @@ class SignUpContainer extends React.Component<Props, State>{
   }
 
   private submitSignupForm = async (validSignUp: SignUpForm) => {
-    this.props.submitSignUp(validSignUp);
+    await this.props.submitSignUp(validSignUp);
   }
 
   public render(): JSX.Element {
     const { redirect, displayDocuments } = this.state;
-    const { isRequesting, error, currentUser  } = this.props;
+    const { isRequesting, error, currentUser } = this.props;
     if (redirect) {
       return <Redirect to={redirect} />
     }

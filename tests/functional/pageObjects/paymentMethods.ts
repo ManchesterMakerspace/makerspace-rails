@@ -3,15 +3,18 @@ class PaymentMethods {
   public paymentMethodFormSelect = {
     creditCard: "#card-payment",
     paypal: "#paypal-button",
-    error: "braintree-payment-method-error",
+    error: "#braintree-payment-method-error",
     cancel: "#payment-method-cancel",
   }
 
   public paymentMethodSelect = {
-    paymentMethodId: "select-payment-method-{ID}",
+    paymentMethodId: "#select-payment-method-{ID}",
     noneFound: "#none-found",
     error: "#get-payment-methods-error",
   }
+
+  public getPaymentMethodSelectId = (id: string) =>
+    this.paymentMethodSelect.paymentMethodId.replace("{ID}", id)
 
   public deletePaymentButton = "#delete-payment-button"
   private paymentMethodDeleteId = "#delete-payment-method-confirm"
@@ -30,6 +33,7 @@ class CreditCard {
     csv: `${this.creditCardFormId}-csv`,
     expirationDate: `${this.creditCardFormId}-expirationDate`,
     postalCode: `${this.creditCardFormId}-postalCode`,
+    submit: `${this.creditCardFormId}-submit`,
   }
 }
 export const creditCard = new CreditCard();

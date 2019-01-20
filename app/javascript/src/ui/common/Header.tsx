@@ -54,10 +54,10 @@ class Header extends React.Component<Props, State> {
     this.setState({ anchorEl: null });
   };
 
-  private renderMenuNavLink = (path: string, label: string) => {
+  private renderMenuNavLink = (path: string, label: string, id: string) => {
     const match = this.props.location && this.props.location.pathname === path;
     return (
-      <Link to={path} style={{ outline: 'none',textDecoration: 'none', color: 'unset' }} onClick={this.detachMenu}>
+      <Link id={id} to={path} style={{ outline: 'none',textDecoration: 'none', color: 'unset' }} onClick={this.detachMenu}>
         <MenuItem selected={match}>
           {label}
         </MenuItem>
@@ -87,6 +87,7 @@ class Header extends React.Component<Props, State> {
         {currentUser.firstname}
       </Typography>
         <IconButton
+          id="menu-button"
           className="menu-button"
           color="inherit" aria-label="Menu"
           onClick={this.attachMenu}
@@ -107,12 +108,12 @@ class Header extends React.Component<Props, State> {
           open={menuOpen}
           onClose={this.detachMenu}
         >
-          {this.renderMenuNavLink(profileUrl, "My Profile")}
-          {this.renderMenuNavLink(Routing.Members, "Members")}
-          {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Rentals, "Rentals")}
-          {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Billing, "Billing")}
-          {this.renderMenuNavLink(Routing.Settings, "Settings")}
-          <MenuItem onClick={this.logoutUser}>Logout</MenuItem>
+          {this.renderMenuNavLink(profileUrl, "My Profile", "profile")}
+          {this.renderMenuNavLink(Routing.Members, "Members", "members")}
+          {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Rentals, "Rentals", "rentals")}
+          {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Billing, "Billing", "billing")}
+          {this.renderMenuNavLink(Routing.Settings, "Settings", "settings")}
+          <MenuItem id="logout" onClick={this.logoutUser}>Logout</MenuItem>
         </Menu>
       </>
     )

@@ -1,4 +1,5 @@
 import { SelectOption } from "ui/common/RenewalForm";
+import { dateToTime } from "ui/utils/timeToDate";
 
 export enum Action {
   StartReadRequest = "RENTALS/START_READ_REQUEST",
@@ -59,7 +60,8 @@ export const fields = {
     label: "Expiration",
     name: `${formPrefix}-expiration`,
     placeholder: "Select an expiration date",
-    validate: (val: string) => true,
+    transform: (val: string) => dateToTime(val),
+    validate: (_val: string) => true,
     error: "Expiration date required"
   },
   member: {

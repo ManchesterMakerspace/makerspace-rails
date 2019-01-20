@@ -41,7 +41,6 @@ describe("Integration tests for password page", function () {
         }, 10000).then(function () {
           protractor.mailHelper.extractPasswordLink(currentUser.email).then(function (url) {
             resetLink = url;
-            console.log(resetLink);
             expect(resetLink).toBeTruthy();
             expect(resetLink).toMatch(new RegExp(passwordPage.getUrl() + "/[A-Za-z0-9+]"));
           });

@@ -1,11 +1,17 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import MembershipSelectForm from "ui/auth/MembershipSelectForm";
 import Form from "ui/common/Form";
 import { Subscription } from "app/entities/subscription";
 import { readSubscriptionAction } from "ui/subscriptions/actions";
-
+import KeyValueItem from "ui/common/KeyValueItem";
+import { displayMemberExpiration } from "ui/member/utils";
+import { AuthMember } from "ui/auth/interfaces";
 
 /*
 View Current Membership Info
@@ -24,6 +30,7 @@ interface DispatchProps {
 }
 interface OwnProps {
   subscriptionId: string;
+  member: AuthMember;
 }
 interface StateProps {
   subscription: Subscription;
@@ -34,6 +41,7 @@ interface Props extends OwnProps, StateProps, DispatchProps {}
 interface State {
   membershipOptionId: string;
   discountId: string;
+  openMembershipSelect: boolean;
 }
 
 class UpdateMembershipForm extends React.Component<Props, State> {
@@ -42,7 +50,8 @@ class UpdateMembershipForm extends React.Component<Props, State> {
     super(props);
     this.state = {
       membershipOptionId: undefined,
-      discountId: undefined
+      discountId: undefined,
+      openMembershipSelect: false,
     }
   }
 
@@ -58,21 +67,54 @@ class UpdateMembershipForm extends React.Component<Props, State> {
   private onDiscount = () => {
 
   }
+  private openMembershipSelect = () => this.setState({ openMembershipSelect: true });
+  private closeMembershipSelect = () => this.setState({ openMembershipSelect: false });
 
-  public render = () => {
+  private renderSubscriptionDetails = () => {
     const { subscription } = this.props;
-    const { membershipOptionId, discountId } = this.state;
+  }
+  private renderMembershipDetails = () => {
+    const { member } = this.props;
+
     return (
-      <Form
-        id="update-membership-modal"
-        title="Change Membership"
-      >
+      <Grid container spacing={24}>
+        <Grid item xs={12}>
+          <KeyValueItem label="Current Membership Expiration">
+            {displayMemberExpiration(member)}
+          </KeyValueItem>
+          <Typography>No subscription found. Update membership to enable automatic renewals.</Typography>
+          <Button variant="contained" onClick={this.openMembershipSelect}>Update Membership</Button>
+        </Grid>
+      </Grid>
+    );
+  }
+
+  private renderMembershipSelect = () => {
+    const { membershipOptionId, discountId } = this.state;
+    const { openMembershipSelect } = this.state;
+    return (openMembershipSelect &&
+      <>
+        <Typography>Select a membership option to continue.</Typography>
         <MembershipSelectForm
+          subscriptionOnly={true}
           membershipOptionId={membershipOptionId}
           discountId={discountId}
           onSelect={this.onSelect}
           onDiscount={this.onDiscount}
         />
+      </>
+   )
+  }
+
+  public render = () => {
+    const { subscription } = this.props;
+    return (
+      <Form
+        id="update-membership-modal"
+        title="Change Membership"
+      >
+        {subscription ? this.renderSubscriptionDetails() : this.renderMembershipDetails()}
+        {this.renderMembershipSelect()}
       </Form>
     )
   }

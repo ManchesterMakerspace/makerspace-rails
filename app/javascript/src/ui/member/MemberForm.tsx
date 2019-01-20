@@ -12,8 +12,8 @@ import { MemberDetails } from "app/entities/member";
 
 import FormModal from "ui/common/FormModal";
 import { fields as memberFormField, MemberStatusOptions, MemberRoleOptions } from "ui/member/constants";
-import Form, { FormField } from "ui/common/Form";
-import { toDatePicker, dateToTime } from "ui/utils/timeToDate";
+import Form from "ui/common/Form";
+import { toDatePicker } from "ui/utils/timeToDate";
 
 interface OwnProps {
   member: Partial<MemberDetails>;
@@ -73,11 +73,7 @@ class MemberForm extends React.Component<OwnProps, State> {
   public validate = async (form: Form): Promise<MemberDetails> => {
     const { isAdmin } = this.props;
     const fields = memberFormField(isAdmin);
-    const details = await form.simpleValidate<MemberDetails>(fields);
-    return {
-      ...details,
-      ...details.expirationTime && {expirationTime: dateToTime(details.expirationTime)}
-    }
+    return (await form.simpleValidate<MemberDetails>(fields));
   }
 
   private renderFormContents = () => {
