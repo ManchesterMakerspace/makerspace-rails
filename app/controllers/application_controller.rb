@@ -14,13 +14,6 @@ class ApplicationController < ActionController::Base
     cookies['XSRF-TOKEN'] = form_authenticity_token if protect_against_forgery?
   end
 
-  private
-  def is_officer?(workshop = nil)
-    unless current_member.nil?
-      @workshop.try(:officer) == current_member || workshop.try(:officer) == current_member
-    end
-  end
-
   protected
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up, keys: [:firstname, :lastname])

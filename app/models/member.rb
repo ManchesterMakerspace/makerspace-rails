@@ -40,18 +40,13 @@ class Member
   validates :cardID, uniqueness: true, allow_nil: true
   validates_inclusion_of :status, in: ["activeMember", "nonMember", "revoked", "inactive"]
 
-  before_save :update_allowed_workshops
   before_save :update_braintree_customer_info
   after_initialize :verify_group_expiry
   after_update :update_card
 
   has_many :rentals, class_name: 'Rental'
-  has_many :offices, class_name: 'Workshop', inverse_of: :officer
   has_many :access_cards, class_name: "Card", inverse_of: :member
   belongs_to :group, class_name: "Group", inverse_of: :active_members, optional: true, primary_key: 'groupName', foreign_key: "groupName"
-  has_and_belongs_to_many :learned_skills, class_name: 'Skill', inverse_of: :trained_members
-  has_and_belongs_to_many :expertises, class_name: 'Workshop', inverse_of: :experts
-  has_and_belongs_to_many :allowed_workshops, class_name: 'Workshop', inverse_of: :allowed_members
 
   def self.active_members
     return Member.where(status: 'activeMember', :expirationTime.gt => (Time.now.strftime('%s').to_i * 1000))
@@ -164,13 +159,6 @@ class Member
            self.expirationTime &&
            self.group.expiry > (Time.now.strftime('%s').to_i * 1000) &&
            self.group.expiry > self.expirationTime
-  end
-
-  def update_allowed_workshops #this checks to see if they have learned all the skills in a workshop one at a time
-    allowed = Workshop.all.collect { |workshop| workshop.skills.all? { |skill| self.learned_skills.include?(skill) } ? workshop : nil}.compact.uniq
-    allowed.flatten.uniq.each do |shop|
-      allowed_workshops.include?(shop) ?  nil : (allowed_workshops << shop)
-    end
   end
 
   def email_required?

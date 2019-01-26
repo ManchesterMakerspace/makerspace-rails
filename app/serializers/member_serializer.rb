@@ -6,13 +6,9 @@ class MemberSerializer < ActiveModel::Serializer
              :email,
              :status,
              :role,
-             :groupName,
              :card_id,
-             :groupName,
              :subscription_id,
-  # has_many :learned_skills
-  # has_many :allowed_workshops
-  # has_many :access_cards
+
   def card_id
     active_card = object.access_cards.to_a.find { |card| card.is_active? }
     active_card && active_card.id
