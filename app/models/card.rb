@@ -19,7 +19,7 @@ class Card
     revoked: "revoked",
     nonMember: "nonMember",
     lost: "lost",
-    stoken: "stolen",
+    stolen: "stolen",
     expired: "expired"
   }
 
@@ -29,7 +29,7 @@ class Card
     @@memberStatuses[:expired],
   ]
 
-  def isActive
+  def is_active?
     @@activeStatuses.include?(self.validity)
   end
 

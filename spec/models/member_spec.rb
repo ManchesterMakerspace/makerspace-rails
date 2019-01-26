@@ -36,13 +36,12 @@ RSpec.describe Member, type: :model do
   end
 
   # context "callbacks" do
-  #   it { expect(member).to callback(:update_allowed_workshops).before(:save) }
-  #   it { expect(member).to callback(:verify_group_expiry).after(:initialize) }
   #   it { expect(member).to callback(:update_card).after(:update) }
   # end
 
   context "public methods" do
     let(:expired_member) { create(:member, :expired) }
+    let(:card) {create(:card, member: expired_member)}
     let(:valid_member) { create(:member, :current) }
     let(:expiring_member) { create(:member, :expiring) }
 
@@ -68,9 +67,10 @@ RSpec.describe Member, type: :model do
     end
 
     describe "Renewing members" do #method to be improved
-      it "Will renew a member with the number of months" do
-        expired_member.send(:renewal=, 1)
+      it "Will renew a members with the number of months" do
+        expired_member.send(:renew=, 1)
         expect(expired_member.membership_status).to eq('current')
+        expect(expired_member.expirationTime).to be > Time.now.to_i * 1000
       end
     end
 
@@ -79,7 +79,7 @@ RSpec.describe Member, type: :model do
       first_expiration = expired_member.expirationTime
       expect(card.expiry).to eq(first_expiration)
 
-      expired_member.send(:renewal=, 1)
+      expired_member.send(:renew=, 1)
       new_expiration = expired_member.expirationTime
       expect(card.expiry).to eq(new_expiration)
       expect(new_expiration).not_to eq(first_expiration)

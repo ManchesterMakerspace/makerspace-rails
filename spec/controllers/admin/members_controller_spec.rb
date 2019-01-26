@@ -12,7 +12,7 @@ RSpec.describe Admin::MembersController, type: :controller do
       password: 'password',
       password_confirmation: 'password',
       expirationTime: (Time.now + 1.month).to_i * 1000
-      # renewal: { months: 1 }
+      renew: { months: 1 }
     }
   }
 
@@ -25,7 +25,7 @@ RSpec.describe Admin::MembersController, type: :controller do
       email: 'test@test.com',
       password: 'password',
       password_confirmation: 'wrong_password',
-      renewal: { months: 1 }
+      renew: { months: 1 }
     }
   }
 
@@ -80,7 +80,7 @@ RSpec.describe Admin::MembersController, type: :controller do
             email: 'new_email@test.com',
             firstname: 'Change',
             lastname: 'Name',
-            renewal: 1
+            renew: 1
           }
         }
 
@@ -123,7 +123,7 @@ RSpec.describe Admin::MembersController, type: :controller do
             email: 'new_email@test.com',
             firstname: 'Change',
             lastname: 'Name',
-            renewal: 1
+            renew: 1
           }
         }
 

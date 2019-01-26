@@ -21,14 +21,6 @@ RSpec.describe Card, type: :model do
     expect(build(:card)).to be_valid
   end
 
-  # context "callbacks" do
-  #   let(:card) { create(:card) }
-
-  #   it { expect(card).to callback(:set_expiration).before(:create) }
-  #   it { expect(card).to callback(:set_expiration).before(:update) }
-  #   it { expect(card).to callback(:set_holder).before(:create) }
-  # end
-
   context "private methods" do
     let(:member) {create(:member, :current)}
     let(:expired_member) {create(:member, :expired)}
@@ -43,8 +35,11 @@ RSpec.describe Card, type: :model do
 
     it "Renewed member renews card" do
       expect(expired_card.expiry).to be < (Time.now.to_i * 1000)
-      expired_member.send(:renewal=, 1)
+      expect(expired_card.validity).to eq("activeMember")
+      expired_member.send(:renew=, 1)
+      expired_card.reload
       expect(expired_card.expiry).to eq(expired_member.expirationTime)
+      expect(expired_card.validity).to eq("activeMember")
     end
 
     it "Lost or stolen card is not reactivated by renewal" do
@@ -52,7 +47,8 @@ RSpec.describe Card, type: :model do
       expired_card.save
 
       expect(expired_card.validity).to eq('lost')
-      expired_member.send(:renewal=, 1)
+      expired_member.send(:renew=, 1)
+      expired_card.reload
       expect(expired_card.validity).to eq('lost')
     end
   end
