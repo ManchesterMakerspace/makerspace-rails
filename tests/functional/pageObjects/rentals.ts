@@ -1,8 +1,10 @@
 import { TablePageObject } from "./table";
+import { Routing } from "app/constants";
 import utils from "./common";
 
 const tableId = "rentals-table";
 class RentalsPageObject extends TablePageObject {
+  public listUrl = Routing.Rentals
 
   public actionButtons = {
     create: "#rentals-list-create",
@@ -38,6 +40,12 @@ class RentalsPageObject extends TablePageObject {
   }
 
   public rentalsListFields = ["number", "description", "member", "expiration", "status"];
+  public rentalsList = {
+    createButton: "#rentals-list-create",
+    editButton: "#rentals-list-edit",
+    renewButton: "#rentals-list-renew",
+    deleteButton: "#rentals-list-delete",
+  }
 }
 
 export default new RentalsPageObject(tableId);

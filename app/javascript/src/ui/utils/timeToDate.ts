@@ -1,6 +1,6 @@
 import * as moment from "moment-timezone";
 // User's timezone
-const defaultTZ = moment.tz.guess();
+const defaultTZ = "America/New_York";
 
 // Format ms since epoch to string to display
 export const timeToDate = (time: number | string | Date) => {

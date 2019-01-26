@@ -39,8 +39,6 @@ const verifyListView = async (membersList: LoginMember[]) => {
   expect(await utils.isElementDisplayed(memberPo.getNoDataRowId())).toBeFalsy();
   expect((await memberPo.getAllRows()).length).toEqual(membersList.length);
 
-
-
   await Promise.all(membersList.slice(0, 5).map(async (member) => {
     await verifyFieldsForMember(member);
   }));

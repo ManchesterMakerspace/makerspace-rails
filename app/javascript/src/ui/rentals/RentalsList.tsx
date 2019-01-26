@@ -259,7 +259,10 @@ class RentalsList extends React.Component<Props, State> {
     const deleteModal = (renderProps: UpdateRentalRenderProps) => {
       const submit = async (form: Form) => {
         const success = await renderProps.submit(form);
-        success && this.setState({ selectedId: undefined });
+        if (success) {
+          this.setState({ selectedId: undefined, pageNum: 0 },
+            this.getRentals
+        };
       }
       return (
         <DeleteRentalModal
