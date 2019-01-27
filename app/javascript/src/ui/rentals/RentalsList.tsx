@@ -261,8 +261,8 @@ class RentalsList extends React.Component<Props, State> {
         const success = await renderProps.submit(form);
         if (success) {
           this.setState({ selectedId: undefined, pageNum: 0 },
-            this.getRentals
-        };
+            this.getRentals);
+        }
       }
       return (
         <DeleteRentalModal
