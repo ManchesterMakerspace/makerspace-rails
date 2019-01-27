@@ -2,7 +2,7 @@ class RegistrationsController < Devise::RegistrationsController
     include BraintreeGateway
     include ApplicationHelper
     include SlackService
-    before_action :initalize_gdrive, only: [:create]
+    include GoogleService
     respond_to :json
 
     def create
@@ -18,10 +18,11 @@ class RegistrationsController < Devise::RegistrationsController
 
         member_response = ActiveModelSerializers::SerializableResource.new(@member).as_json
         invoice_response = ActiveModelSerializers::SerializableResource.new(@invoice).as_json
-        render json: {
+        response = {
           member: member_response[:member],
-          invoice: invoice_response[:invoice],
-        } and return
+        }
+        response[:invoice] = invoice_response[:invoice] unless invoice_response.nil?
+        render json:response and return
       else
         render json: { message: @member.errors.full_messages }, status: 400 and return
       end
@@ -51,21 +52,12 @@ class RegistrationsController < Devise::RegistrationsController
         discounts = ::BraintreeService::Discount.get_discounts(@gateway)
         invoice_discount = discounts.find { |d| d.id == invoice_option_params[:discount_id]}
       end
-      @invoice = invoice_option.build_invoice(@member.id, Time.now, @member.id, invoice_discount)
-      unless @invoice.save
-        @messages.push("Error creating initial membership invoice for new member: #{@member.email}")
-        @messages.concat(@invoice.errors.full_messages)
+      if invoice_option
+        @invoice = invoice_option.build_invoice(@member.id, Time.now, @member.id, invoice_discount)
+        unless @invoice.save
+          @messages.push("Error creating initial membership invoice for new member: #{@member.email}")
+          @messages.concat(@invoice.errors.full_messages)
+        end
       end
-    end
-
-    def initalize_gdrive
-      @service = Google::Apis::DriveV3::DriveService.new
-      creds = Google::Auth::UserRefreshCredentials.new({
-        client_id: ENV['GOOGLE_ID'],
-        client_secret: ENV['GOOGLE_SECRET'],
-        refresh_token: ENV['GOOGLE_TOKEN'],
-        scope: ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/drive"]
-      })
-      @service.authorization = creds
     end
 end

@@ -41,14 +41,18 @@ RSpec.describe RegistrationsController, type: :controller do
         }.to change(Member, :count).by(1)
       end
 
-      it "Uploads the member's signature" do
-        slack_msg = "msg"
-        Slack::Notifier.any_instance.stub(:ping)
-        Slack::Notifier::Util::LinkFormatter.stub(:format).and_return(slack_msg)
+      it "sends slack message on create" do
+        slack_message = {
+          channel: 'test_channel',
+          text: "foo",
+          as_user: false,
+          username: 'Management Bot',
+          icon_emoji: ':ghost:'
+        }
+        Slack::Web::Client.any_instance.stub(:chat_postMessage)
         post :create, params: {member: valid_attributes}, format: :json
-        expect(assigns(:notifier)).to be_a(Slack::Notifier)
-        expect(Slack::Notifier::Util::LinkFormatter).to have_received(:format).with(assigns(:messages).join("\n"))
-        expect(assigns(:notifier)).to have_received(:ping).with(slack_msg)
+        expect(assigns(:client)).to be_a(Slack::Web::Client)
+        # not asserting sending a message cuz that only happens on error
       end
 
       it "Adds user to gdrive" do
@@ -72,7 +76,7 @@ RSpec.describe RegistrationsController, type: :controller do
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
-        expect(parsed_response['id']).to eq(Member.last.id.as_json)
+        expect(parsed_response['member']['id']).to eq(Member.last.id.as_json)
       end
     end
 

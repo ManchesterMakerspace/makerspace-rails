@@ -40,7 +40,7 @@ RSpec.describe Admin::RentalsController, type: :controller do
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
-        expect(parsed_response['id']).to eq(Rental.last.id.to_s)
+        expect(parsed_response['rental']['id']).to eq(Rental.last.id.to_s)
       end
     end
 
@@ -69,7 +69,7 @@ RSpec.describe Admin::RentalsController, type: :controller do
         rental = Rental.create! valid_attributes
         put :update, params: {id: rental.to_param, rental: new_attributes}, format: :json
         rental.reload
-        expect(rental.getExpiration).to eq(Time.parse(new_attributes[:expiration].to_s))
+        expect(rental.prettyTime).to eq(Time.parse(new_attributes[:expiration].to_s))
       end
 
       it "renders json of the rental" do
@@ -79,19 +79,23 @@ RSpec.describe Admin::RentalsController, type: :controller do
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
-        expect(parsed_response['id']).to eq(rental.id.as_json)
+        expect(parsed_response['rental']['id']).to eq(rental.id.as_json)
       end
 
-      it "Sends slack notification if member renewed" do
+      it "Sends slack notification if rental renewed" do
         rental = Rental.create! valid_attributes
-        slack_msg = "msg"
-        Slack::Notifier.any_instance.stub(:ping)
-        Slack::Notifier::Util::LinkFormatter.stub(:format).and_return(slack_msg)
+        slack_message = {
+          channel: 'test_channel',
+          text: "foo",
+          as_user: false,
+          username: 'Management Bot',
+          icon_emoji: ':ghost:'
+        }
+        Rental.any_instance.stub(:build_slack_msg) { "foo" }
+        Slack::Web::Client.any_instance.stub(:chat_postMessage)
         put :update, params: {id: rental.to_param, rental: new_attributes}, format: :json
-        member.reload
-        expect(assigns(:notifier)).to be_a(Slack::Notifier)
-        expect(Slack::Notifier::Util::LinkFormatter).to have_received(:format).with(assigns(:messages).join("\n"))
-        expect(assigns(:notifier)).to have_received(:ping).with(slack_msg)
+        expect(assigns(:client)).to be_a(Slack::Web::Client)
+        expect(assigns(:client)).to have_received(:chat_postMessage).with(slack_message)
       end
     end
   end
