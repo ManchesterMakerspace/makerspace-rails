@@ -41,6 +41,8 @@ services:
     ports:
       - 1080:1080
     tty: false
+    logging:
+      driver: "none"
   selenium:
     image: selenium/standalone-chrome:latest
     ports:

@@ -7,15 +7,3 @@ services:
     environment:
       - RAILS_ENV=test
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rspec --format progress --format html --out /myapp/spec/rspec_results.html"
-  tester:
-    build:
-      context: ../..
-      dockerfile: Docker/Dockerfiles/tester
-    volumes_from:
-      - interface
-    links:
-      - interface
-    depends_on:
-      - interface
-    environment:
-      - RAILS_ENV=test
