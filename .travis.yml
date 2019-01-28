@@ -1,11 +1,22 @@
 sudo: required
-cache:
-  directories:
-    - /box
-    - /myapp/node_modules
-language: ruby
-install: true
 services:
   - docker
-
-script: make test
+language: ruby
+cache:
+  bundler: true
+  yarn: true
+  directories:
+    - node_modules
+addons:
+  chrome: stable
+rvm:
+  - 2.5.1
+install:
+  - bundle install
+  - nvm install node
+  - node -v
+  - npm i -g yarn
+  - yarn install
+script: make start-func
+after_success:
+  - bundle exec rake assets:precompile

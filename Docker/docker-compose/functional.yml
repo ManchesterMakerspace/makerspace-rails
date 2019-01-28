@@ -13,7 +13,21 @@ services:
       - API_DOMAIN=http://mockserver:1080
       - MOCKSERVER_DOMAIN=mockserver
       - PORT=3002
-    env_file: ../../test.env
+      - MLAB_URI
+      - SLACK_ADMIN_TOKEN
+      - SLACK_VARIABLE
+      - SLACK_WEBHOOK_URL
+      - GMAIL_PASSWORD
+      - GMAIL_USERNAME
+      - BT_ENV
+      - BT_PRIVATE_KEY
+      - BT_PUBLIC_KEY
+      - BT_MERCHANT_ID
+      - CODE_CONDUCT_ID
+      - CONTRACT_ID
+      - RESOURCES_FOLDER
+      - SIGNATURES_FOLDER
+      - SECRET_KEY_BASE
   tester:
     build:
       context: ../..
@@ -34,15 +48,27 @@ services:
       - PORT=3002
       - SELENIUM_ADDRESS=http://selenium:4444/wd/hub
       - MOCKSERVER_DOMAIN=mockserver
+      - MLAB_URI
+      - SLACK_ADMIN_TOKEN
+      - SLACK_VARIABLE
+      - SLACK_WEBHOOK_URL
+      - GMAIL_PASSWORD
+      - GMAIL_USERNAME
+      - BT_ENV
+      - BT_PRIVATE_KEY
+      - BT_PUBLIC_KEY
+      - BT_MERCHANT_ID
+      - CODE_CONDUCT_ID
+      - CONTRACT_ID
+      - RESOURCES_FOLDER
+      - SIGNATURES_FOLDER
+      - SECRET_KEY_BASE
     tty: true
-    env_file: ../../test.env
   mockserver:
     image: jamesdbloom/mockserver:mockserver-5.4.1
     ports:
       - 1080:1080
     tty: false
-    logging:
-      driver: "none"
   selenium:
     image: selenium/standalone-chrome:latest
     ports:

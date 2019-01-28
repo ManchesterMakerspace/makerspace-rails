@@ -1,10 +1,20 @@
-const { environment } = require('@rails/webpacker')
-const typescript =  require('./loaders/typescript')
-const webpack = require('webpack')
-const dotenv = require('dotenv')
+const { environment } = require('@rails/webpacker');
+const typescript =  require('./loaders/typescript');
+const webpack = require('webpack');
+const dotenv = require('dotenv');
+const fs = require('fs');
 
-dotenv.config({ path: `./${process.env.NODE_ENV}.env`, silent: true })
-environment.plugins.prepend('Environment', new webpack.EnvironmentPlugin(JSON.parse(JSON.stringify(process.env))))
+const pathname = `./${process.env.NODE_ENV}.env`;
+
+try {
+  if (fs.existsSync(pathname)) {
+    dotenv.config({ path: pathname, silent: true });
+  }
+} catch (e) {
+  console.log(e);
+}
+
+environment.plugins.prepend('Environment', new webpack.EnvironmentPlugin(JSON.parse(JSON.stringify(process.env))));
 
 environment.loaders.append('typescript', typescript);
 environment.loaders.append('html', {
