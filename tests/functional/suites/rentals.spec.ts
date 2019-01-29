@@ -45,8 +45,6 @@ const verifyFieldsForRental = async (rental: Partial<Rental>, member?: Partial<M
 }
 
 const verifyListView = async (rentalsList: Rental[]) => {
-  expect(await utils.isElementDisplayed(rentalsPO.getErrorRowId())).toBeFalsy();
-  expect(await utils.isElementDisplayed(rentalsPO.getNoDataRowId())).toBeFalsy();
   expect((await rentalsPO.getAllRows()).length).toEqual(rentalsList.length);
 
   await Promise.all(rentalsList.slice(0, 5).map(async (rental) => {
@@ -78,6 +76,10 @@ describe("Rentals", () => {
         return auth.autoLogin(adminUser).then(async () => {
           await mock(mockRequests.rentals.get.ok(defaultRentals, {}, true));
           await header.navigateTo(header.links.rentals);
+          expect(await utils.isElementDisplayed(rentalsPO.getErrorRowId())).toBeFalsy();
+          expect(await utils.isElementDisplayed(rentalsPO.getNoDataRowId())).toBeFalsy();
+          expect(await utils.isElementDisplayed(rentalsPO.getLoadingId())).toBeFalsy();
+          await utils.waitForVisisble(rentalsPO.getRowBaseId(defaultRentals[0].id));
         });
       });
       it("Loads a list of rentals", async () => {
@@ -167,11 +169,13 @@ describe("Rentals", () => {
         memberId: basicUser.id,
         memberName: `${basicUser.firstname} ${basicUser.lastname}`,
       };
-      beforeEach(async () => {
-        // 1. Login as admin and nav to basic user's profile
-        await mock(mockRequests.invoices.get.ok([], undefined));
-        await mock(mockRequests.member.get.ok(basicUser.id, basicUser));
-        return auth.autoLogin(adminUser, targetUrl);
+      beforeEach(() => {
+        return new Promise(async (resolve) => {
+          // 1. Login as admin and nav to basic user's profile
+          await mock(mockRequests.invoices.get.ok([], undefined));
+          await mock(mockRequests.member.get.ok(basicUser.id, basicUser));
+          return auth.autoLogin(adminUser, targetUrl).then(() => resolve())
+        })
       });
       it("Can create new rentals for members", async () => {
         /* 1. Login as admin and nav to basic user's profile

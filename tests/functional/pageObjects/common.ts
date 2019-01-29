@@ -5,7 +5,7 @@ import * as moment from "moment";
 export const rootURL = `http://${process.env.APP_DOMAIN || 'localhost'}:${process.env.PORT || 3002}`;
 
 export class PageUtils {
-  private waitUntilTime = 10 * 1000;
+  private waitUntilTime = 15 * 1000;
 
   // programatically set timeout for locating functions
   public setLocatorTimeout = (number: number) => {
@@ -213,7 +213,6 @@ export class PageUtils {
       const date = toDatePicker(timeInMs);
       const [year, month, day] = date.split("-");
       const dateString = `${month}${day}${year}`;
-      console.log(date);
       await this.fillInput(elementLocator, dateString);
     } catch {
       throw new Error(`Error writing time: ${timeInMs} for element: ${elementLocator}`);

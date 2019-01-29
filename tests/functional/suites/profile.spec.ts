@@ -148,7 +148,7 @@ describe("Member Profiles", () => {
         await mock(mockRequests.member.get.ok(viewingMember.id, viewingMember));
         await auth.autoLogin(adminUser, memberPO.getProfilePath(viewingMember.id));
         await utils.clickElement(memberPO.memberDetail.openEditButton);
-        await mock(mockRequests.member.put.ok(updatedMember.id, updatedMember));
+        await mock(mockRequests.member.put.ok(updatedMember.id, updatedMember, true));
         await mock(mockRequests.member.get.ok(updatedMember.id, updatedMember));
         await utils.fillInput(memberPO.memberForm.email, "");
         await utils.fillInput(memberPO.memberForm.email, updatedMember.email);
@@ -193,7 +193,7 @@ describe("Member Profiles", () => {
         await utils.clickElement(memberPO.memberForm.submit);
         await utils.assertNoInputError(memberPO.memberForm.email)
         expect(await utils.getElementText(memberPO.memberForm.error)).toBeTruthy();
-        await mock(mockRequests.member.put.ok(updatedMember.id, updatedMember));
+        await mock(mockRequests.member.put.ok(updatedMember.id, updatedMember, true));
         await mock(mockRequests.member.get.ok(updatedMember.id, updatedMember));
         await utils.clickElement(memberPO.memberForm.submit);
         await utils.waitForNotVisible(memberPO.memberForm.submit);
@@ -233,7 +233,7 @@ describe("Member Profiles", () => {
         await utils.waitForVisisble(memberPO.accessCardForm.submit);
         await utils.clickElement(memberPO.accessCardForm.importButton);
         expect(await utils.getElementText(memberPO.accessCardForm.importConfirmation)).toEqual(cardId);
-        await mock(mockRequests.member.put.ok(updatedMember.id, updatedMember));
+        await mock(mockRequests.member.put.ok(updatedMember.id, updatedMember, true));
         await mock(mockRequests.member.get.ok(updatedMember.id, updatedMember));
         await utils.clickElement(memberPO.accessCardForm.submit);
         await utils.waitForNotVisible(memberPO.accessCardForm.submit);
@@ -285,7 +285,7 @@ describe("Member Profiles", () => {
         await utils.waitForNotVisible(memberPO.accessCardForm.loading);
         await utils.clickElement(memberPO.accessCardForm.importButton);
         expect(await utils.getElementText(memberPO.accessCardForm.importConfirmation)).toEqual(cardId);
-        await mock(mockRequests.member.put.ok(updatedMember.id, updatedMember));
+        await mock(mockRequests.member.put.ok(updatedMember.id, updatedMember, true));
         await mock(mockRequests.member.get.ok(updatedMember.id, updatedMember));
         await utils.clickElement(memberPO.accessCardForm.submit);
         await utils.waitForNotVisible(memberPO.accessCardForm.submit);

@@ -66,7 +66,7 @@ describe("Members page", () => {
       expect(await utils.isElementDisplayed(memberPo.membersList.renewMemberButton)).toBeFalsy();
     });
   });
-  fdescribe("Admin User", () => {
+  describe("Admin User", () => {
     beforeEach(() => {
       return auth.autoLogin(adminUser).then(async () => {
         await mock(mockRequests.members.get.ok(defaultMembers));
