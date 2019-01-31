@@ -13,10 +13,11 @@ import { CollectionOf } from "app/interfaces";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import SignUpFormComponent from "ui/auth/SignUpForm";
-import SignDocuments from "ui/auth/SignDocuments";
 import { SignUpForm } from "ui/auth/interfaces";
 import { submitSignUpAction } from "ui/auth/actions";
 import { AuthMember } from "ui/auth/interfaces";
+import { Whitelists } from "app/constants";
+const { billingEnabled } = Whitelists;
 
 interface OwnProps { }
 interface StateProps {
@@ -31,7 +32,6 @@ interface DispatchProps {
 interface Props extends OwnProps, StateProps, DispatchProps { }
 interface State {
   openLoginModal: boolean;
-  displayDocuments: boolean;
   redirect: string;
 }
 class SignUpContainer extends React.Component<Props, State>{
@@ -40,16 +40,7 @@ class SignUpContainer extends React.Component<Props, State>{
     this.state = ({
       openLoginModal: false,
       redirect: undefined,
-      displayDocuments: false,
     });
-  }
-
-  public componentDidUpdate(prevProps: Props) {
-    const { isRequesting: wasRequesting } = prevProps;
-    const { isRequesting, error } = this.props;
-    if (wasRequesting && !isRequesting && !error) {
-      this.setState({ displayDocuments: true });
-    }
   }
 
   // Option to redirect to login if they try to sign up w/ an existing email
@@ -57,17 +48,13 @@ class SignUpContainer extends React.Component<Props, State>{
     this.setState({ redirect: Routing.Login });
   }
 
-  private goToCheckout = () => {
-    this.setState({ redirect: Routing.Checkout });
-  }
-
   private submitSignupForm = async (validSignUp: SignUpForm) => {
     await this.props.submitSignUp(validSignUp);
   }
 
   public render(): JSX.Element {
-    const { redirect, displayDocuments } = this.state;
-    const { isRequesting, error, currentUser } = this.props;
+    const { redirect } = this.state;
+    const { isRequesting, error } = this.props;
     if (redirect) {
       return <Redirect to={redirect} />
     }
@@ -79,28 +66,21 @@ class SignUpContainer extends React.Component<Props, State>{
             <Grid item xs={12}>
               <Card style={{ minWidth: 275 }}>
                 <CardContent>
-                  {displayDocuments ?
-                    <SignDocuments currentUser={currentUser} onSubmit={this.goToCheckout} />
-                    : (
-                      <>
-                        <SignUpFormComponent
-                          goToLogin={this.goToLogin}
-                          onSubmit={this.submitSignupForm}
-                          isRequesting={isRequesting}
-                          error={error}
-                          renderMembershipOptions={true}
-                        />
-                      </>
-                    )
-                  }
+                  <SignUpFormComponent
+                    goToLogin={this.goToLogin}
+                    onSubmit={this.submitSignupForm}
+                    isRequesting={isRequesting}
+                    error={error}
+                    renderMembershipOptions={billingEnabled}
+                  />
                 </CardContent>
               </Card>
             </Grid>
-            {!displayDocuments && <Grid item xs={12}>
+            <Grid item xs={12}>
               <Button id="auth-toggle" variant="outlined" color="secondary" fullWidth onClick={this.goToLogin}>
                 Already a Member? Login
               </Button>
-            </Grid>}
+            </Grid>
           </Grid>
         </Grid>
       </Grid>

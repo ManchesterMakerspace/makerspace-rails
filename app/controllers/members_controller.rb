@@ -28,6 +28,7 @@ class MembersController < ApplicationController
         if !response[:error].nil?
           render json: { message: response[:error] }, status: 500 and return
         else
+          @member.update({ memberContractOnFile: true })
           render json: {}, status: 200 and return
         end
       end

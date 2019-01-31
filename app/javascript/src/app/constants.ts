@@ -71,6 +71,7 @@ export namespace Routing {
   export const Login = "/login";
   export const SignUp = "/signup";
   export const Members = "/members";
+  export const Documents = "/agreements"
   export const Profile = `${Members}/${PathPlaceholder.MemberId}`;
 
   export const Billing = "/billing";
@@ -100,4 +101,8 @@ export enum CrudOperation {
   Create = "create",
   Update = "update",
   Delete = "delete",
+}
+
+export namespace Whitelists {
+  export const billingEnabled = (process as any).env.BILLING_ENABLED || false;
 }

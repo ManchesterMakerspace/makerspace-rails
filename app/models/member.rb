@@ -14,7 +14,7 @@ class Member
   field :firstname
   field :lastname
   field :status,                         default: "activeMember" # activeMember, nonMember, revoked, inactive
-  field :expirationTime,  type: Integer, default: Time.now #pre-calcualted time of expiration
+  field :expirationTime,  type: Integer  #pre-calcualted time of expiration
   field :startDate, default: Time.now
   field :groupName #potentially member is in a group/partner membership
   field :role,                          default: "member" #admin,officer,member

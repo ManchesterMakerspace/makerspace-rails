@@ -61,10 +61,13 @@ export const submitSignUpAction = (
   try {
     const response = await postSignUp(signUpForm);
     const { member, invoice } = response.data;
-    dispatch({
-      type: CheckoutAction.StageInvoicesForPayment,
-      data: [invoice]
-    });
+    if (invoice) {
+      dispatch({
+        type: CheckoutAction.StageInvoicesForPayment,
+        data: [invoice]
+      });
+    }
+
     dispatch({
       type: AuthAction.AuthUserSuccess,
       data: {

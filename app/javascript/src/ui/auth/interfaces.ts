@@ -1,5 +1,5 @@
 import { MemberDetails, Properties as MemberProperties } from "app/entities/member";
-import { BillingPlan } from "app/entities/billingPlan";
+
 export interface AuthState {
   currentUser: AuthMember;
   isRequesting: boolean;

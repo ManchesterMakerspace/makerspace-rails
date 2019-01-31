@@ -6,7 +6,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { MemberDetails } from "app/entities/member";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
-import { displayMemberExpiration } from "ui/member/utils";
+import { displayMemberExpiration, buildProfileRouting } from "ui/member/utils";
 import LoadingOverlay from "ui/common/LoadingOverlay";
 import KeyValueItem from "ui/common/KeyValueItem";
 import DetailView from "ui/common/DetailView";
@@ -22,6 +22,10 @@ import InvoicesList from "ui/invoices/InvoicesList";
 import RentalsList from "ui/rentals/RentalsList";
 import { Routing, CrudOperation } from "app/constants";
 import { ActionButton } from "ui/common/ButtonRow";
+import NotificationModal, { Notification } from "ui/member/NotificationModal";
+import { Whitelists } from "app/constants";
+import SignDocuments from "ui/auth/SignDocuments";
+const { billingEnabled } = Whitelists;
 
 interface DispatchProps {
   getMember: () => Promise<void>;
@@ -44,20 +48,16 @@ interface State {
   isEditOpen: boolean;
   isRenewOpen: boolean;
   isCardOpen: boolean;
-  isWelcomeOpen: boolean;
-  isInvoiceNotificationOpen: boolean;
-  submittingSignature: boolean;
-  submitSignatureError: string;
+  displayDocuments: boolean;
+  displayNotification: Notification;
   redirect: string;
 }
-const defaultState = {
+const defaultState: State = {
   isEditOpen: false,
   isRenewOpen: false,
   isCardOpen: false,
-  isWelcomeOpen: false,
-  isInvoiceNotificationOpen: false,
-  submittingSignature: false,
-  submitSignatureError: "",
+  displayDocuments: false,
+  displayNotification: undefined,
   redirect: "",
 }
 
@@ -69,7 +69,7 @@ class MemberDetail extends React.Component<Props, State> {
 
     this.state = {
       ...defaultState,
-      isWelcomeOpen: !!props.isNewMember
+      displayNotification: props.isNewMember ? Notification.Welcome : undefined,
     };
   }
 
@@ -90,6 +90,9 @@ class MemberDetail extends React.Component<Props, State> {
         if (resource) {
           !allowedResources.has(resource) && history.push(Routing.Profile.replace(Routing.PathPlaceholder.MemberId, currentUserId))
         }
+        if (!member.memberContractOnFile) {
+          this.setState({ displayNotification: Notification.Welcome  });
+        }
       } else {
         history.push(Routing.Members);
       }
@@ -102,7 +105,6 @@ class MemberDetail extends React.Component<Props, State> {
   private closeEditModal = () => this.setState({ isEditOpen: false });
   private openCardModal = () => this.setState({ isCardOpen: true });
   private closeCardModal = () => this.setState({ isCardOpen: false });
-  private closeWelcomeModal = () => this.setState({ isWelcomeOpen: false });
 
   private renderMemberInfo = (): JSX.Element => {
     const { member } = this.props;
@@ -119,7 +121,7 @@ class MemberDetail extends React.Component<Props, State> {
           <MemberStatusLabel id="member-detail-status" member={member} />
         </KeyValueItem>
         <KeyValueItem label="Membership Type">
-          <span id="member-detail-type">{member.subscriptionId ? "Subscription" : "Monthly"}</span>
+          <span id="member-detail-type">{member.subscriptionId ? "Subscription" : (member.expirationTime ? "Month-to-month" : "No membership found")}</span>
         </KeyValueItem>
       </>
     )
@@ -136,7 +138,7 @@ class MemberDetail extends React.Component<Props, State> {
 
   private renderMemberDetails = (): JSX.Element => {
     const { member, isUpdatingMember, isRequestingMember, match, admin } = this.props;
-    const { memberId } = match.params;
+    const { memberId, resource } = match.params;
     const { redirect } = this.state;
     const loading = isUpdatingMember || isRequestingMember;
     if (redirect) {
@@ -181,11 +183,13 @@ class MemberDetail extends React.Component<Props, State> {
               }] as ActionButton[]: []
           ]}
           information={this.renderMemberInfo()}
+          activeResourceName={resource}
           resources={(this.allowViewProfile() || admin) && [
-            {
+            ...billingEnabled ?
+            [{
               name: "dues",
               content: <InvoicesList member={member} />
-            },
+            }] : [],
             {
               name: "rentals",
               content: (
@@ -197,46 +201,30 @@ class MemberDetail extends React.Component<Props, State> {
           ]}
         />
         {this.renderMemberForms()}
-        {/* {this.renderNotifications()} */}
+        {this.renderNotifications()}
       </>
     )
   }
 
-  // private renderNotifications = () => {
-  //   const { isWelcomeOpen, submittingSignature, submitSignatureError } = this.state;
+  private goToAgreements = () => {
+    this.setState({ displayDocuments: true });
+  }
+  private closeAgreements = () => {
+    this.setState({ displayDocuments: false });
+    this.closeNotifications();
+  }
+  private closeNotifications = () => this.setState({ displayNotification: undefined });
+  private renderNotifications = () => {
+    const { displayNotification } = this.state;
 
-  //   return (
-  //     <WelcomeModal
-  //       isOpen={isWelcomeOpen}
-  //       isRequesting={submittingSignature}
-  //       error={submitSignatureError}
-  //       onSubmit={this.saveSignature}
-  //     />
-  //   );
-  // }
-
-  // private saveSignature = (form: Form) => {
-  //   const { submitSignatureError, submittingSignature } = this.state;
-
-  //   // Allow member to continue past modal if error submitting signature
-  //   // Backend will send a slack notifiation if it errors so we can contact them directly
-  //   if (!submittingSignature && submitSignatureError) {
-  //     this.closeWelcomeModal();
-  //   }
-
-  //   // Don't request if already in progress
-  //   if (!submittingSignature) {
-  //     this.setState({ submittingSignature: true }, async () => {
-  //       try {
-  //         const response = await uploadMemberSignature();
-  //         this.setState({ submittingSignature: false });
-  //       } catch (e) {
-  //         const { errorMessage } = e;
-  //         this.setState({ submittingSignature: false, submitSignatureError: errorMessage || "There was an error saving your signature." });
-  //       }
-  //     })
-  //   }
-  // }
+    return (
+      <NotificationModal
+        notification={displayNotification}
+        onSubmit={this.goToAgreements}
+        onClose={this.closeNotifications}
+      />
+    );
+  }
 
   private renderMemberForms = () => {
     const { member, admin } = this.props;
@@ -309,10 +297,15 @@ class MemberDetail extends React.Component<Props, State> {
   public render(): JSX.Element {
     const { member, isRequestingMember, match } = this.props;
     const { memberId } = match.params;
+    const { displayDocuments } = this.state;
     return (
       <>
         {isRequestingMember && <LoadingOverlay id={memberId}/>}
-        {member && this.renderMemberDetails()}
+        {member && (
+          displayDocuments ?
+          <SignDocuments onSubmit={this.closeAgreements}/>
+          : this.renderMemberDetails()
+      )}
       </>
     )
   }

@@ -1,13 +1,15 @@
 import * as React from 'react';
+import { Redirect } from 'react-router';
 
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+import Button from "@material-ui/core/Button";
 import Typography from '@material-ui/core/Typography';
 
-import { Routing } from "app/constants";
+import { Routing, Whitelists } from "app/constants";
 import MembershipSelectForm from 'ui/auth/MembershipSelectForm';
-import { Redirect } from 'react-router';
+const { billingEnabled } = Whitelists;
 
 interface State {
   redirect: string;
@@ -31,6 +33,10 @@ class LandingPage extends React.Component<Props, State> {
 
   private selectMembershipOption = (membershipOptionId: string) => {
     this.setState({ membershipOptionId });
+    this.goToSignup();
+  }
+
+  private goToSignup = () =>{
     this.setState({ redirect: Routing.SignUp });
   }
 
@@ -65,12 +71,22 @@ class LandingPage extends React.Component<Props, State> {
                   </Typography>
                 </Grid>
 
-                <Grid item xs={12}>
+              </Grid>
+              <Grid container spacing={24} justify="center">
+                {billingEnabled && <Grid item xs={12}>
                   <Typography variant="headline">
                     To get started, first select a membership option.
                   </Typography>
                   <MembershipSelectForm title="" membershipOptionId={membershipOptionId} discountId={discountId} onSelect={this.selectMembershipOption} onDiscount={this.selectMembershipDiscount} />
-                </Grid>
+                </Grid>}
+                {!billingEnabled && <Grid item md={6} xs={12}>
+                  <Typography variant="subheading" align="center">
+                    Please take a moment to register with our online portal.
+                  </Typography>
+                  <Button id="register" variant="outlined" color="secondary" fullWidth onClick={this.goToSignup}>
+                    Register
+                  </Button>
+                </Grid>}
               </Grid>
             </CardContent>
           </Card>

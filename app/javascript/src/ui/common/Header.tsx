@@ -18,6 +18,7 @@ import { logoutUserAction } from "ui/auth/actions";
 import { AuthMember } from "ui/auth/interfaces";
 import { memberIsAdmin } from "ui/member/utils";
 import { Routing } from "app/constants";
+import { Whitelists } from "app/constants";
 
 interface OwnProps extends RouteComponentProps<any> {
 }

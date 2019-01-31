@@ -7,6 +7,7 @@ class MemberSerializer < ActiveModel::Serializer
              :status,
              :role,
              :card_id,
+             :memberContractOnFile,
              :subscription_id,
 
   def card_id

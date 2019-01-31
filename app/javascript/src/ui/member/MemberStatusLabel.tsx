@@ -14,13 +14,23 @@ const MemberStatusLabel: React.SFC<{ member: MemberDetails, id?: string }> = (pr
   const { member } = props;
   const inActive = ![MemberStatus.Active, MemberStatus.NonMember].includes(member.status);
   const current = member.expirationTime > Date.now();
-  const statusColor = current && !inActive ? Status.Success : Status.Danger;
+
+  let statusColor;
+  if (!member.expirationTime) {
+    statusColor = Status.Default;
+  } else {
+    statusColor = current && !inActive ? Status.Success : Status.Danger;
+  }
 
   let label;
   if (inActive) {
     label = memberStatusLabelMap[member.status];
   } else {
-    label = current ? "Active" : "Expired";
+    if (!member.expirationTime) {
+      label = "N/A"
+    } else {
+      label = current ? "Active" : "Expired";
+    }
   }
 
   return (

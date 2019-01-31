@@ -278,10 +278,8 @@ const mapDispatchToProps = (
 
 const ConnectedContainer =  connect(mapStateToProps, mapDispatchToProps)(CheckoutContainer);
 
-export default React.forwardRef(
-  (props: Props, ref: any) => (
+export default (props: Props) => (
     <BillingContext.Consumer>
-      {context => <ConnectedContainer {...props} context={context} ref={ref} />}
+      {context => <ConnectedContainer {...props} context={context} />}
     </BillingContext.Consumer>
-  )
-);
+  );

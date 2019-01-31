@@ -17,6 +17,8 @@ import { State as ReduxState } from "ui/reducer";
 import PaymentMethodsContainer from "ui/checkout/PaymentMethodsContainer";
 import { AuthMember } from "ui/auth/interfaces";
 import UpdateMembershipForm from "ui/member/UpdateMembershipForm";
+import { Whitelists } from "app/constants";
+const { billingEnabled } = Whitelists;
 
 interface StateProps {
   member: AuthMember;
@@ -100,24 +102,26 @@ class SettingsContainer extends React.Component<StateProps, State> {
           </ListItemIcon> */}
           <ListItemText primary="Profile Details" />
         </ListItem>
-        <ListItem
-          button
-          selected={this.state.selectedIndex === 1}
-          onClick={event => this.toggleSettingsView(event, 1)}
-        >
-          {/* <ListItemIcon>
-          </ListItemIcon> */}
-          <ListItemText primary="Membership" />
-        </ListItem>
-        <ListItem
-          button
-          selected={this.state.selectedIndex === 2}
-          onClick={event => this.toggleSettingsView(event, 2)}
-        >
-          {/* <ListItemIcon>
-          </ListItemIcon> */}
-          <ListItemText primary="Payment Methods" />
-        </ListItem>
+        {billingEnabled && <>
+          <ListItem
+            button
+            selected={this.state.selectedIndex === 1}
+            onClick={event => this.toggleSettingsView(event, 1)}
+          >
+            {/* <ListItemIcon>
+            </ListItemIcon> */}
+            <ListItemText primary="Membership" />
+          </ListItem>
+          <ListItem
+            button
+            selected={this.state.selectedIndex === 2}
+            onClick={event => this.toggleSettingsView(event, 2)}
+          >
+            {/* <ListItemIcon>
+            </ListItemIcon> */}
+            <ListItemText primary="Payment Methods" />
+          </ListItem>
+        </>}
       </List>
     )
   }

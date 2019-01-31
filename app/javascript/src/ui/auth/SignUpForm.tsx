@@ -1,5 +1,4 @@
 import * as React from "react";
-import { connect } from "react-redux";
 import { withRouter, RouteComponentProps } from "react-router";
 
 import TextField from "@material-ui/core/TextField";
@@ -10,10 +9,8 @@ import CardContent from "@material-ui/core/CardContent";
 import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
 import MembershipSelectForm from "ui/auth/MembershipSelectForm";
 
-import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { SignUpFields, EmailExistsError, signUpPrefix } from "ui/auth/constants";
 import { SignUpForm } from "ui/auth/interfaces";
-import { submitSignUpAction } from "ui/auth/actions";
 import ErrorMessage from "ui/common/ErrorMessage";
 import Form from "ui/common/Form";
 import { getHistory } from "app/utils";

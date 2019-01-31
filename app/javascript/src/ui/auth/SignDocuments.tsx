@@ -1,4 +1,5 @@
 import * as React from "react";
+import { connect } from "react-redux";
 
 import SignatureCanvas from "react-signature-canvas";
 
@@ -12,17 +13,19 @@ import { uploadMemberSignature } from "api/members/transactions";
 import { AuthMember } from "ui/auth/interfaces";
 import { timeToDate } from "ui/utils/timeToDate";
 import Form from "ui/common/Form";
+import { State as ReduxState } from "ui/reducer";
 
 const codeOfConduct = require('code_of_conduct.html') as string;
 const memberContract = require('member_contract.html') as string;
 
 interface OwnProps {
   onSubmit: () => void;
-  uploadError?: string;
-  uploadProcessing?: boolean;
+}
+
+interface StateProps {
   currentUser: AuthMember;
 }
-interface Props extends OwnProps {}
+interface Props extends OwnProps, StateProps {}
 
 interface State {
   display: Documents;
@@ -104,7 +107,7 @@ class SignDocuments extends React.Component<Props, State>{
         submitText="Proceed"
         loading={this.state.signatureUploading}
         onSubmit={this.completeDocuments}
-        error={this.state.documentError || this.props.uploadError}
+        error={this.state.documentError}
       >
         {this.renderDocument(formattedMemberContract)}
         <div key={document.name}>
@@ -171,8 +174,6 @@ class SignDocuments extends React.Component<Props, State>{
     const signature = this.signatureRef.toDataURL();
     try {
       this.setState({ signatureUploading: true });
-      console.log(this.props.currentUser);
-      console.log(this.props.currentUser.id);
       await uploadMemberSignature(this.props.currentUser && this.props.currentUser.id, signature);
       this.setState({ signatureUploading: false, signatureUploadError: "" });
     } catch (e) {
@@ -211,4 +212,14 @@ class SignDocuments extends React.Component<Props, State>{
   }
 }
 
-export default SignDocuments;
+const mapStateToProps = (
+  state: ReduxState,
+): StateProps => {
+  const { currentUser } = state.auth;
+
+  return {
+    currentUser
+  }
+}
+
+export default connect(mapStateToProps)(SignDocuments);

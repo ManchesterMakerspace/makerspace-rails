@@ -26,8 +26,6 @@ interface OwnProps extends RouteComponentProps<any> {}
 
 interface State {
   attemptingLogin: boolean;
-  allowPrivate: boolean;
-  transitionBlocked: boolean;
 }
 
 interface Props extends StateProps, DispatchProps, OwnProps { }
@@ -38,8 +36,6 @@ class App extends React.Component<Props, State> {
     super(props);
     this.state = {
       attemptingLogin: true,
-      allowPrivate: false,
-      transitionBlocked: false,
     }
   }
 
@@ -49,41 +45,24 @@ class App extends React.Component<Props, State> {
   }
 
   public componentDidUpdate(prevProps: Props) {
-    const { isSigningIn: wasSigningIn, auth: oldAuth, isCheckingOut: wasCheckingOut } = prevProps;
-    const { isSigningIn, auth, stagedInvoices, isCheckingOut, checkoutError } = this.props;
+    const { isSigningIn: wasSigningIn } = prevProps;
+    const { isSigningIn } = this.props;
 
-    const { attemptingLogin, transitionBlocked } = this.state;
-    if (wasSigningIn && !isSigningIn && attemptingLogin) {
-      this.setState({ attemptingLogin: false});
-    }
-    if (!oldAuth && auth) {
-      // Don't switch auth if staged invoices exist
-      // This would happen if someone signed up during an auth flow (ie purchasing init membership)
-      if (!stagedInvoices || isEmpty(stagedInvoices)) {
-        this.setState({ allowPrivate: true })
-      } else {
-        // Set blocked bool for later eval
-        this.setState({ allowPrivate: false, transitionBlocked: true });
+    const { attemptingLogin } = this.state;
+    if (wasSigningIn && !isSigningIn) {
+      if (attemptingLogin) {
+        this.setState({ attemptingLogin: false });
       }
-    }
-    // Restrict routing on logout
-    if (oldAuth && !auth) {
-      this.setState({ allowPrivate: false });
-    }
-
-    if (wasCheckingOut && !isCheckingOut && !checkoutError && transitionBlocked) {
-      // Allow private routing if completed checkout successfully after being blocked
-      this.setState({ allowPrivate: true });
     }
   }
 
   private renderBody = ():JSX.Element => {
-    const { attemptingLogin, allowPrivate } = this.state;
+    const { attemptingLogin } = this.state;
     const { auth } = this.props;
     if (attemptingLogin) {
       return <LoadingOverlay id="body"/>;
     } else {
-      return allowPrivate ? <PrivateRouting auth={auth} /> : <PublicRouting location={this.props.location}/>;
+      return auth ? <PrivateRouting auth={auth} /> : <PublicRouting location={this.props.location}/>;
     }
   }
   public render(): JSX.Element {

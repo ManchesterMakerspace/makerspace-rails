@@ -164,6 +164,11 @@ class RentalsList extends React.Component<Props, State> {
   }
 
   public componentDidMount() {
+    const { member } = this.props;
+    // Return early if the member hasn't loaded yet
+    if (member && !member.id) {
+      return;
+    }
     this.getRentals();
   }
 
@@ -174,7 +179,7 @@ class RentalsList extends React.Component<Props, State> {
 
     if ((wasCreating && !isCreating && !createError) || // refresh list on create
         (wasUpdating && !isUpdating && !updateError) ||  // or update
-        (oldMember !== member) // or member change
+        (oldMember.id !== member.id) // or member change
     ) {
       this.getRentals();
     }
