@@ -164,11 +164,6 @@ class RentalsList extends React.Component<Props, State> {
   }
 
   public componentDidMount() {
-    const { member } = this.props;
-    // Return early if the member hasn't loaded yet
-    if (member && !member.id) {
-      return;
-    }
     this.getRentals();
   }
 
@@ -176,10 +171,9 @@ class RentalsList extends React.Component<Props, State> {
     const { isCreating: wasCreating, isUpdating: wasUpdating, member: oldMember } = prevProps;
     const { isCreating, createError, isUpdating, updateError, member } = this.props;
 
-
     if ((wasCreating && !isCreating && !createError) || // refresh list on create
         (wasUpdating && !isUpdating && !updateError) ||  // or update
-        (oldMember.id !== member.id) // or member change
+        ((oldMember && oldMember.id) !== (member && member.id)) // or member change
     ) {
       this.getRentals();
     }

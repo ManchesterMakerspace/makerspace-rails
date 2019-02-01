@@ -79,6 +79,7 @@ describe("Rentals", () => {
           expect(await utils.isElementDisplayed(rentalsPO.getErrorRowId())).toBeFalsy();
           expect(await utils.isElementDisplayed(rentalsPO.getNoDataRowId())).toBeFalsy();
           expect(await utils.isElementDisplayed(rentalsPO.getLoadingId())).toBeFalsy();
+          expect(await utils.isElementDisplayed(rentalsPO.getTitleId())).toBeTruthy();
           await utils.waitForVisisble(rentalsPO.getRowBaseId(defaultRentals[0].id));
         });
       });

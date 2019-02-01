@@ -61,7 +61,7 @@ class BraintreeService::Subscription < Braintree::Subscription
     resource_class, resource_id = self.class.read_id(id)
     if resource_class && resource_id
       @resource = Invoice.resource(resource_class, resource_id)
-      set_member
+      set_member unless @resource.nil?
     end
   end
 

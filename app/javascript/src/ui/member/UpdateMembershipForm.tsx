@@ -12,6 +12,8 @@ import { readSubscriptionAction } from "ui/subscriptions/actions";
 import KeyValueItem from "ui/common/KeyValueItem";
 import { displayMemberExpiration } from "ui/member/utils";
 import { AuthMember } from "ui/auth/interfaces";
+import LoadingOverlay from "ui/common/LoadingOverlay";
+import MemberStatusLabel from "ui/member/MemberStatusLabel";
 
 /*
 View Current Membership Info
@@ -67,23 +69,45 @@ class UpdateMembershipForm extends React.Component<Props, State> {
   private onDiscount = () => {
 
   }
+
   private openMembershipSelect = () => this.setState({ openMembershipSelect: true });
   private closeMembershipSelect = () => this.setState({ openMembershipSelect: false });
 
   private renderSubscriptionDetails = () => {
     const { subscription } = this.props;
+
+    return (
+      <Grid container spacing={24}>
+        <Grid item xs={12}>
+          <Button variant="contained" onClick={this.openMembershipSelect}>Update Membership</Button>
+        </Grid>
+      </Grid>
+    )
   }
   private renderMembershipDetails = () => {
     const { member } = this.props;
 
     return (
-      <Grid container spacing={24}>
+      <Grid container spacing={16}>
         <Grid item xs={12}>
-          <KeyValueItem label="Current Membership Expiration">
-            {displayMemberExpiration(member)}
+          <KeyValueItem label="Membership Expiration">
+            <span id="member-detail-expiration">{displayMemberExpiration(member)}</span>
           </KeyValueItem>
-          <Typography>No subscription found. Update membership to enable automatic renewals.</Typography>
-          <Button variant="contained" onClick={this.openMembershipSelect}>Update Membership</Button>
+          <KeyValueItem label="Membership Status">
+            <MemberStatusLabel id="member-detail-status" member={member} />
+          </KeyValueItem>
+          <KeyValueItem label="Membership Type">
+            <span id="member-detail-type">{(member.expirationTime ? "Month-to-month" : "No membership found")}</span>
+          </KeyValueItem>
+        </Grid>
+        <Grid item xs={12}>
+          {member.expirationTime ?
+            <Typography>No subscription found. Update membership to enable automatic renewals.</Typography>
+            : <Typography>No membership on file. Create a membership to add one</Typography>
+          }
+        </Grid>
+        <Grid item xs={12}>
+          <Button variant="contained" onClick={this.openMembershipSelect}>{member.expirationTime ? "Update Membership" : "Create Membership"}</Button>
         </Grid>
       </Grid>
     );
@@ -107,13 +131,15 @@ class UpdateMembershipForm extends React.Component<Props, State> {
   }
 
   public render = () => {
-    const { subscription } = this.props;
+    const { subscription, isRequesting } = this.props;
     return (
       <Form
         id="update-membership-modal"
-        title="Change Membership"
+        title="Membership"
       >
-        {subscription ? this.renderSubscriptionDetails() : this.renderMembershipDetails()}
+        {isRequesting ? <LoadingOverlay id="update-membership-modal-loading" contained={true}/>
+          : (subscription ? this.renderSubscriptionDetails() : this.renderMembershipDetails())
+        }
         {this.renderMembershipSelect()}
       </Form>
     )

@@ -81,7 +81,6 @@ class SettingsContainer extends React.Component<StateProps, State> {
     } else if (selectedIndex === 2) {
       form = (<PaymentMethodsContainer
         onPaymentMethodChange={this.selectPaymentMethod}
-        selectedPaymentMethodId={paymentMethodId}
         title="Manage Payment Methods"
         managingMethods={true}
       />)
@@ -127,40 +126,21 @@ class SettingsContainer extends React.Component<StateProps, State> {
   }
 
   public render(): JSX.Element {
-    const { member } = this.props;
     return (
       <Grid container spacing={16}>
         <Grid item md={4} sm={5} xs={12}>
           {this.renderSideNav()}
         </Grid>
         <Grid item md={8} sm={7} xs={12}>
-          <Grid container spacing={16}>
-            <Grid item xs={12}>
-              <Card>
-                <CardContent>
-                  <Grid container spacing={16}>
-                    <Grid item xs={12}>
-                      <Button
-                        style={{float: "right"}}
-                        color="default"
-                        variant="contained"
-                      >
-                        <Link
-                          to={Routing.Profile.replace(Routing.PathPlaceholder.MemberId, member.id)}
-                          style={{ outline: 'none', textDecoration: 'none', color: 'unset' }}
-                        >
-                          Go to Profile
-                        </Link>
-                      </Button>
-                    </Grid>
-                    <Grid item xs={12}>
-                      {this.renderForm()}
-                    </Grid>
+            <Card>
+              <CardContent>
+                <Grid container spacing={16}>
+                  <Grid item xs={12}>
+                    {this.renderForm()}
                   </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
         </Grid>
       </Grid>
     )

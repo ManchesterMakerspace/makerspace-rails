@@ -66,11 +66,7 @@ export enum Properties {
   DiscountId = "discountId",
 }
 
-export enum PaymentMethodType {
-  PayPal = "paypal",
-  Cash = "cash",
-  CreditCard = "cc",
-}
+
 
 export interface InvoiceQueryParams extends QueryParams {
   [Properties.ResourceId]?: string;

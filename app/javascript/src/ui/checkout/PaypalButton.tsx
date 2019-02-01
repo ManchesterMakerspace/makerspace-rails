@@ -105,19 +105,16 @@ class PaypalButton extends React.Component<Props, State> {
     const { braintreeError, paypalRequesting } = this.state;
     const { braintreeInstance } = this.props;
     const error = braintreeError && (isString(braintreeError) ? braintreeError : braintreeError.message);
-
+    const loading = braintreeInstance && paypalRequesting;
     return (
       <Grid container spacing={16} style={{position: "relative", overflow: "hidden"}}>
         <Grid item xs={12} style={{textAlign: "center"}}>
             <button id="paypal-button" style={{ background: "none", border: "none" }} />
-            {braintreeInstance && paypalRequesting && (
-              <>
-                <Typography variant="body1">Contacting PayPal</Typography>
-                <LoadingOverlay id="paypal-button-loading" contained={true} />)
-              </>
-            )}
+            {loading && <Typography variant="body1">Contacting PayPal</Typography>}
             {error && <ErrorMessage error={error} id="paypal-error"/>}
         </Grid>
+
+        {loading && <LoadingOverlay id="paypal-button-loading" />}
       </Grid>
     )
   }

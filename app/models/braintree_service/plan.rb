@@ -18,12 +18,6 @@ class BraintreeService::Plan < Braintree::Plan
     end
   end
 
-  def self.get_discounts(gateway)
-    gateway.discount.all.map do |discount|
-      self.new(gateway, instance_to_hash(discount))
-    end
-  end
-
   def self.select_plans_for_types(types, plans_to_filter)
     plans = []
     if types.include?("member")

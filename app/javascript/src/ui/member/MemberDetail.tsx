@@ -67,9 +67,11 @@ class MemberDetail extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
+    const { isNewMember, member } = this.props;
+
     this.state = {
       ...defaultState,
-      displayNotification: props.isNewMember ? Notification.Welcome : undefined,
+      displayNotification: isNewMember || (member && !member.memberContractOnFile) ? Notification.Welcome : undefined,
     };
   }
 
@@ -155,7 +157,7 @@ class MemberDetail extends React.Component<Props, State> {
               color: "primary",
               variant: "outlined",
               disabled: loading,
-              label: "Settings",
+              label: "Account Settings",
               onClick: this.redirectToSettings
             } as ActionButton] : [],
             ...admin ? [{

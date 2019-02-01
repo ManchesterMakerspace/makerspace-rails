@@ -31,6 +31,9 @@ export class MemberPageObject extends TablePageObject {
     openCardButton: `${this.memberDetailId}-open-card-modal`,
     duesTab: "#dues-tab",
     rentalsTab: "#rentals-tab",
+    notificationModal: "#notification-modal",
+    notificationModalSubmit: "#notification-modal-submit",
+    notificationModalCancel: "#notification-modal-cancel",
   }
 
   public goToMemberRentals = () =>

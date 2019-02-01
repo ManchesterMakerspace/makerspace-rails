@@ -28,6 +28,7 @@ services:
       - RESOURCES_FOLDER
       - SIGNATURES_FOLDER
       - SECRET_KEY_BASE
+      - BILLING_ENABLED
   tester:
     build:
       context: ../..
@@ -63,6 +64,7 @@ services:
       - RESOURCES_FOLDER
       - SIGNATURES_FOLDER
       - SECRET_KEY_BASE
+      - BILLING_ENABLED
     tty: true
   mockserver:
     image: jamesdbloom/mockserver:mockserver-5.4.1

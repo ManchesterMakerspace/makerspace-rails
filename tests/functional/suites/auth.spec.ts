@@ -107,6 +107,11 @@ describe("Authentication", () => {
       await signup.selectMembershipOption(membershipId);
       await utils.waitForPageLoad(signup.signupUrl);
       await signup.signUpUser(member);
+
+      await utils.waitForPageLoad(memberPO.getProfilePath(member.id));
+      expect(utils.isElementDisplayed(memberPO.memberDetail.notificationModal));
+      await utils.clickElement(memberPO.memberDetail.notificationModalSubmit);
+
       await utils.waitForVisisble(signup.documentsSigning.codeOfConductSubmit);
       await utils.clickElement(signup.documentsSigning.codeOfConductCheckbox);
       await utils.clickElement(signup.documentsSigning.codeOfConductSubmit);
@@ -192,6 +197,10 @@ describe("Authentication", () => {
       await mock(mockRequests.signUp.ok(member, membershipOption));
       await mock(mockRequests.member.get.ok(memberId, member));
       await utils.clickElement(submitButton);
+
+      await utils.waitForPageLoad(memberPO.getProfilePath(member.id));
+      expect(utils.isElementDisplayed(memberPO.memberDetail.notificationModal));
+      await utils.clickElement(memberPO.memberDetail.notificationModalSubmit);
 
       // Signed up, code of conduct validation
       await utils.waitForVisisble(signup.documentsSigning.codeOfConductSubmit);

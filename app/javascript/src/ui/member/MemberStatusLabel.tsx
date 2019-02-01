@@ -10,7 +10,7 @@ export const memberStatusLabelMap = {
   [MemberStatus.Inactive]: "Inactive"
 };
 
-const MemberStatusLabel: React.SFC<{ member: MemberDetails, id?: string }> = (props) => {
+const MemberStatusLabel: React.SFC<{ member: Partial<MemberDetails>, id?: string }> = (props) => {
   const { member } = props;
   const inActive = ![MemberStatus.Active, MemberStatus.NonMember].includes(member.status);
   const current = member.expirationTime > Date.now();

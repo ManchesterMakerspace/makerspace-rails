@@ -47,7 +47,7 @@ class NotificationModal extends React.Component<Props> {
     return (
       <FormModal
         formRef={this.setFormRef}
-        id="notificsation-modal"
+        id="notification-modal"
         isOpen={!!notification}
         title={displayedNotification.title}
         onSubmit={onSubmit}

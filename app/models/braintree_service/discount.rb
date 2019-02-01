@@ -13,8 +13,20 @@ class BraintreeService::Discount
   end
 
   def self.get_discounts(gateway)
-    gateway.discount.all.map do |discount|
+    discounts = gateway.discount.all.map do |discount|
       self.new(instance_to_hash(discount))
     end
+    discounts.push(self.standard_membership_discount)
+    discounts
+  end
+
+  private
+  def self.standard_membership_discount
+    self.new({
+      id: "standard_membership_sso",
+      name: "Standard Membership student, senior, military discount (10%)",
+      description: "10% Discount for all student, senior (+65) and military. Proof of applicable affiliation may be required during orientation.",
+      amount: 8
+    })
   end
 end

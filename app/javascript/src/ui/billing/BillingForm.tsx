@@ -153,7 +153,11 @@ export class BillingFormComponent extends React.Component<OwnProps, State>{
 
   private renderPlanOptions = () => {
     const { plans } = this.props.context;
-    return this.renderOptions(plans.loading, plans.error, plans.data);
+    const plansCollection = plans.data.reduce((collection, plan) => {
+      collection[plan.id] = plan;
+      return collection;
+    }, {});
+    return this.renderOptions(plans.loading, plans.error, plansCollection);
   }
 
   private renderPlanOption = (field: { id: string, name: string, value: string }) => (
@@ -168,7 +172,12 @@ export class BillingFormComponent extends React.Component<OwnProps, State>{
 
   private renderDiscountOptions = () => {
     const { discounts } = this.props.context;
-    return this.renderOptions(discounts.loading, discounts.error, discounts.data);
+    const discountsCollection = discounts.data.reduce((collection, discount) => {
+      collection[discount.id] = discount;
+      return collection;
+    }, {});
+
+    return this.renderOptions(discounts.loading, discounts.error, discountsCollection);
   }
 
   private renderOptions = (loading: boolean, error: string, options: CollectionOf<any>) => {
@@ -227,21 +236,19 @@ export class BillingFormComponent extends React.Component<OwnProps, State>{
               {this.renderPlanOptions()}
             </Select>
           </Grid>
-          {!!this.getActivePlanId() && (
-            <Grid item xs={12}>
-              <FormLabel component="legend">{fields.discountId.label}</FormLabel>
-              <Select
-                name={fields.discountId.name}
-                value={option && option.discountId}
-                fullWidth
-                native
-                required
-                placeholder={fields.discountId.placeholder}
-              >
-                {this.renderDiscountOptions()}
-              </Select>
-            </Grid>
-          )}
+          <Grid item xs={12}>
+            <FormLabel component="legend">{fields.discountId.label}</FormLabel>
+            <Select
+              name={fields.discountId.name}
+              value={option && option.discountId}
+              fullWidth
+              native
+              required
+              placeholder={fields.discountId.placeholder}
+            >
+              {this.renderDiscountOptions()}
+            </Select>
+          </Grid>
           <Grid item xs={12}>
             <TextField
               fullWidth

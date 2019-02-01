@@ -4,8 +4,8 @@
   "description": "This is an interface to review which members are signed off on which stations.  This can be expanded to handle the access points.  If logged in (feature for officers & admin), you can also see member expiration dates and renew members.",
   "main": "index.js",
   "dependencies": {
-    "@material-ui/core": "^3.6.0",
-    "@material-ui/icons": "^2.0.1",
+    "@material-ui/core": "^3.9.1",
+    "@material-ui/icons": "^3.0.2",
     "@rails/webpacker": "3.5",
     "@types/braintree-web": "^3.6.3",
     "@types/history": "^4.7.0",

@@ -2,12 +2,14 @@ import * as React from "react";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import pick from "lodash-es/pick";
+import { Redirect } from "react-router";
 
 import { Invoice, Properties } from "app/entities/invoice";
 import { QueryParams, CollectionOf } from "app/interfaces";
 import { MemberDetails } from "app/entities/member";
-import { CrudOperation } from "app/constants";
+import { CrudOperation, Routing } from "app/constants";
 
+import { Action as CheckoutAction } from "ui/checkout/constants";
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { timeToDate } from "ui/utils/timeToDate";
 import { SortDirection } from "ui/common/table/constants";
@@ -19,7 +21,6 @@ import DeleteInvoiceModal from "ui/invoice/DeleteInvoiceModal";
 import { readInvoicesAction } from "ui/invoices/actions";
 import UpdateInvoiceContainer, { UpdateInvoiceRenderProps } from "ui/invoice/UpdateInvoiceContainer";
 import ButtonRow, { ActionButton } from "ui/common/ButtonRow";
-import PaymentRequiredModal from "ui/invoices/PaymentRequiredModal";
 import { numberAsCurrency } from "ui/utils/numberToCurrency";
 import { Status } from "ui/common/constants";
 import StatusLabel from "ui/common/StatusLabel";
@@ -35,6 +36,8 @@ interface ContextProps {
 }
 interface DispatchProps {
   getInvoices: (queryParams: QueryParams, admin: boolean) => void;
+  resetStagedInvoices: () => void;
+  stageInvoices: (invoices: CollectionOf<Invoice>) => void;
 }
 interface StateProps {
   admin: boolean;
@@ -61,7 +64,7 @@ interface State {
   openCreateForm: boolean;
   openSettleForm: boolean;
   openDeleteConfirm: boolean;
-  openPaymentNotification: boolean;
+  goToCheckout: boolean;
 }
 
 
@@ -82,7 +85,7 @@ class InvoicesListComponent extends React.Component<ContextComponentProps, State
       openCreateForm: false,
       openSettleForm: false,
       openDeleteConfirm: false,
-      openPaymentNotification: member && Array.isArray(invoices) && invoices.length > 0,
+      goToCheckout: false,
     };
   }
 
@@ -171,8 +174,14 @@ class InvoicesListComponent extends React.Component<ContextComponentProps, State
   private closeSettleInvoice = () => { this.setState({ openSettleForm: false });}
   private openDeleteInvoice = () => { this.setState({ openDeleteConfirm: true });}
   private closeDeleteInvoice = () => { this.setState({ openDeleteConfirm: false });}
-  private closePaymentNotification = () => { this.setState({ openPaymentNotification: false });}
-  private openPaymentPreview = () => this.setState({ openPaymentNotification: true });
+  private goToCheckout = () =>  {
+    const { selectedIds } = this.state;
+    const { resetStagedInvoices, invoices, stageInvoices } = this.props;
+    const selectedInvoices = pick(invoices, selectedIds);
+    resetStagedInvoices();
+    stageInvoices(selectedInvoices);
+    this.setState({ goToCheckout: true })
+  }
 
   private getActionButtons = () => {
     const { selectedIds } = this.state;
@@ -181,7 +190,6 @@ class InvoicesListComponent extends React.Component<ContextComponentProps, State
     const viewingOwnInvoices = (Object.values(invoices)).every(invoice => invoice.memberId === currentUserId);
     const payNow = viewingOwnInvoices && selectedInvoices.length;
 
-    const payLabel = "Pay Selected Dues";
     const actionButtons: ActionButton[] = [
       ...admin ? [{
             id: "invoices-list-create",
@@ -210,8 +218,8 @@ class InvoicesListComponent extends React.Component<ContextComponentProps, State
             variant: "contained",
             color: "primary",
             disabled: !Array.isArray(selectedIds) || !selectedIds.length,
-            onClick: this.openPaymentPreview,
-            label: payLabel
+            onClick: this.goToCheckout,
+            label: "Pay Selected Dues",
           }]  as ActionButton[] : []
     ];
 
@@ -396,22 +404,6 @@ class InvoicesListComponent extends React.Component<ContextComponentProps, State
     );
   }
 
-  private renderPaymentNotifiation = () => {
-    const { loading, error, invoices } = this.props;
-    const { openPaymentNotification, selectedIds } = this.state;
-    const selectedInvoices = pick(invoices, selectedIds);
-
-    return (
-      <PaymentRequiredModal
-        isOpen={openPaymentNotification}
-        onClose={this.closePaymentNotification}
-        isRequesting={loading}
-        error={error}
-        invoices={selectedInvoices}
-      />
-    )
-  }
-
   public render(): JSX.Element {
     const {
       invoices,
@@ -425,7 +417,14 @@ class InvoicesListComponent extends React.Component<ContextComponentProps, State
       pageNum,
       order,
       orderBy,
+      goToCheckout,
     } = this.state;
+
+    if (goToCheckout) {
+      return (
+        <Redirect to={Routing.Checkout} />
+      );
+    }
 
     return (
       <>
@@ -449,7 +448,6 @@ class InvoicesListComponent extends React.Component<ContextComponentProps, State
           onSelectAll={this.onSelectAll}
         />
         {this.renderInvoiceForms()}
-        {this.renderPaymentNotifiation()}
       </>
     );
   }
@@ -502,6 +500,13 @@ const mapDispatchToProps = (
       ...queryParams,
       ...member && {[Properties.ResourceId]: member.id},
     })),
+    resetStagedInvoices: () => dispatch({
+      type: CheckoutAction.ResetStagedInvoices
+    }),
+    stageInvoices: (invoices) => dispatch({
+      type: CheckoutAction.StageInvoicesForPayment,
+      data: invoices
+    })
   }
 }
 

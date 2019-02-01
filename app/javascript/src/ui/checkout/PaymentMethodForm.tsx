@@ -1,23 +1,23 @@
 import * as React from "react";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
+import Form from "ui/common/Form";
 
 //@ts-ignore
 import * as Braintree from "braintree-web";
-import { PaymentMethodType } from "app/entities/invoice";
+import { PaymentMethodType } from "app/entities/paymentMethod";
 
 import { getClientToken } from "api/checkout/transactions";
 
 import CreditCardForm from "ui/checkout/CreditCardForm";
 import PaypalButton from "ui/checkout/PaypalButton";
-import ErrorMessage from "ui/common/ErrorMessage";
-import LoadingOverlay from "ui/common/LoadingOverlay";
+import FormModal from "ui/common/FormModal";
 
 
 interface OwnProps {
   closeHandler: () => void;
   onSuccess: (paymentMethodNonce: string) => void;
+  isOpen: boolean;
 }
 interface Props extends OwnProps {}
 
@@ -30,32 +30,43 @@ interface State {
   requestingClientToken: boolean;
   braintreeRequesting: boolean;
   clientTokenError: string;
+  methodLoading: boolean;
 }
 
+const defaultState: State = {
+  braintreeError: undefined,
+  paymentMethodNonce: undefined,
+  braintreeInstance: undefined,
+  braintreeRequesting: false,
+  paymentMethodType: undefined,
+  clientToken: undefined,
+  requestingClientToken: false,
+  clientTokenError: "",
+  methodLoading: false,
+};
+
 class PaymentMethodForm extends React.Component<Props, State> {
+  public formRef: Form;
+  private setFormRef = (ref: Form) => this.formRef = ref;
+  public ccRef: CreditCardForm;
+  private setCCRef = (ref: CreditCardForm) => this.ccRef = ref;
 
   constructor(props: Props) {
     super(props);
 
-    this.state = {
-      braintreeError: undefined,
-      paymentMethodNonce: undefined,
-      braintreeInstance: undefined,
-      braintreeRequesting: false,
-      paymentMethodType: undefined,
-      clientToken: undefined,
-      requestingClientToken: false,
-      clientTokenError: ""
-    }
+    this.state = { ...defaultState };
   }
-  public componentDidMount() {
-    this.getClientToken();
+
+  public componentDidUpdate(prevProps: Props) {
+    const { isOpen: wasOpen } = prevProps;
+    if (!wasOpen && this.props.isOpen) {
+      this.getClientToken();
+      this.setState({ ...defaultState });
+    }
   }
 
   private getClientToken = async () => {
-    this.setState({
-      requestingClientToken: true
-    });
+    this.setState({ requestingClientToken: true });
 
     let token;
     let error = "";
@@ -92,20 +103,26 @@ class PaymentMethodForm extends React.Component<Props, State> {
     }
   }
 
-  private selectPaypal = () => this.setState({ paymentMethodType: PaymentMethodType.PayPal });
   private selectCC = () => this.setState({ paymentMethodType: PaymentMethodType.CreditCard });
-  private selectCash = () => this.setState({ paymentMethodType: PaymentMethodType.Cash });
+
+  private toggleMethodLoading = (on: boolean) => {
+    this.setState({ methodLoading: on });
+  }
 
   private renderPaymentMethod = () => {
     const { braintreeInstance, paymentMethodType, clientToken } = this.state;
+    const { onSuccess, closeHandler } = this.props;
+
     switch (paymentMethodType) {
       case PaymentMethodType.CreditCard:
         return (
           <CreditCardForm
-            closeHandler={this.props.closeHandler}
+            ref={this.setCCRef}
+            toggleLoading={this.toggleMethodLoading}
+            closeHandler={closeHandler}
             braintreeInstance={braintreeInstance}
             clientToken={clientToken}
-            onSuccess={this.props.onSuccess}
+            onSuccess={onSuccess}
           />
         );
       default:
@@ -113,35 +130,52 @@ class PaymentMethodForm extends React.Component<Props, State> {
     }
   }
 
-  private renderMethodRequest = () => {
-    const { braintreeError, braintreeInstance, clientToken, requestingClientToken, clientTokenError, braintreeRequesting } = this.state;
-    const error = clientTokenError || (braintreeError && braintreeError.message);
+  private submitPaymentMethod = () => {
+    const { paymentMethodType } = this.state;
 
-    return (
-      <Grid container justify="center" spacing={16}>
-        <Grid item xs={12} style={{textAlign:"center"}}>
-          <Typography variant="subheading">Select Payment Method</Typography>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <Button fullWidth variant="outlined" onClick={this.selectCC} id="card-payment">Credit or debit card</Button>
-        </Grid>
-        <Grid item xs={12}>
-          <PaypalButton
-            clientToken={clientToken}
-            braintreeInstance={braintreeInstance}
-            paymentMethodCallback={this.props.closeHandler}
-          />
-        </Grid>
-        {(requestingClientToken || braintreeRequesting) && <LoadingOverlay id="payment-method-loading" contained={true}/>}
-        {error && <ErrorMessage error={error} id="payment-method--form-error"/>}
-      </Grid>
-    );
+    switch (paymentMethodType) {
+      case PaymentMethodType.CreditCard:
+        this.ccRef && this.ccRef.requestPaymentMethod();
+      default:
+        return <></>;
+    }
   }
 
   public render(): JSX.Element {
     const { paymentMethodType } = this.state;
 
-    return paymentMethodType ? this.renderPaymentMethod() : this.renderMethodRequest();
+    const { braintreeError, braintreeInstance, clientToken, requestingClientToken, clientTokenError, braintreeRequesting, methodLoading } = this.state;
+    const error = clientTokenError || (braintreeError && braintreeError.message);
+    const { isOpen, closeHandler } = this.props;
+    const loading = requestingClientToken || braintreeRequesting || methodLoading;
+
+
+    return (
+      <FormModal
+        id="payment-method-form"
+        title={!paymentMethodType && "Select a payment method type"}
+        formRef={this.setFormRef}
+        isOpen={isOpen}
+        closeHandler={closeHandler}
+        onSubmit={isOpen && this.submitPaymentMethod}
+        loading={loading}
+        error={error}
+      >
+        {paymentMethodType ? this.renderPaymentMethod() :
+        <Grid container justify="center" spacing={16}>
+          <Grid item xs={12} md={6}>
+            <Button fullWidth variant="outlined" onClick={this.selectCC} id="card-payment">Credit or debit card</Button>
+          </Grid>
+          <Grid item xs={12}>
+            <PaypalButton
+              clientToken={clientToken}
+              braintreeInstance={braintreeInstance}
+              paymentMethodCallback={closeHandler}
+            />
+          </Grid>
+        </Grid>}
+      </FormModal>
+    );
   }
 }
 

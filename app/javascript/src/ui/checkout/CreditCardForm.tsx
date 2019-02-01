@@ -16,6 +16,7 @@ import HostedInput from "ui/checkout/HostedInput";
 interface OwnProps {
   braintreeInstance: any;
   clientToken: string;
+  toggleLoading: (on: boolean) => void;
   closeHandler: () => void;
   onSuccess?: (paymentMethodNonce: string) => void;
 }
@@ -25,8 +26,6 @@ interface Props extends OwnProps {}
 interface State {
   hostedFieldsInstance: any;
   braintreeError: Braintree.BraintreeError;
-  isCreating: boolean;
-  isLoading: boolean;
 }
 
 class CreditCardForm extends React.Component<Props, State> {
@@ -37,8 +36,6 @@ class CreditCardForm extends React.Component<Props, State> {
     this.state = {
       hostedFieldsInstance: undefined,
       braintreeError: undefined,
-      isLoading: false,
-      isCreating: false,
     }
   }
 
@@ -55,8 +52,8 @@ class CreditCardForm extends React.Component<Props, State> {
   }
 
   private initHostedFields = async () => {
-    const { braintreeInstance } = this.props;
-    this.setState({ isLoading: true });
+    const { braintreeInstance, toggleLoading } = this.props;
+    toggleLoading(true);
     try {
       await Braintree.hostedFields.create({
         client: braintreeInstance,
@@ -81,29 +78,36 @@ class CreditCardForm extends React.Component<Props, State> {
         }
       }, (err, hostedFieldsInstance) => {
         if (err) throw err;
-        this.setState({ hostedFieldsInstance: hostedFieldsInstance, isLoading: false });
+        this.setState({ hostedFieldsInstance: hostedFieldsInstance });
       });
     } catch (err) {
-      this.setState({ braintreeError: err, isLoading: false });
+      this.setState({ braintreeError: err });
+    } finally {
+      toggleLoading(false);
     }
   }
 
-  private requestPaymentMethod = () => {
+  public requestPaymentMethod = () => {
     const { hostedFieldsInstance } = this.state;
+    const { toggleLoading } = this.props;
+
     if (hostedFieldsInstance) {
-      this.setState({ isCreating: true });
+      toggleLoading(true);
       hostedFieldsInstance.tokenize(async (err: Braintree.BraintreeError, payload:{ [key: string]: string }) => {
         if (err) {
-          this.setState({ braintreeError: err, isCreating: false });
+          this.setState({ braintreeError: err });
+          toggleLoading(false);
         } else {
           try {
             const response = await postPaymentMethod(payload.nonce);
             const paymentMethodId = response.data;
             this.props.onSuccess && this.props.onSuccess(paymentMethodId);
-            this.setState({ isCreating: false, braintreeError: undefined });
+            this.setState({ braintreeError: undefined });
           } catch (e) {
             const { errorMessage } = e;
-            this.setState({ braintreeError: errorMessage, isCreating: false });
+            this.setState({ braintreeError: errorMessage });
+          } finally {
+            toggleLoading(false);
           }
         }
       });
@@ -111,7 +115,7 @@ class CreditCardForm extends React.Component<Props, State> {
   }
 
   public render(): JSX.Element {
-    const { braintreeError, isCreating, isLoading } = this.state;
+    const { braintreeError } = this.state;
     const error = braintreeError && (isString(braintreeError) ? braintreeError : braintreeError.message);
 
     return (
@@ -119,8 +123,6 @@ class CreditCardForm extends React.Component<Props, State> {
         <Form
           id="credit-card-form"
           title="Enter your credit or debit card information"
-          onSubmit={this.requestPaymentMethod}
-          loading={isCreating || isLoading }
         >
           <HostedInput
             label={CreditCardFields.cardNumber.label}

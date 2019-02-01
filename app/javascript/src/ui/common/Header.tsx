@@ -18,7 +18,6 @@ import { logoutUserAction } from "ui/auth/actions";
 import { AuthMember } from "ui/auth/interfaces";
 import { memberIsAdmin } from "ui/member/utils";
 import { Routing } from "app/constants";
-import { Whitelists } from "app/constants";
 
 interface OwnProps extends RouteComponentProps<any> {
 }
@@ -113,7 +112,7 @@ class Header extends React.Component<Props, State> {
           {this.renderMenuNavLink(Routing.Members, "Members", "members")}
           {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Rentals, "Rentals", "rentals")}
           {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Billing, "Billing", "billing")}
-          {this.renderMenuNavLink(Routing.Settings, "Settings", "settings")}
+          {this.renderMenuNavLink(Routing.Settings, "Account Settings", "settings")}
           <MenuItem id="logout" onClick={this.logoutUser}>Logout</MenuItem>
         </Menu>
       </>

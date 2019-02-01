@@ -220,7 +220,7 @@ class CheckoutContainer extends React.Component<ContextComponentProps,State> {
   private rowId = (row: Invoice) => row.id;
   public render(): JSX.Element {
     const { isRequesting, error } = this.props;
-    const { redirect, paymentMethodId } = this.state;
+    const { redirect } = this.state;
 
     if (redirect) {
       return <Redirect to={redirect}/>;
@@ -236,7 +236,6 @@ class CheckoutContainer extends React.Component<ContextComponentProps,State> {
                 <CardContent>
                   <PaymentMethodsContainer
                     onPaymentMethodChange={this.selectPaymentMethod}
-                    selectedPaymentMethodId={paymentMethodId}
                   />
                   <p>*The payment method used when creating a subscription will be the default payment method used for subscription payments unless changed through Settings.</p>
                 </CardContent>

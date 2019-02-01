@@ -286,20 +286,27 @@ class Form extends React.Component<FormModalProps, State> {
 
   // Wrap form in loading icon w/ background blocker if loading
   public render(): JSX.Element {
-    const { id, loading, style } = this.props;
-    return (
+    const { id, loading, style, onSubmit, onCancel } = this.props;
+    const Wrapper = (onSubmit || onCancel) && <form
+      onSubmit={this.handleSubmit}
+      onChange={this.handleChange}
+      noValidate
+      autoComplete="off"
+      id={id}
+      style={{ width: "100%", ...style }}
+      children={<>
+        {loading && <LoadingOverlay id={id} />}
+        {this.renderFormContent()}
+      </>}
+    />;
+    const Content = (<>
+      {loading && <LoadingOverlay id={id} />}
+      {this.renderFormContent()}
+    </>)
+
+      return (
       <div style={{ position: 'relative' }}>
-        <form
-          onSubmit={this.handleSubmit}
-          onChange={this.handleChange}
-          noValidate
-          autoComplete="off"
-          id={id}
-          style={{ width: "100%", ...style}}
-        >
-          {loading &&  <LoadingOverlay id={id}/>}
-          {this.renderFormContent()}
-        </form>
+        {Wrapper || Content}
       </div>
     );
   }
