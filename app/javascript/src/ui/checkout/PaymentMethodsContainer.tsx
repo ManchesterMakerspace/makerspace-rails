@@ -18,7 +18,7 @@ import ButtonRow, { ActionButton } from "ui/common/ButtonRow";
 import PaymentMethodComponent from "ui/checkout/PaymentMethod";
 
 interface OwnProps {
-  onPaymentMethodChange: (newId: string) => void;
+  onPaymentMethodChange?: (newId: string) => void;
   managingMethods?: boolean;
   title?: string;
 }

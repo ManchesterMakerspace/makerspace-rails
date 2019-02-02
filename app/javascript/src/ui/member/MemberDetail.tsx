@@ -6,7 +6,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { MemberDetails } from "app/entities/member";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
-import { displayMemberExpiration, buildProfileRouting } from "ui/member/utils";
+import { displayMemberExpiration } from "ui/member/utils";
 import LoadingOverlay from "ui/common/LoadingOverlay";
 import KeyValueItem from "ui/common/KeyValueItem";
 import DetailView from "ui/common/DetailView";

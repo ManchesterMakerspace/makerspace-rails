@@ -5,7 +5,7 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
-import MembershipSelectForm from "ui/auth/MembershipSelectForm";
+import MembershipSelectForm from "ui/membership/MembershipSelectForm";
 import Form from "ui/common/Form";
 import { Subscription } from "app/entities/subscription";
 import { readSubscriptionAction } from "ui/subscriptions/actions";

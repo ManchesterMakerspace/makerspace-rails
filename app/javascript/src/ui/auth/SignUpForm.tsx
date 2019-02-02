@@ -7,7 +7,7 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
-import MembershipSelectForm from "ui/auth/MembershipSelectForm";
+import MembershipSelectForm from "ui/membership/MembershipSelectForm";
 
 import { SignUpFields, EmailExistsError, signUpPrefix } from "ui/auth/constants";
 import { SignUpForm } from "ui/auth/interfaces";

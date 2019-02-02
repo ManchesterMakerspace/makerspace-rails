@@ -8,7 +8,7 @@ import Button from "@material-ui/core/Button";
 import Typography from '@material-ui/core/Typography';
 
 import { Routing, Whitelists } from "app/constants";
-import MembershipSelectForm from 'ui/auth/MembershipSelectForm';
+import MembershipSelectForm from 'ui/membership/MembershipSelectForm';
 const { billingEnabled } = Whitelists;
 
 interface State {

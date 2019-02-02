@@ -1,33 +1,29 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
 
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
-import Button from "@material-ui/core/Button";
 import CardContent from "@material-ui/core/CardContent";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 
-import { Routing, CrudOperation } from "app/constants";
+import { CrudOperation } from "app/constants";
 import UpdateMemberContainer, { UpdateMemberRenderProps } from "ui/member/UpdateMemberContainer";
 import MemberForm from "ui/member/MemberForm";
 import { State as ReduxState } from "ui/reducer";
 import PaymentMethodsContainer from "ui/checkout/PaymentMethodsContainer";
 import { AuthMember } from "ui/auth/interfaces";
-import UpdateMembershipForm from "ui/member/UpdateMembershipForm";
+import UpdateMembershipForm from "ui/membership/UpdateMembershipForm";
 import { Whitelists } from "app/constants";
 const { billingEnabled } = Whitelists;
 
 interface StateProps {
   member: AuthMember;
-  isAdmin: boolean;
 }
 
 interface State {
   selectedIndex: number;
-  paymentMethodId: string;
 }
 
 class SettingsContainer extends React.Component<StateProps, State> {
@@ -35,16 +31,13 @@ class SettingsContainer extends React.Component<StateProps, State> {
     super(props);
     this.state = {
       selectedIndex: 0,
-      paymentMethodId: undefined,
     };
   }
 
   private toggleSettingsView = (_event: any, index: number) => this.setState({ selectedIndex: index });
 
-  private selectPaymentMethod = (paymentMethodId: string) => this.setState({ paymentMethodId });
-
   private renderForm = () => {
-    const { selectedIndex, paymentMethodId } = this.state;
+    const { selectedIndex } = this.state;
     const { member } = this.props;
     let form: JSX.Element;
     if (!member) {
@@ -80,7 +73,6 @@ class SettingsContainer extends React.Component<StateProps, State> {
       form = <UpdateMembershipForm subscriptionId={member.subscriptionId} member={member}/>;
     } else if (selectedIndex === 2) {
       form = (<PaymentMethodsContainer
-        onPaymentMethodChange={this.selectPaymentMethod}
         title="Manage Payment Methods"
         managingMethods={true}
       />)
@@ -153,7 +145,6 @@ const mapStateToProps = (
   const { currentUser } = state.auth;
   return {
     member: currentUser,
-    isAdmin: currentUser.isAdmin,
   }
 }
 
