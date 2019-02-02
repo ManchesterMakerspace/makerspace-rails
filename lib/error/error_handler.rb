@@ -11,7 +11,13 @@ module Error
         rescue_from ::ActionController::InvalidAuthenticityToken do |e|
           respond(:unauthorized, 401, "Unauthorized")
         end
+        rescue_from ::ActionController::ParameterMissing do |e|
+          respond(:unprocessable_entity, 422, e.message)
+        end
         rescue_from ::Mongoid::Errors::DocumentNotFound do |e|
+          respond(:not_found, 404, "Resource not found")
+        end
+        rescue_from ::Braintree::NotFoundError do |e|
           respond(:not_found, 404, "Resource not found")
         end
         rescue_from CustomError do |e|
@@ -24,6 +30,7 @@ module Error
 
     def respond(_error, _status, _message)
       json = Error::Helpers::Render.json(_error, _status, _message)
+      # TODO should send slack notification
       render json: json, status: _status and return
     end
   end

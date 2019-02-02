@@ -17,9 +17,7 @@ class Admin::CardsController < AdminController
     render json: {msg: 'Member missing'}, status: 500 and return if !@card.member
 
     cards = @card.member.access_cards.select { |c| (c.validity != 'lost') && (c.validity != 'stolen') && (c != @card)}
-    if cards.length > 0
-      render json: {msg: 'Member has Active cards'}, status: 400 and return
-    end
+    raise Error::Conflict.new("Member has active cards. Cards must be disabled before creating new one.") if cards.length > 0
 
     @card.save!
     rejection_card = RejectionCard.find_by(uid: @card.uid)

@@ -35,7 +35,7 @@ class Rental
 
   protected
   def remove_subscription
-    self.update({ subscription_id: nil })
+    self.update!({ subscription_id: nil })
   end
 
   def expiration_attr
@@ -43,7 +43,7 @@ class Rental
   end
 
   def update_expiration(new_expiration)
-    self.update_attribute(self.expiration_attr, get_expiration(new_expiration))
+    self.update!(self.expiration_attr => get_expiration(new_expiration))
   end
 
   def expiration_as_time(ms = nil)

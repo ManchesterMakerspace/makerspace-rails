@@ -8,7 +8,6 @@ class Card
 
   before_create :set_expiration, :set_holder
   before_update :set_expiration
-  # after_save :check_validity
 
   validates :uid, presence: true, uniqueness: true
 

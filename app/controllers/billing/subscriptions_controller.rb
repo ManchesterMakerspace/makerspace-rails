@@ -11,24 +11,15 @@ class Billing::SubscriptionsController < ApplicationController
   def update
     # 2 different types of updates (payment method or plan)
     result = ::BraintreeService::Subscription.update(@gateway, subscription_params)
-    if result.success?
-      render json: subscription, serializer: Braintree::SubscriptionSerializer, root: "subscription" and return
-    else
-      render json: { error: result.errors.map { |e| e.message } }, status: 500 and return
-    end
+    raise Error::Braintree::Result.new(result) unless result.success?
+    render json: subscription, serializer: Braintree::SubscriptionSerializer, root: "subscription" and return
   end
 
   def destroy
     result = ::BraintreeService::Subscription.cancel(@gateway, subscription_params[:id])
-    if result.success?
-      if @subscription_resource.remove_subscription()
-        render json: {}, status: 204 and return
-      else
-        render json: { error: @subscription_resource.errors.full_messages.join(". ") }, status: 500 and return
-      end
-    else
-      render json: { error: result.errors.map { |e| e.message } }, status: 500 and return
-    end
+    raise Error::Braintree::Result.new(result) unless result.success?
+    @subscription_resource.remove_subscription()
+    render json: {}, status: 204 and return
   end
 
   private

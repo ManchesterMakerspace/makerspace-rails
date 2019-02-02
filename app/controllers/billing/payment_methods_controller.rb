@@ -3,86 +3,55 @@ class Billing::PaymentMethodsController < ApplicationController
   before_action :payment_method_params, only: [:create]
 
   def create
-    response = {
-      success: false,
-      error: "",
-      data: nil
-    }
+    payment_method_nonce = payment_method_params[:payment_method_nonce]
+
     # Make sure params are valid
-    if payment_method_params && payment_method_params[:payment_method_nonce]
-      payment_method_nonce = payment_method_params[:payment_method_nonce]
+    raise ::ActionController::ParameterMissing.new(:payment_method_nonce) if payment_method_nonce.nil? || payment_method_nonce.empty?
 
-      # Create a member w/ this payment method if not a customer yet
-      if current_member.customer_id.nil?
-        result = @gateway.customer.create(
-          first_name: current_member.firstname,
-          last_name: current_member.lastname,
-          payment_method_nonce: payment_method_nonce,
-        )
-        current_member.update({ customer_id: result.customer.id }) if result.success?
-      # Add this payment method to customer
-      else
-        result = @gateway.payment_method.create(
-          customer_id: current_member.customer_id,
-          payment_method_nonce: payment_method_nonce,
-          options: {
-            fail_on_duplicate_payment_method: Rails.env.production? && braintree_production?,
-            make_default: payment_method_params[:make_default] || false
-          }
-        )
-      end
-
-      # Parse Braintree result
-      if result.success?
-        response[:success] = result.success?
-        response[:data] = result.try(:payment_method) ? result.payment_method.token : result.customer.payment_methods[0].token
-      else
-        response[:error] = result.errors.map { |e| e.message }
-      end
+    # Create a member w/ this payment method if not a customer yet
+    if current_member.customer_id.nil?
+      result = @gateway.customer.create(
+        first_name: current_member.firstname,
+        last_name: current_member.lastname,
+        payment_method_nonce: payment_method_nonce,
+      )
+      current_member.update({ customer_id: result.customer.id }) if result.success?
+    # Add this payment method to customer
     else
-      response[:error] = "Invalid payment method"
+      result = @gateway.payment_method.create(
+        customer_id: current_member.customer_id,
+        payment_method_nonce: payment_method_nonce,
+        options: {
+          fail_on_duplicate_payment_method: Rails.env.production? && braintree_production?,
+          make_default: payment_method_params[:make_default] || false
+        }
+      )
     end
 
-    if response[:success]
-      render json: response[:data], status: 200 and return
-    else
-      render json: {error: response[:error] }, status: 400 and return
-    end
+    # Parse Braintree result
+    raise Error::Braintree::Result.new(result) unless result.success?
+    payment_method = result.try(:payment_method) ? result.payment_method.token : result.customer.payment_methods[0].token
+
+    render json: payment_method, status: 200 and return
   end
 
   def index
     if current_member.customer_id.nil?
       payment_methods = []
     else
-      begin
-        payment_methods = ::BraintreeService::PaymentMethod.get_payment_methods_for_customer(@gateway, current_member.customer_id)
-      rescue Braintree::NotFoundError => e
-        render json: {error: e.message }, status: 500 and return
-      end
+      payment_methods = ::BraintreeService::PaymentMethod.get_payment_methods_for_customer(@gateway, current_member.customer_id)
     end
     render json: payment_methods, each_serializer: Braintree::PaymentMethodSerializer, status: 200, root: :payment_methods and return
   end
 
   def destroy
     payment_method_token = params[:id]
-    if current_member.customer_id
-      # Only allowed to modify own payment methods
-      begin
-        payment_method = ::BraintreeService::PaymentMethod.find_payment_method_for_customer(@gateway, payment_method_token, current_member.customer_id)
-        result = ::BraintreeService::PaymentMethod.delete_payment_method(@gateway, payment_method.token)
-        if result.success?
-          render json: {}, status: 204 and return
-        else
-          render json: { error: result.errors.map { |e| e.message } }, status: 500 and return
-        end
-      rescue ArgumentError => e
-        render json: { error: e.message }, status: 401 and return
-      rescue Braintree::NotFoundError => e
-        render json: { error: e.message }, status: 500 and return
-      end
-    else
-      render json: {error: "Unauthorized"}, status: 401 and return
-    end
+    raise Error::Braintree::MissingCustomer.new unless current_member.customer_id
+    # Only allowed to modify own payment methods
+    payment_method = ::BraintreeService::PaymentMethod.find_payment_method_for_customer(@gateway, payment_method_token, current_member.customer_id)
+    result = ::BraintreeService::PaymentMethod.delete_payment_method(@gateway, payment_method.token)
+    raise Error::Braintree::Result.new(result) unless result.success?
+    render json: {}, status: 204 and return
   end
 
   private

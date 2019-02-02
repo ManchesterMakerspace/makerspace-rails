@@ -111,7 +111,7 @@ class Member
   end
 
   def remove_subscription
-    self.update({ subscription_id: nil, subscription: false })
+    self.update!({ subscription_id: nil, subscription: false })
   end
 
   protected
@@ -136,7 +136,7 @@ class Member
   end
 
   def update_expiration(new_expiration)
-    self.update_attribute(self.expiration_attr, new_expiration)
+    self.update!(self.expiration_attr => new_expiration)
   end
 
   def get_expiration

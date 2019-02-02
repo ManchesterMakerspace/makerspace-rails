@@ -8,7 +8,7 @@ class Admin::MembersController < AdminController
     if @member.cardID
       Card.create(uid: @member.cardID, member: @member)
       rejection_card = RejectionCard.find_by(uid: @member.cardID)
-      rejection_card.update(holder: @member.fullname) unless rejection_card.nil?
+      rejection_card.update!(holder: @member.fullname) unless rejection_card.nil?
     end
     render json: @member and return
   end

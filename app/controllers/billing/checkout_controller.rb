@@ -11,52 +11,29 @@ class Billing::CheckoutController < ApplicationController
       if checkout_params[:payment_method_id].nil?
         render json: {error: "Payment method required" }, status: 400 and return
       end
-      begin
-        @payment_method = verify_token
-      rescue Braintree::NotFoundError => e
-        render json: {error: e.message }, status: 500 and return
-      rescue ArgumentError => e
-        render json: {error: e.message }, status: 500 and return
-      end
+      @payment_method = verify_token
       invoices = Invoice.any_in(id: checkout_params[:invoice_ids] )
 
       results = settle_invoices(invoices)
       failures = results.select { |r| !r[:result].success? }
 
-      if results.any? { |r| r[:result].success? }
-        # TODO Email user a receipt
+      if results.none? { |r| r[:result].success? }
+        raise Error::Braintree::Result.new(failures)
+      end
+      # TODO Email user a receipt
 
-        # All succeed, were good. Just return 200
-        if failures.size == 0
-          render json: { }, status: 200 and return
+      # All succeed, were good. Just return 200
+      if failures.size == 0
+        render json: { }, status: 200 and return
 
-        # Partial succeess.  Need to alert user what failed
-        else
-          checkout_failures = failures.map { |f| { invoice_ids: f[:invoice_ids], error: get_result_error(f[:result]) }}
-          render json: { failures: failures }, status: 200 and return
-        end
+      # Partial succeess.  Need to alert user what failed
       else
-        error = failures.map { |f| get_result_error(f[:result]) }
-        render json: { error: error }, status: 500 and return
+        checkout_failures = failures.map { |f| { invoice_ids: f[:invoice_ids], error: get_result_error(f[:result]) }}
+        render json: { failures: failures }, status: 200 and return
       end
     end
 
     private
-    def get_result_error(result)
-      error = "Unknown error"
-      if result.transaction && result.transaction.status === Braintree::Transaction::Status::GatewayRejected
-        error = "Braintree rejected transaction"
-      else
-        if result.errors && result.errors.size
-          error = result.errors.map { |e| e.message }.join("\n")
-        elsif result.error
-          error = result.error.message
-        end
-      end
-      # TODO: Slack notificsation of error result
-      error
-    end
-
     def generate_client_token
       return @gateway.client_token.generate
     end

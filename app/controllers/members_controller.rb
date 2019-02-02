@@ -66,7 +66,7 @@ class MembersController < ApplicationController
         if result && result.id then
             @messages.push("New member #{@member.fullname}'s Member Contract signature uploaded.'")
             File.delete("dump/signature.png")
-            @member.update(memberContractOnFile: true)
+            @member.update!(memberContractOnFile: true)
         end
         return { error: error, result: result }
       end

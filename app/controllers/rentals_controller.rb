@@ -13,6 +13,6 @@ class RentalsController < ApplicationController
 
 private
   def set_rental
-    @rental = Rental.find_by(id: params[:id])
+    @rental = Rental.find(params[:id])
   end
 end
