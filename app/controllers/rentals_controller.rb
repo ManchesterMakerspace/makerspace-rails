@@ -14,5 +14,6 @@ class RentalsController < ApplicationController
 private
   def set_rental
     @rental = Rental.find(params[:id])
+    raise ::Mongoid::Errors::DocumentNotFound.new if @rental.nil?
   end
 end

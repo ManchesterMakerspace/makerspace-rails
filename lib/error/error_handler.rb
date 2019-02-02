@@ -18,7 +18,7 @@ module Error
           respond(:not_found, 404, "Resource not found")
         end
         rescue_from ::Braintree::NotFoundError do |e|
-          respond(:not_found, 404, "Resource not found")
+          respond(:not_found, 404, "Braintree resource not found")
         end
         rescue_from CustomError do |e|
           respond(e.error, e.status, e.message)

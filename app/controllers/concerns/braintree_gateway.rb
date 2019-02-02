@@ -1,4 +1,5 @@
 module BraintreeGateway
+  include Service::BraintreeGateway
   extend ActiveSupport::Concern
 
   included do
@@ -6,11 +7,6 @@ module BraintreeGateway
   end
 
   def init_gateway
-    @gateway = Braintree::Gateway.new(
-      :environment => ENV["BT_ENV"].to_sym,
-      :merchant_id => ENV["BT_MERCHANT_ID"],
-      :public_key => ENV["BT_PUBLIC_KEY"],
-      :private_key => ENV['BT_PRIVATE_KEY'],
-    )
+    @gateway = self.connect_gateway
   end
 end

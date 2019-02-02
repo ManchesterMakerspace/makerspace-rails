@@ -99,6 +99,7 @@ class Invoice
     resource_class = OPERATION_RESOURCES[self.resource_class]
     if resource_class
       resource = resource_class.find(self.resource_id)
+      raise ::Mongoid::Errors::DocumentNotFound.new if resource.nil?
       operation = OPERATION_FUNCTIONS.find{ |f| f == self.operation }
       if operation
         if resource.execute_operation(operation, self)

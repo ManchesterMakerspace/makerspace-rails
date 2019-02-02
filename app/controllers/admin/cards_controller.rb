@@ -26,12 +26,15 @@ class Admin::CardsController < AdminController
   end
 
   def index
-    @cards = Card.where(member: Member.find(card_params[:member_id]))
+    member = Member.find(card_params[:member_id])
+    raise ::Mongoid::Errors::DocumentNotFound.new if member.nil?
+    @cards = Card.where(member: member)
     render json: @cards and return
   end
 
   def update
     @card = Card.find(params[:id])
+    raise ::Mongoid::Errors::DocumentNotFound.new if @card.nil?
     @card.update!(card_params)
     render json: @card and return
   end

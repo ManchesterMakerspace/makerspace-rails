@@ -25,5 +25,5 @@ module FastQuery
 end
 
 def query_params
-  params.require(:foo).permit(:orderBy, :order, :pageNum, :search)
+  params.permit(:orderBy, :order, :pageNum, :search)
 end

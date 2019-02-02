@@ -11,6 +11,7 @@ class Admin::PaymentsController < AdminController
 
   def update
     @payment.member = Member.find(params[:payment][:member][:id])
+    raise ::Mongoid::Errors::DocumentNotFound.new if @payment.member.nil?
     @payment.update!(payment_params)
     render json: @payment and return
   end

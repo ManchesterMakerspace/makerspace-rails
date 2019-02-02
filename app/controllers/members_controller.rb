@@ -35,6 +35,7 @@ class MembersController < ApplicationController
     private
     def set_member
       @member = Member.find(params[:id])
+      raise ::Mongoid::Errors::DocumentNotFound.new if @member.nil?
     end
 
     def signature_params
@@ -54,7 +55,7 @@ class MembersController < ApplicationController
         name: "#{@member.fullname}_signature.png",
         parents: [ENV['SIGNATURES_FOLDER']]
       }
-      @service.create_file(signature_meta,
+      @google.create_file(signature_meta,
                           fields: 'id',
                           upload_source: Rails.root.join("dump/signature.png").to_s,
                           content_type: 'image/png'

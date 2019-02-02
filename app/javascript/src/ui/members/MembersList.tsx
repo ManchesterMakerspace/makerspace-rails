@@ -166,35 +166,24 @@ class MembersList extends React.Component<Props, State> {
     this.setState(state => ({ currentMembers: state.currentMembers ? "" : "true" }), this.getMembers);
 
   private getActionButtons = () => {
-    const { selectedId, currentMembers } = this.state;
+    const { selectedId } = this.state;
     return (
-      <>
-        <ButtonRow
-          actionButtons={[{
-            id: "members-list-create",
-            variant: "contained",
-            color: "primary",
-            onClick: this.openCreateForm,
-            label: "Create New Member"
-          }, {
-            id: "members-list-renew",
-            variant: "outlined",
-            color: "primary",
-            disabled: !selectedId,
-            onClick: this.openRenewalForm,
-            label: "Renew Member"
-          }]}
-        />
-        <FormControlLabel
-          control={<Checkbox
-            color="primary"
-            value="true"
-            checked={!!currentMembers}
-            onChange={this.updateFilter}
-          />}
-          label="View only current members"
-        />
-      </>
+      <ButtonRow
+        actionButtons={[{
+          id: "members-list-create",
+          variant: "contained",
+          color: "primary",
+          onClick: this.openCreateForm,
+          label: "Create New Member"
+        }, {
+          id: "members-list-renew",
+          variant: "outlined",
+          color: "primary",
+          disabled: !selectedId,
+          onClick: this.openRenewalForm,
+          label: "Renew Member"
+        }]}
+      />
     )
   }
 
@@ -282,7 +271,8 @@ class MembersList extends React.Component<Props, State> {
       pageNum,
       order,
       orderBy,
-      redirect
+      redirect,
+      currentMembers,
     } = this.state;
 
     if (redirect) {
@@ -292,9 +282,22 @@ class MembersList extends React.Component<Props, State> {
     return (
       <>
         {admin && (
-          <Grid style={{paddingTop: 20}}>
-            {this.getActionButtons()}
-          </Grid>
+          <>
+            <Grid style={{paddingTop: 20}}>
+              {this.getActionButtons()}
+            </Grid>
+            <Grid>
+              <FormControlLabel
+                control={<Checkbox
+                  color="primary"
+                  value="true"
+                  checked={!!currentMembers}
+                  onChange={this.updateFilter}
+                />}
+                label="View only current members"
+              />
+            </Grid>
+          </>
         )}
         <TableContainer
           id="members-table"

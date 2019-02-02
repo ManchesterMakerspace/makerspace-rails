@@ -16,12 +16,14 @@ class Admin::InvoicesController < ApplicationController
 
   def update
     invoice = Invoice.find(params[:id])
+    raise ::Mongoid::Errors::DocumentNotFound.new if invoice.nil?
     invoice.update!(invoice_params)
     render json: invoice and return
   end
 
   def destroy
     invoice = Invoice.find(params[:id])
+    raise ::Mongoid::Errors::DocumentNotFound.new if invoice.nil?
     invoice.delete!
     render json: invoice and return
   end

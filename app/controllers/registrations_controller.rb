@@ -38,7 +38,7 @@ class RegistrationsController < Devise::RegistrationsController
       permission = Google::Apis::DriveV3::Permission.new(type: :user,
           email_address: "#{@member.email}",
           role: :reader)
-      @service.create_permission(ENV['RESOURCES_FOLDER'], permission) do |result, err|
+      @google.create_permission(ENV['RESOURCES_FOLDER'], permission) do |result, err|
         @messages.push("Error sharing Member Resources folder with #{@member.fullname}. Error: #{err}") unless err.nil?
       end
     end

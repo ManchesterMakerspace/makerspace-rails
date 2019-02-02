@@ -2,7 +2,7 @@ class TokenController < ApplicationController
 
   def create
     @member = Member.find_by(email: params[:email])
-    raise Error::AccountExistsError.new unless !member
+    raise Error::AccountExistsError.new if @member
 
     token = RegistrationToken.new(email: params[:email])
     token.save!
@@ -11,9 +11,10 @@ class TokenController < ApplicationController
 
   def validate
     @member = Member.find_by(email: params[:email])
-    raise Error::AccountExistsError.new unless !member
+    raise Error::AccountExistsError.new if @member
 
     @token = RegistrationToken.find(params[:id])
+    raise ::Mongoid::Errors::DocumentNotFound.new if @token.nil?
     render json: {msg: 'Invalid registration link'}, status: 400 and return if !@token
 
     challenge_token = params[:token]

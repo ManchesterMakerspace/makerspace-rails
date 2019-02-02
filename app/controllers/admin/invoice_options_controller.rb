@@ -9,12 +9,14 @@ class Admin::InvoiceOptionsController < ApplicationController
 
   def update
     invoice_option = InvoiceOption.find(params[:id])
+    raise ::Mongoid::Errors::DocumentNotFound.new if invoice_option.nil?
     invoice_option.update!(invoice_params)
     render json: invoice_option and return
   end
 
   def destroy
     invoice_option = InvoiceOption.find(params[:id])
+    raise ::Mongoid::Errors::DocumentNotFound.new if invoice_option.nil?
     invoice_option.delete!
     render json: invoice_option and return
   end
