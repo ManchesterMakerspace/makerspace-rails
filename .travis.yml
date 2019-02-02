@@ -5,8 +5,6 @@ language: ruby
 cache:
   bundler: true
   yarn: true
-  directories:
-    - node_modules
 addons:
   chrome: stable
 rvm:

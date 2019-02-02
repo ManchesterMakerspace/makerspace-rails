@@ -280,45 +280,47 @@ class MembersList extends React.Component<Props, State> {
     }
 
     return (
-      <>
-        {admin && (
-          <>
-            <Grid style={{paddingTop: 20}}>
-              {this.getActionButtons()}
-            </Grid>
-            <Grid>
-              <FormControlLabel
-                control={<Checkbox
-                  color="primary"
-                  value="true"
-                  checked={!!currentMembers}
-                  onChange={this.updateFilter}
-                />}
-                label="View only current members"
-              />
-            </Grid>
-          </>
-        )}
-        <TableContainer
-          id="members-table"
-          title="Members"
-          loading={loading}
-          data={Object.values(members)}
-          error={error}
-          totalItems={totalItems}
-          selectedIds={[selectedId]}
-          pageNum={pageNum}
-          onSearchEnter={this.onSearchEnter}
-          columns={fields}
-          order={order}
-          orderBy={orderBy}
-          onSort={this.onSort}
-          rowId={this.rowId}
-          onPageChange={this.onPageChange}
-          onSelect={admin && this.onSelect}
-        />
-        {this.renderMemberForms()}
-      </>
+      <Grid container spacing={24} justify="center">
+        <Grid item md={10} xs={12}>
+          {admin && (
+            <>
+              <Grid style={{paddingTop: 20}}>
+                {this.getActionButtons()}
+              </Grid>
+              <Grid>
+                <FormControlLabel
+                  control={<Checkbox
+                    color="primary"
+                    value="true"
+                    checked={!!currentMembers}
+                    onChange={this.updateFilter}
+                  />}
+                  label="View only current members"
+                />
+              </Grid>
+            </>
+          )}
+          <TableContainer
+            id="members-table"
+            title="Members"
+            loading={loading}
+            data={Object.values(members)}
+            error={error}
+            totalItems={totalItems}
+            selectedIds={[selectedId]}
+            pageNum={pageNum}
+            onSearchEnter={this.onSearchEnter}
+            columns={fields}
+            order={order}
+            orderBy={orderBy}
+            onSort={this.onSort}
+            rowId={this.rowId}
+            onPageChange={this.onPageChange}
+            onSelect={admin && this.onSelect}
+          />
+          {this.renderMemberForms()}
+        </Grid>
+      </Grid>
     );
   }
 }

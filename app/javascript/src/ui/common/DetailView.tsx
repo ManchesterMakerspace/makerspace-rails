@@ -88,7 +88,7 @@ class DetailView extends React.Component<OwnProps, State> {
     const { activeResource } = this.state;
     const { resources } = this.props;
     return (
-      <Grid item xs={10} style={{ ...sectionBorderStyle, marginTop: "0.5em"}}>
+      <Grid item md={10} xs={12} style={{ ...sectionBorderStyle, marginTop: "0.5em"}}>
         {activeResource && (
           <>
             {resources.length > 1 && (<Tabs

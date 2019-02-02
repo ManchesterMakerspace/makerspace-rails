@@ -1,7 +1,6 @@
 class ApplicationController < ActionController::Base
   include ApplicationHelper
   include ::Error::ErrorHandler
-  include ::Service::BraintreeGateway
 
   protect_from_forgery with: :exception
   after_action :set_csrf_cookie_for_ng

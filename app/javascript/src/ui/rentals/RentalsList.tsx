@@ -2,7 +2,7 @@ import * as React from "react";
 import * as moment from "moment";
 import { connect } from "react-redux";
 import { Link } from 'react-router-dom';
-
+import Grid from "@material-ui/core/Grid";
 
 import { Rental, Properties } from "app/entities/rental";
 import { QueryParams, CollectionOf } from "app/interfaces";
@@ -323,31 +323,33 @@ class RentalsList extends React.Component<Props, State> {
     const { selectedId, pageNum, order, orderBy } = this.state;
 
     return (
-      <>
-        {
-          admin && (
-            this.getActionButtons()
-          )
-        }
-        <TableContainer
-          id="rentals-table"
-          title="Rentals"
-          loading={isReading}
-          data={Object.values(rentals)}
-          error={readError}
-          totalItems={totalItems}
-          selectedIds={[selectedId]}
-          pageNum={pageNum}
-          columns={this.fields}
-          order={order}
-          orderBy={orderBy}
-          onSort={this.onSort}
-          rowId={this.rowId}
-          onPageChange={this.onPageChange}
-          onSelect={this.onSelect}
-        />
-        {this.renderInvoiceForms()}
-      </>
+      <Grid container spacing={24} justify="center">
+        <Grid item md={10} xs={12}>
+          {
+            admin && (
+              this.getActionButtons()
+            )
+          }
+          <TableContainer
+            id="rentals-table"
+            title="Rentals"
+            loading={isReading}
+            data={Object.values(rentals)}
+            error={readError}
+            totalItems={totalItems}
+            selectedIds={[selectedId]}
+            pageNum={pageNum}
+            columns={this.fields}
+            order={order}
+            orderBy={orderBy}
+            onSort={this.onSort}
+            rowId={this.rowId}
+            onPageChange={this.onPageChange}
+            onSelect={this.onSelect}
+          />
+          {this.renderInvoiceForms()}
+        </Grid>
+      </Grid>
     );
   }
 }
