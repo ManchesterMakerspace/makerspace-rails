@@ -2,6 +2,8 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { Link, Redirect } from 'react-router-dom';
 import Grid from "@material-ui/core/Grid";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
 import isUndefined from "lodash-es/isUndefined";
 import { MemberDetails, MemberStatus, MemberRole } from "app/entities/member";
 import { QueryParams, CollectionOf } from "app/interfaces";
@@ -45,6 +47,7 @@ interface State {
   pageNum: number;
   orderBy: string;
   search: string;
+  currentMembers: string;
   order: SortDirection;
   openRenewalForm: boolean;
   openCreateForm: boolean;
@@ -79,6 +82,7 @@ class MembersList extends React.Component<Props, State> {
       pageNum: 0,
       orderBy: "",
       search: "",
+      currentMembers: "true",
       order: SortDirection.Asc,
       openRenewalForm: false,
       openCreateForm: false,
@@ -98,14 +102,6 @@ class MembersList extends React.Component<Props, State> {
   private closeRenewalForm = () => {
     this.setState({ openRenewalForm: false });
   }
-
-  // private submitRenewalForm = async (form: Form) => {
-  //   const validRenewal: RenewForm = await this.renewFormRef.validate(form);
-
-  //   if (!form.isValid()) return;
-
-  //   await this.props.updateMember(validRenewal.id, validRenewal);
-  // }
 
   private renderMemberForms = () => {
     const { admin, members } = this.props;
@@ -166,26 +162,39 @@ class MembersList extends React.Component<Props, State> {
     )
   }
 
+  private updateFilter = () =>
+    this.setState(state => ({ currentMembers: state.currentMembers ? "" : "true" }), this.getMembers);
 
   private getActionButtons = () => {
-    const { selectedId } = this.state;
+    const { selectedId, currentMembers } = this.state;
     return (
-      <ButtonRow
-        actionButtons={[{
-          id: "members-list-create",
-          variant: "contained",
-          color: "primary",
-          onClick: this.openCreateForm,
-          label: "Create New Member"
-        }, {
-          id: "members-list-renew",
-          variant: "outlined",
-          color: "primary",
-          disabled: !selectedId,
-          onClick: this.openRenewalForm,
-          label: "Renew Member"
-        }]}
-      />
+      <>
+        <ButtonRow
+          actionButtons={[{
+            id: "members-list-create",
+            variant: "contained",
+            color: "primary",
+            onClick: this.openCreateForm,
+            label: "Create New Member"
+          }, {
+            id: "members-list-renew",
+            variant: "outlined",
+            color: "primary",
+            disabled: !selectedId,
+            onClick: this.openRenewalForm,
+            label: "Renew Member"
+          }]}
+        />
+        <FormControlLabel
+          control={<Checkbox
+            color="primary"
+            value="true"
+            checked={!!currentMembers}
+            onChange={this.updateFilter}
+          />}
+          label="View only current members"
+        />
+      </>
     )
   }
 
@@ -194,13 +203,15 @@ class MembersList extends React.Component<Props, State> {
       pageNum,
       orderBy,
       order,
-      search
+      search,
+      currentMembers
     } = this.state
     return {
       pageNum,
       orderBy,
       order,
-      search
+      search,
+      currentMembers
     };
   }
 

@@ -71,7 +71,6 @@ class Billing::CheckoutController < ApplicationController
 
     def settle_invoices(invoices)
       single_transactions, new_subscriptions = invoices.partition { |invoice| invoice.plan_id.nil? }
-      byebug
       subscription_results = new_subscriptions.map { |invoice| { invoice_ids: [invoice.id], result: create_subscription(invoice)} } unless new_subscriptions.empty?
       single_transaction_result = submit_transaction(single_transactions) unless single_transactions.empty?
 

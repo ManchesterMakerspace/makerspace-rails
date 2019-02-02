@@ -1,10 +1,9 @@
 class AdminController < ApplicationController
+  before_action :authenticate_member!
   before_action :authorized?
 
   private
   def authorized?
-    unless is_admin?
-      render json: {}, status: 401 and return
-    end
+    raise Error::InsufficentPermissionsError.new unless is_admin?
   end
 end

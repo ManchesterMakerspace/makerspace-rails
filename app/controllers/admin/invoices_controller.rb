@@ -10,29 +10,20 @@ class Admin::InvoicesController < ApplicationController
 
   def create
     invoice = Invoice.new(invoice_params)
-    if invoice.save
-      render json: invoice and return
-    else
-      render json: invoice.errors.full_messages, status: 500 and return
-    end
+    invoice.save!
+    render json: invoice and return
   end
 
   def update
-    invoice = Invoice.find_by(id: params[:id])
-    if invoice && invoice.update(invoice_params)
-      render json: invoice and return
-    else
-      render json: invoice.errors.full_messages, status: (invoice ? 500 : 404) and return
-    end
+    invoice = Invoice.find(params[:id])
+    invoice.update!(invoice_params)
+    render json: invoice and return
   end
 
   def destroy
-    invoice = Invoice.find_by(id: params[:id])
-    if invoice && invoice.delete
-      render json: invoice and return
-    else
-      render json: invoice.errors.full_messages, status: (invoice ? 500 : 404) and return
-    end
+    invoice = Invoice.find(params[:id])
+    invoice.delete!
+    render json: invoice and return
   end
 
   private

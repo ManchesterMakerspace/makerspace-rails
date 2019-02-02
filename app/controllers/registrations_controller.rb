@@ -7,25 +7,22 @@ class RegistrationsController < Devise::RegistrationsController
 
     def create
       @member = Member.new(member_params)
-      if @member.save
-        create_initial_membership_invoice
-        if Rails.env == "production"
-          invite_to_slack(@member)
-          invite_gdrive
-        end
-        send_slack_messages(@messages)
-        sign_in(@member)
-
-        member_response = ActiveModelSerializers::SerializableResource.new(@member).as_json
-        invoice_response = ActiveModelSerializers::SerializableResource.new(@invoice).as_json
-        response = {
-          member: member_response[:member],
-        }
-        response[:invoice] = invoice_response[:invoice] unless invoice_response.nil?
-        render json:response and return
-      else
-        render json: { message: @member.errors.full_messages }, status: 400 and return
+      @member.save!
+      create_initial_membership_invoice
+      if Rails.env == "production"
+        invite_to_slack(@member)
+        invite_gdrive
       end
+      send_slack_messages(@messages)
+      sign_in(@member)
+
+      member_response = ActiveModelSerializers::SerializableResource.new(@member).as_json
+      invoice_response = ActiveModelSerializers::SerializableResource.new(@invoice).as_json
+      response = {
+        member: member_response[:member],
+      }
+      response[:invoice] = invoice_response[:invoice] unless invoice_response.nil?
+      render json:response and return
     end
 
     private

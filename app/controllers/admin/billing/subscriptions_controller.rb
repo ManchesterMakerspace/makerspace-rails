@@ -11,14 +11,11 @@ class Admin::Billing::SubscriptionsController < ApplicationController
   def destroy
     subscription = ::BraintreeService::Subscription.get_subscription(@gateway, params[:id])
     result = ::BraintreeService::Subscription.cancel(@gateway, params[:id])
-    if result.success?
-      if subscription.resource.nil? || subscription.resource.remove_subscription()
-        render json: {}, status: 204 and return
-      else
-        render json: { error: subscription.resource.errors.full_messages.join(". ") }, status: 500 and return
-      end
-    else
-      render json: { error: result.errors.map { |e| e.message } }, status: 500 and return
+    raise Error::BraintreeResultError.new(result) unless result.success?
+
+    # Verify resource exists and call update on that resource
+    if subscription.resource.nil? || subscription.resource.remove_subscription()
+      render json: {}, status: 204 and return
     end
   end
 end

@@ -2,6 +2,8 @@ module FastQuery
   extend ActiveSupport::Concern
   @@items_per_page = 20
 
+  private
+
   def query_resource(current_query, custom_query = nil)
     return current_query unless current_query.class == Mongoid::Criteria
     query = custom_query || query_params

@@ -5,9 +5,6 @@ import TextField from "@material-ui/core/TextField";
 import Select from "@material-ui/core/Select";
 import FormLabel from "@material-ui/core/FormLabel";
 
-import { getGroups } from "api/groups/transactions";
-import { Group } from "app/entities/group";
-
 import { MemberDetails } from "app/entities/member";
 
 import FormModal from "ui/common/FormModal";
@@ -27,48 +24,9 @@ interface OwnProps {
   noDialog?: boolean;
 }
 
-interface State {
-  groups: Group[];
-  readingGroups: boolean;
-  readGroupsError: string;
-}
-
-class MemberForm extends React.Component<OwnProps, State> {
+class MemberForm extends React.Component<OwnProps> {
   public formRef: Form;
   private setFormRef = (ref: Form) => this.formRef = ref;
-
-  public constructor(props: OwnProps) {
-    super(props);
-    this.state = {
-      groups: [],
-      readingGroups: false,
-      readGroupsError: ""
-    }
-  }
-
-  public componentDidMount() {
-    this.getGroups();
-  }
-
-  public componentDidUpdate(prevProps: OwnProps) {
-    const { isOpen: wasOpen } = prevProps;
-    const { isOpen } = this.props;
-    if (isOpen && !wasOpen) {
-      this.getGroups();
-    }
-  }
-
-  private getGroups = async () => {
-    if (this.state.readingGroups) { return; }
-    try {
-      this.setState({ readingGroups: true });
-      const { data } = await getGroups();
-      this.setState({ groups: data.groups, readGroupsError: "" });
-    } catch (e) {
-      const { errorMessage } = e;
-      this.setState({ readGroupsError: errorMessage });
-    }
-  }
 
   public validate = async (form: Form): Promise<MemberDetails> => {
     const { isAdmin } = this.props;
@@ -78,13 +36,9 @@ class MemberForm extends React.Component<OwnProps, State> {
 
   private renderFormContents = () => {
     const { member, isAdmin } = this.props;
-    const { groups, readGroupsError } = this.state;
     const fields = memberFormField(isAdmin);
-    const groupOptions = fields.groupName && Array.isArray(groups) && groups.map(
-      group => <option id={`${fields.groupName.name}-option-${kebabCase(group.groupName)}`} key={kebabCase(group.groupName)} value={group.groupName}>{group.groupName}</option>).concat(
-        [<option id={`${fields.groupName.name}-option-none`} key="none" value="">None</option>]
-      )
-    return (<Grid container spacing={24}>
+
+return (<Grid container spacing={24}>
       <Grid item xs={6}>
         <TextField
           fullWidth
@@ -147,18 +101,6 @@ class MemberForm extends React.Component<OwnProps, State> {
             >
               {Object.entries(MemberStatusOptions).map(
                 ([key, value]) => <option id={`${fields.status.name}-option-${kebabCase(key)}`} key={kebabCase(key)} value={key}>{value}</option>)}
-            </Select>
-          </Grid>
-          <Grid item xs={12}>
-            <FormLabel component="legend">{fields.groupName.label}</FormLabel>
-            <Select
-              name={fields.groupName.name}
-              value={member.groupName}
-              fullWidth
-              native
-              placeholder={fields.groupName.placeholder}
-            >
-              {readGroupsError || groupOptions}
             </Select>
           </Grid>
           <Grid item xs={12}>

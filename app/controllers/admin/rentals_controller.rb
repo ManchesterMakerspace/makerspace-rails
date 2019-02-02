@@ -10,33 +10,23 @@ class Admin::RentalsController < AdminController
 
   def create
     @rental = Rental.new(rental_params)
-    if @rental.save
-      render json: @rental and return
-    else
-      render json: {message: @rental.errors.full_messages}, status: 500 and return
-    end
+    @rental.save!
+    render json: @rental and return
   end
 
   def update
     initial_date = @rental.get_expiration
-    if @rental.update(rental_params)
-      slack_msg = @rental.build_slack_msg(initial_date)
-      @messages.push(slack_msg) unless slack_msg.nil?
-      send_slack_messages(@messages) unless @messages.empty?
-      @rental.reload
-      render json: @rental and return
-    else
-      render json: {}, status: 500 and return
-    end
+    @rental.update!(rental_params)
+    slack_msg = @rental.build_slack_msg(initial_date)
+    @messages.push(slack_msg) unless slack_msg.nil?
+    send_slack_messages(@messages) unless @messages.empty?
+    @rental.reload
+    render json: @rental and return
   end
 
   def destroy
-    if !!@rental
-      @rental.delete
-      render json: {}, status: 204 and return
-    else
-      render json: {message: @rental.errors.full_messages}, status: 422 and return
-    end
+    @rental.delete!
+    render json: {}, status: 204 and return
   end
 
   private
@@ -45,6 +35,6 @@ class Admin::RentalsController < AdminController
   end
 
   def set_rental
-    @rental = Rental.find_by(id: params[:id])
+    @rental = Rental.find(params[:id])
   end
 end

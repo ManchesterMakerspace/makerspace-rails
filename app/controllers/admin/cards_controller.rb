@@ -21,27 +21,21 @@ class Admin::CardsController < AdminController
       render json: {msg: 'Member has Active cards'}, status: 400 and return
     end
 
-    if @card.save
-      rejection_card = RejectionCard.find_by(uid: @card.uid)
-      rejection_card.update(holder: @card.holder) unless rejection_card.nil?
-      render json: @card and return
-    else
-      render json: {}, status: 500 and return
-    end
+    @card.save!
+    rejection_card = RejectionCard.find_by(uid: @card.uid)
+    rejection_card.update(holder: @card.holder) unless rejection_card.nil?
+    render json: @card and return
   end
 
   def index
-    @cards = Card.where(member: Member.find_by(id: card_params[:member_id]))
+    @cards = Card.where(member: Member.find(card_params[:member_id]))
     render json: @cards and return
   end
 
   def update
-    @card = Card.find_by(id: params[:id])
-    if @card.update(card_params)
-      render json: @card and return
-    else
-      render json: {}, status: 500 and return
-    end
+    @card = Card.find(params[:id])
+    @card.update!(card_params)
+    render json: @card and return
   end
 
   private

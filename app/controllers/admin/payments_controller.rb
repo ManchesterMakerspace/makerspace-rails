@@ -10,12 +10,9 @@ class Admin::PaymentsController < AdminController
   end
 
   def update
-    @payment.member = Member.find_by(id: params[:payment][:member][:id])
-    if @payment.update(payment_params)
-      render json: @payment and return
-    else
-      render json: {}, status: 500 and return
-    end
+    @payment.member = Member.find(params[:payment][:member][:id])
+    @payment.update!(payment_params)
+    render json: @payment and return
   end
 
   private

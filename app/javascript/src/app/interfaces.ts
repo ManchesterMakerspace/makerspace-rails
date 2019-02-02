@@ -15,6 +15,7 @@ export interface QueryParams extends AxiosRequestConfig {
   order?: SortDirection;
   orderBy?: string;
   search?: string;
+  [key: string]: any;
 }
 
 export interface ApiErrorResponse {

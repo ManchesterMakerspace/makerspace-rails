@@ -15,15 +15,12 @@ export const handleApiError = (e: any): ApiErrorResponse => {
     console.error(`API Error Recieved: ${e}`);
   } else if (isObject(e) && isObject(e.response)) {
     try {
-      const { response: errorResponse, error } = e;
+      const { response: errorResponse } = e;
+
+      const { data: error } = errorResponse;
       apiErrorResponse.response = errorResponse;
-      if (!isUndefined(error)) {
-        if (isObject(error)) {
-          apiErrorResponse.errorMessage = error.message;
-        } else {
-          apiErrorResponse.errorMessage = error;
-        }
-      }
+      apiErrorResponse.errorMessage = error.message;
+
     } catch (parseError) {
       console.error(`Error handling API Error: ${parseError}`);
     }

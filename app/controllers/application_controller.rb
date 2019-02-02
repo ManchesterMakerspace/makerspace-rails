@@ -1,10 +1,11 @@
 class ApplicationController < ActionController::Base
   include ApplicationHelper
-  protect_from_forgery
+  include ::Error::ErrorHandler
+
+  protect_from_forgery with: :exception
   after_action :set_csrf_cookie_for_ng
 
   before_action :configure_permitted_parameters, if: :devise_controller?
-  # before_action :authenticate_member!, except: [:index, :search_by, :angular]
 
   def application
     render 'layouts/application'

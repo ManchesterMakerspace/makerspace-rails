@@ -11,7 +11,7 @@ class BraintreeService::PaymentMethod < Braintree::PaymentMethodNonce
 
   def self.find_payment_method_for_customer(gateway, payment_method_id, customer_id)
     payment_method = gateway.payment_method.find(payment_method_id)
-    raise ArgumentError, { message: "Payment method not for customer" } if payment_method.customer_id != customer_id
+    raise ArgumentError.new, { message: "Payment method not for customer" } if payment_method.customer_id != customer_id
     normalize_payment_method(gateway, payment_method)
   end
 

@@ -3,29 +3,20 @@ class Admin::InvoiceOptionsController < ApplicationController
 
    def create
     invoice_option = InvoiceOption.new(invoice_params)
-    if invoice_option.save
-      render json: invoice_option, each_serializer: InvoiceOptionSerializer, root: "invoice_option" and return
-    else
-      render json: invoice_option.errors.full_messages, status: 500 and return
-    end
+    invoice_option.save!
+    render json: invoice_option, each_serializer: InvoiceOptionSerializer, root: "invoice_option" and return
   end
 
   def update
-    invoice_option = InvoiceOption.find_by(id: params[:id])
-    if invoice_option && invoice_option.update(invoice_params)
-      render json: invoice_option and return
-    else
-      render json: invoice_option.errors.full_messages, status: (invoice_option ? 500 : 404) and return
-    end
+    invoice_option = InvoiceOption.find(params[:id])
+    invoice_option.update!(invoice_params)
+    render json: invoice_option and return
   end
 
   def destroy
-    invoice_option = InvoiceOption.find_by(id: params[:id])
-    if invoice_option && invoice_option.delete
-      render json: invoice_option and return
-    else
-      render json: invoice_option.errors.full_messages, status: (invoice_option ? 500 : 404) and return
-    end
+    invoice_option = InvoiceOption.find(params[:id])
+    invoice_option.delete!
+    render json: invoice_option and return
   end
 
   private

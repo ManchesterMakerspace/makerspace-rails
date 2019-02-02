@@ -6,7 +6,7 @@ class MembersController < ApplicationController
 
     def index
       @members = query_params[:search].nil? || query_params[:search].empty? ? Member.all : Member.rough_search_members(query_params[:search])
-      @members = @members.where(:expirationTime => { '$gt' => (Time.now.strftime('%s').to_i * 1000) }) unless is_admin?
+      @members = @members.where(:expirationTime => { '$gt' => (Time.now.strftime('%s').to_i * 1000) }) unless params[:currentMembers] == "" && is_admin?
       @members = query_resource(@members)
 
       return render_with_total_items(@members, root: :members)
@@ -18,26 +18,18 @@ class MembersController < ApplicationController
 
     def update
       # Non admins can only update themselves
-      if @member.id != current_member.id
-        render json: { message: "Unauthorized" }, status: 404 and return
-      end
+      raise Error::Unauthorized.new unless  @member.id != current_member.id
 
       if signature_params[:signature]
         response = upload_signature()
         send_slack_messages(@messages) unless @messages.empty?
-        if !response[:error].nil?
-          render json: { message: response[:error] }, status: 500 and return
-        else
-          @member.update({ memberContractOnFile: true })
-          render json: {}, status: 200 and return
-        end
+        raise Error::GoogleServiceError.new(response[:error]) unless response[:error].nil?
+        render json: {}, status: 200 and return
+        # TODO should return 204
       end
 
-      if member_params && @member.update(member_params)
-        render json: @member and return
-      else
-        render json: { message: @member.errors.full_messages }, status: 500 and return
-      end
+      @member.update!(member_params)
+      render json: @member and return
     end
 
     private
