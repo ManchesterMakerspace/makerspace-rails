@@ -18,7 +18,7 @@ class MembersController < ApplicationController
 
     def update
       # Non admins can only update themselves
-      raise Error::Unauthorized.new unless  @member.id != current_member.id
+      raise Error::Unauthorized.new unless @member.id == current_member.id
 
       if signature_params[:signature]
         response = upload_signature()
@@ -71,15 +71,4 @@ class MembersController < ApplicationController
         return { error: error, result: result }
       end
     end
-
-  def initalize_gdrive
-    @service = Google::Apis::DriveV3::DriveService.new
-    creds = Google::Auth::UserRefreshCredentials.new({
-      client_id: ENV['GOOGLE_ID'],
-      client_secret: ENV['GOOGLE_SECRET'],
-      refresh_token: ENV['GOOGLE_TOKEN'],
-      scope: ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/drive"]
-    })
-    @service.authorization = creds
-  end
 end

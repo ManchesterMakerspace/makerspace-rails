@@ -1,6 +1,6 @@
-require_relative 'custom_error'
+require_relative '../custom_error'
 module Error::Braintree
-  class Result < CustomError
+  class Result < ::Error::CustomError
     def initialize(result)
       error = {
         attribute: :service_unavailable,

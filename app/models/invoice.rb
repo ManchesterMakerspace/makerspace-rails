@@ -46,10 +46,14 @@ class Invoice
   validates_numericality_of :quantity, greater_than: 0
   validates_presence_of :resource_id
   validates_presence_of :due_date
+  validate :one_active_invoice_per_resource, on: :create
+  validate :one_active_membership_invoice_per_member, on: :create
 
   belongs_to :member
 
   before_validation :set_due_date
+
+  attr_accessor :found_resource
 
   def settled
     !!self.settled_at
@@ -67,21 +71,21 @@ class Invoice
     determine_payment_type(transaction_result)
     execute_invoice_operation
     self.settled = true
-    return self.save
+    return self.save!
   end
 
   def build_next_invoice
     next_invoice = self.clone
     next_invoice.due_date = self.due_date + self.quantity.months
-    return next_invoice.save
+    return next_invoice.save!
   end
 
   def self.resource(class_name, id)
-    Invoice::OPERATION_RESOURCES[class_name].find_by(id: id)
+    Invoice::OPERATION_RESOURCES[class_name].find(id)
   end
 
   def resource
-    self.class.resource(self.resource_class, self.resource_id)
+    found_resource ||= self.class.resource(self.resource_class, self.resource_id)
   end
 
   private
@@ -96,20 +100,27 @@ class Invoice
   end
 
   def execute_invoice_operation
-    resource_class = OPERATION_RESOURCES[self.resource_class]
-    if resource_class
-      resource = resource_class.find(self.resource_id)
-      raise ::Mongoid::Errors::DocumentNotFound.new if resource.nil?
-      operation = OPERATION_FUNCTIONS.find{ |f| f == self.operation }
-      if operation
-        if resource.execute_operation(operation, self)
-          self.executed_at = Time.now
-          return
-        end
-        raise "Unable to process invoice. Operation failed"
+    raise ::Mongoid::Errors::DocumentNotFound.new if resource.nil?
+    operation = OPERATION_FUNCTIONS.find{ |f| f == self.operation }
+    if operation
+      if resource.execute_operation(operation, self)
+        self.executed_at = Time.now
+        return
       end
-      raise "Unable to process invoice. Invalid operation"
+      raise "Unable to process invoice. Operation failed"
     end
-    raise "Unable to process invoice. Invalid resource"
+    raise "Unable to process invoice. Invalid operation"
+  end
+
+  def one_active_invoice_per_resource
+    active = self.class.where(resource_id: resource_id, settled_at: nil)
+    errors.add "Active invoices already exist for this invoice" if active.size > 0
+  end
+
+  def one_active_membership_invoice_per_member
+    if resource_class == OPERATION_RESOURCES[:member]
+      active = self.class.where(resource_class: resource_class, settled_at: nil)
+      errors.add "Active invoices already exist for this membership" if active.size > 0
+    end
   end
 end

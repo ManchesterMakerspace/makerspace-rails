@@ -9,6 +9,7 @@ export interface MemberDetails {
   groupName: string;
   role: MemberRole;
   subscriptionId: string;
+  subscription: boolean;
   memberContractOnFile: boolean;
 }
 

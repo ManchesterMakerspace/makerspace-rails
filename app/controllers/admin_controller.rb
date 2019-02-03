@@ -4,6 +4,6 @@ class AdminController < ApplicationController
 
   private
   def authorized?
-    raise Error::InsufficentPermissionsError.new unless is_admin?
+    raise ::Error::InsufficientPermissions.new unless is_admin?
   end
 end

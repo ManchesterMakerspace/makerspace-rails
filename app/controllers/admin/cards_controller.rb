@@ -8,13 +8,13 @@ class Admin::CardsController < AdminController
     else
       @card.uid = nil
     end
-    render json: @card
+    render json: @card and return
   end
 
   def create
+    raise ::ActionController::ParameterMissing.new(:member_id) unless card_params[:member_id]
     @card = Card.new(card_params)
-
-    render json: {msg: 'Member missing'}, status: 500 and return if !@card.member
+    raise Error::NotFound.new() unless @card.member
 
     cards = @card.member.access_cards.select { |c| (c.validity != 'lost') && (c.validity != 'stolen') && (c != @card)}
     raise Error::Conflict.new("Member has active cards. Cards must be disabled before creating new one.") if cards.length > 0

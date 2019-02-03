@@ -27,6 +27,29 @@ Changing methods renders PaymentMethodsContainer w/ managing methods false
 
 */
 
+const membershipDetails = {
+  none: {
+    description: "No membership on file. Create a membership to add one.",
+    type: "No membership found",
+    allowMod: true,
+  },
+  paypal: {
+    description: "Membership handled by PayPal. Contact an administrator for details.",
+    type: "Managed by PayPal",
+    allowMod: false,
+  },
+  notFound: {
+    description: "Membership subscription cannot be found. Contact an administrator for assistance.",
+    type: "Unknown",
+    allowMod: false,
+  },
+  noSubscription: {
+    description: "No subscription found. Update membership to enable automatic renewals.",
+    type: "Month-to-month",
+    allowMod: true,
+  },
+}
+
 interface DispatchProps {
   getSubscription: (id: string) => void;
 }
@@ -85,7 +108,16 @@ class UpdateMembershipForm extends React.Component<Props, State> {
     )
   }
   private renderMembershipDetails = () => {
-    const { member } = this.props;
+    const { member, subscription } = this.props;
+
+    let details = membershipDetails.noSubscription;
+    if (member.subscription && !member.subscriptionId) {
+      details = membershipDetails.paypal;
+    } else if (member.subscriptionId && !subscription) {
+      details = membershipDetails.notFound;
+    } else if (!member.expirationTime) {
+      details = membershipDetails.none;
+    }
 
     return (
       <Grid container spacing={16}>
@@ -97,17 +129,14 @@ class UpdateMembershipForm extends React.Component<Props, State> {
             <MemberStatusLabel id="member-detail-status" member={member} />
           </KeyValueItem>
           <KeyValueItem label="Membership Type">
-            <span id="member-detail-type">{(member.expirationTime ? "Month-to-month" : "No membership found")}</span>
+            <span id="member-detail-type">{details.type}</span>
           </KeyValueItem>
         </Grid>
         <Grid item xs={12}>
-          {member.expirationTime ?
-            <Typography>No subscription found. Update membership to enable automatic renewals.</Typography>
-            : <Typography>No membership on file. Create a membership to add one</Typography>
-          }
+          <Typography>{details.description}</Typography>
         </Grid>
         <Grid item xs={12}>
-          <Button variant="contained" onClick={this.openMembershipSelect}>{member.expirationTime ? "Update Membership" : "Create Membership"}</Button>
+          <Button variant="contained" disabled={!details.allowMod} onClick={this.openMembershipSelect}>{member.expirationTime ? "Update Membership" : "Create Membership"}</Button>
         </Grid>
       </Grid>
     );

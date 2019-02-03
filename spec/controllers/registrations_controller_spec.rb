@@ -57,7 +57,7 @@ RSpec.describe RegistrationsController, type: :controller do
 
       it "Adds user to gdrive" do
         post :create, params: {member: valid_attributes}, format: :json
-        expect(assigns(:service)).to be_a(Google::Apis::DriveV3::DriveService)
+        expect(assigns(:google)).to be_a(Google::Apis::DriveV3::DriveService)
       end
 
       it "assigns a newly created member as @member" do

@@ -1,13 +1,16 @@
-import { CreditCard } from "app/entities/paymentMethod";
+import { CreditCard, PaymentMethodType } from "app/entities/paymentMethod";
 
 export const creditCard: CreditCard = {
   id: "foo",
   customerId: "foobar",
-  paymentType: "credit_card",
+  paymentType: PaymentMethodType.CreditCard,
   last4: "1111",
   expirationMonth: "02",
   expirationYear: "2022",
   cardType: "Visa",
+  debit: false,
+  imageUrl: "https://foo.com",
+  default: false,
 }
 
 export const creditCardForm = {

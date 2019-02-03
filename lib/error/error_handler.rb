@@ -21,7 +21,7 @@ module Error
           respond(:not_found, 404, "Braintree resource not found")
         end
         rescue_from CustomError do |e|
-          respond(e.error, e.status, e.message)
+          respond(e.status, e.error, e.message)
         end
       end
     end
@@ -30,7 +30,6 @@ module Error
 
     def respond(_error, _status, _message)
       json = Error::Helpers::Render.json(_error, _status, _message)
-      # TODO should send slack notification
       render json: json, status: _status and return
     end
   end
