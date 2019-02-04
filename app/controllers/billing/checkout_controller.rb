@@ -39,11 +39,8 @@ class Billing::CheckoutController < ApplicationController
     end
 
     def verify_token
-      if current_member.customer_id.nil?
-        # TODO: Figure out guest checkout process
-      else
-        payment_method = ::BraintreeService::PaymentMethod.find_payment_method_for_customer(@gateway, checkout_params[:payment_method_id], current_member.customer_id)
-      end
+      raise Error::Braintree::MissingCustomer.new unless current_member.customer_id
+      payment_method = ::BraintreeService::PaymentMethod.find_payment_method_for_customer(@gateway, checkout_params[:payment_method_id], current_member.customer_id)
     end
 
     def settle_invoices(invoices)

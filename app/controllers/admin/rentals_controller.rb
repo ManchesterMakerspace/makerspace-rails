@@ -1,5 +1,4 @@
 class Admin::RentalsController < AdminController
-  include SlackService
   include FastQuery
   before_action :set_rental, only: [:update, :destroy]
 
@@ -9,16 +8,13 @@ class Admin::RentalsController < AdminController
   end
 
   def create
-    @rental = Rental.new(rental_params)
-    @rental.save!
+    @rental = Rental.create!(rental_params)
     render json: @rental and return
   end
 
   def update
     initial_date = @rental.get_expiration
     @rental.update!(rental_params)
-    slack_msg = @rental.build_slack_msg(initial_date)
-    @messages.push(slack_msg) unless slack_msg.nil?
     @rental.reload
     render json: @rental and return
   end

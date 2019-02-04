@@ -1,6 +1,7 @@
 class Rental
   include Mongoid::Document
   include InvoiceableResource
+  include Service::SlackConnector
 
   belongs_to :member, optional: true
 
@@ -10,6 +11,7 @@ class Rental
   field :subscription_id, type: String # Braintree relation
 
   validates :number, presence: true, uniqueness: true
+  after_update :notify_renewal
 
   def prettyTime
     if self.expiration
@@ -21,16 +23,6 @@ class Rental
 
   def get_expiration(exp = nil)
     self.expiration_as_ms(exp)
-  end
-
-  def build_slack_msg(initial_date)
-    if self.get_expiration && initial_date
-      if self.get_expiration > initial_date
-        return "#{self.member.fullname}'s rental of Locker/Plot # #{self.number} renewed.  Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}"
-      elsif self.get_expiration != initial_date
-        return "#{self.member.fullname}'s rental of Locker/Plot # #{self.number} updated.  Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}"
-      end
-    end
   end
 
   protected
@@ -61,6 +53,17 @@ class Rental
       return exp
     else
       return exp.to_i * 1000
+    end
+  end
+
+  def notify_renewal
+    if self.expiration_changed?
+      init, final = self.expiration.change
+      if final && init && final > init
+        connect_slack.send_slack_message("#{self.member.fullname}'s rental of Locker/Plot # #{self.number} renewed.  Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}")
+      elsif final != init
+        connect_slack.send_slack_message("#{self.member.fullname}'s rental of Locker/Plot # #{self.number} updated.  Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}")
+      end
     end
   end
 end

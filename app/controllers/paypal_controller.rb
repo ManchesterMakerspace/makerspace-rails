@@ -1,5 +1,4 @@
 class PaypalController < ApplicationController
-  include SlackService
   protect_from_forgery except: [:notify]
   before_action :build_payment, only: [:notify]
 

@@ -3,11 +3,7 @@ class Admin::CardsController < AdminController
   def new
     @card = Card.new()
     reject = RejectionCard.where({'holder' => nil, 'timeOf' => {'$gt' => (Date.today - 1.day)}}).last
-    if( !!reject )
-      @card.uid = reject.uid || nil
-    else
-      @card.uid = nil
-    end
+    @card.uid = reject.uid if !!reject
     render json: @card and return
   end
 

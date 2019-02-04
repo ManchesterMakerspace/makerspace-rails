@@ -49,6 +49,6 @@ class InvoiceOption
       plan_id: self.plan_id,
       operation: self.operation,
     }
-    Invoice.new(invoice_args)
+    Invoice.create!(invoice_args)
   end
 end

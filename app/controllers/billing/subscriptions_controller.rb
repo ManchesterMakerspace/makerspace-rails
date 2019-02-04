@@ -1,7 +1,7 @@
 class Billing::SubscriptionsController < ApplicationController
     include FastQuery
     include BraintreeGateway
-    before_action :verify_own_subscription, only: [:show, :update, :destroy]
+    before_action :verify_own_subscription
 
   def show
     subscription = ::BraintreeService::Subscription.get_subscription(@gateway, params[:id])

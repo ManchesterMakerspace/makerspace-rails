@@ -1,6 +1,5 @@
 class MembersController < ApplicationController
     include FastQuery
-    include SlackService
     include GoogleService
     before_action :set_member, only: [:show, :update]
 
@@ -21,8 +20,12 @@ class MembersController < ApplicationController
       raise Error::Unauthorized.new unless @member.id == current_member.id
 
       if signature_params[:signature]
-        response = upload_signature()
-        raise Error::GoogleServiceError.new(response[:error]) unless response[:error].nil?
+        begin
+          upload_signature(signature_params[:signature], "#{@member.fullname}_signature.png")
+          @member.update!(memberContractOnFile: true)
+        rescue Error::Google::Upload => err
+          @messages.push("Error uploading #{@member.fullname}'s signature'. Error: #{err}")
+        end
         render json: {}, status: 204 and return
       end
 
@@ -42,32 +45,5 @@ class MembersController < ApplicationController
 
     def member_params
       params.require(:member).permit(:firstname, :lastname, :email)
-    end
-
-    def upload_signature
-      encoded_img = signature_params[:signature].split(",")[1]
-      File.open("dump/signature.png", 'wb') do |f|
-        f.write(Base64.decode64(encoded_img))
-      end
-      signature_meta = {
-        name: "#{@member.fullname}_signature.png",
-        parents: [ENV['SIGNATURES_FOLDER']]
-      }
-      @google.create_file(signature_meta,
-                          fields: 'id',
-                          upload_source: Rails.root.join("dump/signature.png").to_s,
-                          content_type: 'image/png'
-                          ) do |result, err|
-        unless err.nil?
-          error = "Error uploading #{@member.fullname}'s signature'. Error: #{err}"
-          @messages.push(error)
-        end
-        if result && result.id then
-            @messages.push("New member #{@member.fullname}'s Member Contract signature uploaded.'")
-            File.delete("dump/signature.png")
-            @member.update!(memberContractOnFile: true)
-        end
-        return { error: error, result: result }
-      end
     end
 end

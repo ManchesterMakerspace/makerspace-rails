@@ -8,6 +8,7 @@ class Card
 
   before_create :set_expiration, :set_holder
   before_update :set_expiration
+  after_create :update_rejection_card
 
   validates :uid, presence: true, uniqueness: true
 
@@ -44,5 +45,10 @@ class Card
     elsif (self.validity != @@memberStatuses[:lost] && self.validity != @@memberStatuses[:stolen])
       self.validity = self.member.status
     end
+  end
+
+  def update_rejection_card
+    rejection_card = RejectionCard.find_by(uid: self.uid)
+    rejection_card.update!(holder: self.member.fullname) unless rejection_card.nil?
   end
 end

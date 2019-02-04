@@ -11,13 +11,13 @@ class InvoicesController < ApplicationController
 
   def create
     invoice_option = InvoiceOption.find(invoice_option_params[:id])
+    raise ::Mongoid::Errors::DocumentNotFound.new if invoice_option.nil?
     if (invoice_option_params[:discount_id])
       discounts = ::BraintreeService::Discount.get_discounts(@gateway)
       invoice_discount = discounts.find { |d| d.id == invoice_option_params[:discount_id]}
     end
 
-    @invoice = invoice_option.build_invoice(@member.id, Time.now, current_member.id, invoice_discount)
-    @invoice.save!
+    @invoice = invoice_option.build_invoice(current_member.id, Time.now, current_member.id, invoice_discount)
     render json: @invoice and return
   end
 

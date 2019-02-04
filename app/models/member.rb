@@ -4,6 +4,8 @@ class Member
   include ActiveModel::Serializers::JSON
   include InvoiceableResource
   include Service::BraintreeGateway
+  include Service::GoogleDrive
+  include Service::SlackConnector
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -43,7 +45,8 @@ class Member
 
   before_save :update_braintree_customer_info
   after_initialize :verify_group_expiry
-  after_update :update_card
+  after_update :update_card, :notify_renewal
+  after_create :send_slack_invite, :send_google_invite
 
   has_many :rentals, class_name: 'Rental'
   has_many :access_cards, class_name: "Card", inverse_of: :member
@@ -99,13 +102,12 @@ class Member
 
   protected
   def find_braintree_customer
-    gateway.customer.find(self.customer_id) unless self.customer_id.nil?
+    connect_gateway.customer.find(self.customer_id) unless self.customer_id.nil?
   end
 
   def update_braintree_customer_info
     if self.customer_id && self.changed.any? { |attr| [:firstname, :lastname].include?(attr) }
-      gateway = self.connect_gateway
-      customer = gateway.customer.update(self.customer_id, firstname: self.firstname, lastname: self.lastname)
+      connect_gateway.customer.update(self.customer_id, firstname: self.firstname, lastname: self.lastname)
     end
   end
 
@@ -141,5 +143,32 @@ class Member
 
   def password_required?
     false
+  end
+
+  def send_slack_invite
+    if Rails.env == "production"
+      invite_to_slack(self)
+    end
+  end
+
+  def send_google_invite
+    if Rails.env == "production"
+      begin
+        invite_gdrive(self.email)
+      rescue Error::Google::Upload => err
+        connect_slack.send_slack_message("Error sharing Member Resources folder with #{self.fullname}. Error: #{err}")
+      end
+    end
+  end
+
+  def notify_renewal
+    if self.expirationTime_changed?
+      init, final = self.expirationTime.change
+      if final && init && final > init
+        connect_slack.send_slack_message("#{self.fullname} renewed. Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}")
+      elsif final != init
+        connect_slack.send_slack_message("#{self.fullname} updated. Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}")
+      end
+    end
   end
 end
