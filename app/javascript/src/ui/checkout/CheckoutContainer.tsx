@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router";
+import { push } from "connected-react-router";
 
 import Grid from "@material-ui/core/Grid";
 import Dialog from "@material-ui/core/Dialog";
@@ -30,6 +30,7 @@ import FormModal from "ui/common/FormModal";
 import Form from "ui/common/Form";
 
 import { buildProfileRouting } from "ui/member/utils";
+import { Location } from "history";
 
 interface ContextProps {
   context: Context;
@@ -43,12 +44,12 @@ interface StateProps {
 }
 interface DispatchProps {
   submitCheckout: (invoices: Invoice[], paymentMethodId: string) => void;
+  pushLocation: (location: string) => void;
 }
 interface ContextComponentProps extends Props, ContextProps { }
 interface Props extends OwnProps, StateProps, DispatchProps {}
 interface State {
   total: number;
-  redirect: string;
   paymentMethodId: string;
   error: string;
   openLoginModal: boolean;
@@ -62,10 +63,13 @@ class CheckoutContainer extends React.Component<ContextComponentProps,State> {
     super(props);
     // Redirect if there are no invoices to checkout
     const { userId, invoices } = props;
-    const redirectPath = userId ? Routing.Profile.replace(Routing.PathPlaceholder.MemberId, userId) : Routing.Login;
+    const redirectPath = userId ? buildProfileRouting(userId) : Routing.Login;
     const redirect = invoices && isEmpty(invoices) ? redirectPath : undefined;
+    if (redirect) {
+      this.props.pushLocation(redirectPath);
+    }
+
     this.state = ({
-      redirect,
       total: invoices && Object.values(invoices).reduce((a, b) => a + Number(b.amount), 0),
       error: "",
       paymentMethodId: undefined,
@@ -118,8 +122,7 @@ class CheckoutContainer extends React.Component<ContextComponentProps,State> {
       }
       // If there are no invoices, redirect to profile since there's nothing to do here
       if (isEmpty(invoices)) {
-        const profileUrl = buildProfileRouting(userId);
-        this.setState({ redirect: profileUrl });
+        this.props.pushLocation(buildProfileRouting(userId));
       }
     }
   }
@@ -173,7 +176,7 @@ class CheckoutContainer extends React.Component<ContextComponentProps,State> {
               />
             </Grid>
             <Grid item xs={12} style={{textAlign: "right"}}>
-              <Typography id="total" variant="title" color="inherit">Total {numberAsCurrency(total)}</Typography>
+              <Typography id="total" variant="h6" color="inherit">Total {numberAsCurrency(total)}</Typography>
             </Grid>
             <Grid item xs={12} style={{ textAlign: "left" }}>
               <Button id="submit-payment-button" variant="contained" disabled={!paymentMethodId} onClick={this.submitPayment}>Submit Payment</Button>
@@ -220,11 +223,6 @@ class CheckoutContainer extends React.Component<ContextComponentProps,State> {
   private rowId = (row: Invoice) => row.id;
   public render(): JSX.Element {
     const { isRequesting, error } = this.props;
-    const { redirect } = this.state;
-
-    if (redirect) {
-      return <Redirect to={redirect}/>;
-    }
 
     return (
       <Grid container spacing={16}>
@@ -272,6 +270,7 @@ const mapDispatchToProps = (
 ): DispatchProps => {
   return {
     submitCheckout: (invoices, paymentMethodId) => dispatch(submitPaymentAction(paymentMethodId, invoices)),
+    pushLocation: (location) => dispatch(push(location))
   };
 }
 

@@ -127,7 +127,7 @@ class SignDocuments extends React.Component<Props, State>{
         </div>
         <Grid container>
           <Grid item xs={12}>
-            <Typography variant="subheading" align="left">Please sign below</Typography>
+            <Typography variant="subtitle1" align="left">Please sign below</Typography>
           </Grid>
           <Grid item xs={12} style={{ border: "1px solid black", borderRadius: "4px" }}>
             <SignatureCanvas ref={this.setSignatureRef} canvasProps={{ height: "250", width: "1000" }} />

@@ -3,7 +3,7 @@ import { ThunkAction } from "redux-thunk";
 import toNumber from "lodash-es/toNumber";
 import omit from "lodash-es/omit";
 
-import { Invoice, InvoiceQueryParams, InvoiceableResource } from "app/entities/invoice";
+import { Invoice, InvoiceQueryParams, InvoiceableResource, InvoiceOptionSelection } from "app/entities/invoice";
 import { getInvoices, postInvoices, getInvoiceOptions } from "api/invoices/transactions";
 import { Action as InvoicesAction } from "ui/invoices/constants";
 import { InvoicesState } from "ui/invoices/interfaces";
@@ -35,12 +35,13 @@ export const readInvoicesAction = (
 };
 
 export const createInvoiceAction = (
-  invoiceForm: Invoice
+  invoiceForm: Invoice | InvoiceOptionSelection,
+  admin: boolean,
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
   dispatch({ type: InvoicesAction.StartCreateRequest });
 
   try {
-    await postInvoices(invoiceForm);
+    await postInvoices(invoiceForm, admin);
     dispatch({
       type: InvoicesAction.CreateInvoiceSuccess,
     })

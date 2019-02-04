@@ -46,7 +46,6 @@ class PaypalController < ApplicationController
       @messages.push("Messages related to error: ")
       @messages.concat(@payment.errors.full_messages)
     end
-    send_slack_messages(@messages)
   end
 
   def configure_messages

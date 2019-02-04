@@ -1,7 +1,7 @@
 import axios from "axios";
 import { QueryParams } from "app/interfaces";
 import { handleApiError } from "api/utils/handleApiError";
-import { Subscription } from "app/entities/subscription";
+import { Subscription, SubscriptionUpdate } from "app/entities/subscription";
 import { buildSubscriptionUrl, buildSubscriptionsUrl } from "api/subscriptions/utils";
 
 export interface SubscriptionQueryParams extends QueryParams {
@@ -17,18 +17,18 @@ export const getSubscriptions = async (queryParams?: SubscriptionQueryParams, ad
   }
 }
 
-export const getSubscription = async (subId: string, admin: boolean = false) => {
+export const getSubscription = async (subId: string) => {
   try {
-    return await axios.get(buildSubscriptionUrl(subId, admin));
+    return await axios.get(buildSubscriptionUrl(subId, false));
   } catch (e) {
     const error = handleApiError(e);
     throw error;
   }
 };
 
-export const putSubscription = async (subId: string, subscriptionForm: Partial<Subscription>, admin: boolean = false) => {
+export const putSubscription = async (subId: string, subscription: SubscriptionUpdate) => {
   try {
-    return await axios.put(buildSubscriptionUrl(subId, admin), { subscription: subscriptionForm });
+    return await axios.put(buildSubscriptionUrl(subId, false), { subscription });
   } catch (e) {
     const error = handleApiError(e);
     throw error;

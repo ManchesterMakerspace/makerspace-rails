@@ -6,36 +6,40 @@ import { CrudOperation } from "app/constants";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import Form from "ui/common/Form";
-import InvoiceForm from "ui/invoice/InvoiceForm"
-import SettleInvoiceModal from "ui/invoice/SettleInvoiceModal"
-import { updateInvoiceAction, deleteInvoiceAction } from "ui/invoice/actions";
+import { Subscription } from "app/entities/subscription";
+import DeleteSubscription from "ui/subscriptions/DeleteSubscriptionModal";
+import { deleteSubscriptionAction, updateSubscriptionAction } from "ui/subscriptions/actions";
+import CancelMembershipModal from "ui/membership/CancelMembershipModal";
 import { createInvoiceAction } from "ui/invoices/actions";
-import DeleteInvoiceModal from "ui/invoice/DeleteInvoiceModal";
 
 
-export interface UpdateInvoiceRenderProps extends Props {
+export interface UpdateSubscriptionRenderProps extends Props {
   submit: (form: Form) => void;
-  setRef: (ref: InvoiceForm | SettleInvoiceModal | DeleteInvoiceModal) => void;
+  setRef: (ref: CancelMembershipModal | Form) => void;
 }
 interface OwnProps {
-  invoice?: Partial<Invoice>;
+  subscription: Partial<Subscription>;
+  invoice: Partial<Invoice>;
+  discountId?: string;
+  membershipOptionId?: string;
+  paymentMethodToken?: string;
   isOpen: boolean;
   operation: CrudOperation;
   closeHandler: () => void;
-  render: (renderPayload: UpdateInvoiceRenderProps) => JSX.Element;
+  render: (renderPayload: UpdateSubscriptionRenderProps) => JSX.Element;
 }
 interface StateProps {
   error: string;
   isRequesting: boolean;
 }
 interface DispatchProps {
-  dispatchInvoice: (updatedInvoice: Invoice) => void;
+  dispatchSubscription: () => void;
 }
 interface Props extends OwnProps, StateProps, DispatchProps { }
 
-class UpdateInvoice extends React.Component<Props, {}> {
-  private formRef: InvoiceForm;
-  private setFormRef = (ref: InvoiceForm) => this.formRef = ref;
+class UpdateSubscription extends React.Component<Props, {}> {
+  private formRef: CancelMembershipModal | Form;
+  private setFormRef = (ref: CancelMembershipModal | Form) => this.formRef = ref;
 
   public componentDidUpdate(prevProps: Props) {
     const { isRequesting: wasRequesting } = prevProps;
@@ -46,18 +50,7 @@ class UpdateInvoice extends React.Component<Props, {}> {
   }
 
   private submit = async (form: Form) => {
-    const { invoice } = this.props;
-    let validUpdate: Invoice;
-    if (this.formRef.validate) {
-      validUpdate = this.formRef.validate && await this.formRef.validate(form);
-    }
-    const updatedInvoice = {
-      ...invoice,
-      ...validUpdate
-    }
-    if (!form.isValid()) return;
-
-    await this.props.dispatchInvoice(updatedInvoice);
+    await this.props.dispatchSubscription();
     if (!this.props.error) {
       return true;
     }
@@ -83,14 +76,11 @@ const mapStateToProps = (
   let stateProps: Partial<StateProps> = {};
   const { operation } = ownProps;
   switch (operation) {
-    case CrudOperation.Update:
-      stateProps = state.invoice.update;
-      break;
-    case CrudOperation.Create:
-      stateProps = state.invoices.create;
-      break;
     case CrudOperation.Delete:
-      stateProps = state.invoice.delete;
+      stateProps = state.subscriptions.delete;
+      break;
+    case CrudOperation.Update:
+      stateProps = state.subscriptions.update;
       break;
   }
 
@@ -105,24 +95,29 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch,
   ownProps: OwnProps,
 ): DispatchProps => {
-  const { invoice, operation } = ownProps;
+  const { operation, subscription, discountId, membershipOptionId, paymentMethodToken } = ownProps;
   return {
-    dispatchInvoice: (invoiceDetails) => {
+    dispatchSubscription: async () => {
       let action;
       switch (operation) {
-        case CrudOperation.Update:
-          action = (updateInvoiceAction(invoice.id, invoiceDetails));
-          break;``
-        case CrudOperation.Create:
-          action = (createInvoiceAction(invoiceDetails, true));
-          break;
         case CrudOperation.Delete:
-          action = (deleteInvoiceAction(invoice.id));
+          action = (deleteSubscriptionAction(subscription.id));
           break;
+        case CrudOperation.Update:
+          if (subscription) {
+            action = (updateSubscriptionAction(subscription.id, {
+              discountId,
+              paymentMethodToken,
+              invoiceOptionId: membershipOptionId,
+            }))
+          } else {
+            action = (createInvoiceAction({ discountId, invoiceOptionId: membershipOptionId }, false))
+          }
+
       }
-      dispatch(action);
+      await dispatch(action);
     },
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UpdateInvoice);
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateSubscription);

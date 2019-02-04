@@ -136,7 +136,7 @@ class EnhancedTable<T> extends React.Component<Props<T>, {}> {
     return (
       <TableRow id={`${tableId}-no-data-row`}>
         <TableCell colSpan={onSelect ? (columns.length + 1) : columns.length}>
-          <Typography align="center" variant="body2">No items</Typography>
+          <Typography align="center" variant="body1">No items</Typography>
         </TableCell>
       </TableRow>
     )

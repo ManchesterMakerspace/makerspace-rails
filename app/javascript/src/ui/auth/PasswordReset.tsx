@@ -1,6 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { RouteComponentProps, Redirect } from "react-router";
+import { push } from "connected-react-router";
+import { RouteComponentProps } from "react-router-dom";
 
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
@@ -19,9 +20,11 @@ import { activeSessionLogin } from "ui/auth/actions";
 
 interface DispatchProps {
   attemptLogin: () => void;
+  goToRoot: () => void;
 }
-interface OwnProps extends RouteComponentProps<any> {}
-interface Props extends OwnProps, DispatchProps {}
+interface StateProps {}
+interface OwnProps extends RouteComponentProps<{ token: string }> {}
+interface Props extends OwnProps, StateProps, DispatchProps {}
 
 interface State {
   passwordMask: boolean;
@@ -56,20 +59,28 @@ class PasswordReset extends React.Component<Props, State> {
     };
   }
 
+  public componentDidMount() {
+    const { goToRoot } = this.props;
+    const { token: passwordToken } = this.props.match.params;
+    if (!passwordToken) {
+      goToRoot();
+    }
+  }
+
   private togglePasswordMask = () => {
     this.setState((state) => ({ passwordMask: !state.passwordMask }));
   }
 
   private submit = async (form: Form) => {
     const { password } = await this.formRef.simpleValidate<PasswordForm>(passwordFields);
-    const { token } = this.props.match.params;
+    const { token: passwordToken } = this.props.match.params;
 
     if (!form.isValid()) return;
 
     this.setState({ passwordRequesting: true });
     try {
       // Successfully changing password counts as auth action for Devise
-      await putPassword(token, password);
+      await putPassword(passwordToken, password);
       // TODO: Toast Message
       await this.props.attemptLogin();
       // TODO: Toast Message
@@ -82,11 +93,6 @@ class PasswordReset extends React.Component<Props, State> {
 
   public render(): JSX.Element {
     const { passwordMask, passwordError, passwordRequesting } = this.state;
-    const { token } = this.props.match.params;
-
-    if (!token) {
-      return (<Redirect to={Routing.Root}/>)
-    }
     return (
       <Grid container spacing={24} justify="center">
         <Grid item xs={12} md={6}>
@@ -137,8 +143,9 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch
 ): DispatchProps => {
   return {
-    attemptLogin: async () => dispatch(await activeSessionLogin())
+    attemptLogin: async () => dispatch(await activeSessionLogin()),
+    goToRoot: () => dispatch(push(Routing.Root)),
   }
 }
 
-export default (connect(null, mapDispatchToProps)(PasswordReset));
+export default connect(null, mapDispatchToProps)(PasswordReset);

@@ -75,7 +75,7 @@ class RenewalForm extends React.Component<OwnProps, {}> {
 
     return (
       <>
-        <Typography id={`${formId}-entity-name`} gutterBottom variant="subheading" align="center" color="primary">
+        <Typography id={`${formId}-entity-name`} gutterBottom variant="subtitle1" align="center" color="primary">
           {entity.name}
         </Typography>
         <KeyValueItem label="Expiration" align="left">

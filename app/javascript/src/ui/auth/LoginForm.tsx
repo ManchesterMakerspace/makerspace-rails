@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router";
+import { push } from "connected-react-router";
 
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
@@ -32,6 +32,7 @@ const passwordFields = {
 interface OwnProps {}
 interface DispatchProps {
   loginUser: (authForm: AuthForm) => Promise<void>;
+  pushLocation: (location: string) => void;
 }
 interface StateProps {
   isRequesting: boolean;
@@ -39,7 +40,6 @@ interface StateProps {
   auth: boolean;
 }
 interface State {
-  redirect: string;
   requestingPassword: boolean;
   passwordError: string;
   openPassword: boolean;
@@ -56,7 +56,6 @@ class LoginForm extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      redirect: "",
       requestingPassword: false,
       openPassword: false,
       passwordError: "",
@@ -65,18 +64,18 @@ class LoginForm extends React.Component<Props, State> {
   }
 
   public componentDidMount() {
-    const { auth } = this.props;
+    const { auth, pushLocation } = this.props;
     if (auth) {
-      this.setState({ redirect: Routing.Members });
+      pushLocation(Routing.Members);
     }
   }
 
   public componentDidUpdate(prevProps: Props) {
     const { isRequesting: wasRequesting } = prevProps;
 
-    const { isRequesting, auth, error } = this.props;
+    const { isRequesting, auth, error, pushLocation} = this.props;
     if (wasRequesting && !isRequesting && !error && auth) {
-      this.setState({ redirect: Routing.Members });
+      pushLocation(Routing.Members);
     }
   }
 
@@ -151,11 +150,6 @@ class LoginForm extends React.Component<Props, State> {
 
   public render(): JSX.Element {
     const { isRequesting, error } = this.props;
-    const { redirect } = this.state;
-
-    if (redirect) {
-      return <Redirect to={Routing.Members} push={true} />
-    }
 
     return (
       <>
@@ -217,7 +211,8 @@ const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch
 ): DispatchProps => {
   return {
-    loginUser: (authForm) => dispatch(loginUserAction(authForm))
+    loginUser: (authForm) => dispatch(loginUserAction(authForm)),
+    pushLocation: (location) => dispatch(push(location)),
   };
 }
 export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);

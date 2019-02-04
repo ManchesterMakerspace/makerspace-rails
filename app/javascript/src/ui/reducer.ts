@@ -1,5 +1,7 @@
 import { combineReducers, Action } from "redux";
+import { History } from "history";
 import { ThunkDispatch } from "redux-thunk";
+import { connectRouter, RouterState } from 'connected-react-router';
 
 import { AuthState } from "ui/auth/interfaces";
 import { authReducer } from "ui/auth/actions";
@@ -24,7 +26,8 @@ import { invoicesReducer } from "ui/invoices/actions";
 
 export type ScopedThunkDispatch = ThunkDispatch<State, {}, Action>
 
-export interface State {
+export interface State  {
+  router: RouterState;
   auth: AuthState;
   members: MembersState;
   member: MemberState;
@@ -37,7 +40,8 @@ export interface State {
   invoices: InvoicesState;
 }
 
-export const rootReducer = combineReducers({
+export const getRootReducer = (history: History) => combineReducers({
+  router: connectRouter(history),
   auth: authReducer,
   members: membersReducer,
   member: memberReducer,

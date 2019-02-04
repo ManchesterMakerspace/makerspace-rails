@@ -22,7 +22,6 @@ class MembersController < ApplicationController
 
       if signature_params[:signature]
         response = upload_signature()
-        send_slack_messages(@messages) unless @messages.empty?
         raise Error::GoogleServiceError.new(response[:error]) unless response[:error].nil?
         render json: {}, status: 204 and return
       end

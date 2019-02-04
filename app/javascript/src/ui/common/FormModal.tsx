@@ -4,10 +4,10 @@ import Dialog from "@material-ui/core/Dialog";
 import Form from "ui/common/Form";
 
 interface FormModalProps {
-  formRef: (ref: Form) => Form;
+  formRef: (ref: Form) => Form | void;
   id: string;
   isOpen: boolean;
-  title: string;
+  title?: string;
   closeHandler?: () => void;
   cancelText?: string;
   onSubmit?: (form: Form) => void;
@@ -15,16 +15,18 @@ interface FormModalProps {
   loading?: boolean;
   children?: React.ReactNode;
   error?: string;
+  fullScreen?: boolean;
   style?: { [key: string]: string }
 }
 
 const FormModal: React.SFC<FormModalProps> = (props: FormModalProps) => {
   const { formRef, isOpen, id, loading, title, closeHandler, cancelText,
-    submitText, onSubmit, children, error, style } = props;
+    submitText, onSubmit, children, error, style, fullScreen } = props;
 
   return (
     <Dialog
       fullWidth={true}
+      fullScreen={fullScreen}
       aria-labelledby={`${id}-title`}
       open={isOpen}
       onClose={closeHandler}

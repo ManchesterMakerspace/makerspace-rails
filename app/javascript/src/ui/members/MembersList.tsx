@@ -1,10 +1,12 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { push } from "connected-react-router";
 import Grid from "@material-ui/core/Grid";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import isUndefined from "lodash-es/isUndefined";
+
 import { MemberDetails, MemberStatus, MemberRole } from "app/entities/member";
 import { QueryParams, CollectionOf } from "app/interfaces";
 
@@ -29,6 +31,7 @@ interface OwnProps {}
 interface DispatchProps {
   getMembers: (queryParams?: QueryParams) => void;
   updateMember: (id: string, details: Partial<MemberDetails>, isAdmin: boolean) => void;
+  goToMemberProfile: (id: string) => void;
 }
 interface StateProps {
   admin: boolean;
@@ -51,7 +54,6 @@ interface State {
   order: SortDirection;
   openRenewalForm: boolean;
   openCreateForm: boolean;
-  redirect: string;
 }
 
 const fields: Column<MemberDetails>[] = [
@@ -86,7 +88,6 @@ class MembersList extends React.Component<Props, State> {
       order: SortDirection.Asc,
       openRenewalForm: false,
       openCreateForm: false,
-      redirect: undefined,
     };
   }
 
@@ -112,7 +113,7 @@ class MembersList extends React.Component<Props, State> {
       const submitCreate = async (form: Form) => {
         const newMember = await renderProps.submit(form);
         if (newMember) {
-          this.setState({ redirect: buildProfileRouting(newMember.id) });
+          this.props.goToMemberProfile(newMember.id);
         }
       }
       return (<MemberForm
@@ -271,13 +272,8 @@ class MembersList extends React.Component<Props, State> {
       pageNum,
       order,
       orderBy,
-      redirect,
       currentMembers,
     } = this.state;
-
-    if (redirect) {
-      return <Redirect to={redirect}/>;
-    }
 
     return (
       <Grid container spacing={24} justify="center">
@@ -368,6 +364,7 @@ const mapDispatchToProps = (
   return {
     getMembers: (queryParams) => dispatch(readMembersAction(queryParams)),
     updateMember: (id, memberDetails, admin) => dispatch(updateMemberAction(id, memberDetails, admin)),
+    goToMemberProfile: (id) => dispatch(push(buildProfileRouting(id))),
   }
 }
 

@@ -8,12 +8,24 @@ import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import MembershipSelectForm from "ui/membership/MembershipSelectForm";
 import Form from "ui/common/Form";
 import { Subscription } from "app/entities/subscription";
-import { readSubscriptionAction } from "ui/subscriptions/actions";
+import { readSubscriptionAction, deleteSubscriptionAction, updateSubscriptionAction } from "ui/subscriptions/actions";
 import KeyValueItem from "ui/common/KeyValueItem";
 import { displayMemberExpiration } from "ui/member/utils";
 import { AuthMember } from "ui/auth/interfaces";
 import LoadingOverlay from "ui/common/LoadingOverlay";
 import MemberStatusLabel from "ui/member/MemberStatusLabel";
+import { getDetailsForMember } from "ui/membership/constants";
+import { readInvoicesAction } from "ui/invoices/actions";
+import { timeToDate } from "ui/utils/timeToDate";
+import ButtonRow, { ActionButton } from "ui/common/ButtonRow";
+import UpdateMembershipContainer, { UpdateSubscriptionRenderProps } from "ui/membership/UpdateMembershipContainer";
+import CancelMembershipModal from "ui/membership/CancelMembershipModal";
+import { CrudOperation, Routing } from "app/constants";
+import { Invoice } from "app/entities/invoice";
+import { Dialog } from "@material-ui/core";
+import FormModal from "ui/common/FormModal";
+import PaymentMethodsContainer from "ui/checkout/PaymentMethodsContainer";
+import { push } from "connected-react-router";
 
 /*
 View Current Membership Info
@@ -27,31 +39,26 @@ Changing methods renders PaymentMethodsContainer w/ managing methods false
 
 */
 
-const membershipDetails = {
-  none: {
-    description: "No membership on file. Create a membership to add one.",
-    type: "No membership found",
-    allowMod: true,
-  },
-  paypal: {
-    description: "Membership handled by PayPal. Contact an administrator for details.",
-    type: "Managed by PayPal",
-    allowMod: false,
-  },
-  notFound: {
-    description: "Membership subscription cannot be found. Contact an administrator for assistance.",
-    type: "Unknown",
-    allowMod: false,
-  },
-  noSubscription: {
-    description: "No subscription found. Update membership to enable automatic renewals.",
-    type: "Month-to-month",
-    allowMod: true,
-  },
-}
+
+// Need to determine current membership state
+// If has subscription, can cancel or change - change is just a cancel and create
+  // Cancelling subscription needs to delete all oustanding invoices for that subscription
+  // Creating a subscription will create an invoice for it to be settled automatically
+  // Need to watch for payments from subscription in order to settle automatically
+
+  // Also need to support changing payment methods
+
+
+// If doesn't have subscription, may be month to month or non member
+  // If month to month, delete existing invoice & create subscription
+
+  // If non member, going through orig checkout process
+
 
 interface DispatchProps {
   getSubscription: (id: string) => void;
+  getInvoices: () => void;
+  goToCheckout: () => void;
 }
 interface OwnProps {
   subscriptionId: string;
@@ -59,6 +66,7 @@ interface OwnProps {
 }
 interface StateProps {
   subscription: Subscription;
+  invoice: Invoice;
   isRequesting: boolean;
   error: string;
 }
@@ -67,57 +75,201 @@ interface State {
   membershipOptionId: string;
   discountId: string;
   openMembershipSelect: boolean;
+  openCancelModal: boolean;
+  openPaymentMethodModal: boolean;
+  paymentMethodId: string;
 }
 
 class UpdateMembershipForm extends React.Component<Props, State> {
-
   public constructor(props: Props) {
     super(props);
     this.state = {
       membershipOptionId: undefined,
       discountId: undefined,
       openMembershipSelect: false,
+      openPaymentMethodModal: false,
+      openCancelModal: false,
+      paymentMethodId: undefined,
     }
   }
 
   public componentDidMount() {
-    const { subscriptionId } = this.props;
-    subscriptionId && this.props.getSubscription(subscriptionId);
+    const { subscriptionId, getSubscription, getInvoices } = this.props;
+    subscriptionId && getSubscription(subscriptionId);
+    getInvoices();
   }
 
-  private onSelect = () => {
-
-  }
-
-  private onDiscount = () => {
-
-  }
 
   private openMembershipSelect = () => this.setState({ openMembershipSelect: true });
   private closeMembershipSelect = () => this.setState({ openMembershipSelect: false });
+  private openCancelModal = () => this.setState({ openCancelModal: true });
+  private closeCancelModal = () => this.setState({ openCancelModal: false });
+  private openPaymentMethodForm = () => this.setState({ openPaymentMethodModal: true });
+  private closePaymentMethodForm = () => this.setState({ openPaymentMethodModal: false });
+
+  private getSubscriptionOptions = () => {
+    const { isRequesting, error } = this.props;
+    return [{
+      id: "subscription-option-update",
+      color: "primary",
+      variant: "outlined",
+      disabled: isRequesting || error,
+      label: "Change Membership",
+      onClick: this.openMembershipSelect
+    },{
+      id: "subscription-option-payment-method",
+      color: "primary",
+      variant: "contained",
+      disabled: isRequesting || error,
+      label: "Change Payment Method",
+      onClick: this.openPaymentMethodForm
+    }, {
+      id: "subscription-option-cancel",
+      color: "secondary",
+      variant: "outlined",
+      disabled: isRequesting || error,
+      label: "Cancel Membership",
+      onClick: this.openCancelModal
+    }] as ActionButton[]
+  }
+
+
+
+  private renderMembershipForm = () => {
+    const { openMembershipSelect, openCancelModal, openPaymentMethodModal, paymentMethodId, discountId, membershipOptionId } = this.state;
+    const { invoice, subscription } = this.props;
+
+    // Update can change payment method, subscription type, or create new subscription
+    // Creating a new sub means one doesn't already exist
+    const onUpdate = (onSubmit: Function) => (form: Form) => {
+      onSubmit(form);
+      if (!subscription) {
+        this.props.goToCheckout();
+      }
+    }
+
+    const membershipSelectForm = (renderProps: UpdateSubscriptionRenderProps) => (
+      // TODO on submit, submit render props then, on success, redirect to checkout
+      <FormModal
+        id="select-membership"
+        fullScreen={true}
+        formRef={renderProps.setRef}
+        isOpen={renderProps.isOpen}
+        closeHandler={renderProps.closeHandler}
+        onSubmit={onUpdate(renderProps.submit)}
+        loading={renderProps.isRequesting}
+        error={renderProps.error}
+      >
+        {this.renderMembershipSelect()}
+      </FormModal>
+    );
+
+    const cancellationForm = (renderProps: UpdateSubscriptionRenderProps) => (
+      <CancelMembershipModal
+        ref={renderProps.setRef}
+        subscription={renderProps.subscription}
+        invoice={renderProps.invoice}
+        isOpen={renderProps.isOpen}
+        isRequesting={renderProps.isRequesting}
+        error={renderProps.error}
+        onClose={renderProps.closeHandler}
+        onSubmit={renderProps.submit}
+      />
+    );
+
+    const paymentMethodForm = (renderProps: UpdateSubscriptionRenderProps) => (
+      <PaymentMethodsContainer
+        onPaymentMethodChange={this.updatePaymentMethodId}
+        title="Select or add a new payment method"
+      />
+    );
+
+    return (
+      <>
+        <UpdateMembershipContainer
+          operation={CrudOperation.Update}
+          isOpen={openMembershipSelect}
+          subscription={subscription}
+          discountId={discountId}
+          membershipOptionId={membershipOptionId}
+          invoice={invoice}
+          closeHandler={this.closeMembershipSelect}
+          render={membershipSelectForm}
+        />
+        {subscription && (
+          <>
+            <UpdateMembershipContainer
+              operation={CrudOperation.Delete}
+              isOpen={openCancelModal}
+              subscription={subscription}
+              invoice={invoice}
+              closeHandler={this.closeCancelModal}
+              render={cancellationForm}
+            />
+            <UpdateMembershipContainer
+              operation={CrudOperation.Update}
+              isOpen={openPaymentMethodModal}
+              subscription={subscription}
+              paymentMethodToken={paymentMethodId}
+              invoice={invoice}
+              closeHandler={this.closePaymentMethodForm}
+              render={paymentMethodForm}
+            />
+          </>
+        )}
+      </>
+    );
+  }
+
+  private updatePaymentMethodId = (id: string) => this.setState({ paymentMethodId: id });
+  private onSelect = (id: string) => this.setState({ membershipOptionId: id })
+  private onDiscount = (id: string) => this.setState({ discountId: id });
+  private renderMembershipSelect = () => {
+    const { membershipOptionId, discountId } = this.state;
+    const { openMembershipSelect } = this.state;
+    return (openMembershipSelect &&
+      <>
+        <MembershipSelectForm
+          subscriptionOnly={true}
+          membershipOptionId={membershipOptionId}
+          discountId={discountId}
+          onSelect={this.onSelect}
+          onDiscount={this.onDiscount}
+        />
+      </>
+    )
+  }
 
   private renderSubscriptionDetails = () => {
-    const { subscription } = this.props;
+    const { subscription, invoice } = this.props;
 
     return (
       <Grid container spacing={24}>
         <Grid item xs={12}>
-          <Button variant="contained" onClick={this.openMembershipSelect}>Update Membership</Button>
+          <KeyValueItem label="Name">
+            <span id="cancel-subscription-name">{invoice.name}</span>
+          </KeyValueItem>
+          <KeyValueItem label="Description">
+            <span id="cancel-subscription-description">{invoice.description}</span>
+          </KeyValueItem>
+          <KeyValueItem label="Status">
+            <span id="subscription-status">{`${subscription.status}`}</span>
+          </KeyValueItem>
+          <KeyValueItem label="Next Payment">
+            <span id="subscription-next-payment">{timeToDate(subscription.nextBillingDate)}</span>
+          </KeyValueItem>
+        </Grid>
+
+        <Grid item xs={12}>
+          <ButtonRow actionButtons={this.getSubscriptionOptions()}/>
         </Grid>
       </Grid>
     )
   }
   private renderMembershipDetails = () => {
-    const { member, subscription } = this.props;
+    const { member } = this.props;
 
-    let details = membershipDetails.noSubscription;
-    if (member.subscription && !member.subscriptionId) {
-      details = membershipDetails.paypal;
-    } else if (member.subscriptionId && !subscription) {
-      details = membershipDetails.notFound;
-    } else if (!member.expirationTime) {
-      details = membershipDetails.none;
-    }
+    const details = getDetailsForMember(member);
 
     return (
       <Grid container spacing={16}>
@@ -142,23 +294,6 @@ class UpdateMembershipForm extends React.Component<Props, State> {
     );
   }
 
-  private renderMembershipSelect = () => {
-    const { membershipOptionId, discountId } = this.state;
-    const { openMembershipSelect } = this.state;
-    return (openMembershipSelect &&
-      <>
-        <Typography>Select a membership option to continue.</Typography>
-        <MembershipSelectForm
-          subscriptionOnly={true}
-          membershipOptionId={membershipOptionId}
-          discountId={discountId}
-          onSelect={this.onSelect}
-          onDiscount={this.onDiscount}
-        />
-      </>
-   )
-  }
-
   public render = () => {
     const { subscription, isRequesting } = this.props;
     return (
@@ -169,7 +304,7 @@ class UpdateMembershipForm extends React.Component<Props, State> {
         {isRequesting ? <LoadingOverlay id="update-membership-modal-loading" contained={true}/>
           : (subscription ? this.renderSubscriptionDetails() : this.renderMembershipDetails())
         }
-        {this.renderMembershipSelect()}
+        {this.renderMembershipForm()}
       </Form>
     )
   }
@@ -182,22 +317,27 @@ const mapStateToProps = (
 ): StateProps => {
 
   const { subscriptionId } = ownProps;
-  const { entities: subscriptions, read: { isRequesting, error } } = state.subscriptions;
-
+  const { entities: subscriptions, read: { isRequesting: subscriptionsLoading, error: subscriptionError } } = state.subscriptions;
+  const { entities: invoices, read: {isRequesting: invoicesLoading, error: invoicesError }} = state.invoices;
   const subscription = subscriptions[subscriptionId];
+  const invoice = Object.values(invoices).find(invoice => invoice.subscriptionId === subscriptionId);
   return {
+    invoice,
     subscription,
-    isRequesting,
-    error
+    isRequesting: subscriptionsLoading || invoicesLoading,
+    error: subscriptionError || invoicesError,
   }
 }
 
 const mapDispatchToProps = (
   dispatch: ScopedThunkDispatch,
-  _ownProps: OwnProps,
+  ownProps: OwnProps,
 ): DispatchProps => {
+  const { member, subscriptionId } = ownProps;
   return {
-    getSubscription: (id) => dispatch(readSubscriptionAction(id)),
+    getSubscription: () => dispatch(readSubscriptionAction(subscriptionId)),
+    getInvoices: () => dispatch(readInvoicesAction(false, { resourceId: member.id })),
+    goToCheckout: () => dispatch(push(Routing.Checkout)),
   }
 }
 

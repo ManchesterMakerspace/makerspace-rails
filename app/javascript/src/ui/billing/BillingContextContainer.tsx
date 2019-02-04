@@ -1,6 +1,4 @@
 import * as React from "react";
-import { Switch, Route } from "react-router";
-import { connect } from "react-redux";
 
 import { BillingPlan, Discount } from "app/entities/billingPlan";
 import { getDiscounts, getPlans } from "api/billingPlans/transactions";

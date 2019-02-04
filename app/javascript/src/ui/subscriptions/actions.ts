@@ -3,10 +3,10 @@ import { ThunkAction } from "redux-thunk";
 import toNumber from "lodash-es/toNumber";
 import omit from "lodash-es/omit";
 
-import { getSubscriptions, deleteSubscription, getSubscription, SubscriptionQueryParams } from "api/subscriptions/transactions";
+import { getSubscriptions, deleteSubscription, getSubscription, SubscriptionQueryParams, putSubscription } from "api/subscriptions/transactions";
 import { Action as SubscriptionsAction } from "ui/subscriptions/constants";
 import { SubscriptionsState } from "ui/subscriptions/interfaces";
-import { Subscription } from "app/entities/subscription";
+import { Subscription, SubscriptionUpdate } from "app/entities/subscription";
 
 export const readSubscriptionsAction = (
   queryParams?: SubscriptionQueryParams
@@ -58,21 +58,42 @@ export const readSubscriptionAction = (
 };
 
 export const deleteSubscriptionAction = (
-  invoiceId: string,
+  subscriptionId: string,
   admin: boolean = false,
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
   dispatch({ type: SubscriptionsAction.StartDeleteRequest });
 
   try {
-    await deleteSubscription(invoiceId, admin);
+    await deleteSubscription(subscriptionId, admin);
     dispatch({
       type: SubscriptionsAction.DeleteSuccess,
-      data: invoiceId
+      data: subscriptionId
     });
   } catch (e) {
     const { errorMessage } = e;
     dispatch({
       type: SubscriptionsAction.DeleteFailure,
+      error: errorMessage
+    });
+  }
+}
+
+export const updateSubscriptionAction = (
+  subscriptionId: string,
+  subscriptionUpdate: SubscriptionUpdate,
+): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
+  dispatch({ type: SubscriptionsAction.StartUpdateRequest });
+
+  try {
+    await putSubscription(subscriptionId, subscriptionUpdate);
+    dispatch({
+      type: SubscriptionsAction.UpdateSuccess,
+      data: subscriptionId
+    });
+  } catch (e) {
+    const { errorMessage } = e;
+    dispatch({
+      type: SubscriptionsAction.UpdateFailure,
       error: errorMessage
     });
   }
@@ -86,6 +107,10 @@ const defaultState: SubscriptionsState = {
     totalItems: 0,
   },
   delete: {
+    isRequesting: false,
+    error: ""
+  },
+  update: {
     isRequesting: false,
     error: ""
   }
@@ -161,6 +186,39 @@ export const subscriptionsReducer = (state: SubscriptionsState = defaultState, a
           ...state.delete,
           isRequesting: false,
           error: deleteError,
+        }
+      }
+    case SubscriptionsAction.StartUpdateRequest:
+      return {
+        ...state,
+        update: {
+          ...state.update,
+          isRequesting: true
+        }
+      }
+    case SubscriptionsAction.UpdateSuccess:
+      const updatedSub = action.data;
+
+      return {
+        ...state,
+        entities: {
+          ...state.entities,
+          [updatedSub.id]: updatedSub
+        },
+        update: {
+          ...state.update,
+          isRequesting: false,
+          error: ""
+        }
+      }
+    case SubscriptionsAction.UpdateFailure:
+      const updateError = action.error;
+      return {
+        ...state,
+        update: {
+          ...state.update,
+          isRequesting: false,
+          error: updateError
         }
       }
     default:

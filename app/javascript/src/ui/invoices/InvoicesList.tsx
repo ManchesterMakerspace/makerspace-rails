@@ -1,8 +1,8 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import { push } from "connected-react-router";
 import Button from "@material-ui/core/Button";
 import pick from "lodash-es/pick";
-import { Redirect } from "react-router";
 
 import { Invoice, Properties } from "app/entities/invoice";
 import { QueryParams, CollectionOf } from "app/interfaces";
@@ -25,19 +25,16 @@ import { numberAsCurrency } from "ui/utils/numberToCurrency";
 import { Status } from "ui/common/constants";
 import StatusLabel from "ui/common/StatusLabel";
 import Form from "ui/common/Form";
-import { BillingContext, Context } from "ui/billing/BillingContextContainer";
 
 interface OwnProps {
   member?: MemberDetails;
 }
 
-interface ContextProps {
-  context: Context;
-}
 interface DispatchProps {
   getInvoices: (queryParams: QueryParams, admin: boolean) => void;
   resetStagedInvoices: () => void;
   stageInvoices: (invoices: CollectionOf<Invoice>) => void;
+  goToCheckout: () => void;
 }
 interface StateProps {
   admin: boolean;
@@ -52,7 +49,6 @@ interface StateProps {
   currentUserId: string;
 }
 interface Props extends OwnProps, DispatchProps, StateProps { }
-interface ContextComponentProps extends Props, ContextProps {}
 interface State {
   ownAllInvoices: boolean;
   selectedIds: string[];
@@ -64,12 +60,11 @@ interface State {
   openCreateForm: boolean;
   openSettleForm: boolean;
   openDeleteConfirm: boolean;
-  goToCheckout: boolean;
 }
 
 
-class InvoicesListComponent extends React.Component<ContextComponentProps, State> {
-  constructor(props: ContextComponentProps) {
+class InvoicesListComponent extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     const { invoices, member, currentUserId } = props;
     // Select all invoices if viewing your own invoices page for quick checkout
@@ -85,7 +80,6 @@ class InvoicesListComponent extends React.Component<ContextComponentProps, State
       openCreateForm: false,
       openSettleForm: false,
       openDeleteConfirm: false,
-      goToCheckout: false,
     };
   }
 
@@ -176,11 +170,11 @@ class InvoicesListComponent extends React.Component<ContextComponentProps, State
   private closeDeleteInvoice = () => { this.setState({ openDeleteConfirm: false });}
   private goToCheckout = () =>  {
     const { selectedIds } = this.state;
-    const { resetStagedInvoices, invoices, stageInvoices } = this.props;
+    const { resetStagedInvoices, invoices, stageInvoices, goToCheckout } = this.props;
     const selectedInvoices = pick(invoices, selectedIds);
     resetStagedInvoices();
     stageInvoices(selectedInvoices);
-    this.setState({ goToCheckout: true })
+    goToCheckout();
   }
 
   private getActionButtons = () => {
@@ -417,14 +411,7 @@ class InvoicesListComponent extends React.Component<ContextComponentProps, State
       pageNum,
       order,
       orderBy,
-      goToCheckout,
     } = this.state;
-
-    if (goToCheckout) {
-      return (
-        <Redirect to={Routing.Checkout} />
-      );
-    }
 
     return (
       <>
@@ -506,19 +493,10 @@ const mapDispatchToProps = (
     stageInvoices: (invoices) => dispatch({
       type: CheckoutAction.StageInvoicesForPayment,
       data: invoices
-    })
+    }),
+    goToCheckout: () => dispatch(push(Routing.Checkout)),
   }
 }
 
 
-const ConnectedInvoicesListComponent = connect(mapStateToProps, mapDispatchToProps)(InvoicesListComponent);
-
-const InvoicesList = React.forwardRef(
-  (props: OwnProps, ref: any) => (
-    <BillingContext.Consumer>
-      {context => <ConnectedInvoicesListComponent {...props} context={context} ref={ref} />}
-    </BillingContext.Consumer>
-  )
-);
-
-export default InvoicesList;
+export default connect(mapStateToProps, mapDispatchToProps)(InvoicesListComponent);

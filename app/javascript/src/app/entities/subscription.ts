@@ -13,3 +13,9 @@ export interface Subscription {
   firstBillingDate: Date;
   nextBillingDate: Date;
 }
+
+export interface SubscriptionUpdate {
+  invoiceOptionId: string;
+  discountId: string;
+  paymentMethodToken: string;
+}

@@ -6,4 +6,8 @@ export enum Action {
   StartDeleteRequest = "SUBSCRIPTIONS/START_DELETE_REQUEST",
   DeleteSuccess = "SUBSCRIPTIONS/DELETE_SUCCESS",
   DeleteFailure = "SUBSCRIPTIONS/DELETE_FAILURE",
+
+  StartUpdateRequest = "SUBSCRIPTIONS/START_UPDATE_REQUEST",
+  UpdateSuccess = "SUBSCRIPTIONS/UPDATE_SUCCESS",
+  UpdateFailure = "SUBSCRIPTIONS/UPDATE_FAILURE",
 }

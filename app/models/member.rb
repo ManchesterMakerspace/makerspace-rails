@@ -49,14 +49,6 @@ class Member
   has_many :access_cards, class_name: "Card", inverse_of: :member
   belongs_to :group, class_name: "Group", inverse_of: :active_members, optional: true, primary_key: 'groupName', foreign_key: "groupName"
 
-  def self.active_members
-    return Member.where(status: 'activeMember', :expirationTime.gt => (Time.now.strftime('%s').to_i * 1000))
-  end
-
-  def self.expiring_members
-    return Member.where(status: 'activeMember', :expirationTime.gt => (Time.now.strftime('%s').to_i * 1000), :expirationTime.lte => (Time.now + 1.week).strftime('%s').to_i * 1000)
-  end
-
   def self.search_members(searchTerms)
     regexp_search = Regexp.new(searchTerms, 'i')
     members = Member.where(email: searchTerms)
@@ -77,16 +69,6 @@ class Member
   def fullname
     return "#{self.firstname} #{self.lastname}"
   end
-
-  def membership_status
-     if duration <= 0
-       'expired'
-     elsif duration < 1.week
-       'expiring'
-     else
-       'current'
-     end
-   end
 
    def prettyTime
      if self.expirationTime
@@ -140,10 +122,6 @@ class Member
   end
 
   private
-  def default_invoice_amount
-    80
-  end
-
   def update_card
     self.access_cards.each do |c|
       c.update(expiry: self.expirationTime)
@@ -163,9 +141,5 @@ class Member
 
   def password_required?
     false
-  end
-
-  def duration
-    prettyTime - Time.now
   end
 end

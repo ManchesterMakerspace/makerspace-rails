@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { connect } from "react-redux";
-import { RouteComponentProps, withRouter } from "react-router";
-import isEmpty from 'lodash-es/isEmpty';
 
 import { ScopedThunkDispatch, State as ReduxState } from "ui/reducer";
 import { activeSessionLogin } from "ui/auth/actions";
@@ -22,7 +20,7 @@ interface StateProps {
 interface DispatchProps {
   attemptLogin: () => void;
 }
-interface OwnProps extends RouteComponentProps<any> {}
+interface OwnProps {}
 
 interface State {
   attemptingLogin: boolean;
@@ -62,7 +60,7 @@ class App extends React.Component<Props, State> {
     if (attemptingLogin) {
       return <LoadingOverlay id="body"/>;
     } else {
-      return auth ? <PrivateRouting auth={auth} /> : <PublicRouting location={this.props.location}/>;
+      return auth ? <PrivateRouting auth={auth} /> : <PublicRouting/>;
     }
   }
   public render(): JSX.Element {
@@ -103,4 +101,4 @@ const mapDispatchToProps = (
   }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));
+export default connect(mapStateToProps, mapDispatchToProps)(App);

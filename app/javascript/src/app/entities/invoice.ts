@@ -35,6 +35,11 @@ export interface InvoiceOption {
   discountId: string;
 }
 
+export interface InvoiceOptionSelection {
+  invoiceOptionId: string;
+  discountId: string;
+}
+
 
 export enum InvoiceOperation {
   Renew = "renew"

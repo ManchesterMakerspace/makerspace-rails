@@ -63,9 +63,4 @@ class Rental
       return exp.to_i * 1000
     end
   end
-
-  private
-  def default_invoice_amount
-    25
-  end
 end

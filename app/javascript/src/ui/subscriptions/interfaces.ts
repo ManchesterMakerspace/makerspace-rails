@@ -7,4 +7,5 @@ export interface SubscriptionsState {
     totalItems: number;
   };
   delete: RequestStatus;
+  update: RequestStatus;
 }

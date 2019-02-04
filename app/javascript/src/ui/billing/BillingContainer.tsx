@@ -1,11 +1,8 @@
 import * as React from "react";
-import { connect } from "react-redux";
-import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { Routing } from "app/constants";
 import DetailView from "ui/common/DetailView";
 import SubscriptionsList from "ui/subscriptions/SubscriptionsList";
 import OptionsList from "ui/billing/OptionsList";
-import KeyValueItem from "ui/common/KeyValueItem";
 
 interface StateProps {}
 interface DispatchProps {}

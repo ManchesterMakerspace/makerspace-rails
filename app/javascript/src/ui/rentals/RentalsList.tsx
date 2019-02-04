@@ -318,13 +318,13 @@ class RentalsList extends React.Component<Props, State> {
 
 
   public render(): JSX.Element {
-    const { rentals, totalItems, isReading, readError, admin } = this.props;
+    const { rentals, totalItems, isReading, readError, admin, member } = this.props;
 
     const { selectedId, pageNum, order, orderBy } = this.state;
 
     return (
       <Grid container spacing={24} justify="center">
-        <Grid item md={10} xs={12}>
+        <Grid item md={member ? 12 : 10} xs={12}>
           {
             admin && (
               this.getActionButtons()

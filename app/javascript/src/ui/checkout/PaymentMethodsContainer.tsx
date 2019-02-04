@@ -177,7 +177,7 @@ class PaymentMethodsContainer extends React.Component<Props, State> {
       <>
         <Grid container justify="center" spacing={16}>
           <Grid item xs={12}>
-            <Typography variant="title" color="inherit">{title ? title : "Please Select a Payment Method"}</Typography>
+            <Typography variant="h6" color="inherit">{title ? title : "Please Select a Payment Method"}</Typography>
           </Grid>
         </Grid>
         <Grid container justify="flex-start" spacing={16}>

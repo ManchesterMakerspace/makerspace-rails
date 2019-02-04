@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Switch, Route, Redirect } from "react-router";
+import { Switch, Route, Redirect } from "react-router-dom";
 
 import { Routing, Whitelists } from "app/constants";
 import NotFound from "ui/common/NotFound";
@@ -13,20 +13,18 @@ import BillingContextContainer from 'ui/billing/BillingContextContainer';
 const { billingEnabled } = Whitelists;
 
 const PrivateRouting: React.SFC<{ auth: string }> = (props) => (
-  <Switch>
-    <Route exact path={Routing.Members} component={MembersList} />
-    <Route exact path={`${Routing.Profile}/${Routing.PathPlaceholder.Resource}${Routing.PathPlaceholder.Optional}`} component={MemberDetail} />
-    <Route exact path={`${Routing.Billing}/${Routing.PathPlaceholder.Resource}${Routing.PathPlaceholder.Optional}`} render={() => (
-      <BillingContextContainer>
-        <BillingContainer />
-      </BillingContextContainer>
-    )} />
-    <Route exact path={Routing.Settings} component={SettingsContainer} />
-    <Route exact path={Routing.Rentals} component={RentalsList} />
-    {billingEnabled && <Route exact path={Routing.Checkout} component={CheckoutContainer} />}
-    <Redirect to={`${Routing.Members}/${props.auth}`}/>
-    <Route component={NotFound} />
-  </Switch>
+  <BillingContextContainer>
+    <Switch>
+      <Route exact path={Routing.Members} component={MembersList} />
+      <Route exact path={`${Routing.Profile}/${Routing.PathPlaceholder.Resource}${Routing.PathPlaceholder.Optional}`} component={MemberDetail} />
+      <Route exact path={`${Routing.Billing}/${Routing.PathPlaceholder.Resource}${Routing.PathPlaceholder.Optional}`} component={BillingContainer}/>
+      <Route exact path={Routing.Settings} component={SettingsContainer} />
+      <Route exact path={Routing.Rentals} component={RentalsList} />
+      {billingEnabled && <Route exact path={Routing.Checkout} component={CheckoutContainer} />}
+      <Redirect to={`${Routing.Members}/${props.auth}`}/>
+      <Route component={NotFound} />
+    </Switch>
+  </BillingContextContainer>
 );
 
 export default PrivateRouting;

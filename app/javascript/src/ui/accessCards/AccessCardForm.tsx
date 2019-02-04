@@ -175,8 +175,8 @@ export class AccessCardForm extends React.Component<Props,State> {
           <span id="card-form-key-confirmation">
             {
               rejectionCardId ?
-              <span style={{ color: "green" }}>{rejectionCardId}</span>
-              : <span style={{ color: "red" }}>No Card Found</span>
+              <span style={{ color: "green" }}> {rejectionCardId}</span>
+              : <span style={{ color: "red" }}> No Card Found</span>
             }
           </span>
         </li>
@@ -222,7 +222,7 @@ export class AccessCardForm extends React.Component<Props,State> {
         )}
         {cardDisabled && (
           <>
-            <Typography variant="body2" gutterBottom>Fob successfully disabled.  Please register new key fob</Typography>
+            <Typography variant="body1" gutterBottom>Fob successfully disabled.  Please register new key fob</Typography>
             {this.renderImportInstructions()}
           </>
         )}

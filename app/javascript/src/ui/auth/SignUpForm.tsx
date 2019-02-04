@@ -1,5 +1,4 @@
 import * as React from "react";
-import { withRouter, RouteComponentProps } from "react-router";
 
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
@@ -13,14 +12,15 @@ import { SignUpFields, EmailExistsError, signUpPrefix } from "ui/auth/constants"
 import { SignUpForm } from "ui/auth/interfaces";
 import ErrorMessage from "ui/common/ErrorMessage";
 import Form from "ui/common/Form";
-import { getHistory } from "app/utils";
+import { Location } from "history";
 
-interface OwnProps extends RouteComponentProps<any>{
+interface OwnProps {
   goToLogin: () => void;
   renderMembershipOptions?: boolean;
   onSubmit?: (validSignUp: SignUpForm) => void;
   isRequesting: boolean;
   error: string;
+  location: Location;
 }
 
 interface State {
@@ -46,7 +46,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
       discountId: props.location.state && props.location.state.discountId,
     };
     // Clear history after reading state
-    getHistory().replace({ ...props.location, state: undefined });
+    // getHistory().replace({ ...props.location, state: undefined });
   }
 
   public componentDidUpdate(prevProps: Props, prevState: State) {
@@ -205,4 +205,4 @@ class SignUpFormComponent extends React.Component<Props, State> {
   }
 }
 
-export default withRouter(SignUpFormComponent);
+export default SignUpFormComponent;

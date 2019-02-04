@@ -20,7 +20,6 @@ interface OwnProps {
   membershipOptionId: string;
   discountId: string;
   subscriptionOnly?: boolean;
-  redirectOnSelect?: boolean;
 }
 interface DispatchProps {
   getMembershipOptions: () => void;

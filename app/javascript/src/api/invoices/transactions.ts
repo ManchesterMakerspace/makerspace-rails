@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Invoice, InvoiceQueryParams, InvoiceOption } from "app/entities/invoice";
+import { Invoice, InvoiceQueryParams, InvoiceOption, InvoiceOptionSelection } from "app/entities/invoice";
 
 import { buildInvoicesUrl, buildInvoiceUrl, buildInvoiceOptionsUrl } from "api/invoices/utils";
 import { InvoiceOptionQueryParams } from "api/invoices/interfaces";
@@ -14,9 +14,11 @@ export const getInvoices = async (isUserAdmin: boolean, queryParams?: InvoiceQue
   }
 };
 
-export const postInvoices = async (invoiceForm: Invoice) => {
+export const postInvoices = async (invoiceForm: Invoice | InvoiceOptionSelection, admin: boolean = false) => {
   try {
-    return await axios.post(buildInvoicesUrl(true), { invoice: invoiceForm });
+    return await axios.post(buildInvoicesUrl(admin), ((invoiceForm as InvoiceOptionSelection).invoiceOptionId ?
+      { invoiceOption: invoiceForm }
+      : { invoice: invoiceForm }));
   } catch (e) {
     const error = handleApiError(e);
     throw error;

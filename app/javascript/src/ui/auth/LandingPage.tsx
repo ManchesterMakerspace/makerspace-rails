@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Redirect } from 'react-router';
+import { connect } from 'react-redux';
+import { push } from "connected-react-router";
 
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
@@ -9,23 +10,25 @@ import Typography from '@material-ui/core/Typography';
 
 import { Routing, Whitelists } from "app/constants";
 import MembershipSelectForm from 'ui/membership/MembershipSelectForm';
+import { ScopedThunkDispatch } from 'ui/reducer';
+import { Location } from 'history';
 const { billingEnabled } = Whitelists;
 
 interface State {
-  redirect: string;
   membershipOptionId: string;
   discountId: string;
 }
 interface OwnProps  {}
 interface StateProps {}
-interface DispatchProps {}
+interface DispatchProps {
+  pushLocation: (location: Location) => void;
+}
 interface Props extends OwnProps, StateProps, DispatchProps {}
 
 class LandingPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      redirect: undefined,
       membershipOptionId: undefined,
       discountId: undefined,
     }
@@ -36,8 +39,16 @@ class LandingPage extends React.Component<Props, State> {
     this.goToSignup();
   }
 
-  private goToSignup = () =>{
-    this.setState({ redirect: Routing.SignUp });
+  private goToSignup = () => {
+    const { membershipOptionId, discountId } = this.state;
+    this.props.pushLocation({
+      pathname: Routing.SignUp,
+      ...membershipOptionId && {
+        state: { membershipOptionId, discountId }
+      },
+      search: "",
+      hash: ""
+    });
   }
 
   private selectMembershipDiscount = (discountId: string) => {
@@ -45,15 +56,8 @@ class LandingPage extends React.Component<Props, State> {
   }
 
   public render(): JSX.Element {
-    const { membershipOptionId, redirect, discountId } = this.state;
-    if (redirect) {
-      return <Redirect to={{
-        pathname: redirect,
-        ...membershipOptionId && {
-          state: { membershipOptionId, discountId }
-        }
-      }}/>;
-    }
+    const { membershipOptionId, discountId } = this.state;
+
     return (
       <Grid container spacing={24} justify="center">
         <Grid item xs={10}>
@@ -66,7 +70,7 @@ class LandingPage extends React.Component<Props, State> {
                 </Grid>
 
                 <Grid item md={6} sm={12}>
-                    <Typography variant="subheading">
+                    <Typography variant="subtitle1">
                       Manchester Makerspace is a non-profit collaborative organization of members who maintain a shared workspace, tooling, and skills in the Manchester, NH community. We will provide access to shared resources, training, and mentorship for the benefit of Manchester’s local entrepreneurs, makers, and artists of all ages.
                   </Typography>
                 </Grid>
@@ -74,13 +78,13 @@ class LandingPage extends React.Component<Props, State> {
               </Grid>
               <Grid container spacing={24} justify="center">
                 {billingEnabled && <Grid item xs={12}>
-                  <Typography variant="headline">
+                  <Typography variant="h5">
                     To get started, first select a membership option.
                   </Typography>
                   <MembershipSelectForm title="" membershipOptionId={membershipOptionId} discountId={discountId} onSelect={this.selectMembershipOption} onDiscount={this.selectMembershipDiscount} />
                 </Grid>}
                 {!billingEnabled && <Grid item md={6} xs={12}>
-                  <Typography variant="subheading" align="center">
+                  <Typography variant="subtitle1" align="center">
                     Please take a moment to register with our online portal.
                   </Typography>
                   <Button id="register" variant="outlined" color="secondary" fullWidth onClick={this.goToSignup}>
@@ -96,4 +100,12 @@ class LandingPage extends React.Component<Props, State> {
   }
 }
 
-export default LandingPage;
+const mapDispatchToProps = (
+  dispatch: ScopedThunkDispatch
+): DispatchProps => {
+  return {
+    pushLocation: (location) => dispatch(push(location))
+  }
+}
+
+export default connect(null, mapDispatchToProps)(LandingPage);

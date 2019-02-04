@@ -70,7 +70,7 @@ class DetailView extends React.Component<OwnProps, State> {
     return (
       <>
         <Grid item xs={10}>
-          <Typography id="detail-view-title" gutterBottom variant="title">{title}</Typography>
+          <Typography id="detail-view-title" gutterBottom variant="h6">{title}</Typography>
           <ButtonRow actionButtons={actionButtons} />
         </Grid>
         <Grid item xs={10} style={sectionBorderStyle}>

@@ -19,7 +19,6 @@ class Admin::RentalsController < AdminController
     @rental.update!(rental_params)
     slack_msg = @rental.build_slack_msg(initial_date)
     @messages.push(slack_msg) unless slack_msg.nil?
-    send_slack_messages(@messages) unless @messages.empty?
     @rental.reload
     render json: @rental and return
   end

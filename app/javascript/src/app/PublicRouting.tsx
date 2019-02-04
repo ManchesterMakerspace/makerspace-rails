@@ -1,15 +1,14 @@
 import * as React from 'react';
-import { Switch, Route, Redirect } from "react-router";
+import { Switch, Route, Redirect } from "react-router-dom";
 
 import { Routing } from "app/constants";
 import LandingPage from 'ui/auth/LandingPage';
 import PasswordReset from 'ui/auth/PasswordReset';
-import { Location } from 'history';
 import SignUpContainer from 'ui/auth/SignUpContainer';
 import LoginPage from 'ui/auth/LoginPage';
 
 
-const PublicRouting: React.SFC<{ location: Location<any> }> = () => {
+const PublicRouting: React.SFC<{ }> = () => {
   // Redirect to root if not authed and somewhere else
   return (
     <Switch >

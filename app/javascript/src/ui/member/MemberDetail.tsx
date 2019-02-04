@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router";
+import { push } from "connected-react-router";
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 
 import { MemberDetails } from "app/entities/member";
@@ -25,10 +25,12 @@ import { ActionButton } from "ui/common/ButtonRow";
 import NotificationModal, { Notification } from "ui/member/NotificationModal";
 import { Whitelists } from "app/constants";
 import SignDocuments from "ui/auth/SignDocuments";
+import { getDetailsForMember } from "ui/membership/constants";
 const { billingEnabled } = Whitelists;
 
 interface DispatchProps {
   getMember: () => Promise<void>;
+  goToSettings: () => void;
 }
 interface StateProps {
   admin: boolean;
@@ -50,7 +52,6 @@ interface State {
   isCardOpen: boolean;
   displayDocuments: boolean;
   displayNotification: Notification;
-  redirect: string;
 }
 const defaultState: State = {
   isEditOpen: false,
@@ -58,7 +59,6 @@ const defaultState: State = {
   isCardOpen: false,
   displayDocuments: false,
   displayNotification: undefined,
-  redirect: "",
 }
 
 const allowedResources = new Set(["dues", "rentals"]);
@@ -111,6 +111,8 @@ class MemberDetail extends React.Component<Props, State> {
   private renderMemberInfo = (): JSX.Element => {
     const { member } = this.props;
 
+    const details = getDetailsForMember(member);
+
     return (
       <>
         <KeyValueItem label="Email">
@@ -123,7 +125,7 @@ class MemberDetail extends React.Component<Props, State> {
           <MemberStatusLabel id="member-detail-status" member={member} />
         </KeyValueItem>
         <KeyValueItem label="Membership Type">
-          <span id="member-detail-type">{member.subscriptionId ? "Subscription" : (member.expirationTime ? "Month-to-month" : "No membership found")}</span>
+          <span id="member-detail-type">{details.type}</span>
         </KeyValueItem>
       </>
     )
@@ -134,18 +136,10 @@ class MemberDetail extends React.Component<Props, State> {
     return this.props.match.params.memberId === currentUserId;
   }
 
-  private redirectToSettings = () => {
-    this.setState({ redirect: Routing.Settings });
-  }
-
   private renderMemberDetails = (): JSX.Element => {
-    const { member, isUpdatingMember, isRequestingMember, match, admin } = this.props;
+    const { member, isUpdatingMember, isRequestingMember, match, admin, goToSettings } = this.props;
     const { memberId, resource } = match.params;
-    const { redirect } = this.state;
     const loading = isUpdatingMember || isRequestingMember;
-    if (redirect) {
-      return <Redirect to={redirect} />
-    }
     return (
       <>
         <DetailView
@@ -158,7 +152,7 @@ class MemberDetail extends React.Component<Props, State> {
               variant: "outlined",
               disabled: loading,
               label: "Account Settings",
-              onClick: this.redirectToSettings
+              onClick: goToSettings
             } as ActionButton] : [],
             ...admin ? [{
               id: "member-detail-open-edit-modal",
@@ -178,7 +172,7 @@ class MemberDetail extends React.Component<Props, State> {
               {
                 id: "member-detail-open-card-modal",
                 color: "primary",
-                variant: "outlined",
+                variant: member && member.cardId ? "outlined" : "contained",
                 disabled: loading,
                 label: member && member.cardId ? "Replace Fob" : "Register Fob",
                 onClick: this.openCardModal
@@ -341,6 +335,7 @@ const mapDispatchToProps = (
   const memberId = ownProps.match.params.memberId;
   return {
     getMember: () => dispatch(readMemberAction(memberId)),
+    goToSettings: () => dispatch(push(Routing.Settings)),
   }
 }
 

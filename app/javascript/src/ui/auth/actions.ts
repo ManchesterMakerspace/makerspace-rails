@@ -1,7 +1,7 @@
 import { ThunkAction } from "redux-thunk";
 import { AnyAction } from "redux";
 
-import { AuthState, AuthForm, SignUpForm } from "ui/auth/interfaces";
+import { AuthState, AuthForm, SignUpForm, SignUpPayload } from "ui/auth/interfaces";
 import { postLogin, deleteLogin, postSignUp } from "api/auth/transactions";
 import { Action as AuthAction } from "ui/auth/constants";
 import { Action as CheckoutAction } from "ui/checkout/constants";
@@ -54,7 +54,7 @@ export const logoutUserAction = (
 }
 
 export const submitSignUpAction = (
-  signUpForm: SignUpForm
+  signUpForm: SignUpPayload
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
   dispatch({ type: AuthAction.StartAuthRequest });
   dispatch({ type: CheckoutAction.ResetStagedInvoices });

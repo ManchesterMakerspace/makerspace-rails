@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Redirect } from "react-router";
+import { push } from "connected-react-router";
 
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
@@ -9,24 +9,15 @@ import Hidden from '@material-ui/core/Hidden';
 
 import LoginForm from "ui/auth/LoginForm";
 import { Routing } from 'app/constants';
+import { connect } from 'react-redux';
+import { ScopedThunkDispatch } from 'ui/reducer';
 
-interface State {
-  redirect: string;
+interface DispatchProps {
+  goToRegister: () => void;
 }
-class LoginPage extends React.Component<{}, State> {
-  public constructor(props: {}) {
-    super(props);
-    this.state = {
-      redirect: undefined,
-    }
-  }
-  private goToRegister = () => {
-    this.setState({ redirect: Routing.Root });
-  }
+class LoginPage extends React.Component<DispatchProps> {
   public render() {
-    if (this.state.redirect) {
-      return <Redirect to={this.state.redirect}/>
-    }
+
     return (
       <Grid container spacing={24}>
         <Hidden smDown>
@@ -45,7 +36,7 @@ class LoginPage extends React.Component<{}, State> {
               </Card>
             </Grid>
             <Grid item container xs={12} justify="center" alignItems="center">
-              <Button id="auth-toggle" variant="outlined" color="secondary" fullWidth onClick={this.goToRegister}>
+              <Button id="auth-toggle" variant="outlined" color="secondary" fullWidth onClick={this.props.goToRegister}>
                 Register
               </Button>
             </Grid>
@@ -56,4 +47,11 @@ class LoginPage extends React.Component<{}, State> {
   }
 }
 
-export default LoginPage;
+const mapDispatchToProps = (
+  dispatch: ScopedThunkDispatch
+): DispatchProps => {
+  return {
+    goToRegister: () => dispatch(push(Routing.Root))
+  }
+}
+export default connect(null, mapDispatchToProps)(LoginPage);

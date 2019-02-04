@@ -1,5 +1,4 @@
 class Admin::MembersController < AdminController
-  include SlackService
   before_action :set_member, only: [:update, :renew]
 
   def create
@@ -23,7 +22,6 @@ class Admin::MembersController < AdminController
       @messages.push("#{@member.fullname} updated. Now expiring #{@member.prettyTime.strftime("%m/%d/%Y")}")
     end
 
-    send_slack_messages(@messages) unless @messages.empty?
     @member.reload
     render json: @member and return
   end

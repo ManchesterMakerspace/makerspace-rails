@@ -24,7 +24,7 @@ class Billing::SubscriptionsController < ApplicationController
 
   private
   def subscription_params
-    params.require(:subscription).permit(:id, :payment_method_token, :plan_id)
+    params.require(:subscription).permit(:id, :payment_method_token, :invoice_option_id)
   end
 
   def verify_own_subscription

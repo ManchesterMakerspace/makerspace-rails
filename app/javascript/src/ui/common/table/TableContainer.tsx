@@ -66,7 +66,7 @@ class TableContainer<T> extends React.Component<Props<T>, {}> {
       <div className="table-container-wrapper" style={{width: "100%"}}>
         { (title || onSearchEnter) && (
           <Toolbar>
-            {title && <Typography id={`${id}-title`} variant="title" color="inherit" className="flex">
+            {title && <Typography id={`${id}-title`} variant="h6" color="inherit" className="flex">
               {title}
             </Typography>}
             {onSearchEnter &&

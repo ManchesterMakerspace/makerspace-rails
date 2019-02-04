@@ -17,7 +17,7 @@ const PaymentMethodComponent: React.SFC<Props> = (props) => {
     <Grid container spacing={16}>
       <Grid item xs={12} style={{ border: "1px solid black", borderColor: "#9E3321", borderRadius: "4px", textAlign: "center" }}>
         <img style={{float: "left", marginRight: "2em"}} src={image} alt={cardType}/>
-        <Typography inline={true} style={{lineHeight: "2.5em"}} variant="subheading">{description}</Typography>
+        <Typography inline={true} style={{ lineHeight: "2.5em" }} variant="subtitle1">{description}</Typography>
       </Grid>
     </Grid>
   );

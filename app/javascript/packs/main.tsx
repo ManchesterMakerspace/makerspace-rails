@@ -2,23 +2,41 @@
  * Main injection point for application.  Webpacker compiles everything in this folder by default.
  */
 import "./stylesheets/application";
+import { composeWithDevTools } from 'redux-devtools-extension';
 import * as React from 'react';
-import { Store } from 'redux';
+import { createBrowserHistory, History } from "history";
+import { applyMiddleware, createStore, Store } from 'redux';
+import reduxThunk from "redux-thunk";
 import { Provider } from "react-redux";
 import * as ReactDOM from 'react-dom';
-import { ConnectedRouter } from 'connected-react-router';
-import { History } from 'history';
-import { Theme, MuiThemeProvider } from '@material-ui/core';
+import { ConnectedRouter, routerMiddleware } from 'connected-react-router';
+import { Theme, MuiThemeProvider, createMuiTheme } from '@material-ui/core';
 
-import { getHistory, getTheme, getStore } from 'app/utils';
 import App from "app/App";
 
-import { State as ReduxState } from "ui/reducer";
+import { State as ReduxState, getRootReducer } from "ui/reducer";
 
 
-const history: History = getHistory();
-const store: Store<ReduxState> = getStore();
-const theme: Theme = getTheme();
+const history: History = createBrowserHistory();
+const store: Store<ReduxState> = createStore(
+  getRootReducer(history), // new root reducer with router state
+  composeWithDevTools(
+    applyMiddleware(
+      routerMiddleware(history), // for dispatching history actions
+      reduxThunk
+    ),
+  ),
+);;
+const theme: Theme = createMuiTheme({
+  palette: {
+    secondary: {
+      light: '#9E3321',
+      main: '#791100',
+      dark: '#510B00',
+      contrastText: '#FFF',
+    },
+  },
+});
 
 ReactDOM.render(
   <Provider store={store}>

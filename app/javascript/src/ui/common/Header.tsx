@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { withRouter, RouteComponentProps } from "react-router";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 import { connect } from "react-redux";
 
 import AppBar from "@material-ui/core/AppBar";
@@ -130,7 +130,7 @@ class Header extends React.Component<Props, State> {
     return (
       <AppBar style={{ marginBottom: "1em" }} position="static" color="default" title={Logo}>
         <Toolbar>
-          <Typography variant="title" color="inherit" className="flex">
+          <Typography variant="h6" color="inherit" className="flex">
             <img src={Logo} alt="Manchester Makerspace" height={60} />
           </Typography>
           {currentUser.id ? this.renderHambMenu() : (!authRequesting && this.renderLoginLink()) }
