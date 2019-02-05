@@ -58,11 +58,11 @@ class Rental
 
   def notify_renewal
     if self.expiration_changed?
-      init, final = self.expiration.change
+      init, final = self.expiration_change
       if final && init && final > init
-        connect_slack.send_slack_message("#{self.member.fullname}'s rental of Locker/Plot # #{self.number} renewed.  Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}")
+        send_slack_message("#{self.member.fullname}'s rental of Locker/Plot # #{self.number} renewed.  Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}")
       elsif final != init
-        connect_slack.send_slack_message("#{self.member.fullname}'s rental of Locker/Plot # #{self.number} updated.  Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}")
+        send_slack_message("#{self.member.fullname}'s rental of Locker/Plot # #{self.number} updated.  Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}")
       end
     end
   end

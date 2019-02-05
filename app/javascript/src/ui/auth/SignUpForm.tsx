@@ -13,11 +13,13 @@ import { SignUpForm } from "ui/auth/interfaces";
 import ErrorMessage from "ui/common/ErrorMessage";
 import Form from "ui/common/Form";
 import { Location } from "history";
+import { InvoiceOptionSelection } from "app/entities/invoice";
 
 interface OwnProps {
   goToLogin: () => void;
   renderMembershipOptions?: boolean;
-  onSubmit?: (validSignUp: SignUpForm) => void;
+  selectedOption?: InvoiceOptionSelection;
+  onSubmit: (validSignUp: SignUpForm) => void;
   isRequesting: boolean;
   error: string;
   location: Location;
@@ -42,11 +44,9 @@ class SignUpFormComponent extends React.Component<Props, State> {
       passwordMask: true,
       emailExists: false,
       membershipSelectionError: "",
-      membershipSelectionId: props.location.state && props.location.state.membershipOptionId,
-      discountId: props.location.state && props.location.state.discountId,
+      membershipSelectionId: props.selectedOption && props.selectedOption.invoiceOptionId,
+      discountId: props.selectedOption && props.selectedOption.discountId,
     };
-    // Clear history after reading state
-    // getHistory().replace({ ...props.location, state: undefined });
   }
 
   public componentDidUpdate(prevProps: Props, prevState: State) {
@@ -102,11 +102,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
       return;
     }
 
-    this.props.onSubmit && await this.props.onSubmit({
-      ...validSignUp,
-      membershipSelectionId: this.state.membershipSelectionId,
-      discountId: this.state.discountId
-    });
+    await this.props.onSubmit(validSignUp);
   }
 
   private closeNotification = () => {
@@ -138,13 +134,9 @@ class SignUpFormComponent extends React.Component<Props, State> {
     this.setState({ membershipSelectionId });
   }
 
-  private selectMembershipDiscount = (discountId: string) => {
-    this.setState({ discountId });
-  }
-
   public render(): JSX.Element {
     const { isRequesting, error } = this.props;
-    const { emailExists, membershipSelectionError, membershipSelectionId, discountId } = this.state;
+    const { emailExists, membershipSelectionError, } = this.state;
 
     return (
       <Form
@@ -192,7 +184,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
           </Grid>
           {this.props.renderMembershipOptions && (
             <Grid item xs={12}>
-              <MembershipSelectForm membershipOptionId={membershipSelectionId} discountId={discountId} onDiscount={this.selectMembershipDiscount} onSelect={this.updateMembershipSelection}/>
+              <MembershipSelectForm onSelect={this.updateMembershipSelection}/>
               {membershipSelectionError && <ErrorMessage error={membershipSelectionError}/>}
             </Grid>
           )}

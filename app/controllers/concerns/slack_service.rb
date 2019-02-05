@@ -2,17 +2,14 @@ module SlackService
   extend ActiveSupport::Concern
   include Service::SlackConnector
 
+  attr_accessor :messages
+
   included do
-    before_action :init_slack_client
+    @messages = []
     after_action :send_messages
   end
 
-  def init_slack_client
-    @messages = []
-    @client = self.connect_slack
-  end
-
   def send_messages
-    @client.send_slack_messages(@messages)
+    send_slack_messages(@messages)
   end
 end

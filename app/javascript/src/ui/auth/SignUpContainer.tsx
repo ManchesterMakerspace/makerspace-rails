@@ -12,7 +12,7 @@ import { CollectionOf } from "app/interfaces";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import SignUpFormComponent from "ui/auth/SignUpForm";
-import { SignUpForm, SignUpPayload } from "ui/auth/interfaces";
+import { SignUpForm } from "ui/auth/interfaces";
 import { submitSignUpAction } from "ui/auth/actions";
 import { AuthMember } from "ui/auth/interfaces";
 import { Whitelists } from "app/constants";
@@ -27,10 +27,11 @@ interface StateProps {
   isRequesting: boolean;
   error: string;
   currentUser: AuthMember;
-  location: Location
+  location: Location;
+  selectedOption: InvoiceOptionSelection;
 }
 interface DispatchProps {
-  submitSignUp: (signUpForm: SignUpPayload) => void;
+  submitSignUp: (signUpForm: SignUpForm) => void;
   createInitialInvoice: (invoiceSelection: InvoiceOptionSelection) => void;
   goToLogin: () => void;
 }
@@ -47,15 +48,15 @@ class SignUpContainer extends React.Component<Props, State>{
   }
 
   private submitSignupForm = async (validSignUp: SignUpForm) => {
-    const { membershipSelectionId, discountId, ...rest } = validSignUp;
-    await this.props.submitSignUp(rest);
-    if (membershipSelectionId) {
-      await this.props.createInitialInvoice({ discountId, invoiceOptionId: membershipSelectionId });
+    const { selectedOption } = this.props;
+    await this.props.submitSignUp(validSignUp);
+    if (selectedOption) {
+      await this.props.createInitialInvoice(selectedOption);
     }
   }
 
   public render(): JSX.Element {
-    const { isRequesting, error, location, goToLogin } = this.props;
+    const { isRequesting, error, location, goToLogin, selectedOption } = this.props;
 
     return (
       <Grid container justify="center" spacing={16}>
@@ -70,6 +71,7 @@ class SignUpContainer extends React.Component<Props, State>{
                     isRequesting={isRequesting}
                     error={error}
                     renderMembershipOptions={billingEnabled}
+                    selectedOption={selectedOption}
                     location={location}
                   />
                 </CardContent>
@@ -99,13 +101,15 @@ const mapStateToProps = (
     error
   } = state.auth;
   const { location } = state.router;
+  const { selectedOption } = state.billing;
 
   return {
     currentUser,
     stagedInvoices,
     isRequesting,
     error,
-    location
+    location,
+    selectedOption,
   }
 }
 

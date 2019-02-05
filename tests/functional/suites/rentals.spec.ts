@@ -76,11 +76,12 @@ describe("Rentals", () => {
         return auth.autoLogin(adminUser).then(async () => {
           await mock(mockRequests.rentals.get.ok(defaultRentals, {}, true));
           await header.navigateTo(header.links.rentals);
+          await utils.waitForPageLoad(rentalsPO.listUrl);
           expect(await utils.isElementDisplayed(rentalsPO.getErrorRowId())).toBeFalsy();
           expect(await utils.isElementDisplayed(rentalsPO.getNoDataRowId())).toBeFalsy();
           expect(await utils.isElementDisplayed(rentalsPO.getLoadingId())).toBeFalsy();
           expect(await utils.isElementDisplayed(rentalsPO.getTitleId())).toBeTruthy();
-          await utils.waitForVisisble(rentalsPO.getRowBaseId(defaultRentals[0].id));
+          expect(await rentalsPO.getColumnText("number", defaultRentals[0].id)).toBeTruthy();
         });
       });
       it("Loads a list of rentals", async () => {

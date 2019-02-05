@@ -15,6 +15,9 @@ export enum Action {
   StartDeleteRequest = "BILLING/START_DELETE_REQUEST",
   DeleteOptionSuccess = "BILLING/DELETE_OPTION_SUCCESS",
   DeleteOptionFailure = "BILLING/DELETE_OPTION_FAILURE",
+
+  SelectOption = "BILLING/SELECT_OPTION",
+  ClearSelection = "BILLING/CLEAR_SELECTION",
 }
 
 const formPrefix = "billing-form";

@@ -10,6 +10,7 @@ class InvoicesController < ApplicationController
   end
 
   def create
+    raise ActionController::ParameterMissing.new(:id) if invoice_option_params[:id].nil?
     invoice_option = InvoiceOption.find(invoice_option_params[:id])
     raise ::Mongoid::Errors::DocumentNotFound.new if invoice_option.nil?
     if (invoice_option_params[:discount_id])

@@ -1,6 +1,6 @@
 class MembersController < ApplicationController
     include FastQuery
-    include GoogleService
+    include ::Service::GoogleDrive
     before_action :set_member, only: [:show, :update]
 
     def index

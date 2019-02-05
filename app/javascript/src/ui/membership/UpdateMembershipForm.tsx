@@ -21,7 +21,7 @@ import ButtonRow, { ActionButton } from "ui/common/ButtonRow";
 import UpdateMembershipContainer, { UpdateSubscriptionRenderProps } from "ui/membership/UpdateMembershipContainer";
 import CancelMembershipModal from "ui/membership/CancelMembershipModal";
 import { CrudOperation, Routing } from "app/constants";
-import { Invoice } from "app/entities/invoice";
+import { Invoice, InvoiceOptionSelection } from "app/entities/invoice";
 import { Dialog } from "@material-ui/core";
 import FormModal from "ui/common/FormModal";
 import PaymentMethodsContainer from "ui/checkout/PaymentMethodsContainer";
@@ -69,11 +69,10 @@ interface StateProps {
   invoice: Invoice;
   isRequesting: boolean;
   error: string;
+  selectedOption: InvoiceOptionSelection;
 }
 interface Props extends OwnProps, StateProps, DispatchProps {}
 interface State {
-  membershipOptionId: string;
-  discountId: string;
   openMembershipSelect: boolean;
   openCancelModal: boolean;
   openPaymentMethodModal: boolean;
@@ -84,8 +83,6 @@ class UpdateMembershipForm extends React.Component<Props, State> {
   public constructor(props: Props) {
     super(props);
     this.state = {
-      membershipOptionId: undefined,
-      discountId: undefined,
       openMembershipSelect: false,
       openPaymentMethodModal: false,
       openCancelModal: false,
@@ -136,8 +133,8 @@ class UpdateMembershipForm extends React.Component<Props, State> {
 
 
   private renderMembershipForm = () => {
-    const { openMembershipSelect, openCancelModal, openPaymentMethodModal, paymentMethodId, discountId, membershipOptionId } = this.state;
-    const { invoice, subscription } = this.props;
+    const { openMembershipSelect, openCancelModal, openPaymentMethodModal, paymentMethodId } = this.state;
+    const { invoice, subscription, selectedOption } = this.props;
 
     // Update can change payment method, subscription type, or create new subscription
     // Creating a new sub means one doesn't already exist
@@ -190,8 +187,8 @@ class UpdateMembershipForm extends React.Component<Props, State> {
           operation={CrudOperation.Update}
           isOpen={openMembershipSelect}
           subscription={subscription}
-          discountId={discountId}
-          membershipOptionId={membershipOptionId}
+          discountId={selectedOption && selectedOption.discountId}
+          membershipOptionId={selectedOption && selectedOption.invoiceOptionId}
           invoice={invoice}
           closeHandler={this.closeMembershipSelect}
           render={membershipSelectForm}
@@ -222,19 +219,12 @@ class UpdateMembershipForm extends React.Component<Props, State> {
   }
 
   private updatePaymentMethodId = (id: string) => this.setState({ paymentMethodId: id });
-  private onSelect = (id: string) => this.setState({ membershipOptionId: id })
-  private onDiscount = (id: string) => this.setState({ discountId: id });
   private renderMembershipSelect = () => {
-    const { membershipOptionId, discountId } = this.state;
     const { openMembershipSelect } = this.state;
     return (openMembershipSelect &&
       <>
         <MembershipSelectForm
           subscriptionOnly={true}
-          membershipOptionId={membershipOptionId}
-          discountId={discountId}
-          onSelect={this.onSelect}
-          onDiscount={this.onDiscount}
         />
       </>
     )
@@ -317,6 +307,7 @@ const mapStateToProps = (
 ): StateProps => {
 
   const { subscriptionId } = ownProps;
+  const { selectedOption } = state.billing;
   const { entities: subscriptions, read: { isRequesting: subscriptionsLoading, error: subscriptionError } } = state.subscriptions;
   const { entities: invoices, read: {isRequesting: invoicesLoading, error: invoicesError }} = state.invoices;
   const subscription = subscriptions[subscriptionId];
@@ -324,6 +315,7 @@ const mapStateToProps = (
   return {
     invoice,
     subscription,
+    selectedOption,
     isRequesting: subscriptionsLoading || invoicesLoading,
     error: subscriptionError || invoicesError,
   }

@@ -22,6 +22,7 @@ class Admin::CardsController < AdminController
   end
 
   def index
+    raise ::ActionController::ParameterMissing.new(:member_id) unless card_params[:member_id]
     member = Member.find(card_params[:member_id])
     raise ::Mongoid::Errors::DocumentNotFound.new if member.nil?
     @cards = Card.where(member: member)

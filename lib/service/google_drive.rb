@@ -1,7 +1,8 @@
+require_relative '../error/google/share'
+require_relative '../error/google/upload'
+
 module Service
   module GoogleDrive
-    include ::Error::ErrorHandler
-
     def load_gdrive
       google = Google::Apis::DriveV3::DriveService.new
       google.authorization = Google::Auth::UserRefreshCredentials.new({

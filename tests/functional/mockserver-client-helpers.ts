@@ -369,14 +369,14 @@ export const mockRequests = {
     }),
   },
   signUp: {
-    ok: (member: Partial<AuthForm | MemberDetails>, invoice: Partial<Invoice>): MockRequest => ({
+    ok: (member: Partial<AuthForm | MemberDetails>): MockRequest => ({
       httpRequest: {
         method: Method.Post,
         path: `/${Url.Auth.SignUp}.json`,
       },
       httpResponse: {
         statusCode: 200,
-        body: JSON.stringify({ member, invoice })
+        body: JSON.stringify({ member })
       }
     }),
     error: (statusCode?: string): MockRequest => ({
@@ -425,10 +425,10 @@ export const mockRequests = {
       })
     },
     post: {
-      ok: (invoice: Invoice): MockRequest => ({
+      ok: (invoice: Partial<Invoice>, admin = true): MockRequest => ({
         httpRequest: {
           method: Method.Post,
-          path: `/${Url.Admin.Invoices}.json`,
+          path: `/${admin ? Url.Admin.Invoices : Url.Invoices}.json`,
         },
         httpResponse: {
           statusCode: 200,

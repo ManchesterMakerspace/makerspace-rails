@@ -14,7 +14,7 @@ class HeaderPageObject {
   public openNavMenu = () => utils.clickElement(this.navMenuButton);
 
   public navigateTo = async (menuLinkId: string) => {
-    const idSelector = `${menuLinkId} li`
+    const idSelector = `a${menuLinkId}`
     const displayed = await utils.isElementDisplayed(idSelector);
     if (!displayed) {
       await this.openNavMenu();

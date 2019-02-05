@@ -97,6 +97,7 @@ class Header extends React.Component<Props, State> {
         <Menu
           id="menu-appbar"
           anchorEl={anchorEl}
+          transitionDuration={0}
           anchorOrigin={{
             vertical: 'top',
             horizontal: 'right',

@@ -18,3 +18,5 @@ install:
 script: make start-func
 after_success:
   - bundle exec rake assets:precompile
+after_failure:
+  - bundle exec rake upload_screenshots

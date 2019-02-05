@@ -8,18 +8,16 @@ class Billing::CheckoutController < ApplicationController
     end
 
     def create
-      if checkout_params[:payment_method_id].nil?
-        render json: {error: "Payment method required" }, status: 400 and return
-      end
+      raise Error::Braintree::MissingCustomer.new unless current_member.customer_id
+      raise ActionController::ParameterMissing.new(:payment_method_id) if checkout_params[:payment_method_id].nil?
       @payment_method = verify_token
-      invoices = Invoice.any_in(id: checkout_params[:invoice_ids] )
+      invoices = Invoice.any_in(id: checkout_params[:invoice_ids])
+      # TODO only allow a subscription to be created or single transactions to be submitted. Doing both confuses the result
 
       results = settle_invoices(invoices)
       failures = results.select { |r| !r[:result].success? }
 
-      if results.none? { |r| r[:result].success? }
-        raise Error::Braintree::Result.new(failures)
-      end
+      raise Error::Braintree::Result.new(failures) if results.none? { |r| r[:result].success? }
       # TODO Email user a receipt
 
       # All succeed, were good. Just return 200
@@ -39,7 +37,6 @@ class Billing::CheckoutController < ApplicationController
     end
 
     def verify_token
-      raise Error::Braintree::MissingCustomer.new unless current_member.customer_id
       payment_method = ::BraintreeService::PaymentMethod.find_payment_method_for_customer(@gateway, checkout_params[:payment_method_id], current_member.customer_id)
     end
 

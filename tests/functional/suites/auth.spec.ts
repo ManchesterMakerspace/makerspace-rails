@@ -8,6 +8,7 @@ import { invoiceOptions, membershipOptionQueryParams } from "../constants/invoic
 import signup from "../pageObjects/signup";
 import { checkout } from "../pageObjects/checkout";
 import { paymentMethods, creditCard } from "../pageObjects/paymentMethods";
+import invoicePo from "../pageObjects/invoice";
 import { creditCard as defaultCreditCard, creditCardForm } from "../constants/paymentMethod";
 const member = Object.assign({}, basicUser);
 const memberId = member.id;
@@ -100,54 +101,61 @@ describe("Authentication", () => {
       const membershipId = "foo";
       const membershipOption = invoiceOptions.find((io) => io.id === membershipId);
       await mock(mockRequests.invoiceOptions.get.ok([membershipOption], membershipOptionQueryParams));
-      await mock(mockRequests.signUp.ok(member, membershipOption)); // initial signup
-      await mock(mockRequests.member.put.ok(memberId, member)); // upload signature
-      await mock(mockRequests.paymentMethods.get.ok([newCard])); // Load payment method
+      await mock(mockRequests.invoiceOptions.get.ok([membershipOption], membershipOptionQueryParams));
+      await mock(mockRequests.signUp.ok(member)); // initial signup
+      await mock(mockRequests.invoices.post.ok(membershipOption, false)); // initial invoice creation
+      await mock(mockRequests.member.get.ok(memberId, member)); // Profile load
       await browser.get(utils.buildUrl());
       await signup.selectMembershipOption(membershipId);
       await utils.waitForPageLoad(signup.signupUrl);
       await signup.signUpUser(member);
 
       await utils.waitForPageLoad(memberPO.getProfilePath(member.id));
-      expect(utils.isElementDisplayed(memberPO.memberDetail.notificationModal));
+      expect(await utils.isElementDisplayed(memberPO.memberDetail.notificationModal));
       await utils.clickElement(memberPO.memberDetail.notificationModalSubmit);
 
       await utils.waitForVisisble(signup.documentsSigning.codeOfConductSubmit);
       await utils.clickElement(signup.documentsSigning.codeOfConductCheckbox);
       await utils.clickElement(signup.documentsSigning.codeOfConductSubmit);
       await utils.waitForVisisble(signup.documentsSigning.memberContractCheckbox);
+      await mock(mockRequests.member.put.ok(memberId, member)); // upload signature
+      await mock(mockRequests.paymentMethods.get.ok([newCard])); // Load payment methods
+      await mock(mockRequests.invoices.get.ok([membershipOption])); // Load selected invoice
       await utils.clickElement(signup.documentsSigning.memberContractCheckbox);
       await signup.signContract();
       await utils.clickElement(signup.documentsSigning.memberContractSubmit);
+      await utils.waitForNotVisible(signup.documentsSigning.memberContractSubmit);
+      expect((await invoicePo.getAllRows()).length).toEqual(1);
+      expect(await invoicePo.getColumnText("name", membershipOption.id)).toEqual(membershipOption.name);
 
-      // Get payment methods (none array)
-      // Checkout
-      await utils.waitForPageLoad(checkout.checkoutUrl);
+      // // Get payment methods (none array)
+      // // Checkout
+      // await utils.waitForPageLoad(checkout.checkoutUrl);
 
-      // TODO Find a way to mock creating a payment method
-      // await mock(mockRequests.checkout.new.ok("foo"));
-      // await utils.clickElement(paymentMethods.addPaymentButton);
-      // await utils.waitForVisisble(paymentMethods.paymentMethodFormSelect.creditCard);
-      // await utils.clickElement(paymentMethods.paymentMethodFormSelect.creditCard);
-      // await utils.waitForVisisble(creditCard.creditCardForm.submit);
-      // await utils.fillInput(creditCard.creditCardForm.cardNumber, creditCardForm.cardNumber);
-      // await utils.fillInput(creditCard.creditCardForm.expirationDate, creditCardForm.expiration);
-      // await utils.fillInput(creditCard.creditCardForm.postalCode, creditCardForm.postalCode);
-      // await utils.fillInput(creditCard.creditCardForm.csv, creditCardForm.csv);
-      // await mock(mockRequests.paymentMethods.post.ok(newCard.nonce, newCard.id));
-      // await mock(mockRequests.paymentMethods.get.ok([newCard]));
-      // await utils.clickElement(creditCard.creditCardForm.submit);
+      // // TODO Find a way to mock creating a payment method
+      // // await mock(mockRequests.checkout.new.ok("foo"));
+      // // await utils.clickElement(paymentMethods.addPaymentButton);
+      // // await utils.waitForVisisble(paymentMethods.paymentMethodFormSelect.creditCard);
+      // // await utils.clickElement(paymentMethods.paymentMethodFormSelect.creditCard);
+      // // await utils.waitForVisisble(creditCard.creditCardForm.submit);
+      // // await utils.fillInput(creditCard.creditCardForm.cardNumber, creditCardForm.cardNumber);
+      // // await utils.fillInput(creditCard.creditCardForm.expirationDate, creditCardForm.expiration);
+      // // await utils.fillInput(creditCard.creditCardForm.postalCode, creditCardForm.postalCode);
+      // // await utils.fillInput(creditCard.creditCardForm.csv, creditCardForm.csv);
+      // // await mock(mockRequests.paymentMethods.post.ok(newCard.nonce, newCard.id));
+      // // await mock(mockRequests.paymentMethods.get.ok([newCard]));
+      // // await utils.clickElement(creditCard.creditCardForm.submit);
 
-      // Submit payment
-      await mock(mockRequests.checkout.post.ok([membershipOption.id], newCard.id));
-      await mock(mockRequests.member.get.ok(memberId, member));
-      await utils.clickElement(paymentMethods.getPaymentMethodSelectId(newCard.id));
-      expect(await utils.getElementText(checkout.total)).toEqual(`Total $${membershipOption.amount}.00`);
-      await utils.clickElement(checkout.submit);
-      await utils.assertNoInputError(checkout.checkoutError, true);
-      // Wait for profile redirect
-      // TODO: Verify receipt
-      await utils.waitForPageLoad(memberPO.getProfilePath(member.id));
+      // // Submit payment
+      // await mock(mockRequests.checkout.post.ok([membershipOption.id], newCard.id));
+      // await mock(mockRequests.member.get.ok(memberId, member));
+      // await utils.clickElement(paymentMethods.getPaymentMethodSelectId(newCard.id));
+      // expect(await utils.getElementText(checkout.total)).toEqual(`Total $${membershipOption.amount}.00`);
+      // await utils.clickElement(checkout.submit);
+      // await utils.assertNoInputError(checkout.checkoutError, true);
+      // // Wait for profile redirect
+      // // TODO: Verify receipt
+      // await utils.waitForPageLoad(memberPO.getProfilePath(member.id));
     }, 200000);
     xit("User notified if they have an account with the attempted sign up email", async () => {
       /* 1. Setup mocks
@@ -173,6 +181,7 @@ describe("Authentication", () => {
       const membershipId = "foo";
       const membershipOption = invoiceOptions.find((io) => io.id === membershipId);
       await mock(mockRequests.invoiceOptions.get.ok([membershipOption], membershipOptionQueryParams));
+      await mock(mockRequests.invoiceOptions.get.ok([membershipOption], membershipOptionQueryParams));
       await browser.get(utils.buildUrl());
       await signup.selectMembershipOption(membershipId);
       await utils.waitForPageLoad(signup.signupUrl);
@@ -194,7 +203,7 @@ describe("Authentication", () => {
       await utils.fillInput(emailInput, member.email);
       await utils.clickElement(submitButton);
       expect(await utils.getElementText(error)).toBeTruthy();
-      await mock(mockRequests.signUp.ok(member, membershipOption));
+      await mock(mockRequests.signUp.ok(member));
       await mock(mockRequests.member.get.ok(memberId, member));
       await utils.clickElement(submitButton);
 
@@ -218,8 +227,10 @@ describe("Authentication", () => {
       await utils.assertNoInputError(signup.documentsSigning.memberContractError, true)
       await utils.clickElement(signup.documentsSigning.memberContractSubmit);
       await utils.assertInputError(signup.documentsSigning.memberContractError, true)
+      await mock(mockRequests.member.put.ok(memberId, member)); // upload signature
       await signup.signContract();
       await utils.clickElement(signup.documentsSigning.memberContractSubmit);
+      await utils.waitForNotVisible(signup.documentsSigning.memberContractSubmit);
     }, 200000);
   });
 

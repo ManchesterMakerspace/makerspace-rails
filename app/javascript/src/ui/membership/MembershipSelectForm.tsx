@@ -12,22 +12,24 @@ import { Column } from "ui/common/table/Table";
 import { numberAsCurrency } from "ui/utils/numberToCurrency";
 import { Button, FormControlLabel, Checkbox } from "@material-ui/core";
 import { readOptionsAction } from "ui/billing/actions";
+import { Action as InvoiceOptionAction } from "ui/billing/constants";
 
 interface OwnProps {
   title?: string;
-  onSelect: (membershipOptionId: string) => void;
-  onDiscount: (discountId: string) => void;
-  membershipOptionId: string;
-  discountId: string;
+  onSelect?: (membershipOptionId: string, discountId: string) => void;
   subscriptionOnly?: boolean;
 }
 interface DispatchProps {
   getMembershipOptions: () => void;
+  clearSelectedMembership: () => void;
+  selectMembershipOption: (membershipOptionId: string, discountId: string) => void;
 }
 interface StateProps {
   membershipOptions: CollectionOf<InvoiceOption>;
   invoiceOptionsLoading: boolean;
   invoiceOptionsError: string;
+  membershipOptionId: string;
+  discountId: string;
 }
 
 interface Props extends OwnProps, DispatchProps, StateProps { }
@@ -35,20 +37,21 @@ interface Props extends OwnProps, DispatchProps, StateProps { }
 class MembershipSelectComponent extends React.Component<Props> {
 
   private selectMembershipOption = (event: React.MouseEvent<HTMLTableElement>) => {
+    const { discountId } = this.props;
     const optionId = event.currentTarget.id;
     const option = this.getOption(optionId);
-    this.updateOptionDiscount(option);
-    this.props.onSelect(optionId)
+    let optionDiscount;
+    if (discountId) { // Only want to update discount if already selected
+      optionDiscount = option.discountId;
+    }
+    this.props.selectMembershipOption(optionId, optionDiscount);
+    this.props.onSelect && this.props.onSelect(optionId, optionDiscount);
   };
 
   private getOption = (id: string) => this.props.membershipOptions[id];
-  private updateOptionDiscount = (option: InvoiceOption) => {
-    if (this.props.discountId) { // Only want to update if selected
-      (option.discountId && option.discountId !== this.props.discountId) && this.props.onDiscount(option.discountId);
-    }
-  }
 
   public componentDidMount() {
+    this.props.clearSelectedMembership();
     this.props.getMembershipOptions();
   }
 
@@ -85,7 +88,7 @@ class MembershipSelectComponent extends React.Component<Props> {
   ]
 
   private toggleDiscount = (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-    const { membershipOptionId, onDiscount, membershipOptions } = this.props;
+    const { membershipOptionId, membershipOptions, selectMembershipOption } = this.props;
     let discountId;
     if (checked) { // Apply discount
       if (membershipOptionId) { // If option is already selected, find related discount and apply
@@ -95,7 +98,7 @@ class MembershipSelectComponent extends React.Component<Props> {
         discountId = "apply";
       }
     }
-    onDiscount(discountId)
+    selectMembershipOption(membershipOptionId, discountId);
   };
 
   private byAmount = (a: InvoiceOption, b: InvoiceOption) =>  a.amount - b.amount;
@@ -142,16 +145,22 @@ const mapStateToProps = (
 ): StateProps => {
   const {
     entities: membershipOptions,
+    selectedOption,
     read: {
       isRequesting: invoiceOptionsLoading,
       error: invoiceOptionsError,
     }
   } = state.billing;
 
+  const discountId = selectedOption && selectedOption.discountId;
+  const membershipOptionId = selectedOption && selectedOption.invoiceOptionId;
+
   return {
     membershipOptions,
     invoiceOptionsLoading,
     invoiceOptionsError,
+    membershipOptionId,
+    discountId,
   }
 }
 
@@ -162,6 +171,13 @@ const mapDispatchToProps = (
   const { subscriptionOnly } = ownProps;
   return {
     getMembershipOptions: () => dispatch(readOptionsAction({ subscriptionOnly, types: [InvoiceableResource.Membership] })),
+    clearSelectedMembership: () => dispatch({
+      type: InvoiceOptionAction.ClearSelection
+    }),
+    selectMembershipOption: (membershipOptionId, discountId) => dispatch({
+      type: InvoiceOptionAction.SelectOption,
+      data: { invoiceOptionId: membershipOptionId, discountId }
+    })
   };
 }
 export default connect(mapStateToProps, mapDispatchToProps)(MembershipSelectComponent);

@@ -21,7 +21,7 @@ interface State {
 interface OwnProps  {}
 interface StateProps {}
 interface DispatchProps {
-  pushLocation: (location: Location) => void;
+  pushLocation: (location: string) => void;
 }
 interface Props extends OwnProps, StateProps, DispatchProps {}
 
@@ -34,29 +34,11 @@ class LandingPage extends React.Component<Props, State> {
     }
   }
 
-  private selectMembershipOption = (membershipOptionId: string) => {
-    this.setState({ membershipOptionId });
-    this.goToSignup();
-  }
-
   private goToSignup = () => {
-    const { membershipOptionId, discountId } = this.state;
-    this.props.pushLocation({
-      pathname: Routing.SignUp,
-      ...membershipOptionId && {
-        state: { membershipOptionId, discountId }
-      },
-      search: "",
-      hash: ""
-    });
-  }
-
-  private selectMembershipDiscount = (discountId: string) => {
-    this.setState({ discountId });
+    this.props.pushLocation(Routing.SignUp);
   }
 
   public render(): JSX.Element {
-    const { membershipOptionId, discountId } = this.state;
 
     return (
       <Grid container spacing={24} justify="center">
@@ -81,7 +63,7 @@ class LandingPage extends React.Component<Props, State> {
                   <Typography variant="h5">
                     To get started, first select a membership option.
                   </Typography>
-                  <MembershipSelectForm title="" membershipOptionId={membershipOptionId} discountId={discountId} onSelect={this.selectMembershipOption} onDiscount={this.selectMembershipDiscount} />
+                  <MembershipSelectForm onSelect={this.goToSignup} />
                 </Grid>}
                 {!billingEnabled && <Grid item md={6} xs={12}>
                   <Typography variant="subtitle1" align="center">

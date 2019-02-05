@@ -14,8 +14,7 @@ class Admin::Billing::SubscriptionsController < ApplicationController
     raise Error::BraintreeResultError.new(result) unless result.success?
 
     # Verify resource exists and call update on that resource
-    if subscription.resource.nil? || subscription.resource.remove_subscription()
-      render json: {}, status: 204 and return
-    end
+    subscription.resource.remove_subscription() unless subscription.resource.nil?
+    render json: {}, status: 204 and return
   end
 end

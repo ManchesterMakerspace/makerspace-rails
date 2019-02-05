@@ -71,6 +71,7 @@ describe("Members page", () => {
       return auth.autoLogin(adminUser).then(async () => {
         await mock(mockRequests.members.get.ok(defaultMembers));
         await header.navigateTo(header.links.members);
+        await utils.waitForPageLoad(memberPo.membersListUrl);
       });
     });
     it("Loads a list of members", async () => {

@@ -1,8 +1,9 @@
 import { RequestStatus, CollectionOf } from "app/interfaces";
-import { InvoiceOption } from "app/entities/invoice";
+import { InvoiceOption, InvoiceOptionSelection } from "app/entities/invoice";
 
 export interface BillingState {
   entities: CollectionOf<InvoiceOption>;
+  selectedOption: InvoiceOptionSelection;
   read: RequestStatus & {
     totalItems: number;
   };

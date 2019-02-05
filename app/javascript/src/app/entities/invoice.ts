@@ -40,6 +40,8 @@ export interface InvoiceOptionSelection {
   discountId: string;
 }
 
+export const isInvoiceOptionSelection = (item: any): item is InvoiceOptionSelection => !!item.invoiceOptionId;
+
 
 export enum InvoiceOperation {
   Renew = "renew"

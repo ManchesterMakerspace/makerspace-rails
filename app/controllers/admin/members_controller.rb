@@ -3,7 +3,7 @@ class Admin::MembersController < AdminController
 
   def create
     @member = Member.create!(get_camel_case_params)
-    Card.create!(uid: @member.cardID, member: @member) @member.cardID
+    Card.create!(uid: @member.cardID, member: @member)
     render json: @member and return
   end
 

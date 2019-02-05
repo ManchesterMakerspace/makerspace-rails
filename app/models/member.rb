@@ -156,18 +156,18 @@ class Member
       begin
         invite_gdrive(self.email)
       rescue Error::Google::Upload => err
-        connect_slack.send_slack_message("Error sharing Member Resources folder with #{self.fullname}. Error: #{err}")
+        send_slack_message("Error sharing Member Resources folder with #{self.fullname}. Error: #{err}")
       end
     end
   end
 
   def notify_renewal
     if self.expirationTime_changed?
-      init, final = self.expirationTime.change
+      init, final = self.expirationTime_change
       if final && init && final > init
-        connect_slack.send_slack_message("#{self.fullname} renewed. Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}")
+        send_slack_message("#{self.fullname} renewed. Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}")
       elsif final != init
-        connect_slack.send_slack_message("#{self.fullname} updated. Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}")
+        send_slack_message("#{self.fullname} updated. Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}")
       end
     end
   end

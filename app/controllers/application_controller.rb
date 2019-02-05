@@ -5,7 +5,6 @@ class ApplicationController < ActionController::Base
 
   protect_from_forgery with: :exception
   after_action :set_csrf_cookie_for_ng
-  after_action :dispatch_slack_messages
 
   before_action :configure_permitted_parameters, if: :devise_controller?
 
@@ -20,10 +19,6 @@ class ApplicationController < ActionController::Base
   protected
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up, keys: [:firstname, :lastname])
-  end
-
-  def dispatch_slack_messages
-    send_slack_messages(@messages) unless @messages.empty?
   end
 
   # In Rails 4.2 and above
