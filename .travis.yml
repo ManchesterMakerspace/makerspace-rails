@@ -15,8 +15,6 @@ install:
   - node -v
   - npm i -g yarn
   - yarn install
-script: make start-func
-after_success:
-  - bundle exec rake assets:precompile
+script: make test
 after_failure:
   - bundle exec rake upload_screenshots
