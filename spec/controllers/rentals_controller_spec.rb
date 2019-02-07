@@ -18,13 +18,13 @@ RSpec.describe RentalsController, type: :controller do
 
   describe "GET #index" do
     it "assigns all rentals for current user as @rentals" do
-      rental = Rental.create! valid_attributes
+      rental = Rental.create(valid_attributes)
       get :index, params: {}
       expect(assigns(:rentals)).to eq([rental])
     end
 
     it "renders json of @rentals" do
-      rental = Rental.create! valid_attributes
+      rental = Rental.create(valid_attributes)
       get :index, params: {}
 
       expect(response).to have_http_status(200)
@@ -36,13 +36,13 @@ RSpec.describe RentalsController, type: :controller do
 
   describe "GET #show" do
     it "assigns the requested rental as @rental" do
-      rental = Rental.create! valid_attributes
+      rental = Rental.create(valid_attributes)
       get :show, params: {id: rental.to_param}
       expect(assigns(:rental)).to eq(rental)
     end
 
     it "renders json of the created rental" do
-      rental = Rental.create! valid_attributes
+      rental = Rental.create(valid_attributes)
       get :show, params: {id: rental.to_param}
 
       expect(response).to have_http_status(200)

@@ -15,8 +15,9 @@ class Billing::PaymentMethodsController < ApplicationController
         last_name: current_member.lastname,
         payment_method_nonce: payment_method_nonce,
       )
-      current_member.update!({ customer_id: result.customer.id }) if result.success?
-    # Add this payment method to customer
+      current_member.update_attributes!({ customer_id: result.customer.id }) if result.success?
+
+    # Add this payment method to customer if already customer
     else
       result = @gateway.payment_method.create(
         customer_id: current_member.customer_id,

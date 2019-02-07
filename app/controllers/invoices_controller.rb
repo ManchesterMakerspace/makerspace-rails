@@ -12,7 +12,7 @@ class InvoicesController < ApplicationController
   def create
     raise ActionController::ParameterMissing.new(:id) if invoice_option_params[:id].nil?
     invoice_option = InvoiceOption.find(invoice_option_params[:id])
-    raise ::Mongoid::Errors::DocumentNotFound.new if invoice_option.nil?
+    raise ::Mongoid::Errors::DocumentNotFound.new(InvoiceOption, { id: invoice_option_params[:id] }) if invoice_option.nil?
     if (invoice_option_params[:discount_id])
       discounts = ::BraintreeService::Discount.get_discounts(@gateway)
       invoice_discount = discounts.find { |d| d.id == invoice_option_params[:discount_id]}

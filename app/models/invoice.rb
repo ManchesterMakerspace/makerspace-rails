@@ -100,7 +100,7 @@ class Invoice
   end
 
   def execute_invoice_operation
-    raise ::Mongoid::Errors::DocumentNotFound.new if resource.nil?
+    raise ::Error::NotFound.new if resource.nil?
     operation = OPERATION_FUNCTIONS.find{ |f| f == self.operation }
     if operation
       if resource.execute_operation(operation, self)

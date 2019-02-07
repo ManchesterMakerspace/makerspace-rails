@@ -45,15 +45,16 @@ RSpec.describe Admin::RentalsController, type: :controller do
     end
 
     context "with invalid params" do
-      it "assigns a newly created but unsaved rental as @rental" do
+      it "raises validation error with invalid params" do
         post :create, params: {rental: invalid_attributes}, format: :json
-        expect(assigns(:rental)).to be_a_new(Rental)
-      end
+        parsed_response = JSON.parse(response.body)
+        expect(response).to have_http_status(422)
+        expect(parsed_response['message']).to match(/Number/)
 
-      it "returns status 500" do
-        post :create, params: {rental: invalid_attributes}, format: :json
-        expect(response).to have_http_status(500)
-        expect(response.content_type).to eq "application/json"
+        post :create, params: invalid_attributes, format: :json
+        parsed_response = JSON.parse(response.body)
+        expect(response).to have_http_status(422)
+        expect(parsed_response['message']).to match(/rental/)
       end
     end
   end
@@ -66,14 +67,14 @@ RSpec.describe Admin::RentalsController, type: :controller do
         }
       }
       it "updates the requested rental" do
-        rental = Rental.create! valid_attributes
+        rental = Rental.create(valid_attributes)
         put :update, params: {id: rental.to_param, rental: new_attributes}, format: :json
         rental.reload
         expect(rental.prettyTime).to eq(Time.parse(new_attributes[:expiration].to_s))
       end
 
       it "renders json of the rental" do
-        rental = Rental.create! valid_attributes
+        rental = Rental.create(valid_attributes)
         put :update, params: {id: rental.to_param, rental: new_attributes}, format: :json
 
         parsed_response = JSON.parse(response.body)
@@ -81,21 +82,12 @@ RSpec.describe Admin::RentalsController, type: :controller do
         expect(response.content_type).to eq "application/json"
         expect(parsed_response['rental']['id']).to eq(rental.id.as_json)
       end
+    end
 
-      it "Sends slack notification if rental renewed" do
-        rental = Rental.create! valid_attributes
-        slack_message = {
-          channel: 'test_channel',
-          text: "foo",
-          as_user: false,
-          username: 'Management Bot',
-          icon_emoji: ':ghost:'
-        }
-        Rental.any_instance.stub(:build_slack_msg) { "foo" }
-        Slack::Web::Client.any_instance.stub(:chat_postMessage)
-        put :update, params: {id: rental.to_param, rental: new_attributes}, format: :json
-        expect(assigns(:client)).to be_a(Slack::Web::Client)
-        expect(assigns(:client)).to have_received(:chat_postMessage).with(slack_message)
+     context "with invalid params" do
+      it "raises not found if member doens't exist" do
+        put :update, params: {id: "foo" }, format: :json
+        expect(response).to have_http_status(404)
       end
     end
   end

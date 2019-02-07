@@ -8,13 +8,14 @@ class Admin::RentalsController < AdminController
   end
 
   def create
-    @rental = Rental.create!(rental_params)
+    @rental = Rental.new(rental_params)
+    @rental.save!
     render json: @rental and return
   end
 
   def update
     initial_date = @rental.get_expiration
-    @rental.update!(rental_params)
+    @rental.update_attributes!(rental_params)
     @rental.reload
     render json: @rental and return
   end
@@ -31,6 +32,6 @@ class Admin::RentalsController < AdminController
 
   def set_rental
     @rental = Rental.find(params[:id])
-    raise ::Mongoid::Errors::DocumentNotFound.new if @rental.nil?
+    raise ::Mongoid::Errors::DocumentNotFound.new(Rental, { id: params[:id] }) if @rental.nil?
   end
 end

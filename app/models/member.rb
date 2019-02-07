@@ -42,6 +42,7 @@ class Member
   validates :email, uniqueness: true
   validates :cardID, uniqueness: true, allow_nil: true
   validates_inclusion_of :status, in: ["activeMember", "nonMember", "revoked", "inactive"]
+  validates_inclusion_of :role, in: ["admin", "member"]
 
   before_save :update_braintree_customer_info
   after_initialize :verify_group_expiry
@@ -90,14 +91,17 @@ class Member
     end
   end
 
-  def find_subscription_resource(id)
+  # Find the subscribed resource (instance of Member | Rental) for member
+  # Since subscriptions aren't stored in our db, we'll check the subscribed resources
+  # to verify ownership
+  def find_subscribed_resource(id)
     resource = self if self.subscription_id && self.subscription_id == id
-    resource = (self.rentals && self.rentals.find_by(subscription_id: subscription_id)) if resource.nil?
+    resource = (self.rentals && self.rentals.find_by(subscription_id: id)) if resource.nil?
     resource
   end
 
   def remove_subscription
-    self.update!({ subscription_id: nil, subscription: false })
+    self.update_attributes!({ subscription_id: nil, subscription: false })
   end
 
   protected
@@ -116,7 +120,7 @@ class Member
   end
 
   def update_expiration(new_expiration)
-    self.update!(self.expiration_attr => new_expiration)
+    self.update_attributes!(self.expiration_attr => new_expiration)
   end
 
   def get_expiration
@@ -146,29 +150,25 @@ class Member
   end
 
   def send_slack_invite
-    if Rails.env == "production"
-      invite_to_slack(self)
-    end
+    invite_to_slack()
   end
 
   def send_google_invite
-    if Rails.env == "production"
-      begin
-        invite_gdrive(self.email)
-      rescue Error::Google::Upload => err
-        send_slack_message("Error sharing Member Resources folder with #{self.fullname}. Error: #{err}")
-      end
+    begin
+      invite_gdrive(self.email)
+    rescue Error::Google::Upload => err
+      send_slack_message("Error sharing Member Resources folder with #{self.fullname}. Error: #{err}")
     end
   end
 
   def notify_renewal
     if self.expirationTime_changed?
       init, final = self.expirationTime_change
-      if final && init && final > init
-        send_slack_message("#{self.fullname} renewed. Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}")
-      elsif final != init
-        send_slack_message("#{self.fullname} updated. Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}")
-      end
+      time = self.prettyTime.strftime("%m/%d/%Y")
+      final_msg = "#{self.fullname} renewed. Now expiring #{time}"
+    else
+      final_msg = "#{self.fullname} updated. Expires #{time}"
     end
+    send_slack_message(final_msg)
   end
 end

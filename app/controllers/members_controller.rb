@@ -22,21 +22,21 @@ class MembersController < ApplicationController
       if signature_params[:signature]
         begin
           upload_signature(signature_params[:signature], "#{@member.fullname}_signature.png")
-          @member.update!(memberContractOnFile: true)
+          @member.update_attributes!(memberContractOnFile: true)
         rescue Error::Google::Upload => err
           @messages.push("Error uploading #{@member.fullname}'s signature'. Error: #{err}")
         end
         render json: {}, status: 204 and return
       end
 
-      @member.update!(member_params)
+      @member.update_attributes!(member_params)
       render json: @member and return
     end
 
     private
     def set_member
       @member = Member.find(params[:id])
-      raise ::Mongoid::Errors::DocumentNotFound.new if @member.nil?
+      raise ::Mongoid::Errors::DocumentNotFound.new(Member, { id: params[:id] }) if @member.nil?
     end
 
     def signature_params

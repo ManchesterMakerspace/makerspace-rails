@@ -4,7 +4,8 @@ class RegistrationsController < Devise::RegistrationsController
     respond_to :json
 
     def create
-      @member = Member.create!(member_params)
+      @member = Member.new(member_params)
+      @member.save!
       sign_in(@member)
       render json: @member and return
     end

@@ -1,4 +1,4 @@
-class Admin::Billing::SubscriptionsController < ApplicationController
+class Admin::Billing::SubscriptionsController < AdminController
     include FastQuery
     include BraintreeGateway
 

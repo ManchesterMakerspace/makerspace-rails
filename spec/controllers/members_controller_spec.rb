@@ -36,5 +36,20 @@ RSpec.describe MembersController, type: :controller do
       expect(response.content_type).to eq "application/json"
       expect(parsed_response['member']['id']).to eq(Member.last.id.as_json)
     end
+
+    it "raises not found if member doens't exist" do
+      put :show, params: {id: "foo" }, format: :json
+      parsed_response = JSON.parse(response.body)
+      expect(response).to have_http_status(404)
+    end
+  end
+
+  describe "PUT #update" do
+
+    it "raises not found if member doens't exist" do
+      put :show, params: {id: "foo" }, format: :json
+      parsed_response = JSON.parse(response.body)
+      expect(response).to have_http_status(404)
+    end
   end
 end

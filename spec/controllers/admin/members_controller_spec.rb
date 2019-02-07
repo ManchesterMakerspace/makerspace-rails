@@ -7,22 +7,17 @@ RSpec.describe Admin::MembersController, type: :controller do
       firstname: 'Test',
       lastname: 'Tester',
       email: 'test@test.com',
-      expirationTime: (Time.now + 1.month).to_i * 1000,
       renew: 1
     }
   }
 
-  # let(:invalid_attributes) {
-  #   {
-  #     firstname: 'Test',
-  #     lastname: 'Tester',
-  #     email: 'test@test.com',
-  #     renew: 1
-  #   }
-  # }
-
   def get_fullname(member)
     return member[:firstname] + " " + member[:lastname]
+  end
+
+  # Need this because we store things in milliseconds instead of ruby seconds
+  def conv_to_ms(time)
+    time.to_i * 1000
   end
 
   describe "Authenticated admin" do
@@ -37,9 +32,16 @@ RSpec.describe Admin::MembersController, type: :controller do
         end
 
         it "assigns a newly created member as @member" do
+          one_month_later = Time.now + 1.month;
           post :create, params: {member: valid_attributes}, format: :json
+          one_month_later_after = Time.now + 1.month;
+
           expect(assigns(:member)).to be_a(Member)
           expect(assigns(:member)).to be_persisted
+          expect(assigns[:member].firstname).to eq(valid_attributes[:firstname])
+
+          expect(assigns[:member].expirationTime).to be >= conv_to_ms(one_month_later)
+          expect(assigns[:member].expirationTime).to be <= conv_to_ms(one_month_later_after)
         end
 
         it "renders json of the created member" do
@@ -52,18 +54,25 @@ RSpec.describe Admin::MembersController, type: :controller do
         end
       end
 
-      # context "with invalid params" do
-      #   it "assigns a newly created but unsaved member as @member" do
-      #     post :create, params: {member: invalid_attributes}, format: :json
-      #     expect(assigns(:member)).to be_a(Member)
-      #     expect(assigns(:member)).not_to be_persisted
-      #   end
+      context "with invalid params" do
+        missing_member_prop = {
+          firstname: 'Test',
+          email: 'test@test.com',
+        }
 
-      #   it "Returns 500 status" do
-      #     post :create, params: {member: invalid_attributes}, format: :json
-      #     expect(response).to have_http_status(500)
-      #   end
-      # end
+        it "raises validation error with invalid params" do
+          post :create, params: {member: missing_member_prop}, format: :json
+
+          parsed_response = JSON.parse(response.body)
+          expect(response).to have_http_status(422)
+          expect(parsed_response['message']).to match(/Lastname/)
+
+          post :create, params: missing_member_prop, format: :json
+          parsed_response = JSON.parse(response.body)
+          expect(response).to have_http_status(422)
+          expect(parsed_response['message']).to match(/member/)
+        end
+      end
     end
 
     describe "PUT #update" do
@@ -76,13 +85,23 @@ RSpec.describe Admin::MembersController, type: :controller do
             renew: 1
           }
         }
+        create_attr = {
+            email: 'new_email@test.com',
+            firstname: 'Change',
+            lastname: 'Name',
+        }
 
         it "updates the requested member" do
-          member = Member.create valid_attributes
+          member = Member.create create_attr
+          one_month_later = Time.now + 1.month;
           put :update, params: {id: member.to_param, member: new_attributes}, format: :json
+          one_month_later_after = Time.now + 1.month;
+
           member.reload
           expect(member.email).to eq(new_attributes[:email])
           expect(member.fullname).to eq(get_fullname(new_attributes))
+          expect(member.expirationTime).to be >= conv_to_ms(one_month_later)
+          expect(member.expirationTime).to be <= conv_to_ms(one_month_later_after)
         end
 
         it "renders json of the member" do
@@ -94,20 +113,28 @@ RSpec.describe Admin::MembersController, type: :controller do
           expect(response.content_type).to eq "application/json"
           expect(parsed_response['member']['id']).to eq(member.id.as_json)
         end
+      end
 
-        it "Sends slack notification if member renewed" do
+      context "with invalid params" do
+        invalid_params = {
+          firstname: 'Test',
+          email: 'test@test.com',
+          role: "foo"
+        }
+
+        it "raises validation error with invalid params" do
           member = Member.create valid_attributes
-          slack_message = {
-            channel: 'test_channel',
-            text: "foo",
-            as_user: false,
-            username: 'Management Bot',
-            icon_emoji: ':ghost:'
-          }
-          Slack::Web::Client.any_instance.stub(:chat_postMessage)
-          put :update, params: {id: member.to_param, member: new_attributes}, format: :json
-          expect(assigns(:client)).to be_a(Slack::Web::Client)
-          expect(assigns(:client)).to have_received(:chat_postMessage)
+          put :update, params: {id: member.to_param, member: invalid_params}, format: :json
+
+          parsed_response = JSON.parse(response.body)
+          expect(response).to have_http_status(422)
+          expect(parsed_response['message']).to match(/Role/)
+        end
+
+        it "raises not found if member doens't exist" do
+          put :update, params: {id: "foo" }, format: :json
+          parsed_response = JSON.parse(response.body)
+          expect(response).to have_http_status(404)
         end
       end
     end

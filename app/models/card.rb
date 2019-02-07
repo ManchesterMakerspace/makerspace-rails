@@ -49,6 +49,6 @@ class Card
 
   def update_rejection_card
     rejection_card = RejectionCard.find_by(uid: self.uid)
-    rejection_card.update!(holder: self.member.fullname) unless rejection_card.nil?
+    rejection_card.update_attributes!(holder: self.member.fullname) unless rejection_card.nil?
   end
 end

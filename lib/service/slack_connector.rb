@@ -16,12 +16,14 @@ module Service
       )
     end
 
-    def invite_to_slack(member)
-      client.users_admin_invite(
-        email: member.email,
-        first_name: member.firstname,
-        last_name: member.lastname
-      )
+    def invite_to_slack()
+      if Rails.env == "production"
+        client.users_admin_invite(
+          email: self.email,
+          first_name: self.firstname,
+          last_name: self.lastname
+        )
+      end
     end
 
     private

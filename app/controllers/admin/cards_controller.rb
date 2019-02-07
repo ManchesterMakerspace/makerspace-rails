@@ -17,22 +17,22 @@ class Admin::CardsController < AdminController
 
     @card.save!
     rejection_card = RejectionCard.find_by(uid: @card.uid)
-    rejection_card.update(holder: @card.holder) unless rejection_card.nil?
+    rejection_card.update_attributes!(holder: @card.holder) unless rejection_card.nil?
     render json: @card and return
   end
 
   def index
     raise ::ActionController::ParameterMissing.new(:member_id) unless card_params[:member_id]
     member = Member.find(card_params[:member_id])
-    raise ::Mongoid::Errors::DocumentNotFound.new if member.nil?
+    raise ::Mongoid::Errors::DocumentNotFound.new(Member, { id: card_params[:member_id] }) if member.nil?
     @cards = Card.where(member: member)
     render json: @cards and return
   end
 
   def update
     @card = Card.find(params[:id])
-    raise ::Mongoid::Errors::DocumentNotFound.new if @card.nil?
-    @card.update!(card_params)
+    raise ::Mongoid::Errors::DocumentNotFound.new(Card, { id: params[:id] }) if @card.nil?
+    @card.update_attributes!(card_params)
     render json: @card and return
   end
 

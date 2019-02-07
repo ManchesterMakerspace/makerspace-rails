@@ -1,4 +1,4 @@
-class Admin::InvoicesController < ApplicationController
+class Admin::InvoicesController < AdminController
   include FastQuery
   before_action :find_invoice, only: [:update, :destroy]
 
@@ -10,12 +10,13 @@ class Admin::InvoicesController < ApplicationController
   end
 
   def create
-    invoice = Invoice.create!(invoice_params)
+    invoice = Invoice.new(invoice_params)
+    invoice.save!
     render json: invoice and return
   end
 
   def update
-    @invoice.update!(invoice_params)
+    @invoice.update_attributes!(invoice_params)
     render json: invoice and return
   end
 
@@ -35,6 +36,6 @@ class Admin::InvoicesController < ApplicationController
 
   def find_invoice
     @invoice = Invoice.find(params[:id])
-    raise ::Mongoid::Errors::DocumentNotFound.new if @invoice.nil?
+    raise ::Mongoid::Errors::DocumentNotFound.new(Invoice, { id: params[:id] }) if @invoice.nil?
   end
 end

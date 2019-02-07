@@ -90,12 +90,12 @@ RSpec.describe Admin::CardsController, type: :controller do
 
         it "invalid cards return status 500" do
           post :create, params: {"card" => missing_uid_attributes}, format: :json
-          expect(response).to have_http_status(500)
-          expect(response.content_type).to eq "application/json"
+          parsed_response = JSON.parse(response.body)
+          expect(response).to have_http_status(422)
+          expect(parsed_response['message']).to match(/Uid/)
 
           post :create, params: {"card" => missing_member_attributes}, format: :json
           expect(response).to have_http_status(422)
-          expect(response.content_type).to eq "application/json"
         end
 
         it "does not create new card if member already has one" do

@@ -29,9 +29,7 @@ class Billing::SubscriptionsController < ApplicationController
 
   def verify_own_subscription
     subscription_id = params[:id] || subscription_params[:id]
-    @subscription_resource = current_member.find_subscription_resource(subscription_id)
-    if @subscription_resource.nil?
-      render json: { error: "Unauthorized or not found" }, status: 404 and return
-    end
+    @subscription_resource = current_member.find_subscribed_resource(subscription_id)
+    raise Error::NotFound.new if @subscription_resource.nil?
   end
 end

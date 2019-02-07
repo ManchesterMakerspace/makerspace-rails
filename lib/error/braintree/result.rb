@@ -1,7 +1,7 @@
 require_relative '../custom_error'
 module Error::Braintree
   class Result < ::Error::CustomError
-    def initialize(result)
+    def initialize(result=nil)
       error = {
         attribute: :service_unavailable,
         code: 503,

@@ -27,7 +27,7 @@ class Rental
 
   protected
   def remove_subscription
-    self.update!({ subscription_id: nil })
+    self.update_attributes!({ subscription_id: nil })
   end
 
   def expiration_attr
@@ -35,7 +35,7 @@ class Rental
   end
 
   def update_expiration(new_expiration)
-    self.update!(self.expiration_attr => get_expiration(new_expiration))
+    self.update_attributes!(self.expiration_attr => get_expiration(new_expiration))
   end
 
   def expiration_as_time(ms = nil)
@@ -59,11 +59,12 @@ class Rental
   def notify_renewal
     if self.expiration_changed?
       init, final = self.expiration_change
-      if final && init && final > init
-        send_slack_message("#{self.member.fullname}'s rental of Locker/Plot # #{self.number} renewed.  Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}")
-      elsif final != init
-        send_slack_message("#{self.member.fullname}'s rental of Locker/Plot # #{self.number} updated.  Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}")
-      end
+      core_msg = "#{self.member ? "#{self.member.fullname}'s rental of " : ""} Locker/Plot # #{self.number}"
+      time = self.prettyTime.strftime("%m/%d/%Y")
+      final_msg = "#{core_msg} renewed.  Now expiring #{time}"
+    else
+      final_msg = "#{core_msg} updated.  Expires #{time}"
     end
+    send_slack_message(final_msg)
   end
 end

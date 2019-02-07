@@ -2,8 +2,8 @@ class Admin::MembersController < AdminController
   before_action :set_member, only: [:update]
 
   def create
-    @member = Member.create!(get_camel_case_params)
-    Card.create!(uid: @member.cardID, member: @member)
+    @member = Member.new(get_camel_case_params)
+    @member.save!
     render json: @member and return
   end
 
@@ -21,7 +21,7 @@ class Admin::MembersController < AdminController
 
   def get_camel_case_params
     camel_case_props = {
-      expiration_time: :expirationTime,
+      expiration_time: :expirationTime
     }
     params = member_params()
     camel_case_props.each do | key, value|
@@ -32,6 +32,6 @@ class Admin::MembersController < AdminController
 
   def set_member
     @member = Member.find(params[:id])
-    raise ::Mongoid::Errors::DocumentNotFound.new if @member.nil?
+    raise ::Mongoid::Errors::DocumentNotFound.new(Member, { id: params[:id] }) if @member.nil?
   end
 end

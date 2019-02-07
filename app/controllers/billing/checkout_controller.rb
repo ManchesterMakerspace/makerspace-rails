@@ -65,7 +65,7 @@ class Billing::CheckoutController < ApplicationController
       result = @gateway.subscription.create(subscription_obj)
       if result.success?
         invoice.settle_invoice(result)
-        invoice.resource.update(subscription_id: result.subscription.id)
+        invoice.resource.update_attributes!(subscription_id: result.subscription.id)
       end
       result
     end

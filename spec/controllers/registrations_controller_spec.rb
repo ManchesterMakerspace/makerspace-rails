@@ -41,25 +41,6 @@ RSpec.describe RegistrationsController, type: :controller do
         }.to change(Member, :count).by(1)
       end
 
-      it "sends slack message on create" do
-        slack_message = {
-          channel: 'test_channel',
-          text: "foo",
-          as_user: false,
-          username: 'Management Bot',
-          icon_emoji: ':ghost:'
-        }
-        Slack::Web::Client.any_instance.stub(:chat_postMessage)
-        post :create, params: {member: valid_attributes}, format: :json
-        expect(assigns(:client)).to be_a(Slack::Web::Client)
-        # not asserting sending a message cuz that only happens on error
-      end
-
-      it "Adds user to gdrive" do
-        post :create, params: {member: valid_attributes}, format: :json
-        expect(assigns(:google)).to be_a(Google::Apis::DriveV3::DriveService)
-      end
-
       it "assigns a newly created member as @member" do
         post :create, params: {member: valid_attributes}, format: :json
         expect(assigns(:member)).to be_a(Member)
