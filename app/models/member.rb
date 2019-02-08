@@ -47,7 +47,7 @@ class Member
   before_save :update_braintree_customer_info
   after_initialize :verify_group_expiry
   after_update :update_card, :notify_renewal
-  after_create :send_slack_invite, :send_google_invite
+  after_create :send_slack_invite, :send_google_invite, :send_member_registered_email
 
   has_many :permissions, class_name: 'Permission', dependent: :destroy, :autosave => true
   has_many :rentals, class_name: 'Rental'
@@ -190,5 +190,9 @@ class Member
       final_msg = "#{self.fullname} updated. Expires #{time}"
     end
     send_slack_message(final_msg)
+  end
+
+  def send_member_registered_email
+    MemberMailer.member_registered(self).deliver_now
   end
 end

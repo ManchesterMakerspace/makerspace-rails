@@ -3,6 +3,8 @@ Rails.application.routes.draw do
   root to: "application#application"
   post '/ipnlistener', to: 'paypal#notify'
 
+  get '/send_registration/:email', to: 'registrations#new'
+
   scope :api, defaults: { format: :json } do
     devise_for :members, skip: [:registrations]
     devise_scope :member do

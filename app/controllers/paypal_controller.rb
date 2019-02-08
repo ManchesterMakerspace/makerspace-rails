@@ -8,7 +8,7 @@ class PaypalController < ApplicationController
       if PaypalService.ipn_valid?(request.raw_post)
           save_and_notify
       else
-        @notifier.ping("Invalid IPN received: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
+        @messages.push("Invalid IPN received: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
       end
     else #dev & test
       save_and_notify
@@ -51,10 +51,10 @@ class PaypalController < ApplicationController
     @messages = [];
 
     if @payment.member
-        completed_message = "Payment Completed: $#{@payment.amount} for #{@payment.product} from  #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email} - Member found: #{@payment.member.fullname}. <https://makerspace-interface.herokuapp.com/#/memberships/renew/#{@payment.member.id}|Renew Member>"
+        completed_message = "Payment Completed: $#{@payment.amount} for #{@payment.product} from  #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email} - Member found: #{@payment.member.fullname}. <#{request.base_url}/members/#{@payment.member.id}|Renew Member>"
         failed_message = "Error completing payment: $#{@payment.amount} for #{@payment.product} from from  #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email} - Member found: #{@payment.member.fullname}"
     else
-        completed_message = "Payment Completed: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}. No member found. <https://makerspace-interface.herokuapp.com/#/memberships/invite/#{@payment.payer_email}|Send registration email to #{@payment.payer_email}>"
+        completed_message = "Payment Completed: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}. No member found. <#{request.base_url}/send_registration/#{@payment.payer_email}|Send registration email to #{@payment.payer_email}>"
         failed_message = "Error completing payment: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}. No member found. <mailto:#{@payment.payer_email}|Contact #{@payment.payer_email}>"
     end
 
