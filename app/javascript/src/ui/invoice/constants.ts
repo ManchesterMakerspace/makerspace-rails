@@ -51,6 +51,11 @@ export const fields = {
     label: "Invoice Type",
     name: `${formPrefix}-type`,
   },
+  rental: {
+    label: "Rental",
+    name: `${formPrefix}-rental`,
+    placeholder: "Select a rental"
+  },
   // term: {
   //   label: "Renewal Length",
   //   name: `${formPrefix}-term`,

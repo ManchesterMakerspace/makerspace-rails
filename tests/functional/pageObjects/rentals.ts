@@ -1,10 +1,34 @@
 import { TablePageObject } from "./table";
 import { Routing } from "app/constants";
+import { Rental } from "app/entities/rental";
+import { MemberDetails } from "app/entities/member";
+import { timeToDate } from "ui/utils/timeToDate";
 import utils from "./common";
 
 const tableId = "rentals-table";
+const rentalsListFields = ["number", "description", "member", "expiration", "status"];
+
 class RentalsPageObject extends TablePageObject {
   public listUrl = Routing.Rentals
+
+  public fieldEvaluator = (member?: Partial<MemberDetails>) => (rental: Partial<Rental>) => (fieldContent: { field: string, text: string }) => {
+    const { field, text } = fieldContent;
+    if (field === "expiration") {
+      expect(text).toEqual(timeToDate(rental.expiration));
+    } else if (field === "status") {
+      expect(
+        ["Active", "Expired"].some((status => new RegExp(status, 'i').test(text)))
+      ).toBeTruthy();
+    } else if (field === "member") {
+      if (member) {
+        expect(text).toEqual(`${member.firstname} ${member.lastname}`);
+      } else {
+        expect(text).toBeTruthy();
+      }
+    } else {
+      expect(text.includes(rental[field])).toBeTruthy();
+    }
+  }
 
   public actionButtons = {
     create: "#rentals-list-create",
@@ -39,7 +63,6 @@ class RentalsPageObject extends TablePageObject {
     loading: `${this.deleteRentalModalId}-loading`,
   }
 
-  public rentalsListFields = ["number", "description", "member", "expiration", "status"];
   public rentalsList = {
     createButton: "#rentals-list-create",
     editButton: "#rentals-list-edit",
@@ -48,4 +71,4 @@ class RentalsPageObject extends TablePageObject {
   }
 }
 
-export default new RentalsPageObject(tableId);
+export default new RentalsPageObject(tableId, rentalsListFields);

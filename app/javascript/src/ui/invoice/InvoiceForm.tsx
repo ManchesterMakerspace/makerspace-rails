@@ -7,6 +7,7 @@ import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormLabel from "@material-ui/core/FormLabel";
 import RadioGroup from "@material-ui/core/RadioGroup";
+import Select from "@material-ui/core/Select";
 import Radio from "@material-ui/core/Radio";
 import Grid from "@material-ui/core/Grid";
 
@@ -17,6 +18,8 @@ import { fields } from "ui/invoice/constants";
 import { toDatePicker } from "ui/utils/timeToDate";
 import { getMembers, getMember } from "api/members/transactions";
 import { MemberDetails } from "app/entities/member";
+import { Rental } from "app/entities/rental";
+import { getRentals } from "api/rentals/transactions";
 
 interface OwnProps {
   invoice?: Partial<Invoice>;
@@ -30,6 +33,9 @@ interface OwnProps {
 interface State {
   invoiceType: InvoiceableResource;
   member: SelectOption;
+  rentals: Rental[];
+  rentalsLoading: boolean;
+  rentalsError: string;
 }
 
 type SelectOption = { label: string, value: string, id?: string };
@@ -41,8 +47,11 @@ class InvoiceForm extends React.Component<OwnProps, State> {
   public constructor(props: OwnProps) {
     super(props);
     this.state = {
-      invoiceType: undefined,
+      invoiceType: InvoiceableResource.Membership,
       member: undefined,
+      rentals: [],
+      rentalsLoading: false,
+      rentalsError: "",
     }
   }
 
@@ -53,12 +62,29 @@ class InvoiceForm extends React.Component<OwnProps, State> {
     if (isOpen === !wasOpen) {
       this.resetInvoiceType();
       this.initInvoiceMember();
+      this.getRentals();
+    }
+  }
+
+  private getRentals = async () => {
+    this.setState({ rentalsLoading: true });
+    try {
+      const response = await getRentals(true);
+      this.setState({ rentalsLoading: false, rentals: response.data.rentals });
+    } catch (e) {
+      const { errorMessage } = e;
+      this.setState({ rentalsLoading: false, rentalsError: errorMessage });
     }
   }
 
   public validate = async (form: Form): Promise<Invoice> => {
     const updatedInvoice = await form.simpleValidate<Invoice>(fields);
     const { member } = this.state;
+
+    if (updatedInvoice && updatedInvoice.resourceClass === InvoiceableResource.Membership) {
+      updatedInvoice.resourceId = member.id;
+    }
+
     return {
       ...updatedInvoice,
       memberId: member.id || null,
@@ -106,6 +132,14 @@ class InvoiceForm extends React.Component<OwnProps, State> {
 
   public render(): JSX.Element {
     const { isOpen, onClose, isRequesting, error, onSubmit, invoice } = this.props;
+    const { rentals } = this.state;
+
+    const rental = invoice && invoice.resourceId && invoice.resourceClass === InvoiceableResource.Rental &&
+      (rentals || []).find(r => r.id === invoice.resourceId);
+
+    if (!invoice) {
+      return null;
+    }
 
     return (
       <FormModal
@@ -146,6 +180,23 @@ class InvoiceForm extends React.Component<OwnProps, State> {
               loadOptions={this.memberOptions}
             />
           </Grid>
+          {this.state.invoiceType === InvoiceableResource.Rental && <Grid item xs={12}>
+            <FormLabel component="legend">{fields.rental.label}</FormLabel>
+            <Select
+              name={fields.rental.name}
+              value={rental && rental.id || invoice.resourceId}
+              fullWidth
+              native
+              required
+              placeholder={fields.rental.placeholder}
+            >
+              {rentals.length ?
+                rentals.map(
+                  (rental) => <option id={`${fields.rental.name}-option-${rental.id}`} key={rental.id} value={rental.id}>{rental.number}</option>)
+                : invoice && <option id={`${fields.rental.name}-option-${invoice.resourceId}`} value={invoice.resourceClass}>{invoice.resourceId}</option>
+              }
+            </Select>
+          </Grid>}
         {/* Who's it form - Member search */}
         {/* If can find resource, ask how long to renew for
         Else, display sub form to create the resource */}

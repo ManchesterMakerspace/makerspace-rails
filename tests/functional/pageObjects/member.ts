@@ -1,11 +1,28 @@
 import { Routing } from "app/constants";
 import utils from "./common";
 import { TablePageObject } from "./table";
+import { timeToDate } from "ui/utils/timeToDate"
+import { MemberDetails } from "app/entities/member";
 
+const membersListTableId = "members-table";
+const membersListFields = ["lastname", "expirationTime", "status"];
 export class MemberPageObject extends TablePageObject {
   public welcomeModal = {
     id: "#welcome-modal",
   };
+
+  public fieldEvaluator = (member: Partial<MemberDetails>) => (fieldContent: { field: string, text: string }) => {
+    const { field, text } = fieldContent;
+    if (field === "expirationTime") {
+      expect(text).toEqual(timeToDate(member.expirationTime));
+    } else if (field === "status") {
+      expect(
+        ["Active", "Expired", "Non-Member", "Revoked", "Inactive"].some((status => new RegExp(status, 'i').test(text)))
+      ).toBeTruthy();
+    } else {
+      expect(text.includes(member[field])).toBeTruthy();
+    }
+  }
 
   private memberFormId = "#member-form";
   public memberForm = {
@@ -58,7 +75,6 @@ export class MemberPageObject extends TablePageObject {
 
   public membersListUrl = Routing.Members;
   private membersListTableId = "#members-table";
-  public membersListFields = ["lastname", "expirationTime", "status"];
   public membersList = {
     id: this.membersListTableId,
     createMemberButton: "#members-list-create",
@@ -85,4 +101,4 @@ export class MemberPageObject extends TablePageObject {
   public getProfilePath = (memberId: string) => Routing.Profile.replace(Routing.PathPlaceholder.MemberId, memberId);
 }
 
-export default new MemberPageObject("members-table");
+export default new MemberPageObject(membersListTableId, membersListFields);

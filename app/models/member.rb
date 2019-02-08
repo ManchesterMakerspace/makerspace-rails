@@ -51,6 +51,7 @@ class Member
 
   has_many :permissions, class_name: 'Permission', dependent: :destroy, :autosave => true
   has_many :rentals, class_name: 'Rental'
+  has_many :invoices, class_name: "Invoice"
   has_many :access_cards, class_name: "Card", inverse_of: :member
   belongs_to :group, class_name: "Group", inverse_of: :active_members, optional: true, primary_key: 'groupName', foreign_key: "groupName"
 

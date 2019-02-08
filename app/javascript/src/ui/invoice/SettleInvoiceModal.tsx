@@ -1,7 +1,7 @@
 import * as React from "react";
 import Typography from "@material-ui/core/Typography";
 
-import { Invoice } from "app/entities/invoice";
+import { Invoice, InvoiceableResourceDisplay } from "app/entities/invoice";
 import FormModal from "ui/common/FormModal";
 import KeyValueItem from "ui/common/KeyValueItem";
 import Form from "ui/common/Form";
@@ -37,10 +37,13 @@ class SettleInvoiceModal extends React.Component<OwnProps, {}> {
         error={error}
       >
         <Typography gutterBottom>
-          Are you sure you want to manually settle this invoice?  This action cannot be reversed.
+          Are you sure you want to manually mark this invoice as paid? This may trigger automatic renewals based on the invoice. This action cannot be reversed.
         </Typography>
-        <KeyValueItem label="Member">
+        <KeyValueItem label="Responsible Party">
           <span id="settle-invoice-member">{invoice.memberName}</span>
+        </KeyValueItem>
+        <KeyValueItem label="Type">
+          <span id="settle-invoice-amount">{InvoiceableResourceDisplay[invoice.resourceClass]}</span>
         </KeyValueItem>
         <KeyValueItem label="Amount">
           <span id="settle-invoice-amount">{`$${invoice.amount}`}</span>

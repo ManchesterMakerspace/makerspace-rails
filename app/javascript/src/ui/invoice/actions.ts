@@ -34,14 +34,14 @@ export const updateInvoiceAction = (
 
   try {
     const response = await putInvoice(invoiceId, updateDetails);
-    const { data } = response;
+    const { invoice } = response.data;
     dispatch({
       type: InvoiceAction.UpdateInvoiceSuccess,
-      data: data.invoice
+      data: invoice
     });
     dispatch({
       type: InvoicesAction.UpdateInvoiceSuccess,
-      data
+      data: invoice
     });
   } catch (e) {
     const { errorMessage } = e;

@@ -84,10 +84,7 @@ export const submitSignUpAction = (
     dispatch({
       type: AuthAction.AuthUserSuccess,
       data: {
-        member: {
-          ...member,
-          isNewMember: true,
-        },
+        member: member,
         permissions,
       }
     });
@@ -108,7 +105,6 @@ const defaultState: AuthState = {
     email: undefined,
     expirationTime: undefined,
     isAdmin: false,
-    isNewMember: undefined,
   },
   permissions: {},
   isRequesting: false,

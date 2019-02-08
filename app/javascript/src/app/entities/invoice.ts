@@ -52,6 +52,11 @@ export enum InvoiceableResource {
   Rental = "rental",
 }
 
+export const InvoiceableResourceDisplay = {
+  [InvoiceableResource.Membership]: "Membership",
+  [InvoiceableResource.Rental]: "Rental",
+}
+
 export enum Properties {
   Id = "id",
   Name = "name",

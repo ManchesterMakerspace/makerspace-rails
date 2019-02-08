@@ -8,6 +8,9 @@ import memberPO from "../pageObjects/member";
 import invoicePo from "../pageObjects/invoice";
 import { pastDueInvoice, settledInvoice, defaultInvoice } from "../constants/invoice";
 import { SortDirection } from "ui/common/table/constants";
+import { checkout } from "../pageObjects/checkout";
+import { paymentMethods, creditCard } from "../pageObjects/paymentMethods";
+import { creditCard as defaultCreditCard, creditCardForm } from "../constants/paymentMethod";
 
 const initInvoices = [defaultInvoice, pastDueInvoice, settledInvoice];
 
@@ -39,7 +42,43 @@ describe("Invoicing and Dues", () => {
         11. Click 'Return to Profile'
         12. Assert invoices displayed in table
       */
-      await loadInvoices([defaultInvoice, pastDueInvoice, settledInvoice], true);
+      const newCard = {
+        ...defaultCreditCard,
+        nonce: "foobar"
+      }
+      await loadInvoices(initInvoices, true);
+      expect((await invoicePo.getAllRows()).length).toEqual(1);
+      expect(await invoicePo.getColumnText("name", defaultInvoice.id)).toEqual(defaultInvoice.name);
+
+      // Get payment methods (none array)
+      // Checkout
+      await mock(mockRequests.paymentMethods.get.ok([newCard]));
+      await utils.clickElement(invoicePo.actionButtons.payNow);
+      await utils.waitForPageLoad(checkout.checkoutUrl);
+
+      // TODO Find a way to mock creating a payment method
+      // await mock(mockRequests.checkout.new.ok("foo"));
+      // await utils.clickElement(paymentMethods.addPaymentButton);
+      // await utils.waitForVisisble(paymentMethods.paymentMethodFormSelect.creditCard);
+      // await utils.clickElement(paymentMethods.paymentMethodFormSelect.creditCard);
+      // await utils.waitForVisisble(creditCard.creditCardForm.submit);
+      // await utils.fillInput(creditCard.creditCardForm.cardNumber, creditCardForm.cardNumber);
+      // await utils.fillInput(creditCard.creditCardForm.expirationDate, creditCardForm.expiration);
+      // await utils.fillInput(creditCard.creditCardForm.postalCode, creditCardForm.postalCode);
+      // await utils.fillInput(creditCard.creditCardForm.csv, creditCardForm.csv);
+      // await mock(mockRequests.paymentMethods.post.ok(newCard.nonce, newCard.id));
+      // await utils.clickElement(creditCard.creditCardForm.submit);
+
+      // Submit payment
+      await mock(mockRequests.checkout.post.ok([defaultInvoice.id], newCard.id));
+      await mock(mockRequests.member.get.ok(basicUser.id, basicUser));
+      await utils.clickElement(paymentMethods.getPaymentMethodSelectId(newCard.id));
+      expect(await utils.getElementText(checkout.total)).toEqual(`Total $${defaultInvoice.amount}.00`);
+      await utils.clickElement(checkout.submit);
+      await utils.assertNoInputError(checkout.checkoutError, true);
+      // Wait for profile redirect
+      // TODO: Verify receipt
+      await utils.waitForPageLoad(memberPO.getProfilePath(basicUser.id));
     });
     it("Members can review their payment history", () => {
       /* 1. Login as basic user

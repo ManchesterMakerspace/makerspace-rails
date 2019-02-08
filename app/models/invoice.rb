@@ -44,10 +44,11 @@ class Invoice
   validates :operation, inclusion: { in: OPERATION_FUNCTIONS }, allow_nil: false
   validates_numericality_of :amount, greater_than: 0
   validates_numericality_of :quantity, greater_than: 0
-  validates_presence_of :resource_id
-  validates_presence_of :due_date
+  validates :resource_id, presence: true
+  validates :due_date, presence: true
   validate :one_active_invoice_per_resource, on: :create
   validate :one_active_membership_invoice_per_member, on: :create
+  validate :resource_exists, on: :save
 
   belongs_to :member
 
@@ -114,13 +115,17 @@ class Invoice
 
   def one_active_invoice_per_resource
     active = self.class.where(resource_id: resource_id, settled_at: nil)
-    errors.add "Active invoices already exist for this invoice" if active.size > 0
+    errors.add(:base, "Active invoices already exist for this resource") if active.size > 0
   end
 
   def one_active_membership_invoice_per_member
     if resource_class == OPERATION_RESOURCES[:member]
       active = self.class.where(resource_class: resource_class, settled_at: nil)
-      errors.add "Active invoices already exist for this membership" if active.size > 0
+      errors.add(:base, "Active invoices already exist for this membership") if active.size > 0
     end
+  end
+
+  def resource_exists
+    !!resource
   end
 end

@@ -29,7 +29,6 @@ export type AuthMember = Pick<MemberDetails,
                         MemberProperties.Expiration
                       > & Partial<MemberDetails> & {
   isAdmin: boolean;
-  isNewMember: boolean;
 };
 
 type NewUserSignUp = Pick<MemberDetails,

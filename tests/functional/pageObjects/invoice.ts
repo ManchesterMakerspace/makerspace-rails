@@ -1,10 +1,25 @@
 import { TablePageObject } from "./table";
+import { timeToDate } from "ui/utils/timeToDate";
+import { MemberDetails } from "app/entities/member";
+import { Invoice } from "app/entities/invoice";
 
-export const invoicesTableId = "invoices-table";
+const invoicesTableId = "invoices-table";
+const fields = [
+  "contact", "dueDate", "amount", "settled", "status"
+];
 export class InvoicePageObject extends TablePageObject {
-  public fields = [
-    "contact", "dueDate", "amount", "settled", "status"
-  ];
+  public fieldEvaluator = (member?: Partial<MemberDetails>) => (invoice: Partial<Invoice>) => (fieldContent: { field: string, text: string }) => {
+    const { field, text } = fieldContent;
+     if (field === "member") {
+      if (member) {
+        expect(text).toEqual(`${member.firstname} ${member.lastname}`);
+      } else {
+        expect(text).toBeTruthy();
+      }
+    } else {
+      expect(text.includes(invoice[field])).toBeTruthy();
+    }
+  }
 
   public actionButtons = {
     create: "#invoices-list-create",
@@ -53,31 +68,5 @@ export class InvoicePageObject extends TablePageObject {
     error: `${this.deleteInvoiceModalId}-error`,
     loading: `${this.deleteInvoiceModalId}-loading`,
   }
-
-  private paymentRequiredTableId = "#payment-invoices-table";
-  private paymentRequiredModalId = "#payment-invoices-modal";
-  public paymentRequiredForm = {
-    id: `${this.paymentRequiredModalId}`,
-    invoiceList: {
-      id: `${this.paymentRequiredTableId}`,
-      headers: {
-        description: `${this.paymentRequiredTableId}-description-header`,
-        dueDate: `${this.paymentRequiredTableId}-dueDate-header`,
-        amount: `${this.paymentRequiredTableId}-amount-header`,
-      },
-      row: {
-        id: `${this.paymentRequiredTableId}-{ID}`,
-        select: `${this.paymentRequiredTableId}-{ID}-select`,
-        description: `${this.paymentRequiredTableId}-{ID}-description`,
-        dueDate: `${this.paymentRequiredTableId}-{ID}-dueDate`,
-        amount: `${this.paymentRequiredTableId}-{ID}-amount`,
-      },
-      error: `${this.paymentRequiredTableId}-error-row`,
-      noData: `${this.paymentRequiredTableId}-no-data-row`,
-      loading: `${this.paymentRequiredTableId}-loading`,
-    },
-    submit: `${this.paymentRequiredModalId}-submit`,
-    cancel: `${this.paymentRequiredModalId}-cancel`,
-  }
 }
-export default new InvoicePageObject(invoicesTableId);
+export default new InvoicePageObject(invoicesTableId, fields);

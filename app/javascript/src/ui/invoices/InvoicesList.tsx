@@ -4,7 +4,7 @@ import { push } from "connected-react-router";
 import Button from "@material-ui/core/Button";
 import pick from "lodash-es/pick";
 
-import { Invoice, Properties } from "app/entities/invoice";
+import { Invoice, Properties, InvoiceableResourceDisplay } from "app/entities/invoice";
 import { QueryParams, CollectionOf } from "app/interfaces";
 import { MemberDetails } from "app/entities/member";
 import { CrudOperation, Routing } from "app/constants";
@@ -50,7 +50,6 @@ interface StateProps {
 }
 interface Props extends OwnProps, DispatchProps, StateProps { }
 interface State {
-  ownAllInvoices: boolean;
   selectedIds: string[];
   pageNum: number;
   orderBy: string;
@@ -68,9 +67,9 @@ class InvoicesListComponent extends React.Component<Props, State> {
     super(props);
     const { invoices, member, currentUserId } = props;
     // Select all invoices if viewing your own invoices page for quick checkout
-    const ownAllInvoices = Object.values(invoices).every(invoice => invoice.memberId === currentUserId);
+    const invoicesList = Object.values(invoices);
+    const ownAllInvoices = invoicesList.length && invoicesList.every(invoice => invoice.memberId === currentUserId);
     this.state = {
-      ownAllInvoices,
       selectedIds: ownAllInvoices ? Object.keys(invoices) : [],
       pageNum: 0,
       orderBy: "",
@@ -84,17 +83,16 @@ class InvoicesListComponent extends React.Component<Props, State> {
   }
 
   private getFields = (): Column<Invoice>[] => [
-    ...this.state.ownAllInvoices ? [] : [{
+    ...this.props.member ? [] : [{
       id: "member",
       label: "Member",
       cell: (row: Invoice) => row.memberName,
       defaultSortDirection: SortDirection.Desc,
     }],
     {
-      id: "name",
-      label: "Name",
-      cell: (row: Invoice) => row.name,
-      defaultSortDirection: SortDirection.Desc,
+      id: "resourceClass",
+      label: "Type",
+      cell: (row: Invoice) => InvoiceableResourceDisplay[row.resourceClass]
     },
     {
       id: "description",
@@ -106,13 +104,12 @@ class InvoicesListComponent extends React.Component<Props, State> {
       id: "dueDate",
       label: "Due Date",
       cell: (row: Invoice) => {
-        const { ownAllInvoices } = this.state;
         const dueDate = timeToDate(row.dueDate);
         if (row.subscriptionId) {
           return `Automatic Payment on ${dueDate}`
         } else {
-          if (row.settled && ownAllInvoices) {
-            return "N/A"
+          if (row.settled) {
+            return "Paid"
           } else {
             return dueDate;
           }
@@ -141,7 +138,7 @@ class InvoicesListComponent extends React.Component<Props, State> {
             disabled={this.props.isUpdating}
             onClick={settleInvoice}
           >
-            Settle Invoice
+            Mark as Paid
           </Button>
         )
       },
@@ -277,11 +274,14 @@ class InvoicesListComponent extends React.Component<Props, State> {
   }
 
   // Only select one at a time
-  private onSelect = (id: string, _selected: boolean) => {
+  private onSelect = (id: string, selected: boolean) => {
     this.setState(currentState => {
       const updatedIds = currentState.selectedIds.slice();
       const existingIndex = currentState.selectedIds.indexOf(id);
-      if (existingIndex > -1) {
+      const alreadySelected = existingIndex > -1;
+      if (selected && alreadySelected) {
+        return;
+      } else if (alreadySelected) {
         updatedIds.splice(existingIndex, 1)
       } else {
         updatedIds.push(id)
@@ -463,8 +463,11 @@ const mapStateToProps = (
     }
   } = state.invoice;
   const { currentUser: { isAdmin: admin, id: currentUserId } } = state.auth;
+  const invoiceList = Object.values(invoices);
+  const allOwn = invoiceList.length && invoiceList.every(i => i.memberId === currentUserId);
+
   return {
-    admin,
+    admin: admin && !allOwn,
     invoices,
     totalItems,
     loading,

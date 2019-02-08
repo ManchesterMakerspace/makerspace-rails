@@ -9,49 +9,7 @@ import memberPO from "../pageObjects/member";
 import rentalsPO from "../pageObjects/rentals";
 import renewPO from "../pageObjects/renewalForm";
 import { Rental } from "app/entities/rental";
-import { MemberDetails } from "app/entities/member";
 import { defaultRental, defaultRentals } from "../constants/rental";
-import { timeToDate } from "ui/utils/timeToDate";
-
-const verifyFieldsForRental = async (rental: Partial<Rental>, member?: Partial<MemberDetails>) => {
-  const fields: { field: string, text: string }[] = await Promise.all(rentalsPO.rentalsListFields.map((field: string) => {
-    return new Promise(async (resolve) => {
-      const text = await rentalsPO.getColumnText(field, rental.id);
-      resolve({
-        field,
-        text
-      });
-    }) as Promise<{ field: string, text: string }>;
-  }));
-
-  fields.forEach(fieldObj => {
-    const { field, text } = fieldObj;
-    if (field === "expiration") {
-      expect(text).toEqual(timeToDate(rental.expiration));
-    } else if (field === "status") {
-      expect(
-        ["Active", "Expired"].some((status => new RegExp(status, 'i').test(text)))
-      ).toBeTruthy();
-    } else if (field === "member") {
-      if (member) {
-        expect(text).toEqual(`${member.firstname} ${member.lastname}`);
-      } else {
-        expect(text).toBeTruthy();
-      }
-    } else {
-      expect(text.includes(rental[field])).toBeTruthy();
-    }
-  });
-}
-
-const verifyListView = async (rentalsList: Rental[]) => {
-  expect((await rentalsPO.getAllRows()).length).toEqual(rentalsList.length);
-
-  await Promise.all(rentalsList.slice(0, 5).map(async (rental) => {
-    await verifyFieldsForRental(rental);
-  }));
-}
-
 
 describe("Rentals", () => {
   xdescribe("Basic user", () => {
@@ -85,7 +43,7 @@ describe("Rentals", () => {
         });
       });
       it("Loads a list of rentals", async () => {
-        await verifyListView(defaultRentals);
+        await rentalsPO.verifyListView(defaultRentals, rentalsPO.fieldEvaluator());
       });
       it("Can create new rentals for members", async () => {
         await utils.clickElement(rentalsPO.rentalsList.createButton);
@@ -99,7 +57,7 @@ describe("Rentals", () => {
         await utils.clickElement(rentalsPO.rentalForm.submit);
         await utils.waitForNotVisible(rentalsPO.rentalForm.submit);
         expect((await rentalsPO.getAllRows()).length).toEqual(1);
-        await verifyFieldsForRental(initRental, basicUser);
+        await rentalsPO.verifyFields(initRental, rentalsPO.fieldEvaluator(basicUser));
       });
 
       it("Can edit rentals for members", async () => {
@@ -121,7 +79,7 @@ describe("Rentals", () => {
         await utils.clickElement(rentalsPO.rentalForm.submit);
         await utils.waitForNotVisible(rentalsPO.rentalForm.submit);
         expect((await rentalsPO.getAllRows()).length).toEqual(1);
-        await verifyFieldsForRental(updatedRental);
+        await rentalsPO.verifyFields(updatedRental, rentalsPO.fieldEvaluator());
       });
 
       it("Can delete rentals for members", async () => {
@@ -156,7 +114,7 @@ describe("Rentals", () => {
         await utils.clickElement(renewPO.renewalForm.submit);
         await utils.waitForNotVisible(renewPO.renewalForm.submit);
         expect((await rentalsPO.getAllRows()).length).toEqual(1);
-        await verifyFieldsForRental(updatedRental);
+        await rentalsPO.verifyFields(updatedRental, rentalsPO.fieldEvaluator());
       });
 
       it("Rental Form Validation", async () => {
@@ -203,7 +161,7 @@ describe("Rentals", () => {
         await utils.clickElement(rentalsPO.rentalForm.submit);
         await utils.waitForNotVisible(rentalsPO.rentalForm.submit);
         expect((await rentalsPO.getAllRows()).length).toEqual(1);
-        await verifyFieldsForRental(initRental, basicUser);
+        await rentalsPO.verifyFields(initRental, rentalsPO.fieldEvaluator(basicUser));
       });
 
       it("Can edit rentals for members", async () => {
@@ -236,7 +194,7 @@ describe("Rentals", () => {
         await utils.clickElement(rentalsPO.rentalForm.submit);
         await utils.waitForNotVisible(rentalsPO.rentalForm.submit);
         expect((await rentalsPO.getAllRows()).length).toEqual(1);
-        await verifyFieldsForRental(updatedRental, basicUser);
+        await rentalsPO.verifyFields(updatedRental, rentalsPO.fieldEvaluator(basicUser));
       });
 
       it("Can delete rentals for members", async () => {
@@ -284,7 +242,7 @@ describe("Rentals", () => {
         await utils.clickElement(renewPO.renewalForm.submit);
         await utils.waitForNotVisible(renewPO.renewalForm.submit);
         expect((await rentalsPO.getAllRows()).length).toEqual(1);
-        await verifyFieldsForRental(updatedRental, basicUser);
+        await rentalsPO.verifyFields(updatedRental, rentalsPO.fieldEvaluator(basicUser));
       });
     });
   });

@@ -33,7 +33,6 @@ interface DispatchProps {
 }
 interface StateProps {
   admin: boolean;
-  isNewMember: boolean;
   requestingError: string;
   isRequestingMember: boolean;
   isUpdatingMember: boolean;
@@ -67,11 +66,12 @@ class MemberDetail extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    const { isNewMember, member } = this.props;
+    const { member, currentUserId } = this.props;
+    const ownProfile = member && currentUserId === member.id;
 
     this.state = {
       ...defaultState,
-      displayNotification: isNewMember || (member && !member.memberContractOnFile) ? Notification.Welcome : undefined,
+      displayNotification: ownProfile && !member.memberContractOnFile ? Notification.Welcome : undefined,
     };
   }
 
@@ -87,12 +87,13 @@ class MemberDetail extends React.Component<Props, State> {
     if (oldMemberId !== memberId && !isRequestingMember) {
       getMember();
     }
+    const ownProfile = member && currentUserId === memberId;
     if (wasRequesting && !isRequestingMember) {
       if (member) {
         if (resource) {
           !allowedResources.has(resource) && history.push(Routing.Profile.replace(Routing.PathPlaceholder.MemberId, currentUserId))
         }
-        if (!member.memberContractOnFile) {
+        if (ownProfile && !member.memberContractOnFile) {
           this.setState({ displayNotification: Notification.Welcome  });
         }
       } else {
@@ -314,16 +315,15 @@ const mapStateToProps = (
   const { isRequesting, error: requestingError } = state.member.read;
   const { isRequesting: isUpdating } = state.member.update
   const { entity: member } = state.member;
-  const { permissions, currentUser: { isAdmin: admin, id: currentUserId, isNewMember, subscriptionId } } = state.auth;
+  const { permissions, currentUser: { isAdmin: admin, id: currentUserId, subscriptionId } } = state.auth;
 
   return {
-    admin,
+    admin: admin,
     member,
     requestingError,
     currentUserId,
     isRequestingMember: isRequesting,
     isUpdatingMember: isUpdating,
-    isNewMember,
     subscriptionId,
     billingEnabled: !!permissions[Whitelists.billing] || false,
   }

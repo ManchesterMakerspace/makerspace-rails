@@ -37,7 +37,7 @@ const reviewSubResource = async (member: LoginMember, rentals: Rental[], invoice
   // Invoices displayed
   await mock(mockRequests.invoices.get.ok(invoices, { resourceId: member.id }, admin));
   await memberPO.gotToMemberDues();
-  expect(await invoicePo.getColumnText("name", invoices[0].id)).toEqual(invoices[0].name);
+  expect(await invoicePo.getColumnText("resourceClass", invoices[0].id)).toMatch(new RegExp(invoices[0].resourceClass, 'i'));
 }
 
 describe("Member Profiles", () => {

@@ -2,48 +2,13 @@ import * as moment from "moment";
 import auth, { LoginMember } from "../pageObjects/auth";
 import utils from "../pageObjects/common";
 import header from "../pageObjects/header";
-import { MemberDetails } from "app/entities/member";
 import { basicUser, adminUser, defaultMembers } from "../constants/member";
 import { mockRequests, mock } from "../mockserver-client-helpers";
-import { timeToDate } from "ui/utils/timeToDate"
 import memberPo from "../pageObjects/member";
 import renewalPO from "../pageObjects/renewalForm";
 
-
-const verifyFieldsForMember = async (member: Partial<MemberDetails>) => {
-  const fields: { field: string, text: string }[] = await Promise.all(memberPo.membersListFields.map((field: string) => {
-    return new Promise(async (resolve) => {
-      const text = await memberPo.getColumnText(field, member.id);
-      resolve({
-        field,
-        text
-      });
-    }) as Promise<{ field: string, text: string }>;
-  }));
-
-  fields.forEach(fieldObj => {
-    const { field, text } = fieldObj;
-    if (field === "expirationTime") {
-      expect(text).toEqual(timeToDate(member.expirationTime));
-    } else if (field === "status") {
-      expect(
-        ["Active", "Expired", "Non-Member", "Revoked", "Inactive"].some((status => new RegExp(status, 'i').test(text)))
-      ).toBeTruthy();
-    } else {
-      expect(text.includes(member[field])).toBeTruthy();
-    }
-  });
-}
-const verifyListView = async (membersList: LoginMember[]) => {
-  expect(await utils.isElementDisplayed(memberPo.getErrorRowId())).toBeFalsy();
-  expect(await utils.isElementDisplayed(memberPo.getNoDataRowId())).toBeFalsy();
-  expect((await memberPo.getAllRows()).length).toEqual(membersList.length);
-
-  await Promise.all(membersList.slice(0, 5).map(async (member) => {
-    await verifyFieldsForMember(member);
-  }));
-
-  const id = membersList[0].id;
+const verifyRouting = async (member: LoginMember) => {
+  const id = member.id;
   const columns = memberPo.getColumnIds(["lastname"], id);
 
   await utils.clickElement(`${columns["lastname"]} a`);
@@ -59,7 +24,8 @@ describe("Members page", () => {
       });
     });
     it("Loads a list of members", async () => {
-      await verifyListView(defaultMembers);
+      await memberPo.verifyListView(defaultMembers, memberPo.fieldEvaluator);
+      await verifyRouting(defaultMembers[0]);
     });
     it("Does not have an option to create or renew a new member", async () => {
       expect(await utils.isElementDisplayed(memberPo.membersList.createMemberButton)).toBeFalsy();
@@ -75,9 +41,11 @@ describe("Members page", () => {
       });
     });
     it("Loads a list of members", async () => {
-      await verifyListView(defaultMembers);
+      await memberPo.verifyListView(defaultMembers, memberPo.fieldEvaluator);
+      await verifyRouting(defaultMembers[0]);
     });
     it("Creating a new member", async () => {
+      const newMemberId = "new_new";
       const newMember = {
         firstname: "New",
         lastname: "Member",
@@ -86,8 +54,8 @@ describe("Members page", () => {
         groupName: "",
         expirationTime: (basicUser.expirationTime),
         role: basicUser.role,
+        id: newMemberId,
       }
-      const newMemberId = "new_new";
 
       const updatedMembersList = [
         ...defaultMembers.slice(1, defaultMembers.length),
@@ -121,10 +89,11 @@ describe("Members page", () => {
 
       await utils.clickElement(memberPo.memberForm.submit);
       await utils.waitForNotVisible(memberPo.memberForm.submit);
-      await verifyFieldsForMember(newMember);
+      await memberPo.verifyFields(newMember, memberPo.fieldEvaluator);
     });
     it("Renewing a member", async () => {
       const updatedMember: LoginMember = {
+        id: "updated_updated",
         ...defaultMembers[0],
         expirationTime: moment(defaultMembers[0].expirationTime).add(1, 'M').valueOf()
       };
@@ -147,7 +116,7 @@ describe("Members page", () => {
       await mock(mockRequests.members.get.ok(updatedMembersList));
       await utils.clickElement(renewalPO.renewalForm.submit);
       await utils.waitForNotVisible(renewalPO.renewalForm.submit);
-      await verifyFieldsForMember(updatedMember);
+      await memberPo.verifyFields((updatedMember as any), memberPo.fieldEvaluator);
     })
   });
 });
