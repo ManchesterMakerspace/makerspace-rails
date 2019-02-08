@@ -24,6 +24,9 @@ export namespace Url {
   export const Invoices = `${baseApiPath}/invoices`;
   export const InvoiceOptions = `${baseApiPath}/invoice_options`;
 
+  export const Permissions = `${baseApiPath}/permissions`;
+  export const Permission = `${Permissions}/${PathPlaceholder.MemberId}`;
+
   export const Auth = {
     SignIn: `${Members}/sign_in`,
     SignOut: `${Members}/sign_out`,
@@ -45,7 +48,9 @@ export namespace Url {
     Billing: {
       Subscriptions: `${baseAdminPath}/billing/subscriptions`,
       Subscription: `${baseAdminPath}/billing/subscriptions/${PathPlaceholder.SubscriptionId}`,
-    }
+    },
+    Permissions: `${baseAdminPath}/permissions`,
+    Permission: `${baseAdminPath}/permissions/${PathPlaceholder.MemberId}`,
   }
 
   export const Billing = {
@@ -103,6 +108,9 @@ export enum CrudOperation {
   Delete = "delete",
 }
 
-export namespace Whitelists {
-  export const billingEnabled = (process as any).env.BILLING_ENABLED || false;
+export enum Whitelists {
+  billing = "billing"
 }
+
+// TODO: I don't like this very much
+export const billingEnabled = (process as any).env.BILLING_ENABLED || false;

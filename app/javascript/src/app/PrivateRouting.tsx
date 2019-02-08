@@ -10,21 +10,26 @@ import CheckoutContainer from 'ui/checkout/CheckoutContainer';
 import BillingContainer from 'ui/billing/BillingContainer';
 import SettingsContainer from 'ui/member/Settings';
 import BillingContextContainer from 'ui/billing/BillingContextContainer';
-const { billingEnabled } = Whitelists;
+import { Permission } from 'app/entities/permission';
+import { CollectionOf } from 'app/interfaces';
 
-const PrivateRouting: React.SFC<{ auth: string }> = (props) => (
-  <BillingContextContainer>
-    <Switch>
-      <Route exact path={Routing.Members} component={MembersList} />
-      <Route exact path={`${Routing.Profile}/${Routing.PathPlaceholder.Resource}${Routing.PathPlaceholder.Optional}`} component={MemberDetail} />
-      <Route exact path={`${Routing.Billing}/${Routing.PathPlaceholder.Resource}${Routing.PathPlaceholder.Optional}`} component={BillingContainer}/>
-      <Route exact path={Routing.Settings} component={SettingsContainer} />
-      <Route exact path={Routing.Rentals} component={RentalsList} />
-      {billingEnabled && <Route exact path={Routing.Checkout} component={CheckoutContainer} />}
-      <Redirect to={`${Routing.Members}/${props.auth}`}/>
-      <Route component={NotFound} />
-    </Switch>
-  </BillingContextContainer>
-);
+const PrivateRouting: React.SFC<{ auth: string, permissions: CollectionOf<Permission> }> = (props) => {
+  const billingEnabled = props.permissions[Whitelists.billing] || false;
+
+  return (
+    <BillingContextContainer>
+      <Switch>
+        <Route exact path={Routing.Members} component={MembersList} />
+        <Route exact path={`${Routing.Profile}/${Routing.PathPlaceholder.Resource}${Routing.PathPlaceholder.Optional}`} component={MemberDetail} />
+        <Route exact path={Routing.Settings} component={SettingsContainer} />
+        <Route exact path={Routing.Rentals} component={RentalsList} />
+        {billingEnabled && <Route exact path={`${Routing.Billing}/${Routing.PathPlaceholder.Resource}${Routing.PathPlaceholder.Optional}`} component={BillingContainer} />}
+        {billingEnabled && <Route exact path={Routing.Checkout} component={CheckoutContainer} />}
+        <Redirect to={`${Routing.Members}/${props.auth}`} />
+        <Route component={NotFound} />
+      </Switch>
+    </BillingContextContainer>
+  )
+};
 
 export default PrivateRouting;

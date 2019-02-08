@@ -9,6 +9,8 @@ import { AuthForm } from "ui/auth/interfaces";
 import { Invoice, InvoiceQueryParams } from "app/entities/invoice";
 import { InvoiceOptionQueryParams } from "api/invoices/interfaces";
 import { PaymentMethod } from "app/entities/paymentMethod";
+import { Permission } from "app/entities/permission";
+import { CollectionOf } from "app/interfaces";
 
 enum Method {
   Get = "GET",
@@ -253,6 +255,46 @@ export const mockRequests = {
         }
       }),
     }
+  },
+  permission: {
+    get: {
+      ok: (memberId: string, memberPermissions: CollectionOf<Permission>) => ({
+        httpRequest: {
+          method: Method.Get,
+          path: `/${Url.Permissions}/${memberId}.json`,
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({ permissions: memberPermissions })
+        }
+      })
+    }
+  },
+  permissions: {
+    get: {
+      ok: (permissions: CollectionOf<Permission>) => ({
+        httpRequest: {
+          method: Method.Get,
+          path: `/${Url.Admin.Permissions}.json`,
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({ permissions })
+        }
+      })
+    },
+    put: {
+      ok: (memberId: string, permissions: CollectionOf<Permission>) => ({
+        httpRequest: {
+          method: Method.Put,
+          path: `/${Url.Admin.Permissions}/${memberId}.json`,
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({ permissions })
+        }
+      })
+    },
   },
   rejectionCard: {
     get: {

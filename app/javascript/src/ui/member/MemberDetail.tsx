@@ -26,7 +26,6 @@ import NotificationModal, { Notification } from "ui/member/NotificationModal";
 import { Whitelists } from "app/constants";
 import SignDocuments from "ui/auth/SignDocuments";
 import { getDetailsForMember } from "ui/membership/constants";
-const { billingEnabled } = Whitelists;
 
 interface DispatchProps {
   getMember: () => Promise<void>;
@@ -41,6 +40,7 @@ interface StateProps {
   member: MemberDetails,
   currentUserId: string;
   subscriptionId: string;
+  billingEnabled: boolean;
 }
 interface OwnProps extends RouteComponentProps<any> {
 }
@@ -137,7 +137,7 @@ class MemberDetail extends React.Component<Props, State> {
   }
 
   private renderMemberDetails = (): JSX.Element => {
-    const { member, isUpdatingMember, isRequestingMember, match, admin, goToSettings } = this.props;
+    const { member, isUpdatingMember, isRequestingMember, match, admin, goToSettings, billingEnabled } = this.props;
     const { memberId, resource } = match.params;
     const loading = isUpdatingMember || isRequestingMember;
     return (
@@ -314,7 +314,7 @@ const mapStateToProps = (
   const { isRequesting, error: requestingError } = state.member.read;
   const { isRequesting: isUpdating } = state.member.update
   const { entity: member } = state.member;
-  const { currentUser: { isAdmin: admin, id: currentUserId, isNewMember, subscriptionId } } = state.auth;
+  const { permissions, currentUser: { isAdmin: admin, id: currentUserId, isNewMember, subscriptionId } } = state.auth;
 
   return {
     admin,
@@ -325,6 +325,7 @@ const mapStateToProps = (
     isUpdatingMember: isUpdating,
     isNewMember,
     subscriptionId,
+    billingEnabled: !!permissions[Whitelists.billing] || false,
   }
 }
 

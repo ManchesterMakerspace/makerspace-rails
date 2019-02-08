@@ -9,6 +9,7 @@ import PrivateRouting from 'app/PrivateRouting';
 import PublicRouting from 'app/PublicRouting';
 import { CollectionOf } from 'app/interfaces';
 import { Invoice } from 'app/entities/invoice';
+import { Permission } from 'app/entities/permission';
 
 interface StateProps {
   auth: string;
@@ -16,6 +17,7 @@ interface StateProps {
   stagedInvoices: CollectionOf<Invoice>;
   isCheckingOut: boolean;
   checkoutError: string;
+  permissions: CollectionOf<Permission>;
 }
 interface DispatchProps {
   attemptLogin: () => void;
@@ -56,11 +58,11 @@ class App extends React.Component<Props, State> {
 
   private renderBody = ():JSX.Element => {
     const { attemptingLogin } = this.state;
-    const { auth } = this.props;
+    const { auth, permissions } = this.props;
     if (attemptingLogin) {
       return <LoadingOverlay id="body"/>;
     } else {
-      return auth ? <PrivateRouting auth={auth} /> : <PublicRouting/>;
+      return auth ? <PrivateRouting permissions={permissions} auth={auth} /> : <PublicRouting/>;
     }
   }
   public render(): JSX.Element {
@@ -75,7 +77,7 @@ class App extends React.Component<Props, State> {
 
 const mapStateToProps = (state: ReduxState, _ownProps: OwnProps): StateProps => {
   const {
-    auth: { currentUser, isRequesting: isSigningIn },
+    auth: { currentUser, permissions, isRequesting: isSigningIn },
     checkout: { invoices }
   } = state;
 
@@ -87,6 +89,7 @@ const mapStateToProps = (state: ReduxState, _ownProps: OwnProps): StateProps => 
   return {
     auth: currentUser.id,
     stagedInvoices: invoices,
+    permissions,
     isSigningIn,
     isCheckingOut,
     checkoutError

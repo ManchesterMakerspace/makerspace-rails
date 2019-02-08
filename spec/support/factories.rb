@@ -111,6 +111,18 @@ FactoryBot.define do
     end
   end
 
+  factory :permission do
+    name { generate(:number) }
+    enabled {false}
+    association :member
+
+    trait :enabled do
+      after(:build) do |permission|
+        permission.enabled = true
+      end
+    end
+  end
+
   sequence :time_of do |n|
     (Time.now - n.days).to_i * 1000
   end

@@ -48,10 +48,11 @@ export class AuthPageObject {
   * This fakes that iniital request to automatically sign in the user
   * and skips the landing page
   */
-  public autoLogin = async (user: LoginMember, destination?: string) => {
+  public autoLogin = async (user: LoginMember, destination?: string, permissions = {}) => {
     const profileUrl = memberPO.getProfilePath(user.id);
     const destinationUrl = destination || profileUrl;
     await mock(mockRequests.signIn.ok(user));
+    await mock(mockRequests.permission.get.ok(user.id, permissions));
     // If no destination, mock default member profile redirect
     if (!destination) {
       await mock(mockRequests.member.get.ok(user.id, user));

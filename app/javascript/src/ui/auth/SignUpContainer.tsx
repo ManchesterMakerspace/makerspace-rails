@@ -15,11 +15,10 @@ import SignUpFormComponent from "ui/auth/SignUpForm";
 import { SignUpForm } from "ui/auth/interfaces";
 import { submitSignUpAction } from "ui/auth/actions";
 import { AuthMember } from "ui/auth/interfaces";
-import { Whitelists } from "app/constants";
+import { billingEnabled } from "app/constants";
 import { createInvoiceAction } from "ui/invoices/actions";
 import { Location } from "history";
 import { push } from "connected-react-router";
-const { billingEnabled } = Whitelists;
 
 interface OwnProps { }
 interface StateProps {

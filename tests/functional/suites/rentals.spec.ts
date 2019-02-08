@@ -73,7 +73,7 @@ describe("Rentals", () => {
         memberName: `${basicUser.firstname} ${basicUser.lastname}`,
       };
       beforeEach(async () => {
-        return auth.autoLogin(adminUser).then(async () => {
+        return auth.autoLogin(adminUser, undefined, { billing: true }).then(async () => {
           await mock(mockRequests.rentals.get.ok(defaultRentals, {}, true));
           await header.navigateTo(header.links.rentals);
           await utils.waitForPageLoad(rentalsPO.listUrl);
@@ -176,7 +176,7 @@ describe("Rentals", () => {
           // 1. Login as admin and nav to basic user's profile
           await mock(mockRequests.invoices.get.ok([], undefined));
           await mock(mockRequests.member.get.ok(basicUser.id, basicUser));
-          return auth.autoLogin(adminUser, targetUrl).then(() => resolve())
+          return auth.autoLogin(adminUser, targetUrl, { billing: true }).then(() => resolve())
         })
       });
       it("Can create new rentals for members", async () => {

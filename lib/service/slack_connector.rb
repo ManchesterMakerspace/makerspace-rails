@@ -17,7 +17,7 @@ module Service
     end
 
     def invite_to_slack()
-      if Rails.env == "production"
+      if Rails.env.production? && braintree_production?
         client.users_admin_invite(
           email: self.email,
           first_name: self.firstname,

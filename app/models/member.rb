@@ -49,6 +49,7 @@ class Member
   after_update :update_card, :notify_renewal
   after_create :send_slack_invite, :send_google_invite
 
+  has_many :permissions, class_name: 'Permission', dependent: :destroy, :autosave => true
   has_many :rentals, class_name: 'Rental'
   has_many :access_cards, class_name: "Card", inverse_of: :member
   belongs_to :group, class_name: "Group", inverse_of: :active_members, optional: true, primary_key: 'groupName', foreign_key: "groupName"
@@ -96,12 +97,31 @@ class Member
   # to verify ownership
   def find_subscribed_resource(id)
     resource = self if self.subscription_id && self.subscription_id == id
-    resource = (self.rentals && self.rentals.find_by(subscription_id: id)) if resource.nil?
+    resource = self.rentals.detect { |r| r.subscription_id == id }  unless resource || self.rentals.nil?
     resource
   end
 
   def remove_subscription
     self.update_attributes!({ subscription_id: nil, subscription: false })
+  end
+
+  def get_permissions
+    Hash[permissions.map { |p| [p.name.to_sym, p.enabled] }]
+  end
+
+  def update_permissions(permissions_collection)
+    permissions_collection.each_pair do |name, enabled|
+      permission = permissions.detect { |p| p.name == name.to_sym}
+      if permission
+        permission.update!(enabled: enabled)
+      else
+        Permission.new(name: name.to_sym, enabled: enabled, member_id: self.id).upsert
+      end
+    end
+  end
+
+  def is_allowed?(permission_name)
+    permissions.detect { |p| p.name == permission_name.to_sym && !!p.enabled }
   end
 
   protected

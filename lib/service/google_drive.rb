@@ -15,7 +15,7 @@ module Service
     end
 
     def invite_gdrive(email_address)
-      if Rails.env == "production"
+      if Rails.env.production? && braintree_production?
         permission = Google::Apis::DriveV3::Permission.new(type: :user,
             email_address: email_address,
             role: :reader)

@@ -5,7 +5,7 @@ import * as moment from "moment";
 export const rootURL = `http://${process.env.APP_DOMAIN || 'localhost'}:${process.env.PORT || 3002}`;
 
 export class PageUtils {
-  private waitUntilTime = 15 * 1000;
+  private waitUntilTime = 10 * 1000;
 
   // programatically set timeout for locating functions
   public setLocatorTimeout = (number: number) => {

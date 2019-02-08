@@ -58,7 +58,7 @@ describe("Invoicing and Dues", () => {
       await mock(mockRequests.invoices.get.ok(invoices, { order: SortDirection.Asc, resourceId: basicUser.id }, true));
       if (login) {
         await mock(mockRequests.member.get.ok(basicUser.id, basicUser));
-        await auth.autoLogin(adminUser, targetUrl);
+        await auth.autoLogin(adminUser, targetUrl, { billing: true });
         expect(await browser.getCurrentUrl()).toEqual(utils.buildUrl(targetUrl));
       }
     }

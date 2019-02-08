@@ -98,7 +98,7 @@ class SignUpFormComponent extends React.Component<Props, State> {
     if (!form.isValid()) return;
 
     if (this.props.renderMembershipOptions && !this.state.membershipSelectionId) {
-      this.setState({ membershipSelectionError: SignUpFields.membershipId.error })
+      this.setState({ membershipSelectionError: SignUpFields.membershipSelectionId.error })
       return;
     }
 

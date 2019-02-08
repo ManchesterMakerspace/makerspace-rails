@@ -21,7 +21,6 @@ interface OwnProps {
 }
 interface DispatchProps {
   getMembershipOptions: () => void;
-  clearSelectedMembership: () => void;
   selectMembershipOption: (membershipOptionId: string, discountId: string) => void;
 }
 interface StateProps {
@@ -51,7 +50,6 @@ class MembershipSelectComponent extends React.Component<Props> {
   private getOption = (id: string) => this.props.membershipOptions[id];
 
   public componentDidMount() {
-    this.props.clearSelectedMembership();
     this.props.getMembershipOptions();
   }
 
@@ -171,9 +169,6 @@ const mapDispatchToProps = (
   const { subscriptionOnly } = ownProps;
   return {
     getMembershipOptions: () => dispatch(readOptionsAction({ subscriptionOnly, types: [InvoiceableResource.Membership] })),
-    clearSelectedMembership: () => dispatch({
-      type: InvoiceOptionAction.ClearSelection
-    }),
     selectMembershipOption: (membershipOptionId, discountId) => dispatch({
       type: InvoiceOptionAction.SelectOption,
       data: { invoiceOptionId: membershipOptionId, discountId }

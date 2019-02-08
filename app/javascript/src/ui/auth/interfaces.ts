@@ -1,7 +1,10 @@
 import { MemberDetails, Properties as MemberProperties } from "app/entities/member";
+import { Permission } from "app/entities/permission";
+import { CollectionOf } from "app/interfaces";
 
 export interface AuthState {
   currentUser: AuthMember;
+  permissions: CollectionOf<Permission>;
   isRequesting: boolean;
   error: string;
 }

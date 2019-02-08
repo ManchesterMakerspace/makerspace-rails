@@ -42,7 +42,7 @@ RSpec.describe Member, type: :model do
     let(:expired_member) { create(:member, :expired) }
     let(:expired_card) { create(:card, member: expired_member) }
 
-    describe "Renewing members" do #method to be improved
+    describe "Renewing members" do
       it "Adds renewal to Now if member is expired" do
         one_month_later = Time.now + 1.month;
         expired_member.send(:renew=, 1)
@@ -70,6 +70,40 @@ RSpec.describe Member, type: :model do
         expired_card.reload
         expect(expired_card.validity).to eq('lost')
         expect(expired_card.expiry).to eq(new_expiration)
+      end
+    end
+
+    describe "permissions" do
+      it "determines if member is allowed by permission" do
+        enabled_permission = build(:permission, name: :foo, enabled: true, member_id: nil)
+        enabled_permission_2 = build(:permission, name: :bar, enabled: true, member_id: nil)
+        disabled_permission = build(:permission, name: :foo, enabled: false, member_id: nil)
+        disabled_permission_2 = build(:permission, name: :bar, enabled: false, member_id: nil)
+        allowed_member = create(:member, permissions: [enabled_permission, enabled_permission_2] )
+        disallowed_member = create(:member, permissions: [disabled_permission, disabled_permission_2] )
+        expect(allowed_member.is_allowed?(:foo)).to be_truthy
+        expect(allowed_member.is_allowed?(:bar)).to be_truthy
+        expect(disallowed_member.is_allowed?(:foo)).to be_falsy
+        expect(disallowed_member.is_allowed?(:bar)).to be_falsy
+      end
+
+      it "gets permissions for user" do
+        enabled_permission = build(:permission, name: :bar, enabled: true, member_id: nil)
+        disabled_permission = build(:permission, name: :foo, enabled: false, member_id: nil)
+        member = create(:member, permissions: [enabled_permission, disabled_permission] )
+        expect(member.get_permissions).to eq({ foo: false, bar: true })
+      end
+
+      it "upserts permissions for user" do
+        enabled_permission = build(:permission, name: :bar, enabled: true, member_id: nil)
+        member = create(:member, permissions: [enabled_permission] )
+        expect(member.get_permissions).to eq({ bar: true })
+        expect(Permission.all.size).to eq(1)
+
+        member.update_permissions({ bar: false, foo: true })
+        member.reload
+        expect(member.get_permissions).to eq({ foo: true, bar: false })
+        expect(Permission.all.size).to eq(2)
       end
     end
   end

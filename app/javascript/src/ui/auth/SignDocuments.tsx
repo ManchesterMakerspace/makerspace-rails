@@ -208,7 +208,13 @@ class SignDocuments extends React.Component<Props, State>{
   )
   public render() {
     const activeDisplay = this.documents()[this.state.display];
-    return activeDisplay.render();
+    return (
+      <Grid container spacing={16} justify="center">
+        <Grid item md={10} sm={12}>
+          {activeDisplay.render()}
+        </Grid>
+      </Grid>
+    );
   }
 }
 

@@ -1,4 +1,4 @@
-class Billing::SubscriptionsController < ApplicationController
+class Billing::SubscriptionsController < BillingController
     include FastQuery
     include BraintreeGateway
     before_action :verify_own_subscription

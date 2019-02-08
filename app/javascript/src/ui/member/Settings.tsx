@@ -16,10 +16,10 @@ import PaymentMethodsContainer from "ui/checkout/PaymentMethodsContainer";
 import { AuthMember } from "ui/auth/interfaces";
 import UpdateMembershipForm from "ui/membership/UpdateMembershipForm";
 import { Whitelists } from "app/constants";
-const { billingEnabled } = Whitelists;
 
 interface StateProps {
   member: AuthMember;
+  billingEnabled: boolean;
 }
 
 interface State {
@@ -38,7 +38,7 @@ class SettingsContainer extends React.Component<StateProps, State> {
 
   private renderForm = () => {
     const { selectedIndex } = this.state;
-    const { member } = this.props;
+    const { member, billingEnabled } = this.props;
     let form: JSX.Element;
     if (!member) {
       return;
@@ -82,6 +82,7 @@ class SettingsContainer extends React.Component<StateProps, State> {
   }
 
   private renderSideNav = () => {
+    const { billingEnabled } = this.props;
     return (
       <List component="nav">
         <ListItem
@@ -142,9 +143,10 @@ class SettingsContainer extends React.Component<StateProps, State> {
 const mapStateToProps = (
   state: ReduxState
 ): StateProps => {
-  const { currentUser } = state.auth;
+  const { currentUser, permissions } = state.auth;
   return {
     member: currentUser,
+    billingEnabled: !!permissions[Whitelists.billing] || false,
   }
 }
 

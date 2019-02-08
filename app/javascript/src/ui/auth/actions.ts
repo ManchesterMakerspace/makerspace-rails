@@ -6,6 +6,7 @@ import { postLogin, deleteLogin, postSignUp } from "api/auth/transactions";
 import { Action as AuthAction } from "ui/auth/constants";
 import { Action as CheckoutAction } from "ui/checkout/constants";
 import { memberIsAdmin } from "ui/member/utils";
+import { getPermissionsForMember } from "api/permissions/transactions";
 
 export const loginUserAction = (
   loginForm?: AuthForm
@@ -14,9 +15,16 @@ export const loginUserAction = (
 
   try {
     const response = await postLogin(loginForm);
+    const { member } = response.data;
+    const permissionsResponse = await getPermissionsForMember(member.id);
+    const { permissions } = permissionsResponse.data;
+
     dispatch({
       type: AuthAction.AuthUserSuccess,
-      data: response.data.member
+      data: {
+        member,
+        permissions
+      }
     });
   } catch (e) {
     const { errorMessage } = e;
@@ -35,9 +43,16 @@ export const activeSessionLogin = (
 
   try {
     const response = await postLogin();
+    const { member } = response.data;
+    const permissionsResponse = await getPermissionsForMember(member.id);
+    const { permissions } = permissionsResponse.data;
+
     dispatch({
       type: AuthAction.AuthUserSuccess,
-      data: response.data.member
+      data: {
+        member,
+        permissions
+      }
     });
   } catch {
     dispatch({ type: AuthAction.AuthUserFailure })
@@ -62,11 +77,18 @@ export const submitSignUpAction = (
   try {
     const response = await postSignUp(signUpForm);
     const { member } = response.data;
+
+    const permissionsResponse = await getPermissionsForMember(member.id);
+    const { permissions } = permissionsResponse.data;
+
     dispatch({
       type: AuthAction.AuthUserSuccess,
       data: {
-        ...member,
-        isNewMember: true,
+        member: {
+          ...member,
+          isNewMember: true,
+        },
+        permissions,
       }
     });
   } catch(e) {
@@ -88,6 +110,7 @@ const defaultState: AuthState = {
     isAdmin: false,
     isNewMember: undefined,
   },
+  permissions: {},
   isRequesting: false,
   error: ""
 }
@@ -100,13 +123,17 @@ export const authReducer = (state: AuthState = defaultState, action: AnyAction) 
         isRequesting: true
       };
     case AuthAction.AuthUserSuccess:
-      const { data: newUser } = action;
+      const { data: {
+        member,
+        permissions
+      } } = action;
       return {
         ...state,
         currentUser: {
-          ...newUser,
-          isAdmin: memberIsAdmin(newUser)
+          ...member,
+          isAdmin: memberIsAdmin(member)
         },
+        permissions,
         isRequesting: false,
         error: ""
       };

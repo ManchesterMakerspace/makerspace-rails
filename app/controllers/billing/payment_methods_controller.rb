@@ -1,4 +1,4 @@
-class Billing::PaymentMethodsController < ApplicationController
+class Billing::PaymentMethodsController < BillingController
   include BraintreeGateway
   before_action :payment_method_params, only: [:create]
 

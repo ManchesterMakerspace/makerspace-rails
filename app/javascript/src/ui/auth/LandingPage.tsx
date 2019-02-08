@@ -8,11 +8,10 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from "@material-ui/core/Button";
 import Typography from '@material-ui/core/Typography';
 
-import { Routing, Whitelists } from "app/constants";
+import { Routing, billingEnabled } from "app/constants";
 import MembershipSelectForm from 'ui/membership/MembershipSelectForm';
 import { ScopedThunkDispatch } from 'ui/reducer';
-import { Location } from 'history';
-const { billingEnabled } = Whitelists;
+
 
 interface State {
   membershipOptionId: string;

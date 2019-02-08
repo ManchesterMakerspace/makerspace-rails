@@ -17,13 +17,14 @@ import { ScopedThunkDispatch, State as ReduxState } from "ui/reducer";
 import { logoutUserAction } from "ui/auth/actions";
 import { AuthMember } from "ui/auth/interfaces";
 import { memberIsAdmin } from "ui/member/utils";
-import { Routing } from "app/constants";
+import { Routing, Whitelists } from "app/constants";
 
 interface OwnProps extends RouteComponentProps<any> {
 }
 interface StateProps {
   currentUser: AuthMember;
   authRequesting: boolean;
+  billingEnabled: boolean;
 }
 interface DispatchProps {
   logout: () => void;
@@ -76,7 +77,7 @@ class Header extends React.Component<Props, State> {
   }
 
   private renderHambMenu = (): JSX.Element => {
-    const { currentUser } = this.props;
+    const { currentUser, billingEnabled } = this.props;
     const { anchorEl } = this.state;
     const menuOpen = Boolean(anchorEl);
     const profileUrl = Routing.Profile.replace(Routing.PathPlaceholder.MemberId, currentUser.id);
@@ -112,7 +113,7 @@ class Header extends React.Component<Props, State> {
           {this.renderMenuNavLink(profileUrl, "My Profile", "profile")}
           {this.renderMenuNavLink(Routing.Members, "Members", "members")}
           {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Rentals, "Rentals", "rentals")}
-          {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Billing, "Billing", "billing")}
+          {billingEnabled && memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Billing, "Billing", "billing")}
           {this.renderMenuNavLink(Routing.Settings, "Account Settings", "settings")}
           <MenuItem id="logout" onClick={this.logoutUser}>Logout</MenuItem>
         </Menu>
@@ -143,11 +144,12 @@ class Header extends React.Component<Props, State> {
 
 const mapStateToProps = (state: ReduxState, _ownProps: OwnProps): StateProps => {
   const {
-    auth: { currentUser, isRequesting }
+    auth: { currentUser, isRequesting, permissions }
   } = state;
 
   return {
     currentUser,
+    billingEnabled: !!permissions[Whitelists.billing] || false,
     authRequesting: isRequesting
   }
 }

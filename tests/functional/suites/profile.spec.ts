@@ -20,7 +20,7 @@ const reviewMemberInfo = async (loggedInUser: LoginMember, viewingMember?: Login
   if (executeLogin) {
     await mock(mockRequests.member.get.ok(viewingMember.id, viewingMember));
     await mock(mockRequests.member.get.ok(viewingMember.id, viewingMember, true));
-    await auth.autoLogin(loggedInUser, memberPO.getProfilePath(viewingMember.id));
+    await auth.autoLogin(loggedInUser, memberPO.getProfilePath(viewingMember.id), { billing: true });
   }
   const { firstname, lastname, email, expirationTime } = viewingMember;
   expect(await utils.getElementText(memberPO.memberDetail.title)).toEqual(`${firstname} ${lastname}`);
@@ -63,7 +63,7 @@ describe("Member Profiles", () => {
           memberId: basicUser.id,
           memberName: `${basicUser.firstname} ${basicUser.lastname}`,
         }
-        return auth.autoLogin(basicUser).then(() => {
+        return auth.autoLogin(basicUser, undefined, { billing: true }).then(() => {
           return reviewSubResource(basicUser, [rental], [invoice]);
         });
       });
@@ -104,7 +104,7 @@ describe("Member Profiles", () => {
           memberId: adminUser.id,
           memberName: `${adminUser.firstname} ${adminUser.lastname}`,
         }
-        return auth.autoLogin(adminUser).then(() => {
+        return auth.autoLogin(adminUser, undefined, { billing: true }).then(() => {
           return reviewSubResource(adminUser, [rental], [invoice], true);
         })
       });

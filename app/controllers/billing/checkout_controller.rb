@@ -1,4 +1,4 @@
-class Billing::CheckoutController < ApplicationController
+class Billing::CheckoutController < BillingController
     include BraintreeGateway
     before_action :checkout_params, only: [:create]
 
