@@ -20,8 +20,9 @@ Rails.application.routes.draw do
 
       namespace :billing do
         resources :plans, only: [:index]
-        resources :payment_methods, only: [:create, :index, :destroy]
+        resources :payment_methods, only: [:new, :create, :index, :destroy]
         resources :subscriptions, only: [:show, :update, :destroy]
+        resources :transactions, only: [:create]
         get '/plans/discounts', to: "plans#discounts"
       end
 
@@ -36,10 +37,6 @@ Rails.application.routes.draw do
           resources :subscriptions, only: [:index, :destroy]
         end
       end
-    end
-
-    namespace :billing do
-      resources :checkout, only: [:new, :create]
     end
   end
 

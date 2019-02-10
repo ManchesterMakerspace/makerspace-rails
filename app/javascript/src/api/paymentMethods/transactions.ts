@@ -4,6 +4,15 @@ import { buildJsonUrl } from "app/utils";
 import { handleApiError } from "api/utils/handleApiError";
 import { buildPaymentMethodUrl } from "api/paymentMethods/utils";
 
+export const getClientToken = async () => {
+  try {
+    return await axios.get(buildJsonUrl([Url.Billing.PaymentMethods, "new"]))
+  } catch (e) {
+    const error = handleApiError(e);
+    throw error;
+  }
+}
+
 export const getPaymentMethods = async () => {
   try {
     return await axios.get(buildJsonUrl(Url.Billing.PaymentMethods));

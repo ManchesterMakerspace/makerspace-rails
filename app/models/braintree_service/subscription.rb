@@ -30,16 +30,19 @@ class BraintreeService::Subscription < Braintree::Subscription
     normalize_subscription(gateway, subscription)
   end
 
-  def self.create(gateway, subscription)
-    subscription = gateway.subscription.create(
-      :payment_method_token => subscription[:payment_method_token],
-      :plan_id => subscription[:plan_id]
-    )
+  def self.create(gateway, invoice)
+    subscription_obj = {
+      payment_method_token: invoice.payment_method_id,
+      plan_id: invoice.plan_id,
+      id: ::BraintreeService::Subscription.generate_id(invoice)
+    }
+    if invoice.discount_id
+      subscription_obj[:discounts] = {
+        add: [{ inherited_from_id: invoice.discount_id }]
+      }
+    end
+    subscription = gateway.subscription.create(subscription_obj)
     normalize_subscription(gateway, subscription)
-  end
-
-  def self.generate_id(invoice)
-    "#{invoice.resource_class}_#{invoice.resource_id}_#{SecureRandom.hex[0...6]}"
   end
 
   def self.read_id(id)

@@ -60,7 +60,7 @@ export namespace Url {
     Discounts: `${baseBillingPath}/plans/discounts`,
     Subscriptions: `${baseBillingPath}/subscriptions`,
     Subscription: `${baseBillingPath}/subscriptions/${PathPlaceholder.SubscriptionId}`,
-    Checkout: `${baseBillingPath}/checkout`
+    Transactions: `${baseBillingPath}/transactions`
   }
 
 }

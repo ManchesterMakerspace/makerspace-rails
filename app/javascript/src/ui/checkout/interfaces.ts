@@ -4,4 +4,5 @@ import { CollectionOf } from "app/interfaces";
 
 export interface CheckoutState extends RequestStatus {
   invoices: CollectionOf<Invoice>;
+  transactions: CollectionOf<RequestStatus>;
 }

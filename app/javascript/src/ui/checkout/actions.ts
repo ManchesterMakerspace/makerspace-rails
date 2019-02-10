@@ -1,50 +1,58 @@
 import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import isObject from "lodash-es/isObject";
-import { postCheckout } from "api/checkout/transactions";
+import omit from "lodash-es/omit";
+
+import { postTransaction } from "api/transactions/transactions";
 
 import { Invoice } from "app/entities/invoice";
 
 import { Action as CheckoutAction } from "ui/checkout/constants";
 import { CheckoutState } from "ui/checkout/interfaces";
-import { pick } from "lodash-es";
 
 export const submitPaymentAction = (
   paymentMethodToken: string,
   invoices: Invoice[],
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
   dispatch({ type: CheckoutAction.StartAsyncRequest });
-  try {
-    const result = await postCheckout(paymentMethodToken, invoices);
-    const { failures } = result.data;
-    dispatch({
-      type: CheckoutAction.PostCheckoutSuccess,
-      data: failures
-    });
-  } catch (e) {
-    const { errorMessage } = e;
-    dispatch({
-      type: CheckoutAction.PostCheckoutFailure,
-      error: errorMessage
-    })
-  }
+  await Promise.all(invoices.map(async (invoice) => {
+    const invoiceId = invoice.id;
+    dispatch({ type: CheckoutAction.StartTransactionRequest, data: invoiceId });
+
+    try {
+      await postTransaction(paymentMethodToken, invoiceId);
+      dispatch({ type: CheckoutAction.FinishTransactionSuccess, data: invoiceId });
+    } catch (e) {
+      const { errorMessage } = e;
+      dispatch({ type: CheckoutAction.FinishTransactionFailure, error: errorMessage, id: invoiceId });
+    }
+  }));
+  dispatch({ type: CheckoutAction.StopAsyncRequest });
 };
 
 const defaultState: CheckoutState = {
   invoices: {},
+  transactions: {},
   isRequesting: false,
   error: ""
 }
 
 
 export const checkoutReducer = (state: CheckoutState = defaultState, action: AnyAction) => {
-
+  let invoiceId;
   switch (action.type) {
     case CheckoutAction.StartAsyncRequest:
       return {
         ...state,
         isRequesting: true
       }
+
+    case CheckoutAction.StopAsyncRequest:
+      return {
+        ...state,
+        isRequesting: false
+      }
+
     case CheckoutAction.StageInvoicesForPayment:
       const invoices = action.data;
       // Can accept array or collection of invoices to stage
@@ -69,33 +77,60 @@ export const checkoutReducer = (state: CheckoutState = defaultState, action: Any
           }
         }
       }
+
+    case CheckoutAction.ResetStagedInvoice:
+      invoiceId = action.data;
+      return {
+        ...state,
+        invoices: omit(state.invoices, invoiceId),
+      }
+
     case CheckoutAction.ResetStagedInvoices:
       return {
         ...state,
         invoices: defaultState.invoices
       }
-    case CheckoutAction.PostCheckoutSuccess:
-      const failures = action.data as { invoiceIds: string, error: string }[];
 
-      let updatedInvoices = {};
-      let checkoutError = "";
-      if (failures && failures.length) {
-        updatedInvoices = pick(state.invoices, failures.reduce((invoiceIds, failure) => invoiceIds.concat(failure.invoiceIds), []));
-        checkoutError = failures.map(failure => failure.error).join("\n");
-      }
+    case CheckoutAction.StartTransactionRequest:
+      invoiceId = action.data;
 
       return {
         ...state,
-        invoices: updatedInvoices,
-        isRequesting: false,
-        error: checkoutError
+        transactions: {
+          ...state.transactions,
+          [invoiceId]: {
+            ...state.transactions[invoiceId],
+            isRequesting: true,
+          }
+        }
       }
-    case CheckoutAction.PostCheckoutFailure:
+    case CheckoutAction.FinishTransactionSuccess:
+      invoiceId = action.data;
+
       return {
         ...state,
-        isRequesting: false,
-        error: action.error
+        transactions: {
+          ...state.transactions,
+          [invoiceId]: {
+            isRequesting: false,
+            error: ""
+          }
+        }
       }
+
+    case CheckoutAction.FinishTransactionFailure:
+      const { id, error } = action;
+      return {
+        ...state,
+        transactions: {
+          ...state.transactions,
+          [id]: {
+            isRequesting: false,
+            error,
+          }
+        }
+      }
+
     default:
       return state;
   }

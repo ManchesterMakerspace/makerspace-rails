@@ -2,6 +2,11 @@ class Billing::PaymentMethodsController < BillingController
   include BraintreeGateway
   before_action :payment_method_params, only: [:create]
 
+  def new
+    client_token = generate_client_token
+    render json: { client_token: client_token } and return
+  end
+
   def create
     payment_method_nonce = payment_method_params[:payment_method_nonce]
 
@@ -58,5 +63,9 @@ class Billing::PaymentMethodsController < BillingController
   private
   def payment_method_params
     params.require(:payment_method).permit(:payment_method_nonce, :make_default, :payment_method_token)
+  end
+
+  def generate_client_token
+    @gateway.client_token.generate
   end
 end

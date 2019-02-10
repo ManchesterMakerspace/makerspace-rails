@@ -98,25 +98,13 @@ export const mockRequests = {
       })
     }
   },
-  checkout: {
-    new: {
-      ok: (clientToken: string) => ({
-        httpRequest: {
-          method: Method.Get,
-          path: `/${Url.Billing.Checkout}/new.json`,
-        },
-        httpResponse: {
-          statusCode: 200,
-          body: JSON.stringify({ clientToken })
-        }
-      })
-    },
+  transactions: {
     post: {
-      ok: (invoiceIds: string[], paymentMethodId: string) => ({
+      ok: (invoiceId: string, paymentMethodId: string) => ({
         httpRequest: {
           method: Method.Post,
-          path: `/${Url.Billing.Checkout}.json`,
-          body: JSON.stringify({ checkout: { payment_method_id: paymentMethodId, invoice_ids: invoiceIds } }),
+          path: `/${Url.Billing.Transactions}.json`,
+          body: JSON.stringify({ transaction: { payment_method_id: paymentMethodId, invoice_id: invoiceId } }),
         },
         httpResponse: {
           statusCode: 200,
@@ -214,6 +202,18 @@ export const mockRequests = {
     }
   },
   paymentMethods: {
+    new: {
+      ok: (clientToken: string) => ({
+        httpRequest: {
+          method: Method.Get,
+          path: `/${Url.Billing.PaymentMethods}/new.json`,
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({ clientToken })
+        }
+      })
+    },
     get: {
       ok: (paymentMethods: PaymentMethod[]) => ({
         httpRequest: {

@@ -19,10 +19,7 @@ class Invoice
   field :created_at, type: Time, default: Time.now
   # When payment submitted.
   field :settled_at, type: Time
-  # When operation was applied
-  field :executed_at, type: Time
   field :due_date, type: Time
-  field :payment_type, type: String
   field :amount, type: Float
   field :discount_id, type: String
 
@@ -36,11 +33,12 @@ class Invoice
   field :resource_id, type: String
   # Class name of resource, one of OPERATION_RESOURCES
   field :resource_class, type: String
-  # ID of billing plan to/is subscribe(d) to.  May reference a DEFAULT_INVOICE
+  # ID of billing plan to/is subscribe(d) to.
   field :plan_id, type: String
+  # ID of payment method used to settle invoice
+  field :transaction_id, type: String
 
   validates :resource_class, inclusion: { in: OPERATION_RESOURCES.keys }, allow_nil: false
-  validates :payment_type, inclusion: { in: PAYMENT_TYPES }, allow_nil: true
   validates :operation, inclusion: { in: OPERATION_FUNCTIONS }, allow_nil: false
   validates_numericality_of :amount, greater_than: 0
   validates_numericality_of :quantity, greater_than: 0
@@ -54,7 +52,7 @@ class Invoice
 
   before_validation :set_due_date
 
-  attr_accessor :found_resource
+  attr_accessor :found_resource, :payment_method_id
 
   def settled
     !!self.settled_at
@@ -68,11 +66,12 @@ class Invoice
     self.due_date && self.due_date < Time.now
   end
 
-  def settle_invoice(transaction_result)
-    determine_payment_type(transaction_result)
+  def settle_invoice(gateway, payment_method_id)
+    self.payment_method_id = payment_method_id
+    transaction = ::BraintreeService::Transaction.submit_invoice_for_settlement(gateway, self)
+    # TODO handle errors here
     execute_invoice_operation
-    self.settled = true
-    return self.save!
+    return transaction
   end
 
   def build_next_invoice
@@ -89,23 +88,22 @@ class Invoice
     found_resource ||= self.class.resource(self.resource_class, self.resource_id)
   end
 
+  def generate_subscription_id
+    "#{resource_class}_#{resource_id}_#{SecureRandom.hex[0...6]}"
+  end
+
   private
   def set_due_date
     self.due_date = Time.parse(self.due_date).in_time_zone('Eastern Time (US & Canada') if self.due_date.kind_of?(String)
-  end
-
-  def determine_payment_type(transaction_result)
-    transaction_details = transaction_result.transaction || (transaction_result.subscription.transactions.last if transaction_result.subscription)
-    self.payment_type = transaction_details ? transaction_details.payment_instrument_type.to_sym : :cash
-    print self.payment_type
   end
 
   def execute_invoice_operation
     raise ::Error::NotFound.new if resource.nil?
     operation = OPERATION_FUNCTIONS.find{ |f| f == self.operation }
     if operation
-      if resource.execute_operation(operation, self)
-        self.executed_at = Time.now
+      if resource && resource.execute_operation(operation, self)
+        self.settled = true
+        self.save!
         return
       end
       raise "Unable to process invoice. Operation failed"

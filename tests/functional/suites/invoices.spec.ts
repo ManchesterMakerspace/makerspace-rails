@@ -57,7 +57,7 @@ describe("Invoicing and Dues", () => {
       await utils.waitForPageLoad(checkout.checkoutUrl);
 
       // TODO Find a way to mock creating a payment method
-      // await mock(mockRequests.checkout.new.ok("foo"));
+      // await mock(mockRequests.paymentMethods.new.ok("foo"));
       // await utils.clickElement(paymentMethods.addPaymentButton);
       // await utils.waitForVisisble(paymentMethods.paymentMethodFormSelect.creditCard);
       // await utils.clickElement(paymentMethods.paymentMethodFormSelect.creditCard);
@@ -70,7 +70,7 @@ describe("Invoicing and Dues", () => {
       // await utils.clickElement(creditCard.creditCardForm.submit);
 
       // Submit payment
-      await mock(mockRequests.checkout.post.ok([defaultInvoice.id], newCard.id));
+      await mock(mockRequests.transactions.post.ok(defaultInvoice.id, newCard.id));
       await mock(mockRequests.member.get.ok(basicUser.id, basicUser));
       await utils.clickElement(paymentMethods.getPaymentMethodSelectId(newCard.id));
       expect(await utils.getElementText(checkout.total)).toEqual(`Total $${defaultInvoice.amount}.00`);

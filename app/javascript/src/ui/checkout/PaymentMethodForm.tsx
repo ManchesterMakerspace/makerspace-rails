@@ -7,7 +7,7 @@ import Form from "ui/common/Form";
 import * as Braintree from "braintree-web";
 import { PaymentMethodType } from "app/entities/paymentMethod";
 
-import { getClientToken } from "api/checkout/transactions";
+import { getClientToken } from "api/paymentMethods/transactions";
 
 import CreditCardForm from "ui/checkout/CreditCardForm";
 import PaypalButton from "ui/checkout/PaypalButton";

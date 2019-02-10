@@ -1,5 +1,5 @@
 import { Routing } from "app/constants";
-import auth from "../pageObjects/auth";
+import auth, { LoginMember } from "../pageObjects/auth";
 import utils from "../pageObjects/common";
 import { mockRequests, mock } from "../mockserver-client-helpers";
 import memberPO from "../pageObjects/member";
@@ -74,6 +74,10 @@ describe("Authentication", () => {
     });
   });
   describe("Signing up", () => {
+    const newMember: LoginMember = {
+      ...member,
+      memberContractOnFile: false,
+    }
     it("User can sign up with a selected membership option", async () => {
       /* 1. Setup mocks
           - Load membership options
@@ -97,16 +101,16 @@ describe("Authentication", () => {
       const membershipOption = invoiceOptions.find((io) => io.id === membershipId);
       await mock(mockRequests.invoiceOptions.get.ok([membershipOption], membershipOptionQueryParams));
       await mock(mockRequests.invoiceOptions.get.ok([membershipOption], membershipOptionQueryParams));
-      await mock(mockRequests.signUp.ok(member)); // initial signup
-      await mock(mockRequests.permission.get.ok(member.id, {}));
+      await mock(mockRequests.signUp.ok(newMember)); // initial signup
+      await mock(mockRequests.permission.get.ok(newMember.id, {}));
       await mock(mockRequests.invoices.post.ok(membershipOption, false)); // initial invoice creation
-      await mock(mockRequests.member.get.ok(memberId, member)); // Profile load
+      await mock(mockRequests.member.get.ok(newMember.id, newMember)); // Profile load
       await browser.get(utils.buildUrl());
       await signup.selectMembershipOption(membershipId);
       await utils.waitForPageLoad(signup.signupUrl);
-      await signup.signUpUser(member);
+      await signup.signUpUser(newMember);
 
-      await utils.waitForPageLoad(memberPO.getProfilePath(member.id));
+      await utils.waitForPageLoad(memberPO.getProfilePath(newMember.id));
       expect(await utils.isElementDisplayed(memberPO.memberDetail.notificationModal));
       await utils.clickElement(memberPO.memberDetail.notificationModalSubmit);
 
@@ -114,13 +118,13 @@ describe("Authentication", () => {
       await utils.clickElement(signup.documentsSigning.codeOfConductCheckbox);
       await utils.clickElement(signup.documentsSigning.codeOfConductSubmit);
       await utils.waitForVisisble(signup.documentsSigning.memberContractCheckbox);
-      await mock(mockRequests.member.put.ok(memberId, member)); // upload signature
+      await mock(mockRequests.member.put.ok(newMember.id, newMember)); // upload signature
       await mock(mockRequests.invoices.get.ok([membershipOption])); // Load selected invoice
       await utils.clickElement(signup.documentsSigning.memberContractCheckbox);
       await signup.signContract();
       await utils.clickElement(signup.documentsSigning.memberContractSubmit);
       await utils.waitForNotVisible(signup.documentsSigning.memberContractSubmit);
-      await utils.waitForPageLoad(memberPO.getProfilePath(member.id));
+      await utils.waitForPageLoad(memberPO.getProfilePath(newMember.id));
     }, 200000);
     xit("User notified if they have an account with the attempted sign up email", async () => {
       /* 1. Setup mocks
@@ -156,24 +160,24 @@ describe("Authentication", () => {
       await utils.assertInputError(lastnameInput);
       await utils.assertInputError(emailInput);
       await utils.assertInputError(passwordInput);
-      await utils.fillInput(firstnameInput, member.firstname);
-      await utils.fillInput(lastnameInput, member.lastname);
-      await utils.fillInput(passwordInput, member.password);
+      await utils.fillInput(firstnameInput, newMember.firstname);
+      await utils.fillInput(lastnameInput, newMember.lastname);
+      await utils.fillInput(passwordInput, newMember.password);
       await utils.fillInput(emailInput, "foo");
       await utils.clickElement(submitButton);
       await utils.assertNoInputError(firstnameInput);
       await utils.assertNoInputError(lastnameInput);
       expect(await utils.assertInputError(emailInput));
       await utils.assertNoInputError(passwordInput);
-      await utils.fillInput(emailInput, member.email);
+      await utils.fillInput(emailInput, newMember.email);
       await utils.clickElement(submitButton);
       expect(await utils.getElementText(error)).toBeTruthy();
-      await mock(mockRequests.signUp.ok(member));
-      await mock(mockRequests.permission.get.ok(member.id, {}));
-      await mock(mockRequests.member.get.ok(memberId, member));
+      await mock(mockRequests.signUp.ok(newMember));
+      await mock(mockRequests.permission.get.ok(newMember.id, {}));
+      await mock(mockRequests.member.get.ok(newMember.id, newMember));
       await utils.clickElement(submitButton);
 
-      await utils.waitForPageLoad(memberPO.getProfilePath(member.id));
+      await utils.waitForPageLoad(memberPO.getProfilePath(newMember.id));
       expect(utils.isElementDisplayed(memberPO.memberDetail.notificationModal));
       await utils.clickElement(memberPO.memberDetail.notificationModalSubmit);
 
@@ -193,7 +197,7 @@ describe("Authentication", () => {
       await utils.assertNoInputError(signup.documentsSigning.memberContractError, true)
       await utils.clickElement(signup.documentsSigning.memberContractSubmit);
       await utils.assertInputError(signup.documentsSigning.memberContractError, true)
-      await mock(mockRequests.member.put.ok(memberId, member)); // upload signature
+      await mock(mockRequests.member.put.ok(newMember.id, newMember)); // upload signature
       await signup.signContract();
       await utils.clickElement(signup.documentsSigning.memberContractSubmit);
       await utils.waitForNotVisible(signup.documentsSigning.memberContractSubmit);

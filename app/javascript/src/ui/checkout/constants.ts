@@ -2,14 +2,17 @@ import { FormFields } from "ui/common/Form";
 
 export enum Action {
   StartAsyncRequest = "CHECKOUT/START_ASYNC_REQUEST",
+  StopAsyncRequest = "CHECKOUT/STOP_ASYNC_REQUEST",
   GetClientTokenSuccess = "CHECKOUT/GET_CLIENT_TOKEN_SUCCESS",
   GetClientTokenFailure = "CHECKOUT/GET_CLIENT_TOKEN_FAILURE",
 
-  PostCheckoutSuccess = "CHECKOUT/POST_CHECKOUT_SUCCESS",
-  PostCheckoutFailure = "CHECKOUT/POST_CHECKOUT_FAILURE",
+  StartTransactionRequest = "CHECKOUT/START_TRANSACTION",
+  FinishTransactionFailure = "CHECKOUT/FINISH_TRANSACTION_FAILURE",
+  FinishTransactionSuccess = "CHECKOUT/FINISH_TRANSACTION_SUCCESS",
 
   StageInvoicesForPayment = "CHECKOUT/STAGE_INVOICES_PAYMENT",
   ResetStagedInvoices = "CHECKOUT/RESET_STAGED_INVOICES",
+  ResetStagedInvoice = "CHECKOUT/RESET_STAGED_INVOICE",
 }
 
 const formPrefix = "credit-card-form";
