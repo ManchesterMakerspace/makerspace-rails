@@ -44,8 +44,9 @@ class Member
   validates_inclusion_of :status, in: ["activeMember", "nonMember", "revoked", "inactive"]
   validates_inclusion_of :role, in: ["admin", "member"]
 
-  before_save :update_braintree_customer_info
   after_initialize :verify_group_expiry
+  before_update :update_initial_expiration_from_invoice, :if => proc { !cardID && cardID_changed? }
+  before_save :update_braintree_customer_info
   after_update :update_card, :notify_renewal
   after_create :send_slack_invite, :send_google_invite, :send_member_registered_email
 
@@ -153,6 +154,14 @@ class Member
     self.access_cards.each do |c|
       c.update(expiry: self.expirationTime)
     end
+  end
+
+  # Update expiration by giving time back that has elapsed since signing up
+  def update_initial_expiration_from_invoice
+    start = startDate.to_i * 1000
+    expirationTime ||= Time.now
+    lag = expirationTime - start
+    update!({ expirationTime: (expirationTime + lag)})
   end
 
   def benefits_from_group

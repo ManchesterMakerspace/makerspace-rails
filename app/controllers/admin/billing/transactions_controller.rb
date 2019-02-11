@@ -42,8 +42,4 @@ class Admin::Billing::TransactionsController < Admin::BillingController
   def transactions_params
     params.permit(:search_by, :search_id)
   end
-
-  def set_transaction
-    @transaction =
-  end
 end
