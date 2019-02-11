@@ -19,8 +19,8 @@ export const postInvoices = async (invoiceForm: Invoice | InvoiceOptionSelection
   if (isInvoiceOptionSelection(invoiceForm)) {
     payload = {
       invoiceOption: {
+        ...invoiceForm,
         id: invoiceForm.invoiceOptionId,
-        discountId: invoiceForm.discountId
       }
     };
   } else {

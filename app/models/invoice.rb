@@ -66,9 +66,11 @@ class Invoice
     self.due_date && self.due_date < Time.now
   end
 
-  def settle_invoice(gateway, payment_method_id)
-    self.payment_method_id = payment_method_id
-    transaction = ::BraintreeService::Transaction.submit_invoice_for_settlement(gateway, self)
+  def settle_invoice(gateway=nil, payment_method_id=nil)
+    if payment_method_id
+      self.payment_method_id = payment_method_id
+      transaction = ::BraintreeService::Transaction.submit_invoice_for_settlement(gateway, self)
+    end
     # TODO handle errors here
     execute_invoice_operation
     return transaction

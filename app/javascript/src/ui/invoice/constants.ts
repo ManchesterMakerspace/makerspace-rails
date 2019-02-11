@@ -18,13 +18,7 @@ export const fields = {
     label: "Description",
     name: `${formPrefix}-description`,
     placeholder: "Enter description",
-    validate: (val: string) => !!val,
-  },
-  notes: {
-    label: "Notes",
-    name: `${formPrefix}-notes`,
-    placeholder: "Enter notes",
-    validate: (_val: string) => true,
+    // validate: (val: string) => !!val,
   },
   member: {
     label: "Select a member",
@@ -44,18 +38,26 @@ export const fields = {
     label: "Amount ($)",
     name: `${formPrefix}-amount`,
     placeholder: "Enter amount",
-    validate: (val: number) => (!!val && val > 0),
+    // validate: (val: number) => (!!val && val > 0),
     error: "Invoice amount required"
   },
   resourceClass: {
     label: "Invoice Type",
     name: `${formPrefix}-type`,
+    validate: (val: string) => !!val,
   },
-  rental: {
+  rentalId: {
     label: "Rental",
     name: `${formPrefix}-rental`,
-    placeholder: "Select a rental"
+    placeholder: "Select a rental",
+    error: "Please select an associated rental to apply invoice to"
   },
+  invoiceOptionId: {
+    label: "Billing Option",
+    name: `${formPrefix}-option`,
+    placeholder: "Select an option",
+    validate: (val: string) => !!val,
+  }
   // term: {
   //   label: "Renewal Length",
   //   name: `${formPrefix}-term`,

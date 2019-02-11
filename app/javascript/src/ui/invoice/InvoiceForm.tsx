@@ -11,7 +11,8 @@ import Select from "@material-ui/core/Select";
 import Radio from "@material-ui/core/Radio";
 import Grid from "@material-ui/core/Grid";
 
-import { Invoice, InvoiceableResource } from "app/entities/invoice";
+import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
+import { Invoice, InvoiceableResource, InvoiceOption } from "app/entities/invoice";
 import FormModal from "ui/common/FormModal";
 import Form from "ui/common/Form";
 import { fields } from "ui/invoice/constants";
@@ -20,12 +21,21 @@ import { getMembers, getMember } from "api/members/transactions";
 import { MemberDetails } from "app/entities/member";
 import { Rental } from "app/entities/rental";
 import { getRentals } from "api/rentals/transactions";
+import { CollectionOf } from "app/interfaces";
+import { Whitelists } from "app/constants";
+import { connect } from "react-redux";
+import { readOptionsAction } from "ui/billing/actions";
 
 interface OwnProps {
   invoice?: Partial<Invoice>;
   isOpen: boolean;
   isRequesting: boolean;
   error: string;
+  allowCustomBilling: boolean;
+  invoiceOptions: CollectionOf<InvoiceOption>;
+  optionsLoading: boolean;
+  optionsError: string;
+  getInvoiceOptions: (type: InvoiceableResource) => void;
   onClose: () => void;
   onSubmit: (form: Form) => void;
 }
@@ -37,17 +47,19 @@ interface State {
   rentalsLoading: boolean;
   rentalsError: string;
 }
+interface Props extends OwnProps {}
 
 type SelectOption = { label: string, value: string, id?: string };
 
-class InvoiceForm extends React.Component<OwnProps, State> {
+export class InvoiceForm extends React.Component<Props, State> {
   public formRef: Form;
   private setFormRef = (ref: Form) => this.formRef = ref;
 
-  public constructor(props: OwnProps) {
+  public constructor(props: Props) {
     super(props);
+    const { invoice } = props;
     this.state = {
-      invoiceType: InvoiceableResource.Membership,
+      invoiceType: invoice && invoice.resourceClass || InvoiceableResource.Membership,
       member: undefined,
       rentals: [],
       rentalsLoading: false,
@@ -55,14 +67,20 @@ class InvoiceForm extends React.Component<OwnProps, State> {
     }
   }
 
-  public componentDidUpdate(prevProps: OwnProps){
+  public componentDidUpdate(prevProps: OwnProps, prevState: State){
     const { isOpen: wasOpen } = prevProps;
-    const { isOpen } = this.props;
+    const { isOpen, invoice } = this.props;
     // Determine invoice type on open
     if (isOpen === !wasOpen) {
       this.resetInvoiceType();
       this.initInvoiceMember();
       this.getRentals();
+      this.props.getInvoiceOptions(invoice.resourceClass || this.state.invoiceType);
+    }
+
+    // Fetch new options on type change
+    if (prevState.invoiceType !== this.state.invoiceType) {
+      this.props.getInvoiceOptions(this.state.invoiceType);
     }
   }
 
@@ -81,8 +99,14 @@ class InvoiceForm extends React.Component<OwnProps, State> {
     const updatedInvoice = await form.simpleValidate<Invoice>(fields);
     const { member } = this.state;
 
-    if (updatedInvoice && updatedInvoice.resourceClass === InvoiceableResource.Membership) {
+    if (updatedInvoice.resourceClass === InvoiceableResource.Membership) {
       updatedInvoice.resourceId = member.id;
+    } else {
+      updatedInvoice.resourceId = (updatedInvoice as any).rentalId;
+    }
+
+    if (!updatedInvoice.resourceId) {
+      form.setError(fields.rentalId.name, fields.rentalId.error);
     }
 
     return {
@@ -96,7 +120,6 @@ class InvoiceForm extends React.Component<OwnProps, State> {
   }
 
   private updateType = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // Reset everything
     this.setState({ invoiceType: event.currentTarget.value as InvoiceableResource });
   }
 
@@ -131,7 +154,10 @@ class InvoiceForm extends React.Component<OwnProps, State> {
   }
 
   public render(): JSX.Element {
-    const { isOpen, onClose, isRequesting, error, onSubmit, invoice } = this.props;
+    const {
+      isOpen, onClose, isRequesting, error,
+      onSubmit, invoice, allowCustomBilling,
+      invoiceOptions, optionsError, optionsLoading } = this.props;
     const { rentals } = this.state;
 
     const rental = invoice && invoice.resourceId && invoice.resourceClass === InvoiceableResource.Rental &&
@@ -140,6 +166,21 @@ class InvoiceForm extends React.Component<OwnProps, State> {
     if (!invoice) {
       return null;
     }
+
+    const optionsList = Object.values(invoiceOptions);
+    const invoiceOptionsList = optionsList.length ?
+      [<option id={`${fields.invoiceOptionId.name}-option-none`} key="none" value={null}>None</option>,
+        [...optionsList.map(
+        (invoiceOption) =>
+          <option
+            id={`${fields.invoiceOptionId.name}-option-${invoiceOption.id}`}
+            key={invoiceOption.id}
+            value={invoiceOption.id}>
+              {invoiceOption.name}
+          </option>)
+        ]]
+      : <option id={`${fields.invoiceOptionId.name}-option-none`}>No Options</option>
+
 
     return (
       <FormModal
@@ -181,59 +222,75 @@ class InvoiceForm extends React.Component<OwnProps, State> {
             />
           </Grid>
           {this.state.invoiceType === InvoiceableResource.Rental && <Grid item xs={12}>
-            <FormLabel component="legend">{fields.rental.label}</FormLabel>
+            <FormLabel component="legend">{fields.rentalId.label}</FormLabel>
             <Select
-              name={fields.rental.name}
+              name={fields.rentalId.name}
               value={rental && rental.id || invoice.resourceId}
               fullWidth
               native
               required
-              placeholder={fields.rental.placeholder}
+              placeholder={fields.rentalId.placeholder}
             >
               {rentals.length ?
                 rentals.map(
-                  (rental) => <option id={`${fields.rental.name}-option-${rental.id}`} key={rental.id} value={rental.id}>{rental.number}</option>)
-                : invoice && <option id={`${fields.rental.name}-option-${invoice.resourceId}`} value={invoice.resourceClass}>{invoice.resourceId}</option>
+                  (rental) => <option id={`${fields.rentalId.name}-option-${rental.id}`} key={rental.id} value={rental.id}>{rental.number}</option>)
+                : invoice && <option id={`${fields.rentalId.name}-option-${invoice.resourceId}`} value={invoice.resourceClass}>{invoice.resourceId}</option>
               }
             </Select>
           </Grid>}
+          <Grid item xs={12}>
+            <FormLabel component="legend">{fields.invoiceOptionId.label}</FormLabel>
+            <Select
+              name={fields.invoiceOptionId.name}
+              fullWidth
+              native
+              required
+              disabled={!optionsList.length}
+              placeholder={fields.invoiceOptionId.placeholder}
+            >
+              {invoiceOptionsList}
+            </Select>
+          </Grid>
         {/* Who's it form - Member search */}
         {/* If can find resource, ask how long to renew for
         Else, display sub form to create the resource */}
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              required
-              value={invoice && invoice.description}
-              label={fields.description.label}
-              name={fields.description.name}
-              placeholder={fields.description.placeholder}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              required
-              value={invoice && invoice.amount}
-              label={fields.amount.label}
-              name={fields.amount.name}
-              placeholder={fields.amount.placeholder}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              required
-              value={invoice && toDatePicker(invoice.dueDate)}
-              label={fields.dueDate.label}
-              name={fields.dueDate.name}
-              placeholder={fields.dueDate.placeholder}
-              type="date"
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
+          {allowCustomBilling &&
+          <>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                required
+                value={invoice && invoice.description}
+                label={fields.description.label}
+                name={fields.description.name}
+                placeholder={fields.description.placeholder}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                required
+                value={invoice && invoice.amount}
+                label={fields.amount.label}
+                name={fields.amount.name}
+                placeholder={fields.amount.placeholder}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                required
+                value={invoice && toDatePicker(invoice.dueDate)}
+                label={fields.dueDate.label}
+                name={fields.dueDate.name}
+                placeholder={fields.dueDate.placeholder}
+                type="date"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </Grid>
+          </>}
         </Grid>
       </FormModal>
     )

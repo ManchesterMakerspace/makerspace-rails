@@ -10,24 +10,48 @@ class Admin::InvoicesController < AdminController
   end
 
   def create
-    invoice = Invoice.new(invoice_params)
-    invoice.save!
+    if invoice_option_params
+      raise ActionController::ParameterMissing.new(:id) if invoice_option_params[:id].nil?
+      raise ActionController::ParameterMissing.new(:member_id) if invoice_option_params[:member_id].nil?
+      member = Member.find(invoice_option_params[:member_id])
+      raise ::Mongoid::Errors::DocumentNotFound.new(Member, { id: invoice_option_params[:member_id] }) if member.nil?
+      invoice_option = InvoiceOption.find(invoice_option_params[:id])
+      raise ::Mongoid::Errors::DocumentNotFound.new(InvoiceOption, { id: invoice_option_params[:id] }) if invoice_option.nil?
+      if (invoice_option_params[:discount_id])
+        discounts = ::BraintreeService::Discount.get_discounts(@gateway)
+        invoice_discount = discounts.find { |d| d.id == invoice_option_params[:discount_id]}
+      end
+      invoice = invoice_option.build_invoice(member.id, Time.now, invoice_option_params[:resource_id], invoice_discount)
+
+    else
+      invoice = Invoice.new(invoice_params)
+      invoice.save!
+    end
+
     render json: invoice and return
   end
 
   def update
-    @invoice.update_attributes!(invoice_params)
+    if !!invoice_params[:settled] && !@invoice.settled
+      @invoice.settle_invoice
+    else
+      @invoice.update_attributes!(invoice_params)
+    end
     render json: @invoice and return
   end
 
   def destroy
-    @invoice.delete!
+    @invoice.delete
     render json: @invoice and return
   end
 
   private
   def invoice_params
     params.require(:invoice).permit(:description, :items, :settled, :amount, :payment_type, :resource_id, :resource_class, :due_date, :member_id)
+  end
+
+  def invoice_option_params
+    params.require(:invoice_option).permit(:id, :discount_id, :member_id, :resource_id)
   end
 
   def admin_index_params

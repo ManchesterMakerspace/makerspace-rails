@@ -7,7 +7,7 @@ import pick from "lodash-es/pick";
 import { Invoice, Properties, InvoiceableResourceDisplay } from "app/entities/invoice";
 import { QueryParams, CollectionOf } from "app/interfaces";
 import { MemberDetails } from "app/entities/member";
-import { CrudOperation, Routing } from "app/constants";
+import { CrudOperation, Routing, Whitelists } from "app/constants";
 
 import { Action as CheckoutAction } from "ui/checkout/constants";
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
@@ -38,6 +38,7 @@ interface DispatchProps {
 }
 interface StateProps {
   admin: boolean;
+  allowCustomBilling: boolean;
   invoices: CollectionOf<Invoice>;
   totalItems: number;
   loading: boolean;
@@ -176,7 +177,7 @@ class InvoicesListComponent extends React.Component<Props, State> {
 
   private getActionButtons = () => {
     const { selectedIds } = this.state;
-    const { admin, currentUserId, invoices } = this.props;
+    const { admin, currentUserId, invoices, allowCustomBilling } = this.props;
     const selectedInvoices = Object.values(pick(invoices, selectedIds));
     const viewingOwnInvoices = (Object.values(invoices)).every(invoice => invoice.memberId === currentUserId);
     const payNow = viewingOwnInvoices && selectedInvoices.length;
@@ -188,14 +189,15 @@ class InvoicesListComponent extends React.Component<Props, State> {
             color: "primary",
             onClick: this.openCreateForm,
             label: "Create New Invoice"
-          }, {
-            id: "invoices-list-edit",
-            variant: "outlined",
-            color: "primary",
-            disabled: !Array.isArray(selectedIds) || selectedIds.length !== 1,
-            onClick: this.openUpdateForm,
-            label: "Edit Invoice"
-          }, {
+          },
+        ...allowCustomBilling ? [{
+          id: "invoices-list-edit",
+          variant: "outlined",
+          color: "primary",
+          disabled: !Array.isArray(selectedIds) || selectedIds.length !== 1,
+          onClick: this.openUpdateForm,
+          label: "Edit Invoice"
+        }]: [], {
             id: "invoices-list-delete",
             variant: "contained",
             color: "secondary",
@@ -303,7 +305,7 @@ class InvoicesListComponent extends React.Component<Props, State> {
 
   private renderInvoiceForms = () => {
     const { selectedIds, openCreateForm, openUpdateForm, openSettleForm, openDeleteConfirm } = this.state;
-    const { invoices, member, admin } = this.props;
+    const { invoices, member, admin, allowCustomBilling } = this.props;
 
     const editForm = (renderProps: UpdateInvoiceRenderProps) => (
       <InvoiceForm
@@ -314,6 +316,11 @@ class InvoicesListComponent extends React.Component<Props, State> {
         error={renderProps.error}
         onClose={renderProps.closeHandler}
         onSubmit={renderProps.submit}
+        allowCustomBilling={renderProps.allowCustomBilling}
+        invoiceOptions={renderProps.invoiceOptions}
+        optionsLoading={renderProps.optionsLoading}
+        optionsError={renderProps.optionsError}
+        getInvoiceOptions={renderProps.getInvoiceOptions}
       />
     );
 
@@ -326,6 +333,11 @@ class InvoicesListComponent extends React.Component<Props, State> {
         error={renderProps.error}
         onClose={renderProps.closeHandler}
         onSubmit={renderProps.submit}
+        allowCustomBilling={renderProps.allowCustomBilling}
+        invoiceOptions={renderProps.invoiceOptions}
+        optionsLoading={renderProps.optionsLoading}
+        optionsError={renderProps.optionsError}
+        getInvoiceOptions={renderProps.getInvoiceOptions}
       />
     );
 
@@ -369,6 +381,7 @@ class InvoicesListComponent extends React.Component<Props, State> {
           invoice={invoices[selectedId]}
           closeHandler={this.closeUpdateForm}
           render={editForm}
+          customBillingEnabled={allowCustomBilling}
         />
         <UpdateInvoiceContainer
           operation={CrudOperation.Create}
@@ -376,6 +389,7 @@ class InvoicesListComponent extends React.Component<Props, State> {
           invoice={member && { memberId: member.id, memberName: `${member.firstname} ${member.lastname}` }}
           closeHandler={this.closeCreateForm}
           render={createForm}
+          customBillingEnabled={allowCustomBilling}
         />
         <UpdateInvoiceContainer
           operation={CrudOperation.Update}
@@ -386,6 +400,7 @@ class InvoicesListComponent extends React.Component<Props, State> {
           }}
           closeHandler={this.closeSettleInvoice}
           render={settlementModal}
+          customBillingEnabled={allowCustomBilling}
         />
          <UpdateInvoiceContainer
           operation={CrudOperation.Delete}
@@ -393,6 +408,7 @@ class InvoicesListComponent extends React.Component<Props, State> {
           invoice={invoices[selectedId]}
           closeHandler={this.closeDeleteInvoice}
           render={deleteModal}
+          customBillingEnabled={allowCustomBilling}
         />
       </>
     );
@@ -462,12 +478,13 @@ const mapStateToProps = (
       error: updateError
     }
   } = state.invoice;
-  const { currentUser: { isAdmin: admin, id: currentUserId } } = state.auth;
+  const { currentUser: { isAdmin: admin, id: currentUserId }, permissions } = state.auth;
   const invoiceList = Object.values(invoices);
   const allOwn = invoiceList.length && invoiceList.every(i => i.memberId === currentUserId);
 
   return {
     admin: admin && !allOwn,
+    allowCustomBilling: !!permissions[Whitelists.customBilling] || false,
     invoices,
     totalItems,
     loading,

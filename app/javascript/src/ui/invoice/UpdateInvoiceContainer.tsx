@@ -1,16 +1,24 @@
 import * as React from "react";
 import { connect } from "react-redux";
 
-import { Invoice } from "app/entities/invoice";
+import { Invoice,
+  InvoiceableResource,
+  isInvoiceOptionSelection,
+  InvoiceOptionSelection,
+  InvoiceOption
+} from "app/entities/invoice";
 import { CrudOperation } from "app/constants";
 
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import Form from "ui/common/Form";
-import InvoiceForm from "ui/invoice/InvoiceForm"
+import { InvoiceForm } from "ui/invoice/InvoiceForm"
 import SettleInvoiceModal from "ui/invoice/SettleInvoiceModal"
 import { updateInvoiceAction, deleteInvoiceAction } from "ui/invoice/actions";
 import { createInvoiceAction } from "ui/invoices/actions";
 import DeleteInvoiceModal from "ui/invoice/DeleteInvoiceModal";
+import { readOptionsAction } from "ui/billing/actions";
+import { Whitelists } from "app/constants";
+import { CollectionOf } from "app/interfaces";
 
 
 export interface UpdateInvoiceRenderProps extends Props {
@@ -19,6 +27,7 @@ export interface UpdateInvoiceRenderProps extends Props {
 }
 interface OwnProps {
   invoice?: Partial<Invoice>;
+  customBillingEnabled: boolean;
   isOpen: boolean;
   operation: CrudOperation;
   closeHandler: () => void;
@@ -27,9 +36,15 @@ interface OwnProps {
 interface StateProps {
   error: string;
   isRequesting: boolean;
+  allowCustomBilling: boolean;
+  invoiceOptions: CollectionOf<InvoiceOption>;
+  optionsLoading: boolean;
+  optionsError: string;
 }
 interface DispatchProps {
   dispatchInvoice: (updatedInvoice: Invoice) => void;
+  getInvoiceOptions: (type: InvoiceableResource) => void;
+  dispatchInvoiceOptionSelect: (invoiceOption: InvoiceOptionSelection) => void;
 }
 interface Props extends OwnProps, StateProps, DispatchProps { }
 
@@ -51,15 +66,16 @@ class UpdateInvoice extends React.Component<Props, {}> {
     if (this.formRef.validate) {
       validUpdate = this.formRef.validate && await this.formRef.validate(form);
     }
-    const updatedInvoice = {
-      ...invoice,
-      ...validUpdate
-    }
     if (!form.isValid()) return;
 
-    await this.props.dispatchInvoice(updatedInvoice);
-    if (!this.props.error) {
-      return true;
+    if (validUpdate && isInvoiceOptionSelection(validUpdate)) {
+      await this.props.dispatchInvoiceOptionSelect(validUpdate);
+    } else {
+      const updatedInvoice = {
+        ...invoice,
+        ...validUpdate
+      }
+      await this.props.dispatchInvoice(updatedInvoice);
     }
   }
 
@@ -93,11 +109,23 @@ const mapStateToProps = (
       stateProps = state.invoice.delete;
       break;
   }
+  const { permissions } = state.auth;
+  const {
+    entities: invoiceOptions,
+    read: {
+      isRequesting: optionsLoading,
+      error: optionsError
+    }
+  } = state.billing;
 
   const { isRequesting, error } = stateProps;
   return {
     error,
-    isRequesting
+    isRequesting,
+    invoiceOptions,
+    optionsLoading,
+    optionsError,
+    allowCustomBilling: !!permissions[Whitelists.customBilling] || false,
   }
 }
 
@@ -112,7 +140,7 @@ const mapDispatchToProps = (
       switch (operation) {
         case CrudOperation.Update:
           action = (updateInvoiceAction(invoice.id, invoiceDetails));
-          break;``
+          break;
         case CrudOperation.Create:
           action = (createInvoiceAction(invoiceDetails, true));
           break;
@@ -120,8 +148,10 @@ const mapDispatchToProps = (
           action = (deleteInvoiceAction(invoice.id));
           break;
       }
-      dispatch(action);
+      action && dispatch(action);
     },
+    dispatchInvoiceOptionSelect: (invoiceOption) => dispatch(createInvoiceAction(invoiceOption, true)),
+    getInvoiceOptions: (type) => dispatch(readOptionsAction({ types: [type] }))
   }
 }
 

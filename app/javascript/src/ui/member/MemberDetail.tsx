@@ -40,6 +40,8 @@ interface StateProps {
   currentUserId: string;
   subscriptionId: string;
   billingEnabled: boolean;
+  invoiceUpdating: boolean;
+  invoiceError: string;
 }
 interface OwnProps extends RouteComponentProps<any> {
 }
@@ -81,7 +83,7 @@ class MemberDetail extends React.Component<Props, State> {
 
   public componentDidUpdate(prevProps: Props) {
     const oldMemberId = prevProps.match.params.memberId;
-    const { isRequestingMember: wasRequesting } = prevProps;
+    const { isRequestingMember: wasRequesting, invoiceUpdating: invoiceWasUpdating } = prevProps;
     const { currentUserId, isRequestingMember, match, getMember, member, history, match: { params: { resource } } } = this.props;
     const { memberId } = match.params;
     if (oldMemberId !== memberId && !isRequestingMember) {
@@ -99,6 +101,10 @@ class MemberDetail extends React.Component<Props, State> {
       } else {
         history.push(Routing.Members);
       }
+    }
+
+    if (invoiceWasUpdating && !this.props.invoiceUpdating && !this.props.invoiceError) {
+      getMember();
     }
   }
 
@@ -316,6 +322,7 @@ const mapStateToProps = (
   const { isRequesting: isUpdating } = state.member.update
   const { entity: member } = state.member;
   const { permissions, currentUser: { isAdmin: admin, id: currentUserId, subscriptionId } } = state.auth;
+  const { update: { isRequesting: invoiceUpdating, error: invoiceError } } = state.invoice;
 
   return {
     admin: admin,
@@ -325,6 +332,8 @@ const mapStateToProps = (
     isRequestingMember: isRequesting,
     isUpdatingMember: isUpdating,
     subscriptionId,
+    invoiceUpdating,
+    invoiceError,
     billingEnabled: !!permissions[Whitelists.billing] || false,
   }
 }
