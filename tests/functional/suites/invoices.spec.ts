@@ -14,8 +14,8 @@ import { creditCard as defaultCreditCard, creditCardForm } from "../constants/pa
 
 const initInvoices = [defaultInvoice, pastDueInvoice, settledInvoice];
 
-describe("Invoicing and Dues", () => {
-  xdescribe("Basic User", () => {
+xdescribe("Invoicing and Dues", () => {
+  describe("Basic User", () => {
     const loadInvoices = async (invoices: Invoice[], login?: boolean) => {
       await mock(mockRequests.invoices.get.ok(invoices));
       if (login) {

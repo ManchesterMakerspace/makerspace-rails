@@ -248,12 +248,15 @@ class InvoicesListComponent extends React.Component<Props, State> {
     if ((wasCreating && !isCreating && !createError) || // refresh list on create
         (oldMember.id !== member.id) // or member change
        ) {
-      this.getInvoices();
+      this.getInvoices(true);
     }
   }
 
-  private getInvoices = () => {
+  private getInvoices = (resetPage: boolean = false) => {
     const { admin, getInvoices } = this.props;
+    if (resetPage) {
+      this.setState({ pageNum: 0 });
+    }
     getInvoices(this.getQueryParams(), admin);
   }
   private rowId = (row: Invoice) => row.id;
@@ -265,7 +268,7 @@ class InvoicesListComponent extends React.Component<Props, State> {
       order = SortDirection.Asc;
     }
     this.setState({ order, orderBy, pageNum: 0 },
-      this.getInvoices
+      () => this.getInvoices(true)
     );
   }
 

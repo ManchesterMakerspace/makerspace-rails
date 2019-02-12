@@ -175,12 +175,15 @@ class RentalsList extends React.Component<Props, State> {
         (wasUpdating && !isUpdating && !updateError) ||  // or update
         ((oldMember && oldMember.id) !== (member && member.id)) // or member change
     ) {
-      this.getRentals();
+      this.getRentals(true);
     }
   }
 
-  private getRentals = () => {
+  private getRentals = (resetPage: boolean = false) => {
     const { admin } = this.props;
+    if (resetPage) {
+      this.setState({ pageNum: 0 });
+    }
     this.props.getRentals(admin, this.getQueryParams());
   }
   private rowId = (row: Rental) => row.id;
@@ -192,7 +195,7 @@ class RentalsList extends React.Component<Props, State> {
       order = SortDirection.Asc;
     }
     this.setState({ order, orderBy, pageNum: 0 },
-      this.getRentals
+      () => this.getRentals(true)
     );
   }
 

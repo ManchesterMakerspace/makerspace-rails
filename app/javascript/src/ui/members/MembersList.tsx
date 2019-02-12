@@ -164,7 +164,7 @@ class MembersList extends React.Component<Props, State> {
   }
 
   private updateFilter = () =>
-    this.setState(state => ({ currentMembers: state.currentMembers ? "" : "true" }), this.getMembers);
+    this.setState(state => ({ currentMembers: state.currentMembers ? "" : "true" }), () => this.getMembers(true));
 
   private getActionButtons = () => {
     const { selectedId } = this.state;
@@ -216,11 +216,14 @@ class MembersList extends React.Component<Props, State> {
 
     if ((wasCreating && !isCreating && !createError) || // refresh list on create or update
       (wasUpdating && !isUpdating && !updateError)) {
-      this.getMembers();
+      this.getMembers(true);
     }
   }
 
-  private getMembers = () => {
+  private getMembers = (resetPage: boolean = false) => {
+    if (resetPage) {
+      this.setState({ pageNum: 0 });
+    }
     this.setState({ selectedId: undefined });
     this.props.getMembers(this.getQueryParams());
   }
@@ -233,7 +236,7 @@ class MembersList extends React.Component<Props, State> {
       order = SortDirection.Asc;
     }
     this.setState({ order, orderBy, pageNum: 0 },
-      this.getMembers
+      () => this.getMembers(true)
     );
   }
 
@@ -245,7 +248,7 @@ class MembersList extends React.Component<Props, State> {
 
   private onSearchEnter = (searchTerm: string) => {
     this.setState({ search: searchTerm, pageNum: 0 },
-      this.getMembers
+      () => this.getMembers(true)
     );
   }
 

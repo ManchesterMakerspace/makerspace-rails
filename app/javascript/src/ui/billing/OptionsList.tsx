@@ -103,7 +103,7 @@ class OptionsList extends React.Component<Props, State> {
 
     if ((wasCreating && !isCreating && !createError) // refresh list on create
     ) {
-      this.getOptions();
+      this.getOptions(true);
     }
   }
 
@@ -122,8 +122,11 @@ class OptionsList extends React.Component<Props, State> {
       types: Object.values(InvoiceableResource)
     };
   }
-  private getOptions = () => {
+  private getOptions = (resetPage: boolean = false) => {
     this.setState({ selectedId: undefined });
+    if (resetPage) {
+      this.setState({ pageNum: 0 });
+    }
     this.props.getOptions(this.getQueryParams());
   }
   private openCreateForm = () => this.setState({ openCreateForm: true });
@@ -251,7 +254,7 @@ class OptionsList extends React.Component<Props, State> {
       order = SortDirection.Asc;
     }
     this.setState({ order, orderBy, pageNum: 0 },
-      this.getOptions
+      () => this.getOptions(true)
     );
   }
 
