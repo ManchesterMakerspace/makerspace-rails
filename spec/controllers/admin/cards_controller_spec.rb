@@ -19,6 +19,13 @@ RSpec.describe Admin::CardsController, type: :controller do
     }
   }
 
+  let(:second_member_card) {
+    {
+      member_id: member.id,
+      uid: 'PID08'
+    }
+  }
+
   let(:different_member_cards) {
     {
       member_id: other_member.id,
@@ -63,6 +70,30 @@ RSpec.describe Admin::CardsController, type: :controller do
           expect(response.content_type).to eq "application/json"
           expect(parsed_response['card']['id']).to eq(Card.last.id.as_json)
         end
+
+        it "invalidates existing cards if member already has one" do
+          first_card = Card.create! valid_attributes
+          second_card = Card.create! second_member_card
+          expect {
+            post :create, params: {"card" => duplicate_member_card}, format: :json
+          }.to change(Card, :count)
+          first_card.reload
+          second_card.reload
+          expect(first_card.validity).to eq("lost")
+          expect(second_card.validity).to eq("lost")
+        end
+
+        it "duplicate cards for a members returns status 200" do
+          card = Card.create! valid_attributes
+          post :create, params: {"card" => duplicate_member_card}, format: :json
+          card.reload
+
+          parsed_response = JSON.parse(response.body)
+          expect(response).to have_http_status(200)
+          expect(response.content_type).to eq "application/json"
+          expect(parsed_response['card']['id']).to eq(Card.last.id.as_json)
+          expect(Card.last.id.as_json).not_to eq(card.id)
+        end
       end
 
       context "with invalid params" do
@@ -96,21 +127,6 @@ RSpec.describe Admin::CardsController, type: :controller do
 
           post :create, params: {"card" => missing_member_attributes}, format: :json
           expect(response).to have_http_status(422)
-        end
-
-        it "does not create new card if member already has one" do
-          card = Card.create! valid_attributes
-          expect {
-            post :create, params: {"card" => duplicate_member_card}, format: :json
-          }.not_to change(Card, :count)
-        end
-
-        it "duplicate cards for a members returns status 409 with message" do
-          card = Card.create! valid_attributes
-          post :create, params: {"card" => duplicate_member_card}, format: :json
-
-          expect(response).to have_http_status(409)
-          expect(response.content_type).to eq "application/json"
         end
       end
     end

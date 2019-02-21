@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { Link } from 'react-router-dom';
+import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { push } from "connected-react-router";
 import Grid from "@material-ui/core/Grid";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -27,7 +27,7 @@ import { memberToRenewal } from "ui/member/utils";
 import UpdateMemberContainer, { UpdateMemberRenderProps } from "ui/member/UpdateMemberContainer";
 import { CrudOperation } from "app/constants";
 
-interface OwnProps {}
+interface OwnProps extends RouteComponentProps<{}> {}
 interface DispatchProps {
   getMembers: (queryParams?: QueryParams) => void;
   updateMember: (id: string, details: Partial<MemberDetails>, isAdmin: boolean) => void;
@@ -371,4 +371,4 @@ const mapDispatchToProps = (
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MembersList);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(MembersList));

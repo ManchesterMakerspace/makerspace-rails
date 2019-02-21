@@ -10,6 +10,7 @@ import PublicRouting from 'app/PublicRouting';
 import { CollectionOf } from 'app/interfaces';
 import { Invoice } from 'app/entities/invoice';
 import { Permission } from 'app/entities/permission';
+import { withRouter, RouteComponentProps } from 'react-router';
 
 interface StateProps {
   auth: string;
@@ -22,7 +23,7 @@ interface StateProps {
 interface DispatchProps {
   attemptLogin: () => void;
 }
-interface OwnProps {}
+interface OwnProps extends RouteComponentProps<{}> {}
 
 interface State {
   attemptingLogin: boolean;
@@ -104,4 +105,4 @@ const mapDispatchToProps = (
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));

@@ -215,6 +215,7 @@ export class InvoiceForm extends React.Component<Props, State> {
               isClearable
               name={fields.member.name}
               value={this.state.member}
+              isDisabled={invoice && !!invoice.memberId}
               onChange={this.updateContactValue}
               placeholder={fields.member.placeholder}
               id={fields.member.name}

@@ -56,19 +56,19 @@ class Member
   has_many :access_cards, class_name: "Card", inverse_of: :member
   belongs_to :group, class_name: "Group", inverse_of: :active_members, optional: true, primary_key: 'groupName', foreign_key: "groupName"
 
-  def self.search_members(searchTerms)
+  def self.search_members(searchTerms, criteria = Mongoid::Criteria.new(Member))
     regexp_search = Regexp.new(searchTerms, 'i')
-    members = Member.where(email: searchTerms)
-    members = Member.where("(this.firstname + ' ' + this.lastname).match(new RegExp('#{searchTerms}', 'i'))") unless (members.size > 0)
-    members = Member.full_text_search(searchTerms, index: :_lastname_keywords).sort_by(&:relevance).reverse unless (members.size > 0)
-    members = Member.full_text_search(searchTerms, index: :_email_keywords).sort_by(&:relevance).reverse unless (members.size > 0)
+    members = criteria.where(email: searchTerms)
+    members = criteria.where("(this.firstname + ' ' + this.lastname).match(new RegExp('#{searchTerms}', 'i'))") unless (members.size > 0)
+    members = criteria.full_text_search(searchTerms, index: :_lastname_keywords).sort_by(&:relevance).reverse unless (members.size > 0)
+    members = criteria.full_text_search(searchTerms, index: :_email_keywords).sort_by(&:relevance).reverse unless (members.size > 0)
     return members
   end
 
   # Includes firstname if cant find anything else
   # Not to be used for Payment association
-  def self.rough_search_members(searchTerms)
-    members = self.search_members(searchTerms)
+  def self.rough_search_members(searchTerms, criteria = Mongoid::Criteria.new(Member))
+    members = self.search_members(searchTerms, criteria)
     memebrs = Member.full_text_search(searchTerms).sort_by(&:relevance).reverse unless (members.size > 0)
     return members
   end

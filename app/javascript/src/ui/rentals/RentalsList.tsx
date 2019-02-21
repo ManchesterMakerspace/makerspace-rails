@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as moment from "moment";
 import { connect } from "react-redux";
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import Grid from "@material-ui/core/Grid";
 
 import { Rental, Properties } from "app/entities/rental";
@@ -26,7 +26,7 @@ import { rentalToRenewal } from "ui/rentals/utils";
 import { rentalRenewalOptions } from "ui/rentals/constants";
 import RenewalForm from "ui/common/RenewalForm";
 
-interface OwnProps {
+interface OwnProps extends RouteComponentProps<{}> {
   member?: MemberDetails;
   fields?: Column<Rental>[];
 }
@@ -407,4 +407,4 @@ const mapDispatchToProps = (
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(RentalsList);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RentalsList));

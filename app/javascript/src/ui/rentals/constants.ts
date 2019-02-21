@@ -63,7 +63,7 @@ export const fields = {
     name: `${formPrefix}-expiration`,
     placeholder: "Select an expiration date",
     transform: (val: string) => dateToTime(val),
-    validate: (_val: string) => true,
+    validate: (val: string) => !!val,
     error: "Expiration date required"
   },
   memberId: {

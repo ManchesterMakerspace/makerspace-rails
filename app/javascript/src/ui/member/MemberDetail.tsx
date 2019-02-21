@@ -37,6 +37,7 @@ interface StateProps {
   requestingError: string;
   isRequestingMember: boolean;
   isUpdatingMember: boolean;
+  updateMemberError: string;
   member: MemberDetails,
   currentUserId: string;
   subscriptionId: string;
@@ -84,7 +85,7 @@ class MemberDetail extends React.Component<Props, State> {
 
   public componentDidUpdate(prevProps: Props) {
     const oldMemberId = prevProps.match.params.memberId;
-    const { isRequestingMember: wasRequesting, invoiceUpdating: invoiceWasUpdating } = prevProps;
+    const { isRequestingMember: wasRequesting, invoiceUpdating: invoiceWasUpdating, isUpdatingMember: wasUpdating } = prevProps;
     const { currentUserId, isRequestingMember, match, getMember, member, history, match: { params: { resource } } } = this.props;
     const { memberId } = match.params;
     if (oldMemberId !== memberId && !isRequestingMember) {
@@ -104,7 +105,9 @@ class MemberDetail extends React.Component<Props, State> {
       }
     }
 
-    if (invoiceWasUpdating && !this.props.invoiceUpdating && !this.props.invoiceError) {
+    if (
+      (invoiceWasUpdating && !this.props.invoiceUpdating && !this.props.invoiceError) ||
+      (wasUpdating && !this.props.isUpdatingMember && !this.props.updateMemberError) ){
       getMember();
     }
   }
@@ -317,7 +320,7 @@ const mapStateToProps = (
   _ownProps: OwnProps
 ): StateProps => {
   const { isRequesting, error: requestingError } = state.member.read;
-  const { isRequesting: isUpdating } = state.member.update
+  const { isRequesting: isUpdating, error: updateError } = state.member.update
   const { entity: member } = state.member;
   const { permissions, currentUser: { isAdmin: admin, id: currentUserId, subscriptionId } } = state.auth;
   const { update: { isRequesting: invoiceUpdating, error: invoiceError } } = state.invoice;
@@ -329,6 +332,7 @@ const mapStateToProps = (
     currentUserId,
     isRequestingMember: isRequesting,
     isUpdatingMember: isUpdating,
+    updateMemberError: updateError,
     subscriptionId,
     invoiceUpdating,
     invoiceError,

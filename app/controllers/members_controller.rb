@@ -4,8 +4,13 @@ class MembersController < ApplicationController
     before_action :set_member, only: [:show, :update]
 
     def index
-      @members = query_params[:search].nil? || query_params[:search].empty? ? Member.all : Member.rough_search_members(query_params[:search])
-      @members = @members.where(:expirationTime => { '$gt' => (Time.now.strftime('%s').to_i * 1000) }) unless params[:currentMembers] == "" && is_admin?
+      # Limit index to only current members unless authorized and requesting full records
+      if is_admin? && (params[:currentMembers].nil? || params[:currentMembers].empty?)
+        search = Mongoid::Criteria.new(Member)
+      else
+        search = Member.where(:expirationTime => { '$gt' => (Time.now.strftime('%s').to_i * 1000) })
+      end
+      @members = query_params[:search].nil? || query_params[:search].empty? ? search.all : Member.rough_search_members(query_params[:search], search)
       @members = query_resource(@members)
 
       return render_with_total_items(@members, root: :members)
