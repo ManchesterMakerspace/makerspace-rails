@@ -115,7 +115,6 @@ class RentalForm extends React.Component<OwnProps, State> {
           <Grid item xs={6}>
             <TextField
               fullWidth
-              required
               value={rental.description}
               label={fields.description.label}
               name={fields.description.name}

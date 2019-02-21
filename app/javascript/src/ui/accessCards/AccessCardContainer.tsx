@@ -12,6 +12,7 @@ export interface CreateAccessCardProps {
   isRequesting: boolean;
   error: string;
   createAccessCard: (uid: string) => void;
+  member: Partial<MemberDetails>;
 }
 
 interface OwnProps {
@@ -41,11 +42,12 @@ class AccessCardContainer extends React.Component<Props> {
   }
 
   public render() {
-    const { isRequesting, error, isOpen, closeHandler, createAccessCard } = this.props;
+    const { isRequesting, error, isOpen, closeHandler, createAccessCard, member } = this.props;
     return this.props.render({
       isRequesting,
       error,
       isOpen,
+      member,
       createAccessCard,
       onClose: closeHandler,
     });

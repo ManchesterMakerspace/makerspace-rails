@@ -55,7 +55,7 @@ export const fields = {
     label: "Description",
     name: `${formPrefix}-description`,
     placeholder: "Enter description",
-    validate: (val: string) => !!val,
+    validate: (val: string) => true,
     error: "Please enter a description. Often cost of rental",
   },
   expiration: {

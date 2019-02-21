@@ -220,6 +220,10 @@ describe("Member Profiles", () => {
          ...foblessMember,
          cardId: cardId
        }
+        const newCard = {
+          id: "345",
+          uid: cardId,
+        }
         const rejectionCard = {
           uid: cardId,
           timeOf: moment().subtract(1, "minute").calendar()
@@ -233,12 +237,10 @@ describe("Member Profiles", () => {
         await utils.waitForVisisble(memberPO.accessCardForm.submit);
         await utils.clickElement(memberPO.accessCardForm.importButton);
         expect(await utils.getElementText(memberPO.accessCardForm.importConfirmation)).toEqual(cardId);
-        await mock(mockRequests.member.put.ok(updatedMember.id, updatedMember, true));
+        await mock(mockRequests.accessCard.post.ok(newCard));
         await mock(mockRequests.member.get.ok(updatedMember.id, updatedMember));
         await utils.clickElement(memberPO.accessCardForm.submit);
         await utils.waitForNotVisible(memberPO.accessCardForm.submit);
-        await utils.clickElement(memberPO.memberDetail.openCardButton);
-        await utils.waitForVisisble(memberPO.accessCardForm.deactivateButton);
       });
       it("Can replace a keyfob for a member", async () => {
         /* 1. Login as admin and nav to basic user's profile that has a fob
@@ -249,8 +251,7 @@ describe("Member Profiles", () => {
             - Load updated member's profile
            3. Click 'Replace Fob' button
            4. Assert modal opens
-           5. Click 'Report Lost' button
-           6. Click 'Impoort new Key' button
+           5. Click 'Impoort new Key' button
            6. Assert rejection card ID displayed
            7. Submit
            8. Assert updated member's info
@@ -269,6 +270,10 @@ describe("Member Profiles", () => {
           ...fobbedMember,
           cardId: cardId
         };
+        const newCard = {
+          id: "345",
+          uid: cardId,
+        }
         const rejectionCard = {
           uid: cardId,
           timeOf: moment().subtract(1, "minute").calendar()
@@ -276,21 +281,16 @@ describe("Member Profiles", () => {
         await mock(mockRequests.member.get.ok(fobbedMember.id, fobbedMember));
         await auth.autoLogin(adminUser, memberPO.getProfilePath(fobbedMember.id));
         await mock(mockRequests.rejectionCard.get.ok(rejectionCard));
-        await mock(mockRequests.accessCard.put.ok(currentCard.id, currentCard));
 
         expect(await utils.getElementText(memberPO.memberDetail.openCardButton)).toMatch(/Replace Fob/i);
         await utils.clickElement(memberPO.memberDetail.openCardButton);
         await utils.waitForVisisble(memberPO.accessCardForm.submit);
-        await utils.clickElement(memberPO.accessCardForm.deactivateButton);
-        await utils.waitForNotVisible(memberPO.accessCardForm.loading);
         await utils.clickElement(memberPO.accessCardForm.importButton);
         expect(await utils.getElementText(memberPO.accessCardForm.importConfirmation)).toEqual(cardId);
-        await mock(mockRequests.member.put.ok(updatedMember.id, updatedMember, true));
+        await mock(mockRequests.accessCard.post.ok(newCard));
         await mock(mockRequests.member.get.ok(updatedMember.id, updatedMember));
         await utils.clickElement(memberPO.accessCardForm.submit);
         await utils.waitForNotVisible(memberPO.accessCardForm.submit);
-        await utils.clickElement(memberPO.memberDetail.openCardButton);
-        await utils.waitForVisisble(memberPO.accessCardForm.deactivateButton);
       });
     });
   });

@@ -3,6 +3,7 @@ import * as React from "react";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 
+import { MemberDetails } from "app/entities/member";
 import { getRejectionCard } from "api/accessCards/transactions";
 import FormModal from "ui/common/FormModal";
 import Form from "ui/common/Form";
@@ -13,6 +14,7 @@ interface OwnProps {
   error: string;
   onClose: () => void;
   createAccessCard: (uid: string) => void;
+  member: Partial<MemberDetails>;
 }
 
 interface Props extends OwnProps {}
@@ -68,9 +70,14 @@ export class AccessCardForm extends React.Component<Props,State> {
   }
 
   private renderNewCardInstructions = () => {
+    const { member } = this.props;
     return (
       <>
         <Typography variant="body1" gutterBottom>Instructions to register new member key fob</Typography>
+        {(member && member.cardId) ?
+          <Typography color="default" variant="body1" gutterBottom>Access card exists for {member.firstname}</Typography>
+         : <Typography color="secondary" variant="body1" gutterBottom>No access card exists {member.firstname}</Typography>
+        }
         {this.renderImportInstructions()}
       </>
     )

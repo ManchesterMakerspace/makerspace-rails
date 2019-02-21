@@ -265,6 +265,7 @@ class MemberDetail extends React.Component<Props, State> {
     const accessCardForm = (renderProps:CreateAccessCardProps) => (
       <AccessCardForm
         isOpen={renderProps.isOpen}
+        member={renderProps.member}
         isRequesting={renderProps.isRequesting}
         error={renderProps.error}
         onClose={renderProps.onClose}

@@ -71,6 +71,18 @@ export const mockRequests = {
         }
       })
     },
+    post: {
+      ok: (accessCard: Partial<AccessCard>): MockRequest => ({
+        httpRequest: {
+          method: Method.Post,
+          path: `/api/admin/cards.json`,
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({ accessCard })
+        }
+      })
+    },
     put: {
       ok: (id: string, accessCard: Partial<AccessCard>): MockRequest => ({
         httpRequest: {
@@ -305,7 +317,7 @@ export const mockRequests = {
         },
         httpResponse: {
           statusCode: 200,
-          body: JSON.stringify(card)
+          body: JSON.stringify({ card })
         }
       })
     }
