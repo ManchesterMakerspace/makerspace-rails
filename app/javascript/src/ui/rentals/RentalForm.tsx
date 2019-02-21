@@ -1,5 +1,5 @@
 import * as React from "react";
-import AsyncCreatableSelect from 'react-select/lib/AsyncCreatable';
+import AsyncSelect from 'react-select/lib/Async';
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 
@@ -48,13 +48,7 @@ class RentalForm extends React.Component<OwnProps, State> {
   }
 
 
-  public validate = async (form: Form): Promise<Rental> => {
-    const details = await form.simpleValidate<Rental>(fields);
-    return {
-      ...details,
-      memberId: this.state.member && this.state.member.id,
-    }
-  }
+  public validate = (form: Form): Promise<Rental> => form.simpleValidate<Rental>(fields);
 
   private initRentalMember = async () => {
     const { rental } = this.props;
@@ -77,7 +71,7 @@ class RentalForm extends React.Component<OwnProps, State> {
   // Need to update internal state and set form value since input is otherwise a controlled input
   private updateMemberValue = (newMember: SelectOption) => {
     this.setState({ member: newMember });
-    this.formRef && this.formRef.setValue(fields.member.name, newMember);
+    this.formRef && this.formRef.setValue(fields.memberId.name, newMember);
   }
 
   private memberOptions = async (searchValue: string) => {
@@ -144,14 +138,15 @@ class RentalForm extends React.Component<OwnProps, State> {
             />
           </Grid>
           <Grid item xs={12}>
-            <FormLabel component="legend">{fields.member.label}</FormLabel>
-            <AsyncCreatableSelect
+            <FormLabel component="legend">{fields.memberId.label}</FormLabel>
+            <AsyncSelect
               isClearable
-              name={fields.member.name}
+              name={fields.memberId.name}
+              isDisabled={rental && !!rental.memberId}
               value={this.state.member}
               onChange={this.updateMemberValue}
-              placeholder={fields.member.placeholder}
-              id={fields.member.name}
+              placeholder={fields.memberId.placeholder}
+              id={fields.memberId.name}
               loadOptions={this.memberOptions}
             />
           </Grid>

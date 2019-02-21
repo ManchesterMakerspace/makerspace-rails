@@ -15,7 +15,6 @@ import { CollectionOf } from "app/interfaces";
 import ErrorMessage from "ui/common/ErrorMessage";
 import LoadingOverlay from "ui/common/LoadingOverlay";
 
-
 export interface FormField {
   label?: string;
   name: string;
@@ -271,7 +270,7 @@ class Form extends React.Component<FormModalProps, State> {
     return (
       <>
         {title && <DialogTitle id={`${id}-title`}>{title}</DialogTitle>}
-        <DialogContent>
+        <DialogContent style={{ overflow: 'visible' }}>
           {this.renderChildren(children)}
           {isDirty && !loading && error && <ErrorMessage error={error} id={`${id}-error`}/>}
         </DialogContent>

@@ -26,6 +26,7 @@ import NotificationModal, { Notification } from "ui/member/NotificationModal";
 import { Whitelists } from "app/constants";
 import SignDocuments from "ui/auth/SignDocuments";
 import { getDetailsForMember } from "ui/membership/constants";
+import AccessCardContainer, { CreateAccessCardProps } from "ui/accessCards/AccessCardContainer";
 
 interface DispatchProps {
   getMember: () => Promise<void>;
@@ -258,15 +259,13 @@ class MemberDetail extends React.Component<Props, State> {
         onSubmit={renderProps.submit}
         />
     )
-    const accessCardForm = (renderProps:UpdateMemberRenderProps) => (
+    const accessCardForm = (renderProps:CreateAccessCardProps) => (
       <AccessCardForm
-        ref={renderProps.setRef}
-        member={renderProps.member}
         isOpen={renderProps.isOpen}
-        isRequesting={renderProps.isUpdating}
-        error={renderProps.updateError}
-        onClose={renderProps.closeHandler}
-        onSubmit={renderProps.submit}
+        isRequesting={renderProps.isRequesting}
+        error={renderProps.error}
+        onClose={renderProps.onClose}
+        createAccessCard={renderProps.createAccessCard}
       />
     )
 
@@ -286,8 +285,7 @@ class MemberDetail extends React.Component<Props, State> {
           closeHandler={this.closeEditModal}
           render={editForm}
         />
-        <UpdateMemberContainer
-          operation={CrudOperation.Update}
+        <AccessCardContainer
           isOpen={isCardOpen}
           member={member}
           closeHandler={this.closeCardModal}

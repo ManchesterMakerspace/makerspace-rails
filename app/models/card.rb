@@ -33,6 +33,11 @@ class Card
     @@activeStatuses.include?(self.validity)
   end
 
+  def invalidate
+    self.card_location = @@memberStatuses[:lost]
+    self.save!
+  end
+
   private
   def set_holder
     self.holder = self.member.fullname

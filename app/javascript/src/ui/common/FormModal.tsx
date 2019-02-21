@@ -1,5 +1,6 @@
 import * as React from "react";
 import Dialog from "@material-ui/core/Dialog";
+import { withStyles } from '@material-ui/core/styles';
 
 import Form from "ui/common/Form";
 
@@ -19,12 +20,19 @@ interface FormModalProps {
   style?: { [key: string]: string }
 }
 
-const FormModal: React.SFC<FormModalProps> = (props: FormModalProps) => {
+const styles = {
+  root: {
+    overflow: 'visible'
+  }
+}
+
+const FormModal: React.SFC<FormModalProps> = (props: FormModalProps & { classes: any }) => {
   const { formRef, isOpen, id, loading, title, closeHandler, cancelText,
-    submitText, onSubmit, children, error, style, fullScreen } = props;
+    submitText, onSubmit, children, error, style, fullScreen, classes } = props;
 
   return (
     <Dialog
+      classes={{ paperScrollPaper: classes.root }}
       fullWidth={true}
       fullScreen={fullScreen}
       aria-labelledby={`${id}-title`}
@@ -50,4 +58,4 @@ const FormModal: React.SFC<FormModalProps> = (props: FormModalProps) => {
   );
 }
 
-export default FormModal;
+export default withStyles(styles)(FormModal);

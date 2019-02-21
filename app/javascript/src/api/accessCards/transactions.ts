@@ -21,6 +21,16 @@ export const putCard = async (id: string, details: Partial<AccessCard>) => {
   }
 }
 
+
+export const postCard = async (memberId: string, uid: string) => {
+  try {
+    return await axios.post(`${buildAccessCardUrl()}`, { card: { memberId, uid } });
+  } catch (e) {
+    const error = handleApiError(e);
+    throw error;
+  }
+}
+
 export const getRejectionCard = async () => {
   try {
     return await axios.get(`${buildAccessCardUrl("new")}`);

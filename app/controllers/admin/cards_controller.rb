@@ -13,7 +13,7 @@ class Admin::CardsController < AdminController
     raise Error::NotFound.new() unless @card.member
 
     cards = @card.member.access_cards.select { |c| (c.validity != 'lost') && (c.validity != 'stolen') && (c != @card)}
-    raise Error::Conflict.new("Member has active cards. Cards must be disabled before creating new one.") if cards.length > 0
+    cards.each { |card| card.invalidate }
 
     @card.save!
     rejection_card = RejectionCard.find_by(uid: @card.uid)

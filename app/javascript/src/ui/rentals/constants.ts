@@ -49,12 +49,14 @@ export const fields = {
     name: `${formPrefix}-number`,
     placeholder: "Enter number",
     validate: (val: string) => !!val,
+    error: "Please enter a number",
   },
   description: {
     label: "Description",
     name: `${formPrefix}-description`,
     placeholder: "Enter description",
     validate: (val: string) => !!val,
+    error: "Please enter a description. Often cost of rental",
   },
   expiration: {
     label: "Expiration",
@@ -64,7 +66,7 @@ export const fields = {
     validate: (_val: string) => true,
     error: "Expiration date required"
   },
-  member: {
+  memberId: {
     label: "Select a member",
     name: `${formPrefix}-member`,
     placeholder: `Search by name or email`,

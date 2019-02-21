@@ -1,7 +1,7 @@
 import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 
-import { getCards, putCard } from "api/accessCards/transactions";
+import { getCards, putCard, postCard } from "api/accessCards/transactions";
 import { Action as CardAction } from "ui/accessCards/constants";
 import { CardState } from "ui/accessCards/interfaces";
 import { AccessCard } from "app/entities/card";
@@ -49,9 +49,35 @@ export const updateCardAction = (
   }
 }
 
+export const createCardAction = (
+  memberId: string,
+  uid: string,
+): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
+  dispatch({ type: CardAction.StartCreateRequest });
+
+  try {
+    const response = await postCard(memberId, uid);
+    const { data } = response;
+    dispatch({
+      type: CardAction.CreateCardSuccess,
+      data: data.card
+    });
+  } catch (e) {
+    const { errorMessage } = e;
+    dispatch({
+      type: CardAction.CreateCardFailure,
+      error: errorMessage
+    });
+  }
+}
+
 const defaultState: CardState = {
   entities: undefined,
   read: {
+    isRequesting: false,
+    error: "",
+  },
+  create: {
     isRequesting: false,
     error: "",
   },
@@ -91,6 +117,35 @@ export const cardReducer = (state: CardState = defaultState, action: AnyAction) 
       return {
         ...state,
         read: {
+          ...state.read,
+          isRequesting: false,
+          error
+        }
+      }
+    case CardAction.StartCreateRequest:
+      return {
+        ...state,
+        create: {
+          ...state.read,
+          isRequesting: true
+        }
+      };
+    case CardAction.CreateCardSuccess:
+
+      return {
+        ...state,
+        create: {
+          ...state.read,
+          isRequesting: false,
+          error: ""
+        }
+      };
+    case CardAction.CreateCardFailure:
+      error = action.error;
+
+      return {
+        ...state,
+        create: {
           ...state.read,
           isRequesting: false,
           error
