@@ -79,7 +79,7 @@ class RenewalForm extends React.Component<OwnProps, {}> {
           {entity.name}
         </Typography>
         <KeyValueItem label="Expiration" align="left">
-          {timeToDate(entity.expiration)}
+          {entity.expiration ? timeToDate(entity.expiration) : "N/A"}
         </KeyValueItem>
         <KeyValueItem label="Renewal Term" align="left">
           <Select

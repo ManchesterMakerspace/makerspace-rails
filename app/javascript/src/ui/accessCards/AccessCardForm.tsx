@@ -54,9 +54,13 @@ export class AccessCardForm extends React.Component<Props,State> {
       }), async () => {
         const rejectionCardResposne = await getRejectionCard();
         const { card } = rejectionCardResposne.data;
+        let error = "";
+        if (!card || !card.uid) {
+          error = "No card found. Scan card and try again."
+        }
         this.setState({
           loading: false,
-          error: "",
+          error: error,
           rejectionCardId: card.uid
         })
       });
@@ -76,7 +80,7 @@ export class AccessCardForm extends React.Component<Props,State> {
         <Typography variant="body1" gutterBottom>Instructions to register new member key fob</Typography>
         {(member && member.cardId) ?
           <Typography color="default" variant="body1" gutterBottom>Access card exists for {member.firstname}</Typography>
-         : <Typography color="secondary" variant="body1" gutterBottom>No access card exists {member.firstname}</Typography>
+         : <Typography color="secondary" variant="body1" gutterBottom>No access card exists for {member.firstname}</Typography>
         }
         {this.renderImportInstructions()}
       </>

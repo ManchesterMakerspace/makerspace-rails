@@ -144,8 +144,6 @@ RSpec.describe Member, type: :model do
       it "Sends a slack notification about the change" do
         expect(member).to receive(:send_slack_message).with(/renewed/)
         member.send(:renew=, 1)
-        expect(member).to receive(:send_slack_message).with(/updated/)
-        member.update({ firstname: "Foo" })
       end
     end
   end

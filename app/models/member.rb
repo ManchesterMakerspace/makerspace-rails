@@ -197,10 +197,8 @@ class Member
       init, final = self.expirationTime_change
       time = self.prettyTime.strftime("%m/%d/%Y")
       final_msg = "#{self.fullname} renewed. Now expiring #{time}"
-    else
-      final_msg = "#{self.fullname} updated. Expires #{time}"
     end
-    send_slack_message(final_msg)
+    send_slack_message(final_msg) unless final_msg.nil?
   end
 
   def send_member_registered_email

@@ -62,9 +62,7 @@ class Rental
       core_msg = "#{self.member ? "#{self.member.fullname}'s rental of " : ""} Locker/Plot # #{self.number}"
       time = self.prettyTime.strftime("%m/%d/%Y")
       final_msg = "#{core_msg} renewed.  Now expiring #{time}"
-    else
-      final_msg = "#{core_msg} updated.  Expires #{time}"
     end
-    send_slack_message(final_msg)
+    send_slack_message(final_msg) unless final_msg.nil?
   end
 end

@@ -11,7 +11,6 @@ import { Subscription } from "app/entities/subscription";
 import { readSubscriptionAction, deleteSubscriptionAction, updateSubscriptionAction } from "ui/subscriptions/actions";
 import KeyValueItem from "ui/common/KeyValueItem";
 import { displayMemberExpiration } from "ui/member/utils";
-import { AuthMember } from "ui/auth/interfaces";
 import LoadingOverlay from "ui/common/LoadingOverlay";
 import MemberStatusLabel from "ui/member/MemberStatusLabel";
 import { getDetailsForMember } from "ui/membership/constants";
@@ -22,10 +21,10 @@ import UpdateMembershipContainer, { UpdateSubscriptionRenderProps } from "ui/mem
 import CancelMembershipModal from "ui/membership/CancelMembershipModal";
 import { CrudOperation, Routing } from "app/constants";
 import { Invoice, InvoiceOptionSelection } from "app/entities/invoice";
-import { Dialog } from "@material-ui/core";
 import FormModal from "ui/common/FormModal";
 import PaymentMethodsContainer from "ui/checkout/PaymentMethodsContainer";
 import { push } from "connected-react-router";
+import { MemberDetails } from "app/entities/member";
 
 /*
 View Current Membership Info
@@ -62,7 +61,7 @@ interface DispatchProps {
 }
 interface OwnProps {
   subscriptionId: string;
-  member: AuthMember;
+  member: MemberDetails;
 }
 interface StateProps {
   subscription: Subscription;

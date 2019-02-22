@@ -1,5 +1,6 @@
 import { SelectOption } from "ui/common/RenewalForm";
 import { dateToTime } from "ui/utils/timeToDate";
+import { MemberDetails } from "app/entities/member";
 
 export enum Action {
   StartReadRequest = "RENTALS/START_READ_REQUEST",
@@ -70,7 +71,7 @@ export const fields = {
     label: "Select a member",
     name: `${formPrefix}-member`,
     placeholder: `Search by name or email`,
-    validate: (val: string) => !!val,
+    transform: (val: MemberDetails) => val && val.id,
     error: "Member required"
   },
 }

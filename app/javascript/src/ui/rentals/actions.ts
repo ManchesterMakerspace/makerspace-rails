@@ -16,7 +16,7 @@ export const readRentalsAction = (
 
   try {
     const response = await getRentals(isUserAdmin, queryParams);
-    const {rentals} = response.data;
+    const { rentals } = response.data;
     const totalItems = response.headers[("total-items")];
     dispatch({
       type: RentalsAction.GetRentalsSuccess,

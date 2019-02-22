@@ -19,6 +19,8 @@ const Notifications = {
 
     You will receieve an invitation to the Manchester Makerspace Slack workspace and Google Drive account shortly if you have not already. If you're unfamiliar with these tools, Slack is a messaging application where members collaborate on projects and coordinate use of the space.  Google Drive is where we store all sorts of member resources including equipment manuals.
 
+    You can review your profile now. Please note, if you just signed up, your membership will not be active until we receive your payment and you receive your key.
+
     Before proceeding, please take a moment to review and sign the Manchester Makerspace Code of Conduct and Member Contract.`,
     required: true,
   }

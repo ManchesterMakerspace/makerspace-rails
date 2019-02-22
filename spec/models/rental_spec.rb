@@ -25,8 +25,6 @@ RSpec.describe Rental, type: :model do
       it "Sends a slack notification about the change" do
         expect(rental).to receive(:send_slack_message).with(/renewed/)
         rental.send(:renew=, 1)
-        expect(rental).to receive(:send_slack_message).with(/updated/)
-        rental.update({ number: "Foo" })
       end
     end
   end

@@ -29,7 +29,7 @@ export const fields = (admin: boolean): FormFields => ({
     error: "Invalid name"
   },
   email: {
-    label: "Email",
+    label: "Email / Username",
     name: `${formPrefix}-email`,
     placeholder: "Enter email",
     validate: (val: string) => val && emailValid(val),

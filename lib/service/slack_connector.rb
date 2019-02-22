@@ -6,7 +6,7 @@ module Service
     end
 
     def send_slack_message(message)
-      channel = Rails.env.production? && braintree_production? == :production ? 'members_relations' : 'test_channel'
+      channel = Rails.env.production? && ENV['BT_ENV'].to_sym == :production ? 'members_relations' : 'test_channel'
       client.chat_postMessage(
         channel: channel,
         text: message,
@@ -17,7 +17,7 @@ module Service
     end
 
     def invite_to_slack()
-      if Rails.env.production? && braintree_production?
+      if Rails.env.production? && ENV['BT_ENV'].to_sym == :production
         client.users_admin_invite(
           email: self.email,
           first_name: self.firstname,

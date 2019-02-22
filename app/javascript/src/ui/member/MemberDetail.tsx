@@ -120,7 +120,7 @@ class MemberDetail extends React.Component<Props, State> {
   private closeCardModal = () => this.setState({ isCardOpen: false });
 
   private renderMemberInfo = (): JSX.Element => {
-    const { member } = this.props;
+    const { member, billingEnabled } = this.props;
 
     const details = getDetailsForMember(member);
 
@@ -135,9 +135,9 @@ class MemberDetail extends React.Component<Props, State> {
         <KeyValueItem label="Membership Status">
           <MemberStatusLabel id="member-detail-status" member={member} />
         </KeyValueItem>
-        <KeyValueItem label="Membership Type">
+        {billingEnabled && <KeyValueItem label="Membership Type">
           <span id="member-detail-type">{details.type}</span>
-        </KeyValueItem>
+        </KeyValueItem>}
       </>
     )
   }

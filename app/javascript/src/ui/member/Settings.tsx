@@ -11,27 +11,41 @@ import ListItemText from "@material-ui/core/ListItemText";
 import { CrudOperation } from "app/constants";
 import UpdateMemberContainer, { UpdateMemberRenderProps } from "ui/member/UpdateMemberContainer";
 import MemberForm from "ui/member/MemberForm";
-import { State as ReduxState } from "ui/reducer";
+import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import PaymentMethodsContainer from "ui/checkout/PaymentMethodsContainer";
 import { AuthMember } from "ui/auth/interfaces";
 import UpdateMembershipForm from "ui/membership/UpdateMembershipForm";
 import { Whitelists } from "app/constants";
+import { readMemberAction } from "ui/member/actions";
+import { MemberDetails } from "app/entities/member";
 
 interface StateProps {
-  member: AuthMember;
+  currentMember: AuthMember;
+  member: MemberDetails;
   billingEnabled: boolean;
 }
 
+interface DispatchProps {
+  getMember: (id: string) => void;
+}
 interface State {
   selectedIndex: number;
 }
 
-class SettingsContainer extends React.Component<StateProps, State> {
-  constructor(props: StateProps) {
+interface Props extends StateProps {
+  getMember: () => void;
+}
+
+class SettingsContainer extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       selectedIndex: 0,
     };
+  }
+
+  public componentDidMount() {
+    this.props.getMember();
   }
 
   private toggleSettingsView = (_event: any, index: number) => this.setState({ selectedIndex: index });
@@ -69,9 +83,9 @@ class SettingsContainer extends React.Component<StateProps, State> {
           render={memberForm}
         />
       )
-    } else if (selectedIndex === 1) {
+    } else if (selectedIndex === 1 && billingEnabled) {
       form = <UpdateMembershipForm subscriptionId={member.subscriptionId} member={member}/>;
-    } else if (selectedIndex === 2) {
+    } else if (selectedIndex === 2 && billingEnabled) {
       form = (<PaymentMethodsContainer
         title="Manage Payment Methods"
         managingMethods={true}
@@ -140,14 +154,34 @@ class SettingsContainer extends React.Component<StateProps, State> {
   }
 }
 
+const mapDispatchToProps = (
+  dispatch: ScopedThunkDispatch,
+): DispatchProps => {
+  return {
+    getMember: (id) => dispatch(readMemberAction(id))
+  }
+};
+
 const mapStateToProps = (
   state: ReduxState
 ): StateProps => {
-  const { currentUser, permissions } = state.auth;
+  const { currentUser: currentMember, permissions } = state.auth;
+  const { entity: member } = state.member;
   return {
-    member: currentUser,
+    currentMember,
+    member,
     billingEnabled: !!permissions[Whitelists.billing] || false,
   }
 }
 
-export default connect(mapStateToProps)(SettingsContainer);
+const mergeProps = (
+  stateProps: StateProps,
+  dispatchProps: DispatchProps
+): Props => {
+  return {
+    ...stateProps,
+    getMember: () => dispatchProps.getMember(stateProps.currentMember && stateProps.currentMember.id),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(SettingsContainer);
