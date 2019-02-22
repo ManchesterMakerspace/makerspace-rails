@@ -5,20 +5,7 @@ services:
       context: ../..
       dockerfile: Docker/Dockerfiles/dev
     volumes:
-      - ../../:/myapp
-    environment:
-      - MLAB_URI
-      - SECRET_KEY_BASE
-      - SLACK_ADMIN_TOKEN
-      - SLACK_VARIABLE
-      - SLACK_WEBHOOK_URL
-      - RESOURCES_FOLDER
-      - CODE_CONDUCT_ID
-      - CONTRACT_ID
-      - SIGNATURES_FOLDER
-      - GMAIL_PASSWORD
-      - GMAIL_USERNAME
-      - GOOGLE_CALENDAR
-      - GOOGLE_ID
-      - GOOGLE_SECRET
-      - GOOGLE_TOKEN
+      - ../..:/usr/src/app
+      - /box
+    ports:
+      - 3002:3002

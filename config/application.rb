@@ -1,6 +1,5 @@
 require_relative 'boot'
 
-
 # Pick the frameworks you want:
 # require "active_record/railtie"
 require "active_model/railtie"
@@ -28,8 +27,17 @@ Mongoid.load!('config/mongoid.yml')
 
 module MemberInterface
   class Application < Rails::Application
+    config.autoload_paths << "#{Rails.root}/lib"
+    config.eager_load_paths << "#{Rails.root}/lib"
+
     config.to_prepare do
-      DeviseController.respond_to :html, :json
+      DeviseController.respond_to :json
+    end
+    Rails.application.config.middleware.insert_before 0, "Rack::Cors" do
+      allow do
+        origins '*'
+        resource '*', headers: :any, methods: [:get, :post, :options, :patch, :delete], expose: ['total-items']
+      end
     end
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers

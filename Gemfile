@@ -1,14 +1,11 @@
 source 'https://rubygems.org'
 
-gem 'rails_12factor', group: :production
-gem 'rails', '~> 5.0.7', '>= 5.0.7.1'
+gem 'rails', '~> 5.0.0', '>= 5.0.0.1'
+gem 'rack-cors'
 gem 'puma', '~> 3.0'
-gem 'sass-rails', '~> 5.0'
 gem 'active_model_serializers'
-gem 'angular-rails-templates'
-# Use Uglifier as compressor for JavaScript assets
-gem 'uglifier', '>= 1.3.0'
 gem 'dotenv-rails'
+gem 'webpacker'
 
 #authentication
 gem 'devise'
@@ -17,11 +14,10 @@ gem 'bcrypt'
 gem 'mongoid', '~> 6.0.0'
 gem 'mongoid_search'
 #Paypal IPN
-gem 'paypal-sdk-merchant'
-gem "slack-notifier"
-gem 'google_drive'
-gem 'socket.io-rails'
-gem 'google-api-client', require: ['google/apis/calendar_v3', 'google/apis/drive_v3']
+gem 'paypal-sdk-rest'
+gem "braintree"
+gem "slack-ruby-client"
+gem 'google-api-client', require: ['google/apis/drive_v3']
 gem 'mini_magick'
 
 group :development do
@@ -32,6 +28,7 @@ group :development do
 end
 
 group :test do
+  gem 'byebug', platform: :mri
   gem 'rspec-rails'
   gem 'mongoid-rspec'
   gem 'factory_bot'

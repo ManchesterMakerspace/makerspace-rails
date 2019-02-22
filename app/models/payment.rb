@@ -32,10 +32,10 @@ class Payment
       elsif false_types.include?(self.txn_type)
           self.member.subscription = false
       end
-      self.member.save
+      self.member.save!
     end
   end
-  
+
   def find_member
     return unless self.valid?
     unless !!self.member

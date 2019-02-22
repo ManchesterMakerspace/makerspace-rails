@@ -2,6 +2,10 @@ class Member
   include Mongoid::Document
   include Mongoid::Search
   include ActiveModel::Serializers::JSON
+  include InvoiceableResource
+  include Service::BraintreeGateway
+  include Service::GoogleDrive
+  include Service::SlackConnector
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -13,7 +17,7 @@ class Member
   field :firstname
   field :lastname
   field :status,                         default: "activeMember" # activeMember, nonMember, revoked, inactive
-  field :expirationTime,   type: Integer #pre-calcualted time of expiration
+  field :expirationTime,  type: Integer  #pre-calcualted time of expiration
   field :startDate, default: Time.now
   field :groupName #potentially member is in a group/partner membership
   field :role,                          default: "member" #admin,officer,member
@@ -28,46 +32,43 @@ class Member
   ## Rememberable - Handles cookies
   field :remember_created_at, type: Time
 
+  field :customer_id, type: String # Braintree customer relation
+  field :subscription_id, type: String # Braintree relation
+
   search_in :email, :lastname, :firstname
 
   validates :firstname, presence: true
   validates :lastname, presence: true
   validates :email, uniqueness: true
-  validates :cardID, uniqueness: true
-  validates_confirmation_of :password
+  validates :cardID, uniqueness: true, allow_nil: true
+  validates_inclusion_of :status, in: ["activeMember", "nonMember", "revoked", "inactive"]
+  validates_inclusion_of :role, in: ["admin", "member"]
 
-  before_save :update_allowed_workshops
   after_initialize :verify_group_expiry
-  after_update :update_card
+  before_update :update_initial_expiration_from_invoice, :if => proc { !cardID && cardID_changed? }
+  before_save :update_braintree_customer_info
+  after_update :update_card, :notify_renewal
+  after_create :send_slack_invite, :send_google_invite, :send_member_registered_email
 
-  has_many :offices, class_name: 'Workshop', inverse_of: :officer
+  has_many :permissions, class_name: 'Permission', dependent: :destroy, :autosave => true
+  has_many :rentals, class_name: 'Rental'
+  has_many :invoices, class_name: "Invoice"
   has_many :access_cards, class_name: "Card", inverse_of: :member
   belongs_to :group, class_name: "Group", inverse_of: :active_members, optional: true, primary_key: 'groupName', foreign_key: "groupName"
-  has_and_belongs_to_many :learned_skills, class_name: 'Skill', inverse_of: :trained_members
-  has_and_belongs_to_many :expertises, class_name: 'Workshop', inverse_of: :experts
-  has_and_belongs_to_many :allowed_workshops, class_name: 'Workshop', inverse_of: :allowed_members
 
-  def self.active_members
-    return Member.where(status: 'activeMember', :expirationTime.gt => (Time.now.strftime('%s').to_i * 1000))
-  end
-
-  def self.expiring_members
-    return Member.where(status: 'activeMember', :expirationTime.gt => (Time.now.strftime('%s').to_i * 1000), :expirationTime.lte => (Time.now + 1.week).strftime('%s').to_i * 1000)
-  end
-
-  def self.search_members(searchTerms)
+  def self.search_members(searchTerms, criteria = Mongoid::Criteria.new(Member))
     regexp_search = Regexp.new(searchTerms, 'i')
-    members = Member.where(email: searchTerms)
-    members = Member.where("(this.firstname + ' ' + this.lastname).match(new RegExp('#{searchTerms}', 'i'))") unless (members.size > 0)
-    members = Member.full_text_search(searchTerms, index: :_lastname_keywords).sort_by(&:relevance).reverse unless (members.size > 0)
-    members = Member.full_text_search(searchTerms, index: :_email_keywords).sort_by(&:relevance).reverse unless (members.size > 0)
+    members = criteria.where(email: searchTerms)
+    members = criteria.where("(this.firstname + ' ' + this.lastname).match(new RegExp('#{searchTerms}', 'i'))") unless (members.size > 0)
+    members = criteria.full_text_search(searchTerms, index: :_lastname_keywords).sort_by(&:relevance).reverse unless (members.size > 0)
+    members = criteria.full_text_search(searchTerms, index: :_email_keywords).sort_by(&:relevance).reverse unless (members.size > 0)
     return members
   end
 
   # Includes firstname if cant find anything else
   # Not to be used for Payment association
-  def self.rough_search_members(searchTerms)
-    members = self.search_members(searchTerms)
+  def self.rough_search_members(searchTerms, criteria = Mongoid::Criteria.new(Member))
+    members = self.search_members(searchTerms, criteria)
     memebrs = Member.full_text_search(searchTerms).sort_by(&:relevance).reverse unless (members.size > 0)
     return members
   end
@@ -75,16 +76,6 @@ class Member
   def fullname
     return "#{self.firstname} #{self.lastname}"
   end
-
-  def membership_status
-     if duration <= 0
-       'expired'
-     elsif duration < 1.week
-       'expiring'
-     else
-       'current'
-     end
-   end
 
    def prettyTime
      if self.expirationTime
@@ -104,17 +95,59 @@ class Member
     end
   end
 
-  def renewal=(num_months)
-    now_in_ms = (Time.now.strftime('%s').to_i * 1000)
+  # Find the subscribed resource (instance of Member | Rental) for member
+  # Since subscriptions aren't stored in our db, we'll check the subscribed resources
+  # to verify ownership
+  def find_subscribed_resource(id)
+    resource = self if self.subscription_id && self.subscription_id == id
+    resource = self.rentals.detect { |r| r.subscription_id == id }  unless resource || self.rentals.nil?
+    resource
+  end
 
-    if (!!self.expirationTime && self.try(:expirationTime) > now_in_ms && self.persisted?) #if renewing
-      newExpTime = prettyTime + num_months.to_i.months
-      write_attribute(:expirationTime, (newExpTime.to_i * 1000) )
-    else
-      newExpTime = Time.now + num_months.to_i.months
-      write_attribute(:expirationTime,  (newExpTime.to_i * 1000) )
+  def remove_subscription
+    self.update_attributes!({ subscription_id: nil, subscription: false })
+  end
+
+  def get_permissions
+    Hash[permissions.map { |p| [p.name.to_sym, p.enabled] }]
+  end
+
+  def update_permissions(permissions_collection)
+    permissions_collection.each_pair do |name, enabled|
+      permission = permissions.detect { |p| p.name == name.to_sym}
+      if permission
+        permission.update!(enabled: enabled)
+      else
+        Permission.new(name: name.to_sym, enabled: enabled, member_id: self.id).upsert
+      end
     end
-    self.save
+  end
+
+  def is_allowed?(permission_name)
+    permissions.detect { |p| p.name == permission_name.to_sym && !!p.enabled }
+  end
+
+  protected
+  def find_braintree_customer
+    connect_gateway.customer.find(self.customer_id) unless self.customer_id.nil?
+  end
+
+  def update_braintree_customer_info
+    if self.customer_id && self.changed.any? { |attr| [:firstname, :lastname].include?(attr) }
+      connect_gateway.customer.update(self.customer_id, firstname: self.firstname, lastname: self.lastname)
+    end
+  end
+
+  def expiration_attr
+    :expirationTime
+  end
+
+  def update_expiration(new_expiration)
+    self.update_attributes!(self.expiration_attr => new_expiration)
+  end
+
+  def get_expiration
+    self.expirationTime
   end
 
   private
@@ -124,18 +157,19 @@ class Member
     end
   end
 
+  # Update expiration by giving time back that has elapsed since signing up
+  def update_initial_expiration_from_invoice
+    start = startDate.to_i * 1000
+    expirationTime ||= Time.now
+    lag = expirationTime - start
+    update!({ expirationTime: (expirationTime + lag)})
+  end
+
   def benefits_from_group
     return self.group.expiry &&
            self.expirationTime &&
            self.group.expiry > (Time.now.strftime('%s').to_i * 1000) &&
            self.group.expiry > self.expirationTime
-  end
-
-  def update_allowed_workshops #this checks to see if they have learned all the skills in a workshop one at a time
-    allowed = Workshop.all.collect { |workshop| workshop.skills.all? { |skill| self.learned_skills.include?(skill) } ? workshop : nil}.compact.uniq
-    allowed.flatten.uniq.each do |shop|
-      allowed_workshops.include?(shop) ?  nil : (allowed_workshops << shop)
-    end
   end
 
   def email_required?
@@ -146,7 +180,28 @@ class Member
     false
   end
 
-  def duration
-    prettyTime - Time.now
+  def send_slack_invite
+    invite_to_slack()
+  end
+
+  def send_google_invite
+    begin
+      invite_gdrive(self.email)
+    rescue Error::Google::Upload => err
+      send_slack_message("Error sharing Member Resources folder with #{self.fullname}. Error: #{err}")
+    end
+  end
+
+  def notify_renewal
+    if self.expirationTime_changed?
+      init, final = self.expirationTime_change
+      time = self.prettyTime.strftime("%m/%d/%Y")
+      final_msg = "#{self.fullname} renewed. Now expiring #{time}"
+    end
+    send_slack_message(final_msg) unless final_msg.nil?
+  end
+
+  def send_member_registered_email
+    MemberMailer.member_registered(self).deliver_now
   end
 end

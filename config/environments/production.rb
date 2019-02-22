@@ -1,4 +1,7 @@
 Rails.application.configure do
+  # Verifies that versions and hashed value of the package contents in the project's package.json
+config.webpacker.check_yarn_integrity = false
+
   # Settings specified here will take precedence over those in config/application.rb.
   config.action_mailer.default_url_options = { host: 'makerspace-interface.herokuapp.com'}
   config.action_mailer.delivery_method = :smtp

@@ -1,22 +1,33 @@
 FROM ruby:2.3
-RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs curl
-RUN curl -sL https://deb.nodesource.com/setup_8.x  | bash -
-RUN apt-get install -y nodejs
-RUN npm install -g bower
 
-ENV app /myapp
+# Install base packages
+RUN curl -sL https://deb.nodesource.com/setup_8.x  | bash -
+RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs curl
+
+# Fetch yarn and install
+RUN npm install -g yarn
+
+# Create application directories
+# tmp may not exist in local and must be created explicitly
+ENV app /usr/src/app
 RUN mkdir $app
 RUN mkdir $app/tmp
-WORKDIR $app
 
+# Configure where gems will be installed
+# Box is a shared container volume to prevent duplicate installs
 ENV BUNDLE_GEMFILE=$app/Gemfile \
   BUNDLE_JOBS=2 \
   BUNDLE_PATH=/box
 
-COPY Gemfile* $app/
+# Copy and use application
 COPY . $app
+WORKDIR $app
 
-RUN npm install
-RUN bower install --allow-root
-
+# Install js & ruby libraries
 RUN bundle check || bundle install
+RUN yarn install
+
+COPY Docker/scripts/start_dev.sh /bin/start_dev.sh
+RUN chmod +x /bin/start_dev.sh
+
+CMD ["/bin/start_dev.sh"]

@@ -24,8 +24,7 @@ class MemberMailer < ApplicationMailer
 
   def member_registered(member)
     @member = member
-    email = 'test@manchestermakerspace.org' unless Rails.env.production?
-    email = 'contact@manchestermakerspace.org' if Rails.env.production?
+    email = Rails.env.production? && ENV['BT_ENV'].to_sym == :production ? 'contact@manchestermakerspace.org' : 'test@manchestermakerspace.org'
     mail to: email, subject: 'New Member Registered'
   end
 end

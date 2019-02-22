@@ -2,17 +2,10 @@
 <html>
 <head>
   <title>Makerspace Authorization</title>
-  <%= stylesheet_link_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css' %>
-  <%= stylesheet_link_tag 'application', media: 'all'%>
-  <%= javascript_include_tag 'application', media: 'all' %>
-  <%= favicon_link_tag asset_path('favicon.png'), :rel => 'icon', :type =>  'image/png' %>
-  <!-- <%= javascript_include_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js' %> -->
   <%= csrf_meta_tags %>
+  <%= stylesheet_pack_tag 'main' %>
   </head>
 <body>
-  <div class="container-fluid" ng-app="app">
-    <ui-view></ui-view>
-  </div>
-</div>
+  <%= javascript_pack_tag 'main' %>
 </body>
 </html>

@@ -3,7 +3,7 @@ require 'rails_helper'
 #https://github.com/mongoid/mongoid-rspec
 
 RSpec.describe Member, type: :model do
-  let(:member) { build(:member) }
+
 
   describe "Mongoid validations" do
     it { is_expected.to be_mongoid_document }
@@ -26,63 +26,125 @@ RSpec.describe Member, type: :model do
     it { is_expected.to validate_uniqueness_of(:email) }
     it { is_expected.to have_many(:access_cards).as_inverse_of(:member) }
     it { is_expected.to belong_to(:group).as_inverse_of(:active_members).with_foreign_key("groupName") }
-
-    # with_primary_key being released in next version of RSpec
-    # it { is_expected.to belong_to(:group).with_primary_key("groupName").as_inverse_of(:active_members).with_foreign_key("groupName") }
   end
 
   it "has a valid factory" do
     expect(build(:member)).to be_valid
   end
 
-  # context "callbacks" do
-  #   it { expect(member).to callback(:update_allowed_workshops).before(:save) }
-  #   it { expect(member).to callback(:verify_group_expiry).after(:initialize) }
-  #   it { expect(member).to callback(:update_card).after(:update) }
-  # end
+  # Need this because we store things in milliseconds instead of ruby seconds
+  def conv_to_ms(time)
+    time.to_i * 1000
+  end
 
   context "public methods" do
+    let(:member) { create(:member) }
     let(:expired_member) { create(:member, :expired) }
-    let(:valid_member) { create(:member, :current) }
-    let(:expiring_member) { create(:member, :expiring) }
+    let(:expired_card) { create(:card, member: expired_member) }
 
-    it "Retrieves the correct active members" do
-      members = [expired_member, valid_member, expiring_member]
-      expect(Member.active_members.to_a).to include(valid_member, expiring_member)
-    end
+    describe "Renewing members" do
+      it "Adds renewal to Now if member is expired" do
+        one_month_later = Time.now + 1.month;
+        expired_member.send(:renew=, 1)
+        one_month_later_after = Time.now + 1.month;
+        # We can't assert the exact time since we measure in ms, the expectation may be off by the
+        # assertion by just a few ms. So we define before and after the call, and make sure the result is
+        # within those bounds
+        expect(expired_member.expirationTime).to be >= conv_to_ms(one_month_later)
+        expect(expired_member.expirationTime).to be <= conv_to_ms(one_month_later_after)
+      end
 
-    it "Retrieves the correct expiring members" do
-      members = [expired_member, valid_member, expiring_member]
-      expect(Member.expiring_members.to_a).to include(expiring_member)
-    end
+      it "Extends membership if not expired" do
+        initial_expiration = member.prettyTime
+        member.send(:renew=, 10)
+        expected_renewal = conv_to_ms(initial_expiration + 10.months)
+      end
 
-    it "Correctly parses expirationTime" do
-      expect(expired_member.membership_status).to eq('expired')
-      expect(expired_member.send(:duration)).to be_within(1.day).of(-20.days.to_i)
+      it "Lost or stolen card is not reactivated by renewal" do
+        expired_card.card_location = "lost"
+        expired_card.save
 
-      expect(valid_member.membership_status).to eq('current')
-      expect(valid_member.send(:duration)).to be_within(1.day).of(20.days.to_i)
-
-      expect(expiring_member.membership_status).to eq('expiring')
-      expect(expiring_member.send(:duration)).to be_within(1.day).of(5.days.to_i)
-    end
-
-    describe "Renewing members" do #method to be improved
-      it "Will renew a member with the number of months" do
-        expired_member.send(:renewal=, 1)
-        expect(expired_member.membership_status).to eq('current')
+        expect(expired_card.validity).to eq('lost')
+        expired_member.send(:renew=, 1)
+        new_expiration = expired_member.expirationTime
+        expired_card.reload
+        expect(expired_card.validity).to eq('lost')
+        expect(expired_card.expiry).to eq(new_expiration)
       end
     end
 
-    it "Updates access card" do
-      card = create(:card, member: expired_member)
-      first_expiration = expired_member.expirationTime
-      expect(card.expiry).to eq(first_expiration)
+    describe "permissions" do
+      it "determines if member is allowed by permission" do
+        enabled_permission = build(:permission, name: :foo, enabled: true, member_id: nil)
+        enabled_permission_2 = build(:permission, name: :bar, enabled: true, member_id: nil)
+        disabled_permission = build(:permission, name: :foo, enabled: false, member_id: nil)
+        disabled_permission_2 = build(:permission, name: :bar, enabled: false, member_id: nil)
+        allowed_member = create(:member, permissions: [enabled_permission, enabled_permission_2] )
+        disallowed_member = create(:member, permissions: [disabled_permission, disabled_permission_2] )
+        expect(allowed_member.is_allowed?(:foo)).to be_truthy
+        expect(allowed_member.is_allowed?(:bar)).to be_truthy
+        expect(disallowed_member.is_allowed?(:foo)).to be_falsy
+        expect(disallowed_member.is_allowed?(:bar)).to be_falsy
+      end
 
-      expired_member.send(:renewal=, 1)
-      new_expiration = expired_member.expirationTime
-      expect(card.expiry).to eq(new_expiration)
-      expect(new_expiration).not_to eq(first_expiration)
+      it "gets permissions for user" do
+        enabled_permission = build(:permission, name: :bar, enabled: true, member_id: nil)
+        disabled_permission = build(:permission, name: :foo, enabled: false, member_id: nil)
+        member = create(:member, permissions: [enabled_permission, disabled_permission] )
+        expect(member.get_permissions).to eq({ foo: false, bar: true })
+      end
+
+      it "upserts permissions for user" do
+        enabled_permission = build(:permission, name: :bar, enabled: true, member_id: nil)
+        member = create(:member, permissions: [enabled_permission] )
+        expect(member.get_permissions).to eq({ bar: true })
+        expect(Permission.all.size).to eq(1)
+
+        member.update_permissions({ bar: false, foo: true })
+        member.reload
+        expect(member.get_permissions).to eq({ foo: true, bar: false })
+        expect(Permission.all.size).to eq(2)
+      end
+    end
+  end
+
+  context "Callbacks" do
+    describe "on create" do
+      it "sends a slack invite" do
+        member = build(:member)
+        expect(member).to receive(:invite_to_slack)
+        member.save
+      end
+
+      it "sends a google drive invite" do
+        member = build(:member)
+        expect(member).to receive(:invite_gdrive).with(member.email)
+        member.save
+
+        other_member = build(:member)
+        expect(other_member).to receive(:invite_gdrive).with(other_member.email).and_raise(Error::Google::Upload)
+        expect(other_member).to receive(:send_slack_message).with(/sharing/)
+        other_member.save
+      end
+    end
+
+    describe "on update" do
+      let(:member) { create(:member) }
+      let(:expired_member) { create(:member, :expired) }
+      let(:expired_card) { create(:card, member: expired_member) }
+
+      it "Updates access card expiration" do
+        first_expiration = expired_member.expirationTime
+        expect(expired_card.expiry).to eq(first_expiration)
+
+        expired_member.update({ expirationTime: first_expiration + 10})
+        expect(expired_card.expiry).to eq(first_expiration + 10)
+      end
+
+      it "Sends a slack notification about the change" do
+        expect(member).to receive(:send_slack_message).with(/renewed/)
+        member.send(:renew=, 1)
+      end
     end
   end
 end

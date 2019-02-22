@@ -19,12 +19,6 @@ RSpec.describe Payment, type: :model do
     expect(build(:payment)).to be_valid
   end
 
-  # context "callbacks" do
-  #   let(:payment) { create(:payment) }
-
-  #   it { expect(payment).to callback(:find_member).after(:initialize) }
-  # end
-
   context "private methods" do
     it "Finds member from payment email or name" do
       member = create(:member, firstname: "New", lastname: 'Member')

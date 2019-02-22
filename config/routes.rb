@@ -1,31 +1,44 @@
 Rails.application.routes.draw do
 
-  root to: "application#angular"
+  root to: "application#application"
   post '/ipnlistener', to: 'paypal#notify'
 
-  scope :api, defaults: { format: :json } do
-    resources :members, only: [:index]
-    get 'members/contract', to: 'members#contract'
-    resources :groups, only: [:index]
-    resources :token, only: [:create]
-    post '/token/:id/:token', to: 'token#validate'
-    resources :rentals, only: [:index]
-    resources :calendar, only: [:index, :update]
+  get '/send_registration/:email', to: 'registrations#new'
 
+  scope :api, defaults: { format: :json } do
     devise_for :members, skip: [:registrations]
     devise_scope :member do
        post "members", to: "registrations#create"
     end
+    resources :invoice_options, only: [:index]
 
     authenticate :member do
-      resources :members, only: [:show]
-      resources :rentals, only: [:show]
+      resources :members, only: [:show, :index, :update]
+      resources :rentals, only: [:show, :index]
+      resources :invoices, only: [:index, :create]
+      resources :permissions, only: [:show]
+
+      namespace :billing do
+        resources :plans, only: [:index]
+        resources :payment_methods, only: [:new, :create, :index, :destroy]
+        resources :subscriptions, only: [:show, :update, :destroy]
+        resources :transactions, only: [:create]
+        get '/plans/discounts', to: "plans#discounts"
+      end
+
       namespace :admin  do
-        put 'members/renew/:id', to: 'members#renew'
         resources :cards, only: [:new, :create, :index, :update]
-        resources :rentals, only: [:create, :update, :destroy]
+        resources :invoices, only: [:index, :create, :update, :destroy]
+        resources :invoice_options, only: [:create, :update, :destroy]
+        resources :rentals, only: [:create, :update, :destroy, :index]
         resources :members, only: [:create, :update]
+        resources :permissions, only: [:index, :update]
+        namespace :billing do
+          resources :subscriptions, only: [:index, :destroy]
+        end
       end
     end
   end
+
+  get '*path', to: 'application#application'
 end
