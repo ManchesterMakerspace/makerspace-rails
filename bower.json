@@ -1,7 +1,0 @@
-{
-  "name": "vendor-assets",
-  "dependencies": {
-    "angular-devise": "latest",
-    "angular-bootstrap": "latest"
-  }
-}

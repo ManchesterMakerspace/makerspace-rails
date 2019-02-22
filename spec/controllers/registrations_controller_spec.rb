@@ -41,21 +41,6 @@ RSpec.describe RegistrationsController, type: :controller do
         }.to change(Member, :count).by(1)
       end
 
-      it "Uploads the member's signature" do
-        slack_msg = "msg"
-        Slack::Notifier.any_instance.stub(:ping)
-        Slack::Notifier::Util::LinkFormatter.stub(:format).and_return(slack_msg)
-        post :create, params: {member: valid_attributes}, format: :json
-        expect(assigns(:notifier)).to be_a(Slack::Notifier)
-        expect(Slack::Notifier::Util::LinkFormatter).to have_received(:format).with(assigns(:messages).join("\n"))
-        expect(assigns(:notifier)).to have_received(:ping).with(slack_msg)
-      end
-
-      it "Adds user to gdrive" do
-        post :create, params: {member: valid_attributes}, format: :json
-        expect(assigns(:service)).to be_a(Google::Apis::DriveV3::DriveService)
-      end
-
       it "assigns a newly created member as @member" do
         post :create, params: {member: valid_attributes}, format: :json
         expect(assigns(:member)).to be_a(Member)
@@ -72,7 +57,7 @@ RSpec.describe RegistrationsController, type: :controller do
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
-        expect(parsed_response['id']).to eq(Member.last.id.as_json)
+        expect(parsed_response['member']['id']).to eq(Member.last.id.as_json)
       end
     end
 

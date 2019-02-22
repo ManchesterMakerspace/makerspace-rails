@@ -1,9 +1,10 @@
 class RentalsController < ApplicationController
-  before_action :set_rental, only: [:show]
+    include FastQuery
+    before_action :set_rental, only: [:show]
 
   def index
-    @rentals = Rental.all
-    render json: @rentals and return
+    @rentals = Rental.where(member_id: current_member.id)
+    return render_with_total_items(query_resource(@rentals))
   end
 
   def show
@@ -12,6 +13,7 @@ class RentalsController < ApplicationController
 
 private
   def set_rental
-    @rental = Rental.find_by(id: params[:id])
+    @rental = Rental.find(params[:id])
+    raise ::Mongoid::Errors::DocumentNotFound.new(Rental, { id: params[:id] }) if @rental.nil?
   end
 end

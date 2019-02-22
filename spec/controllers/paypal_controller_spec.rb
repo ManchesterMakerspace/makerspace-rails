@@ -41,13 +41,9 @@ RSpec.describe PaypalController, type: :controller do
       end
 
       it "Sends a notification to Slack" do
-        slack_msg = "msg"
-        Slack::Notifier.any_instance.stub(:ping)
-        Slack::Notifier::Util::LinkFormatter.stub(:format).and_return(slack_msg)
+        expect_any_instance_of(PaypalController).to receive(:send_slack_messages)
         post :notify, params: valid_attributes, format: :json
-        expect(assigns(:notifier)).to be_a(Slack::Notifier)
-        expect(Slack::Notifier::Util::LinkFormatter).to have_received(:format).with(assigns(:messages).join("\n"))
-        expect(assigns(:notifier)).to have_received(:ping).with(slack_msg)
+        expect(assigns(:messages)).to be_a(Array)
       end
 
       it "Attributes the correct member to the payment" do

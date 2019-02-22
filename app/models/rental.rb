@@ -1,37 +1,68 @@
 class Rental
   include Mongoid::Document
+  include InvoiceableResource
+  include Service::SlackConnector
 
   belongs_to :member, optional: true
 
   field :number
   field :description
   field :expiration
+  field :subscription_id, type: String # Braintree relation
 
   validates :number, presence: true, uniqueness: true
+  after_update :notify_renewal
 
   def prettyTime
     if self.expiration
-      return self.getExpiration
+      return self.expiration_as_time
     else
       return Time.at(0)
     end
   end
 
-  def getExpiration
-    if self.expiration.is_a? Numeric
-      return Time.at(self.expiration/1000)
+  def get_expiration(exp = nil)
+    self.expiration_as_ms(exp)
+  end
+
+  protected
+  def remove_subscription
+    self.update_attributes!({ subscription_id: nil })
+  end
+
+  def expiration_attr
+    :expiration
+  end
+
+  def update_expiration(new_expiration)
+    self.update_attributes!(self.expiration_attr => get_expiration(new_expiration))
+  end
+
+  def expiration_as_time(ms = nil)
+    exp ||= self.expiration
+    if exp.is_a? Numeric
+      return Time.at(exp/1000)
     else
-      return Time.parse(self.expiration.to_s)
+      return Time.parse(exp.to_s)
     end
   end
 
-  def build_slack_msg(initial_date)
-    if self.getExpiration && initial_date
-      if self.getExpiration > initial_date
-        return "#{self.member.fullname}'s rental of Locker/Plot # #{self.number} renewed.  Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}"
-      elsif self.getExpiration != initial_date
-        return "#{self.member.fullname}'s rental of Locker/Plot # #{self.number} updated.  Now expiring #{self.prettyTime.strftime("%m/%d/%Y")}"
-      end
+  def expiration_as_ms(exp = nil)
+    exp ||= self.expiration
+    if exp.is_a? Numeric
+      return exp
+    else
+      return exp.to_i * 1000
     end
+  end
+
+  def notify_renewal
+    if self.expiration_changed?
+      init, final = self.expiration_change
+      core_msg = "#{self.member ? "#{self.member.fullname}'s rental of " : ""} Locker/Plot # #{self.number}"
+      time = self.prettyTime.strftime("%m/%d/%Y")
+      final_msg = "#{core_msg} renewed.  Now expiring #{time}"
+    end
+    send_slack_message(final_msg) unless final_msg.nil?
   end
 end

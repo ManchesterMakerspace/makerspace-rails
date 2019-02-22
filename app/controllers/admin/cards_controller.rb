@@ -3,45 +3,37 @@ class Admin::CardsController < AdminController
   def new
     @card = Card.new()
     reject = RejectionCard.where({'holder' => nil, 'timeOf' => {'$gt' => (Date.today - 1.day)}}).last
-    if( !!reject )
-      @card.uid = reject.uid || nil
-    else
-      @card.uid = nil
-    end
-    render json: @card
+    @card.uid = reject.uid if !!reject
+    render json: @card and return
   end
 
   def create
+    raise ::ActionController::ParameterMissing.new(:member_id) unless card_params[:member_id]
     @card = Card.new(card_params)
-
-    render json: {msg: 'Member missing'}, status: 500 and return if !@card.member
+    raise Error::NotFound.new() unless @card.member
 
     cards = @card.member.access_cards.select { |c| (c.validity != 'lost') && (c.validity != 'stolen') && (c != @card)}
-    if cards.length > 0
-      render json: {msg: 'Member has Active cards'}, status: 400 and return
-    end
+    cards.each { |card| card.invalidate }
 
-    if @card.save
-      rejection_card = RejectionCard.find_by(uid: @card.uid)
-      rejection_card.update(holder: @card.holder) unless rejection_card.nil?
-      render json: @card and return
-    else
-      render json: {}, status: 500 and return
-    end
+    @card.save!
+    rejection_card = RejectionCard.find_by(uid: @card.uid)
+    rejection_card.update_attributes!(holder: @card.holder) unless rejection_card.nil?
+    render json: @card and return
   end
 
   def index
-    @cards = Card.where(member: Member.find_by(id: params[:id]))
+    raise ::ActionController::ParameterMissing.new(:member_id) unless card_params[:member_id]
+    member = Member.find(card_params[:member_id])
+    raise ::Mongoid::Errors::DocumentNotFound.new(Member, { id: card_params[:member_id] }) if member.nil?
+    @cards = Card.where(member: member)
     render json: @cards and return
   end
 
   def update
-    @card = Card.find_by(id: params[:id])
-    if @card.update(card_params)
-      render json: @card and return
-    else
-      render json: {}, status: 500 and return
-    end
+    @card = Card.find(params[:id])
+    raise ::Mongoid::Errors::DocumentNotFound.new(Card, { id: params[:id] }) if @card.nil?
+    @card.update_attributes!(card_params)
+    render json: @card and return
   end
 
   private

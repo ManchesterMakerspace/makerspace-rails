@@ -1,49 +1,54 @@
 class MembersController < ApplicationController
-    before_action :set_member, only: [:show]
+    include FastQuery
+    include ::Service::GoogleDrive
+    before_action :set_member, only: [:show, :update]
 
     def index
-      if (params[:search]) then
-        @members = Member.rough_search_members(params[:search])
+      # Limit index to only current members unless authorized and requesting full records
+      if is_admin? && (params[:currentMembers].nil? || params[:currentMembers].empty?)
+        search = Mongoid::Criteria.new(Member)
       else
-        @members = Member.asc(&:lastname)
+        search = Member.where(:expirationTime => { '$gt' => (Time.now.strftime('%s').to_i * 1000) })
       end
-      if current_member.try(:role) != 'admin'
-        @members = @members.select do |m|
-          Time.at(m.expirationTime/1000) - Time.now > 0 unless m.expirationTime.nil?
-        end
-      end
-      render json: @members and return
+      @members = query_params[:search].nil? || query_params[:search].empty? ? search.all : Member.rough_search_members(query_params[:search], search)
+      @members = query_resource(@members)
+
+      return render_with_total_items(@members, root: :members)
     end
 
     def show
       render json: @member and return
     end
 
-    # TODO: Move this to a different controller
-    def contract
-      creds = Google::Auth::UserRefreshCredentials.new({
-        client_id: ENV['GOOGLE_ID'],
-        client_secret: ENV['GOOGLE_SECRET'],
-        refresh_token: ENV['GOOGLE_TOKEN'],
-        scope: ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/drive"]
-        })
-      session = GoogleDrive.login_with_oauth(creds)
-      contract = session.file_by_id(ENV['CONTRACT_ID'])
-      conduct = session.file_by_id(ENV['CODE_CONDUCT_ID'])
-      contract_html = Tempfile.new(['contract', '.html'])
-      conduct_html = Tempfile.new(['conduct', '.html'])
-      contract.export_as_file(contract_html.path, 'text/html')
-      conduct.export_as_file(conduct_html.path, 'text/html')
-      render json: {contract: contract_html.read, conduct: conduct_html.read}
-      contract_html.close
-      contract_html.unlink
-      conduct_html.close
-      conduct_html.unlink
-    end
+    def update
+      # Non admins can only update themselves
+      raise Error::Unauthorized.new unless @member.id == current_member.id
 
+      if signature_params[:signature]
+        begin
+          upload_signature(signature_params[:signature], "#{@member.fullname}_signature.png")
+          @member.update_attributes!(memberContractOnFile: true)
+        rescue Error::Google::Upload => err
+          @messages.push("Error uploading #{@member.fullname}'s signature'. Error: #{err}")
+        end
+        render json: {}, status: 204 and return
+      end
+
+      @member.update_attributes!(member_params)
+      render json: @member and return
+    end
 
     private
     def set_member
       @member = Member.find(params[:id])
+      raise ::Mongoid::Errors::DocumentNotFound.new(Member, { id: params[:id] }) if @member.nil?
+    end
+
+    def signature_params
+      params.require(:member).permit(:signature)
+    end
+
+    def member_params
+      params.require(:member).permit(:firstname, :lastname, :email)
     end
 end

@@ -6,26 +6,8 @@ RSpec.describe Admin::MembersController, type: :controller do
     {
       firstname: 'Test',
       lastname: 'Tester',
-      cardID: '1234',
-      memberContractOnFile: true,
       email: 'test@test.com',
-      password: 'password',
-      password_confirmation: 'password',
-      expirationTime: (Time.now + 1.month).to_i * 1000
-      # renewal: { months: 1 }
-    }
-  }
-
-  let(:invalid_attributes) {
-    {
-      firstname: 'Test',
-      lastname: 'Tester',
-      cardID: '1234',
-      memberContractOnFile: true,
-      email: 'test@test.com',
-      password: 'password',
-      password_confirmation: 'wrong_password',
-      renewal: { months: 1 }
+      renew: 1
     }
   }
 
@@ -33,20 +15,33 @@ RSpec.describe Admin::MembersController, type: :controller do
     return member[:firstname] + " " + member[:lastname]
   end
 
+  # Need this because we store things in milliseconds instead of ruby seconds
+  def conv_to_ms(time)
+    time.to_i * 1000
+  end
+
   describe "Authenticated admin" do
     login_admin
+
     describe "POST #create" do
       context "with valid params" do
-        it "creates a new Admin::Member" do
+        it "creates a new member" do
           expect {
             post :create, params: {member: valid_attributes}, format: :json
           }.to change(Member, :count).by(1)
         end
 
         it "assigns a newly created member as @member" do
+          one_month_later = Time.now + 1.month;
           post :create, params: {member: valid_attributes}, format: :json
+          one_month_later_after = Time.now + 1.month;
+
           expect(assigns(:member)).to be_a(Member)
           expect(assigns(:member)).to be_persisted
+          expect(assigns[:member].firstname).to eq(valid_attributes[:firstname])
+
+          expect(assigns[:member].expirationTime).to be >= conv_to_ms(one_month_later)
+          expect(assigns[:member].expirationTime).to be <= conv_to_ms(one_month_later_after)
         end
 
         it "renders json of the created member" do
@@ -55,20 +50,27 @@ RSpec.describe Admin::MembersController, type: :controller do
           parsed_response = JSON.parse(response.body)
           expect(response).to have_http_status(200)
           expect(response.content_type).to eq "application/json"
-          expect(parsed_response['id']).to eq(Member.last.id.as_json)
+          expect(parsed_response['member']['id']).to eq(Member.last.id.as_json)
         end
       end
 
       context "with invalid params" do
-        it "assigns a newly created but unsaved member as @member" do
-          post :create, params: {member: invalid_attributes}, format: :json
-          expect(assigns(:member)).to be_a(Member)
-          expect(assigns(:member)).not_to be_persisted
-        end
+        missing_member_prop = {
+          firstname: 'Test',
+          email: 'test@test.com',
+        }
 
-        it "Returns 500 status" do
-          post :create, params: {member: invalid_attributes}, format: :json
-          expect(response).to have_http_status(500)
+        it "raises validation error with invalid params" do
+          post :create, params: {member: missing_member_prop}, format: :json
+
+          parsed_response = JSON.parse(response.body)
+          expect(response).to have_http_status(422)
+          expect(parsed_response['message']).to match(/Lastname/)
+
+          post :create, params: missing_member_prop, format: :json
+          parsed_response = JSON.parse(response.body)
+          expect(response).to have_http_status(422)
+          expect(parsed_response['message']).to match(/member/)
         end
       end
     end
@@ -80,76 +82,59 @@ RSpec.describe Admin::MembersController, type: :controller do
             email: 'new_email@test.com',
             firstname: 'Change',
             lastname: 'Name',
-            renewal: 1
+            renew: 1
           }
         }
-
-        it "updates the requested member" do
-          member = Member.create! valid_attributes
-          put :update, params: {id: member.to_param, member: new_attributes}, format: :json
-          member.reload
-          expect(member.email).to eq(new_attributes[:email])
-          expect(member.fullname).to eq(get_fullname(new_attributes))
-        end
-
-        it "renders json of the member" do
-          member = Member.create! valid_attributes
-          put :update, params: {id: member.to_param, member: new_attributes}, format: :json
-
-          parsed_response = JSON.parse(response.body)
-          expect(response).to have_http_status(200)
-          expect(response.content_type).to eq "application/json"
-          expect(parsed_response['id']).to eq(member.id.as_json)
-        end
-
-        it "Sends slack notification if member renewed" do
-          member = Member.create! valid_attributes
-          slack_msg = "msg"
-          Slack::Notifier.any_instance.stub(:ping)
-          Slack::Notifier::Util::LinkFormatter.stub(:format).and_return(slack_msg)
-          put :update, params: {id: member.to_param, member: new_attributes}, format: :json
-          member.reload
-          expect(assigns(:notifier)).to be_a(Slack::Notifier)
-          expect(Slack::Notifier::Util::LinkFormatter).to have_received(:format).with(assigns(:messages).join("\n"))
-          expect(assigns(:notifier)).to have_received(:ping).with(slack_msg)
-        end
-      end
-    end
-
-    describe "PUT #renew" do
-      context "with valid params" do
-        let(:new_attributes) {
-          {
+        create_attr = {
             email: 'new_email@test.com',
             firstname: 'Change',
             lastname: 'Name',
-            renewal: 1
-          }
         }
 
-        it "updates the requested member's expiration time" do
-          member = Member.create! valid_attributes
-          original_exp = member.prettyTime
-          put :renew, params: {id: member.to_param, member: new_attributes}, format: :json
+        it "updates the requested member" do
+          member = Member.create create_attr
+          one_month_later = Time.now + 1.month;
+          put :update, params: {id: member.to_param, member: new_attributes}, format: :json
+          one_month_later_after = Time.now + 1.month;
+
           member.reload
-          expect(member.expirationTime).to eq((original_exp + 1.months).to_i * 1000)
+          expect(member.email).to eq(new_attributes[:email])
+          expect(member.fullname).to eq(get_fullname(new_attributes))
+          expect(member.expirationTime).to be >= conv_to_ms(one_month_later)
+          expect(member.expirationTime).to be <= conv_to_ms(one_month_later_after)
         end
 
         it "renders json of the member" do
-          member = Member.create! valid_attributes
-          put :renew, params: {id: member.to_param, member: new_attributes}, format: :json
+          member = Member.create valid_attributes
+          put :update, params: {id: member.to_param, member: new_attributes}, format: :json
 
           parsed_response = JSON.parse(response.body)
           expect(response).to have_http_status(200)
           expect(response.content_type).to eq "application/json"
-          expect(parsed_response['id']).to eq(member.id.as_json)
+          expect(parsed_response['member']['id']).to eq(member.id.as_json)
+        end
+      end
+
+      context "with invalid params" do
+        invalid_params = {
+          firstname: 'Test',
+          email: 'test@test.com',
+          role: "foo"
+        }
+
+        it "raises validation error with invalid params" do
+          member = Member.create valid_attributes
+          put :update, params: {id: member.to_param, member: invalid_params}, format: :json
+
+          parsed_response = JSON.parse(response.body)
+          expect(response).to have_http_status(422)
+          expect(parsed_response['message']).to match(/Role/)
         end
 
-        it "Sends slack notification if member renewed" do
-          member = Member.create! valid_attributes
-          put :renew, params: {id: member.to_param, member: new_attributes}, format: :json
-          member.reload
-          expect(assigns(:notifier)).to be_a(Slack::Notifier)
+        it "raises not found if member doens't exist" do
+          put :update, params: {id: "foo" }, format: :json
+          parsed_response = JSON.parse(response.body)
+          expect(response).to have_http_status(404)
         end
       end
     end

@@ -17,6 +17,7 @@ FactoryBot.define do
     email {generate(:email)}
     encrypted_password BCrypt::Password.create('password')
     memberContractOnFile true
+    status 'activeMember'
 
     trait :expired do
       after(:build) do |member|
@@ -36,6 +37,16 @@ FactoryBot.define do
     trait :admin do
       after(:build) do |member|
         member.role = 'admin'
+      end
+    end
+    trait :inactive do
+      after(:build) do |member|
+        member.status = 'inactive'
+      end
+    end
+    trait :revoked do
+      after(:build) do |member|
+        member.status = 'revoked'
       end
     end
   end
@@ -97,6 +108,18 @@ FactoryBot.define do
     trait :rental_sub do
       product "Plot Rental"
       txn_type "subscr_payment"
+    end
+  end
+
+  factory :permission do
+    name { generate(:number) }
+    enabled {false}
+    association :member
+
+    trait :enabled do
+      after(:build) do |permission|
+        permission.enabled = true
+      end
     end
   end
 

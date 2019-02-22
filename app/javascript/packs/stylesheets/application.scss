@@ -1,0 +1,110 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require_self
+ */
+
+ @mixin flex {
+  -webkit-flex-grow: 1;
+  -moz-flex-grow: 1;
+  flex-grow: 1;
+ }
+
+ .form-modal {
+   width: 600px;
+   min-width: 600px;
+ }
+ .error-message {
+  color: red;
+  height: 8px;
+  font-size: 0.8em;
+  line-height: 1em;
+  margin-top: 0.2em;
+ }
+ .table-wrapper {
+   position: relative;
+ }
+ .loading-overlay {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 1000;
+  background-color: rgba(200, 200, 200, 0.5);
+  .spinner-container {
+    position: relative;
+    transform: translateY(calc(50% - 20px));
+    text-align: center;
+    height: 100%;
+  }
+}
+ .root {
+  @include flex;
+}
+.flex {
+  @include flex;
+}
+.menu-button {
+  margin-left: -12;
+  margin-right: 20;
+}
+
+#landing-page-graphic {
+  background: url("../../src/images/FilledLaserableLogo.svg") no-repeat center;
+  background-size: contain;
+  height: 100%;
+}
+
+.hosted-field {
+  height: 32px;
+  margin-bottom: 1em;
+  display: block;
+  background-color: transparent;
+  color: rgba(0, 0, 0, .87);
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, .26);
+  outline: 0;
+  width: 100%;
+  font-size: 16px;
+  padding: 0;
+  box-shadow: none;
+  border-radius: 0;
+  position: relative;
+}
+
+.hosted-field--label {
+  transform: translateY(0.4em);
+  font-size: 1.125em;
+  line-height: 32px;
+  transition: all .15s ease-out;
+  display: block;
+  width: 100%;
+  font-weight: 400;
+  overflow: hidden;
+  margin-bottom: 0.5em;
+  &.label-float {
+    text-overflow: ellipsis;
+    color: #2196F3;
+    transition: all .15s ease-out
+  }
+  &.filled {
+    @extend .label-float;
+    color: rgba(0, 0, 0, .54);
+  }
+  &.invalid {
+    @extend .label-float;
+    color: #F44336;
+  }
+}
+
+.instruction-list li, .instruction-list div {
+  margin-bottom: .5em;
+}

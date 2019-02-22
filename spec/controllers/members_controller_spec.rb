@@ -16,7 +16,7 @@ RSpec.describe MembersController, type: :controller do
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
-      expect(parsed_response.first['id']).to eq(Member.last.id.as_json)
+      expect(parsed_response['members'].first['id']).to eq(Member.last.id.as_json)
     end
   end
 
@@ -34,19 +34,22 @@ RSpec.describe MembersController, type: :controller do
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
-      expect(parsed_response['id']).to eq(Member.last.id.as_json)
+      expect(parsed_response['member']['id']).to eq(Member.last.id.as_json)
+    end
+
+    it "raises not found if member doens't exist" do
+      put :show, params: {id: "foo" }, format: :json
+      parsed_response = JSON.parse(response.body)
+      expect(response).to have_http_status(404)
     end
   end
 
-  describe "GET #contract" do
-    it "Renders two documents - member contract and code of conduct" do
-      get :contract, params: {}, format: :json
+  describe "PUT #update" do
 
+    it "raises not found if member doens't exist" do
+      put :show, params: {id: "foo" }, format: :json
       parsed_response = JSON.parse(response.body)
-      expect(response).to have_http_status(200)
-      expect(response.content_type).to eq "application/json"
-      expect(parsed_response['contract']).to include('Membership Contract')
-      expect(parsed_response['conduct']).to include('Code of Conduct')
+      expect(response).to have_http_status(404)
     end
   end
 end
