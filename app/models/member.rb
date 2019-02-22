@@ -90,6 +90,7 @@ class Member
       #make sure member benefits from group expTime
       if benefits_from_group
         self.expirationTime = self.group.expiry
+        self.save
       end
     end
   end
