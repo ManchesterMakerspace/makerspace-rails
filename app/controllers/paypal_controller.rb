@@ -5,7 +5,7 @@ class PaypalController < ApplicationController
   def notify
     configure_messages
     if Rails.env.production?
-      if PaypalService.ipn_valid?(request.raw_post)
+      if ::PaypalService.ipn_valid?(request.raw_post)
           save_and_notify
       else
         @messages.push("Invalid IPN received: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
