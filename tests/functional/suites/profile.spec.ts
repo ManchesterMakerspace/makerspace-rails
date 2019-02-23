@@ -154,7 +154,7 @@ describe("Member Profiles", () => {
         await utils.fillInput(memberPO.memberForm.email, updatedMember.email);
         await utils.fillInput(memberPO.memberForm.firstname, updatedMember.firstname);
         await utils.fillInput(memberPO.memberForm.lastname, updatedMember.lastname);
-        await utils.fillInput(memberPO.memberForm.expiration, new Date(updatedMember.expirationTime).toDateString());
+        await utils.inputTime(memberPO.memberForm.expiration, updatedMember.expirationTime)
         await utils.clickElement(memberPO.memberForm.submit);
         await utils.waitForNotVisible(memberPO.memberForm.submit);
         await reviewMemberInfo(adminUser, updatedMember, false);
@@ -184,7 +184,7 @@ describe("Member Profiles", () => {
         await utils.fillInput(memberPO.memberForm.email, "foo");
         await utils.fillInput(memberPO.memberForm.firstname, updatedMember.firstname);
         await utils.fillInput(memberPO.memberForm.lastname, updatedMember.lastname);
-        await utils.fillInput(memberPO.memberForm.expiration, new Date(updatedMember.expirationTime).toDateString());
+        await utils.inputTime(memberPO.memberForm.expiration, updatedMember.expirationTime)
         await utils.clickElement(memberPO.memberForm.submit);
         await utils.assertInputError(memberPO.memberForm.email)
         await utils.assertNoInputError(memberPO.memberForm.firstname)
