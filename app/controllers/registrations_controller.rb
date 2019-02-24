@@ -1,4 +1,4 @@
-class RegistrationsController < Devise::RegistrationsController
+class RegistrationsController < ApplicationController
     include BraintreeGateway
     include ApplicationHelper
     respond_to :json
@@ -8,10 +8,12 @@ class RegistrationsController < Devise::RegistrationsController
       raise ::ActionController::ParameterMissing.new(:email) if email.nil?
       member = Member.find_by(email: email)
       if member
-        @messages.push("Cannot send registration to #{email}. Account already exists")
-        return
+        error = "Cannot send registration to #{email}. Account already exists"
+        @messages.push(error)
+        render json: { error: error }, status: 409 and return
       end
       MemberMailer.welcome_email(email, request.base_url).deliver_now
+      render json: {}, status: 200 and return
     end
 
     def create
