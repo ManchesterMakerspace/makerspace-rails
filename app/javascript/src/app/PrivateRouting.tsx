@@ -12,6 +12,7 @@ import SettingsContainer from 'ui/member/Settings';
 import BillingContextContainer from 'ui/billing/BillingContextContainer';
 import { Permission } from 'app/entities/permission';
 import { CollectionOf } from 'app/interfaces';
+import SendRegistrationComponent from 'ui/auth/SendRegistrationComponent';
 
 const PrivateRouting: React.SFC<{ auth: string, permissions: CollectionOf<Permission> }> = (props) => {
   const billingEnabled = props.permissions[Whitelists.billing] || false;
@@ -25,6 +26,7 @@ const PrivateRouting: React.SFC<{ auth: string, permissions: CollectionOf<Permis
         <Route exact path={Routing.Rentals} component={RentalsList} />
         {billingEnabled && <Route exact path={`${Routing.Billing}/${Routing.PathPlaceholder.Resource}${Routing.PathPlaceholder.Optional}`} component={BillingContainer} />}
         {billingEnabled && <Route exact path={Routing.Checkout} component={CheckoutContainer} />}
+        <Route exact path={Routing.SendRegistration} component={SendRegistrationComponent}/>
         <Redirect to={`${Routing.Members}/${props.auth}`} />
         <Route component={NotFound} />
       </Switch>

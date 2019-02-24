@@ -62,3 +62,14 @@ export const putPassword = async (token: string, password: string) => {
     throw error;
   }
 }
+
+export const sendRegistrationEmail = async (email: string) => {
+  try {
+    return await axios.post(buildJsonUrl(Url.Auth.SendRegistration), {
+      email
+    });
+  } catch (e) {
+    const error = handleApiError(e);
+    throw error;
+  }
+}

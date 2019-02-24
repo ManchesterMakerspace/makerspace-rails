@@ -31,7 +31,8 @@ export namespace Url {
     SignIn: `${Members}/sign_in`,
     SignOut: `${Members}/sign_out`,
     Password: `${Members}/password`,
-    SignUp: `${Members}`
+    SignUp: `${Members}`,
+    SendRegistration: `${baseApiPath}/send_registration`
   }
 
   export const Admin = {
@@ -70,6 +71,7 @@ export namespace Routing {
     Optional = "?",
     MemberId = ":memberId",
     Resource = ":resource",
+    Email = ":email",
   }
 
   export const Root = "/";
@@ -85,6 +87,7 @@ export namespace Routing {
   export const Checkout = "/checkout";
   export const PasswordReset = "/resetPassword";
   export const Settings = "/settings";
+  export const SendRegistration = `/send_registration/${PathPlaceholder.Email}`
 }
 
 export enum ApiErrorStatus {
