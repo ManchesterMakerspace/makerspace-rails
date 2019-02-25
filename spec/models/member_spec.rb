@@ -140,11 +140,6 @@ RSpec.describe Member, type: :model do
         expired_member.update({ expirationTime: first_expiration + 10})
         expect(expired_card.expiry).to eq(first_expiration + 10)
       end
-
-      it "Sends a slack notification about the change" do
-        expect(member).to receive(:send_slack_message).with(/renewed/)
-        member.send(:renew=, 1)
-      end
     end
   end
 end
