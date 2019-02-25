@@ -47,7 +47,7 @@ class Member
   after_initialize :verify_group_expiry
   before_update :update_initial_expiration_from_invoice, :if => proc { !cardID && cardID_changed? }
   before_save :update_braintree_customer_info
-  after_update :update_card, :notify_renewal
+  after_update :update_card
   after_create :send_slack_invite, :send_google_invite, :send_member_registered_email
 
   has_many :permissions, class_name: 'Permission', dependent: :destroy, :autosave => true
@@ -190,15 +190,6 @@ class Member
     rescue Error::Google::Upload => err
       send_slack_message("Error sharing Member Resources folder with #{self.fullname}. Error: #{err}")
     end
-  end
-
-  def notify_renewal
-    if self.expirationTime_changed?
-      init, final = self.expirationTime_change
-      time = self.prettyTime.strftime("%m/%d/%Y")
-      final_msg = "#{self.fullname} renewed. Now expiring #{time}"
-    end
-    send_slack_message(final_msg) unless final_msg.nil?
   end
 
   def send_member_registered_email

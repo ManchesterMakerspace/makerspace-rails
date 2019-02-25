@@ -10,6 +10,7 @@ class Admin::MembersController < AdminController
   def update
     date = @member.expirationTime
     @member.update!(get_camel_case_params)
+    notify_renewal(date)
     @member.reload
     render json: @member and return
   end
@@ -33,5 +34,13 @@ class Admin::MembersController < AdminController
   def set_member
     @member = Member.find(params[:id])
     raise ::Mongoid::Errors::DocumentNotFound.new(Member, { id: params[:id] }) if @member.nil?
+  end
+
+  def notify_renewal(init)
+    final = @member.expirationTime
+    if (Time.at(final / 1000) - Time.at((init || 0) / 1000) > 1.day)
+      time = @member.prettyTime.strftime("%m/%d/%Y")
+      @messages.push("#{@member.fullname} renewed. Now expiring #{time}")
+    end
   end
 end

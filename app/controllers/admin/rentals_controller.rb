@@ -16,6 +16,7 @@ class Admin::RentalsController < AdminController
   def update
     initial_date = @rental.get_expiration
     @rental.update_attributes!(rental_params)
+    notify_renewal(initial_date)
     @rental.reload
     render json: @rental and return
   end
@@ -33,5 +34,14 @@ class Admin::RentalsController < AdminController
   def set_rental
     @rental = Rental.find(params[:id])
     raise ::Mongoid::Errors::DocumentNotFound.new(Rental, { id: params[:id] }) if @rental.nil?
+  end
+
+  def notify_renewal(init)
+    final = @rental.get_expiration
+    if (Time.at(final / 1000) - Time.at((init || 0) / 1000) > 1.day)
+      core_msg = "#{@rental.member ? "#{@rental.member.fullname}'s rental of " : ""} Locker/Plot # #{@rental.number}"
+      time = @rental.prettyTime.strftime("%m/%d/%Y")
+      @messages.push("#{core_msg} renewed.  Now expiring #{time}")
+    end
   end
 end
