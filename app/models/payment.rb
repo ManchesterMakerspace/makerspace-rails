@@ -37,7 +37,6 @@ class Payment
   end
 
   def find_member
-    return unless self.valid?
     unless !!self.member
       self.member = Member.search_members("#{self.firstname} #{self.lastname} #{self.payer_email}").first
       if !self.member && self.payer_email then
