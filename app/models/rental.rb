@@ -11,7 +11,6 @@ class Rental
   field :subscription_id, type: String # Braintree relation
 
   validates :number, presence: true, uniqueness: true
-  after_update :notify_renewal
 
   def prettyTime
     if self.expiration
@@ -54,15 +53,5 @@ class Rental
     else
       return exp.to_i * 1000
     end
-  end
-
-  def notify_renewal
-    if self.expiration_changed?
-      init, final = self.expiration_change
-      core_msg = "#{self.member ? "#{self.member.fullname}'s rental of " : ""} Locker/Plot # #{self.number}"
-      time = self.prettyTime.strftime("%m/%d/%Y")
-      final_msg = "#{core_msg} renewed.  Now expiring #{time}"
-    end
-    send_slack_message(final_msg) unless final_msg.nil?
   end
 end
