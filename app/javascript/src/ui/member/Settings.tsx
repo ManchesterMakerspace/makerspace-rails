@@ -18,21 +18,25 @@ import UpdateMembershipForm from "ui/membership/UpdateMembershipForm";
 import { Whitelists } from "app/constants";
 import { readMemberAction } from "ui/member/actions";
 import { MemberDetails } from "app/entities/member";
+import { withRouter, RouteComponentProps } from "react-router";
 
 interface StateProps {
   currentMember: AuthMember;
   member: MemberDetails;
+  isReading: boolean;
+  readError: string;
   billingEnabled: boolean;
 }
 
 interface DispatchProps {
   getMember: (id: string) => void;
 }
+interface OwnProps extends RouteComponentProps<{}>{ }
 interface State {
   selectedIndex: number;
 }
 
-interface Props extends StateProps {
+interface Props extends StateProps, OwnProps {
   getMember: () => void;
 }
 
@@ -52,26 +56,24 @@ class SettingsContainer extends React.Component<Props, State> {
 
   private renderForm = () => {
     const { selectedIndex } = this.state;
-    const { member, billingEnabled } = this.props;
+    const { member, billingEnabled, isReading, readError } = this.props;
     let form: JSX.Element;
     if (!member) {
       return;
     }
     const memberForm = (renderProps: UpdateMemberRenderProps) => (
-      <>
-        <MemberForm
-          ref={renderProps.setRef}
-          member={renderProps.member}
-          isAdmin={false}
-          isOpen={renderProps.isOpen}
-          isRequesting={renderProps.isUpdating}
-          error={renderProps.updateError}
-          onClose={renderProps.closeHandler}
-          onSubmit={renderProps.submit}
-          noDialog={true}
-          title="Update Profile Details"
-        />
-      </>
+      <MemberForm
+        ref={renderProps.setRef}
+        member={member}
+        isAdmin={false}
+        isOpen={renderProps.isOpen}
+        isRequesting={isReading || renderProps.isRequesting}
+        error={readError || renderProps.error}
+        onClose={renderProps.closeHandler}
+        onSubmit={renderProps.submit}
+        noDialog={true}
+        title="Update Profile Details"
+      />
     )
     if (selectedIndex === 0) {
       form = (
@@ -166,22 +168,27 @@ const mapStateToProps = (
   state: ReduxState
 ): StateProps => {
   const { currentUser: currentMember, permissions } = state.auth;
-  const { entity: member } = state.member;
+  const { entity: member, read: { isRequesting, error } } = state.member;
   return {
     currentMember,
     member,
+    isReading: isRequesting,
+    readError: error,
     billingEnabled: !!permissions[Whitelists.billing] || false,
   }
 }
 
 const mergeProps = (
   stateProps: StateProps,
-  dispatchProps: DispatchProps
+  dispatchProps: DispatchProps,
+  ownProps: OwnProps,
 ): Props => {
+
   return {
     ...stateProps,
+    ...ownProps,
     getMember: () => dispatchProps.getMember(stateProps.currentMember && stateProps.currentMember.id),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(SettingsContainer);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(SettingsContainer));

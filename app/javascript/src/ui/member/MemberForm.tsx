@@ -11,6 +11,7 @@ import FormModal from "ui/common/FormModal";
 import { fields as memberFormField, MemberStatusOptions, MemberRoleOptions } from "ui/member/constants";
 import Form from "ui/common/Form";
 import { toDatePicker } from "ui/utils/timeToDate";
+import { Checkbox, FormControlLabel } from "@material-ui/core";
 
 interface OwnProps {
   member: Partial<MemberDetails>;
@@ -22,23 +23,50 @@ interface OwnProps {
   onSubmit: (form: Form) => void;
   title?: string;
   noDialog?: boolean;
+  ref?: any;
 }
 
-class MemberForm extends React.Component<OwnProps> {
+interface State {
+  memberContractOnFile: boolean;
+}
+
+class MemberForm extends React.Component<OwnProps, State> {
   public formRef: Form;
   private setFormRef = (ref: Form) => this.formRef = ref;
 
+  public constructor(props: OwnProps) {
+    super(props);
+    this.state = {
+      memberContractOnFile: false,
+    }
+  }
+
+  public componentDidUpdate(prevProps: OwnProps) {
+    const { isOpen, member } = this.props;
+    if (isOpen && !prevProps.isOpen) {
+      this.setState({ memberContractOnFile: member && member.memberContractOnFile || false });
+    }
+    if (member && member !== prevProps.member) {
+      this.formRef && this.formRef.resetForm();
+    }
+  }
+
+  public toggleContract = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { checked } = event.currentTarget;
+    this.setState({ memberContractOnFile: checked });
+  }
+
   public validate = async (form: Form): Promise<MemberDetails> => {
-    const { isAdmin } = this.props;
-    const fields = memberFormField(isAdmin);
+    const { isAdmin, member } = this.props;
+    const fields = memberFormField(isAdmin, member);
     return (await form.simpleValidate<MemberDetails>(fields));
   }
 
   private renderFormContents = () => {
     const { member, isAdmin } = this.props;
-    const fields = memberFormField(isAdmin);
+    const fields = memberFormField(isAdmin, member);
 
-return (<Grid container spacing={24}>
+    return (<Grid container spacing={24}>
       <Grid item xs={6}>
         <TextField
           fullWidth
@@ -117,6 +145,21 @@ return (<Grid container spacing={24}>
                 ([key, value]) => <option id={`${fields.role.name}-option-${kebabCase(key)}`} key={kebabCase(key)} value={key}>{value}</option>)}
             </Select>
           </Grid>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  required={!(member && member.id)}
+                  name={fields.memberContractOnFile.name}
+                  value={fields.memberContractOnFile.name}
+                  checked={this.state.memberContractOnFile}
+                  onChange={this.toggleContract}
+                  color="default"
+                />
+              }
+              label={fields.memberContractOnFile.label}
+            />
+          </Grid>
         </>
       )}
       {/* TODO Permissions (Select) */}
@@ -127,7 +170,6 @@ return (<Grid container spacing={24}>
     const { isOpen, onClose, isRequesting, error, onSubmit, member, isAdmin, title, noDialog } = this.props;
     const contents = this.renderFormContents();
     const formProps = {
-      formRef: this.setFormRef,
       id: "member-form",
       loading: isRequesting,
       isOpen,
@@ -139,9 +181,9 @@ return (<Grid container spacing={24}>
     }
 
     if (noDialog) {
-      return <Form {...formProps}>{contents}</Form>;
+      return <Form ref={this.setFormRef} {...formProps}>{contents}</Form>;
     } else {
-      return <FormModal {...formProps}>{contents}</FormModal>;
+      return <FormModal formRef={this.setFormRef} {...formProps}>{contents}</FormModal>;
     }
   }
 }

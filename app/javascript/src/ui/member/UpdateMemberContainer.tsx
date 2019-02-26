@@ -25,10 +25,8 @@ interface OwnProps {
 }
 interface StateProps {
   isAdmin: boolean;
-  updateError: string;
-  isUpdating: boolean;
-  isCreating: boolean;
-  createError: string;
+  error: string;
+  isRequesting: boolean;
 }
 interface DispatchProps {
   dispatchMember: (updatedMember: MemberDetails, isAdmin: boolean) => Promise<MemberDetails>;
@@ -40,11 +38,8 @@ class EditMember extends React.Component<Props, {}> {
   private setFormRef = (ref: MemberForm) => this.formRef = ref;
 
   public componentDidUpdate(prevProps: Props){
-    const { isUpdating: wasUpdating, isCreating: wasCreating } = prevProps;
-    const { isOpen, isUpdating, isCreating, closeHandler, updateError, createError } = this.props;
-    const isRequesting = (isCreating || isUpdating);
-    const wasRequesting = (wasCreating || wasUpdating);
-    const error = (createError || updateError)
+    const { isRequesting: wasRequesting } = prevProps;
+    const { isOpen, isRequesting, closeHandler, error } = this.props;
     if (isOpen && wasRequesting && !isRequesting && !error) {
       closeHandler();
     }
@@ -65,25 +60,22 @@ class EditMember extends React.Component<Props, {}> {
       submit: this.submitMemberForm,
       setRef: this.setFormRef,
     }
-    return (
-      render(renderPayload)
-    )
+    return render(renderPayload);
   }
 }
 
 const mapStateToProps = (
   state: ReduxState,
-  _ownProps: OwnProps
+  ownProps: OwnProps
 ): StateProps => {
   const { isRequesting: isUpdating, error: updateError } = state.member.update
   const { isRequesting: isCreating, error: createError } = state.members.create
   const { currentUser: { isAdmin } } = state.auth;
+
   return {
     isAdmin,
-    createError,
-    isCreating,
-    updateError,
-    isUpdating
+    isRequesting: ownProps.member && ownProps.member.id ? isUpdating : isCreating,
+    error: ownProps.member && ownProps.member.id ? updateError : createError,
   }
 }
 
