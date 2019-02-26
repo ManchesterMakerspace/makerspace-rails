@@ -34,7 +34,7 @@ group :test do
   gem 'byebug', platform: :mri
   gem 'rspec-rails'
   gem 'mongoid-rspec'
-  gem 'factory_bot'
+  gem 'factory_bot_rails'
   gem 'database_cleaner'
   gem 'rails-controller-testing'
   gem 'simplecov'
