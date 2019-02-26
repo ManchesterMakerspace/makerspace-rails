@@ -1,17 +1,20 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 5.0.0', '>= 5.0.0.1'
+gem 'rails', '~> 5.2.2'
 gem 'rack-cors'
 gem 'puma', '~> 3.0'
 gem 'active_model_serializers'
 gem 'dotenv-rails'
 gem 'webpacker'
 
+# Pin ffi b/c 1.10 has issues installing
+gem 'ffi', '1.9.25'
+
 #authentication
 gem 'devise'
 gem 'bcrypt'
 #Use Mongo DB
-gem 'mongoid', '~> 6.0.0'
+gem 'mongoid', '~> 7.0.2'
 gem 'mongoid_search'
 #Paypal IPN
 gem 'paypal-sdk-rest'
