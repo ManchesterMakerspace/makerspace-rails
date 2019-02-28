@@ -30,6 +30,7 @@ export class MemberPageObject extends TablePageObject {
     firstname: `${this.memberFormId}-firstname`,
     lastname: `${this.memberFormId}-lastname`,
     expiration: `${this.memberFormId}-expirationTime`,
+    contract: `${this.memberFormId}-contract`,
     email: `${this.memberFormId}-email`,
     error: `${this.memberFormId}-error`,
     submit: `${this.memberFormId}-submit`,

@@ -69,6 +69,9 @@ describe("Members page", () => {
       await utils.assertInputError(memberPo.memberForm.lastname);
       await utils.assertInputError(memberPo.memberForm.expiration);
       await utils.assertInputError(memberPo.memberForm.email);
+      await utils.assertInputError(memberPo.memberForm.contract);
+      await utils.clickElement(memberPo.memberForm.contract);
+      await utils.assertNoInputError(memberPo.memberForm.contract);
       await utils.fillInput(memberPo.memberForm.email, "foo");
       await utils.assertNoInputError(memberPo.memberForm.email);
       await utils.fillInput(memberPo.memberForm.firstname, newMember.firstname);
