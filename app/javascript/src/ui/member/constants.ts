@@ -66,7 +66,7 @@ export const fields = (admin: boolean, member?: Partial<MemberDetails>): FormFie
     memberContractOnFile: {
       label: "Member Contract Signed?",
       name: `${formPrefix}-contract`,
-      validate: (_val) => member && member.id ? false : true,
+      validate: (val) => member && member.id ? true : !!val, // Validate contract only on create.
       error: "Member must sign contract"
     }
   },
