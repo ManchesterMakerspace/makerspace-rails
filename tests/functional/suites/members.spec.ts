@@ -44,7 +44,7 @@ describe("Members page", () => {
       await memberPo.verifyListView(defaultMembers, memberPo.fieldEvaluator);
       await verifyRouting(defaultMembers[0]);
     });
-    it("Creating a new member", async () => {
+    fit("Creating a new member", async () => {
       const newMemberId = "new_new";
       const newMember = {
         firstname: "New",
@@ -93,7 +93,7 @@ describe("Members page", () => {
       await utils.clickElement(memberPo.memberForm.submit);
       await utils.waitForNotVisible(memberPo.memberForm.submit);
       await memberPo.verifyFields(newMember, memberPo.fieldEvaluator);
-    });
+    }, 200000);
     it("Renewing a member", async () => {
       const updatedMember: LoginMember = {
         id: "updated_updated",

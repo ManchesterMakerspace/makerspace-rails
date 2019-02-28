@@ -151,6 +151,7 @@ class MemberForm extends React.Component<OwnProps, State> {
                 <Checkbox
                   required={!(member && member.id)}
                   name={fields.memberContractOnFile.name}
+                  id={fields.memberContractOnFile.name}
                   value={fields.memberContractOnFile.name}
                   checked={this.state.memberContractOnFile}
                   onChange={this.toggleContract}
