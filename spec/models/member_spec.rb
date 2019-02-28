@@ -25,7 +25,6 @@ RSpec.describe Member, type: :model do
     it { is_expected.to validate_presence_of(:lastname) }
     it { is_expected.to validate_uniqueness_of(:email) }
     it { is_expected.to have_many(:access_cards).as_inverse_of(:member) }
-    it { is_expected.to belong_to(:group).as_inverse_of(:active_members).with_foreign_key("groupName") }
   end
 
   it "has a valid factory" do
