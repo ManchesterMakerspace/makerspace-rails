@@ -286,7 +286,6 @@ DEPENDENCIES
   devise
   dotenv-rails
   factory_bot_rails
-  ffi (= 1.9.25)
   google-api-client
   mini_magick
   mongoid (~> 7.0.2)
@@ -304,6 +303,9 @@ DEPENDENCIES
   spring-watcher-listen (~> 2.0.0)
   tzinfo-data
   webpacker
+
+RUBY VERSION
+   ruby 2.6.1p33
 
 BUNDLED WITH
    1.16.5

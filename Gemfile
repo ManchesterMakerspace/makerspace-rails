@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+ruby '2.6.1'
 
 gem 'rails', '~> 5.2.2'
 gem 'rack-cors'
@@ -6,9 +7,6 @@ gem 'puma', '~> 3.0'
 gem 'active_model_serializers'
 gem 'dotenv-rails'
 gem 'webpacker'
-
-# Pin ffi b/c 1.10 has issues installing
-gem 'ffi', '1.9.25'
 
 #authentication
 gem 'devise'
