@@ -35,9 +35,7 @@ class Member
   field :customer_id, type: String # Braintree customer relation
   field :subscription_id, type: String # Braintree relation
 
-  search_in :email, index: :_email_keywords
-  search_in :lastname, index: :_lastname_keywords
-
+  search_in :email, :lastname
   validates :firstname, presence: true
   validates :lastname, presence: true
   validates :email, uniqueness: true
@@ -61,8 +59,8 @@ class Member
   def self.search_members(searchTerms, criteria = Mongoid::Criteria.new(Member))
     members = criteria.where(email: searchTerms)
     members = criteria.where("(this.firstname + ' ' + this.lastname).match(new RegExp('#{searchTerms}', 'i'))") unless (members.size > 0)
-    members = Member.full_text_search(searchTerms, index: :_lastname_keywords).sort_by(&:relevance).reverse unless (members.size > 0)
-    members = Member.full_text_search(searchTerms, index: :_email_keywords).sort_by(&:relevance).reverse unless (members.size > 0)
+    members = Member.full_text_search(searchTerms).sort_by(&:relevance).reverse unless (members.size > 0)
+    members = Member.full_text_search(searchTerms).sort_by(&:relevance).reverse unless (members.size > 0)
     return members
   end
 
