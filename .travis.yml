@@ -8,7 +8,7 @@ cache:
 addons:
   chrome: stable
 rvm:
-  - 2.5.1
+  - 2.6.1
 install:
   - bundle install
   - nvm install node

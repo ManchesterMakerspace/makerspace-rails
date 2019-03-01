@@ -15,9 +15,9 @@ FactoryBot.define do
     cardID {generate(:cardID)}
     expirationTime {generate(:expiry)}
     email {generate(:email)}
-    encrypted_password BCrypt::Password.create('password')
-    memberContractOnFile true
-    status 'activeMember'
+    encrypted_password { BCrypt::Password.create('password') }
+    memberContractOnFile { true }
+    status { 'activeMember' }
 
     trait :expired do
       after(:build) do |member|
@@ -53,8 +53,8 @@ FactoryBot.define do
 
   factory :card do
     transient do
-      lost false
-      stolen false
+      lost { false }
+      stolen { false }
     end
 
     association :member
@@ -84,30 +84,30 @@ FactoryBot.define do
   factory :rejection_card do
     uid { generate(:cardID) }
     timeOf { generate(:time_of) }
-    validity :unregistered
+    validity { :unregistered }
   end
 
   factory :payment do
-    product "1-month Subscription Sub-Stnd-Membership"
-    firstname "firstname"
-    lastname "lastname"
-    amount 65.0
-    currency "USD"
+    product { "1-month Subscription Sub-Stnd-Membership" }
+    firstname { "firstname" }
+    lastname { "lastname" }
+    amount { 65.0 }
+    currency { "USD" }
     payer_email { generate(:email)}
     txn_id { generate(:uid) }
 
     trait :sub_payment do
-      txn_type "subscr_payment"
+      txn_type { "subscr_payment" }
     end
     trait :sub_cancel do
-      txn_type "subscr_cancel"
+      txn_type { "subscr_cancel" }
     end
     trait :subscr_failed do
-      txn_type "subscr_failed"
+      txn_type { "subscr_failed" }
     end
     trait :rental_sub do
-      product "Plot Rental"
-      txn_type "subscr_payment"
+      product { "Plot Rental" }
+      txn_type { "subscr_payment" }
     end
   end
 

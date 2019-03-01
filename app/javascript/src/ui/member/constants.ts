@@ -1,6 +1,6 @@
 import { emailValid } from "app/utils";
 import { FormFields } from "ui/common/Form";
-import { MemberStatus, MemberRole } from "app/entities/member";
+import { MemberStatus, MemberRole, MemberDetails } from "app/entities/member";
 import { dateToTime } from "ui/utils/timeToDate";
 
 export enum Action {
@@ -13,7 +13,7 @@ export enum Action {
 }
 
 const formPrefix = "member-form";
-export const fields = (admin: boolean): FormFields => ({
+export const fields = (admin: boolean, member?: Partial<MemberDetails>): FormFields => ({
   firstname: {
     label: "First Name",
     name: `${formPrefix}-firstname`,
@@ -62,6 +62,13 @@ export const fields = (admin: boolean): FormFields => ({
       placeholder: "Select one",
       validate: (val) => !!val,
       error: "Invalid role"
+    },
+    memberContractOnFile: {
+      label: "Member Contract Signed?",
+      name: `${formPrefix}-contract`,
+      validate: (val) => member && member.id ? true : val, // Validate contract only on create.
+      transform: (val) => !!val,
+      error: "Member must sign contract"
     }
   },
 })

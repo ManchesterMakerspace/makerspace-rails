@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
+ruby '2.6.1'
 
-gem 'rails', '~> 5.0.0', '>= 5.0.0.1'
+gem 'rails', '~> 5.2.2'
 gem 'rack-cors'
 gem 'puma', '~> 3.0'
 gem 'active_model_serializers'
@@ -11,7 +12,7 @@ gem 'webpacker'
 gem 'devise'
 gem 'bcrypt'
 #Use Mongo DB
-gem 'mongoid', '~> 6.0.0'
+gem 'mongoid', '~> 7.0.2'
 gem 'mongoid_search'
 #Paypal IPN
 gem 'paypal-sdk-rest'
@@ -31,7 +32,7 @@ group :test do
   gem 'byebug', platform: :mri
   gem 'rspec-rails'
   gem 'mongoid-rspec'
-  gem 'factory_bot'
+  gem 'factory_bot_rails'
   gem 'database_cleaner'
   gem 'rails-controller-testing'
   gem 'simplecov'

@@ -17,12 +17,13 @@ class Admin::MembersController < AdminController
 
   private
   def member_params
-    params.require(:member).permit(:firstname, :lastname, :role, :email, :status, :expiration_time, :renew)
+    params.require(:member).permit(:firstname, :lastname, :role, :email, :status, :expiration_time, :renew, :member_contract_on_file)
   end
 
   def get_camel_case_params
     camel_case_props = {
-      expiration_time: :expirationTime
+      expiration_time: :expirationTime,
+      member_contract_on_file: :memberContractOnFile,
     }
     params = member_params()
     camel_case_props.each do | key, value|

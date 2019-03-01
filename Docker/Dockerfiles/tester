@@ -1,4 +1,4 @@
-FROM ruby:2.3
+FROM ruby:2.6
 
 # Install base packages
 RUN curl -sL https://deb.nodesource.com/setup_8.x  | bash -

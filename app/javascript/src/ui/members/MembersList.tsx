@@ -121,8 +121,8 @@ class MembersList extends React.Component<Props, State> {
         member={renderProps.member}
         isAdmin={admin}
         isOpen={renderProps.isOpen}
-        isRequesting={renderProps.isCreating}
-        error={renderProps.createError}
+        isRequesting={renderProps.isRequesting}
+        error={renderProps.error}
         onClose={renderProps.closeHandler}
         onSubmit={submitCreate}
         title="Create New Member"
@@ -136,8 +136,8 @@ class MembersList extends React.Component<Props, State> {
         title="Renew Membership"
         entity={memberToRenewal(renderProps.member)}
         isOpen={renderProps.isOpen}
-        isRequesting={renderProps.isUpdating}
-        error={renderProps.updateError}
+        isRequesting={renderProps.isRequesting}
+        error={renderProps.error}
         onClose={renderProps.closeHandler}
         onSubmit={renderProps.submit}
       />
