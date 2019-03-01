@@ -243,8 +243,8 @@ class MemberDetail extends React.Component<Props, State> {
         member={renderProps.member}
         isAdmin={admin}
         isOpen={renderProps.isOpen}
-        isRequesting={renderProps.isUpdating}
-        error={renderProps.updateError}
+        isRequesting={renderProps.isRequesting}
+        error={renderProps.error}
         onClose={renderProps.closeHandler}
         onSubmit={renderProps.submit}
       />
@@ -256,8 +256,8 @@ class MemberDetail extends React.Component<Props, State> {
         title="Renew Membership"
         entity={memberToRenewal(renderProps.member)}
         isOpen={renderProps.isOpen}
-        isRequesting={renderProps.isUpdating}
-        error={renderProps.updateError}
+        isRequesting={renderProps.isRequesting}
+        error={renderProps.error}
         onClose={renderProps.closeHandler}
         onSubmit={renderProps.submit}
         />

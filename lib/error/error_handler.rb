@@ -6,7 +6,7 @@ module Error
     def self.included(clazz)
       clazz.class_eval do
         rescue_from ::Mongoid::Errors::MongoidError do |e|
-          respond(:interal_server_error, 500, "Internal Server Error")
+          respond(:interal_server_error, 500, e.summary || "Internal Server Error")
         end
         rescue_from ::Mongoid::Errors::Validations do |e|
           respond(:unprocessable_entity, 422, e.summary || "Internal Server Error")

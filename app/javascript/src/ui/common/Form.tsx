@@ -57,8 +57,10 @@ class Form extends React.Component<FormModalProps, State> {
   private extractInputNames = (values: CollectionOf<string>, input: ChildNode) => {
     if (input && input.props) {
       // Get input name
-      if (this.isFormInput(input)) {
-        values[input.props.name] = input.props.value || input.props.defaultValue || "";
+      const formInput = this.getFormInput(input);
+      if (formInput) {
+        const val = formInput.props.hasOwnProperty("checked") ? formInput.props.checked : formInput.props.value || formInput.props.defaultValue || "";
+        values[formInput.props.name] = val;
       }
       // extract names from input children elements
       if (React.Children.count(input.props.children) > 0) {
@@ -98,7 +100,11 @@ class Form extends React.Component<FormModalProps, State> {
   }
 
   public componentDidMount() {
-    this.setState({...this.getDefaultState(this.props)});
+    this.resetForm();
+  }
+
+  public resetForm = () => {
+    this.setState({ ...this.getDefaultState(this.props) });
   }
 
   public getValues = (): CollectionOf<string> => {
@@ -193,8 +199,14 @@ class Form extends React.Component<FormModalProps, State> {
     });
   }
 
-  private isFormInput = (element: ChildNode): boolean => {
-    return element && element.hasOwnProperty("props") && element.props.hasOwnProperty("name");
+  private getFormInput = (element: ChildNode): ChildNode => {
+    if (element && element.hasOwnProperty("props")) {
+      if (element.props.hasOwnProperty("control")) {
+        return this.getFormInput(element.props.control);
+      } else {
+        return element.props.hasOwnProperty("name") && element;
+      }
+    }
   }
 
   /**
@@ -214,7 +226,7 @@ class Form extends React.Component<FormModalProps, State> {
         const key = child.props.key || `${id}-${uniqKey}`;
         const hasChildren = child && React.Children.count(child.props.children) > 0;
 
-        if (this.isFormInput(child)) {
+        if (this.getFormInput(child)) {
           // Configure error handling for input
           modifiedChild = this.configureFormInput(child);
         } else if (typeof child === "string") {
@@ -231,8 +243,10 @@ class Form extends React.Component<FormModalProps, State> {
 
   private configureFormInput = (input: ChildNode) => {
     const { errors, touched, isDirty } = this.state;
-    const fieldName = input.props.name;
-    const id = input.props.id || fieldName;
+    const formInput = this.getFormInput(input);
+
+    const fieldName = formInput.props.name;
+    const id = formInput.props.id || fieldName;
     const isTouched = touched[fieldName];
     const error = errors[fieldName];
     return (
