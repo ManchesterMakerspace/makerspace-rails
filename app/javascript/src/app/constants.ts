@@ -8,6 +8,7 @@ export namespace Url {
     InvoiceId = "{invoiceId}",
     SubscriptionId = "{subscriptionId}",
     PaymentMethodId = "{paymentMethodId}",
+    MembershipId = "{membershipId}",
   }
 
   const baseApiPath = "api";
@@ -52,6 +53,9 @@ export namespace Url {
     },
     Permissions: `${baseAdminPath}/permissions`,
     Permission: `${baseAdminPath}/permissions/${PathPlaceholder.MemberId}`,
+
+    EarnedMemberships: `${baseAdminPath}/earned_memberships`,
+    EarnedMembership: `${baseAdminPath}/earned_memberships/${PathPlaceholder.MembershipId}`
   }
 
   export const Billing = {
@@ -64,6 +68,10 @@ export namespace Url {
     Transactions: `${baseBillingPath}/transactions`
   }
 
+  export const baseEarnedMembershipPath = `${baseApiPath}/earned_memberships`
+  export const EarnedMembership ={
+    Reports: `${baseEarnedMembershipPath}/reports`
+  }
 }
 
 export namespace Routing {
