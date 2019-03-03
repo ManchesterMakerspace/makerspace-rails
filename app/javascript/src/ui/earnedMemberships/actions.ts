@@ -3,102 +3,105 @@ import { ThunkAction } from "redux-thunk";
 import toNumber from "lodash-es/toNumber";
 import omit from "lodash-es/omit";
 
-import { getRentals, postRentals, putRental, deleteRental } from "api/rentals/transactions";
-import { Action as RentalsAction } from "ui/rentals/constants";
-import { RentalsState } from "ui/rentals/interfaces";
-import { Rental, RentalQueryParams } from "app/entities/rental";
+import { QueryParams } from "app/interfaces";
+import { MemberDetails } from "app/entities/member";
 
-export const readRentalsAction = (
-  isUserAdmin: boolean,
-  queryParams?: RentalQueryParams
+import { Action as MembershipAction } from "ui/earnedMemberships/constants";
+import { EarnedMembershipsState } from "ui/earnedMemberships/interfaces";
+import { getMemberships, getMembership, postMembership, putMembership } from "api/earnedMemberships/transactions";
+import { EarnedMembership } from "app/entities/earnedMembership";
+
+
+export const readMembershipsAction = (
+  queryParams?: QueryParams
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
-  dispatch({ type: RentalsAction.StartReadRequest });
+  dispatch({ type: MembershipAction.StartReadRequest });
 
   try {
-    const response = await getRentals(isUserAdmin, queryParams);
-    const { rentals } = response.data;
+    const response = await getMemberships(queryParams);
+    const {members} = response.data;
     const totalItems = response.headers[("total-items")];
     dispatch({
-      type: RentalsAction.GetRentalsSuccess,
+      type: MembershipAction.GetMembershipsSuccess,
       data: {
-        rentals,
+        members,
         totalItems: toNumber(totalItems)
       }
     });
   } catch (e) {
     const { errorMessage } = e;
     dispatch({
-      type: RentalsAction.GetRentalsFailure,
+      type: MembershipAction.GetMembershipsFailure,
       error: errorMessage
     });
   }
 };
 
-export const createRentalAction = (
-  rentalForm: Rental
+
+export const createMembershipAction = (
+  membershipForm: EarnedMembership
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
-  dispatch({ type: RentalsAction.StartCreateRequest });
+  dispatch({ type: MembershipAction.StartCreateRequest });
 
   try {
-    const response = await postRentals(rentalForm);
-    const { rental } = response.data;
+    const response = await postMembership(membershipForm);
     dispatch({
-      type: RentalsAction.CreateRentalSuccess,
-      data: rental
+      type: MembershipAction.CreateMembershipSuccess,
     })
   } catch (e) {
     const { errorMessage } = e;
     dispatch({
-      type: RentalsAction.CreateRentalFailure,
+      type: MembershipAction.CreateMembershipFailure,
       error: errorMessage
     });
   }
 };
 
-export const updateRentalAction = (
-  rentalId: string,
-  updatedRental: Partial<Rental>
+
+export const updateMembershipAction = (
+  membershipId: string,
+  updatedMembership: Partial<EarnedMembership>
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
-  dispatch({ type: RentalsAction.StartUpdateRequest });
+  dispatch({ type: MembershipAction.StartUpdateRequest });
 
   try {
-    const response = await putRental(rentalId, updatedRental);
-    const { rental } = response.data;
+    const response = await putMembership(membershipId, updatedMembership);
+    const { Membership } = response.data;
     dispatch({
-      type: RentalsAction.UpdateRentalSuccess,
-      data: rental
+      type: MembershipAction.UpdateMembershipSuccess,
+      data: Membership
     });
   } catch (e) {
     const { errorMessage } = e;
     dispatch({
-      type: RentalsAction.UpdateRentalFailure,
+      type: MembershipAction.UpdateMembershipFailure,
       error: errorMessage
     })
   }
 };
 
 
-export const deleteRentalAction = (
-  rentalId: string,
+export const deleteMembershipAction = (
+  membershipId: string,
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
-  dispatch({ type: RentalsAction.StartDeleteRequest });
+  dispatch({ type: MembershipAction.StartDeleteRequest });
 
   try {
-    await deleteRental(rentalId);
+    await getMembership(membershipId);
     dispatch({
-      type: RentalsAction.DeleteRentalSuccess,
-      data: rentalId
+      type: MembershipAction.DeleteMembershipSuccess,
+      data: membershipId
     });
   } catch (e) {
     const { errorMessage } = e;
     dispatch({
-      type: RentalsAction.DeleteRentalFailure,
+      type: MembershipAction.DeleteMembershipFailure,
       error: errorMessage
     });
   }
 }
 
-const defaultState: RentalsState = {
+const defaultState: EarnedMembershipsState = {
   entities: {},
   read: {
     isRequesting: false,
@@ -107,7 +110,7 @@ const defaultState: RentalsState = {
   },
   create: {
     isRequesting: false,
-    error: "",
+    error: ""
   },
   update: {
     isRequesting: false,
@@ -119,9 +122,9 @@ const defaultState: RentalsState = {
   }
 }
 
-export const rentalsReducer = (state: RentalsState = defaultState, action: AnyAction) => {
+export const earnedMembershipsReducer = (state: EarnedMembershipsState = defaultState, action: AnyAction) => {
   switch (action.type) {
-    case RentalsAction.StartReadRequest:
+    case MembershipAction.StartReadRequest:
       return {
         ...state,
         read: {
@@ -129,22 +132,22 @@ export const rentalsReducer = (state: RentalsState = defaultState, action: AnyAc
           isRequesting: true
         }
       };
-    case RentalsAction.GetRentalsSuccess:
+    case MembershipAction.GetMembershipsSuccess:
       const {
         data: {
-          rentals,
+          members,
           totalItems,
         }
       } = action;
 
-      const newRentals = {};
-      rentals.forEach((rental: Rental) => {
-        newRentals[rental.id] = rental;
+      const newMembers = {};
+      members.forEach((member: MemberDetails) => {
+        newMembers[member.id] = member;
       });
 
       return {
         ...state,
-        entities: newRentals,
+        entities: newMembers,
         read: {
           ...state.read,
           totalItems,
@@ -152,7 +155,7 @@ export const rentalsReducer = (state: RentalsState = defaultState, action: AnyAc
           error: ""
         }
       };
-    case RentalsAction.GetRentalsFailure:
+    case MembershipAction.GetMembershipsFailure:
       const { error } = action;
       return {
         ...state,
@@ -162,7 +165,7 @@ export const rentalsReducer = (state: RentalsState = defaultState, action: AnyAc
           error
         }
       }
-    case RentalsAction.StartCreateRequest:
+    case MembershipAction.StartCreateRequest:
       return {
         ...state,
         create: {
@@ -170,21 +173,16 @@ export const rentalsReducer = (state: RentalsState = defaultState, action: AnyAc
           isRequesting: true
         }
       };
-    case RentalsAction.CreateRentalSuccess:
-      const newRental = action.data;
+    case MembershipAction.CreateMembershipSuccess:
       return {
         ...state,
-        entities: {
-          ...state.entities,
-          [newRental.id]: newRental
-        },
         create: {
           ...state.create,
           isRequesting: false,
           error: ""
         }
       };
-    case RentalsAction.CreateRentalFailure:
+    case MembershipAction.CreateMembershipFailure:
       const { error: createError } = action;
       return {
         ...state,
@@ -194,7 +192,7 @@ export const rentalsReducer = (state: RentalsState = defaultState, action: AnyAc
           error: createError
         }
       }
-    case RentalsAction.StartUpdateRequest:
+    case MembershipAction.StartUpdateRequest:
       return {
         ...state,
         update: {
@@ -202,13 +200,13 @@ export const rentalsReducer = (state: RentalsState = defaultState, action: AnyAc
           isRequesting: true
         }
       };
-    case RentalsAction.UpdateRentalSuccess:
-      const { data: updatedRental } = action;
+    case MembershipAction.UpdateMembershipSuccess:
+      const { data: updatedMembership } = action;
       return {
         ...state,
         entities: {
           ...state.entities,
-          [updatedRental.id]: updatedRental,
+          [updatedMembership.id]: updatedMembership,
         },
         update: {
           ...state.update,
@@ -216,7 +214,7 @@ export const rentalsReducer = (state: RentalsState = defaultState, action: AnyAc
           error: ""
         }
       };
-    case RentalsAction.UpdateRentalFailure:
+    case MembershipAction.UpdateMembershipFailure:
       const updateError = action.error;
 
       return {
@@ -227,7 +225,7 @@ export const rentalsReducer = (state: RentalsState = defaultState, action: AnyAc
           error: updateError
         }
       }
-    case RentalsAction.StartDeleteRequest:
+    case MembershipAction.StartDeleteRequest:
       return {
         ...state,
         delete: {
@@ -235,7 +233,7 @@ export const rentalsReducer = (state: RentalsState = defaultState, action: AnyAc
           isRequesting: true
         }
       };
-    case RentalsAction.DeleteRentalSuccess:
+    case MembershipAction.DeleteMembershipSuccess:
       const id = action.data;
       return {
         ...state,
@@ -246,7 +244,7 @@ export const rentalsReducer = (state: RentalsState = defaultState, action: AnyAc
           error: ""
         }
       };
-    case RentalsAction.DeleteRentalFailure:
+    case MembershipAction.DeleteMembershipFailure:
       const deleteError = action.error;
 
       return {

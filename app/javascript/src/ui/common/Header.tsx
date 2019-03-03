@@ -114,6 +114,7 @@ class Header extends React.Component<Props, State> {
           {this.renderMenuNavLink(Routing.Members, "Members", "members")}
           {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Rentals, "Rentals", "rentals")}
           {billingEnabled && memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Billing, "Billing", "billing")}
+          {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.EarnedMemberships, "Earned Memberships", "earnedMembership")}
           {this.renderMenuNavLink(Routing.Settings, "Account Settings", "settings")}
           <MenuItem id="logout" onClick={this.logoutUser}>Logout</MenuItem>
         </Menu>
