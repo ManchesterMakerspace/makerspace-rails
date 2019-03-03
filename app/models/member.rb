@@ -76,7 +76,7 @@ class Member
     return "#{self.firstname} #{self.lastname}"
   end
 
-   def prettyTime
+   def pretty_time
      if self.expirationTime
        return Time.at(self.expirationTime/1000)
      else

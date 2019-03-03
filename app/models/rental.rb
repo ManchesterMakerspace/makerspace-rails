@@ -12,7 +12,7 @@ class Rental
 
   validates :number, presence: true, uniqueness: true
 
-  def prettyTime
+  def pretty_time
     if self.expiration
       return self.expiration_as_time
     else

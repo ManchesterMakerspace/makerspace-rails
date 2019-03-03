@@ -54,7 +54,7 @@ RSpec.describe Member, type: :model do
       end
 
       it "Extends membership if not expired" do
-        initial_expiration = member.prettyTime
+        initial_expiration = member.pretty_time
         member.send(:renew=, 10)
         expected_renewal = conv_to_ms(initial_expiration + 10.months)
       end
