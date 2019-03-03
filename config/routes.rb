@@ -25,6 +25,10 @@ Rails.application.routes.draw do
         get '/plans/discounts', to: "plans#discounts"
       end
 
+      namespace :earned_memberships do
+        resources :reports, only: [:index, :create]
+      end
+
       namespace :admin  do
         resources :cards, only: [:new, :create, :index, :update]
         resources :invoices, only: [:index, :create, :update, :destroy]
@@ -35,6 +39,8 @@ Rails.application.routes.draw do
         namespace :billing do
           resources :subscriptions, only: [:index, :destroy]
         end
+
+        resources :earned_memberships, only: [:index, :show, :create, :update]
       end
     end
   end

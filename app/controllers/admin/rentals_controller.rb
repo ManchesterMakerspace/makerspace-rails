@@ -40,7 +40,7 @@ class Admin::RentalsController < AdminController
     final = @rental.get_expiration
     if (Time.at(final / 1000) - Time.at((init || 0) / 1000) > 1.day)
       core_msg = "#{@rental.member ? "#{@rental.member.fullname}'s rental of " : ""} Locker/Plot # #{@rental.number}"
-      time = @rental.prettyTime.strftime("%m/%d/%Y")
+      time = @rental.pretty_time.strftime("%m/%d/%Y")
       @messages.push("#{core_msg} renewed.  Now expiring #{time}")
     end
   end

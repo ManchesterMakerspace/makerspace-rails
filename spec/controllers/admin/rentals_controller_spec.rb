@@ -70,7 +70,7 @@ RSpec.describe Admin::RentalsController, type: :controller do
         rental = Rental.create(valid_attributes)
         put :update, params: {id: rental.to_param, rental: new_attributes}, format: :json
         rental.reload
-        expect(rental.prettyTime).to eq(Time.at(new_attributes[:expiration]/1000))
+        expect(rental.pretty_time).to eq(Time.at(new_attributes[:expiration]/1000))
       end
 
       it "renders json of the rental" do
