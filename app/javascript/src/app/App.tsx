@@ -19,6 +19,7 @@ interface StateProps {
   isCheckingOut: boolean;
   checkoutError: string;
   permissions: CollectionOf<Permission>;
+  isAdmin: boolean;
 }
 interface DispatchProps {
   attemptLogin: () => void;
@@ -59,11 +60,11 @@ class App extends React.Component<Props, State> {
 
   private renderBody = ():JSX.Element => {
     const { attemptingLogin } = this.state;
-    const { auth, permissions } = this.props;
+    const { auth, permissions, isAdmin } = this.props;
     if (attemptingLogin) {
       return <LoadingOverlay id="body"/>;
     } else {
-      return auth ? <PrivateRouting permissions={permissions} auth={auth} /> : <PublicRouting/>;
+      return auth ? <PrivateRouting permissions={permissions} auth={auth} isAdmin={isAdmin}/> : <PublicRouting/>;
     }
   }
   public render(): JSX.Element {
@@ -89,6 +90,7 @@ const mapStateToProps = (state: ReduxState, _ownProps: OwnProps): StateProps => 
 
   return {
     auth: currentUser.id,
+    isAdmin: currentUser.isAdmin,
     stagedInvoices: invoices,
     permissions,
     isSigningIn,

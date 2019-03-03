@@ -102,7 +102,7 @@ const mapDispatchToProps = (
     dispatchRental: (rentalDetails) => {
       let action;
       switch (operation) {
-        case CrudOperation.Update:rental
+        case CrudOperation.Update:
           action = (updateRentalAction(rental.id, rentalDetails));
           break;
         case CrudOperation.Create:

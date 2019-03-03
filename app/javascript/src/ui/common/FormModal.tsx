@@ -18,6 +18,7 @@ interface FormModalProps {
   error?: string;
   fullScreen?: boolean;
   style?: { [key: string]: string }
+  bodyScroll?: boolean;
 }
 
 const styles = {
@@ -28,7 +29,7 @@ const styles = {
 
 const FormModal: React.SFC<FormModalProps> = (props: FormModalProps & { classes: any }) => {
   const { formRef, isOpen, id, loading, title, closeHandler, cancelText,
-    submitText, onSubmit, children, error, style, fullScreen, classes } = props;
+    submitText, onSubmit, children, error, style, fullScreen, classes, bodyScroll } = props;
 
   return (
     <Dialog
@@ -39,6 +40,7 @@ const FormModal: React.SFC<FormModalProps> = (props: FormModalProps & { classes:
       open={isOpen}
       onClose={closeHandler}
       disableBackdropClick={true}
+      scroll={bodyScroll && "body" || "paper"}
     >
       <Form
         ref={formRef}

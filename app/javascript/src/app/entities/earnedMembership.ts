@@ -1,6 +1,7 @@
 export interface EarnedMembership {
   id: string;
   memberId: string;
+  memberName?: string;
   requirements: Requirement[];
 }
 

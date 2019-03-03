@@ -25,9 +25,9 @@ class Admin::EarnedMembershipsController < AdminController
 
   private
   def earned_membership_params
-    params.require(:earned_membership).permit(:member_id, requirements: [{
+    params.require(:earned_membership).permit(:member_id, requirements: [
       :name, :rollover_limit, :term_length, :target_count, :strict
-    }])
+    ])
   end
 
   def set_membership
