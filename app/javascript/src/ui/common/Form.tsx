@@ -54,13 +54,15 @@ type ChildNode = React.ReactElement<HTMLFormElement>;
 
 class Form extends React.Component<FormModalProps, State> {
 
-  private extractInputNames = (values: CollectionOf<string>, input: ChildNode) => {
+  private extractInputNames = (values: CollectionOf<string> = {}, input: ChildNode) => {
     if (input && input.props) {
       // Get input name
       const formInput = this.getFormInput(input);
       if (formInput) {
-        const val = formInput.props.hasOwnProperty("checked") ? formInput.props.checked : formInput.props.value || formInput.props.defaultValue || "";
-        values[formInput.props.name] = val;
+        if (values[formInput.props.name] === undefined) {
+          const val = formInput.props.hasOwnProperty("checked") ? formInput.props.checked : formInput.props.value || formInput.props.defaultValue || "";
+          values[formInput.props.name] = val;
+        }
       }
       // extract names from input children elements
       if (React.Children.count(input.props.children) > 0) {
@@ -75,7 +77,7 @@ class Form extends React.Component<FormModalProps, State> {
   }
 
   private extractNamesFromChildren = (children: React.ReactNode) => {
-    return React.Children.toArray(children).reduce(this.extractInputNames, {});
+    return React.Children.toArray(children).reduce(this.extractInputNames, (this.state || {} as State).values);
   }
 
   /**
@@ -142,7 +144,9 @@ class Form extends React.Component<FormModalProps, State> {
   }
 
   public simpleValidate = async <T extends object>(fields: FormFields) => {
-    const values = this.getValues();
+    const values = {
+      ...this.getValues()
+    };
     const errors: CollectionOf<string> = {};
     const validatedForm: Partial<T> = {};
     Object.entries(fields).forEach(([key, field]) => {
@@ -262,7 +266,8 @@ class Form extends React.Component<FormModalProps, State> {
     const fieldName = input.props.name;
     const id = input.props.id || fieldName;
     const error = errors[fieldName];
-    const value = values[fieldName];
+    const value = values[fieldName] || "";
+
     return (
       React.cloneElement(input, {
         error: error ? !!error : undefined,

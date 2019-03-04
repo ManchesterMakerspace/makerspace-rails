@@ -7,7 +7,7 @@ import { CrudOperation } from "app/constants";
 
 import Form from "ui/common/Form";
 import EarnedMembershipForm from "ui/earnedMemberships/EarnedMembershipForm"
-import { EarnedMembership } from "app/entities/earnedMembership";
+import { EarnedMembership, NewEarnedMembership } from "app/entities/earnedMembership";
 import {
   createMembershipAction,
   updateMembershipAction,
@@ -33,7 +33,7 @@ interface StateProps {
 }
 
 interface DispatchProps {
-  dispatchMembership: (updateMembership: EarnedMembership) => void;
+  dispatchMembership: (updateMembership: NewEarnedMembership) => void;
 }
 
 interface Props extends OwnProps, StateProps, DispatchProps { }
@@ -51,9 +51,9 @@ class EditEarnedMembership extends React.Component<Props> {
   }
 
   private submitForm = async (form: Form) => {
-    const validUpdate: EarnedMembership = await this.formRef.validate(form);
+    const validUpdate: NewEarnedMembership = await this.formRef.validate(form);
 
-    if (true || !form.isValid()) return;
+    if (!form.isValid()) return;
 
     return await this.props.dispatchMembership(validUpdate);
   }
@@ -77,13 +77,13 @@ const mapStateToProps = (
   const { operation } = ownProps;
   switch (operation) {
     case CrudOperation.Update:
-      stateProps = state.rentals.update;
+      stateProps = state.earnedMemberships.update;
       break;
     case CrudOperation.Create:
-      stateProps = state.rentals.create;
+      stateProps = state.earnedMemberships.create;
       break;
     case CrudOperation.Delete:
-      stateProps = state.rentals.delete;
+      stateProps = state.earnedMemberships.delete;
       break;
   }
 

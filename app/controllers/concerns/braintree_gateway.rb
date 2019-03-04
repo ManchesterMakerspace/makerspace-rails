@@ -7,6 +7,6 @@ module BraintreeGateway
   end
 
   def init_gateway
-    @gateway = self.connect_gateway
+    @gateway ||= self.connect_gateway
   end
 end

@@ -9,7 +9,7 @@ import { MemberDetails } from "app/entities/member";
 import { Action as MembershipAction } from "ui/earnedMemberships/constants";
 import { EarnedMembershipsState } from "ui/earnedMemberships/interfaces";
 import { getMemberships, getMembership, postMembership, putMembership } from "api/earnedMemberships/transactions";
-import { EarnedMembership } from "app/entities/earnedMembership";
+import { EarnedMembership, NewEarnedMembership } from "app/entities/earnedMembership";
 
 
 export const readMembershipsAction = (
@@ -19,12 +19,12 @@ export const readMembershipsAction = (
 
   try {
     const response = await getMemberships(queryParams);
-    const {members} = response.data;
+    const {memberships} = response.data;
     const totalItems = response.headers[("total-items")];
     dispatch({
       type: MembershipAction.GetMembershipsSuccess,
       data: {
-        members,
+        memberships,
         totalItems: toNumber(totalItems)
       }
     });
@@ -39,7 +39,7 @@ export const readMembershipsAction = (
 
 
 export const createMembershipAction = (
-  membershipForm: EarnedMembership
+  membershipForm: NewEarnedMembership
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
   dispatch({ type: MembershipAction.StartCreateRequest });
 
@@ -135,19 +135,19 @@ export const earnedMembershipsReducer = (state: EarnedMembershipsState = default
     case MembershipAction.GetMembershipsSuccess:
       const {
         data: {
-          members,
+          memberships,
           totalItems,
         }
       } = action;
 
-      const newMembers = {};
-      members.forEach((member: MemberDetails) => {
-        newMembers[member.id] = member;
+      const newMemberships = {};
+      memberships.forEach((member: MemberDetails) => {
+        newMemberships[member.id] = member;
       });
 
       return {
         ...state,
-        entities: newMembers,
+        entities: newMemberships,
         read: {
           ...state.read,
           totalItems,

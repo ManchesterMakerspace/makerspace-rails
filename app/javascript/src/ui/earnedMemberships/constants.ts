@@ -46,25 +46,26 @@ export const requirementFields: FormFields = {
   rolloverLimit: {
     label: "Rollover Limit",
     name: `rolloverLimit`,
-    placeholder: 'Select a rollover limit (optional)',
+    placeholder: 'Enter a rollover limit (optional)',
     transform: (val) => Number(val),
-    validate: (val) => isUndefined(val) ? true : val !== NaN,
+    validate: (val: number) => val !== undefined && val > -1,
     error: "Invalid limit. Must be an integer"
   },
   termLength: {
     label: "Term Length",
     name: `termLength`,
     placeholder: 'Select number of months for this requirement',
+    transform: (val) => Number(val),
     validate: (val) => !!val,
     error: "Term length is required"
   },
   targetCount: {
     label: "Count required for completion",
     name: `targetCount`,
-    placeholder: 'Select a number',
+    placeholder: 'Enter a number',
     transform: (val) => Number(val),
-    validate: (val: string) => !!(val),
-    error: "Invalid count. Must be an integer"
+    validate: (val: number) => val > 0,
+    error: "Invalid count. Must be great than 0"
   },
   strict: {
     label: "Strict reporting?",

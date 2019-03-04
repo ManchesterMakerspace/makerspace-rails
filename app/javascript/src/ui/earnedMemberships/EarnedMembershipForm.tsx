@@ -13,7 +13,7 @@ import { getMembers } from "api/members/transactions";
 import Form from "ui/common/Form";
 import { Checkbox, FormControlLabel, Button, Card, CardContent } from "@material-ui/core";
 import { formPrefix, requirementFields, earnedMembershipFields } from "ui/earnedMemberships/constants";
-import { EarnedMembership } from "app/entities/earnedMembership";
+import { EarnedMembership, Requirement } from "app/entities/earnedMembership";
 import { range } from "lodash-es";
 import ButtonRow, { ActionButton } from "ui/common/ButtonRow";
 
@@ -36,6 +36,7 @@ interface State {
   member: SelectOption;
 }
 
+const requirementNamePrefix = `${formPrefix}-requirement-`;
 export class EarnedMembershipForm extends React.Component<OwnProps, State> {
   public formRef: Form;
   private setFormRef = (ref: Form) => this.formRef = ref;
@@ -72,14 +73,23 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
     this.formRef && this.formRef.setValue(earnedMembershipFields.memberId.name, newMember);
   }
 
-  private addRequirement = () => this.setState(state => ({ requirementCount: state.requirementCount + 1 }))
-  private removeRequirement = () => this.setState(state => ({ requirementCount: state.requirementCount - 1 || 1 }))
+  private addRequirement = () => {
+    this.setState(state => ({ requirementCount: state.requirementCount + 1 }), () =>
+      this.formRef && this.formRef.resetForm()
+    );
+  }
+  private removeRequirement = () => {
+    this.setState(state => ({ requirementCount: state.requirementCount - 1 || 1 }), () =>
+      this.formRef && this.formRef.resetForm()
+    );
+  }
 
   public componentDidUpdate(prevProps: OwnProps) {
     const { isOpen: wasOpen } = prevProps;
-    const { isOpen, member } = this.props;
+    const { isOpen, member, membership } = this.props;
     if (isOpen === !wasOpen) {
       this.initMember();
+      this.setState({ requirementCount: membership && Array.isArray(membership.requirements) ? membership.requirements.length : 1 });
     }
     if (member && member !== prevProps.member) {
       this.formRef && this.formRef.resetForm();
@@ -88,14 +98,44 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
 
   public validate = async (form: Form) => {
     const values = form.getValues();
-    console.log(values);
-    const result = await form.simpleValidate(requirementFields);
-    console.log(result);
-    return {} as EarnedMembership;
+    const result = await form.simpleValidate<{ memberId: string }>(earnedMembershipFields);
+    const {
+      [earnedMembershipFields.memberId.name]: memberId,
+      ...requirementValues
+    } = values;
+
+    const requirements: Requirement[] = [];
+    Object.entries(requirementValues).reduce((requirements, [fieldName, value]) => {
+      if (!fieldName || value === undefined) {
+       return requirements;
+     }
+      const rowFieldName = fieldName.replace(requirementNamePrefix, ''); // get row key eg 0-rolloverLimit
+      const [strIndex, prop] = rowFieldName.split('-'); // index in list, req prop
+      const index = Number(strIndex); // Normalize string as number
+      const relatedRequirement = requirements[index] || {} as Requirement; // Get req from list or create new one
+
+      const { transform, validate, error } = requirementFields[prop]; // Transform, validate, then update
+      const transformedVal = transform ? transform(value) : value;
+      if (validate && !validate(transformedVal)) {
+        form.setError(fieldName, error);
+      } else {
+        relatedRequirement[prop] = transformedVal;
+        requirements[index] = relatedRequirement; // Replace in list
+      }
+      return requirements;
+    }, requirements);
+
+    return {
+      ...result,
+      requirements,
+    };
   }
 
+  private getRequirementName = (index: number) =>
+    `${requirementNamePrefix}${index}`
+
   private renderRequirementRow = (index: number) => {
-    const fieldName = `${formPrefix}-requirement-${index}`;
+    const fieldName = this.getRequirementName(index);
 
     return (
       <Card>
@@ -126,6 +166,7 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
                 name={`${fieldName}-${requirementFields.termLength.name}`}
                 id={`${fieldName}-${requirementFields.termLength.name}`}
                 fullWidth
+                value="1"
                 native
                 required
                 placeholder={requirementFields.termLength.placeholder}
@@ -144,6 +185,7 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
             <Grid item xs={12}>
               <TextField
                 fullWidth
+                required
                 label={requirementFields.targetCount.label}
                 name={`${fieldName}-${requirementFields.targetCount.name}`}
                 id={`${fieldName}-${requirementFields.targetCount.name}`}
