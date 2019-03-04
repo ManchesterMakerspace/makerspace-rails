@@ -55,6 +55,7 @@ class Member
   has_many :access_cards, class_name: "Card", inverse_of: :member
   belongs_to :group, class_name: "Group", inverse_of: :active_members, optional: true, primary_key: 'groupName', foreign_key: "groupName"
   has_one :group, class_name: "Group", inverse_of: :member
+  has_one :earned_membership, class_name: 'EarnedMembership', dependent: :destroy
 
   def self.search_members(searchTerms, criteria = Mongoid::Criteria.new(Member))
     members = criteria.where(email: searchTerms)

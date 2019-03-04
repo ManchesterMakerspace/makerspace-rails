@@ -1,8 +1,15 @@
-export interface EarnedMembership {
-  id: string;
+import { MemberStatus } from "app/entities/member";
+
+export interface NewEarnedMembership {
   memberId: string;
-  memberName?: string;
   requirements: Requirement[];
+}
+
+export interface EarnedMembership extends NewEarnedMembership {
+  id: string;
+  memberName?: string;
+  memberStatus?: MemberStatus;
+  memberExpiration?: number;
 }
 
 export interface Requirement {

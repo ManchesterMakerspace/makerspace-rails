@@ -4,7 +4,7 @@ class Admin::EarnedMembershipsController < AdminController
 
   def index
     memberships = params[:memberId] ? EarnedMembership.where(member_id: params[:memberId]) : EarnedMembership.all
-    return render_with_total_items(query_resource(memberships))
+    return render_with_total_items(query_resource(memberships), {each_serializer: EarnedMembershipSerializer, root: "memberships"})
   end
 
   def show
@@ -25,7 +25,8 @@ class Admin::EarnedMembershipsController < AdminController
 
   private
   def earned_membership_params
-    params.require(:earned_membership).permit(:member_id, requirements: [
+    params[:earned_membership][:requirements_attributes] = params[:earned_membership].delete(:requirements)
+    params.require(:earned_membership).permit(:member_id, requirements_attributes: [
       :name, :rollover_limit, :term_length, :target_count, :strict
     ])
   end

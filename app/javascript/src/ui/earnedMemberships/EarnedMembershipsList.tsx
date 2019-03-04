@@ -16,6 +16,8 @@ import { readMembershipsAction } from "ui/earnedMemberships/actions";
 import { EarnedMembership } from "app/entities/earnedMembership";
 import EarnedMembershipForm from "ui/earnedMemberships/EarnedMembershipForm";
 import UpdateEarnedMembershipContainer, { UpdateMembershipRenderProps } from "ui/earnedMemberships/UpdateEarnedMembershipContainer";
+import { displayMemberExpiration } from "ui/member/utils";
+import MemberStatusLabel from "ui/member/MemberStatusLabel";
 
 
 interface OwnProps extends RouteComponentProps<{}> {}
@@ -48,6 +50,23 @@ const fields: Column<EarnedMembership>[] = [
     label: "Name",
     cell: (row: EarnedMembership) => <Link to={`/members/${row.memberId}`}>{row.memberName}</Link>,
     defaultSortDirection: SortDirection.Desc,
+  },
+  {
+    id: "expirationTime",
+    label: "Expiration",
+    cell: (row: EarnedMembership) => displayMemberExpiration(row.memberExpiration),
+    defaultSortDirection: SortDirection.Desc
+  },
+  {
+    id: "status",
+    label: "Status",
+    cell: (row: EarnedMembership) => {
+      const member = {
+        expirationTime: row.memberExpiration,
+        status: row.memberStatus,
+      };
+      return <MemberStatusLabel member={member} />;
+    }
   },
 ];
 
