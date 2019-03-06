@@ -19,8 +19,9 @@ export const handleApiError = (e: any): ApiErrorResponse => {
 
       const { data: error } = errorResponse;
       apiErrorResponse.response = errorResponse;
-      apiErrorResponse.errorMessage = error.message || error.error;
-
+      if (isObject(error) && (error.message || error.error)) {
+        apiErrorResponse.errorMessage = error.message || error.error;
+      }
     } catch (parseError) {
       console.error(`Error handling API Error: ${parseError}`);
     }

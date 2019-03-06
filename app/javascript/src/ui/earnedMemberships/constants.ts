@@ -2,13 +2,13 @@ import { FormFields } from "ui/common/Form";
 import { MemberDetails } from "app/entities/member";
 import { Requirement } from "app/entities/earnedMembership";
 import { isObject } from "lodash-es";
-import { isUndefined } from "util";
 
 
 export enum Action {
   StartReadRequest = "EARNED_MEMBERSHIP/START_READ_REQUEST",
   GetMembershipsSuccess = "EARNED_MEMBERSHIP/GET_MEMBERSHIPS_SUCCESS",
   GetMembershipsFailure = "EARNED_MEMBERSHIP/GET_MEMBERSHIPS_FAILURE",
+  GetMembershipSuccess = "EARNED_MEMBERSHIP/GET_MEMBERSHIP_SUCCESS",
 
   StartCreateRequest = "EARNED_MEMBERSHIP/START_CREATE_REQUEST",
   CreateMembershipSuccess = "EARNED_MEMBERSHIP/CREATE_RENTAL_SUCCESS",
@@ -73,21 +73,3 @@ export const requirementFields: FormFields = {
     transform: (val) => !!val,
   },
 }
-
-export const reportRequirementFields = (requirement: Requirement): FormFields => ({
-  reportedCount: {
-    label: "Completed count for this report",
-    name: `${formPrefix}-reportedCount`,
-    placeholder: 'Select a number',
-    validate: (val: string) => !!Number(val),
-    error: "Count is required"
-  },
-  memberId: {
-    label: "Select the member you helped",
-    name: `${formPrefix}-members`,
-    placeholder: `Search by name or email`,
-    transform: (val: MemberDetails | string) => isObject(val) ? (val as MemberDetails).id : val,
-    validate: (val: string) => requirement.strict ? !!val : true,
-    error: "Must select members for this requirement"
-  },
-})

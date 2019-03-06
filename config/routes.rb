@@ -28,6 +28,7 @@ Rails.application.routes.draw do
       namespace :earned_memberships do
         resources :reports, only: [:index, :create]
       end
+      resources :earned_memberships, only: [:show]
 
       namespace :admin  do
         resources :cards, only: [:new, :create, :index, :update]
