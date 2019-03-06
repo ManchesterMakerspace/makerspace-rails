@@ -1,6 +1,4 @@
 import * as React from "react";
-import AsyncSelect from 'react-select/lib/Async';
-import isEmpty from "lodash-es/isEmpty";
 
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
@@ -22,9 +20,7 @@ import { MemberDetails } from "app/entities/member";
 import { Rental } from "app/entities/rental";
 import { getRentals } from "api/rentals/transactions";
 import { CollectionOf } from "app/interfaces";
-import { Whitelists } from "app/constants";
-import { connect } from "react-redux";
-import { readOptionsAction } from "ui/billing/actions";
+import AsyncSelectFixed from "ui/common/AsyncSelect";
 
 interface OwnProps {
   invoice?: Partial<Invoice>;
@@ -211,7 +207,7 @@ export class InvoiceForm extends React.Component<Props, State> {
           </Grid>
           <Grid item xs={12}>
             <FormLabel component="legend">{fields.member.label}</FormLabel>
-            <AsyncSelect
+            <AsyncSelectFixed
               isClearable
               name={fields.member.name}
               value={this.state.member}

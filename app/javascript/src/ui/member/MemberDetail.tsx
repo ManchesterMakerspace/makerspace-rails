@@ -27,10 +27,14 @@ import { Whitelists } from "app/constants";
 import SignDocuments from "ui/auth/SignDocuments";
 import { getDetailsForMember } from "ui/membership/constants";
 import AccessCardContainer, { CreateAccessCardProps } from "ui/accessCards/AccessCardContainer";
+import ReportList from "ui/reports/ReportList";
+import { EarnedMembership } from "app/entities/earnedMembership";
+import { readMembershipAction } from "ui/earnedMemberships/actions";
 
 interface DispatchProps {
   getMember: () => Promise<void>;
   goToSettings: () => void;
+  getEarnedMembership: (membershipId: string) => void;
 }
 interface StateProps {
   admin: boolean;
@@ -44,6 +48,7 @@ interface StateProps {
   billingEnabled: boolean;
   invoiceUpdating: boolean;
   invoiceError: string;
+  earnedMembership: EarnedMembership;
 }
 interface OwnProps extends RouteComponentProps<any> {
 }
@@ -100,6 +105,9 @@ class MemberDetail extends React.Component<Props, State> {
         if (ownProfile && !member.memberContractOnFile) {
           this.setState({ displayNotification: Notification.Welcome  });
         }
+        if (member.earnedMembershipId) {
+          this.props.getEarnedMembership(member.earnedMembershipId);
+        }
       } else {
         history.push(Routing.Members);
       }
@@ -148,9 +156,11 @@ class MemberDetail extends React.Component<Props, State> {
   }
 
   private renderMemberDetails = (): JSX.Element => {
-    const { member, isUpdatingMember, isRequestingMember, match, admin, goToSettings, billingEnabled } = this.props;
+    const { member, isUpdatingMember, isRequestingMember, match, admin, goToSettings, billingEnabled, earnedMembership } = this.props;
     const { memberId, resource } = match.params;
     const loading = isUpdatingMember || isRequestingMember;
+    const isEarnedMember = !!member.earnedMembershipId;
+
     return (
       <>
         <DetailView
@@ -192,6 +202,13 @@ class MemberDetail extends React.Component<Props, State> {
           information={this.renderMemberInfo()}
           activeResourceName={resource}
           resources={(this.allowViewProfile() || admin) && [
+            ...isEarnedMember ?
+            [{
+              name: "membership",
+              content: (
+                <ReportList member={member} membership={earnedMembership}/>
+              )
+            }] : [],
             ...billingEnabled ?
             [{
               name: "dues",
@@ -325,7 +342,8 @@ const mapStateToProps = (
   const { entity: member } = state.member;
   const { permissions, currentUser: { isAdmin: admin, id: currentUserId, subscriptionId } } = state.auth;
   const { update: { isRequesting: invoiceUpdating, error: invoiceError } } = state.invoice;
-
+  const earnedMembershipId = member && member.earnedMembershipId;
+  const earnedMembership = state.earnedMemberships.entities[earnedMembershipId];
   return {
     admin: admin,
     member,
@@ -338,6 +356,7 @@ const mapStateToProps = (
     invoiceUpdating,
     invoiceError,
     billingEnabled: !!permissions[Whitelists.billing] || false,
+    earnedMembership,
   }
 }
 
@@ -349,6 +368,7 @@ const mapDispatchToProps = (
   return {
     getMember: () => dispatch(readMemberAction(memberId)),
     goToSettings: () => dispatch(push(Routing.Settings)),
+    getEarnedMembership: (membershipId) => dispatch(readMembershipAction(membershipId)),
   }
 }
 

@@ -15,9 +15,9 @@ export const getMemberships = async (queryparams?: QueryParams) => {
   }
 }
 
-export const getMembership = async (membershipId: string) => {
+export const getMembership = async (membershipId: string, admin?: boolean) => {
   try {
-    return await axios.get(buildMembershipUrl(membershipId));
+    return await axios.get(buildMembershipUrl(membershipId, admin));
   } catch (e) {
     const error = handleApiError(e);
     throw error;
@@ -44,7 +44,7 @@ export const postMembership = async (details: Partial<EarnedMembership>) => {
 
 export const getReports = async (queryparams?: QueryParams) => {
   try {
-    return await axios.get(buildJsonUrl(Url.EarnedMembership.Reports), { params: queryparams });
+    return await axios.get(buildJsonUrl(Url.EarnedMembershipNamespace.Reports), { params: queryparams });
   } catch (e) {
     const error = handleApiError(e);
     throw error;
@@ -53,7 +53,7 @@ export const getReports = async (queryparams?: QueryParams) => {
 
 export const postReport = async (details: Partial<Report>) => {
   try {
-    return await axios.post(buildJsonUrl(Url.EarnedMembership.Reports), { report: details });
+    return await axios.post(buildJsonUrl(Url.EarnedMembershipNamespace.Reports), { report: details });
   } catch (e) {
     const error = handleApiError(e);
     throw error;

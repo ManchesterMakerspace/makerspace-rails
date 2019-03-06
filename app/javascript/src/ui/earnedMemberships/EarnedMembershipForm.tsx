@@ -1,5 +1,5 @@
 import * as React from "react";
-import AsyncSelect from 'react-select/lib/Async';
+import range from "lodash-es/range";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Select from "@material-ui/core/Select";
@@ -14,8 +14,8 @@ import Form from "ui/common/Form";
 import { Checkbox, FormControlLabel, Button, Card, CardContent } from "@material-ui/core";
 import { formPrefix, requirementFields, earnedMembershipFields } from "ui/earnedMemberships/constants";
 import { EarnedMembership, Requirement } from "app/entities/earnedMembership";
-import { range } from "lodash-es";
 import ButtonRow, { ActionButton } from "ui/common/ButtonRow";
+import AsyncSelectFixed from "ui/common/AsyncSelect";
 
 interface OwnProps {
   isOpen: boolean;
@@ -79,6 +79,9 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
     );
   }
   private removeRequirement = () => {
+    const index = this.state.requirementCount - 1;
+    const fieldName = this.getRequirementName(index);
+    this.formRef.setValue(fieldName, "");
     this.setState(state => ({ requirementCount: state.requirementCount - 1 || 1 }), () =>
       this.formRef && this.formRef.resetForm()
     );
@@ -229,7 +232,7 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
       <Grid container spacing={24}>
         <Grid item xs={12}>
           <FormLabel component="legend">{earnedMembershipFields.memberId.label}</FormLabel>
-          <AsyncSelect
+          <AsyncSelectFixed
             isClearable
             name={earnedMembershipFields.memberId.name}
             value={this.state.member}
@@ -289,7 +292,7 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
     if (noDialog) {
       return <Form ref={this.setFormRef} {...formProps}>{contents}</Form>;
     } else {
-      return <FormModal bodyScroll={true} formRef={this.setFormRef} {...formProps}>{contents}</FormModal>;
+      return <FormModal formRef={this.setFormRef} {...formProps}>{contents}</FormModal>;
     }
   }
 }

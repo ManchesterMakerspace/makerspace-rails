@@ -11,6 +11,7 @@ export interface MemberDetails {
   subscriptionId: string;
   subscription: boolean;
   memberContractOnFile: boolean;
+  earnedMembershipId: string;
 }
 
 export enum Properties {

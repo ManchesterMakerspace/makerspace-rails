@@ -1,0 +1,306 @@
+import * as React from "react";
+import { connect } from "react-redux";
+import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
+import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
+
+import { QueryParams, CollectionOf } from "app/interfaces";
+import { MemberDetails } from "app/entities/member";
+
+import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
+import ButtonRow from "ui/common/ButtonRow";
+import { SortDirection } from "ui/common/table/constants";
+import TableContainer from "ui/common/table/TableContainer";
+import { Column } from "ui/common/table/Table";
+import Form from "ui/common/Form";
+import { CrudOperation } from "app/constants";
+import { readMembershipsAction } from "ui/earnedMemberships/actions";
+import { EarnedMembership, Report } from "app/entities/earnedMembership";
+import EarnedMembershipForm from "ui/earnedMemberships/EarnedMembershipForm";
+import UpdateEarnedMembershipContainer, { UpdateMembershipRenderProps } from "ui/earnedMemberships/UpdateEarnedMembershipContainer";
+import { displayMemberExpiration } from "ui/member/utils";
+import MemberStatusLabel from "ui/member/MemberStatusLabel";
+import { timeToDate } from "ui/utils/timeToDate";
+import { ReportForm } from "ui/reports/ReportForm";
+import UpdateReportContainer, { UpdateReportRenderProps } from "ui/reports/UpdateReportContainer";
+import { readReportsAction } from "ui/reports/actions";
+
+
+interface OwnProps extends RouteComponentProps<{}> {
+  member: MemberDetails;
+  membership: EarnedMembership;
+}
+interface DispatchProps {
+  getReports: (queryParams?: QueryParams) => void;
+}
+interface StateProps {
+  reports: CollectionOf<Report>;
+  totalItems: number;
+  loading: boolean;
+  error: string;
+  isCreating: boolean;
+  createError: string;
+}
+interface Props extends OwnProps, DispatchProps, StateProps { }
+interface State {
+  selectedId: string;
+  pageNum: number;
+  orderBy: string;
+  search: string;
+  order: SortDirection;
+  openCreateForm: boolean;
+  openDetails: boolean;
+}
+
+class ReportList extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      selectedId: undefined,
+      pageNum: 0,
+      orderBy: "",
+      search: "",
+      order: SortDirection.Asc,
+      openCreateForm: false,
+      openDetails: false,
+    };
+  }
+
+  private fields: Column<Report>[] = [
+    {
+      id: "date",
+      label: "Created",
+      cell: (row: Report) => timeToDate(row.date),
+      defaultSortDirection: SortDirection.Desc
+    },
+    {
+      id: "reportRequirements",
+      label: "Report Details",
+      cell: (row: Report) => {
+        return "TBD";
+      },
+    },
+    {
+      id: "view",
+      label: "",
+      cell: (row: Report) => <Button onClick={this.openDetails}>View Report</Button>
+    },
+  ];
+
+
+  private openCreateForm = () =>
+    this.setState({ openCreateForm: true });
+  private closeCreateForm = () =>
+    this.setState({ openCreateForm: false });
+  private openDetails = () =>
+    this.setState({ openDetails: true });
+  private closeDetails = () =>
+    this.setState({ openDetails: false });
+
+  private renderMembershipForms = () => {
+    const { reports, membership, member } = this.props;
+    const { selectedId, openCreateForm, openDetails } = this.state;
+
+
+    const createForm = (renderProps: UpdateReportRenderProps) => {
+      const submitCreate = async (form: Form) => {
+        const newMembership = await renderProps.submit(form);
+      }
+      return (<ReportForm
+        membership={renderProps.membership}
+        member={renderProps.membership}
+        isOpen={renderProps.isOpen}
+        isRequesting={renderProps.isRequesting}
+        error={renderProps.error}
+        onClose={renderProps.closeHandler}
+        onSubmit={submitCreate}
+      />)
+    }
+
+    return (
+      <UpdateReportContainer
+        isOpen={openCreateForm}
+        membership={membership}
+        member={member}
+        closeHandler={this.closeCreateForm}
+        render={createForm}
+        operation={CrudOperation.Create}
+      />
+    )
+  }
+
+  private getActionButtons = () => {
+    const { selectedId } = this.state;
+    return (
+      <ButtonRow
+        actionButtons={[{
+          id: "report-list-create",
+          variant: "contained",
+          color: "primary",
+          onClick: this.openCreateForm,
+          label: "Submit new Report"
+        }]}
+      />
+    )
+  }
+
+  private getQueryParams = (): QueryParams => {
+    const {
+      pageNum,
+      orderBy,
+      order,
+      search,
+    } = this.state
+    return {
+      pageNum,
+      orderBy,
+      order,
+      search,
+    };
+  }
+
+  public componentDidMount() {
+    this.getReports();
+  }
+
+  public componentDidUpdate(prevProps: Props) {
+    const { isCreating: wasCreating, member: oldMember } = prevProps;
+    const { isCreating, createError, member } = this.props;
+
+    if ((wasCreating && !isCreating && !createError) || // refresh list on create
+      ((oldMember && oldMember.id) !== (member && member.id)) // or member change
+    ) {
+      this.getReports(true);
+    }
+  }
+
+  private getReports = (resetPage: boolean = false) => {
+    if (resetPage) {
+      this.setState({ pageNum: 0 });
+    }
+    this.setState({ selectedId: undefined });
+    this.props.getReports(this.getQueryParams());
+  }
+  private rowId = (row: Report) => row.id;
+
+  private onSort = (prop: string) => {
+    const orderBy = prop;
+    let order = SortDirection.Desc;
+    if (this.state.orderBy === orderBy && this.state.order === order) {
+      order = SortDirection.Asc;
+    }
+    this.setState({ order, orderBy, pageNum: 0 },
+      () => this.getReports(true)
+    );
+  }
+
+  private onPageChange = (newPage: number) => {
+    this.setState({ pageNum: newPage },
+      this.getReports
+    );
+  }
+
+  private onSearchEnter = (searchTerm: string) => {
+    this.setState({ search: searchTerm, pageNum: 0 },
+      () => this.getReports(true)
+    );
+  }
+
+  // Only select one at a time
+  private onSelect = (id: string, selected: boolean) => {
+    if (selected) {
+      this.setState({ selectedId: id });
+    } else {
+      this.setState({ selectedId: undefined });
+    }
+  }
+
+  public render(): JSX.Element {
+    const {
+      reports,
+      totalItems,
+      loading,
+      error,
+      member,
+    } = this.props;
+
+    const {
+      selectedId,
+      pageNum,
+      order,
+      orderBy,
+    } = this.state;
+
+    return (
+      <Grid container spacing={24} justify="center">
+        <Grid item md={member ? 12 : 10} xs={12}>
+          {this.getActionButtons()}
+          <TableContainer
+            id="membership-reports-table"
+            title="Earned Membership Reports"
+            loading={loading}
+            data={Object.values(reports)}
+            error={error}
+            totalItems={totalItems}
+            selectedIds={[selectedId]}
+            pageNum={pageNum}
+            onSearchEnter={this.onSearchEnter}
+            columns={this.fields}
+            order={order}
+            orderBy={orderBy}
+            onSort={this.onSort}
+            rowId={this.rowId}
+            onPageChange={this.onPageChange}
+            onSelect={this.onSelect}
+          />
+          {this.renderMembershipForms()}
+        </Grid>
+      </Grid>
+    );
+  }
+}
+
+const mapStateToProps = (
+  state: ReduxState,
+  _ownProps: OwnProps
+): StateProps => {
+  const {
+    entities: reports,
+    read: {
+      totalItems,
+      isRequesting: reportsLoading,
+      error: reportsError,
+    },
+    create: {
+      isRequesting: isCreating,
+      error: createError,
+    },
+  } = state.reports;
+  const {
+    read: {
+      isRequesting: membershipLoading,
+      error: membershipError,
+    }
+  } = state.earnedMemberships;
+  const loading = membershipLoading || reportsLoading;
+  const error = membershipError || reportsError;
+  return {
+    reports,
+    totalItems,
+    loading,
+    error,
+    isCreating,
+    createError,
+  }
+}
+
+const mapDispatchToProps = (
+  dispatch: ScopedThunkDispatch,
+  ownProps: OwnProps
+): DispatchProps => {
+  return {
+    getReports: (queryParams) => dispatch(readReportsAction(queryParams)),
+  }
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ReportList));

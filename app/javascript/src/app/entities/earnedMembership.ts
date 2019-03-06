@@ -18,6 +18,7 @@ export interface Requirement {
   rolloverLimit: number;
   termLength: number;
   termStartDate: Date;
+  termEndDate: Date;
   targetCount: number;
   currentCount: number;
   satisfied: boolean;
@@ -31,7 +32,11 @@ export interface ReportRequirement {
   memberIds: string[];
 }
 
-export interface Report {
+export interface NewReport {
   earnedMembershipId: string;
   reportRequirements: ReportRequirement[];
+}
+export interface Report extends NewReport {
+  id: string;
+  date: Date;
 }

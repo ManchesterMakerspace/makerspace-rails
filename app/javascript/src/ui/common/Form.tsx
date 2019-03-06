@@ -178,7 +178,7 @@ class Form extends React.Component<FormModalProps, State> {
   );
   }
 
-  private handleChange = (event: React.ChangeEvent<HTMLFormElement>) => {
+  private handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fieldName = event.target.name;
     // Set value depending on checked state for checkboxes and radios
     const fieldValue = event.target.hasOwnProperty("checked") ? (isUndefined(event.target.value) ? !!event.target.checked : (event.target.checked && event.target.value)) : event.target.value;
@@ -190,7 +190,7 @@ class Form extends React.Component<FormModalProps, State> {
       return {
         values: {
           ...state.values,
-          [fieldName]: isUndefined(fieldValue) ? null : fieldValue
+          [fieldName]: isUndefined(fieldValue) ? null : fieldValue as string
         },
         touched: {
           ...state.touched,
@@ -261,10 +261,11 @@ class Form extends React.Component<FormModalProps, State> {
     );
   }
 
-  private cloneFormInput = (input: ChildNode, newChildren?: React.ReactNode) => {
+  private cloneFormInput = (input: ChildNode) => {
     const { values, errors } = this.state;
     const fieldName = input.props.name;
     const id = input.props.id || fieldName;
+    const onChange = input.props.onChange || this.handleChange;
     const error = errors[fieldName];
     const value = values[fieldName] || "";
 
@@ -272,7 +273,8 @@ class Form extends React.Component<FormModalProps, State> {
       React.cloneElement(input, {
         error: error ? !!error : undefined,
         id,
-        value
+        value,
+        onChange,
       })
     );
   }
@@ -307,7 +309,6 @@ class Form extends React.Component<FormModalProps, State> {
     const { id, loading, style, onSubmit, onCancel } = this.props;
     const Wrapper = (onSubmit || onCancel) && <form
       onSubmit={this.handleSubmit}
-      onChange={this.handleChange}
       noValidate
       autoComplete="off"
       id={id}

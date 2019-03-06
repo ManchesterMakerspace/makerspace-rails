@@ -1,5 +1,4 @@
 import * as React from "react";
-import AsyncSelect from 'react-select/lib/Async';
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 
@@ -13,6 +12,7 @@ import { getMember } from "api/members/transactions";
 import { getMembers } from "api/members/transactions";
 import { MemberDetails } from "app/entities/member";
 import FormLabel from "@material-ui/core/FormLabel";
+import AsyncSelectFixed from "ui/common/AsyncSelect";
 
 interface OwnProps {
   rental: Partial<Rental>;
@@ -138,7 +138,7 @@ class RentalForm extends React.Component<OwnProps, State> {
           </Grid>
           <Grid item xs={12}>
             <FormLabel component="legend">{fields.memberId.label}</FormLabel>
-            <AsyncSelect
+            <AsyncSelectFixed
               isClearable
               name={fields.memberId.name}
               isDisabled={rental && !!rental.memberId}

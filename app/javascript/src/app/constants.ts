@@ -68,9 +68,10 @@ export namespace Url {
     Transactions: `${baseBillingPath}/transactions`
   }
 
-  export const baseEarnedMembershipPath = `${baseApiPath}/earned_memberships`
-  export const EarnedMembership ={
-    Reports: `${baseEarnedMembershipPath}/reports`
+  export const EarnedMemberships = `${baseApiPath}/earned_memberships`
+  export const EarnedMembership = `${EarnedMemberships}/${PathPlaceholder.MembershipId}`
+  export const EarnedMembershipNamespace ={
+    Reports: `${EarnedMemberships}/reports`
   }
 }
 

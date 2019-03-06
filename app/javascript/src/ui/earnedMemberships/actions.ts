@@ -37,6 +37,28 @@ export const readMembershipsAction = (
   }
 };
 
+export const readMembershipAction = (
+  membershipId: string,
+  admin: boolean = false,
+): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
+  dispatch({ type: MembershipAction.StartReadRequest });
+
+  try {
+    const response = await getMembership(membershipId, admin);
+    const { membership } = response.data;
+    dispatch({
+      type: MembershipAction.GetMembershipSuccess,
+      data: membership
+    });
+  } catch (e) {
+    const { errorMessage } = e;
+    dispatch({
+      type: MembershipAction.GetMembershipsFailure,
+      error: errorMessage
+    });
+  }
+};
+
 
 export const createMembershipAction = (
   membershipForm: NewEarnedMembership
@@ -141,8 +163,8 @@ export const earnedMembershipsReducer = (state: EarnedMembershipsState = default
       } = action;
 
       const newMemberships = {};
-      memberships.forEach((member: MemberDetails) => {
-        newMemberships[member.id] = member;
+      memberships.forEach((membership: EarnedMembership) => {
+        newMemberships[membership.id] = membership;
       });
 
       return {
@@ -155,6 +177,24 @@ export const earnedMembershipsReducer = (state: EarnedMembershipsState = default
           error: ""
         }
       };
+    case MembershipAction.GetMembershipSuccess:
+      const membership = action.data;
+      const exists = Object.keys(state.entities).includes(membership.id);
+      return {
+        ...state,
+        entities: {
+          ...state.entities,
+          [membership.id]: membership
+        },
+        read: {
+          ...state.read,
+          ...!exists && {
+            totalItems: state.read.totalItems + 1
+          },
+          isRequesting: false,
+          error: ""
+        }
+      }
     case MembershipAction.GetMembershipsFailure:
       const { error } = action;
       return {
