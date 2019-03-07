@@ -7,7 +7,7 @@ import FormLabel from "@material-ui/core/FormLabel";
 import { getMembers } from "api/members/transactions";
 
 import { MemberDetails } from "app/entities/member";
-import { Requirement, ReportRequirement } from "app/entities/earnedMembership";
+import { Requirement, ReportRequirement, Report } from "app/entities/earnedMembership";
 
 import Form from "ui/common/Form";
 import { reportRequirementFields } from "ui/reports/constants";
@@ -17,6 +17,7 @@ import AsyncSelectFixed from "ui/common/AsyncSelect";
 
 interface OwnProps {
   requirement: Requirement;
+  reportRequirement?: ReportRequirement;
   disabled: boolean;
   index: number;
 }
@@ -38,9 +39,13 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
   }
 
   public componentDidUpdate(prevProps: OwnProps) {
-    const { requirement } = this.props;
+    const { requirement, reportRequirement } = this.props;
     if (requirement && requirement !== prevProps.requirement) {
       this.formRef && this.formRef.resetForm();
+    }
+    if (reportRequirement && reportRequirement !== prevProps.reportRequirement) {
+      console.log(reportRequirement);
+      this.setState({ memberCount: (reportRequirement.memberIds || []).length });
     }
   }
 
@@ -162,7 +167,7 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
   }
 
   public render(): JSX.Element {
-    const { requirement, disabled, index } = this.props;
+    const { requirement, disabled, index, reportRequirement } = this.props;
     const fields = reportRequirementFields(requirement, index);
 
     return (
@@ -175,6 +180,7 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
             <TextField
               fullWidth
               required
+              value={reportRequirement && reportRequirement.reportedCount}
               disabled={disabled}
               label={fields.reportedCount.label}
               name={`${fields.reportedCount.name}`}
@@ -191,26 +197,28 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
               </Grid >
             )}
           </Grid >
-          <Grid item xs={12}>
-            <ButtonRow
-              actionButtons={[
-                {
-                  color: "default",
-                  id: "add-member-row",
-                  variant: "outlined",
-                  onClick: this.addMemberRow,
-                  label: "Add Member",
-                },
-                ...this.state.memberCount > 1 ? [{
-                  color: "secondary",
-                  id: "add-member-row",
-                  variant: "outlined",
-                  onClick: this.removeMemberRow,
-                  label: "Remove Member",
-                }] : []
-              ] as ActionButton[]}
-            />
-          </Grid >
+          {!disabled && (
+            <Grid item xs={12}>
+              <ButtonRow
+                actionButtons={[
+                  {
+                    color: "default",
+                    id: "add-member-row",
+                    variant: "outlined",
+                    onClick: this.addMemberRow,
+                    label: "Add Member",
+                  },
+                  ...this.state.memberCount > 1 ? [{
+                    color: "secondary",
+                    id: "add-member-row",
+                    variant: "outlined",
+                    onClick: this.removeMemberRow,
+                    label: "Remove Member",
+                  }] : []
+                ] as ActionButton[]}
+              />
+            </Grid >
+          )}
         </Grid >
       </Form>
 

@@ -78,7 +78,7 @@ const mapStateToProps = (
   const { operation } = ownProps;
   switch (operation) {
     case CrudOperation.Create:
-      stateProps = state.earnedMemberships.create;
+      stateProps = state.reports.create;
       break;
   }
 
