@@ -83,7 +83,7 @@ class ReportList extends React.Component<Props, State> {
     {
       id: "view",
       label: "",
-      cell: (row: Report) => <Button onClick={this.openDetails}>View Report</Button>
+      cell: (row: Report) => <Button onClick={() => this.openDetails(row.id)}>View Report</Button>
     },
   ];
 
@@ -92,13 +92,13 @@ class ReportList extends React.Component<Props, State> {
     this.setState({ openCreateForm: true });
   private closeCreateForm = () =>
     this.setState({ openCreateForm: false });
-  private openDetails = () =>
-    this.setState({ openDetails: true });
+  private openDetails = (rowId: string) =>
+    this.setState({ openDetails: true, selectedId: rowId });
   private closeDetails = () =>
-    this.setState({ openDetails: false });
+    this.setState({ openDetails: false, selectedId: undefined });
 
   private renderMembershipForms = () => {
-    const { reports, membership, member } = this.props;
+    const { reports, membership, member, loading, error } = this.props;
     const { selectedId, openCreateForm, openDetails } = this.state;
 
 
@@ -107,6 +107,7 @@ class ReportList extends React.Component<Props, State> {
         const newMembership = await renderProps.submit(form);
       }
       return (<ReportForm
+        ref={renderProps.setRef}
         membership={renderProps.membership}
         member={renderProps.membership}
         isOpen={renderProps.isOpen}
@@ -118,14 +119,26 @@ class ReportList extends React.Component<Props, State> {
     }
 
     return (
-      <UpdateReportContainer
-        isOpen={openCreateForm}
-        membership={membership}
-        member={member}
-        closeHandler={this.closeCreateForm}
-        render={createForm}
-        operation={CrudOperation.Create}
-      />
+      <>
+        <UpdateReportContainer
+          isOpen={openCreateForm}
+          membership={membership}
+          member={member}
+          closeHandler={this.closeCreateForm}
+          render={createForm}
+          operation={CrudOperation.Create}
+        />
+        <ReportForm
+          membership={membership}
+          member={member}
+          report={reports[selectedId]}
+          isOpen={openDetails}
+          isRequesting={loading}
+          error={error}
+          onClose={this.closeDetails}
+          disabled={true}
+        />
+      </>
     )
   }
 

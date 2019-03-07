@@ -10,8 +10,8 @@ export enum Action {
   GetReportsFailure = "REPORTS/GET_REPORTS_FAILURE",
 
   StartCreateRequest = "REPORTS/START_CREATE_REQUEST",
-  CreateReportSuccess = "REPORTS/CREATE_RENTAL_SUCCESS",
-  CreateReportFailure = "REPORTS/CREATE_RENTAL_FAILURE",
+  CreateReportSuccess = "REPORTS/CREATE_REPORTS_SUCCESS",
+  CreateReportFailure = "REPORTS/CREATE_REPORTS_FAILURE",
 }
 
 export const formPrefix = "report-form";
@@ -28,6 +28,6 @@ export const reportRequirementFields = (requirement: Requirement, index: number)
     name: `${formPrefix}-members-${index}`,
     placeholder: `Search by name or email`,
     transform: (val: MemberDetails | string) => isObject(val) ? (val as MemberDetails).id : val,
-    error: "Must select members for this requirement"
+    error: "Must select members you helped for this requirement"
   },
 });

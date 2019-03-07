@@ -17,9 +17,10 @@ interface OwnProps {
   isRequesting: boolean;
   error: string;
   onClose: () => void;
-  onSubmit: (form: Form) => void;
+  onSubmit?: (form: Form) => void;
   membership: EarnedMembership;
   member: Partial<MemberDetails>;
+  report?: Report;
   disabled?: boolean;
 }
 type SelectOption = { label: string, value: string, id?: string };
@@ -50,17 +51,18 @@ export class ReportForm extends React.Component<OwnProps> {
       });
     }));
 
+
     // Halt validation if any subforms invalid
     if (this.reportRequirementRefs.some(ref => !ref.formRef.isValid())) {
-      console.log("HALT")
       return;
     }
-    console.log(report);
 
     return report;
   }
 
   private renderRequirementForm = (requirement: Requirement, index: number) => {
+    const { report } = this.props;
+    const assocReportReq = report && report.reportRequirements.find(rr => rr.requirementId === requirement.id);
 
     return (
       <Card>
@@ -82,6 +84,7 @@ export class ReportForm extends React.Component<OwnProps> {
           <ReportRequirementFieldset
             disabled={this.props.disabled}
             requirement={requirement}
+            reportRequirement={assocReportReq}
             index={index}
             ref={(ref) => this.reportRequirementRefs[index] = ref}
           />
@@ -91,7 +94,7 @@ export class ReportForm extends React.Component<OwnProps> {
   }
 
   public render(): JSX.Element {
-    const { isOpen, onClose, isRequesting, error, disabled, membership } = this.props;
+    const { isOpen, onClose, isRequesting, error, onSubmit, membership } = this.props;
 
     return membership ?
       <FormModal
@@ -99,7 +102,7 @@ export class ReportForm extends React.Component<OwnProps> {
         id={formPrefix}
         loading={isRequesting}
         error={error}
-        onSubmit={!disabled && this.validate}
+        onSubmit={onSubmit}
         closeHandler={onClose}
         isOpen={isOpen}
         title="Submit Earned Membership Report"
