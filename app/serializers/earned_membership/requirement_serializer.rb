@@ -4,14 +4,31 @@ class EarnedMembership::RequirementSerializer < ActiveModel::Serializer
             :name,
             :rollover_limit,
             :term_length,
+            :target_count,
+            :strict,
+            :current_count,
             :term_start_date,
             :term_end_date,
-            :target_count,
-            :current_count,
-            :satisfied,
-            :strict
+            :term_id,
+            :satisfied
 
   def term_end_date
-    object.term_start_date && object.term_length && object.term_start_date + (object.term_length.to_i.months)
+    object.current_term.end_date
+  end
+
+  def term_start_date
+    object.current_term.start_date
+  end
+
+  def current_count
+    object.current_term.current_count
+  end
+
+  def satisfied
+    object.current_term.satisfied
+  end
+
+  def term_id
+    object.current_term.id
   end
 end

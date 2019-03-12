@@ -123,7 +123,8 @@ export enum CrudOperation {
 
 export enum Whitelists {
   billing = "billing",
-  customBilling = "custom_billing"
+  customBilling = "custom_billing",
+  earnedMembership = "earned_membership"
 }
 
 // TODO: I don't like this very much

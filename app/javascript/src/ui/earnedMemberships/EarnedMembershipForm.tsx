@@ -201,7 +201,6 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
                   <Checkbox
                     name={`${fieldName}-${requirementFields.strict.name}`}
                     id={`${fieldName}-${requirementFields.strict.name}`}
-                    value={requirementFields.strict.name}
                     color="default"
                   />
                 }

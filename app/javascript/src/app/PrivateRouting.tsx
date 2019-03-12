@@ -22,6 +22,7 @@ interface Props {
 }
 const PrivateRouting: React.SFC<Props> = (props) => {
   const billingEnabled = props.permissions[Whitelists.billing] || false;
+  const earnedMembershipEnabled = props.isAdmin && props.permissions[Whitelists.earnedMembership];
 
   return (
     <BillingContextContainer>
@@ -33,7 +34,7 @@ const PrivateRouting: React.SFC<Props> = (props) => {
         {billingEnabled && <Route exact path={`${Routing.Billing}/${Routing.PathPlaceholder.Resource}${Routing.PathPlaceholder.Optional}`} component={BillingContainer} />}
         {billingEnabled && <Route exact path={Routing.Checkout} component={CheckoutContainer} />}
         <Route exact path={Routing.SendRegistration} component={SendRegistrationComponent}/>
-        {props.isAdmin && <Route exact path={Routing.EarnedMemberships} component={EarnedMembershipsList}/>}
+        {earnedMembershipEnabled && <Route exact path={Routing.EarnedMemberships} component={EarnedMembershipsList}/>}
         <Redirect to={`${Routing.Members}/${props.auth}`} />
         <Route component={NotFound} />
       </Switch>

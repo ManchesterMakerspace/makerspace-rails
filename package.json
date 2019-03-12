@@ -21,6 +21,7 @@
     "babel-preset-react": "^6.24.1",
     "braintree-web": "^3.36.0",
     "connected-react-router": "^6.2.0",
+    "crypto": "^1.0.1",
     "dotenv": "^6.0.0",
     "history": "^4.7.2",
     "html-loader": "^0.5.5",

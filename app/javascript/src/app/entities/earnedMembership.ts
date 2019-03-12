@@ -7,34 +7,46 @@ export interface NewEarnedMembership {
 
 export interface EarnedMembership extends NewEarnedMembership {
   id: string;
-  memberName?: string;
-  memberStatus?: MemberStatus;
-  memberExpiration?: number;
+  memberName: string;
+  memberStatus: MemberStatus;
+  memberExpiration: number;
 }
 
-export interface Requirement {
+interface Term {
+  currentCount: number;
+  termStartDate: Date;
+  termEndDate: Date;
+  satisfied: boolean;
+}
+
+export interface Requirement extends Term {
   id: string;
   name: string;
   rolloverLimit: number;
   termLength: number;
-  termStartDate: Date;
-  termEndDate: Date;
   targetCount: number;
-  currentCount: number;
-  satisfied: boolean;
   strict: boolean;
+  termId: string;
 }
 
-export interface ReportRequirement {
+export interface NewReportRequirement {
   requirementId: string;
   reportedCount: number;
   appliedCount?: number;
   memberIds: string[];
+  termId: string;
 }
+
+export interface ReportRequirement extends Term, NewReportRequirement {
+  id: string;
+}
+
+export const isReportRequirement = (item: any): item is ReportRequirement =>
+  item !== undefined && item.requirementId !== undefined;
 
 export interface NewReport {
   earnedMembershipId: string;
-  reportRequirements: ReportRequirement[];
+  reportRequirements: NewReportRequirement[];
 }
 export interface Report extends NewReport {
   id: string;
