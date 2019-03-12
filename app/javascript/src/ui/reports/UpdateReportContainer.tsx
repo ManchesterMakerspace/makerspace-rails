@@ -14,6 +14,8 @@ import {
 } from "ui/earnedMemberships/actions";
 import { createReportAction } from "ui/reports/actions";
 import { ReportForm } from "ui/reports/ReportForm";
+import { readMembershipAction } from "ui/earnedMemberships/actions";
+import { readMemberAction } from "ui/member/actions";
 
 export interface UpdateReportRenderProps extends Props {
   submit: (form: Form) => Promise<void>;
@@ -35,6 +37,8 @@ interface StateProps {
 
 interface DispatchProps {
   dispatchReport: (updateReport: NewReport) => void;
+  getMember: () => Promise<void>;
+  getEarnedMembership: () => void;
 }
 
 interface Props extends OwnProps, StateProps, DispatchProps { }
@@ -48,12 +52,14 @@ class EditReport extends React.Component<Props> {
     const { isOpen, isRequesting, error, closeHandler } = this.props;
     if (isOpen && wasRequesting && !isRequesting && !error) {
       closeHandler();
+      this.props.getMember();
+      this.props.getEarnedMembership();
     }
   }
 
   private submitForm = async (form: Form) => {
     const validUpdate: NewReport = await this.formRef.validate(form);
-    console.log(form.isValid())
+
     if (!form.isValid()) return;
 
     return await this.props.dispatchReport(validUpdate);
@@ -96,6 +102,8 @@ const mapDispatchToProps = (
 ): DispatchProps => {
   const { membership, operation } = ownProps;
   return {
+    getMember: () => dispatch(readMemberAction(membership.memberId)),
+    getEarnedMembership: () => dispatch(readMembershipAction(membership.id)),
     dispatchReport: (reportDetails) => {
       let action;
       switch (operation) {

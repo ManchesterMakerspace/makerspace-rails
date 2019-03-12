@@ -21,6 +21,11 @@ const membershipDetails = {
     type: "Month-to-month",
     allowMod: true,
   },
+  earnedMembership: {
+    description: "Membership sponsored by earned membership program.",
+    type: "Earned Membership",
+    allowMod: false,
+  },
 }
 
 export const getDetailsForMember = (member: Partial<MemberDetails>) => {

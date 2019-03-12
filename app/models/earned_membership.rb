@@ -1,25 +1,36 @@
 class EarnedMembership
   include Mongoid::Document
   include ActiveModel::Serializers::JSON
+  include Service::SlackConnector
 
   store_in collection: 'earned_membership'
 
   belongs_to :member, class_name: 'Member'
-  has_many :requirements, class_name: 'EarnedMembership::Requirement'
-  has_many :reports, class_name: 'EarnedMembership::Report'
+  has_many :requirements, class_name: 'EarnedMembership::Requirement', dependent: :destroy
+  has_many :reports, class_name: 'EarnedMembership::Report', dependent: :destroy
+
   accepts_nested_attributes_for :requirements, reject_if: :all_blank, allow_destroy: true
+
   validate :one_to_one
   validate :existing_subscription, on: :create
 
-  def has_outstanding_requirements
-    outstanding_requirements = current_requirements.select do |requirement|
-      (requirement.term_start_date + requirement.term_length.months) < member.pretty_time
+  def outstanding_requirements
+    requirements.select do |requirement|
+      requirement.current_term && requirement.current_term.end_date < member.expiration_time
     end
-    !!outstanding_requirements.size
   end
 
-  def current_requirements
-    requirements.where(satisfied: false, :term_start_date.lte => member.pretty_time)
+  def completed_requirements
+    requirements.where(satisfied: true)
+  end
+
+  def shortest_requirement
+    requirements.min_by(&:term_length)
+  end
+
+  def evaluate_for_renewal
+    # Find requirements not satisfied and that are not in future terms
+    renew_member if outstanding_requirements.size == 0
   end
 
   private
@@ -35,5 +46,11 @@ class EarnedMembership
     if self.member.subscription || self.member.subscription_id
       errors.add(:member, "#{self.member.fullname} is still on subscription. Must cancel subscription first")
     end
+  end
+
+  def renew_member
+    self.member.update(expirationTime: shortest_requirement.current_term.end_date.to_i * 1000)
+    time = self.member.expiration_time.strftime("%m/%d/%Y")
+    send_slack_message("#{self.member.fullname} earned membership extended to #{time}")
   end
 end

@@ -14,21 +14,16 @@ import TableContainer from "ui/common/table/TableContainer";
 import { Column } from "ui/common/table/Table";
 import Form from "ui/common/Form";
 import { CrudOperation } from "app/constants";
-import { readMembershipsAction } from "ui/earnedMemberships/actions";
 import { EarnedMembership, Report } from "app/entities/earnedMembership";
-import EarnedMembershipForm from "ui/earnedMemberships/EarnedMembershipForm";
-import UpdateEarnedMembershipContainer, { UpdateMembershipRenderProps } from "ui/earnedMemberships/UpdateEarnedMembershipContainer";
-import { displayMemberExpiration } from "ui/member/utils";
-import MemberStatusLabel from "ui/member/MemberStatusLabel";
 import { timeToDate } from "ui/utils/timeToDate";
 import { ReportForm } from "ui/reports/ReportForm";
 import UpdateReportContainer, { UpdateReportRenderProps } from "ui/reports/UpdateReportContainer";
 import { readReportsAction } from "ui/reports/actions";
-
+import { readMembershipAction } from "ui/earnedMemberships/actions";
+import { readMemberAction } from "ui/member/actions";
 
 interface OwnProps extends RouteComponentProps<{}> {
   member: MemberDetails;
-  membership: EarnedMembership;
 }
 interface DispatchProps {
   getReports: (queryParams?: QueryParams) => void;
@@ -40,6 +35,7 @@ interface StateProps {
   error: string;
   isCreating: boolean;
   createError: string;
+  earnedMembership: EarnedMembership;
 }
 interface Props extends OwnProps, DispatchProps, StateProps { }
 interface State {
@@ -87,7 +83,6 @@ class ReportList extends React.Component<Props, State> {
     },
   ];
 
-
   private openCreateForm = () =>
     this.setState({ openCreateForm: true });
   private closeCreateForm = () =>
@@ -98,14 +93,10 @@ class ReportList extends React.Component<Props, State> {
     this.setState({ openDetails: false, selectedId: undefined });
 
   private renderMembershipForms = () => {
-    const { reports, membership, member, loading, error } = this.props;
+    const { reports, earnedMembership, member, loading, error } = this.props;
     const { selectedId, openCreateForm, openDetails } = this.state;
 
-
     const createForm = (renderProps: UpdateReportRenderProps) => {
-      const submitCreate = async (form: Form) => {
-        const newMembership = await renderProps.submit(form);
-      }
       return (<ReportForm
         ref={renderProps.setRef}
         membership={renderProps.membership}
@@ -114,24 +105,25 @@ class ReportList extends React.Component<Props, State> {
         isRequesting={renderProps.isRequesting}
         error={renderProps.error}
         onClose={renderProps.closeHandler}
-        onSubmit={submitCreate}
+        onSubmit={renderProps.submit}
       />)
     }
 
+    const selectedReport = reports[selectedId];
     return (
       <>
         <UpdateReportContainer
           isOpen={openCreateForm}
-          membership={membership}
+          membership={earnedMembership}
           member={member}
           closeHandler={this.closeCreateForm}
           render={createForm}
           operation={CrudOperation.Create}
         />
         <ReportForm
-          membership={membership}
+          membership={earnedMembership}
           member={member}
-          report={reports[selectedId]}
+          report={selectedReport}
           isOpen={openDetails}
           isRequesting={loading}
           error={error}
@@ -144,6 +136,8 @@ class ReportList extends React.Component<Props, State> {
 
   private getActionButtons = () => {
     const { selectedId } = this.state;
+    const { earnedMembership } = this.props;
+
     return (
       <ButtonRow
         actionButtons={[{
@@ -275,7 +269,7 @@ class ReportList extends React.Component<Props, State> {
 
 const mapStateToProps = (
   state: ReduxState,
-  _ownProps: OwnProps
+  ownProps: OwnProps
 ): StateProps => {
   const {
     entities: reports,
@@ -297,6 +291,8 @@ const mapStateToProps = (
   } = state.earnedMemberships;
   const loading = membershipLoading || reportsLoading;
   const error = membershipError || reportsError;
+  const earnedMembershipId = ownProps.member.earnedMembershipId;
+  const earnedMembership = state.earnedMemberships.entities[earnedMembershipId];
   return {
     reports,
     totalItems,
@@ -304,6 +300,7 @@ const mapStateToProps = (
     error,
     isCreating,
     createError,
+    earnedMembership,
   }
 }
 

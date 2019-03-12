@@ -1,13 +1,14 @@
 import * as React from "react";
+import * as crypto from "crypto";
 import range from "lodash-es/range";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import FormLabel from "@material-ui/core/FormLabel";
 
-import { getMembers } from "api/members/transactions";
+import { getMembers, getMember } from "api/members/transactions";
 
 import { MemberDetails } from "app/entities/member";
-import { Requirement, ReportRequirement, Report } from "app/entities/earnedMembership";
+import { Requirement, ReportRequirement, Report, NewReportRequirement } from "app/entities/earnedMembership";
 
 import Form from "ui/common/Form";
 import { reportRequirementFields } from "ui/reports/constants";
@@ -25,6 +26,7 @@ type SelectOption = { label: string, value: string, id?: string };
 
 interface State {
   memberCount: number;
+  loadingMembersRequestId: string;
 }
 
 class ReportRequirementFieldset extends React.Component<OwnProps, State> {
@@ -35,7 +37,45 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
     super(props);
     this.state = {
       memberCount: 1,
+      loadingMembersRequestId: undefined,
     }
+  }
+
+  private initMembers = async () => {
+    const { reportRequirement } = this.props;
+    if (reportRequirement) {
+      if (reportRequirement.memberIds && reportRequirement.memberIds.length) {
+        this.setState({ memberCount: (reportRequirement.memberIds || []).length || 1 });
+        const requestId = crypto.randomBytes(20).toString('hex');
+        this.setState({ loadingMembersRequestId: requestId });
+        await Promise.all(reportRequirement.memberIds.map((id, index) =>
+          new Promise(async (resolve) => {
+            try {
+              const response = await getMember(id);
+              const { member } = response.data;
+              // Verify we're still fetching the same collection before setting form
+              if (member && this.state.loadingMembersRequestId === requestId) {
+                const option = { value: member.id, label: `${member.firstname} ${member.lastname}`, id: member.id }
+                const fieldName = this.getMemberInputName(index);
+                console.log(fieldName, option);
+                this.formRef && await this.formRef.setValue(fieldName, option);
+              }
+            } catch (e) {
+              console.log(e);
+            } finally {
+              resolve();
+            }
+          })));
+      } else {
+        const fieldName = this.getMemberInputName(0);
+        const option: SelectOption = { value: null, label: "None reported", id: 'none' }
+        this.formRef && await this.formRef.setValue(fieldName, option);
+      }
+    }
+  }
+
+  public componentDidMount() {
+    this.initMembers();
   }
 
   public componentDidUpdate(prevProps: OwnProps) {
@@ -44,20 +84,20 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
       this.formRef && this.formRef.resetForm();
     }
     if (reportRequirement && reportRequirement !== prevProps.reportRequirement) {
-      console.log(reportRequirement);
-      this.setState({ memberCount: (reportRequirement.memberIds || []).length });
+      this.initMembers();
     }
   }
 
-  public validate = async (): Promise<ReportRequirement> => {
+  public validate = async (): Promise<NewReportRequirement> => {
     const { requirement, index } = this.props;
     const { id } = requirement;
     const reportRequirementValues = this.formRef.getValues();
 
-    const reportRequirement: ReportRequirement = {
+    const reportRequirement: NewReportRequirement = {
       requirementId: id,
       reportedCount: undefined,
       memberIds: [],
+      termId: requirement.termId
     };
     const formErrors = {}
     const fields = reportRequirementFields(requirement, index);

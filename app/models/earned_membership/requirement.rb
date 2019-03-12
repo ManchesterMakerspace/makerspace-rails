@@ -4,15 +4,22 @@ class EarnedMembership::Requirement
   store_in collection: 'earned_membership__requirement'
 
   belongs_to :earned_membership, class_name: 'EarnedMembership'
-  has_and_belongs_to_many :reports, class_name: 'EarnedMembership::Report'
+  has_many :terms, class_name: 'EarnedMembership::Term', dependent: :destroy, autosave: true
 
   field :name, type: String
   field :rollover_limit, type: Integer, default: 0
-  field :term_length, type: Integer, default: 1
-  field :term_start_date, type: Time, default: Time.now
   field :target_count, type: Integer
-  field :current_count, type: Integer, default: 0
-  field :satisfied, type: Boolean, default: false
   field :strict, type: Boolean, default: false
+  field :term_length, type: Integer, default: 1
 
+  before_create :build_first_term
+
+  def current_term
+    terms.detect { |t| !t.satisfied and t.end_date.to_i >= earned_membership.member.expiration_time.to_i }
+  end
+
+  private
+  def build_first_term
+    terms.push(EarnedMembership::Term.new())
+  end
 end

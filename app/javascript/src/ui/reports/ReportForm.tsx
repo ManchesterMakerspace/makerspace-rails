@@ -1,12 +1,12 @@
 import * as React from "react";
 import Grid from "@material-ui/core/Grid";
-import { Card, CardContent } from "@material-ui/core";
+import { Card, CardContent, Typography } from "@material-ui/core";
 
 import { MemberDetails } from "app/entities/member";
 
 import FormModal from "ui/common/FormModal";
 import Form from "ui/common/Form";
-import { EarnedMembership, Requirement, ReportRequirement, Report, NewReport } from "app/entities/earnedMembership";
+import { EarnedMembership, Requirement, ReportRequirement, Report, NewReport, isReportRequirement, NewReportRequirement } from "app/entities/earnedMembership";
 import ReportRequirementFieldset from "ui/reports/ReportRequirementFieldset";
 import KeyValueItem from "ui/common/KeyValueItem";
 import { timeToDate } from "ui/utils/timeToDate";
@@ -44,7 +44,7 @@ export class ReportForm extends React.Component<OwnProps> {
       reportRequirements: []
     };
 
-    report.reportRequirements = await Promise.all<ReportRequirement>(this.reportRequirementRefs.map((ref, index) => {
+    report.reportRequirements = await Promise.all<NewReportRequirement>(this.reportRequirementRefs.map((ref, index) => {
       return new Promise(async (resolve) => {
         const reportRequirement = ref.validate();
         resolve(reportRequirement);
@@ -60,31 +60,41 @@ export class ReportForm extends React.Component<OwnProps> {
     return report;
   }
 
-  private renderRequirementForm = (requirement: Requirement, index: number) => {
-    const { report } = this.props;
-    const assocReportReq = report && report.reportRequirements.find(rr => rr.requirementId === requirement.id);
-
+  private renderRequirementForm = (requirement: Requirement | ReportRequirement, index: number) => {
+    const { report, membership } = this.props;
+    const baseReq = isReportRequirement(requirement) ?
+      membership.requirements.find(req => requirement.requirementId === req.id)
+      : requirement
     return (
       <Card>
         <CardContent>
           <Grid item xs={12}>
-            <KeyValueItem label="Name">{requirement.name}</KeyValueItem>
+            <KeyValueItem label="Name">{baseReq.name}</KeyValueItem>
           </Grid>
           <Grid item xs={12}>
             <KeyValueItem label="Reporting Term">
               {`${timeToDate(requirement.termStartDate)} - ${timeToDate(requirement.termEndDate)}`}
             </KeyValueItem>
           </Grid>
-          <Grid item xs={12}>
-            <KeyValueItem label="# required per term">{String(requirement.targetCount)}</KeyValueItem>
-          </Grid>
-          <Grid item xs={12}>
-            <KeyValueItem label="# completed">{String(requirement.currentCount)}</KeyValueItem>
-          </Grid>
+          {report ?
+            <>
+              <Grid item xs={12}>
+                <KeyValueItem label="Report Date">{timeToDate(report.date)}</KeyValueItem>
+              </Grid>
+            </>
+            : <>
+              <Grid item xs={12}>
+                <KeyValueItem label="# required per term">{String(baseReq.targetCount)}</KeyValueItem>
+              </Grid>
+              <Grid item xs={12}>
+                <KeyValueItem label="# completed">{String(requirement.currentCount)}</KeyValueItem>
+              </Grid>
+            </>
+          }
           <ReportRequirementFieldset
             disabled={this.props.disabled}
-            requirement={requirement}
-            reportRequirement={assocReportReq}
+            requirement={baseReq}
+            reportRequirement={isReportRequirement(requirement) && requirement}
             index={index}
             ref={(ref) => this.reportRequirementRefs[index] = ref}
           />
@@ -93,9 +103,38 @@ export class ReportForm extends React.Component<OwnProps> {
     )
   }
 
-  public render(): JSX.Element {
-    const { isOpen, onClose, isRequesting, error, onSubmit, membership } = this.props;
+  // If things get out of sync, we need a way to notifiy the user
+  private renderErrorNotification = () => {
+    return (
+      <Typography variant="body1">
+        You have no current requirements to report, which usually indicates an error in our system.
+        Please <a href='mailto:contact@manchestermakerspace.org"'>email us</a> so we can straighten things out.
+      </Typography>
+    )
+  }
 
+  private getRequirements = () => {
+    const { membership, report } = this.props;
+    const requirements = report ? report.reportRequirements : membership && membership.requirements;
+    return requirements;
+  }
+
+  private renderRequirements = () => {
+    const requirements = this.getRequirements();
+
+    return (requirements as ReportRequirement[]).map((requirement, index) =>
+      <div key={requirement.id}>
+        <Grid container spacing={24}>
+          <Grid item xs={12}>
+            {this.renderRequirementForm(requirement, index)}
+          </Grid>
+        </Grid>
+      </div>
+    )
+  }
+  public render(): JSX.Element {
+    const { isOpen, onClose, isRequesting, error, onSubmit, membership, report } = this.props;
+    const requirements = this.getRequirements();
     return membership ?
       <FormModal
         formRef={this.setFormRef}
@@ -107,15 +146,10 @@ export class ReportForm extends React.Component<OwnProps> {
         isOpen={isOpen}
         title="Submit Earned Membership Report"
       >
-        {(membership.requirements || []).map((requirement, index) =>
-       <div key={requirement.id}>
-        <Grid container spacing={24}>
-          <Grid item xs={12}>
-            {this.renderRequirementForm(requirement, index)}
-          </Grid>
-        </Grid>
-       </div>
-      )}
+        { (requirements || []).length ?
+          this.renderRequirements()
+          : this.renderErrorNotification()
+        }
       </FormModal> : null;
   }
 }

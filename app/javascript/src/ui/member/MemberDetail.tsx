@@ -28,7 +28,6 @@ import SignDocuments from "ui/auth/SignDocuments";
 import { getDetailsForMember } from "ui/membership/constants";
 import AccessCardContainer, { CreateAccessCardProps } from "ui/accessCards/AccessCardContainer";
 import ReportList from "ui/reports/ReportList";
-import { EarnedMembership } from "app/entities/earnedMembership";
 import { readMembershipAction } from "ui/earnedMemberships/actions";
 
 interface DispatchProps {
@@ -48,7 +47,6 @@ interface StateProps {
   billingEnabled: boolean;
   invoiceUpdating: boolean;
   invoiceError: string;
-  earnedMembership: EarnedMembership;
 }
 interface OwnProps extends RouteComponentProps<any> {
 }
@@ -156,7 +154,7 @@ class MemberDetail extends React.Component<Props, State> {
   }
 
   private renderMemberDetails = (): JSX.Element => {
-    const { member, isUpdatingMember, isRequestingMember, match, admin, goToSettings, billingEnabled, earnedMembership } = this.props;
+    const { member, isUpdatingMember, isRequestingMember, match, admin, goToSettings, billingEnabled } = this.props;
     const { memberId, resource } = match.params;
     const loading = isUpdatingMember || isRequestingMember;
     const isEarnedMember = !!member.earnedMembershipId;
@@ -206,7 +204,7 @@ class MemberDetail extends React.Component<Props, State> {
             [{
               name: "membership",
               content: (
-                <ReportList member={member} membership={earnedMembership}/>
+                <ReportList member={member}/>
               )
             }] : [],
             ...billingEnabled ?
@@ -342,8 +340,7 @@ const mapStateToProps = (
   const { entity: member } = state.member;
   const { permissions, currentUser: { isAdmin: admin, id: currentUserId, subscriptionId } } = state.auth;
   const { update: { isRequesting: invoiceUpdating, error: invoiceError } } = state.invoice;
-  const earnedMembershipId = member && member.earnedMembershipId;
-  const earnedMembership = state.earnedMemberships.entities[earnedMembershipId];
+
   return {
     admin: admin,
     member,
@@ -356,7 +353,6 @@ const mapStateToProps = (
     invoiceUpdating,
     invoiceError,
     billingEnabled: !!permissions[Whitelists.billing] || false,
-    earnedMembership,
   }
 }
 
