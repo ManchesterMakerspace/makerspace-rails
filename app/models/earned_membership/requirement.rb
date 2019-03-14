@@ -12,10 +12,11 @@ class EarnedMembership::Requirement
   field :strict, type: Boolean, default: false
   field :term_length, type: Integer, default: 1
 
+  validates :earned_membership, presence: true
   before_create :build_first_term
 
   def current_term
-    terms.detect { |t| !t.satisfied and t.end_date.to_i >= earned_membership.member.get_expiration }
+    terms.detect { |t| !t.satisfied }
   end
 
   private

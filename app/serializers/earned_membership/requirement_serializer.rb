@@ -13,22 +13,22 @@ class EarnedMembership::RequirementSerializer < ActiveModel::Serializer
             :satisfied
 
   def term_end_date
-    object.current_term.end_date
+    object.current_term && object.current_term.end_date
   end
 
   def term_start_date
-    object.current_term.start_date
+    object.current_term && object.current_term.start_date
   end
 
   def current_count
-    object.current_term.current_count
+    object.current_term && object.current_term.current_count
   end
 
   def satisfied
-    object.current_term.satisfied
+    object.current_term && object.current_term.satisfied
   end
 
   def term_id
-    object.current_term.id
+    object.current_term && object.current_term.id
   end
 end

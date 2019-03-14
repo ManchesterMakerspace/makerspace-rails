@@ -8,6 +8,7 @@ class EarnedMembership::Term
   field :current_count, type: Integer, default: 0
   field :satisfied, type: Boolean, default: false
 
+  validates :requirement, presence: true
   before_create :set_start_date
   after_update :evaluate_for_satisfaction
 

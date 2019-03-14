@@ -19,12 +19,12 @@ export const readMembershipsAction = (
 
   try {
     const response = await getMemberships(queryParams);
-    const {memberships} = response.data;
+    const {earnedMemberships} = response.data;
     const totalItems = response.headers[("total-items")];
     dispatch({
       type: MembershipAction.GetMembershipsSuccess,
       data: {
-        memberships,
+        memberships: earnedMemberships,
         totalItems: toNumber(totalItems)
       }
     });
@@ -45,10 +45,10 @@ export const readMembershipAction = (
 
   try {
     const response = await getMembership(membershipId, admin);
-    const { membership } = response.data;
+    const { earnedMembership } = response.data;
     dispatch({
       type: MembershipAction.GetMembershipSuccess,
-      data: membership
+      data: earnedMembership
     });
   } catch (e) {
     const { errorMessage } = e;

@@ -1,4 +1,4 @@
-class InvoicesController < ApplicationController
+class InvoicesController < AuthenticationController
   include FastQuery
   include BraintreeGateway
 

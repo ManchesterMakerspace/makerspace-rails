@@ -4,8 +4,9 @@ class EarnedMembership::ReportRequirement
   embedded_in :report, class_name: 'EarnedMembership::Report'
 
   belongs_to :requirement, class_name: 'EarnedMembership::Requirement'
-  belongs_to :term, class_name: 'EarnedMembership::Term', optional: true
+  belongs_to :term, class_name: 'EarnedMembership::Term'
 
+  validates :requirement, presence: true
   field :reported_count, type: Integer, default: 0
   field :applied_count, type: Integer, default: 0
   field :member_ids, type: Array

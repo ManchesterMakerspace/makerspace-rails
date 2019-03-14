@@ -3,8 +3,8 @@ class Admin::EarnedMembershipsController < AdminController
   before_action :set_membership, only: [:update, :show]
 
   def index
-    memberships = params[:memberId] ? EarnedMembership.where(member_id: params[:memberId]) : EarnedMembership.all
-    return render_with_total_items(query_resource(memberships), {each_serializer: EarnedMembershipSerializer, root: "memberships"})
+    memberships = EarnedMembership.all
+    return render_with_total_items(query_resource(memberships))
   end
 
   def show
@@ -33,6 +33,6 @@ class Admin::EarnedMembershipsController < AdminController
 
   def set_membership
     @membership = EarnedMembership.find(params[:id])
-    raise ::Mongoid::Errors::DocumentNotFound.new(EarnedMembership, { id: params[:id] }) if @member.nil?
+    raise ::Mongoid::Errors::DocumentNotFound.new(EarnedMembership, { id: params[:id] }) if @membership.nil?
   end
 end

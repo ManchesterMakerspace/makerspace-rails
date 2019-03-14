@@ -1,4 +1,4 @@
-class BillingController < ApplicationController
+class BillingController < AuthenticationController
   before_action :verify_billing_permission
 
   private

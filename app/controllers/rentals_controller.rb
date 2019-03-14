@@ -1,4 +1,4 @@
-class RentalsController < ApplicationController
+class RentalsController < AuthenticationController
     include FastQuery
     before_action :set_rental, only: [:show]
 
