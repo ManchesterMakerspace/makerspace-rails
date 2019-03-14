@@ -14,11 +14,11 @@ class EarnedMembership::Report
   validate :report_requirements_exist, on: :create
   validate :no_future_reporting, on: :create
   after_create :process_report
-  before_create :apply_term
+  before_validation :apply_term, on: :create
 
   private
   def apply_term
-    report_requirements.each { |rr| rr.term = rr.requirement.current_term }
+    report_requirements.each { |rr| rr.term.nil? and rr.term = rr.requirement.current_term }
   end
 
   def process_report
@@ -32,7 +32,7 @@ class EarnedMembership::Report
   end
 
   def no_future_reporting
-    if self.report_requirements.any? { |rr| !rr.requirement.current_term || rr.requirement.current_term.start_date > Time.now }
+    if self.report_requirements.any? { |rr| !rr.requirement or !rr.requirement.current_term or rr.requirement.current_term.start_date > Time.now }
       errors.add(:requirement, "Cannot submit reports for future terms")
     end
   end

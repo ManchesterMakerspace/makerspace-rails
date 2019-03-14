@@ -59,7 +59,7 @@ RSpec.describe EarnedMemberships::ReportsController, type: :controller do
         expect(response).to have_http_status(422)
       end
 
-      it "Raises 422 if no membership submitted with report" do 
+      it "Raises 422 if no membership submitted with report" do
           sign_in current_user
           report_params = {
             report_requirements: report_requirements

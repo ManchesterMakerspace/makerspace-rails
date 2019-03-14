@@ -9,7 +9,6 @@ class EarnedMembership::Term
   field :satisfied, type: Boolean, default: false
 
   validates :requirement, presence: true
-  before_create :set_start_date
   after_update :evaluate_for_satisfaction
 
   def end_date
@@ -36,13 +35,5 @@ class EarnedMembership::Term
       requirement_id: self.requirement_id
     )
     next_term.save!
-  end
-
-  def set_start_date
-    if self.start_date.nil?
-      self.start_date = requirement.earned_membership.member.nil? ?
-      Time.now
-      : requirement.earned_membership.member.pretty_time
-    end
   end
 end

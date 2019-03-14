@@ -7,6 +7,7 @@ class EarnedMembership::ReportRequirement
   belongs_to :term, class_name: 'EarnedMembership::Term'
 
   validates :requirement, presence: true
+  validates :term, presence: true
   field :reported_count, type: Integer, default: 0
   field :applied_count, type: Integer, default: 0
   field :member_ids, type: Array
