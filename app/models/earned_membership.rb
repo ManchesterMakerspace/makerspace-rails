@@ -3,7 +3,7 @@ class EarnedMembership
   include ActiveModel::Serializers::JSON
   include Service::SlackConnector
 
-  store_in collection: 'earned_membership'
+  store_in collection: 'earned_memberships'
 
   belongs_to :member, class_name: 'Member'
   has_many :requirements, class_name: 'EarnedMembership::Requirement', dependent: :destroy
@@ -13,21 +13,13 @@ class EarnedMembership
 
   validates :member, presence: true
   validate :one_to_one
-  validate :existing_subscription, on: :create
-  validate :requirements_exist, on: :create
+  validate :existing_subscription
+  validate :requirements_exist
 
   def outstanding_requirements
     requirements.select do |requirement|
-      requirement.current_term && requirement.current_term.end_date < member.expiration_time
+      requirement.current_term && !requirement.current_term.satisfied && requirement.current_term.end_date < member.expiration_time
     end
-  end
-
-  def completed_requirements
-    requirements.where(satisfied: true)
-  end
-
-  def shortest_requirement
-    requirements.min_by(&:term_length)
   end
 
   def evaluate_for_renewal
@@ -55,7 +47,7 @@ class EarnedMembership
   end
 
   def renew_member
-    self.member.update(expirationTime: shortest_requirement.current_term.end_date.to_i * 1000)
+    self.member.update(expirationTime: requirements.min_by(&:term_length).current_term.end_date.to_i * 1000)
     time = self.member.expiration_time.strftime("%m/%d/%Y")
     send_slack_message("#{self.member.fullname} earned membership extended to #{time}")
   end

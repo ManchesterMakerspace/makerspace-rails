@@ -134,6 +134,10 @@ FactoryBot.define do
     end
   end
 
+  factory :earned_membership_no_requirements, class: EarnedMembership do
+    association :member
+  end
+
   factory :earned_membership_with_reports, :parent => :earned_membership do
     after(:build) do |earned_membership|
       FactoryBot.create_list(:report_with_report_requirements, 2, earned_membership: earned_membership)
@@ -164,6 +168,9 @@ FactoryBot.define do
 
   factory :report_requirement, class: EarnedMembership::ReportRequirement do
     association :requirement
+  end
+
+  factory :report_requirement_with_term, parent: :report_requirement do
     association :term
   end
 
