@@ -1,4 +1,4 @@
-class PermissionsController < ApplicationController
+class PermissionsController < AuthenticationController
   before_action :find_member
 
   def show

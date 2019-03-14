@@ -11,8 +11,10 @@ class EarnedMembership
 
   accepts_nested_attributes_for :requirements, reject_if: :all_blank, allow_destroy: true
 
+  validates :member, presence: true
   validate :one_to_one
   validate :existing_subscription, on: :create
+  validate :requirements_exist, on: :create
 
   def outstanding_requirements
     requirements.select do |requirement|
@@ -43,6 +45,10 @@ class EarnedMembership
   end
 
   def existing_subscription
+    if self.member.nil?
+      errors.add(:memebr, "Member required")
+      return
+    end
     if self.member.subscription || self.member.subscription_id
       errors.add(:member, "#{self.member.fullname} is still on subscription. Must cancel subscription first")
     end
@@ -52,5 +58,11 @@ class EarnedMembership
     self.member.update(expirationTime: shortest_requirement.current_term.end_date.to_i * 1000)
     time = self.member.expiration_time.strftime("%m/%d/%Y")
     send_slack_message("#{self.member.fullname} earned membership extended to #{time}")
+  end
+
+  def requirements_exist
+    if self.requirements.nil? or self.requirements.size == 0
+      errors.add(:requirements, "required")
+    end
   end
 end
