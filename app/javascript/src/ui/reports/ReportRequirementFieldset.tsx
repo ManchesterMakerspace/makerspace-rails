@@ -11,7 +11,7 @@ import { MemberDetails } from "app/entities/member";
 import { Requirement, ReportRequirement, Report, NewReportRequirement } from "app/entities/earnedMembership";
 
 import Form from "ui/common/Form";
-import { reportRequirementFields } from "ui/reports/constants";
+import { reportRequirementFields, formPrefix } from "ui/reports/constants";
 import ButtonRow, { ActionButton } from "ui/common/ButtonRow";
 import { mapValues } from "lodash-es";
 import AsyncSelectFixed from "ui/common/AsyncSelect";
@@ -209,11 +209,11 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
   public render(): JSX.Element {
     const { requirement, disabled, index, reportRequirement } = this.props;
     const fields = reportRequirementFields(requirement, index);
-
+    const requirementFormId = `report-requirement-form-${index}`;
     return (
       <Form
         ref={this.setFormRef}
-        id={`report-requirement-form-${index}`}
+        id={requirementFormId}
       >
         <Grid container spacing={24}>
           <Grid item xs={12}>
@@ -243,14 +243,14 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
                 actionButtons={[
                   {
                     color: "default",
-                    id: "add-member-row",
+                    id: `${requirementFormId}-add-member-row`,
                     variant: "outlined",
                     onClick: this.addMemberRow,
                     label: "Add Member",
                   },
                   ...this.state.memberCount > 1 ? [{
                     color: "secondary",
-                    id: "add-member-row",
+                    id: `${requirementFormId}-remove-member-row`,
                     variant: "outlined",
                     onClick: this.removeMemberRow,
                     label: "Remove Member",

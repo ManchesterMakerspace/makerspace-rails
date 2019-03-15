@@ -73,21 +73,38 @@ export class ReportForm extends React.Component<OwnProps> {
           </Grid>
           <Grid item xs={12}>
             <KeyValueItem label="Reporting Term">
-              {`${timeToDate(requirement.termStartDate)} - ${timeToDate(requirement.termEndDate)}`}
+              <span id={`${formPrefix}-termStart`}>
+                {timeToDate(requirement.termStartDate)}
+              </span> -
+              <span id={`${formPrefix}-termEnd`}>
+                {timeToDate(requirement.termEndDate)}
+              </span>
             </KeyValueItem>
           </Grid>
           {report ?
             <>
               <Grid item xs={12}>
-                <KeyValueItem label="Report Date">{timeToDate(report.date)}</KeyValueItem>
+                <KeyValueItem label="Report Date">
+                  <span id={`${formPrefix}-date`}>
+                    {timeToDate(report.date)}
+                  </span>
+                </KeyValueItem>
               </Grid>
             </>
             : <>
               <Grid item xs={12}>
-                <KeyValueItem label="# required per term">{String(baseReq.targetCount)}</KeyValueItem>
+                <KeyValueItem label="# required per term">
+                  <span id={`${formPrefix}-targetCount`}>
+                    {String(baseReq.targetCount)}
+                  </span>
+                </KeyValueItem>
               </Grid>
               <Grid item xs={12}>
-                <KeyValueItem label="# completed">{String(requirement.currentCount)}</KeyValueItem>
+                <KeyValueItem label="# completed">
+                  <span id={`${formPrefix}-targetCount`}>
+                    {String(requirement.currentCount)}
+                  </span>
+                </KeyValueItem>
               </Grid>
             </>
           }
