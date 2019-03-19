@@ -1,4 +1,4 @@
-describe("Subscriptions", () => {
+describe("Paid Subscriptions", () => {
   describe("Admin subscription", () => {
     it("Loads a list of subscriptions", () => {
 

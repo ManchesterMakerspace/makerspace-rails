@@ -59,9 +59,9 @@ xdescribe("Invoicing and Dues", () => {
       // TODO Find a way to mock creating a payment method
       // await mock(mockRequests.paymentMethods.new.ok("foo"));
       // await utils.clickElement(paymentMethods.addPaymentButton);
-      // await utils.waitForVisisble(paymentMethods.paymentMethodFormSelect.creditCard);
+      // await utils.waitForVisible(paymentMethods.paymentMethodFormSelect.creditCard);
       // await utils.clickElement(paymentMethods.paymentMethodFormSelect.creditCard);
-      // await utils.waitForVisisble(creditCard.creditCardForm.submit);
+      // await utils.waitForVisible(creditCard.creditCardForm.submit);
       // await utils.fillInput(creditCard.creditCardForm.cardNumber, creditCardForm.cardNumber);
       // await utils.fillInput(creditCard.creditCardForm.expirationDate, creditCardForm.expiration);
       // await utils.fillInput(creditCard.creditCardForm.postalCode, creditCardForm.postalCode);
@@ -118,7 +118,7 @@ xdescribe("Invoicing and Dues", () => {
       expect(await utils.isElementDisplayed(invoicePo.getErrorRowId())).toBeFalsy();
       expect(await utils.isElementDisplayed(invoicePo.getNoDataRowId())).toBeTruthy();
       await utils.clickElement(invoicePo.actionButtons.create);
-      await utils.waitForVisisble(submit);
+      await utils.waitForVisible(submit);
       await utils.fillInput(description, defaultInvoice.description);
       await utils.fillInput(dueDate, new Date(defaultInvoice.dueDate).toDateString());
       await utils.fillInput(amount, `${defaultInvoice.amount}`);

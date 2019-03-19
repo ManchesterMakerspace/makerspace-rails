@@ -20,15 +20,20 @@ export class ScreenshotReporter {
   specDone(result) {
     return new Promise( async (resolve) => {
       if (result.status === 'failed') {
-        const screenshot = await this.browser.takeScreenshot();
+        try {
+          const screenshot = await this.browser.takeScreenshot();
 
-        const screenshotFilename = path.format({ dir: screenshotDir, name: result.fullName, ext: '.png' });
+          const screenshotFilename = path.format({ dir: screenshotDir, name: result.fullName, ext: '.png' });
 
-        mkdirp.sync(screenshotDir);
-        fs.writeFileSync(screenshotFilename, screenshot, 'base64');
-        console.log("saved screenshot");
+          mkdirp.sync(screenshotDir);
+          fs.writeFileSync(screenshotFilename, screenshot, 'base64');
+          console.log("saved screenshot");
+        } catch (e) {
+          console.log("Error saving screenshot", e);
+        } finally {
+          return resolve;
+        }
       }
-      return resolve;
     });
   }
 }

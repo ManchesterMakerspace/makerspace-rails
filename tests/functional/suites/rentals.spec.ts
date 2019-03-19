@@ -47,7 +47,7 @@ describe("Rentals", () => {
       });
       it("Can create new rentals for members", async () => {
         await utils.clickElement(rentalsPO.rentalsList.createButton);
-        await utils.waitForVisisble(rentalsPO.rentalForm.submit);
+        await utils.waitForVisible(rentalsPO.rentalForm.submit);
         await utils.fillInput(rentalsPO.rentalForm.number, initRental.number);
         await utils.fillInput(rentalsPO.rentalForm.description, initRental.description);
         await utils.inputTime(rentalsPO.rentalForm.expiration, initRental.expiration);
@@ -69,7 +69,7 @@ describe("Rentals", () => {
         }
         await rentalsPO.selectRow(defaultRentals[0].id);
         await utils.clickElement(rentalsPO.rentalsList.editButton);
-        await utils.waitForVisisble(rentalsPO.rentalForm.submit);
+        await utils.waitForVisible(rentalsPO.rentalForm.submit);
 
         await utils.fillInput(rentalsPO.rentalForm.number, updatedRental.number);
         await utils.fillInput(rentalsPO.rentalForm.description, updatedRental.description);
@@ -85,7 +85,7 @@ describe("Rentals", () => {
       it("Can delete rentals for members", async () => {
         await rentalsPO.selectRow(defaultRentals[0].id);
         await utils.clickElement(rentalsPO.rentalsList.deleteButton);
-        await utils.waitForVisisble(rentalsPO.deleteRentalModal.submit);
+        await utils.waitForVisible(rentalsPO.deleteRentalModal.submit);
         expect(await utils.getElementText(rentalsPO.deleteRentalModal.member)).toEqual(defaultRentals[0].memberName);
         expect(await utils.getElementText(rentalsPO.deleteRentalModal.number)).toEqual(defaultRentals[0].number);
         expect(await utils.getElementText(rentalsPO.deleteRentalModal.description)).toEqual(defaultRentals[0].description);
@@ -93,7 +93,7 @@ describe("Rentals", () => {
         await mock(mockRequests.rentals.get.ok([], undefined, true));
         await utils.clickElement(rentalsPO.deleteRentalModal.submit);
         await utils.waitForNotVisible(rentalsPO.deleteRentalModal.submit);
-        await utils.waitForVisisble(rentalsPO.getNoDataRowId());
+        await utils.waitForVisible(rentalsPO.getNoDataRowId());
       });
 
       it("Can renew rentals for members", async () => {
@@ -103,7 +103,7 @@ describe("Rentals", () => {
         }
         await rentalsPO.selectRow(defaultRentals[0].id);
         await utils.clickElement(rentalsPO.rentalsList.renewButton);
-        await utils.waitForVisisble(renewPO.renewalForm.submit);
+        await utils.waitForVisible(renewPO.renewalForm.submit);
         expect(await utils.getElementText(renewPO.renewalForm.entity)).toEqual(defaultRentals[0].number);
         await utils.clickElement(renewPO.renewalForm.submit);
         await utils.assertInputError(renewPO.renewalForm.termError, true);
@@ -150,7 +150,7 @@ describe("Rentals", () => {
         await mock(mockRequests.rentals.get.ok([], undefined, true));
         await memberPO.goToMemberRentals();
         await utils.clickElement(rentalsPO.actionButtons.create);
-        await utils.waitForVisisble(rentalsPO.rentalForm.submit);
+        await utils.waitForVisible(rentalsPO.rentalForm.submit);
         expect(await utils.getElementText(rentalsPO.rentalForm.member)).toEqual(`${basicUser.firstname} ${basicUser.lastname}`);
         await utils.fillInput(rentalsPO.rentalForm.number, initRental.number);
         await utils.fillInput(rentalsPO.rentalForm.description, initRental.description);
@@ -184,7 +184,7 @@ describe("Rentals", () => {
         await memberPO.goToMemberRentals();
         await rentalsPO.selectRow(initRental.id);
         await utils.clickElement(rentalsPO.actionButtons.edit);
-        await utils.waitForVisisble(rentalsPO.rentalForm.submit);
+        await utils.waitForVisible(rentalsPO.rentalForm.submit);
         expect(await utils.getElementText(rentalsPO.rentalForm.member)).toEqual(`${basicUser.firstname} ${basicUser.lastname}`);
         await utils.fillInput(rentalsPO.rentalForm.number, updatedRental.number);
         await utils.fillInput(rentalsPO.rentalForm.description, updatedRental.description);
@@ -211,7 +211,7 @@ describe("Rentals", () => {
         await memberPO.goToMemberRentals();
         await rentalsPO.selectRow(initRental.id);
         await utils.clickElement(rentalsPO.actionButtons.delete);
-        await utils.waitForVisisble(rentalsPO.deleteRentalModal.submit);
+        await utils.waitForVisible(rentalsPO.deleteRentalModal.submit);
         expect(await utils.getElementText(rentalsPO.deleteRentalModal.member)).toEqual(`${basicUser.firstname} ${basicUser.lastname}`);
         expect(await utils.getElementText(rentalsPO.deleteRentalModal.number)).toEqual(initRental.number);
         expect(await utils.getElementText(rentalsPO.deleteRentalModal.description)).toEqual(initRental.description);
@@ -219,7 +219,7 @@ describe("Rentals", () => {
         await mock(mockRequests.rentals.get.ok([], undefined, true));
         await utils.clickElement(rentalsPO.deleteRentalModal.submit);
         await utils.waitForNotVisible(rentalsPO.deleteRentalModal.submit);
-        await utils.waitForVisisble(rentalsPO.getNoDataRowId());
+        await utils.waitForVisible(rentalsPO.getNoDataRowId());
       });
 
       it("Can renew rentals for members", async () => {
@@ -231,7 +231,7 @@ describe("Rentals", () => {
         await memberPO.goToMemberRentals();
         await rentalsPO.selectRow(initRental.id);
         await utils.clickElement(rentalsPO.actionButtons.renew);
-        await utils.waitForVisisble(renewPO.renewalForm.submit);
+        await utils.waitForVisible(renewPO.renewalForm.submit);
         expect(await utils.getElementText(renewPO.renewalForm.entity)).toEqual(initRental.number);
         await utils.clickElement(renewPO.renewalForm.submit);
         await utils.assertInputError(renewPO.renewalForm.termError, true);

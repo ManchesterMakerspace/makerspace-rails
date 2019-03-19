@@ -70,13 +70,6 @@ class ReportList extends React.Component<Props, State> {
       defaultSortDirection: SortDirection.Desc
     },
     {
-      id: "reportRequirements",
-      label: "Report Details",
-      cell: (row: Report) => {
-        return "TBD";
-      },
-    },
-    {
       id: "view",
       label: "",
       cell: (row: Report) => <Button onClick={() => this.openDetails(row.id)}>View Report</Button>

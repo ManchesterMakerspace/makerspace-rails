@@ -46,7 +46,7 @@ export class ReportForm extends React.Component<OwnProps> {
 
     report.reportRequirements = await Promise.all<NewReportRequirement>(this.reportRequirementRefs.map((ref, index) => {
       return new Promise(async (resolve) => {
-        const reportRequirement = ref.validate();
+        const reportRequirement = await ref.validate();
         resolve(reportRequirement);
       });
     }));

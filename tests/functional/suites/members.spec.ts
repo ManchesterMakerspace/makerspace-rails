@@ -44,7 +44,7 @@ describe("Members page", () => {
       await memberPo.verifyListView(defaultMembers, memberPo.fieldEvaluator);
       await verifyRouting(defaultMembers[0]);
     });
-    fit("Creating a new member", async () => {
+    it("Creating a new member", async () => {
       const newMemberId = "new_new";
       const newMember = {
         firstname: "New",
@@ -61,9 +61,9 @@ describe("Members page", () => {
         ...defaultMembers.slice(1, defaultMembers.length),
         newMember
       ]
-      await utils.waitForVisisble(memberPo.membersList.createMemberButton);
+      await utils.waitForVisible(memberPo.membersList.createMemberButton);
       await utils.clickElement(memberPo.membersList.createMemberButton);
-      await utils.waitForVisisble(memberPo.memberForm.submit);
+      await utils.waitForVisible(memberPo.memberForm.submit);
       await utils.clickElement(memberPo.memberForm.submit);
       await utils.assertInputError(memberPo.memberForm.firstname);
       await utils.assertInputError(memberPo.memberForm.lastname);
@@ -106,9 +106,9 @@ describe("Members page", () => {
         updatedMember
       ]
       await memberPo.selectRow(updatedMember.id);
-      await utils.waitForVisisble(memberPo.membersList.renewMemberButton);
+      await utils.waitForVisible(memberPo.membersList.renewMemberButton);
       await utils.clickElement(memberPo.membersList.renewMemberButton);
-      await utils.waitForVisisble(renewalPO.renewalForm.submit);
+      await utils.waitForVisible(renewalPO.renewalForm.submit);
       expect(await utils.getElementText(renewalPO.renewalForm.entity)).toEqual(`${updatedMember.firstname} ${updatedMember.lastname}`);
       await utils.clickElement(renewalPO.renewalForm.submit);
       await utils.assertInputError(renewalPO.renewalForm.termError, true);

@@ -1,10 +1,22 @@
 import { TablePageObject } from "./table";
 const tableId = "membership-reports-table";
 const rentalsListFields = ["date", "reportRequirements", "view"];
+import { MemberDetails } from "app/entities/member";
+import { Report } from "app/entities/earnedMembership";
+import { timeToDate } from "ui/utils/timeToDate";
 
 class ReportsPageObject extends TablePageObject {
   public actionButtons = {
     create: "#report-list-create",
+  }
+
+  public fieldEvaluator = (member?: Partial<MemberDetails>) => (report: Partial<Report>) => (fieldContent: { field: string, text: string }) => {
+    const { field, text } = fieldContent;
+    if (field === "date") {
+      expect(text).toEqual(timeToDate(report.date));
+    } else {
+      expect(text.includes(report[field])).toBeTruthy();
+    }
   }
 
   private reportFormId = "#report-form";
