@@ -12,21 +12,22 @@ export interface EarnedMembership extends NewEarnedMembership {
   memberExpiration: number;
 }
 
-interface Term {
+export interface Term {
   currentCount: number;
   termStartDate: Date;
   termEndDate: Date;
   satisfied: boolean;
 }
 
-export interface Requirement extends Term {
+export interface Requirement extends Partial<Term> {
   id: string;
   name: string;
   rolloverLimit: number;
   termLength: number;
   targetCount: number;
   strict: boolean;
-  termId: string;
+  terms?: Term[];
+  termId?: string;
 }
 
 export interface NewReportRequirement {
@@ -37,7 +38,7 @@ export interface NewReportRequirement {
   termId: string;
 }
 
-export interface ReportRequirement extends Term, NewReportRequirement {
+export interface ReportRequirement extends Partial<Term>, NewReportRequirement {
   id: string;
 }
 

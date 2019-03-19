@@ -34,6 +34,8 @@ export const getDetailsForMember = (member: Partial<MemberDetails>) => {
     details = membershipDetails.paypal;
   } else if (!member.expirationTime) {
     details = membershipDetails.none;
+  } else if (member.earnedMembershipId) {
+    details = membershipDetails.earnedMembership;
   }
   return details;
 }

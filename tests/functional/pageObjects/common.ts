@@ -198,7 +198,7 @@ export class PageUtils {
     }
   }
 
-  public waitForVisisble = async (elementLocator: string) => {
+  public waitForVisible = async (elementLocator: string) => {
     try {
       await browser.wait(() => {
         return this.isElementDisplayed(elementLocator).then((displayed) => displayed);
@@ -216,6 +216,17 @@ export class PageUtils {
       await this.fillInput(elementLocator, dateString);
     } catch {
       throw new Error(`Error writing time: ${timeInMs} for element: ${elementLocator}`);
+    }
+  }
+
+  public fillSearchInput = async (elementLocator: string, searchVal: string, optionValue?: any) => {
+    const element = await this.getElementByCss(`${elementLocator} input`);
+    try {
+      await element.clear();
+      await element.sendKeys(searchVal);
+      await element.sendKeys(Key.ENTER);
+    } catch (e) {
+      throw new Error(`Unable to enter keys: ${searchVal} in input: ${elementLocator}`);
     }
   }
 }

@@ -10,6 +10,7 @@ import { Invoice, InvoiceQueryParams } from "app/entities/invoice";
 import { InvoiceOptionQueryParams } from "api/invoices/interfaces";
 import { PaymentMethod } from "app/entities/paymentMethod";
 import { Permission } from "app/entities/permission";
+import { EarnedMembership, Report } from "app/entities/earnedMembership";
 import { CollectionOf } from "app/interfaces";
 
 enum Method {
@@ -531,17 +532,104 @@ export const mockRequests = {
         }
       })
     }
-  }
+  },
+  earnedMemberships: {
+    get: {
+      ok: (earnedMemberships: Partial<EarnedMembership>[], queryParams?: AnyQueryParam, admin?: boolean): MockRequest => ({
+        httpRequest: {
+          method: Method.Get,
+          path: `/${admin ? Url.Admin.EarnedMemberships : Url.EarnedMemberships}.json`,
+          ...queryParams && {
+            queryStringParameters: objectToQueryParams(queryParams)
+          }
+        },
+        httpResponse: {
+          headers: [{ name: "total-items", value: String(earnedMemberships.length) }],
+          statusCode: 200,
+          body: JSON.stringify({ earnedMemberships })
+        }
+      })
+    },
+    post: {
+      ok: (earnedMembership: Partial<EarnedMembership>, admin = true): MockRequest => ({
+        httpRequest: {
+          method: Method.Post,
+          path: `/${admin ? Url.Admin.EarnedMemberships : Url.EarnedMemberships}.json`,
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({ earnedMembership })
+        }
+      })
+    },
+    show: {
+      ok: (earnedMembership: Partial<EarnedMembership>, admin?: boolean): MockRequest => ({
+        httpRequest: {
+          method: Method.Get,
+          path: `/${admin ? Url.Admin.EarnedMemberships : Url.EarnedMemberships}.json`,
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({ earnedMembership })
+        }
+      })
+    },
+    put: {
+      ok: (earnedMembership: EarnedMembership): MockRequest => ({
+        httpRequest: {
+          method: Method.Put,
+          path: `/${Url.Admin.EarnedMemberships}/${earnedMembership.id}.json`,
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({ earnedMembership })
+        }
+      })
+    }
+  },
+  earnedMembershipReports: {
+    get: {
+      ok: (reports: Partial<Report>[], queryParams?: AnyQueryParam): MockRequest => ({
+        httpRequest: {
+          method: Method.Get,
+          path: `/${Url.EarnedMembershipNamespace.Reports}.json`,
+          ...queryParams && {
+            queryStringParameters: objectToQueryParams(queryParams)
+          }
+        },
+        httpResponse: {
+          headers: [{ name: "total-items", value: String(reports.length) }],
+          statusCode: 200,
+          body: JSON.stringify({ reports })
+        }
+      })
+    },
+    post: {
+      ok: (report: Partial<Report>): MockRequest => ({
+        httpRequest: {
+          method: Method.Post,
+          path: `/${Url.EarnedMembershipNamespace.Reports}.json`,
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({ report })
+        }
+      })
+    },
+  },
 }
 
 
 // By default, mocks 1 response, but can be configured to mock unlimited or specified num
-export const mock = (requestObject: MockRequest, times: number = 1, unlimited: boolean = false) => {
+export const mock = (requestObject: MockRequest, times: number = 1) => {
   const configuredRequest = {
     ...requestObject,
     times: {
-      unlimited,
-      remainingTimes: times,
+      ...times ? {
+        remainingTimes: times,
+      } : {
+        unlimited: true
+      },
     }
   };
   return mockserver.mockAnyResponse(configuredRequest);

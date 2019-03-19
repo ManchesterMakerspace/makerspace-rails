@@ -57,7 +57,7 @@ export class MemberPageObject extends TablePageObject {
   public goToMemberRentals = () =>
     utils.clickElement(this.memberDetail.rentalsTab);
 
-  public gotToMemberDues = () =>
+  public goToMemberDues = () =>
     utils.clickElement(this.memberDetail.duesTab);
 
   private cardFormId = "#card-form";
