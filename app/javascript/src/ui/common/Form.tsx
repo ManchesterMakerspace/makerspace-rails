@@ -129,8 +129,12 @@ class Form extends React.Component<FormModalProps, State> {
   public setError = (fieldName: string, error: string) => {
     return new Promise((resolve) => this.setState(state => ({
       errors: {
-        ...state.errors,
-        [fieldName]: isUndefined(error) ? null : error
+        ...isUndefined(error) ? {
+          ...omit(state.errors, [fieldName])
+        } : {
+            ...state.errors,
+            [fieldName]: error
+        }
       }
     }), resolve))
   }
@@ -178,29 +182,32 @@ class Form extends React.Component<FormModalProps, State> {
   );
   }
 
-  private handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const fieldName = event.target.name;
-    // Set value depending on checked state for checkboxes and radios
-    const fieldValue = event.target.type === "checkbox" ? event.target.checked || event.target.value : event.target.value;
-    const { isDirty } = this.state;
-    if (!isDirty) {
-      this.setState({ isDirty: true });
+  private handleChange = (inputOnChange: (event: any) => void) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target) {
+      const fieldName = event.target.name;
+      // Set value depending on checked state for checkboxes and radios
+      const fieldValue = event.target.type === "checkbox" ? event.target.checked || event.target.value : event.target.value;
+      const { isDirty } = this.state;
+      if (!isDirty) {
+        this.setState({ isDirty: true });
+      }
+      this.setState((state) => {
+        return {
+          values: {
+            ...state.values,
+            [fieldName]: isUndefined(fieldValue) ? null : fieldValue as string
+          },
+          touched: {
+            ...state.touched,
+            [fieldName]: true
+          },
+          errors: {
+            ...omit(state.errors, [fieldName])
+          }
+        };
+      });
     }
-    this.setState((state) => {
-      return {
-        values: {
-          ...state.values,
-          [fieldName]: isUndefined(fieldValue) ? null : fieldValue as string
-        },
-        touched: {
-          ...state.touched,
-          [fieldName]: true
-        },
-        errors: {
-          ...omit(state.errors, [fieldName])
-        }
-      };
-    });
+    inputOnChange && inputOnChange(event);
   }
 
   private getFormInput = (element: ChildNode): ChildNode => {
@@ -265,7 +272,7 @@ class Form extends React.Component<FormModalProps, State> {
     const { values, errors } = this.state;
     const fieldName = input.props.name;
     const id = input.props.id || fieldName;
-    const onChange = input.props.onChange || this.handleChange;
+    const onChange = this.handleChange(input.props.onChange);
     const error = errors[fieldName];
     const value = values[fieldName] || "";
 

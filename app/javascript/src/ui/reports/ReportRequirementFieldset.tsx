@@ -209,7 +209,7 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
   public render(): JSX.Element {
     const { requirement, disabled, index, reportRequirement } = this.props;
     const fields = reportRequirementFields(requirement, index);
-    const requirementFormId = `report-requirement-form-${index}`;
+    const requirementFormId = `${formPrefix}-${index}`;
     return (
       <Form
         ref={this.setFormRef}

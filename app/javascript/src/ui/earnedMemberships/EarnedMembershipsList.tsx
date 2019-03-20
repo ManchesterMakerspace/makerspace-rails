@@ -96,12 +96,6 @@ class EarnedMembershipList extends React.Component<Props, State> {
 
 
     const createForm = (renderProps: UpdateMembershipRenderProps) => {
-      const submitCreate = async (form: Form) => {
-        const newMembership = await renderProps.submit(form);
-        if (newMembership) {
-          this.getMemberships();
-        }
-      }
       return (<EarnedMembershipForm
         ref={renderProps.setRef}
         membership={renderProps.membership}
@@ -109,7 +103,7 @@ class EarnedMembershipList extends React.Component<Props, State> {
         isRequesting={renderProps.isRequesting}
         error={renderProps.error}
         onClose={renderProps.closeHandler}
-        onSubmit={submitCreate}
+        onSubmit={renderProps.submit}
         title="Create New Membership"
       />)
     }

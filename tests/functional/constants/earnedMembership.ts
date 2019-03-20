@@ -87,6 +87,7 @@ export const defaultReports: Report[] = new Array(20).fill(undefined).map((_, in
   }
   return {
     ...basicReport,
+    id: `test_report_${index}`,
     date
   }
 })
