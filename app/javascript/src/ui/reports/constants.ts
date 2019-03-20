@@ -18,14 +18,14 @@ export const formPrefix = "report-form";
 export const reportRequirementFields = (requirement: Requirement, index: number): FormFields => ({
   reportedCount: {
     label: `Number of completed ${requirement.name.toLowerCase()} for this report`,
-    name: `${formPrefix}-reportedCount-${index}`,
+    name: `${formPrefix}-${index}-reportedCount`,
     placeholder: 'Select a number',
     validate: (val: string) => !!Number(val),
     error: "Please enter a number"
   },
   memberId: {
     label: "Select a member you helped",
-    name: `${formPrefix}-members-${index}`,
+    name: `${formPrefix}-${index}-members`,
     placeholder: `Search by name or email`,
     transform: (val: MemberDetails | string) => isObject(val) ? (val as MemberDetails).id : val,
     error: "Must select members you helped for this requirement"

@@ -1,10 +1,10 @@
 import { TablePageObject } from "./table";
 const tableId = "membership-reports-table";
-const rentalsListFields = ["date", "reportRequirements", "view"];
 import { MemberDetails } from "app/entities/member";
 import { Report } from "app/entities/earnedMembership";
 import { timeToDate } from "ui/utils/timeToDate";
 
+const rentalsListFields = ["date", "view"];
 class ReportsPageObject extends TablePageObject {
   public actionButtons = {
     create: "#report-list-create",
@@ -20,21 +20,28 @@ class ReportsPageObject extends TablePageObject {
   }
 
   private reportFormId = "#report-form";
-  private reportRequirementFormId = "#report-requirement-form-{requirementIndex}";
+  private reportRequirementFormId = "#report-form-{requirementIndex}";
+
+  public getReportRequirementPrefix = (index: number) =>
+    this.reportRequirementFormId.replace("{requirementIndex}", String(index));
+
+  public reportRequirementForm = (index: number) => ({
+    reportedCount: `${this.getReportRequirementPrefix(index)}-reportedCount`,
+    member: this.memberInput(index),
+    addMemberButton: `${this.getReportRequirementPrefix(index)}-add-member-row`,
+    removeMemberButton: `${this.getReportRequirementPrefix(index)}-remove-member-row`,
+  });
+  public memberInput = (formIndex: number) => (memberIndex: number) =>
+    `${this.getReportRequirementPrefix(formIndex)}-members-${memberIndex}`;
+
   public reportForm = {
     id: `${this.reportFormId}`,
     requirementName: `${this.reportFormId}-name`,
     requirementTermStart: `${this.reportFormId}-termStart`,
     requirementTermEnd: `${this.reportFormId}-termEnd`,
     requirementTargetCount: `${this.reportFormId}-targetCount`,
-
-    reportDate: `${this.reportFormId}-date`,
     requirementCompleted: `${this.reportFormId}-completed`,
-
-    reportedCount: `${this.reportFormId}-reportedCount-{requirementIndex}`,
-    member: `${this.reportFormId}-memberId-{requirementIndex}-{memberIndex}`,
-    addMemberButton: `${this.reportRequirementFormId}-add-member-row`,
-    removeMemberButton: `${this.reportRequirementFormId}-remove-member-row`,
+    reportDate: `${this.reportFormId}-date`,
 
     submit: `${this.reportFormId}-submit`,
     cancel: `${this.reportFormId}-cancel`,

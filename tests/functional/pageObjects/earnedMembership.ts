@@ -4,7 +4,7 @@ import { timeToDate } from "ui/utils/timeToDate";
 import { EarnedMembership, Report, Requirement, Term, ReportRequirement } from "app/entities/earnedMembership";
 
 const tableId = "memberships-table";
-const rentalsListFields = ["lastname", "expirationTime", "status"];
+const emListFields = ["lastname", "expirationTime", "status"];
 
 class EarnedMembershipsPageObject extends TablePageObject {
   public listUrl = Routing.EarnedMemberships
@@ -47,8 +47,9 @@ class EarnedMembershipsPageObject extends TablePageObject {
     error: `${this.membershipFormId}-error`,
     loading: `${this.membershipFormId}-loading`,
     member: `${this.membershipFormId}-member`,
-    addRequirementButton: "#add-requirement"
+    addRequirementButton: "#add-requirement",
+    removeRequirementButton: "#remove-requirement"
   }
 }
 
-export default new EarnedMembershipsPageObject(tableId, rentalsListFields);
+export default new EarnedMembershipsPageObject(tableId, emListFields);

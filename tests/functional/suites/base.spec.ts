@@ -3,11 +3,11 @@ import utils, { rootURL } from "../pageObjects/common";
 
 // Set locating timeout to 10s
 utils.setLocatorTimeout(10000);
-// Set Jest timeout to 2m
+// Set Jest timeout to 3m
 // Since this is for functional testing, these tests may take several minutes to complete
 // Make sure enough time is allowed so that test can complete
 // Locator timeout (10s) should fail these tests before this timeout is reached
-jest.setTimeout(120000);
+jest.setTimeout(180000);
 
 beforeEach(async () => {
   return resetMockserver();

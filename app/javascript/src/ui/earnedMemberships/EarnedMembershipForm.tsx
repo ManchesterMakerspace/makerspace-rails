@@ -70,7 +70,6 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
   // Need to update internal state and set form value since input is otherwise a controlled input
   private updateMemberValue = (newMember: SelectOption) => {
     this.setState({ member: newMember });
-    this.formRef && this.formRef.setValue(earnedMembershipFields.memberId.name, newMember);
   }
 
   private addRequirement = () => {
@@ -240,6 +239,7 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
             placeholder={earnedMembershipFields.memberId.placeholder}
             id={earnedMembershipFields.memberId.name}
             loadOptions={this.memberOptions}
+            getFormRef={() => this.formRef}
           />
         </Grid>
         <Grid item xs={12}>
@@ -263,7 +263,7 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
               },
               ...this.state.requirementCount > 1 ? [{
                 color: "secondary",
-                id: "add-requirement",
+                id: "remove-requirement",
                 variant: "outlined",
                 onClick: this.removeRequirement,
                 label: "Remove Requirement",

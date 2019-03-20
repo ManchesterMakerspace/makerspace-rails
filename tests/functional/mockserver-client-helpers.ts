@@ -566,7 +566,7 @@ export const mockRequests = {
       ok: (earnedMembership: Partial<EarnedMembership>, admin?: boolean): MockRequest => ({
         httpRequest: {
           method: Method.Get,
-          path: `/${admin ? Url.Admin.EarnedMemberships : Url.EarnedMemberships}.json`,
+          path: `/${admin ? Url.Admin.EarnedMemberships : Url.EarnedMemberships}/${earnedMembership.id}.json`,
         },
         httpResponse: {
           statusCode: 200,
