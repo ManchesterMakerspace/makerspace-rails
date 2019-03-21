@@ -1,4 +1,5 @@
 import * as React from "react";
+import debounce from "lodash-es/debounce";
 import AsyncSelect, { Props as AsyncProps } from 'react-select/lib/Async';
 import { formDialogClass } from "ui/common/FormModal";
 import { SelectOption } from "ui/common/RenewalForm";
@@ -27,7 +28,7 @@ const AsyncSelectFixed: React.SFC<Props> = (props) => {
     ...formDialog && {
       menuPortalTarget: formDialog as HTMLElement
     },
-    onChange
+    onChange: debounce(onChange, 250)
   }
   return <AsyncSelect {...modifiedProps } />
 }
