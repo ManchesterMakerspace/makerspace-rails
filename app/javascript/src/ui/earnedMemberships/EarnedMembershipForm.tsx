@@ -116,6 +116,9 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
       const index = Number(strIndex); // Normalize string as number
       const relatedRequirement = requirements[index] || {} as Requirement; // Get req from list or create new one
 
+     if (!prop) { // May just get a fieldset without any fields. If so, skip over it
+       return requirements;
+     }
       const { transform, validate, error } = requirementFields[prop]; // Transform, validate, then update
       const transformedVal = transform ? transform(value) : value;
       if (validate && !validate(transformedVal)) {

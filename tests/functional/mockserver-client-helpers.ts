@@ -589,10 +589,10 @@ export const mockRequests = {
   },
   earnedMembershipReports: {
     get: {
-      ok: (reports: Partial<Report>[], queryParams?: AnyQueryParam): MockRequest => ({
+      ok: (membershipId: string, reports: Partial<Report>[], queryParams?: AnyQueryParam, admin?: boolean): MockRequest => ({
         httpRequest: {
           method: Method.Get,
-          path: `/${Url.EarnedMembershipNamespace.Reports}.json`,
+          path: `/${admin ? Url.Admin.EarnedMemberships : Url.EarnedMemberships}/${membershipId}/reports.json`,
           ...queryParams && {
             queryStringParameters: objectToQueryParams(queryParams)
           }
@@ -605,10 +605,10 @@ export const mockRequests = {
       })
     },
     post: {
-      ok: (report: Partial<Report>): MockRequest => ({
+      ok: (membershipId: string, report: Partial<Report>): MockRequest => ({
         httpRequest: {
           method: Method.Post,
-          path: `/${Url.EarnedMembershipNamespace.Reports}.json`,
+          path: `/${Url.EarnedMemberships}/${membershipId}/reports.json`,
         },
         httpResponse: {
           statusCode: 200,

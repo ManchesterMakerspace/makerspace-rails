@@ -10,8 +10,9 @@ import reportPO from "../pageObjects/report";
 import utils from "../pageObjects/common";
 import header from "../pageObjects/header";
 import memberPO from "../pageObjects/member";
+import earnedMembership from "../pageObjects/earnedMembership";
 
-describe("Earned Memberships", () => {
+fdescribe("Earned Memberships", () => {
   describe("Admin user", () => {
     describe("From list view", () => {
       const newRequirement: Requirement = {
@@ -86,7 +87,7 @@ describe("Earned Memberships", () => {
 
 
       });
-      it("Create membership form validation", async (done) => {
+      fit("Create membership form validation", async (done) => {
         await utils.clickElement(membershipPO.actionButtons.create);
         await utils.waitForVisible(membershipPO.membershipForm.submit);
 
@@ -120,18 +121,46 @@ describe("Earned Memberships", () => {
         done();
       });
     });
+    describe("Viewing earned member's reports", () => {
+      const membershipUser: LoginMember = {
+        ...basicUser,
+        earnedMembershipId: "foo"
+      }
+      const membership = {
+        ...basicEarnedMembership,
+        memberId: basicUser.id,
+        id: membershipUser.earnedMembershipId,
+      }
+      const reports: Report[] = defaultReports.map(r => ({ ...r, earnedMembership: membership.id }));
+      beforeEach(() => {
+        return mock(mockRequests.earnedMembershipReports.get.ok(membership.id, reports, {}, true)).then(async () => {
+          await mock(mockRequests.earnedMemberships.show.ok(membership, true));
+          await auth.autoLogin(adminUser, memberPO.getProfilePath(membershipUser.id), { earned_membership: true });
+          expect(await utils.isElementDisplayed(reportPO.getErrorRowId())).toBeFalsy();
+          expect(await utils.isElementDisplayed(reportPO.getNoDataRowId())).toBeFalsy();
+          expect(await utils.isElementDisplayed(reportPO.getLoadingId())).toBeFalsy();
+          expect(await utils.isElementDisplayed(reportPO.getTitleId())).toBeTruthy();
+          expect(await reportPO.getColumnText("date", defaultReports[0].id)).toBeTruthy();
+        });
+      })
+      it("Can view list of reports in profile", async (done) => {
+        await reportPO.verifyListView(reports, reportPO.fieldEvaluator);
+        done();
+      });
+    });
   });
-  fdescribe("Earned member reporting", () => {
+  describe("Earned member reporting", () => {
     const membershipUser = {
       ...basicUser,
       earnedMembershipId: "foo"
     }
     const updatedMember: LoginMember = {
-      ...basicUser,
+      ...membershipUser,
       expirationTime: moment().add(2, "months").valueOf()
     }
     const membership = {
       ...basicEarnedMembership,
+      memberId: updatedMember.id,
       id: membershipUser.earnedMembershipId,
     }
     const newReportRequirement: ReportRequirement = {
@@ -140,10 +169,11 @@ describe("Earned Memberships", () => {
     };
     const initReport: Report = {
       ...basicReport,
+      earnedMembershipId: membership.id,
       reportRequirements: [newReportRequirement]
     };
     beforeEach(() => {
-      return mock(mockRequests.earnedMembershipReports.get.ok(defaultReports, {})).then(async () => {
+      return mock(mockRequests.earnedMembershipReports.get.ok(membership.id, defaultReports, {})).then(async () => {
         await mock(mockRequests.earnedMemberships.show.ok(membership));
         await auth.autoLogin(membershipUser, undefined, { earned_membership: true });
         expect(await utils.isElementDisplayed(reportPO.getErrorRowId())).toBeFalsy();
@@ -161,18 +191,19 @@ describe("Earned Memberships", () => {
       await utils.clickElement(reportPO.actionButtons.create);
       await utils.waitForVisible(reportPO.reportForm.submit);
 
-      await mock(mockRequests.members.get.ok(defaultMembers), 0);
+      await mock(mockRequests.members.get.ok(defaultMembers));
       await utils.fillSearchInput(reportPO.reportRequirementForm(0).member(0), defaultMembers[0].email, defaultMembers[0].id);
 
       await utils.fillInput(reportPO.reportRequirementForm(0).reportedCount, String(newReportRequirement.reportedCount));
 
       await utils.clickElement(reportPO.reportRequirementForm(0).addMemberButton);
-      await mock(mockRequests.members.get.ok(defaultMembers.slice(1, 10)), 0);
-      await utils.fillSearchInput(reportPO.reportRequirementForm(0).member(1), defaultMembers[1].email, defaultMembers[1].id);
+      const newMemberSearch = defaultMembers.slice(5, 10);
+      await mock(mockRequests.members.get.ok(newMemberSearch));
+      await utils.fillSearchInput(reportPO.reportRequirementForm(0).member(1), newMemberSearch[1].email, newMemberSearch[1].id);
 
-      await mock(mockRequests.earnedMembershipReports.post.ok(initReport));
-      await mock(mockRequests.earnedMembershipReports.get.ok([initReport], undefined));
-      await mock(mockRequests.earnedMemberships.show.ok(membership));
+      await mock(mockRequests.earnedMembershipReports.post.ok(membership.id, initReport));
+      await mock(mockRequests.earnedMembershipReports.get.ok(membership.id, [initReport]));
+      await mock(mockRequests.earnedMemberships.show.ok(membership), 2);
       await mock(mockRequests.member.get.ok(updatedMember.id, updatedMember));
       await utils.clickElement(reportPO.reportForm.submit);
       await utils.waitForNotVisible(reportPO.reportForm.submit);
@@ -194,11 +225,12 @@ describe("Earned Memberships", () => {
       expect(await utils.isElementDisplayed(reportPO.reportRequirementForm(0).member(1))).toBeTruthy();
 
       // No create mock, should display API error
-      expect(await utils.isElementDisplayed(reportPO.reportForm.error)).toBeFalsy();
+      expect(await utils.isElementDisplayed(reportPO.reportForm.error)).toBeTruthy();
       await utils.clickElement(reportPO.reportForm.submit);
       await utils.waitForVisible(reportPO.reportForm.error);
-      await mock(mockRequests.earnedMembershipReports.post.ok(initReport));
-      await mock(mockRequests.earnedMemberships.show.ok(membership));
+      await mock(mockRequests.earnedMembershipReports.post.ok(membership.id, initReport));
+      await mock(mockRequests.earnedMembershipReports.get.ok(membership.id, [initReport]));
+      await mock(mockRequests.earnedMemberships.show.ok(membership), 2);
       await mock(mockRequests.member.get.ok(updatedMember.id, updatedMember));
       await utils.clickElement(reportPO.reportForm.submit);
       await utils.waitForNotVisible(reportPO.reportForm.submit);
