@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Url } from "app/constants";
 import { buildJsonUrl } from "app/utils";
-import { buildMembershipUrl } from "api/earnedMemberships/utils";
+import { buildMembershipUrl, buildReportsUrl } from "api/earnedMemberships/utils";
 import { handleApiError } from "api/utils/handleApiError";
 import { QueryParams } from "app/interfaces";
 import { EarnedMembership, Report } from "app/entities/earnedMembership";
@@ -42,9 +42,9 @@ export const postMembership = async (details: Partial<EarnedMembership>) => {
   }
 }
 
-export const getReports = async (queryparams?: QueryParams) => {
+export const getReports = async (membershipId: string, queryparams: QueryParams, isAdmin: boolean) => {
   try {
-    return await axios.get(buildJsonUrl(Url.EarnedMembershipNamespace.Reports), { params: queryparams });
+    return await axios.get(buildReportsUrl(membershipId, isAdmin), { params: queryparams });
   } catch (e) {
     const error = handleApiError(e);
     throw error;
@@ -53,7 +53,7 @@ export const getReports = async (queryparams?: QueryParams) => {
 
 export const postReport = async (details: Partial<Report>) => {
   try {
-    return await axios.post(buildJsonUrl(Url.EarnedMembershipNamespace.Reports), { report: details });
+    return await axios.post(buildReportsUrl(details.earnedMembershipId, false), { report: details });
   } catch (e) {
     const error = handleApiError(e);
     throw error;
