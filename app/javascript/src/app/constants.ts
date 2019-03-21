@@ -55,7 +55,10 @@ export namespace Url {
     Permission: `${baseAdminPath}/permissions/${PathPlaceholder.MemberId}`,
 
     EarnedMemberships: `${baseAdminPath}/earned_memberships`,
-    EarnedMembership: `${baseAdminPath}/earned_memberships/${PathPlaceholder.MembershipId}`
+    EarnedMembership: `${baseAdminPath}/earned_memberships/${PathPlaceholder.MembershipId}`,
+    EarnedMembershipNamespace: {
+      Reports: `${baseAdminPath}/earned_memberships/${PathPlaceholder.MembershipId}/reports`
+    }
   }
 
   export const Billing = {
@@ -71,7 +74,7 @@ export namespace Url {
   export const EarnedMemberships = `${baseApiPath}/earned_memberships`
   export const EarnedMembership = `${EarnedMemberships}/${PathPlaceholder.MembershipId}`
   export const EarnedMembershipNamespace ={
-    Reports: `${EarnedMemberships}/reports`
+    Reports: `${EarnedMembership}/reports`
   }
 }
 

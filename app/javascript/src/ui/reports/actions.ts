@@ -13,12 +13,14 @@ import { Report, NewReport } from "app/entities/earnedMembership";
 
 
 export const readReportsAction = (
-  queryParams?: QueryParams
+  membershipId: string,
+  queryParams: QueryParams,
+  isAdmin: boolean,
 ): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
   dispatch({ type: ReportAction.StartReadRequest });
 
   try {
-    const response = await getReports(queryParams);
+    const response = await getReports(membershipId, queryParams, isAdmin);
     const { reports } = response.data;
     const totalItems = response.headers[("total-items")];
     dispatch({

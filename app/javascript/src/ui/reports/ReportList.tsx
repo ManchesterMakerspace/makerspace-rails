@@ -26,7 +26,7 @@ interface OwnProps extends RouteComponentProps<{}> {
   member: MemberDetails;
 }
 interface DispatchProps {
-  getReports: (queryParams?: QueryParams) => void;
+  getReports: (queryParams: QueryParams, admin: boolean) => void;
 }
 interface StateProps {
   reports: CollectionOf<Report>;
@@ -36,8 +36,12 @@ interface StateProps {
   isCreating: boolean;
   createError: string;
   earnedMembership: EarnedMembership;
+  isOwnMembership: boolean;
+  isAdmin: boolean;
 }
-interface Props extends OwnProps, DispatchProps, StateProps { }
+interface Props extends OwnProps, StateProps {
+  getReports: (queryParams: QueryParams) => void;
+}
 interface State {
   selectedId: string;
   pageNum: number;
@@ -200,12 +204,6 @@ class ReportList extends React.Component<Props, State> {
     );
   }
 
-  private onSearchEnter = (searchTerm: string) => {
-    this.setState({ search: searchTerm, pageNum: 0 },
-      () => this.getReports(true)
-    );
-  }
-
   // Only select one at a time
   private onSelect = (id: string, selected: boolean) => {
     if (selected) {
@@ -222,6 +220,7 @@ class ReportList extends React.Component<Props, State> {
       loading,
       error,
       member,
+      isOwnMembership
     } = this.props;
 
     const {
@@ -234,7 +233,7 @@ class ReportList extends React.Component<Props, State> {
     return (
       <Grid container spacing={24} justify="center">
         <Grid item md={member ? 12 : 10} xs={12}>
-          {this.getActionButtons()}
+          {isOwnMembership && this.getActionButtons()}
           <TableContainer
             id="membership-reports-table"
             title="Earned Membership Reports"
@@ -242,16 +241,13 @@ class ReportList extends React.Component<Props, State> {
             data={Object.values(reports)}
             error={error}
             totalItems={totalItems}
-            selectedIds={[selectedId]}
             pageNum={pageNum}
-            onSearchEnter={this.onSearchEnter}
             columns={this.fields}
             order={order}
             orderBy={orderBy}
             onSort={this.onSort}
             rowId={this.rowId}
             onPageChange={this.onPageChange}
-            onSelect={this.onSelect}
           />
           {this.renderMembershipForms()}
         </Grid>
@@ -286,6 +282,7 @@ const mapStateToProps = (
   const error = membershipError || reportsError;
   const earnedMembershipId = ownProps.member.earnedMembershipId;
   const earnedMembership = state.earnedMemberships.entities[earnedMembershipId];
+  const { currentUser: { id: currentUserId, isAdmin } } = state.auth;
   return {
     reports,
     totalItems,
@@ -294,6 +291,8 @@ const mapStateToProps = (
     isCreating,
     createError,
     earnedMembership,
+    isAdmin,
+    isOwnMembership: currentUserId === ownProps.member.id,
   }
 }
 
@@ -302,8 +301,20 @@ const mapDispatchToProps = (
   ownProps: OwnProps
 ): DispatchProps => {
   return {
-    getReports: (queryParams) => dispatch(readReportsAction(queryParams)),
+    getReports: (queryParams, isAdmin) => dispatch(readReportsAction(ownProps.member.earnedMembershipId, queryParams, isAdmin)),
   }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ReportList));
+const mergeProps = (
+  stateProps: StateProps,
+  dispatchProps: DispatchProps,
+  ownProps: OwnProps,
+): Props => {
+  return {
+    ...stateProps,
+    ...ownProps,
+    getReports: (queryParams) => dispatchProps.getReports(queryParams, stateProps.isAdmin && !stateProps.isOwnMembership)
+  }
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(ReportList));
