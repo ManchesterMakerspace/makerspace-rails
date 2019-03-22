@@ -52,7 +52,9 @@ class EditEarnedMembership extends React.Component<Props> {
 
   private submitForm = async (form: Form) => {
     const validUpdate: NewEarnedMembership = await this.formRef.validate(form);
-
+    console.log("IS VALID", form.isValid());
+    console.log("Errors", form.getErrors());
+    console.log("VALUES", form.getValues());
     if (!form.isValid()) {
       const errors = document.querySelectorAll('[id$="-error')
       errors[0] && (errors[0] as HTMLElement).focus();

@@ -54,7 +54,7 @@ type ChildNode = React.ReactElement<HTMLFormElement>;
 
 class Form extends React.Component<FormModalProps, State> {
 
-  private extractInputNames = (values: CollectionOf<string> = {}, input: ChildNode) => {
+  private extractInputNames = (values: CollectionOf<string>, input: ChildNode) => {
     if (input && input.props) {
       // Get input name
       const formInput = this.getFormInput(input);
@@ -68,7 +68,7 @@ class Form extends React.Component<FormModalProps, State> {
       if (React.Children.count(input.props.children) > 0) {
         values = {
           ...values,
-          ...this.extractNamesFromChildren(input.props.children)
+          ...this.extractNamesFromChildren(input.props.children, values)
         }
       }
     }
@@ -76,15 +76,15 @@ class Form extends React.Component<FormModalProps, State> {
     return values;
   }
 
-  private extractNamesFromChildren = (children: React.ReactNode) => {
-    return React.Children.toArray(children).reduce(this.extractInputNames, (this.state || {} as State).values);
+  private extractNamesFromChildren = (children: React.ReactNode, values: CollectionOf<string> = {}) => {
+    return React.Children.toArray(children).reduce(this.extractInputNames, values);
   }
 
   /**
    * Set values to collection of strings by input name
    */
-  private getDefaultState = (props: FormModalProps): State => {
-    const defaultValues = this.extractNamesFromChildren(props.children);
+  private getDefaultState = (props: FormModalProps, resetState?: boolean): State => {
+    const defaultValues = this.extractNamesFromChildren(props.children, resetState ? {} : (this.state || {} as State).values);
 
     return (
       {
@@ -106,7 +106,19 @@ class Form extends React.Component<FormModalProps, State> {
   }
 
   public resetForm = () => {
-    this.setState({ ...this.getDefaultState(this.props) });
+    this.setState(state => {
+      const defaultState = this.getDefaultState(this.props, true);
+      const oldValues = state.values;
+      const values = Object.entries(defaultState.values).reduce((values, [key, val]) => {
+        const oldVal = oldValues[key];
+        values[key] = oldVal || val;
+        return values;
+      }, {})
+     return {
+       ...defaultState,
+       values
+      };
+    });
   }
 
   public getValues = (): CollectionOf<string> => {
@@ -145,6 +157,10 @@ class Form extends React.Component<FormModalProps, State> {
 
   public isDirty = (): boolean => {
     return this.state.isDirty;
+  }
+
+  public getErrors = () => {
+    return this.state.errors;
   }
 
   public simpleValidate = async <T extends object>(fields: FormFields) => {

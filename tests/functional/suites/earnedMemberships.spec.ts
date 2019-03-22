@@ -10,7 +10,6 @@ import reportPO from "../pageObjects/report";
 import utils from "../pageObjects/common";
 import header from "../pageObjects/header";
 import memberPO from "../pageObjects/member";
-import earnedMembership from "../pageObjects/earnedMembership";
 
 fdescribe("Earned Memberships", () => {
   describe("Admin user", () => {
@@ -87,7 +86,7 @@ fdescribe("Earned Memberships", () => {
 
 
       });
-      fit("Create membership form validation", async (done) => {
+      it("Create membership form validation", async (done) => {
         await utils.clickElement(membershipPO.actionButtons.create);
         await utils.waitForVisible(membershipPO.membershipForm.submit);
 
@@ -134,6 +133,7 @@ fdescribe("Earned Memberships", () => {
       const reports: Report[] = defaultReports.map(r => ({ ...r, earnedMembership: membership.id }));
       beforeEach(() => {
         return mock(mockRequests.earnedMembershipReports.get.ok(membership.id, reports, {}, true)).then(async () => {
+          await mock(mockRequests.member.get.ok(membershipUser.id, membershipUser));
           await mock(mockRequests.earnedMemberships.show.ok(membership, true));
           await auth.autoLogin(adminUser, memberPO.getProfilePath(membershipUser.id), { earned_membership: true });
           expect(await utils.isElementDisplayed(reportPO.getErrorRowId())).toBeFalsy();
