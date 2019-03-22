@@ -58,7 +58,7 @@ describe("Earned Memberships", () => {
         await utils.clickElement(membershipPO.actionButtons.create);
         await utils.waitForVisible(membershipPO.membershipForm.submit);
 
-        await mock(mockRequests.members.get.ok(defaultMembers));
+        await mock(mockRequests.members.get.ok(defaultMembers), 0);
         await utils.fillSearchInput(membershipPO.membershipForm.member, defaultMembers[0].email, defaultMembers[0].id);
 
         await utils.fillInput(membershipPO.requirementForm(0).name, newRequirement.name);
@@ -119,7 +119,7 @@ describe("Earned Memberships", () => {
         await utils.assertInputError(membershipPO.requirementForm(0).name)
         await utils.assertInputError(membershipPO.requirementForm(0).targetCount)
 
-        await mock(mockRequests.members.get.ok(defaultMembers));
+        await mock(mockRequests.members.get.ok(defaultMembers), 0);
         await utils.fillSearchInput(membershipPO.membershipForm.member, defaultMembers[0].email, defaultMembers[0].id);
 
         await utils.fillInput(membershipPO.requirementForm(0).name, newRequirement.name);
