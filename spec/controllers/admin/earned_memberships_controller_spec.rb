@@ -84,6 +84,22 @@ RSpec.describe Admin::EarnedMembershipsController, type: :controller do
         expect(response.content_type).to eq "application/json"
         expect(parsed_response["earnedMembership"]["memberName"]).to eq(diff_member.fullname)
       end
+
+      it "Deletes requirements missing from params" do
+        member = create(:member)
+        requirement_1 = create(:requirement)
+        requirement_2 = create(:requirement)
+        init_membership = create(:earned_membership_no_requirements, member: member, requirements: [requirement_1, requirement_2])
+        expect(init_membership.requirements.count).to eq(2)
+        update_params = {
+          requirements: [requirement_1].as_json
+        }
+        put :update, params: { id: init_membership.id, earned_membership: update_params }, format: :json
+        parsed_response = JSON.parse(response.body)
+        expect(response).to have_http_status(200)
+        expect(response.content_type).to eq "application/json"
+        expect(parsed_response["earnedMembership"]["requirements"].count).to eq(1)
+      end
     end
   end
 
