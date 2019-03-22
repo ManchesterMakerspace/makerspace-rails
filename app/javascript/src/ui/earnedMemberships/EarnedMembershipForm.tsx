@@ -34,6 +34,7 @@ type SelectOption = { label: string, value: string, id?: string };
 interface State {
   requirementCount: number;
   member: SelectOption;
+  strictMap: boolean[];
 }
 
 const requirementNamePrefix = `${formPrefix}-requirement-`;
@@ -46,13 +47,14 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
     this.state = {
       requirementCount: 1,
       member: undefined,
+      strictMap: [],
     }
   }
 
   private initMember = async () => {
     const { membership } = this.props;
-    this.setState({ member: { value: membership.memberId, label: membership.memberName, id: membership.memberId } })
     if (membership && membership.memberId) {
+      this.setState({ member: { value: membership.memberId, label: membership.memberName, id: membership.memberId } })
       try {
         const { data } = await getMember(membership.memberId);
         const { member } = data;
@@ -91,7 +93,9 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
     const { isOpen, member, membership } = this.props;
     if (isOpen === !wasOpen) {
       this.initMember();
-      this.setState({ requirementCount: membership && Array.isArray(membership.requirements) ? membership.requirements.length : 1 });
+      this.setState({
+        requirementCount: membership && Array.isArray(membership.requirements) ? membership.requirements.length : 1,
+        strictMap: membership ? (membership.requirements || []).map(req => req.strict) : [] });
     }
     if (member && member !== prevProps.member) {
       this.formRef && this.formRef.resetForm();
@@ -99,6 +103,7 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
   }
 
   public validate = async (form: Form) => {
+    const { strictMap } = this.state;
     const values = form.getValues();
     const result = await form.simpleValidate<{ memberId: string }>(earnedMembershipFields);
     const {
@@ -120,7 +125,11 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
        return requirements;
      }
       const { transform, validate, error } = requirementFields[prop]; // Transform, validate, then update
-      const transformedVal = transform ? transform(value) : value;
+      let val: any = value;
+      if (prop === "strict") {
+        val = strictMap[index];
+      }
+      const transformedVal = transform ? transform(val) : val;
       if (validate && !validate(transformedVal)) {
         form.setError(fieldName, error);
       } else {
@@ -139,8 +148,21 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
   private getRequirementName = (index: number) =>
     `${requirementNamePrefix}${index}`
 
+  private updateStrict = (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = event.target.checked;
+    this.setState(state => {
+      const map = state.strictMap.slice();
+      map[index] = checked;
+      return { strictMap: map };
+    })
+  }
+
   private renderRequirementRow = (index: number) => {
+    const { membership } = this.props;
+    const { strictMap } = this.state;
     const fieldName = this.getRequirementName(index);
+    const requirement = membership && membership.requirements && membership.requirements[index];
+    const strict = requirement ? strictMap[index] : false;
 
     return (
       <Card>
@@ -150,6 +172,8 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
               <TextField
                 fullWidth
                 required
+                value={requirement && requirement.name}
+                disabled={requirement && !!requirement.name}
                 label={requirementFields.name.label}
                 name={`${fieldName}-${requirementFields.name.name}`}
                 id={`${fieldName}-${requirementFields.name.name}`}
@@ -159,6 +183,7 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
             <Grid item xs={12}>
               <TextField
                 fullWidth
+                value={requirement && requirement.rolloverLimit}
                 label={requirementFields.rolloverLimit.label}
                 name={`${fieldName}-${requirementFields.rolloverLimit.name}`}
                 id={`${fieldName}-${requirementFields.rolloverLimit.name}`}
@@ -170,8 +195,8 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
               <Select
                 name={`${fieldName}-${requirementFields.termLength.name}`}
                 id={`${fieldName}-${requirementFields.termLength.name}`}
+                value={requirement ? requirement.termLength : "1"}
                 fullWidth
-                value="1"
                 native
                 required
                 placeholder={requirementFields.termLength.placeholder}
@@ -191,6 +216,7 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
               <TextField
                 fullWidth
                 required
+                value={requirement && requirement.targetCount}
                 label={requirementFields.targetCount.label}
                 name={`${fieldName}-${requirementFields.targetCount.name}`}
                 id={`${fieldName}-${requirementFields.targetCount.name}`}
@@ -201,6 +227,9 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
               <FormControlLabel
                 control={
                   <Checkbox
+                    checked={strict}
+                    value={`${fieldName}-${requirementFields.strict.name}`}
+                    onChange={this.updateStrict(index)}
                     name={`${fieldName}-${requirementFields.strict.name}`}
                     id={`${fieldName}-${requirementFields.strict.name}`}
                     color="default"
@@ -227,7 +256,7 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
   }
 
   private renderFormContents = () => {
-    const { member } = this.props;
+    const { membership } = this.props;
 
     return (
       <Grid container spacing={24}>
@@ -238,7 +267,7 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
             name={earnedMembershipFields.memberId.name}
             value={this.state.member}
             onChange={this.updateMemberValue}
-            isDisabled={member && !!member.id}
+            isDisabled={membership && !!membership.id}
             placeholder={earnedMembershipFields.memberId.placeholder}
             id={earnedMembershipFields.memberId.name}
             loadOptions={this.memberOptions}
