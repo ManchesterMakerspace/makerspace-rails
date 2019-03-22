@@ -26,7 +26,7 @@ export const getMembership = async (membershipId: string, admin?: boolean) => {
 
 export const putMembership = async (id: string, details: Partial<EarnedMembership>) => {
   try {
-    return await axios.put(buildMembershipUrl(id), { earnedMembership: details });
+    return await axios.put(buildMembershipUrl(id, true), { earnedMembership: details });
   } catch (e) {
     const error = handleApiError(e);
     throw error;

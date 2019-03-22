@@ -199,7 +199,7 @@ class Form extends React.Component<FormModalProps, State> {
   }
 
   private handleChange = (inputOnChange: (event: any) => void) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target) {
+    if (event && event.target) {
       const fieldName = event.target.name;
       // Set value depending on checked state for checkboxes and radios
       const fieldValue = event.target.type === "checkbox" ? event.target.checked || event.target.value : event.target.value;
