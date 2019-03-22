@@ -10,6 +10,7 @@ class HeaderPageObject {
     settings: "#settings",
     logout: "#logout",
     rentals: "#rentals",
+    earnedMemberships: '#earnedMembership',
   }
   public openNavMenu = () => utils.clickElement(this.navMenuButton);
 

@@ -1,0 +1,241 @@
+import * as moment from "moment";
+import { timeToDate } from "ui/utils/timeToDate";
+import { EarnedMembership, Report, Requirement, Term, ReportRequirement } from "app/entities/earnedMembership";
+import auth, { LoginMember } from "../pageObjects/auth";
+import { adminUser, defaultMembers, basicUser } from "../constants/member";
+import { mockRequests, mock } from "../mockserver-client-helpers";
+import { defaultMemberships, basicEarnedMembership, basicRequirement, defaultReports, basicReport, basicReportRequirement } from "../constants/earnedMembership";
+import membershipPO from "../pageObjects/earnedMembership";
+import reportPO from "../pageObjects/report";
+import utils from "../pageObjects/common";
+import header from "../pageObjects/header";
+import memberPO from "../pageObjects/member";
+
+fdescribe("Earned Memberships", () => {
+  describe("Admin user", () => {
+    describe("From list view", () => {
+      const newRequirement: Requirement = {
+          ...basicRequirement,
+          name: "Foo",
+          termLength: 1,
+          targetCount: 2,
+      };
+      const newRequirement2: Requirement = {
+        ...basicRequirement,
+        name: "Bar",
+        termLength: 3,
+        targetCount: 5,
+      };
+      const initMembership: EarnedMembership = {
+        ...basicEarnedMembership,
+        requirements: [newRequirement, newRequirement2],
+      };
+
+      beforeEach(() => {
+        return auth.autoLogin(adminUser, undefined, { earned_membership: true }).then(async () => {
+            await mock(mockRequests.earnedMemberships.get.ok(defaultMemberships, {}, true));
+            await header.navigateTo(header.links.earnedMemberships);
+            await utils.waitForPageLoad(membershipPO.listUrl);
+            expect(await utils.isElementDisplayed(membershipPO.getErrorRowId())).toBeFalsy();
+            expect(await utils.isElementDisplayed(membershipPO.getNoDataRowId())).toBeFalsy();
+            expect(await utils.isElementDisplayed(membershipPO.getLoadingId())).toBeFalsy();
+            expect(await utils.isElementDisplayed(membershipPO.getTitleId())).toBeTruthy();
+            expect(await membershipPO.getColumnText("expirationTime", defaultMemberships[0].id)).toBeTruthy();
+        });
+      });
+      it("Loads a list of earned memberships", async (done) => {
+        await membershipPO.verifyListView(defaultMemberships, membershipPO.fieldEvaluator);
+        done();
+      });
+      it("Can create new earned memberships for members", async (done) => {
+        await utils.clickElement(membershipPO.actionButtons.create);
+        await utils.waitForVisible(membershipPO.membershipForm.submit);
+
+        await mock(mockRequests.members.get.ok(defaultMembers), 0);
+        await utils.fillSearchInput(membershipPO.membershipForm.member, defaultMembers[0].email, defaultMembers[0].id);
+
+        await utils.fillInput(membershipPO.requirementForm(0).name, newRequirement.name);
+        await utils.fillInput(membershipPO.requirementForm(0).targetCount, String(newRequirement.targetCount));
+        await utils.selectDropdownByValue(membershipPO.requirementForm(0).termLengthSelect, String(newRequirement.termLength));
+
+        await utils.clickElement(membershipPO.membershipForm.addRequirementButton);
+        await utils.fillInput(membershipPO.requirementForm(1).name, newRequirement2.name);
+        await utils.fillInput(membershipPO.requirementForm(1).targetCount, String(newRequirement2.targetCount));
+        await utils.selectDropdownByValue(membershipPO.requirementForm(1).termLengthSelect, String(newRequirement2.termLength));
+
+        await mock(mockRequests.earnedMemberships.post.ok(initMembership));
+        await mock(mockRequests.earnedMemberships.get.ok([initMembership], undefined, true));
+        await utils.clickElement(membershipPO.membershipForm.submit);
+        await utils.waitForNotVisible(membershipPO.membershipForm.submit);
+        expect((await membershipPO.getAllRows()).length).toEqual(1);
+        await membershipPO.verifyFields(initMembership, membershipPO.fieldEvaluator);
+        done();
+      });
+      xit("Can edit earned memberships from list", async () => {
+        const updatedMembership = {
+          ...defaultMemberships[0],
+          name: "Foobar",
+          requirements: [{
+            ...basicRequirement,
+            termLength: 3
+          }]
+        };
+
+        await membershipPO.selectRow(defaultMemberships[0].id);
+
+
+
+      });
+      it("Create membership form validation", async (done) => {
+        await utils.clickElement(membershipPO.actionButtons.create);
+        await utils.waitForVisible(membershipPO.membershipForm.submit);
+
+        await utils.clickElement(membershipPO.membershipForm.submit);
+        await utils.assertInputError(membershipPO.membershipForm.member)
+        await utils.assertInputError(membershipPO.requirementForm(0).name)
+        await utils.assertInputError(membershipPO.requirementForm(0).targetCount)
+
+        await mock(mockRequests.members.get.ok(defaultMembers), 0);
+        await utils.fillSearchInput(membershipPO.membershipForm.member, defaultMembers[0].email, defaultMembers[0].id);
+
+        await utils.fillInput(membershipPO.requirementForm(0).name, newRequirement.name);
+        await utils.fillInput(membershipPO.requirementForm(0).targetCount, String(newRequirement.targetCount));
+        await utils.selectDropdownByValue(membershipPO.requirementForm(0).termLengthSelect, String(newRequirement.termLength));
+
+        expect(await utils.isElementDisplayed(membershipPO.requirementForm(1).name)).toBeFalsy();
+        await utils.clickElement(membershipPO.membershipForm.addRequirementButton);
+        await utils.clickElement(membershipPO.membershipForm.submit);
+        await utils.assertInputError(membershipPO.requirementForm(1).name)
+        await utils.assertInputError(membershipPO.requirementForm(1).targetCount)
+        await utils.clickElement(membershipPO.membershipForm.removeRequirementButton);
+        expect(await utils.isElementDisplayed(membershipPO.requirementForm(1).name)).toBeFalsy();
+
+        // No create mock, should display API error
+        expect(await utils.isElementDisplayed(membershipPO.membershipForm.error)).toBeFalsy();
+        await utils.clickElement(membershipPO.membershipForm.submit);
+        await utils.waitForVisible(membershipPO.membershipForm.error);
+        await mock(mockRequests.earnedMemberships.post.ok(initMembership));
+        await utils.clickElement(membershipPO.membershipForm.submit);
+        await utils.waitForNotVisible(membershipPO.membershipForm.submit);
+        done();
+      });
+    });
+    describe("Viewing earned member's reports", () => {
+      const membershipUser: LoginMember = {
+        ...basicUser,
+        earnedMembershipId: "foo"
+      }
+      const membership = {
+        ...basicEarnedMembership,
+        memberId: basicUser.id,
+        id: membershipUser.earnedMembershipId,
+      }
+      const reports: Report[] = defaultReports.map(r => ({ ...r, earnedMembership: membership.id }));
+      beforeEach(() => {
+        return mock(mockRequests.earnedMembershipReports.get.ok(membership.id, reports, {}, true)).then(async () => {
+          await mock(mockRequests.member.get.ok(membershipUser.id, membershipUser));
+          await mock(mockRequests.earnedMemberships.show.ok(membership, true));
+          await auth.autoLogin(adminUser, memberPO.getProfilePath(membershipUser.id), { earned_membership: true });
+          expect(await utils.isElementDisplayed(reportPO.getErrorRowId())).toBeFalsy();
+          expect(await utils.isElementDisplayed(reportPO.getNoDataRowId())).toBeFalsy();
+          expect(await utils.isElementDisplayed(reportPO.getLoadingId())).toBeFalsy();
+          expect(await utils.isElementDisplayed(reportPO.getTitleId())).toBeTruthy();
+          expect(await reportPO.getColumnText("date", defaultReports[0].id)).toBeTruthy();
+        });
+      })
+      it("Can view list of reports in profile", async (done) => {
+        await reportPO.verifyListView(reports, reportPO.fieldEvaluator);
+        done();
+      });
+    });
+  });
+  describe("Earned member reporting", () => {
+    const membershipUser = {
+      ...basicUser,
+      earnedMembershipId: "foo"
+    }
+    const updatedMember: LoginMember = {
+      ...membershipUser,
+      expirationTime: moment().add(2, "months").valueOf()
+    }
+    const membership = {
+      ...basicEarnedMembership,
+      memberId: updatedMember.id,
+      id: membershipUser.earnedMembershipId,
+    }
+    const newReportRequirement: ReportRequirement = {
+      ...basicReportRequirement,
+      memberIds: [defaultMembers[0].id, defaultMembers[1].id]
+    };
+    const initReport: Report = {
+      ...basicReport,
+      earnedMembershipId: membership.id,
+      reportRequirements: [newReportRequirement]
+    };
+    beforeEach(() => {
+      return mock(mockRequests.earnedMembershipReports.get.ok(membership.id, defaultReports, {})).then(async () => {
+        await mock(mockRequests.earnedMemberships.show.ok(membership));
+        await auth.autoLogin(membershipUser, undefined, { earned_membership: true });
+        expect(await utils.isElementDisplayed(reportPO.getErrorRowId())).toBeFalsy();
+        expect(await utils.isElementDisplayed(reportPO.getNoDataRowId())).toBeFalsy();
+        expect(await utils.isElementDisplayed(reportPO.getLoadingId())).toBeFalsy();
+        expect(await utils.isElementDisplayed(reportPO.getTitleId())).toBeTruthy();
+        expect(await reportPO.getColumnText("date", defaultReports[0].id)).toBeTruthy();
+      });
+    })
+    it("Can view list of reports in profile", async (done) => {
+      await reportPO.verifyListView(defaultReports, reportPO.fieldEvaluator);
+      done();
+    });
+    it("Can submit new reports from profile", async (done) => {
+      await utils.clickElement(reportPO.actionButtons.create);
+      await utils.waitForVisible(reportPO.reportForm.submit);
+
+      await mock(mockRequests.members.get.ok(defaultMembers));
+      await utils.fillSearchInput(reportPO.reportRequirementForm(0).member(0), defaultMembers[0].email, defaultMembers[0].id);
+
+      await utils.fillInput(reportPO.reportRequirementForm(0).reportedCount, String(newReportRequirement.reportedCount));
+
+      await utils.clickElement(reportPO.reportRequirementForm(0).addMemberButton);
+      const newMemberSearch = defaultMembers.slice(5, 10);
+      await mock(mockRequests.members.get.ok(newMemberSearch));
+      await utils.fillSearchInput(reportPO.reportRequirementForm(0).member(1), newMemberSearch[1].email, newMemberSearch[1].id);
+
+      await mock(mockRequests.earnedMembershipReports.post.ok(membership.id, initReport));
+      await mock(mockRequests.earnedMembershipReports.get.ok(membership.id, [initReport]));
+      await mock(mockRequests.earnedMemberships.show.ok(membership), 2);
+      await mock(mockRequests.member.get.ok(updatedMember.id, updatedMember));
+      await utils.clickElement(reportPO.reportForm.submit);
+      await utils.waitForNotVisible(reportPO.reportForm.submit);
+      expect((await reportPO.getAllRows()).length).toEqual(1);
+      await reportPO.verifyFields(initReport, reportPO.fieldEvaluator);
+      done();
+    });
+    it("Create report form validation", async (done) => {
+      await utils.clickElement(reportPO.actionButtons.create);
+      await utils.waitForVisible(reportPO.reportForm.submit);
+
+      await utils.clickElement(reportPO.reportForm.submit);
+      await utils.assertInputError(reportPO.reportRequirementForm(0).reportedCount)
+
+      await utils.fillInput(reportPO.reportRequirementForm(0).reportedCount, String(newReportRequirement.reportedCount));
+
+      expect(await utils.isElementDisplayed(reportPO.reportRequirementForm(0).member(1))).toBeFalsy();
+      await utils.clickElement(reportPO.reportRequirementForm(0).addMemberButton);
+      expect(await utils.isElementDisplayed(reportPO.reportRequirementForm(0).member(1))).toBeTruthy();
+
+      // No create mock, should display API error
+      expect(await utils.isElementDisplayed(reportPO.reportForm.error)).toBeTruthy();
+      await utils.clickElement(reportPO.reportForm.submit);
+      await utils.waitForVisible(reportPO.reportForm.error);
+      await mock(mockRequests.earnedMembershipReports.post.ok(membership.id, initReport));
+      await mock(mockRequests.earnedMembershipReports.get.ok(membership.id, [initReport]));
+      await mock(mockRequests.earnedMemberships.show.ok(membership), 2);
+      await mock(mockRequests.member.get.ok(updatedMember.id, updatedMember));
+      await utils.clickElement(reportPO.reportForm.submit);
+      await utils.waitForNotVisible(reportPO.reportForm.submit);
+      expect(await utils.getElementText(memberPO.memberDetail.expiration)).toEqual(timeToDate(updatedMember.expirationTime));
+      done();
+    });
+  });
+});

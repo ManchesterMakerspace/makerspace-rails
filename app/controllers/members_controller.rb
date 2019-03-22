@@ -1,4 +1,4 @@
-class MembersController < ApplicationController
+class MembersController < AuthenticationController
     include FastQuery
     include ::Service::GoogleDrive
     before_action :set_member, only: [:show, :update]

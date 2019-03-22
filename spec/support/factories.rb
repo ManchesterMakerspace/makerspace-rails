@@ -51,6 +51,10 @@ FactoryBot.define do
     end
   end
 
+  factory :earned_member, parent: :member do
+    association :earned_membership
+  end
+
   factory :card do
     transient do
       lost { false }
@@ -121,6 +125,58 @@ FactoryBot.define do
         permission.enabled = true
       end
     end
+  end
+
+  factory :earned_membership do
+    association :member
+    after(:build) do |earned_membership|
+      FactoryBot.create_list(:requirement, 2, earned_membership: earned_membership)
+    end
+  end
+
+  factory :earned_membership_no_requirements, class: EarnedMembership do
+    association :member
+  end
+
+  factory :earned_membership_with_reports, :parent => :earned_membership do
+    after(:build) do |earned_membership|
+      FactoryBot.create_list(:report_with_report_requirements, 2, earned_membership: earned_membership)
+    end
+  end
+
+  factory :requirement, class: EarnedMembership::Requirement do
+    association :earned_membership
+    name { generate(:uid) }
+    rollover_limit { 0 }
+    target_count { generate(:number).to_i }
+    strict { false }
+    term_length { 1 }
+  end
+
+  factory :report, class: EarnedMembership::Report do
+    association :earned_membership
+    date { generate(:expiry) }
+  end
+
+  factory :report_with_report_requirements, parent: :report do
+    after(:build) do |report|
+      report.report_requirements = report.earned_membership.requirements.map do |req|
+        create(:report_requirement, requirement: req, report: report, term: req.current_term)
+      end
+    end
+  end
+
+  factory :report_requirement, class: EarnedMembership::ReportRequirement do
+    association :requirement
+  end
+
+  factory :report_requirement_with_term, parent: :report_requirement do
+    association :term
+  end
+
+  factory :term, class: EarnedMembership::Term do
+    association :requirement
+    satisfied { false }
   end
 
   sequence :time_of do |n|

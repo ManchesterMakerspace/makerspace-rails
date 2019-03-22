@@ -27,10 +27,13 @@ import { Whitelists } from "app/constants";
 import SignDocuments from "ui/auth/SignDocuments";
 import { getDetailsForMember } from "ui/membership/constants";
 import AccessCardContainer, { CreateAccessCardProps } from "ui/accessCards/AccessCardContainer";
+import ReportList from "ui/reports/ReportList";
+import { readMembershipAction } from "ui/earnedMemberships/actions";
 
 interface DispatchProps {
   getMember: () => Promise<void>;
   goToSettings: () => void;
+  getEarnedMembership: (membershipId: string, isAdmin: boolean) => void;
 }
 interface StateProps {
   admin: boolean;
@@ -47,7 +50,9 @@ interface StateProps {
 }
 interface OwnProps extends RouteComponentProps<any> {
 }
-interface Props extends OwnProps, DispatchProps, StateProps {}
+interface Props extends OwnProps, Pick<DispatchProps, "getMember" | "goToSettings">, StateProps {
+  getEarnedMembership: (membershipId: string) => void;
+}
 
 interface State {
   isEditOpen: boolean;
@@ -86,7 +91,7 @@ class MemberDetail extends React.Component<Props, State> {
   public componentDidUpdate(prevProps: Props) {
     const oldMemberId = prevProps.match.params.memberId;
     const { isRequestingMember: wasRequesting, invoiceUpdating: invoiceWasUpdating, isUpdatingMember: wasUpdating } = prevProps;
-    const { currentUserId, isRequestingMember, match, getMember, member, history, match: { params: { resource } } } = this.props;
+    const { currentUserId, admin, isRequestingMember, match, getMember, member, history, match: { params: { resource } } } = this.props;
     const { memberId } = match.params;
     if (oldMemberId !== memberId && !isRequestingMember) {
       getMember();
@@ -99,6 +104,9 @@ class MemberDetail extends React.Component<Props, State> {
         }
         if (ownProfile && !member.memberContractOnFile) {
           this.setState({ displayNotification: Notification.Welcome  });
+        }
+        if (member.earnedMembershipId && (ownProfile || admin)) {
+          this.props.getEarnedMembership(member.earnedMembershipId);
         }
       } else {
         history.push(Routing.Members);
@@ -148,9 +156,11 @@ class MemberDetail extends React.Component<Props, State> {
   }
 
   private renderMemberDetails = (): JSX.Element => {
-    const { member, isUpdatingMember, isRequestingMember, match, admin, goToSettings, billingEnabled } = this.props;
+    const { member, isUpdatingMember, isRequestingMember, match, admin, goToSettings, billingEnabled, currentUserId } = this.props;
     const { memberId, resource } = match.params;
     const loading = isUpdatingMember || isRequestingMember;
+    const isEarnedMember = !!member.earnedMembershipId && (currentUserId === member.id || admin);
+
     return (
       <>
         <DetailView
@@ -192,6 +202,13 @@ class MemberDetail extends React.Component<Props, State> {
           information={this.renderMemberInfo()}
           activeResourceName={resource}
           resources={(this.allowViewProfile() || admin) && [
+            ...isEarnedMember ?
+            [{
+              name: "membership",
+              content: (
+                <ReportList member={member}/>
+              )
+            }] : [],
             ...billingEnabled ?
             [{
               name: "dues",
@@ -349,7 +366,21 @@ const mapDispatchToProps = (
   return {
     getMember: () => dispatch(readMemberAction(memberId)),
     goToSettings: () => dispatch(push(Routing.Settings)),
+    getEarnedMembership: (membershipId, isAdmin) => dispatch(readMembershipAction(membershipId, isAdmin)),
   }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(MemberDetail));
+const mergeProps = (
+  stateProps: StateProps,
+  dispatchProps: DispatchProps,
+  ownProps: OwnProps
+): Props => {
+  return {
+    ...stateProps,
+    ...dispatchProps,
+    ...ownProps,
+    getEarnedMembership: (membershipId) => dispatchProps.getEarnedMembership(membershipId, stateProps.admin),
+  }
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(MemberDetail));

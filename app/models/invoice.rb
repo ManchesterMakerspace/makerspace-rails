@@ -126,6 +126,6 @@ class Invoice
   end
 
   def resource_exists
-    !!resource
+    errors.add(:resource, "Invalid resource") unless !!resource
   end
 end

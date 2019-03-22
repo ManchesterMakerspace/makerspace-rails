@@ -1,12 +1,12 @@
 import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import toNumber from "lodash-es/toNumber";
+import omit from "lodash-es/omit";
 
 import { getRentals, postRentals, putRental, deleteRental } from "api/rentals/transactions";
 import { Action as RentalsAction } from "ui/rentals/constants";
 import { RentalsState } from "ui/rentals/interfaces";
 import { Rental, RentalQueryParams } from "app/entities/rental";
-import { omit } from "lodash-es";
 
 export const readRentalsAction = (
   isUserAdmin: boolean,

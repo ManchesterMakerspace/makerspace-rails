@@ -36,7 +36,7 @@ const reviewSubResource = async (member: LoginMember, rentals: Rental[], invoice
   // Go to rentals
   // Invoices displayed
   await mock(mockRequests.invoices.get.ok(invoices, { resourceId: member.id }, admin));
-  await memberPO.gotToMemberDues();
+  await memberPO.goToMemberDues();
   expect(await invoicePo.getColumnText("resourceClass", invoices[0].id)).toMatch(new RegExp(invoices[0].resourceClass, 'i'));
 }
 
@@ -234,7 +234,7 @@ describe("Member Profiles", () => {
 
         expect(await utils.getElementText(memberPO.memberDetail.openCardButton)).toMatch(/Register Fob/i);
         await utils.clickElement(memberPO.memberDetail.openCardButton);
-        await utils.waitForVisisble(memberPO.accessCardForm.submit);
+        await utils.waitForVisible(memberPO.accessCardForm.submit);
         await utils.clickElement(memberPO.accessCardForm.importButton);
         expect(await utils.getElementText(memberPO.accessCardForm.importConfirmation)).toEqual(cardId);
         await mock(mockRequests.accessCard.post.ok(newCard));
@@ -284,7 +284,7 @@ describe("Member Profiles", () => {
 
         expect(await utils.getElementText(memberPO.memberDetail.openCardButton)).toMatch(/Replace Fob/i);
         await utils.clickElement(memberPO.memberDetail.openCardButton);
-        await utils.waitForVisisble(memberPO.accessCardForm.submit);
+        await utils.waitForVisible(memberPO.accessCardForm.submit);
         await utils.clickElement(memberPO.accessCardForm.importButton);
         expect(await utils.getElementText(memberPO.accessCardForm.importConfirmation)).toEqual(cardId);
         await mock(mockRequests.accessCard.post.ok(newCard));

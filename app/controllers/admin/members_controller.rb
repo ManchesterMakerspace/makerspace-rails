@@ -40,7 +40,7 @@ class Admin::MembersController < AdminController
   def notify_renewal(init)
     final = @member.expirationTime
     if (Time.at(final / 1000) - Time.at((init || 0) / 1000) > 1.day)
-      time = @member.prettyTime.strftime("%m/%d/%Y")
+      time = @member.expiration_time.strftime("%m/%d/%Y")
       @messages.push("#{@member.fullname} renewed. Now expiring #{time}")
     end
   end

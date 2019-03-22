@@ -25,6 +25,7 @@ interface StateProps {
   currentUser: AuthMember;
   authRequesting: boolean;
   billingEnabled: boolean;
+  earnedMembershipEnabled: boolean;
 }
 interface DispatchProps {
   logout: () => void;
@@ -77,7 +78,7 @@ class Header extends React.Component<Props, State> {
   }
 
   private renderHambMenu = (): JSX.Element => {
-    const { currentUser, billingEnabled } = this.props;
+    const { currentUser, billingEnabled, earnedMembershipEnabled } = this.props;
     const { anchorEl } = this.state;
     const menuOpen = Boolean(anchorEl);
     const profileUrl = Routing.Profile.replace(Routing.PathPlaceholder.MemberId, currentUser.id);
@@ -114,6 +115,7 @@ class Header extends React.Component<Props, State> {
           {this.renderMenuNavLink(Routing.Members, "Members", "members")}
           {memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Rentals, "Rentals", "rentals")}
           {billingEnabled && memberIsAdmin(currentUser) && this.renderMenuNavLink(Routing.Billing, "Billing", "billing")}
+          {earnedMembershipEnabled && this.renderMenuNavLink(Routing.EarnedMemberships, "Earned Memberships", "earnedMembership")}
           {this.renderMenuNavLink(Routing.Settings, "Account Settings", "settings")}
           <MenuItem id="logout" onClick={this.logoutUser}>Logout</MenuItem>
         </Menu>
@@ -150,6 +152,7 @@ const mapStateToProps = (state: ReduxState, _ownProps: OwnProps): StateProps => 
   return {
     currentUser,
     billingEnabled: !!permissions[Whitelists.billing] || false,
+    earnedMembershipEnabled: memberIsAdmin(currentUser) && !!permissions[Whitelists.earnedMembership] || false,
     authRequesting: isRequesting
   }
 }

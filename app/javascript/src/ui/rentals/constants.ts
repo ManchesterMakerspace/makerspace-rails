@@ -72,6 +72,5 @@ export const fields = {
     name: `${formPrefix}-member`,
     placeholder: `Search by name or email`,
     transform: (val: MemberDetails) => val && val.id,
-    error: "Member required"
   },
 }

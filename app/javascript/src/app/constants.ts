@@ -8,6 +8,7 @@ export namespace Url {
     InvoiceId = "{invoiceId}",
     SubscriptionId = "{subscriptionId}",
     PaymentMethodId = "{paymentMethodId}",
+    MembershipId = "{membershipId}",
   }
 
   const baseApiPath = "api";
@@ -52,6 +53,12 @@ export namespace Url {
     },
     Permissions: `${baseAdminPath}/permissions`,
     Permission: `${baseAdminPath}/permissions/${PathPlaceholder.MemberId}`,
+
+    EarnedMemberships: `${baseAdminPath}/earned_memberships`,
+    EarnedMembership: `${baseAdminPath}/earned_memberships/${PathPlaceholder.MembershipId}`,
+    EarnedMembershipNamespace: {
+      Reports: `${baseAdminPath}/earned_memberships/${PathPlaceholder.MembershipId}/reports`
+    }
   }
 
   export const Billing = {
@@ -64,6 +71,11 @@ export namespace Url {
     Transactions: `${baseBillingPath}/transactions`
   }
 
+  export const EarnedMemberships = `${baseApiPath}/earned_memberships`
+  export const EarnedMembership = `${EarnedMemberships}/${PathPlaceholder.MembershipId}`
+  export const EarnedMembershipNamespace ={
+    Reports: `${EarnedMembership}/reports`
+  }
 }
 
 export namespace Routing {
@@ -88,6 +100,7 @@ export namespace Routing {
   export const PasswordReset = "/resetPassword";
   export const Settings = "/settings";
   export const SendRegistration = `/send_registration/${PathPlaceholder.Email}`
+  export const EarnedMemberships = "/earned_memberships";
 }
 
 export enum ApiErrorStatus {
@@ -113,7 +126,8 @@ export enum CrudOperation {
 
 export enum Whitelists {
   billing = "billing",
-  customBilling = "custom_billing"
+  customBilling = "custom_billing",
+  earnedMembership = "earned_membership"
 }
 
 // TODO: I don't like this very much
