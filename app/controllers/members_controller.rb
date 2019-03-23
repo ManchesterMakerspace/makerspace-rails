@@ -26,7 +26,8 @@ class MembersController < ApplicationController
 
       if signature_params[:signature]
         begin
-          upload_signature(signature_params[:signature], "#{@member.fullname}_signature.png")
+          encoded_img = signature_params[:signature].split(",")[1]
+          upload_signature(encoded_img, "#{@member.fullname}_signature.png")
           @member.update_attributes!(memberContractOnFile: true)
         rescue Error::Google::Upload => err
           @messages.push("Error uploading #{@member.fullname}'s signature'. Error: #{err}")
