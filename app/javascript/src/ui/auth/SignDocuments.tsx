@@ -63,7 +63,6 @@ class SignDocuments extends React.Component<Props, State>{
 
     await form.simpleValidate({ [Documents.codeOfConduct]: documentField });
     if (!form.isValid()) {
-      this.setState({ documentError: documentField.error });
       return;
     }
     this.setState({ display: Documents.memberContract })
@@ -73,6 +72,7 @@ class SignDocuments extends React.Component<Props, State>{
     const document = this.documents()[Documents.codeOfConduct];
     return (
       <Form
+        key={Documents.codeOfConduct}
         id="code-of-conduct-form"
         submitText="Proceed"
         onSubmit={this.completeCodeOfConduct}
@@ -85,9 +85,6 @@ class SignDocuments extends React.Component<Props, State>{
               <Checkbox
                 id={document.name}
                 name={document.name}
-                value={document.name}
-                checked={document.value}
-                onChange={this.acceptDocument(Documents.codeOfConduct)}
                 color="primary"
               />
             }
@@ -103,6 +100,7 @@ class SignDocuments extends React.Component<Props, State>{
     const document = this.documents()[Documents.memberContract];
     return (
       <Form
+        key={Documents.memberContract}
         id="member-contract-form"
         submitText="Proceed"
         loading={this.state.signatureUploading}
@@ -116,9 +114,6 @@ class SignDocuments extends React.Component<Props, State>{
               <Checkbox
                 id={document.name}
                 name={document.name}
-                checked={document.value}
-                value={document.name}
-                onChange={this.acceptDocument(Documents.memberContract)}
                 color="primary"
               />
             }
@@ -146,25 +141,12 @@ class SignDocuments extends React.Component<Props, State>{
     this.signatureRef && this.signatureRef.clear();
   }
 
-  // Handle checkbox state for document acceptance
-  private acceptDocument = (acceptedDoc: Documents) => (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-    if (acceptedDoc === Documents.codeOfConduct) {
-      this.setState({ acceptCodeOfConduct: checked });
-    } else if (acceptedDoc === Documents.memberContract) {
-      this.setState({ acceptMemberContract: checked });
-    }
-    // Clear any errors if accepting the document
-    if (checked) {
-      this.setState({ documentError: "" });
-    }
-  }
   // Verify signature and call submit callback
   private completeDocuments = async (form: Form) => {
     const documentField = this.documents()[Documents.memberContract];
 
     await form.simpleValidate({ [Documents.memberContract]: documentField });
     if (!form.isValid()) {
-      this.setState({ documentError: documentField.error });
       return;
     }
     if (!this.signatureRef || this.signatureRef.isEmpty()) {
@@ -188,7 +170,8 @@ class SignDocuments extends React.Component<Props, State>{
       name: `${Documents.codeOfConduct}-checkbox`,
       render: this.getCodeOfConduct,
       value: this.state.acceptCodeOfConduct,
-      validate: (val: boolean) => !!val,
+      transform: (val: string) => !!val,
+      validate: (val: boolean) => val,
       error: "You must accept to continue",
       label: "I have read and agree to abide by the Manchester Makerspace Code of Conduct",
     },
@@ -197,7 +180,8 @@ class SignDocuments extends React.Component<Props, State>{
       name: `${Documents.memberContract}-checkbox`,
       render: this.getMemberContract,
       value: this.state.acceptMemberContract,
-      validate: (val: boolean) => !!val,
+      transform: (val: string) => !!val,
+      validate: (val: boolean) => val,
       error: "You must accept to continue",
       label: "I have read and agree to the Manchester Makerspace Member Contract",
     }

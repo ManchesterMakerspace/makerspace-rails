@@ -199,10 +199,10 @@ class Form extends React.Component<FormModalProps, State> {
   }
 
   private handleChange = (inputOnChange: (event: any) => void) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target) {
+    if (event && event.target) {
       const fieldName = event.target.name;
       // Set value depending on checked state for checkboxes and radios
-      const fieldValue = event.target.type === "checkbox" ? event.target.checked || event.target.value : event.target.value;
+      const fieldValue = event.target.type === "checkbox" ? (event.target.checked ? "true" : "") : event.target.value;
       const { isDirty } = this.state;
       if (!isDirty) {
         this.setState({ isDirty: true });
@@ -292,13 +292,20 @@ class Form extends React.Component<FormModalProps, State> {
     const error = errors[fieldName];
     const value = values[fieldName] || "";
 
+    const isCheckbox = input.props.hasOwnProperty("checked");
+    const baseProps = {
+      error: error ? (isCheckbox ? error : !!error) : undefined,
+      id,
+      value,
+      onChange,
+    };
+    const props: any = input.props.hasOwnProperty("control") ?
+      {
+        ...baseProps,
+        control: this.cloneFormInput(input.props.control)
+      } : baseProps;
     return (
-      React.cloneElement(input, {
-        error: error ? !!error : undefined,
-        id,
-        value,
-        onChange,
-      })
+      React.cloneElement(input, props)
     );
   }
 

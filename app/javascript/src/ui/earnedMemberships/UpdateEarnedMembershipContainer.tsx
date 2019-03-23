@@ -52,9 +52,7 @@ class EditEarnedMembership extends React.Component<Props> {
 
   private submitForm = async (form: Form) => {
     const validUpdate: NewEarnedMembership = await this.formRef.validate(form);
-    console.log("IS VALID", form.isValid());
-    console.log("Errors", form.getErrors());
-    console.log("VALUES", form.getValues());
+
     if (!form.isValid()) {
       const errors = document.querySelectorAll('[id$="-error')
       errors[0] && (errors[0] as HTMLElement).focus();
@@ -111,7 +109,28 @@ const mapDispatchToProps = (
       let action;
       switch (operation) {
         case CrudOperation.Update:
-          action = (updateMembershipAction(membership.id, membershipDetails));
+          const currentRequirementNames = membership.requirements.map(req => req.name);
+          const mergedRequirements = membershipDetails.requirements.reduce((requirements, requirement) => {
+              // Find if it already exists
+              const reqIndex = currentRequirementNames.indexOf(requirement.name);
+
+              // If it exists, update existing with shallow patch
+              if (reqIndex > -1) {
+                requirements[reqIndex] = {
+                  ...membership.requirements[reqIndex],
+                  ...requirement,
+                }
+              // Add it to the end if it doesn't already exist
+              } else {
+                requirements.push(requirement)
+              }
+              return requirements;
+            }, []);
+
+          action = (updateMembershipAction(membership.id, {
+            ...membershipDetails,
+            requirements: mergedRequirements,
+          }));
           break;
         case CrudOperation.Create:
           action = (createMembershipAction(membershipDetails));

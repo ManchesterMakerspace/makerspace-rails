@@ -18,6 +18,11 @@ class Admin::EarnedMembershipsController < AdminController
   end
 
   def update
+    unless params[:earned_membership][:requirements].nil?
+      requirements_ids = params[:earned_membership][:requirements].collect { |attributes| attributes[:id] }
+      requirements = @membership.requirements.where(:id.nin => requirements_ids)
+      requirements.each { |req| @membership.requirements.delete(req) }
+    end
     @membership.update!(earned_membership_params)
     @membership.reload
     render json: @membership and return
@@ -25,9 +30,9 @@ class Admin::EarnedMembershipsController < AdminController
 
   private
   def earned_membership_params
-    params[:earned_membership][:requirements_attributes] = params[:earned_membership].delete(:requirements)
+    params[:earned_membership][:requirements_attributes] = params[:earned_membership].delete(:requirements) unless params[:earned_membership][:requirements].nil?
     params.require(:earned_membership).permit(:member_id, requirements_attributes: [
-      :name, :rollover_limit, :term_length, :target_count, :strict
+      :id, :name, :rollover_limit, :term_length, :target_count, :strict
     ])
   end
 

@@ -42,6 +42,7 @@ interface State {
   search: string;
   order: SortDirection;
   openCreateForm: boolean;
+  openEditForm: boolean;
 }
 
 const fields: Column<EarnedMembership>[] = [
@@ -80,19 +81,18 @@ class EarnedMembershipList extends React.Component<Props, State> {
       search: "",
       order: SortDirection.Asc,
       openCreateForm: false,
+      openEditForm: false,
     };
   }
 
-  private openCreateForm = () => {
-    this.setState({ openCreateForm: true });
-  }
-  private closeCreateForm = () => {
-    this.setState({ openCreateForm: false });
-  }
+  private openCreateForm = () =>  this.setState({ openCreateForm: true });
+  private closeCreateForm = () =>  this.setState({ openCreateForm: false });
+  private openEditForm = () => this.setState({ openEditForm: true });
+  private closeEditForm = () => this.setState({ openEditForm: false });
 
   private renderMemberForms = () => {
     const { memberships } = this.props;
-    const { selectedId, openCreateForm } = this.state;
+    const { selectedId, openCreateForm, openEditForm } = this.state;
 
 
     const createForm = (renderProps: UpdateMembershipRenderProps) => {
@@ -107,15 +107,38 @@ class EarnedMembershipList extends React.Component<Props, State> {
         title="Create New Membership"
       />)
     }
+    const editForm = (renderProps: UpdateMembershipRenderProps) => {
+      return (<EarnedMembershipForm
+        ref={renderProps.setRef}
+        membership={renderProps.membership}
+        isOpen={renderProps.isOpen}
+        isRequesting={renderProps.isRequesting}
+        error={renderProps.error}
+        onClose={renderProps.closeHandler}
+        onSubmit={renderProps.submit}
+        title="Edit Membership"
+      />)
+    }
+
+    const selectedMembership = memberships[selectedId];
 
     return (
-      <UpdateEarnedMembershipContainer
-        isOpen={openCreateForm}
-        membership={{ } as Partial<EarnedMembership>}
-        closeHandler={this.closeCreateForm}
-        render={createForm}
-        operation={CrudOperation.Create}
-      />
+      <>
+        <UpdateEarnedMembershipContainer
+          isOpen={openCreateForm}
+          membership={{ } as Partial<EarnedMembership>}
+          closeHandler={this.closeCreateForm}
+          render={createForm}
+          operation={CrudOperation.Create}
+        />
+        <UpdateEarnedMembershipContainer
+          isOpen={openEditForm}
+          membership={selectedMembership}
+          closeHandler={this.closeEditForm}
+          render={editForm}
+          operation={CrudOperation.Update}
+        />
+      </>
     )
   }
 
@@ -129,6 +152,13 @@ class EarnedMembershipList extends React.Component<Props, State> {
           color: "primary",
           onClick: this.openCreateForm,
           label: "Create New Membership"
+        }, {
+          id: "membership-list-edit",
+          variant: "contained",
+          color: "default",
+          onClick: this.openEditForm,
+          label: "Edit Membership",
+          disabled: !selectedId
         }]}
       />
     )

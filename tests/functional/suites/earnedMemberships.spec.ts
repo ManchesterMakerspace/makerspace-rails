@@ -11,9 +11,16 @@ import utils from "../pageObjects/common";
 import header from "../pageObjects/header";
 import memberPO from "../pageObjects/member";
 
-fdescribe("Earned Memberships", () => {
+describe("Earned Memberships", () => {
   describe("Admin user", () => {
     describe("From list view", () => {
+      const firstMembership: EarnedMembership = {
+        ...defaultMemberships[0],
+        memberId: defaultMembers[0].id,
+        memberName: `${defaultMembers[0].firstname} ${defaultMembers[0].lastname}`
+      };
+      const membershipList = [...defaultMemberships]
+      membershipList.splice(0, 1, firstMembership);
       const newRequirement: Requirement = {
           ...basicRequirement,
           name: "Foo",
@@ -33,18 +40,18 @@ fdescribe("Earned Memberships", () => {
 
       beforeEach(() => {
         return auth.autoLogin(adminUser, undefined, { earned_membership: true }).then(async () => {
-            await mock(mockRequests.earnedMemberships.get.ok(defaultMemberships, {}, true));
+            await mock(mockRequests.earnedMemberships.get.ok(membershipList, {}, true));
             await header.navigateTo(header.links.earnedMemberships);
             await utils.waitForPageLoad(membershipPO.listUrl);
             expect(await utils.isElementDisplayed(membershipPO.getErrorRowId())).toBeFalsy();
             expect(await utils.isElementDisplayed(membershipPO.getNoDataRowId())).toBeFalsy();
             expect(await utils.isElementDisplayed(membershipPO.getLoadingId())).toBeFalsy();
             expect(await utils.isElementDisplayed(membershipPO.getTitleId())).toBeTruthy();
-            expect(await membershipPO.getColumnText("expirationTime", defaultMemberships[0].id)).toBeTruthy();
+            expect(await membershipPO.getColumnText("expirationTime", membershipList[0].id)).toBeTruthy();
         });
       });
       it("Loads a list of earned memberships", async (done) => {
-        await membershipPO.verifyListView(defaultMemberships, membershipPO.fieldEvaluator);
+        await membershipPO.verifyListView(membershipList, membershipPO.fieldEvaluator);
         done();
       });
       it("Can create new earned memberships for members", async (done) => {
@@ -71,20 +78,37 @@ fdescribe("Earned Memberships", () => {
         await membershipPO.verifyFields(initMembership, membershipPO.fieldEvaluator);
         done();
       });
-      xit("Can edit earned memberships from list", async () => {
+      it("Can edit earned memberships from list", async () => {
+        const origRequirements = firstMembership.requirements;
+        const updatedRequirement = {
+          ...basicRequirement,
+          termLength: 3,
+          targetCount: 999
+        };
         const updatedMembership = {
-          ...defaultMemberships[0],
-          name: "Foobar",
-          requirements: [{
-            ...basicRequirement,
-            termLength: 3
-          }]
+          ...firstMembership,
+          requirements: [updatedRequirement]
         };
 
-        await membershipPO.selectRow(defaultMemberships[0].id);
+        await mock(mockRequests.members.get.ok(defaultMembers));
+        await membershipPO.selectRow(firstMembership.id);
+        await utils.clickElement(membershipPO.actionButtons.edit);
+        await utils.waitForVisible(membershipPO.membershipForm.submit);
 
+        expect(await utils.getElementText(membershipPO.membershipForm.member)).toEqual(firstMembership.memberName)
+        expect(await utils.getElementAttribute(membershipPO.requirementForm(0).name, "value")).toEqual(origRequirements[0].name)
+        expect(await utils.getElementAttribute(membershipPO.requirementForm(0).targetCount, "value")).toEqual(String(origRequirements[0].targetCount))
+        expect(await utils.getElementAttribute(membershipPO.requirementForm(0).termLengthSelect, "value")).toEqual(String(origRequirements[0].termLength))
 
+        await utils.fillInput(membershipPO.requirementForm(0).targetCount, String(updatedRequirement.targetCount));
+        await utils.selectDropdownByValue(membershipPO.requirementForm(0).termLengthSelect, String(updatedRequirement.termLength));
 
+        await mock(mockRequests.earnedMemberships.put.ok(updatedMembership));
+        await mock(mockRequests.earnedMemberships.get.ok([updatedMembership], undefined, true));
+        await utils.clickElement(membershipPO.membershipForm.submit);
+        await utils.waitForNotVisible(membershipPO.membershipForm.submit);
+        expect((await membershipPO.getAllRows()).length).toEqual(1);
+        await membershipPO.verifyFields(updatedMembership, membershipPO.fieldEvaluator);
       });
       it("Create membership form validation", async (done) => {
         await utils.clickElement(membershipPO.actionButtons.create);
