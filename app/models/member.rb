@@ -76,14 +76,6 @@ class Member
     return "#{self.firstname} #{self.lastname}"
   end
 
-   def prettyTime
-     if self.expirationTime
-       return Time.at(self.expirationTime/1000)
-     else
-       return Time.at(0)
-     end
-   end
-
   def verify_group_expiry
     if self.group
       #make sure member benefits from group expTime
@@ -139,14 +131,6 @@ class Member
 
   def expiration_attr
     :expirationTime
-  end
-
-  def update_expiration(new_expiration)
-    self.update_attributes!(self.expiration_attr => new_expiration)
-  end
-
-  def get_expiration
-    self.expirationTime
   end
 
   private
