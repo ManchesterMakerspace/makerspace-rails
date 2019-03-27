@@ -55,6 +55,10 @@ class BraintreeService::Subscription < Braintree::Subscription
     set_resource
   end
 
+  def self.new(gateway, args)
+    super(gateway, args)
+  end
+
   private
   def self.normalize_subscription(gateway, subscription)
       self.new(gateway, instance_to_hash(subscription))

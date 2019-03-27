@@ -8,10 +8,10 @@ class Billing::TransactionsController < BillingController
       verify_payment_method
 
       invoice = Invoice.find(transaction_params[:invoice_id])
-      raise ::Mongoid::Errors::DocumentNotFound.new(Invoice, { id: transaction_params[:id] }) if invoice.nil?
+      raise ::Mongoid::Errors::DocumentNotFound.new(Invoice, { id: transaction_params[:invoice_id] }) if invoice.nil?
 
-      result = invoice.settle_invoice(@gateway, transaction_params[:payment_method_id])
-      raise Error::Braintree::Result.new(result) unless result.success?
+      transaction_result = invoice.settle_invoice(@gateway, transaction_params[:id])
+      raise Error::Braintree::Result.new(transaction_result) unless transaction_result.success?
       # TODO Email user a receipt
 
       render json: { }, status: 200 and return

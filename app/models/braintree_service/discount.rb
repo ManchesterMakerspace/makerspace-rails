@@ -1,5 +1,5 @@
 # Extends Braintree::Discount to incorporate with Rails
-class BraintreeService::Discount
+class BraintreeService::Discount < Braintree::Discount
   include ImportResource
   include ActiveModel::Serializers::JSON
 
@@ -10,6 +10,10 @@ class BraintreeService::Discount
     self.name = props[:name]
     self.description = props[:description]
     self.amount = props[:amount]
+  end
+
+  def self.new(args)
+    super(args)
   end
 
   def self.get_discounts(gateway)

@@ -1,35 +1,9 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
-  <body class="email">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-xs-12">
-          <a href="http://manchestermakerspace.org/">
-            <img src="https://makerspace-interface.herokuapp.com/assets/makerspace.png"
-              alt="Manchester Makerspace"
-              style="max-height: 116px;"/>
-          </a>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="row">
-            <div class="col-xs-12">
-              <h3>New Member Registered</h3>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-12">
-              <p><%=@member.fullname%> has just finished registering.</p>
-              <p>Contact them for orientation: <a href="mailto:<%=@member.email%>"><%=@member.email%></a>
-              <br>
-              <p>--The Manchester Makerspace Team</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </body>
-</html>
+<div>
+  <h3>New Member Registered</h3>
+</div>
+<div>
+  <p><%=@member.fullname%> has just finished registering.</p>
+  <p>Contact them for orientation: <a href="mailto:<%=@member.email%>"><%=@member.email%></a>
+  <br>
+  <p>--The Manchester Makerspace Team</p>
+</div>

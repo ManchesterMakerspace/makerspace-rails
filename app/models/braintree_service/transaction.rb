@@ -2,6 +2,10 @@ class BraintreeService::Transaction < Braintree::Transaction
   include ImportResource
   include ActiveModel::Serializers::JSON
 
+  def self.new(gateway, args)
+    super(gateway, args)
+  end
+
   def self.refund(gateway, transaction_id)
     gateway.transaction.refund(id)
   end

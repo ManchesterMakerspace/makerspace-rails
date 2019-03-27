@@ -12,6 +12,10 @@ class BraintreeService::Plan < Braintree::Plan
   # discounts
   # price
 
+  def self.new(gateway, args)
+    super(gateway, args)
+  end
+
   def self.get_plans(gateway)
     gateway.plan.all.map do |plan|
       self.new(gateway, instance_to_hash(plan))

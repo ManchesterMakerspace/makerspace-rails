@@ -18,6 +18,7 @@ class Braintree::TransactionSerializer < ActiveModel::Serializer
              :subscription_details,
              :subscription_id,
              :tax_amount,
+             :amount
 
   def invoice
     Invoice.find_by(transaction_id: object.id)

@@ -1,5 +1,6 @@
 require 'bcrypt'
 require 'securerandom'
+require_relative '../../lib/service/braintree_gateway'
 # the factories here lists the default values. these can all be overridden.
 # sequence creates unique sequenced values for different attributes.
 today = Time.now
@@ -190,6 +191,105 @@ FactoryBot.define do
     satisfied { false }
   end
 
+  factory :gateway, class: ::Braintree::Gateway do
+  end
+
+  factory :transaction, class: ::BraintreeService::Transaction  do
+    id { "4t606y71" }
+    status { ::Braintree::Transaction::Status::Settled }
+    amount { "65.00" }
+    recurring { false }
+    line_items {[
+      {
+        kind: "debit",
+        name: "Payment for something",
+        quantity: 1,
+        total_amount: 65.00,
+        unit_amount: 65.00,
+        transaction_id: "1234"
+      }
+    ]}
+
+    initialize_with { new(braintree_gateway, attributes) }
+  end
+
+  factory :paypal_transaction, parent: :transaction do
+  end
+
+  factory :credit_card_transaction, parent: :transaction do
+  end
+
+  factory :subscription_transaction, parent: :transaction do
+    recurring { true }
+    subscription_details {{
+      billing_period_end_date: Time.now + 1.month,
+      billing_period_start_date: Time.now,
+    }}
+    subscription_id { generate(:uid) }
+  end
+
+  factory :refunded_transaction, parent: :transaction do
+    refund_ids {[ generate(:uid) ]}
+    refunded_transaction_id { generate(:uid) }
+  end
+
+  factory :subscription, class: ::BraintreeService::Subscription do
+    id { "member_1234" }
+    status { ::Braintree::Subscription::Status::Active }
+    price { "65.00" }
+    first_billing_date { Time.now }
+    next_billing_date { Time.now + 1.month }
+    transactions { [] }
+    add_ons { [] }
+    discounts { [] }
+
+    initialize_with { new(braintree_gateway, attributes) }
+  end
+
+  factory :plan, class: ::BraintreeService::Plan do
+    name { "A Billing Plan" }
+    description { "A billing plan to charge custoemrs" }
+    price { "65.00" }
+    billing_frequency { 1 }
+    add_ons { [] }
+    discounts { [] }
+
+    initialize_with { new(braintree_gateway, attributes) }
+  end
+
+  factory :payment_method, class: ::BraintreeService::PaymentMethod do
+    customer_id { generate(:uid) }
+    nonce { "g7291" }
+    type { ::Braintree::CreditCard }
+    details {{}}
+
+    initialize_with { new(braintree_gateway, attributes) }
+  end
+
+  factory :credit_card, parent: :payment_method, class: ::BraintreeService::CreditCard do
+    card_type { ::Braintree::CreditCard::CardType::Visa }
+    expiration_month { 10 }
+    expiration_year { 2020 }
+    expiration_date { 25 }
+    last4 { 1234 }
+
+    initialize_with { new(braintree_gateway, attributes) }
+  end
+
+  factory :paypal_account, parent: :payment_method, class: ::BraintreeService::PaypalAccount do
+    email { generate(:email) }
+
+    initialize_with { new(braintree_gateway, attributes) }
+  end
+
+  factory :discount, class: ::BraintreeService::Discount do
+    name { "10% Discount" }
+    description { "A discount for 10%" }
+    amount { 6.50 }
+
+    initialize_with { new(attributes) }
+  end
+
   sequence :time_of do |n|
     (Time.now - n.days).to_i * 1000
   end
@@ -225,4 +325,13 @@ FactoryBot.define do
   sequence :expiry do |n|
     (Time.now + n.months).to_i * 1000
   end
+end
+
+def braintree_gateway
+  Braintree::Gateway.new(
+      :environment => ENV["BT_ENV"].to_sym,
+      :merchant_id => ENV["BT_MERCHANT_ID"],
+      :public_key => ENV["BT_PUBLIC_KEY"],
+      :private_key => ENV['BT_PRIVATE_KEY'],
+    )
 end

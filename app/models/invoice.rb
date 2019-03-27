@@ -35,7 +35,7 @@ class Invoice
   field :resource_class, type: String
   # ID of billing plan to/is subscribe(d) to.
   field :plan_id, type: String
-  # ID of payment method used to settle invoice
+  # ID of transaction used to settle invoice
   field :transaction_id, type: String
 
   validates :resource_class, inclusion: { in: OPERATION_RESOURCES.keys }, allow_nil: false
@@ -52,7 +52,7 @@ class Invoice
 
   before_validation :set_due_date
 
-  attr_accessor :found_resource, :payment_method_id
+  attr_accessor :found_resource
 
   def settled
     !!self.settled_at
@@ -66,9 +66,9 @@ class Invoice
     self.due_date && self.due_date < Time.now
   end
 
-  def settle_invoice(gateway=nil, payment_method_id=nil)
-    if payment_method_id
-      self.payment_method_id = payment_method_id
+  def settle_invoice(gateway=nil, transaction_id=nil)
+    if transaction_id
+      self.transaction_id = transaction_id
       transaction = ::BraintreeService::Transaction.submit_invoice_for_settlement(gateway, self)
     end
     # TODO handle errors here

@@ -24,20 +24,22 @@ gem 'mini_magick'
 gem 'rest-client'
 
 group :development do
-  gem 'byebug', platform: :mri
   # Spring speeds up development by keeping your application running in the background.
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
 end
 
 group :test do
-  gem 'byebug', platform: :mri
   gem 'rspec-rails'
   gem 'mongoid-rspec'
-  gem 'factory_bot_rails'
   gem 'database_cleaner'
   gem 'rails-controller-testing'
   gem 'simplecov'
+end
+
+group :development, :test do
+  gem 'byebug', platform: :mri
+  gem 'factory_bot_rails'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
