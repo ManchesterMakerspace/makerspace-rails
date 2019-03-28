@@ -3,23 +3,27 @@ class BillingMailer < ApplicationMailer
 
   default from: 'contact@manchestermakerspace.org'
 
-  def new_subscription(email, subscription)
+  def new_subscription(email, subscription, invoice)
     @subscription = subscription
+    @invoice = invoice
     send_mail(email, "Welcome to Manchester Makerspace!")
   end
 
-  def receipt(email, transaction)
+  def receipt(email, transaction, invoice)
     @transaction = transaction
-    send_mail(email, "Transaction from Manchester Makerspace")
+    @invoice = invoice
+    send_mail(email, "Receipt from Manchester Makerspace")
   end
 
   def refund(email, transaction)
     @transaction = transaction
+    @invoice = invoice
     send_mail(email, "Refund Approved")
   end
 
   def refund_requested(email, transaction)
     @transaction = transaction
+    @invoice = invoice
     send_mail(email, "Refund Requested")
   end
 

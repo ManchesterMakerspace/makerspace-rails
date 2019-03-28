@@ -1,2 +1,9 @@
 Receipt
-<%= ActiveModel::SerializableResource.new(@transaction).to_json %>
+<br />
+<br />
+<%= ActiveModelSerializers::SerializableResource.new(@transaction).to_json %>
+
+
+<br />
+<br />
+<%= ActiveModelSerializers::SerializableResource.new(@invoice).to_json %>

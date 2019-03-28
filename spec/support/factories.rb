@@ -191,7 +191,29 @@ FactoryBot.define do
     satisfied { false }
   end
 
-  factory :gateway, class: ::Braintree::Gateway do
+  factory :invoice do
+    association :member
+    name { "Some invoice" }
+    description { "An invoice to pay or that's been paid"}
+    due_date { Time.now + 1.month }
+    amount { 65.00 }
+    quantity { 1 }
+    operation { "renew=" }
+    resource_class { "member" }
+
+    after(:build) do |invoice|
+      invoice.resource_id = invoice.member.id
+    end
+  end
+
+  factory :invoice_option do
+    name { "Some invoice" }
+    description { "An invoice to pay or that's been paid"}
+    resource_class { "member" }
+    operation { "renew=" }
+    amount { 65.00 }
+    quantity { 1 }
+    disabled { false }
   end
 
   factory :transaction, class: ::BraintreeService::Transaction  do

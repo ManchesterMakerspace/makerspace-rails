@@ -35,6 +35,8 @@ class Admin::Billing::TransactionsController < Admin::BillingController
   def destroy
     result = ::BraintreeService::Transaction.refund(@gateway, params[:id])
     raise ::Error::Braintree::Result.new(result) unless result.success?
+    # TODO find invoice by transaction
+    # TODO: Send email confirmation
     render json: {}, status: 204 and return
   end
 

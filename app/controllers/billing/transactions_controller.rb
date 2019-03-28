@@ -23,8 +23,10 @@ class Billing::TransactionsController < BillingController
       raise ::Mongoid::Errors::DocumentNotFound.new(Invoice, { id: params[:id] }) if invoice.nil?
       raise Error::Unauthorized.new unless invoice.member.id == current_member.id
 
+      # TODO find transaction by invoice
       description = invoice.name || invoice.description
       @messages.push("#{current_member.fullname} has requested a refund of #{invoice.amount} for #{description} from #{invoice.settled_at}. <#{ActionMailer::Base.default_url_options[:host]}/billing/transactions/#{invoice.transaction_id}|Process refund>")
+      # TODO: Send email to member confirming receipt of request
     end
 
     private
