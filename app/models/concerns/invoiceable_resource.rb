@@ -51,5 +51,10 @@ module InvoiceableResource
         return Time.parse(exp.to_s).to_i * 1000
       end
     end
+
+    def get_renewal_slack_message
+      time = self.pretty_time.strftime("%m/%d/%Y")
+      "#{base_slack_message} renewed. Now expiring #{time}"
+    end
   end
 end

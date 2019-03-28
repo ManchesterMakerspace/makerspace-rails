@@ -2,6 +2,7 @@ Rails.application.routes.draw do
 
   root to: "application#application"
   post '/ipnlistener', to: 'paypal#notify'
+  post '/braintree_listener', to: 'braintree#webhooks'
 
   scope :api, defaults: { format: :json } do
     devise_for :members, skip: [:registrations]

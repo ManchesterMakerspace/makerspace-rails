@@ -20,4 +20,8 @@ class Rental
   def expiration_attr
     :expiration
   end
+
+  def base_slack_message
+    "#{self.member ? "#{self.member.fullname}'s rental of " : ""} Locker/Plot # #{self.number}"
+  end
 end

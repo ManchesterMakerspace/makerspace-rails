@@ -45,7 +45,6 @@ class Invoice
   validates :resource_id, presence: true
   validates :due_date, presence: true
   validate :one_active_invoice_per_resource, on: :create
-  validate :one_active_membership_invoice_per_member, on: :create
   validate :resource_exists, on: :save
 
   belongs_to :member
@@ -66,14 +65,18 @@ class Invoice
     self.due_date && self.due_date < Time.now
   end
 
-  def settle_invoice(gateway=nil, transaction_id=nil)
-    if transaction_id
-      self.transaction_id = transaction_id
+  def submit_for_settlement(gateway=nil, payment_method_id=nil)
+    if payment_method_id
       transaction = ::BraintreeService::Transaction.submit_invoice_for_settlement(gateway, self)
+      self.transaction_id = transaction.id
     end
     # TODO handle errors here
-    execute_invoice_operation
+    settle_invoice
     return transaction
+  end
+
+  def settle_invoice
+    execute_invoice_operation
   end
 
   def build_next_invoice
@@ -94,6 +97,10 @@ class Invoice
     "#{resource_class}_#{resource_id}_#{SecureRandom.hex[0...6]}"
   end
 
+  def self.active_invoice_for_resource(resource_id)
+    active = self.find_by(resource_id: resource_id, settled_at: nil)
+  end
+
   private
   def set_due_date
     self.due_date = Time.parse(self.due_date).in_time_zone('Eastern Time (US & Canada') if self.due_date.kind_of?(String)
@@ -108,21 +115,14 @@ class Invoice
         self.save!
         return
       end
-      raise "Unable to process invoice. Operation failed"
+      raise ::Error::UnprocessableEntity.new("Unable to process invoice. Operation failed for invoice #{self.id}")
     end
-    raise "Unable to process invoice. Invalid operation"
+    raise ::Error::UnprocessableEntity.new("Unable to process invoice. Invalid operation for invoice #{self.id}")
   end
 
   def one_active_invoice_per_resource
     active = self.class.where(resource_id: resource_id, settled_at: nil)
     errors.add(:base, "Active invoices already exist for this resource") if active.size > 0
-  end
-
-  def one_active_membership_invoice_per_member
-    if resource_class == OPERATION_RESOURCES[:member]
-      active = self.class.where(resource_class: resource_class, settled_at: nil)
-      errors.add(:base, "Active invoices already exist for this membership") if active.size > 0
-    end
   end
 
   def resource_exists

@@ -120,6 +120,10 @@ class Member
   end
 
   protected
+  def base_slack_message
+    self.fullname
+  end
+
   def find_braintree_customer
     connect_gateway.customer.find(self.customer_id) unless self.customer_id.nil?
   end

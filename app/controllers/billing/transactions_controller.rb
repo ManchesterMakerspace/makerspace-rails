@@ -10,7 +10,7 @@ class Billing::TransactionsController < BillingController
       invoice = Invoice.find(transaction_params[:invoice_id])
       raise ::Mongoid::Errors::DocumentNotFound.new(Invoice, { id: transaction_params[:invoice_id] }) if invoice.nil?
 
-      transaction_result = invoice.settle_invoice(@gateway, transaction_params[:id])
+      transaction_result = invoice.submit_for_settlement(@gateway, transaction_params[:payment_method_id])
       raise Error::Braintree::Result.new(transaction_result) unless transaction_result.success?
       # TODO Email user a receipt
 
