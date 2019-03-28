@@ -36,7 +36,8 @@ class BraintreeService::Notification
     end
 
     begin
-      invoice.settle_invoice
+      # Don't need to pass gateway or payment method since payment has already been made
+      invoice.settle_invoice(nil, nil, last_transaction.id)
     rescue ::Error::NotFound
       send_slack_message("Unable to process recurring payment. Unknown resource for invoice ID #{invoice.id}.")
       return
@@ -46,7 +47,7 @@ class BraintreeService::Notification
     end
 
     send_slack_message("Recurring payment from #{invoice.member.fullname} successful. #{invoice.resource.get_renewal_slack_message}")
-    BillingMailer.receipt(invoice.member.email, last_transaction, invoice).deliver_now
+    BillingMailer.receipt(invoice.member.email, last_transaction, invoice).deliver_later
   end
 
   private

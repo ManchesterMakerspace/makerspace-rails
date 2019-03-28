@@ -15,13 +15,13 @@ class BillingMailer < ApplicationMailer
     send_mail(email, "Receipt from Manchester Makerspace")
   end
 
-  def refund(email, transaction)
+  def refund(email, transaction, invoice)
     @transaction = transaction
     @invoice = invoice
     send_mail(email, "Refund Approved")
   end
 
-  def refund_requested(email, transaction)
+  def refund_requested(email, transaction, invoice)
     @transaction = transaction
     @invoice = invoice
     send_mail(email, "Refund Requested")

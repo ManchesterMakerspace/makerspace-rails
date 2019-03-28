@@ -33,10 +33,13 @@ class Admin::Billing::TransactionsController < Admin::BillingController
   end
 
   def destroy
+    invoice = Invoice.find_by(transaction_id: params[:id])
+    raise ::Mongoid::Errors::DocumentNotFound.new(Invoice, { id: params[:id] }) if invoice.nil?
     result = ::BraintreeService::Transaction.refund(@gateway, params[:id])
     raise ::Error::Braintree::Result.new(result) unless result.success?
-    # TODO find invoice by transaction
-    # TODO: Send email confirmation
+
+    BillingMailer.refund(email, result.transaction, invoice).deliver_later
+    @messages.push("#{invoice.member.fullname}'s refund of #{invoice.amount} for #{invoice.name} from #{invoice.settled_at} completed.")
     render json: {}, status: 204 and return
   end
 

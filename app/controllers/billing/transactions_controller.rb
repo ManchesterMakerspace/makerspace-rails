@@ -10,10 +10,11 @@ class Billing::TransactionsController < BillingController
       invoice = Invoice.find(transaction_params[:invoice_id])
       raise ::Mongoid::Errors::DocumentNotFound.new(Invoice, { id: transaction_params[:invoice_id] }) if invoice.nil?
 
-      transaction_result = invoice.submit_for_settlement(@gateway, transaction_params[:payment_method_id])
+      transaction = invoice.submit_for_settlement(@gateway, transaction_params[:payment_method_id])
       raise Error::Braintree::Result.new(transaction_result) unless transaction_result.success?
-      # TODO Email user a receipt
 
+      @messages.push("Payment from #{invoice.member.fullname} of $#{invoice.amount} received for #{invoice.name}")
+      BillingMailer.receipt(invoice.member.email, transaction, invoice).deliver_later
       render json: { }, status: 200 and return
     end
 
@@ -23,10 +24,10 @@ class Billing::TransactionsController < BillingController
       raise ::Mongoid::Errors::DocumentNotFound.new(Invoice, { id: params[:id] }) if invoice.nil?
       raise Error::Unauthorized.new unless invoice.member.id == current_member.id
 
-      # TODO find transaction by invoice
       description = invoice.name || invoice.description
-      @messages.push("#{current_member.fullname} has requested a refund of #{invoice.amount} for #{description} from #{invoice.settled_at}. <#{ActionMailer::Base.default_url_options[:host]}/billing/transactions/#{invoice.transaction_id}|Process refund>")
-      # TODO: Send email to member confirming receipt of request
+      transaction = ::BraintreeService::Transaction.get_transaction(@gateway, invoice.transaction_id)
+      @messages.push("#{current_member.fullname} has requested a refund of #{invoice.amount} for #{description} from #{invoice.settled_at}. <#{request.base_url}/billing/transactions/#{invoice.transaction_id}|Process refund>")
+      BillingMailer.refund_requested(invoice.member.email, transaction).deliver_later
     end
 
     private

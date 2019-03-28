@@ -145,7 +145,6 @@ class UpdateMembershipForm extends React.Component<Props, State> {
     }
 
     const membershipSelectForm = (renderProps: UpdateSubscriptionRenderProps) => (
-      // TODO on submit, submit render props then, on success, redirect to checkout
       <FormModal
         id="select-membership"
         fullScreen={true}

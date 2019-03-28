@@ -65,4 +65,11 @@ class BillingMailerPreview < ActionMailer::Preview
       FactoryBot.build(:transaction)
     )
   end
+
+  def admin_refund_requested
+    BillingMailer.admin_refund_requested(
+      FactoryBot.build(:member).email,
+      FactoryBot.build(:transaction)
+    )
+  end
 end

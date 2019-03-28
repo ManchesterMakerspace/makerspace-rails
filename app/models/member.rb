@@ -183,4 +183,8 @@ class Member
   def apply_default_permissions
     update_permissions(DefaultPermission.list_as_hash)
   end
+
+  def send_member_registered_email
+    MemberMailer.member_registered(self).deliver_later
+  end
 end
