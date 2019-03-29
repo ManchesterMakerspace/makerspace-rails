@@ -27,6 +27,8 @@ import { EarnedMembershipsState } from "ui/earnedMemberships/interfaces";
 import { earnedMembershipsReducer } from "ui/earnedMemberships/actions";
 import { ReportsState } from "ui/reports/interfaces";
 import { reportsReducer } from "ui/reports/actions";
+import { TransactionsState } from "ui/transactions/interfaces";
+import { transactionsReducer } from "ui/transactions/actions";
 
 export type ScopedThunkDispatch = ThunkDispatch<State, {}, Action>
 
@@ -44,6 +46,7 @@ export interface State  {
   invoices: InvoicesState;
   earnedMemberships: EarnedMembershipsState;
   reports: ReportsState;
+  transactions: TransactionsState;
 }
 
 export const getRootReducer = (history: History) => combineReducers({
@@ -60,4 +63,5 @@ export const getRootReducer = (history: History) => combineReducers({
   invoices: invoicesReducer,
   earnedMemberships: earnedMembershipsReducer,
   reports: reportsReducer,
+  transactions: transactionsReducer,
 });

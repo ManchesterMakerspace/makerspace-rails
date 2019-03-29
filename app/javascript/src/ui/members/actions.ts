@@ -1,6 +1,5 @@
 import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
-import toNumber from "lodash-es/toNumber";
 
 import { QueryParams } from "app/interfaces";
 import { MemberDetails } from "app/entities/member";
@@ -23,7 +22,7 @@ export const readMembersAction = (
       type: MembersAction.GetMembersSuccess,
       data: {
         members,
-        totalItems: toNumber(totalItems)
+        totalItems: Number(totalItems)
       }
     });
   } catch (e) {

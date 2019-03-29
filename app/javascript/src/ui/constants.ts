@@ -3,6 +3,7 @@ export enum Status {
   Danger = "danger",
   Info = "info",
   Warn = "warn",
+  Default = "default",
 }
 
 export enum ItemsPerPage {

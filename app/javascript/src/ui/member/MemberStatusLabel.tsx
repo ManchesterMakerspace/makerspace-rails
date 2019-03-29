@@ -1,6 +1,6 @@
 import * as React from "react";
 import { MemberDetails, MemberStatus } from "app/entities/member";
-import { Status } from "ui/common/constants";
+import { Status } from "ui/constants";
 import StatusLabel from "ui/common/StatusLabel";
 
 export const memberStatusLabelMap = {
@@ -17,7 +17,7 @@ const MemberStatusLabel: React.SFC<{ member: Partial<MemberDetails>, id?: string
 
   let statusColor;
   if (!member.expirationTime) {
-    statusColor = Status.Default;
+    statusColor = Status.Info;
   } else {
     statusColor = current && !inActive ? Status.Success : Status.Danger;
   }

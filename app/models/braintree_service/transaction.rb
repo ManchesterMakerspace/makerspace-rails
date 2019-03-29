@@ -2,23 +2,29 @@ class BraintreeService::Transaction < Braintree::Transaction
   include ImportResource
   include ActiveModel::Serializers::JSON
 
+  attr_accessor :invoice
+
   def self.new(gateway, args)
     super(gateway, args)
   end
 
   def self.refund(gateway, transaction_id)
-    gateway.transaction.refund(id)
+    result = gateway.transaction.refund(id)
+    raise ::Error::Braintree:Result.new(result) unless result.success?
+    invoice.update({ refunded: true })
+    result.transaction
   end
 
-  def self.get_transactions(gateway, search_query)
+  def self.get_transactions(gateway, search_query = nil)
     transactions = gateway.transaction.search do |search|
       if search_query.kind_of? Hash
         search.customer_id.is search_query[:customer_id] unless search_query[:customer_id].nil?
-        search.status.is Braintree::Transaction::Status::Settled if search_query[:paid]
+        search.created_at >= search_query[:start_date] unless search_query[:start_date].nil?
+        search.created_at <= search_query[:end_date] unless search_query[:end_date].nil?
       end
     end
     transactions.map do |transaction|
-      normalize_transaction(gateway, transaction)
+      normalize(gateway, transaction)
     end
   end
 
@@ -31,7 +37,7 @@ class BraintreeService::Transaction < Braintree::Transaction
      if invoice.plan_id
       result = ::BraintreeService::Subscription.create(gateway, invoice)
       raise ::Error::Braintree:Result.new(result) unless result.success?
-      self.update({ subscription_id: subscription.id, transaction_id: subscription.transactions.first.id })
+      invoice.update({ subscription_id: subscription.id, transaction_id: subscription.transactions.first.id })
       transaction = result.subscription.transactions.first
     else
       result = @gateway.transaction.sale(
@@ -50,7 +56,7 @@ class BraintreeService::Transaction < Braintree::Transaction
       )
       raise ::Error::Braintree:Result.new(result) unless result.success?
       transaction = result.transaction
-      self.update!({ tramsaction_id: transaction.id })
+      invoice.update!({ tramsaction_id: transaction.id })
       transaction
     end
 

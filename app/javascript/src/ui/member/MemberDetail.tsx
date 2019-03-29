@@ -29,6 +29,7 @@ import { getDetailsForMember } from "ui/membership/constants";
 import AccessCardContainer, { CreateAccessCardProps } from "ui/accessCards/AccessCardContainer";
 import ReportList from "ui/reports/ReportList";
 import { readMembershipAction } from "ui/earnedMemberships/actions";
+import TransactionsList from "ui/transactions/TransactionsList";
 
 interface DispatchProps {
   getMember: () => Promise<void>;
@@ -221,7 +222,16 @@ class MemberDetail extends React.Component<Props, State> {
                   member={member}
                 />
               )
-            }
+            },
+            ...billingEnabled ? [{
+              name: "transactions",
+              displayName: "Payment History",
+              content: (
+                <TransactionsList
+                  member={member}
+                />
+              )
+            }] : []
           ]}
         />
         {this.renderMemberForms()}

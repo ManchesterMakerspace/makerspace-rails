@@ -8,6 +8,7 @@ export interface MemberDetails {
   cardId: string;
   groupName: string;
   role: MemberRole;
+  customerId: string;
   subscriptionId: string;
   subscription: boolean;
   memberContractOnFile: boolean;

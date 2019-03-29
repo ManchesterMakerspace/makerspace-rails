@@ -2,6 +2,7 @@ import * as React from "react";
 import { Routing } from "app/constants";
 import DetailView from "ui/common/DetailView";
 import SubscriptionsList from "ui/subscriptions/SubscriptionsList";
+import TransactionsList from "ui/transactions/TransactionsList";
 import OptionsList from "ui/billing/OptionsList";
 
 interface StateProps {}
@@ -39,6 +40,11 @@ class BillingContainer extends React.Component<Props, State> {
             name: "subscriptions",
             content: (
               <SubscriptionsList/>
+            )
+          }, {
+            name: "transactions",
+            content: (
+              <TransactionsList />
             )
           }, {
             name: "options",

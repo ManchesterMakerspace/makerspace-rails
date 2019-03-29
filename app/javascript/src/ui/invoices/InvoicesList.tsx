@@ -22,7 +22,7 @@ import { readInvoicesAction } from "ui/invoices/actions";
 import UpdateInvoiceContainer, { UpdateInvoiceRenderProps } from "ui/invoice/UpdateInvoiceContainer";
 import ButtonRow, { ActionButton } from "ui/common/ButtonRow";
 import { numberAsCurrency } from "ui/utils/numberToCurrency";
-import { Status } from "ui/common/constants";
+import { Status } from "ui/constants";
 import StatusLabel from "ui/common/StatusLabel";
 import Form from "ui/common/Form";
 

@@ -1,6 +1,5 @@
 import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
-import toNumber from "lodash-es/toNumber";
 import omit from "lodash-es/omit";
 
 import { getRentals, postRentals, putRental, deleteRental } from "api/rentals/transactions";
@@ -22,7 +21,7 @@ export const readRentalsAction = (
       type: RentalsAction.GetRentalsSuccess,
       data: {
         rentals,
-        totalItems: toNumber(totalItems)
+        totalItems: Number(totalItems)
       }
     });
   } catch (e) {

@@ -3,9 +3,10 @@ import debounce from "lodash-es/debounce";
 import AsyncSelect, { Props as AsyncProps } from 'react-select/lib/Async';
 import Createable from "react-select/lib/Creatable";
 import { formDialogClass } from "ui/common/FormModal";
-import { SelectOption } from "ui/common/RenewalForm";
 import Form from "ui/common/Form";
 import { ActionMeta } from "react-select/lib/types";
+
+export type SelectOption = { label: string, value: string, id?: string };
 
 interface Props extends AsyncProps<any> {
   name: string;

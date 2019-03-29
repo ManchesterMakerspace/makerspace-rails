@@ -1,6 +1,5 @@
 import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
-import toNumber from "lodash-es/toNumber";
 import omit from "lodash-es/omit";
 
 import { Invoice, InvoiceQueryParams, InvoiceableResource, InvoiceOptionSelection } from "app/entities/invoice";
@@ -22,7 +21,7 @@ export const readInvoicesAction = (
       type: InvoicesAction.GetInvoicesSuccess,
       data: {
         invoices,
-        totalItems: toNumber(totalItems)
+        totalItems: Number(totalItems)
       }
     })
   } catch (e) {

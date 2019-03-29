@@ -22,6 +22,8 @@ class Invoice
   field :due_date, type: Time
   field :amount, type: Float
   field :discount_id, type: String
+  field :refunded, type: Boolean, default: false
+  field :refund_requested, type: Time
 
   ## Admin/Operation Information
   # How many operations to perform (eg, num of months renewed)

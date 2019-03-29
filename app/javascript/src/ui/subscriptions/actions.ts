@@ -1,6 +1,5 @@
 import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
-import toNumber from "lodash-es/toNumber";
 import omit from "lodash-es/omit";
 
 import { getSubscriptions, deleteSubscription, getSubscription, SubscriptionQueryParams, putSubscription } from "api/subscriptions/transactions";
@@ -21,7 +20,7 @@ export const readSubscriptionsAction = (
       type: SubscriptionsAction.GetSubscriptionsSuccess,
       data: {
         subscriptions,
-        totalItems: toNumber(totalItems)
+        totalItems: Number(totalItems)
       }
     });
   } catch (e) {

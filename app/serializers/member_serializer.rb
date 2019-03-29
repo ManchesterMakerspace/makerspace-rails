@@ -10,6 +10,7 @@ class MemberSerializer < ActiveModel::Serializer
              :memberContractOnFile,
              :subscription_id,
              :earned_membership_id,
+             :customer_id,
 
   def card_id
     active_card = object.access_cards.to_a.find { |card| card.is_active? }

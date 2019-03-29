@@ -1,8 +1,6 @@
 import * as React from "react";
 import Typography from "@material-ui/core/Typography";
 import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import toNumber from "lodash-es/toNumber";
 
 import FormModal from "ui/common/FormModal";
 import ErrorMessage from "ui/common/ErrorMessage";
@@ -59,7 +57,7 @@ class RenewalForm extends React.Component<OwnProps, {}> {
     }
 
     if (renewalMonths) {
-      validatedForm.renew = toNumber(renewalMonths);
+      validatedForm.renew = Number(renewalMonths);
     } else {
       errors[renewalSelectName] = "Select a renewal term."
     }

@@ -7,6 +7,7 @@ export namespace Url {
     CardId = "{cardId}",
     InvoiceId = "{invoiceId}",
     SubscriptionId = "{subscriptionId}",
+    TransactionId = "{transactionId}",
     PaymentMethodId = "{paymentMethodId}",
     MembershipId = "{membershipId}",
   }
@@ -50,6 +51,8 @@ export namespace Url {
     Billing: {
       Subscriptions: `${baseAdminPath}/billing/subscriptions`,
       Subscription: `${baseAdminPath}/billing/subscriptions/${PathPlaceholder.SubscriptionId}`,
+      Transactions: `${baseAdminPath}/billing/transactions`,
+      Transaction: `${baseAdminPath}/billing/transactions/${PathPlaceholder.TransactionId}`,
     },
     Permissions: `${baseAdminPath}/permissions`,
     Permission: `${baseAdminPath}/permissions/${PathPlaceholder.MemberId}`,
@@ -68,7 +71,8 @@ export namespace Url {
     Discounts: `${baseBillingPath}/plans/discounts`,
     Subscriptions: `${baseBillingPath}/subscriptions`,
     Subscription: `${baseBillingPath}/subscriptions/${PathPlaceholder.SubscriptionId}`,
-    Transactions: `${baseBillingPath}/transactions`
+    Transactions: `${baseBillingPath}/transactions`,
+    Transaction: `${baseBillingPath}/billing/transactions/${PathPlaceholder.TransactionId}`,
   }
 
   export const EarnedMemberships = `${baseApiPath}/earned_memberships`

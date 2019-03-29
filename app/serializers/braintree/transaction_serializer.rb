@@ -18,13 +18,16 @@ class Braintree::TransactionSerializer < ActiveModel::Serializer
              :subscription_details,
              :subscription_id,
              :tax_amount,
-             :amount
-
-  def invoice
-    Invoice.find_by(transaction_id: object.id)
-  end
+             :amount,
+             :invoice
 
   def amount
     object.amount.truncate.to_s + '.' + sprintf('%02d', (BigDecimal(object.amount.to_s).frac * 100).truncate)
+  end
+
+  def discount_amount
+    unless object.discount_amount.nil?
+      object.discount_amount.truncate.to_s + '.' + sprintf('%02d', (BigDecimal(object.discount_amount.to_s).frac * 100).truncate)
+    end
   end
 end

@@ -18,7 +18,7 @@ import DeleteInvoiceOptionModal from "ui/billing/DeleteInvoiceOptionModal";
 import UpdateBillingContainer, { UpdateBillingRenderProps } from "ui/billing/UpdateBillingContainer";
 import { InvoiceOptionQueryParams } from "api/invoices/interfaces";
 import StatusLabel from "ui/common/StatusLabel";
-import { Status } from "ui/common/constants";
+import { Status } from "ui/constants";
 import { numberAsCurrency } from "ui/utils/numberToCurrency";
 
 interface OwnProps { }
@@ -66,7 +66,7 @@ const fields: Column<InvoiceOption>[] = [
   {
     id: "disabled",
     label: "Disabled",
-    cell: (row: InvoiceOption) => row.disabled ? <StatusLabel label="Disabled" color={Status.Default}/>
+    cell: (row: InvoiceOption) => row.disabled ? <StatusLabel label="Disabled" color={Status.Info}/>
                                                 : <StatusLabel label="Enabled" color={Status.Success} />,
   }
 ];

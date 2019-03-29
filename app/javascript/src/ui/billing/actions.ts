@@ -1,6 +1,5 @@
 import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
-import toNumber from "lodash-es/toNumber";
 
 import { Action as BillingAction } from "ui/billing/constants";
 import { BillingState } from "ui/billing/interfaces";
@@ -22,7 +21,7 @@ export const readOptionsAction = (
       type: BillingAction.GetOptionsSuccess,
       data: {
         options,
-        totalItems: toNumber(totalItems)
+        totalItems: Number(totalItems)
       }
     });
   } catch (e) {

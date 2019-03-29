@@ -11,7 +11,10 @@ interface BaseInvoice {
   amount: number;
   memberId: string;
   memberName: string;
+  refunded: boolean;
+  refundRequested?: Date;
   subscriptionId?: string;
+  transactionId?: string;
   discountId?: string;
 }
 

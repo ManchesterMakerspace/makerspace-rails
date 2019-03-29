@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Status } from "ui/common/constants";
+import { Status } from "ui/constants";
 
 interface StatusLabelProps {
   label: string;
@@ -9,7 +9,7 @@ interface StatusLabelProps {
 const statusToStyleMap = {
   [Status.Danger]: {backgroundColor: "rgba(255, 0, 0, 0.4)"},
   [Status.Success]: { backgroundColor: "rgba(88, 227, 111, 0.4)" },
-  [Status.Default]: { backgroundColor: "rgba(0, 0, 0, 0.12)"},
+  [Status.Info]: { backgroundColor: "rgba(0, 0, 0, 0.12)"},
 }
 
 const circleStyle = {
