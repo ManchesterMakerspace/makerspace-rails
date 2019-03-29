@@ -8,7 +8,7 @@ class BraintreeController < ApplicationController
     else
       ::BraintreeService::Notification.process(@gateway, @notification)
     end
-    return 200
+    render json: { }, status: 200 and return
   end
 
   private
