@@ -1,4 +1,4 @@
-class BraintreeController < ApplicationController
+class Billing::BraintreeController < ApplicationController
   include BraintreeGateway
   before_action :validate_notification
 
