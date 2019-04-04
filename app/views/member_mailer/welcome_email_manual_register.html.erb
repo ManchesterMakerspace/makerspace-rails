@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  <body class="email">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-xs-12">
+          <a href="http://manchestermakerspace.org/">
+            <img src="https://makerspace-interface.herokuapp.com/assets/makerspace.png"
+              alt="Manchester Makerspace"
+              style="max-height: 116px;"/>
+          </a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="row">
+            <div class="col-xs-12">
+              <h3>Welcome to Manchester Makerspace!</h3>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <p>We're so glad you've decided to join us!</p>
+
+              <p>When you signed up in person, our system automatically created an account for our Online Portal using the email address you provided at sign up: <%=@member.email%></p>
+              <p>If this email is not correct, please contact us so we can get you set up correctly</p>
+
+              <p>Using the link below, please complete registration in our Online Portal.</p>
+
+              <%= link_to 'Click here to complete registration for our Online Portal', edit_password_url(@member, reset_password_token: @token), id: "password-link"%>
+
+              <p>Additionally, each shop has a Resource Manager for conducting checkouts and maintaining the workshop. If there are any shops or equipment that you are particularly interested getting checked out on, please reach out to the respective Resource Manager for more details on checkouts.</p>
+              <p>Lastly, if you have any other questions, please reply to this email or email <a href="mailto:contact@manchestermakerspace.org?subject=Re:%20Welcome%20to%20Manchester%20Makerspace" target="_top">contact@manchestermakerspace.org</a>. Hope to see you at the space soon!</p>
+              <br>
+              <p>--The Manchester Makerspace Team</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -47,7 +47,7 @@ class Member
   before_update :update_initial_expiration_from_invoice, :if => proc { !cardID && cardID_changed? }
   before_save :update_braintree_customer_info
   after_update :update_card
-  after_create :send_slack_invite, :send_google_invite, :send_member_registered_email
+  after_create :send_slack_invite, :send_google_invite
 
   has_many :permissions, class_name: 'Permission', dependent: :destroy, :autosave => true
   has_many :rentals, class_name: 'Rental'
@@ -190,9 +190,5 @@ class Member
     rescue Error::Google::Upload => err
       send_slack_message("Error sharing Member Resources folder with #{self.fullname}. Error: #{err}")
     end
-  end
-
-  def send_member_registered_email
-    MemberMailer.member_registered(self).deliver_now
   end
 end

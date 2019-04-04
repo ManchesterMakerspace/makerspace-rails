@@ -17,9 +17,15 @@ class MemberMailer < ApplicationMailer
     mail to: "will.lynch91@gmail.com", subject: 'Test Mailer'
   end
 
-  def welcome_email(email, url)
-    @url = url
+  def welcome_email(email)
+    @url = url_for(action: :application, controller: 'application')
     mail to: email, subject: "Welcome to Manchester Makerspace!"
+  end
+
+  def welcome_email_manual_register(member, password_token)
+    @token = password_token
+    @member = member
+    mail to: @member.email, subject: "Welcome to Manchester Makerspace!"
   end
 
   def member_registered(member)
