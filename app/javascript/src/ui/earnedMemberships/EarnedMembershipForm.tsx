@@ -3,7 +3,13 @@ import range from "lodash-es/range";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Select from "@material-ui/core/Select";
+import Checkbox from "@material-ui/core/Checkbox";
 import FormLabel from "@material-ui/core/FormLabel";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import Typography from "@material-ui/core/Typography";
+import MenuItem from "@material-ui/core/MenuItem";
 
 import { MemberDetails } from "app/entities/member";
 
@@ -11,8 +17,7 @@ import FormModal from "ui/common/FormModal";
 import { getMember } from "api/members/transactions";
 import { getMembers } from "api/members/transactions";
 import Form from "ui/common/Form";
-import { Checkbox, FormControlLabel, Button, Card, CardContent } from "@material-ui/core";
-import { formPrefix, requirementFields, earnedMembershipFields } from "ui/earnedMemberships/constants";
+import { formPrefix, requirementFields, earnedMembershipFields, RequirementNames } from "ui/earnedMemberships/constants";
 import { EarnedMembership, Requirement } from "app/entities/earnedMembership";
 import ButtonRow, { ActionButton } from "ui/common/ButtonRow";
 import AsyncSelectFixed from "ui/common/AsyncSelect";
@@ -35,6 +40,7 @@ interface State {
   requirementCount: number;
   member: SelectOption;
   strictMap: boolean[];
+  requirementNames: string[]
 }
 
 const requirementNamePrefix = `${formPrefix}-requirement-`;
@@ -48,6 +54,7 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
       requirementCount: 1,
       member: undefined,
       strictMap: [],
+      requirementNames: [],
     }
   }
 
@@ -95,7 +102,9 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
       this.initMember();
       this.setState({
         requirementCount: membership && Array.isArray(membership.requirements) ? membership.requirements.length : 1,
-        strictMap: membership ? (membership.requirements || []).map(req => req.strict) : [] });
+        strictMap: membership ? (membership.requirements || []).map(req => req.strict) : [],
+        requirementNames: membership ? (membership.requirements || []).map(req => req.name) : [],
+      });
     }
     if (member && member !== prevProps.member) {
       this.formRef && this.formRef.resetForm();
@@ -157,30 +166,57 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
     })
   }
 
+  private updateRequirementName = (index: number) => (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { value } = event.target;
+    this.setState(state => ({
+      requirementNames: state.requirementNames.splice(index, 1, value)
+    }))
+  }
+
   private renderRequirementRow = (index: number) => {
     const { membership } = this.props;
-    const { strictMap } = this.state;
+    const { strictMap, requirementNames } = this.state;
     const fieldName = this.getRequirementName(index);
     const requirement = membership && membership.requirements && membership.requirements[index];
     const strict = requirement ? strictMap[index] : false;
+
+    const requirementName = requirementNames[index];
+    const displayOther = requirementName && (requirementName === RequirementNames.Other || !Object.values(RequirementNames).includes(requirementName));
 
     return (
       <Card>
         <CardContent>
           <Grid container spacing={24}>
             <Grid item xs={12}>
-              <TextField
+              <FormLabel>{requirementFields.name.label}</FormLabel>
+              <Select
                 fullWidth
                 required
-                value={requirement && requirement.name}
+                value={displayOther ? RequirementNames.Other : requirementName}
+                onChange={this.updateRequirementName(index)}
                 disabled={requirement && !!requirement.name}
+                name={`${fieldName}-${requirementFields.name.name}`}
+                id={`${fieldName}-${requirementFields.name.name}`}
+                placeholder={requirementFields.name.placeholder}
+              >
+                {Object.values(RequirementNames).map(name => <MenuItem key={name} value={name}>{name}</MenuItem>)}
+              </Select>
+              {displayOther && <TextField
+                fullWidth
+                required
+                value={requirementName}
+                disabled={requirement && !!requirement.name}
+                onChange={this.updateRequirementName(index)}
                 label={requirementFields.name.label}
                 name={`${fieldName}-${requirementFields.name.name}`}
                 id={`${fieldName}-${requirementFields.name.name}`}
                 placeholder={requirementFields.name.placeholder}
-              />
+              />}
             </Grid>
             <Grid item xs={12}>
+              <Typography variant="caption">
+                {`${requirementFields.rolloverLimit.label}: ${requirementFields.rolloverLimit.hint}`}
+              </Typography>
               <TextField
                 fullWidth
                 value={requirement && requirement.rolloverLimit}
@@ -224,6 +260,9 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
               />
             </Grid>
             <Grid item xs={12}>
+              <Typography variant="caption">
+                {`${requirementFields.strict.label}: ${requirementFields.strict.hint}`}
+              </Typography>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -258,7 +297,10 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
   private renderFormContents = () => {
     const { membership } = this.props;
 
-    return (
+    const renderRemove = this.state.requirementCount > 1 &&
+      (!membership || (membership.requirements || []).length < this.state.requirementCount)
+
+      return (
       <Grid container spacing={24}>
         <Grid item xs={12}>
           <FormLabel component="legend">{earnedMembershipFields.memberId.label}</FormLabel>
@@ -293,7 +335,7 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
                 onClick: this.addRequirement,
                 label: "Add Requirement",
               },
-              ...this.state.requirementCount > 1 ? [{
+              ...renderRemove ? [{
                 color: "secondary",
                 id: "remove-requirement",
                 variant: "outlined",

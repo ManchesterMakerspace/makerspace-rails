@@ -1,6 +1,7 @@
 import * as React from "react";
 import Typography from "@material-ui/core/Typography";
 import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
 import toNumber from "lodash-es/toNumber";
 
 import FormModal from "ui/common/FormModal";
@@ -89,7 +90,7 @@ class RenewalForm extends React.Component<OwnProps, {}> {
             placeholder="Select an option"
             name={renewalSelectName}
           >
-            {renewalOptions.map((option) => <option id={`renewal-option-${kebabCase(option.label)}`} key={kebabCase(option.label)} value={option.value}>{option.label}</option>)}
+            {renewalOptions.map((option) => <MenuItem id={`renewal-option-${kebabCase(option.label)}`} key={kebabCase(option.label)} value={option.value}>{option.label}</MenuItem>)}
           </Select>
         </KeyValueItem>
       </>

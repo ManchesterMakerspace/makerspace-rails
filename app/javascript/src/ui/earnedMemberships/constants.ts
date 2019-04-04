@@ -47,6 +47,7 @@ export const requirementFields: FormFields = {
     label: "Rollover Limit",
     name: `rolloverLimit`,
     placeholder: 'Enter a rollover limit (optional)',
+    hint: "Set number of excess completed requirements to apply to the next term. If left blank, rollover will be infinite (recommended)",
     transform: (val) => Number(val),
     validate: (val: number) => val !== undefined && val > -1,
     error: "Invalid limit. Must be an integer"
@@ -70,6 +71,14 @@ export const requirementFields: FormFields = {
   strict: {
     label: "Strict reporting?",
     name: `strict`,
+    hint: "Require reporter to enter the name of each person they assisted when completing this requirement (not recommended)",
     transform: (val) => !!val,
   },
+}
+
+export enum RequirementNames {
+  Mentorship = "Mentorship",
+  Class = "Class",
+  Checkout = "Checkout",
+  Other = "Other",
 }

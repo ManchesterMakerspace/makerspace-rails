@@ -52,4 +52,5 @@ export interface NewReport {
 export interface Report extends NewReport {
   id: string;
   date: Date;
+  reportRequirements: ReportRequirement[];
 }
