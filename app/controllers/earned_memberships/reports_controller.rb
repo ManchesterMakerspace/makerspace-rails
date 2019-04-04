@@ -11,6 +11,7 @@ class EarnedMemberships::ReportsController < AuthenticationController
     raise ::Error::InsufficientPermissions.new() unless current_member.earned_membership.id.as_json == report_params[:earned_membership_id]
     @report = EarnedMembership::Report.new(report_params)
     @report.save!
+    @messages.push("#{@report.earned_membership.member.fullname} just submitted a report.")
     render json: @report, serializer: EarnedMembership::ReportSerializer, root: "report" and return
   end
 
