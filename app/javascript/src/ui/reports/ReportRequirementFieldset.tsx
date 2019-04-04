@@ -15,6 +15,7 @@ import { reportRequirementFields, formPrefix } from "ui/reports/constants";
 import ButtonRow, { ActionButton } from "ui/common/ButtonRow";
 import { mapValues } from "lodash-es";
 import AsyncSelectFixed from "ui/common/AsyncSelect";
+import { Select } from "@material-ui/core";
 
 interface OwnProps {
   requirement: Requirement;
@@ -184,6 +185,7 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
         <FormLabel component="legend">{fields.memberId.label}</FormLabel>
         <AsyncSelectFixed
           isClearable
+          createable={true}
           name={fieldName}
           placeholder={fields.memberId.placeholder}
           id={fieldName}
@@ -217,16 +219,18 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
       >
         <Grid container spacing={24}>
           <Grid item xs={12}>
-            <TextField
+            <FormLabel>{fields.reportedCount.label}</FormLabel>
+            <Select
               fullWidth
               required
               value={reportRequirement && reportRequirement.reportedCount}
               disabled={disabled}
-              label={fields.reportedCount.label}
               name={`${fields.reportedCount.name}`}
               id={`${fields.reportedCount.name}`}
               placeholder={fields.reportedCount.placeholder}
-            />
+            >
+              {range(1,10).map(i => <option key={i} value={i}>{i}</option>)}
+            </Select>
           </Grid>
           <Grid item xs={12}>
             {range(0, this.state.memberCount).map(index =>

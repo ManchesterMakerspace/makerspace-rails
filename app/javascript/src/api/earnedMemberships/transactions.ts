@@ -4,7 +4,7 @@ import { buildJsonUrl } from "app/utils";
 import { buildMembershipUrl, buildReportsUrl } from "api/earnedMemberships/utils";
 import { handleApiError } from "api/utils/handleApiError";
 import { QueryParams } from "app/interfaces";
-import { EarnedMembership, Report } from "app/entities/earnedMembership";
+import { EarnedMembership, NewReport } from "app/entities/earnedMembership";
 
 export const getMemberships = async (queryparams?: QueryParams) => {
   try {
@@ -51,7 +51,7 @@ export const getReports = async (membershipId: string, queryparams: QueryParams,
   }
 }
 
-export const postReport = async (details: Partial<Report>) => {
+export const postReport = async (details: NewReport) => {
   try {
     return await axios.post(buildReportsUrl(details.earnedMembershipId, false), { report: details });
   } catch (e) {
