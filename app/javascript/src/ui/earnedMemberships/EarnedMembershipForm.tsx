@@ -196,7 +196,7 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
                 onChange={this.updateRequirementName(index)}
                 disabled={requirement && !!requirement.name}
                 name={`${fieldName}-${requirementFields.name.name}`}
-                id={`${fieldName}-${requirementFields.name.name}`}
+                id={`${fieldName}-${requirementFields.name.name}-select`}
                 placeholder={requirementFields.name.placeholder}
               >
                 {Object.values(RequirementNames).map(name => <MenuItem key={name} value={name}>{name}</MenuItem>)}
