@@ -61,6 +61,7 @@ describe("Earned Memberships", () => {
         await mock(mockRequests.members.get.ok(defaultMembers), 0);
         await utils.fillSearchInput(membershipPO.membershipForm.member, defaultMembers[0].email, defaultMembers[0].id);
 
+        await utils.selectDropdownByValue(`${membershipPO.requirementForm(0).name}-select`, "Other");
         await utils.fillInput(membershipPO.requirementForm(0).name, newRequirement.name);
         await utils.fillInput(membershipPO.requirementForm(0).targetCount, String(newRequirement.targetCount));
         await utils.selectDropdownByValue(membershipPO.requirementForm(0).termLengthSelect, String(newRequirement.termLength));
@@ -122,6 +123,7 @@ describe("Earned Memberships", () => {
         await mock(mockRequests.members.get.ok(defaultMembers), 0);
         await utils.fillSearchInput(membershipPO.membershipForm.member, defaultMembers[0].email, defaultMembers[0].id);
 
+        await utils.selectDropdownByValue(`${membershipPO.requirementForm(0).name}-select`, "Other");
         await utils.fillInput(membershipPO.requirementForm(0).name, newRequirement.name);
         await utils.fillInput(membershipPO.requirementForm(0).targetCount, String(newRequirement.targetCount));
         await utils.selectDropdownByValue(membershipPO.requirementForm(0).termLengthSelect, String(newRequirement.termLength));
