@@ -59,6 +59,11 @@ RSpec.describe RegistrationsController, type: :controller do
         expect(response.content_type).to eq "application/json"
         expect(parsed_response['member']['id']).to eq(Member.last.id.as_json)
       end
+
+      it "sends registration notification to us" do
+        expect(MemberMailer).to receive(:member_registered).and_call_original
+        post :create, params: {member: valid_attributes}, format: :json
+      end
     end
 
     # context "with invalid params" do
@@ -72,5 +77,23 @@ RSpec.describe RegistrationsController, type: :controller do
     #     expect(response).to render_template("new")
     #   end
     # end
+  end
+
+  describe "GET #new" do
+    it "throws errors if email missing" do
+      get :new, format: :json
+      expect(response).to have_http_status(422)
+    end
+
+    it "it notifies admin and raises error if email already exists" do
+      create(:member, email: "foo@foo.com")
+      get :new, params: {email: "foo@foo.com"}, format: :json
+      expect(response).to have_http_status(409)
+    end
+
+    it "sends welcome email to new member" do
+      expect(MemberMailer).to receive(:welcome_email).with("foo@foo.com").and_call_original
+      get :new, params: {email: "foo@foo.com"}, format: :json
+    end
   end
 end

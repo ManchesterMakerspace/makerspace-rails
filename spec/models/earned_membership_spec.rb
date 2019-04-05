@@ -25,7 +25,7 @@ RSpec.describe EarnedMembership, type: :model do
       expect(membership.outstanding_requirements).to eq([outstanding_requirement])
     end
 
-    it "dispatches renew memebr if no outstanding requirements" do
+    it "dispatches renew member if no outstanding requirements" do
         membership = create(:earned_membership_no_requirements,
           requirements: [completed_requirement, future_requirement],
           member: member)
@@ -99,6 +99,20 @@ RSpec.describe EarnedMembership, type: :model do
       membership.send(:renew_member)
       member.reload
       expect(member.expiration_time.to_i).to eq(shortest_requirement.current_term.end_date.to_i)
+    end
+
+    it "renews member on create if member benefits" do
+      exp_member = create(:member, expirationTime: (Time.now - 2.months).to_i * 1000)
+      membership = build(:earned_membership,
+        member: exp_member)
+      expect(membership).to receive(:renew_member)
+      membership.save
+
+      other_member = create(:member, expirationTime: (Time.now + 2.months).to_i * 1000)
+      other_membership = build(:earned_membership,
+        member: other_member)
+      expect(other_membership).not_to receive(:renew_member)
+      other_membership.save
     end
   end
 end
