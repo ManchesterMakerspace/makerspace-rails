@@ -4,6 +4,7 @@ import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Select from "@material-ui/core/Select";
 import FormLabel from "@material-ui/core/FormLabel";
+import MenuItem from "@material-ui/core/MenuItem";
 
 import { MemberDetails } from "app/entities/member";
 
@@ -128,7 +129,7 @@ class MemberForm extends React.Component<OwnProps, State> {
               placeholder={fields.status.placeholder}
             >
               {Object.entries(MemberStatusOptions).map(
-                ([key, value]) => <option id={`${fields.status.name}-option-${kebabCase(key)}`} key={kebabCase(key)} value={key}>{value}</option>)}
+                ([key, value]) => <MenuItem id={`${fields.status.name}-option-${kebabCase(key)}`} key={kebabCase(key)} value={key}>{value}</MenuItem>)}
             </Select>
           </Grid>
           <Grid item xs={12}>
@@ -142,7 +143,7 @@ class MemberForm extends React.Component<OwnProps, State> {
               placeholder={fields.role.placeholder}
             >
               {Object.entries(MemberRoleOptions).map(
-                ([key, value]) => <option id={`${fields.role.name}-option-${kebabCase(key)}`} key={kebabCase(key)} value={key}>{value}</option>)}
+                ([key, value]) => <MenuItem id={`${fields.role.name}-option-${kebabCase(key)}`} key={kebabCase(key)} value={key}>{value}</MenuItem>)}
             </Select>
           </Grid>
           <Grid item xs={12}>

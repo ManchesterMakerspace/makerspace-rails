@@ -2,7 +2,7 @@ import * as React from "react";
 import * as crypto from "crypto";
 import range from "lodash-es/range";
 import Grid from "@material-ui/core/Grid";
-import TextField from "@material-ui/core/TextField";
+import MenuItem from "@material-ui/core/MenuItem";
 import FormLabel from "@material-ui/core/FormLabel";
 
 import { getMembers, getMember } from "api/members/transactions";
@@ -229,7 +229,7 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
               id={`${fields.reportedCount.name}`}
               placeholder={fields.reportedCount.placeholder}
             >
-              {range(1,10).map(i => <option key={i} value={i}>{i}</option>)}
+              {range(0,12).map(i => <MenuItem key={i} value={i}>{i}</MenuItem>)}
             </Select>
           </Grid>
           <Grid item xs={12}>

@@ -132,18 +132,45 @@ export class PageUtils {
   }
   public selectDropdownByValue = async (selectLocator: string, optionValue: any) => {
     // Find select and click to open option menu
-    const select = await this.getElementByCss(selectLocator);
+    let select = await this.getElementByCss(selectLocator);
+    // Material-UI hijacks the element and uses a div if using MenuItem with a Select component
+    if ((await select.getTagName()) !== "select") {
+        select = await this.getElementByCss(selectLocator.replace("#", "#select-"));
+    }
+
     await select.click();
     // Get all option elements
-    const options = await select.findElements(by.css('option'));
+    let options = await select.findElements(by.css('option'));
 
-    // Async get value attr for each option
-    const optionValues = await Promise.all(options.map(async (option: any) => {
-      return new Promise(async (resolve) => {
-        const value = await option.getAttribute('value');
-        resolve({ option, value });
-      });
-    }));
+    let optionValues;
+    if (options && options.length) {
+      // Async get value attr for each option
+      optionValues = await Promise.all(options.map(async (option: any) => {
+        return new Promise(async (resolve) => {
+          const value = await option.getAttribute('value');
+          resolve({ option, value });
+        });
+      }));
+    } else {
+      // Matieral UI library displays options in a list on top of the viewstack
+      const menuSelectLocator = selectLocator.replace("#", "#menu-");
+      const menuSelect = await this.getElementByCss(menuSelectLocator);
+      options = await menuSelect.findElements(by.css('li'));
+
+      if (!options || !options.length) {
+        // This should throw an error since it wouldn't be in a select
+        // but that's better than failing silently
+        options = await menuSelect.findElements(by.css('option'));
+      }
+
+      // Async get value attr for each option
+      optionValues = await Promise.all(options.map(async (option: any) => {
+        return new Promise(async (resolve) => {
+          const value = await option.getAttribute('data-value');
+          resolve({ option, value });
+        });
+      }));
+    }
 
     // Find matching one
     const matchingOptions = optionValues.filter((option: any) => {
