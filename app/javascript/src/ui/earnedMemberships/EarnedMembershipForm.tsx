@@ -168,9 +168,15 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
 
   private updateRequirementName = (index: number) => (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { value } = event.target;
-    this.setState(state => ({
-      requirementNames: state.requirementNames.splice(index, 1, value)
-    }))
+    console.log(value);
+    this.setState(state => {
+      const reqNamesCopy = state.requirementNames.slice();
+      const included = state.requirementNames[index];
+      included ? reqNamesCopy.splice(index, 1, value) : reqNamesCopy[index] = value;
+      return ({
+        requirementNames: reqNamesCopy
+      })
+    })
   }
 
   private renderRequirementRow = (index: number) => {
@@ -181,7 +187,7 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
     const strict = requirement ? strictMap[index] : false;
 
     const requirementName = requirementNames[index];
-    const displayOther = requirementName && (requirementName === RequirementNames.Other || !Object.values(RequirementNames).includes(requirementName));
+    const displayOther = requirementName !== undefined && (requirementName === RequirementNames.Other || !Object.values(RequirementNames).includes(requirementName));
 
     return (
       <Card>
@@ -195,7 +201,7 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
                 value={displayOther ? RequirementNames.Other : requirementName}
                 onChange={this.updateRequirementName(index)}
                 disabled={requirement && !!requirement.name}
-                name={`${fieldName}-${requirementFields.name.name}`}
+                name={`${fieldName}-${requirementFields.name.name}-select`}
                 id={`${fieldName}-${requirementFields.name.name}-select`}
                 placeholder={requirementFields.name.placeholder}
               >
@@ -237,7 +243,7 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
                 required
                 placeholder={requirementFields.termLength.placeholder}
               >
-                {range(1, 12).map(int => (
+                {range(1, 13).map(int => (
                   <option
                     id={`${fieldName}-${requirementFields.termLength.name}-option-${int}`}
                     key={`${fieldName}-${requirementFields.termLength.name}-option-${int}`}
@@ -249,15 +255,26 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
               </Select>
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                fullWidth
-                required
-                value={requirement && requirement.targetCount}
-                label={requirementFields.targetCount.label}
+              <FormLabel component="legend">{requirementFields.targetCount.label}</FormLabel>
+              <Select
                 name={`${fieldName}-${requirementFields.targetCount.name}`}
                 id={`${fieldName}-${requirementFields.targetCount.name}`}
+                value={requirement ? requirement.targetCount : "1"}
+                fullWidth
+                native
+                required
                 placeholder={requirementFields.targetCount.placeholder}
-              />
+              >
+                {range(1, 11).map(int => (
+                  <option
+                    id={`${fieldName}-${requirementFields.targetCount.name}-option-${int}`}
+                    key={`${fieldName}-${requirementFields.targetCount.name}-option-${int}`}
+                    value={int}
+                  >
+                    {int}
+                  </option>
+                ))}
+              </Select>
             </Grid>
             <Grid item xs={12}>
               <Typography variant="caption">

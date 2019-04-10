@@ -61,14 +61,15 @@ describe("Earned Memberships", () => {
         await mock(mockRequests.members.get.ok(defaultMembers), 0);
         await utils.fillSearchInput(membershipPO.membershipForm.member, defaultMembers[0].email, defaultMembers[0].id);
 
-        await utils.selectDropdownByValue(`${membershipPO.requirementForm(0).name}-select`, "Other");
-        await utils.fillInput(membershipPO.requirementForm(0).name, newRequirement.name);
-        await utils.fillInput(membershipPO.requirementForm(0).targetCount, String(newRequirement.targetCount));
+        await utils.selectDropdownByValue(membershipPO.requirementForm(0).nameSelect, "Other");
+        await utils.fillInput(membershipPO.requirementForm(0).nameInput, newRequirement.name);
+        await utils.selectDropdownByValue(membershipPO.requirementForm(0).targetCount, String(newRequirement.targetCount));
         await utils.selectDropdownByValue(membershipPO.requirementForm(0).termLengthSelect, String(newRequirement.termLength));
 
         await utils.clickElement(membershipPO.membershipForm.addRequirementButton);
-        await utils.fillInput(membershipPO.requirementForm(1).name, newRequirement2.name);
-        await utils.fillInput(membershipPO.requirementForm(1).targetCount, String(newRequirement2.targetCount));
+        await utils.selectDropdownByValue(membershipPO.requirementForm(1).nameSelect, "Other");
+        await utils.fillInput(membershipPO.requirementForm(1).nameInput, newRequirement2.name);
+        await utils.selectDropdownByValue(membershipPO.requirementForm(1).targetCount, String(newRequirement.targetCount));
         await utils.selectDropdownByValue(membershipPO.requirementForm(1).termLengthSelect, String(newRequirement2.termLength));
 
         await mock(mockRequests.earnedMemberships.post.ok(initMembership));
@@ -97,11 +98,12 @@ describe("Earned Memberships", () => {
         await utils.waitForVisible(membershipPO.membershipForm.submit);
 
         expect(await utils.getElementText(membershipPO.membershipForm.member)).toEqual(firstMembership.memberName)
-        expect(await utils.getElementAttribute(membershipPO.requirementForm(0).name, "value")).toEqual(origRequirements[0].name)
+        expect(await utils.getElementAttribute(membershipPO.requirementForm(0).nameSelect, "value")).toEqual("Other")
+        expect(await utils.getElementAttribute(membershipPO.requirementForm(0).nameInput, "value")).toEqual(origRequirements[0].name)
         expect(await utils.getElementAttribute(membershipPO.requirementForm(0).targetCount, "value")).toEqual(String(origRequirements[0].targetCount))
         expect(await utils.getElementAttribute(membershipPO.requirementForm(0).termLengthSelect, "value")).toEqual(String(origRequirements[0].termLength))
 
-        await utils.fillInput(membershipPO.requirementForm(0).targetCount, String(updatedRequirement.targetCount));
+        await utils.selectDropdownByValue(membershipPO.requirementForm(0).targetCount, String(newRequirement.targetCount));
         await utils.selectDropdownByValue(membershipPO.requirementForm(0).termLengthSelect, String(updatedRequirement.termLength));
 
         await mock(mockRequests.earnedMemberships.put.ok(updatedMembership));
@@ -117,24 +119,22 @@ describe("Earned Memberships", () => {
 
         await utils.clickElement(membershipPO.membershipForm.submit);
         await utils.assertInputError(membershipPO.membershipForm.member)
-        await utils.assertInputError(membershipPO.requirementForm(0).name)
-        await utils.assertInputError(membershipPO.requirementForm(0).targetCount)
+        await utils.assertInputError(membershipPO.requirementForm(0).nameSelect)
 
         await mock(mockRequests.members.get.ok(defaultMembers), 0);
         await utils.fillSearchInput(membershipPO.membershipForm.member, defaultMembers[0].email, defaultMembers[0].id);
 
-        await utils.selectDropdownByValue(`${membershipPO.requirementForm(0).name}-select`, "Other");
-        await utils.fillInput(membershipPO.requirementForm(0).name, newRequirement.name);
-        await utils.fillInput(membershipPO.requirementForm(0).targetCount, String(newRequirement.targetCount));
+        await utils.selectDropdownByValue(membershipPO.requirementForm(0).nameSelect, "Other");
+        await utils.fillInput(membershipPO.requirementForm(0).nameInput, newRequirement.name);
+        await utils.selectDropdownByValue(membershipPO.requirementForm(0).targetCount, String(newRequirement.targetCount));
         await utils.selectDropdownByValue(membershipPO.requirementForm(0).termLengthSelect, String(newRequirement.termLength));
 
-        expect(await utils.isElementDisplayed(membershipPO.requirementForm(1).name)).toBeFalsy();
+        expect(await utils.isElementDisplayed(membershipPO.requirementForm(1).nameSelect)).toBeFalsy();
         await utils.clickElement(membershipPO.membershipForm.addRequirementButton);
         await utils.clickElement(membershipPO.membershipForm.submit);
-        await utils.assertInputError(membershipPO.requirementForm(1).name)
-        await utils.assertInputError(membershipPO.requirementForm(1).targetCount)
+        await utils.assertInputError(membershipPO.requirementForm(1).nameSelect);
         await utils.clickElement(membershipPO.membershipForm.removeRequirementButton);
-        expect(await utils.isElementDisplayed(membershipPO.requirementForm(1).name)).toBeFalsy();
+        expect(await utils.isElementDisplayed(membershipPO.requirementForm(1).nameSelect)).toBeFalsy();
 
         // No create mock, should display API error
         expect(await utils.isElementDisplayed(membershipPO.membershipForm.error)).toBeFalsy();
@@ -218,11 +218,10 @@ describe("Earned Memberships", () => {
       await utils.waitForVisible(reportPO.reportForm.submit);
 
       await mock(mockRequests.members.get.ok(defaultMembers));
-      await utils.fillSearchInput(reportPO.reportRequirementForm(0).member(0), defaultMembers[0].email, defaultMembers[0].id);
-
-      await utils.fillInput(reportPO.reportRequirementForm(0).reportedCount, String(newReportRequirement.reportedCount));
-
       await utils.clickElement(reportPO.reportRequirementForm(0).addMemberButton);
+      await utils.fillSearchInput(reportPO.reportRequirementForm(0).member(0), defaultMembers[0].email, defaultMembers[0].id);
+      await utils.selectDropdownByValue(reportPO.reportRequirementForm(0).reportedCount, String(newReportRequirement.reportedCount));
+
       const newMemberSearch = defaultMembers.slice(5, 10);
       await mock(mockRequests.members.get.ok(newMemberSearch));
       await utils.fillSearchInput(reportPO.reportRequirementForm(0).member(1), newMemberSearch[1].email, newMemberSearch[1].id);
@@ -244,7 +243,7 @@ describe("Earned Memberships", () => {
       await utils.clickElement(reportPO.reportForm.submit);
       await utils.assertInputError(reportPO.reportRequirementForm(0).reportedCount)
 
-      await utils.fillInput(reportPO.reportRequirementForm(0).reportedCount, String(newReportRequirement.reportedCount));
+      await utils.selectDropdownByValue(reportPO.reportRequirementForm(0).reportedCount, String(newReportRequirement.reportedCount));
 
       expect(await utils.isElementDisplayed(reportPO.reportRequirementForm(0).member(1))).toBeFalsy();
       await utils.clickElement(reportPO.reportRequirementForm(0).addMemberButton);
@@ -261,6 +260,7 @@ describe("Earned Memberships", () => {
       await utils.clickElement(reportPO.reportForm.submit);
       await utils.waitForNotVisible(reportPO.reportForm.submit);
       expect(await utils.getElementText(memberPO.memberDetail.expiration)).toEqual(timeToDate(updatedMember.expirationTime));
+      // TODO: Should verify strict attr works properly
       done();
     });
   });

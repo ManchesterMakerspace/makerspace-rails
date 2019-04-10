@@ -35,7 +35,8 @@ class EarnedMembershipsPageObject extends TablePageObject {
   private membershipFormId = "#earned-membership-form";
   private requirementNamePrefix = `${this.membershipFormId}-requirement-{index}`;
   public requirementForm = (index: number) => ({
-    name: `${this.getRequirementPrefix(index)}-name`,
+    nameSelect: `${this.getRequirementPrefix(index)}-name-select`,
+    nameInput: `${this.getRequirementPrefix(index)}-name`,
     rolloverLimit: `${this.getRequirementPrefix(index)}-rolloverLimit`,
     termLengthSelect: `${this.getRequirementPrefix(index)}-termLength`,
     targetCount: `${this.getRequirementPrefix(index)}-targetCount`,

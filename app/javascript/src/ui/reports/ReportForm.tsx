@@ -181,8 +181,9 @@ export class ReportForm extends React.Component<OwnProps> {
         error={error}
         onSubmit={!allReqComplete && onSubmit}
         closeHandler={onClose}
+        cancelText={!onSubmit && "Close"}
         isOpen={isOpen}
-        title="Submit Earned Membership Report"
+        title={onSubmit ? "Submit Earned Membership Report" : "View Earned Membership Report"}
       >
         { (requirements || []).length ?
           this.renderRequirements()
