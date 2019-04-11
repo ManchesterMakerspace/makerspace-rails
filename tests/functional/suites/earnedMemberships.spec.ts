@@ -241,8 +241,6 @@ describe("Earned Memberships", () => {
       await utils.waitForVisible(reportPO.reportForm.submit);
 
       await utils.clickElement(reportPO.reportForm.submit);
-      await utils.assertInputError(reportPO.reportRequirementForm(0).reportedCount)
-
       await utils.selectDropdownByValue(reportPO.reportRequirementForm(0).reportedCount, String(newReportRequirement.reportedCount));
 
       expect(await utils.isElementDisplayed(reportPO.reportRequirementForm(0).member(1))).toBeFalsy();

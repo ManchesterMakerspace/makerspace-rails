@@ -168,7 +168,7 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
 
   private updateRequirementName = (index: number) => (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { value } = event.target;
-    console.log(value);
+
     this.setState(state => {
       const reqNamesCopy = state.requirementNames.slice();
       const included = state.requirementNames[index];
@@ -184,7 +184,7 @@ export class EarnedMembershipForm extends React.Component<OwnProps, State> {
     const { strictMap, requirementNames } = this.state;
     const fieldName = this.getRequirementName(index);
     const requirement = membership && membership.requirements && membership.requirements[index];
-    const strict = requirement ? strictMap[index] : false;
+    const strict = strictMap[index] || false;
 
     const requirementName = requirementNames[index];
     const displayOther = requirementName !== undefined && (requirementName === RequirementNames.Other || !Object.values(RequirementNames).includes(requirementName));

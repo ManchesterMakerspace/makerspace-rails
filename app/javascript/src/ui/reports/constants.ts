@@ -1,7 +1,7 @@
 import { FormFields } from "ui/common/Form";
-import { MemberDetails } from "app/entities/member";
 import { Requirement } from "app/entities/earnedMembership";
-import { isObject } from "lodash-es";
+import isObject from "lodash-es/isObject";
+import { SelectOption } from "ui/common/RenewalForm";
 
 
 export enum Action {
@@ -20,14 +20,14 @@ export const reportRequirementFields = (requirement: Requirement, index: number)
     label: `Number of completed ${requirement.name.toLowerCase()} for this report`,
     name: `${formPrefix}-${index}-reportedCount`,
     placeholder: 'Select a number',
-    validate: (val: string) => !!Number(val),
+    validate: (val: string) => val !== undefined && val !== "" && Number(val) >= 0,
     error: "Please enter a number"
   },
   memberId: {
     label: "Select a member you helped",
     name: `${formPrefix}-${index}-members`,
     placeholder: `Search by name or email`,
-    transform: (val: MemberDetails | string) => isObject(val) ? (val as MemberDetails).id : val,
+    transform: (val: SelectOption | string) => isObject(val) ? (val as SelectOption).value : val,
     error: "Must select members you helped for this requirement"
   },
 });
