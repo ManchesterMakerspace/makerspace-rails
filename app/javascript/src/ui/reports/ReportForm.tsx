@@ -46,16 +46,18 @@ export class ReportForm extends React.Component<OwnProps> {
       reportRequirements: []
     };
 
-    report.reportRequirements = await Promise.all<NewReportRequirement>(this.reportRequirementRefs.map((ref, index) => {
+    const existingRefs = this.reportRequirementRefs.filter(ref => !!ref);
+
+    report.reportRequirements = await Promise.all<NewReportRequirement>(existingRefs.map((ref) => {
       return new Promise(async (resolve) => {
         const reportRequirement = await ref.validate();
         resolve(reportRequirement);
       });
     }));
 
-
     // Halt validation if any subforms invalid
-    if (this.reportRequirementRefs.some(ref => !ref.formRef.isValid())) {
+    if (existingRefs.some(ref => !ref.formRef.isValid())) {
+      form.setError("0", ""); // Doesn't matter what this error is, just want to set it to render the form invalid
       return;
     }
 
@@ -67,13 +69,25 @@ export class ReportForm extends React.Component<OwnProps> {
     return reqStart > new Date()
   }
 
+  private isPassLimit = (requirement: Requirement | ReportRequirement): boolean => {
+    if (isReportRequirement(requirement)) {
+      return false;
+    }
+    return requirement.rolloverLimit &&
+      requirement.rolloverLimit > 0 &&
+      requirement.currentCount >= requirement.rolloverLimit;
+  };
+
   private renderRequirementForm = (requirement: Requirement | ReportRequirement, index: number) => {
     const { report, membership } = this.props;
     const baseReq = isReportRequirement(requirement) ?
       membership.requirements.find(req => requirement.requirementId === req.id)
       : requirement
 
-    const futureTerm = this.isFutureRequirement(requirement)
+    const futureTerm = this.isFutureRequirement(requirement);
+    // Hide fieldset if has a future term and not allowed to rollover requirements
+    // between months. If viewing a report, always display fieldset
+    const hideFieldset = (futureTerm && this.isPassLimit(baseReq) && !report);
 
     return (
       <Card>
@@ -82,8 +96,15 @@ export class ReportForm extends React.Component<OwnProps> {
             <KeyValueItem label="Name">{baseReq.name}</KeyValueItem>
           </Grid>
           {
-            futureTerm && !report ?
-            <Typography variant="body1">Requirement has been satisfied for current term.</Typography>
+            hideFieldset ?
+            (<>
+              <Typography variant="body1">
+                Requirement has been satisfied for current term.
+              </Typography>
+              <Typography variant="body1">
+                Next report can be submitted on {timeToDate(baseReq.termStartDate)}
+              </Typography>
+            </>)
             : (
               <>
                   <Grid item xs={12}>
@@ -171,7 +192,7 @@ export class ReportForm extends React.Component<OwnProps> {
     const { isOpen, onClose, isRequesting, error, onSubmit, membership, report } = this.props;
     const requirements = this.getRequirements();
 
-    const allReqComplete = requirements && (requirements as ItemWithTerm[]).every(this.isFutureRequirement);
+    const allReqComplete = requirements && (requirements as (Requirement | ReportRequirement)[]).every(req => this.isFutureRequirement(req) && this.isPassLimit(req));
 
     return membership ?
       <FormModal

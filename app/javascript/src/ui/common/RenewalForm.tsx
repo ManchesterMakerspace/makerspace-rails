@@ -90,7 +90,7 @@ class RenewalForm extends React.Component<OwnProps, {}> {
             placeholder="Select an option"
             name={renewalSelectName}
           >
-            {renewalOptions.map((option) => <MenuItem id={`renewal-option-${kebabCase(option.label)}`} key={kebabCase(option.label)} value={option.value}>{option.label}</MenuItem>)}
+            {renewalOptions.map((option) => <option id={`renewal-option-${kebabCase(option.label)}`} key={kebabCase(option.label)} value={option.value}>{option.label}</option>)}
           </Select>
         </KeyValueItem>
       </>

@@ -31,8 +31,22 @@ class EarnedMembership::Report
     end
   end
 
+  # Don't allow future reporting if past rollover
   def no_future_reporting
-    if self.report_requirements.any? { |rr| !rr.requirement or !rr.requirement.current_term or rr.requirement.current_term.start_date > Time.now }
+    future_terms = self.report_requirements.select { |rr|
+       (
+        !rr.requirement || # No requirement or
+        (
+          !rr.requirement.current_term || # For the future and cant apply rolloverc
+          rr.requirement.current_term.start_date > Time.now
+        ) &&
+        (
+          !rr.requirement.rollover_limit.nil? &&
+          rr.reported_count >= rr.requirement.rollover_limit
+        )
+      )
+    }
+    if future_terms.size > 0
       errors.add(:requirement, "Cannot submit reports for future terms")
     end
   end

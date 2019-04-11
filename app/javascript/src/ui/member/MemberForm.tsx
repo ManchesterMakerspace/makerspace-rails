@@ -129,7 +129,7 @@ class MemberForm extends React.Component<OwnProps, State> {
               placeholder={fields.status.placeholder}
             >
               {Object.entries(MemberStatusOptions).map(
-                ([key, value]) => <MenuItem id={`${fields.status.name}-option-${kebabCase(key)}`} key={kebabCase(key)} value={key}>{value}</MenuItem>)}
+                ([key, value]) => <option id={`${fields.status.name}-option-${kebabCase(key)}`} key={kebabCase(key)} value={key}>{value}</option>)}
             </Select>
           </Grid>
           <Grid item xs={12}>
@@ -143,7 +143,7 @@ class MemberForm extends React.Component<OwnProps, State> {
               placeholder={fields.role.placeholder}
             >
               {Object.entries(MemberRoleOptions).map(
-                ([key, value]) => <MenuItem id={`${fields.role.name}-option-${kebabCase(key)}`} key={kebabCase(key)} value={key}>{value}</MenuItem>)}
+                ([key, value]) => <option id={`${fields.role.name}-option-${kebabCase(key)}`} key={kebabCase(key)} value={key}>{value}</option>)}
             </Select>
           </Grid>
           <Grid item xs={12}>

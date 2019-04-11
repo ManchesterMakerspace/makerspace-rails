@@ -142,6 +142,16 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
           break;
         }
       }
+    } else if (!reportRequirement && reportRequirement.memberIds.length) {
+      const memberIdField = fields.memberId;
+      const fieldNames = Object.keys(reportRequirementValues);
+      for (let i = 0; i < fieldNames.length; i++) {
+        const fieldName = fieldNames[i];
+        if (fieldName.startsWith(memberIdField.name)) {
+          formErrors[fieldName] = "Cannot submit member without a number of completed requirements";
+          break;
+        }
+      }
     }
 
     await this.formRef.setFormState({
@@ -223,13 +233,13 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
             <Select
               fullWidth
               required
-              value={reportRequirement && reportRequirement.reportedCount}
+              defaultValue={reportRequirement && reportRequirement.reportedCount || "0"}
               disabled={disabled}
               name={`${fields.reportedCount.name}`}
               id={`${fields.reportedCount.name}`}
               placeholder={fields.reportedCount.placeholder}
             >
-              {range(0,12).map(i => <MenuItem key={i} value={i}>{i}</MenuItem>)}
+              {range(0, 12).map(i => <MenuItem key={i} value={String(i)}>{String(i)}</MenuItem>)}
             </Select>
           </Grid>
           <Grid item xs={12}>

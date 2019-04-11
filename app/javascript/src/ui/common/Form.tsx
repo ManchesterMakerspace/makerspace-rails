@@ -60,7 +60,10 @@ class Form extends React.Component<FormModalProps, State> {
       const formInput = this.getFormInput(input);
       if (formInput) {
         if (values[formInput.props.name] === undefined) {
-          const val = formInput.props.hasOwnProperty("checked") ? formInput.props.checked : formInput.props.value || formInput.props.defaultValue || "";
+          const val = formInput.props.hasOwnProperty("checked") ? (formInput.props.checked ? "true" : "")
+            : (formInput.props.value !== undefined && formInput.props.value) ||
+              (formInput.props.defaultValue !== undefined && formInput.props.defaultValue) ||
+              "";
           values[formInput.props.name] = val;
         }
       }
