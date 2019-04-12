@@ -52,6 +52,11 @@ RSpec.describe Admin::MembersController, type: :controller do
           expect(response.content_type).to eq "application/json"
           expect(parsed_response['member']['id']).to eq(Member.last.id.as_json)
         end
+
+        it "sends an email for the created member to reset password" do
+          expect(MemberMailer).to receive(:welcome_email_manual_register).and_call_original
+          post :create, params: {member: valid_attributes}, format: :json
+        end
       end
 
       context "with invalid params" do

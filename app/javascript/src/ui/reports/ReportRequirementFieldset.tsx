@@ -2,7 +2,7 @@ import * as React from "react";
 import * as crypto from "crypto";
 import range from "lodash-es/range";
 import Grid from "@material-ui/core/Grid";
-import TextField from "@material-ui/core/TextField";
+import MenuItem from "@material-ui/core/MenuItem";
 import FormLabel from "@material-ui/core/FormLabel";
 
 import { getMembers, getMember } from "api/members/transactions";
@@ -15,6 +15,7 @@ import { reportRequirementFields, formPrefix } from "ui/reports/constants";
 import ButtonRow, { ActionButton } from "ui/common/ButtonRow";
 import { mapValues } from "lodash-es";
 import AsyncSelectFixed from "ui/common/AsyncSelect";
+import { Select } from "@material-ui/core";
 
 interface OwnProps {
   requirement: Requirement;
@@ -141,6 +142,16 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
           break;
         }
       }
+    } else if (!reportRequirement && reportRequirement.memberIds.length) {
+      const memberIdField = fields.memberId;
+      const fieldNames = Object.keys(reportRequirementValues);
+      for (let i = 0; i < fieldNames.length; i++) {
+        const fieldName = fieldNames[i];
+        if (fieldName.startsWith(memberIdField.name)) {
+          formErrors[fieldName] = "Cannot submit member without a number of completed requirements";
+          break;
+        }
+      }
     }
 
     await this.formRef.setFormState({
@@ -184,6 +195,7 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
         <FormLabel component="legend">{fields.memberId.label}</FormLabel>
         <AsyncSelectFixed
           isClearable
+          createable={true}
           name={fieldName}
           placeholder={fields.memberId.placeholder}
           id={fieldName}
@@ -217,16 +229,18 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
       >
         <Grid container spacing={24}>
           <Grid item xs={12}>
-            <TextField
+            <FormLabel>{fields.reportedCount.label}</FormLabel>
+            <Select
               fullWidth
               required
-              value={reportRequirement && reportRequirement.reportedCount}
+              defaultValue={reportRequirement && reportRequirement.reportedCount || "0"}
               disabled={disabled}
-              label={fields.reportedCount.label}
               name={`${fields.reportedCount.name}`}
               id={`${fields.reportedCount.name}`}
               placeholder={fields.reportedCount.placeholder}
-            />
+            >
+              {range(0, 12).map(i => <MenuItem key={i} value={String(i)}>{String(i)}</MenuItem>)}
+            </Select>
           </Grid>
           <Grid item xs={12}>
             {range(0, this.state.memberCount).map(index =>

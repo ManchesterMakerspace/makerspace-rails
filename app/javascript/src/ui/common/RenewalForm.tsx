@@ -1,6 +1,7 @@
 import * as React from "react";
 import Typography from "@material-ui/core/Typography";
 import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
 import toNumber from "lodash-es/toNumber";
 
 import FormModal from "ui/common/FormModal";

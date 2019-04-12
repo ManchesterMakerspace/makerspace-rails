@@ -10,9 +10,9 @@ class RegistrationsController < ApplicationController
       if member
         error = "Cannot send registration to #{email}. Account already exists"
         @messages.push(error)
-        render json: { error: error }, status: 409 and return
+        raise ::Error::AccountExists
       end
-      MemberMailer.welcome_email(email, request.base_url).deliver_now
+      MemberMailer.welcome_email(email).deliver_now
       render json: {}, status: 200 and return
     end
 
@@ -20,6 +20,7 @@ class RegistrationsController < ApplicationController
       @member = Member.new(member_params)
       @member.save!
       sign_in(@member)
+      MemberMailer.member_registered(@member).deliver_now
       render json: @member and return
     end
 

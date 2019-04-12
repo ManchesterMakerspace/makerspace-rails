@@ -8,8 +8,8 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import Select from "@material-ui/core/Select";
 import Radio from "@material-ui/core/Radio";
 import Grid from "@material-ui/core/Grid";
+import MenuItem from "@material-ui/core/MenuItem";
 
-import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import { Invoice, InvoiceableResource, InvoiceOption } from "app/entities/invoice";
 import FormModal from "ui/common/FormModal";
 import Form from "ui/common/Form";
@@ -165,17 +165,17 @@ export class InvoiceForm extends React.Component<Props, State> {
 
     const optionsList = Object.values(invoiceOptions);
     const invoiceOptionsList = optionsList.length ?
-      [<option id={`${fields.invoiceOptionId.name}-option-none`} key="none" value={null}>None</option>,
+      [<MenuItem id={`${fields.invoiceOptionId.name}-option-none`} key="none" value={null}>None</MenuItem>,
         [...optionsList.map(
         (invoiceOption) =>
-          <option
+          <MenuItem
             id={`${fields.invoiceOptionId.name}-option-${invoiceOption.id}`}
             key={invoiceOption.id}
             value={invoiceOption.id}>
               {invoiceOption.name}
-          </option>)
+          </MenuItem>)
         ]]
-      : <option id={`${fields.invoiceOptionId.name}-option-none`}>No Options</option>
+      : <MenuItem id={`${fields.invoiceOptionId.name}-option-none`}>No Options</MenuItem>
 
 
     return (
@@ -230,8 +230,8 @@ export class InvoiceForm extends React.Component<Props, State> {
             >
               {rentals.length ?
                 rentals.map(
-                  (rental) => <option id={`${fields.rentalId.name}-option-${rental.id}`} key={rental.id} value={rental.id}>{rental.number}</option>)
-                : invoice && <option id={`${fields.rentalId.name}-option-${invoice.resourceId}`} value={invoice.resourceClass}>{invoice.resourceId}</option>
+                  (rental) => <MenuItem id={`${fields.rentalId.name}-option-${rental.id}`} key={rental.id} value={rental.id}>{rental.number}</MenuItem>)
+                : invoice && <MenuItem id={`${fields.rentalId.name}-option-${invoice.resourceId}`} value={invoice.resourceClass}>{invoice.resourceId}</MenuItem>
               }
             </Select>
           </Grid>}

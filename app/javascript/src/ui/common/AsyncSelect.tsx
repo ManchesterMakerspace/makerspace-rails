@@ -1,6 +1,7 @@
 import * as React from "react";
 import debounce from "lodash-es/debounce";
 import AsyncSelect, { Props as AsyncProps } from 'react-select/lib/Async';
+import Createable from "react-select/lib/Creatable";
 import { formDialogClass } from "ui/common/FormModal";
 import { SelectOption } from "ui/common/RenewalForm";
 import Form from "ui/common/Form";
@@ -8,6 +9,7 @@ import { ActionMeta } from "react-select/lib/types";
 
 interface Props extends AsyncProps<any> {
   name: string;
+  createable?: boolean;
   getFormRef?: () => Form;
 }
 
@@ -30,7 +32,7 @@ const AsyncSelectFixed: React.SFC<Props> = (props) => {
     },
     onChange: debounce(onChange, 250)
   }
-  return <AsyncSelect {...modifiedProps } />
+  return props.createable ? <Createable {...modifiedProps} /> : <AsyncSelect {...modifiedProps } />
 }
 
 

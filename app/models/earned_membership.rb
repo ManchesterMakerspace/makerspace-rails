@@ -16,6 +16,8 @@ class EarnedMembership
   validate :existing_subscription
   validate :requirements_exist
 
+  after_create :set_member_expiration
+
   def outstanding_requirements
     requirements.select do |requirement|
       requirement.current_term && !requirement.current_term.satisfied && requirement.current_term.end_date < member.expiration_time
@@ -28,6 +30,11 @@ class EarnedMembership
   end
 
   private
+  def get_shortest_term_end_time
+    min_req_term = requirements.min_by(&:term_length).current_term
+    min_req_term && min_req_term.end_date.to_i * 1000
+  end
+
   def one_to_one
     member_memberships = EarnedMembership.where(member_id: self.member_id)
     # memberships exist and aren't this one
@@ -47,7 +54,7 @@ class EarnedMembership
   end
 
   def renew_member
-    self.member.update(expirationTime: requirements.min_by(&:term_length).current_term.end_date.to_i * 1000)
+    self.member.update(expirationTime: get_shortest_term_end_time)
     time = self.member.expiration_time.strftime("%m/%d/%Y")
     send_slack_message("#{self.member.fullname} earned membership extended to #{time}")
   end
@@ -55,6 +62,13 @@ class EarnedMembership
   def requirements_exist
     if self.requirements.nil? or self.requirements.size == 0
       errors.add(:requirements, "required")
+    end
+  end
+
+  def set_member_expiration
+    # TODO change this to use member exp helper
+    if get_shortest_term_end_time && get_shortest_term_end_time > self.member.expirationTime
+      renew_member
     end
   end
 end
