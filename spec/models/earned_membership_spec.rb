@@ -98,7 +98,7 @@ RSpec.describe EarnedMembership, type: :model do
       membership = create(:earned_membership, member: member, requirements: [shortest_requirement, longest_requirement])
       membership.send(:renew_member)
       member.reload
-      expect(member.expiration_time.to_i).to eq(shortest_requirement.current_term.end_date.to_i)
+      expect(member.get_expiration).to eq(shortest_requirement.current_term.end_date.to_i * 1000)
     end
 
     it "renews member on create if member benefits" do

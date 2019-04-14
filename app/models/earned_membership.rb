@@ -20,7 +20,7 @@ class EarnedMembership
 
   def outstanding_requirements
     requirements.select do |requirement|
-      requirement.current_term && !requirement.current_term.satisfied && requirement.current_term.end_date < member.expiration_time
+      requirement.current_term && !requirement.current_term.satisfied && requirement.current_term.end_date < member.pretty_time
     end
   end
 
@@ -55,7 +55,7 @@ class EarnedMembership
 
   def renew_member
     self.member.update(expirationTime: get_shortest_term_end_time)
-    time = self.member.expiration_time.strftime("%m/%d/%Y")
+    time = self.member.pretty_time.strftime("%m/%d/%Y")
     send_slack_message("#{self.member.fullname} earned membership extended to #{time}")
   end
 
