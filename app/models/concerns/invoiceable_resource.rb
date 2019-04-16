@@ -29,6 +29,11 @@ module InvoiceableResource
       self[self.expiration_attr]
     end
 
+    def get_renewal_slack_message
+      time = self.pretty_time.strftime("%m/%d/%Y")
+      "#{base_slack_message} renewed. Now expiring #{time}"
+    end
+
     protected
     def update_expiration(new_expiration)
       self.update_attributes!(self.expiration_attr => expiration_as_ms(new_expiration))
@@ -50,11 +55,6 @@ module InvoiceableResource
       else
         return Time.parse(exp.to_s).to_i * 1000
       end
-    end
-
-    def get_renewal_slack_message
-      time = self.pretty_time.strftime("%m/%d/%Y")
-      "#{base_slack_message} renewed. Now expiring #{time}"
     end
   end
 end

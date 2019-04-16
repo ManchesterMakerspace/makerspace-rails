@@ -47,10 +47,6 @@ RSpec.describe RegistrationsController, type: :controller do
         expect(assigns(:member)).to be_persisted
       end
 
-      it "sends email notifying us of registered member" do
-        expect(email_present(email)).to be_truthy
-      end
-
       it "renders json of the created member" do
         post :create, params: {member: valid_attributes}, format: :json
 
