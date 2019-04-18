@@ -19,6 +19,7 @@ class RegistrationsController < ApplicationController
     def create
       @member = Member.new(member_params)
       @member.save!
+      @member.reload
       sign_in(@member)
       MemberMailer.member_registered(@member).deliver_now
       render json: @member and return
