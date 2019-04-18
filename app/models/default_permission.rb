@@ -1,4 +1,4 @@
-class Permission
+class DefaultPermission
   include Mongoid::Document
 
   field :name, type: Symbol
@@ -6,9 +6,13 @@ class Permission
 
   validates :name, presence: true
 
-  belongs_to :member
-
   def self.list_permissions
     self.distinct(:name)
+  end
+
+  def self.list_as_hash
+    default_permissions = Hash.new
+    self.all.each { |p| default_permissions[p.name] = p.enabled }
+    default_permissions
   end
 end

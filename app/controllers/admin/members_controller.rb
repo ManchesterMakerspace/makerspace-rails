@@ -4,6 +4,7 @@ class Admin::MembersController < AdminController
   def create
     @member = Member.new(get_camel_case_params)
     @member.save!
+    @member.reload
     new_member_password_token = ::Devise.token_generator.generate(Member, :reset_password_token)
     MemberMailer.welcome_email_manual_register(@member, new_member_password_token).deliver_now
     render json: @member and return

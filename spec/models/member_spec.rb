@@ -104,6 +104,14 @@ RSpec.describe Member, type: :model do
         expect(member.get_permissions).to eq({ foo: true, bar: false })
         expect(Permission.all.size).to eq(2)
       end
+
+      it "applies default permissions to user" do 
+        permission1 = create(:default_permission, name: :foo, enabled: false)
+        permission2 = create(:default_permission, name: :bar, enabled: true)
+        member = create(:member)
+        member.reload
+        expect(member.get_permissions).to eq({ bar: true, foo: false })
+      end
     end
   end
 

@@ -115,6 +115,17 @@ FactoryBot.define do
     end
   end
 
+  factory :default_permission do
+    name { generate(:number) }
+    enabled {false}
+
+    trait :enabled do
+      after(:build) do |permission|
+        permission.enabled = true
+      end
+    end
+  end
+
   factory :permission do
     name { generate(:number) }
     enabled {false}
