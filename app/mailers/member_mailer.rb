@@ -23,9 +23,11 @@ class MemberMailer < ApplicationMailer
   end
 
   def welcome_email_manual_register(member, password_token)
-    @token = password_token
+    @url = url_for(action: :application, controller: 'application')
+    @url += "resetPassword/#{password_token}"
     @member = member
-    mail to: @member.email, subject: "Welcome to Manchester Makerspace!"
+    email = Rails.env.production? && ENV['BT_ENV'].to_sym == :production ? @member.email : 'test@manchestermakerspace.org'
+    mail to: email, subject: "Welcome to Manchester Makerspace!"
   end
 
   def member_registered(member)

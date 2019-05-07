@@ -11,7 +11,7 @@ rvm:
   - 2.6.1
 install:
   - bundle install
-  - nvm install node
+  - nvm install v10.15.3
   - node -v
   - npm i -g yarn
   - yarn install

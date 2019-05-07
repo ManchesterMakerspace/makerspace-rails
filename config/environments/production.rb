@@ -4,7 +4,8 @@ config.webpacker.check_yarn_integrity = false
 
   # Settings specified here will take precedence over those in config/application.rb.
   config.action_mailer.default_url_options = {
-    host: ENV['BT_ENV'] == 'production' ? 'members.manchestermakerspace.org' : 'makerspace-test.herokuapp.com'
+    host: ENV['BT_ENV'] == 'production' ? 'members.manchestermakerspace.org' : 'makerspace-test.herokuapp.com',
+    protocol: "https"
   }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
