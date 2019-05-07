@@ -5,8 +5,7 @@ class Admin::MembersController < AdminController
     @member = Member.new(get_camel_case_params)
     @member.save!
     @member.reload
-    new_member_password_token = ::Devise.token_generator.generate(Member, :reset_password_token)
-    MemberMailer.welcome_email_manual_register(@member, new_member_password_token).deliver_now
+    send_set_password_email
     render json: @member and return
   end
 
@@ -46,5 +45,13 @@ class Admin::MembersController < AdminController
       time = @member.pretty_time.strftime("%m/%d/%Y")
       @messages.push("#{@member.fullname} renewed. Now expiring #{time}")
     end
+  end
+
+  def send_set_password_email
+    raw_token, hashed_token = ::Devise.token_generator.generate(Member, :reset_password_token)
+    @member.reset_password_token = hashed_token
+    @member.reset_password_sent_at = Time.now.utc
+    @member.save!
+    MemberMailer.welcome_email_manual_register(@member, raw_token).deliver_now
   end
 end

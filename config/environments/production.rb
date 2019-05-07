@@ -4,20 +4,35 @@ config.webpacker.check_yarn_integrity = false
 
   # Settings specified here will take precedence over those in config/application.rb.
   config.action_mailer.default_url_options = {
-    host: ENV['BT_ENV'] == 'production' ? 'members.manchestermakerspace.org' : 'makerspace-test.herokuapp.com'
+    host: "https://#{ENV['BT_ENV'] == 'production' ? 'members.manchestermakerspace.org' : 'makerspace-test.herokuapp.com'}",
+    protocol: "https"
   }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.default :charset => "utf-8"
-  config.action_mailer.smtp_settings = {
-    authentication: :plain,
-    address: 'smtp.gmail.com',
-    port: 587,
-    domain: 'makerspace-interface.herokuapp.com',
-    user_name: ENV['GMAIL_USERNAME'],
-    password: ENV['GMAIL_PASSWORD']
-  }
+
+  if ENV['BT_ENV'] == 'production'
+    config.action_mailer.smtp_settings = {
+      authentication: :plain,
+      address: 'smtp.gmail.com',
+      port: 587,
+      domain: 'makerspace-interface.herokuapp.com',
+      user_name: ENV['GMAIL_USERNAME'],
+      password: ENV['GMAIL_PASSWORD']
+    }
+  else
+    response = RestClient::Resource.new("https://mailtrap.io/api/v1/inboxes.json?api_token=#{ENV['MAILTRAP_API_TOKEN']}").get
+    inbox = JSON.parse(response)[0]
+    config.action_mailer.smtp_settings = {
+      :user_name => inbox['username'],
+      :password => inbox['password'],
+      :address => inbox['domain'],
+      :domain => inbox['domain'],
+      :port => 2525,
+      :authentication => :plain
+    }
+  end
 
   # Code is not reloaded between requests.
   config.cache_classes = true

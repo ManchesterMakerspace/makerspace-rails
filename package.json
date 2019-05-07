@@ -1,6 +1,9 @@
 {
   "name": "makerspace-interface",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=8.0.0 <11.0.0"
+  },
   "description": "This is an interface to review which members are signed off on which stations.  This can be expanded to handle the access points.  If logged in (feature for officers & admin), you can also see member expiration dates and renew members.",
   "main": "index.js",
   "dependencies": {

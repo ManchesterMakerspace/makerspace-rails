@@ -11,10 +11,14 @@ rvm:
   - 2.6.1
 install:
   - bundle install
-  - nvm install node
+  - nvm install v10.13.0
   - node -v
   - npm i -g yarn
   - yarn install
-script: make test
-after_failure:
-  - bundle exec rake upload_screenshots
+jobs:
+  include:
+    - stage: unit tests
+      script: make start-unit
+    - stage: functional tests
+      script: make functional-up
+      after_failure: bundle exec rake upload_screenshots

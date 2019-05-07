@@ -29,21 +29,22 @@ config.webpacker.check_yarn_integrity = false
     config.cache_store = :null_store
   end
 
-  # Don't care if the mailer can't send.
+  response = RestClient::Resource.new("https://mailtrap.io/api/v1/inboxes.json?api_token=#{ENV['MAILTRAP_API_TOKEN']}").get
+  inbox = JSON.parse(response)[0]
+
   config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.default_url_options = { host: ENV["APP_DOMAIN"] || "localhost", port: ENV["PORT"] || 3002  }
+  config.action_mailer.default_url_options = { host: "http://#{ENV["APP_DOMAIN"] || "localhost"}", port: ENV["PORT"] || 3002 }
   config.action_mailer.perform_caching = false
   config.action_mailer.perform_deliveries = true
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    authentication: :plain,
-    :enable_starttls_auto => true,
-    address: 'smtp.gmail.com',
-    port: 587,
-    domain: "#{ENV['APP_DOMAIN'] || 'localhost'}:#{ENV['PORT'] || 3002}",
-    user_name: ENV['GMAIL_USERNAME'],
-    password: ENV['GMAIL_PASSWORD']
+    :user_name => inbox['username'],
+    :password => inbox['password'],
+    :address => inbox['domain'],
+    :domain => inbox['domain'],
+    :port => 2525,
+    :authentication => :plain
   }
 
   # Print deprecation notices to the Rails logger.
