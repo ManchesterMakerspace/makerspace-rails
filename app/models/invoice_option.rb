@@ -2,11 +2,6 @@ class InvoiceOption
   include Mongoid::Document
   include ActiveModel::Serializers::JSON
 
-  OPERATION_RESOURCES = {
-    "member" => Member,
-    "rental" => Rental,
-  }.freeze
-
   ## Transaction Information
   # User friendly name for invoice displayed on receipt
   field :name, type: String
@@ -26,12 +21,11 @@ class InvoiceOption
 
   field :disabled, type: Boolean, default: false
 
-  validates :resource_class, inclusion: { in: OPERATION_RESOURCES.keys }, allow_nil: false
+  validates :resource_class, inclusion: { in: Invoice::OPERATION_RESOURCES.keys }, allow_nil: false
   validates :operation, inclusion: { in: Invoice::OPERATION_FUNCTIONS }, allow_nil: false
   validates_numericality_of :amount, greater_than: 0
   validates_numericality_of :quantity, greater_than: 0
   validates_uniqueness_of :plan_id
-
 
   def build_invoice(member_id, due_date, resource_id, discount = nil)
     amount = self.amount

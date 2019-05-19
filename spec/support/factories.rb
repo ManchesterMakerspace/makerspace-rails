@@ -236,9 +236,11 @@ FactoryBot.define do
   end
 
   factory :paypal_transaction, parent: :transaction do
+    # TODO add paypal details
   end
 
   factory :credit_card_transaction, parent: :transaction do
+    # TODO add CC details
   end
 
   factory :subscription_transaction, parent: :transaction do

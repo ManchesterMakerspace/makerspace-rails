@@ -4,13 +4,13 @@ class BraintreeService::Notification
 
   store_in collection: 'braintree__notifications'
 
-  attr_accessor :notification, :gateway
+  attr_accessor :notification
 
   field :kind, type: String
   field :timestamp, type: Date
   field :payload, type: String
 
-  def self.process(gateway, notification)
+  def self.process(notification)
     self.create({
       kind: notification.kind,
       timestamp: notification.timestamp,
@@ -18,7 +18,7 @@ class BraintreeService::Notification
     })
 
     if subscription_notifications.include(notification.kind)
-      self.process_subscription(gateway, notification)
+      self.process_subscription(notification)
     elsif dispute_notifications.include(notification.kind)
       # TODO: send email & slack about dispute
     end

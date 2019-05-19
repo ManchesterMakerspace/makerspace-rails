@@ -8,9 +8,6 @@ class Invoice
   }.freeze
   OPERATION_FUNCTIONS = ["renew="].freeze
 
-  # Accepted payment types
-  PAYMENT_TYPES = ["cash", "paypal_account", "credit_card"].freeze
-
   ## Transaction Information
   # User friendly name for invoice displayed on receipt
   field :name, type: String
@@ -53,7 +50,7 @@ class Invoice
 
   before_validation :set_due_date
 
-  attr_accessor :found_resource
+  attr_accessor :found_resource, :payment_method_id
 
   def settled
     !!self.settled_at
@@ -68,8 +65,10 @@ class Invoice
   end
 
   def submit_for_settlement(gateway=nil, payment_method_id=nil, transaction_id=nil)
-    if payment_method_id
-      # TODO handle errors here
+    if payment_method_id && transaction_id
+      raise Error::UnprocessableEntity.new("Cannot dictate transaction id when creating new transaction")    
+    elsif payment_method_id
+      self.payment_method_id = payment_method_id
       transaction = ::BraintreeService::Transaction.submit_invoice_for_settlement(gateway, self)
       self.transaction_id = transaction.id
     end
