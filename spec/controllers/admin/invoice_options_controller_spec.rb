@@ -2,12 +2,14 @@ require 'rails_helper'
 
 RSpec.describe Admin::InvoiceOptionsController, type: :controller do
   let(:valid_attributes) {
-    description: "foo",
-    name: "Bar",
-    resource_class: "member",
-    amount: 60,
-    quantity: 1,
-    disabled: false
+    {
+      description: "foo",
+      name: "Bar",
+      resource_class: "member",
+      amount: 60,
+      quantity: 1,
+      disabled: false
+    }
   }
   let(:invoice_option) { create(:invoice_option, quantity: 1) }
   describe "POST #create" do 
@@ -40,7 +42,7 @@ RSpec.describe Admin::InvoiceOptionsController, type: :controller do
 
   describe "PUT #update" do 
     context "with valid params" do 
-      let(:new_attributes) { quantity: 5 }
+      let(:new_attributes) { {quantity: 5} }
       it "updates the requested invoice option" do
         put :update, params: {id: invoice_option.to_param, invoice_option: new_attributes}, format: :json
         invoice_option.reload

@@ -143,14 +143,14 @@ RSpec.describe Invoice, type: :model do
 
     it "can fetch related resource" do 
       member_invoice = create(:invoice, member: member, resource_id: member.id, resource_class: "member")
-      rental_invoice = create(:invoice, member: member, resource_id: rental.id, resource_class: "rental"
+      rental_invoice = create(:invoice, member: member, resource_id: rental.id, resource_class: "rental")
       expect(member_invoice.resource).to eq(member)
       expect(rental_invoice.resource).to eq(rental)
     end
 
     it "programatically generates subscription IDs" do 
       member_invoice = create(:invoice, member: member, resource_id: member.id, resource_class: "member")
-      rental_invoice = create(:invoice, member: member, resource_id: rental.id, resource_class: "rental"
+      rental_invoice = create(:invoice, member: member, resource_id: rental.id, resource_class: "rental")
       expect(member_invoice.generate_subscription_id).to start_with("member_#{member.id}_")
       expect(rental_invoice.generate_subscription_id).to start_with("rental_#{rental.id}_")
     end

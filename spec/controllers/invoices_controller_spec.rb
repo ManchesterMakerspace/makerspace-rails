@@ -12,7 +12,7 @@ RSpec.describe InvoicesController, type: :controller do
 
   describe "GET #index" do
     it "renders json of current member's active invoices" do
-      create(:settled_invoice, member: member),
+      create(:settled_invoice, member: member)
       invoices = [
         create(:invoice, member: member),
         create(:invoice, member: member, resource_id: rental.id, resource_class: "rental"),

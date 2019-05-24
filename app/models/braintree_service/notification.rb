@@ -25,7 +25,7 @@ class BraintreeService::Notification
   end
 
   protected
-  def self.process_subscription(gateway, notification)
+  def self.process_subscription(notification)
     resource_class, resource_id = ::BraintreeService::Subscription.read_id(notification.subscription)
     last_transaction = notification.subscription.transactions.last
 

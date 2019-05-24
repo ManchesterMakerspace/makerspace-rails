@@ -5,7 +5,8 @@ RSpec.describe Admin::InvoicesController, type: :controller do
   let(:member) { create(:member)}
 
   let(:valid_invoice_attributes) {
-    { description: "new invoice",
+    { 
+      description: "new invoice",
       amount: 65.0,
       resource_id: member.id,
       resource_class: "member",
