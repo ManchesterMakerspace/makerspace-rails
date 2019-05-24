@@ -206,6 +206,10 @@ FactoryBot.define do
     end
   end
 
+  factory :settled_invoice, parent: :invoice do 
+    settled_at { Time.now }
+  end 
+
   factory :invoice_option do
     name { "Some invoice" }
     description { "An invoice to pay or that's been paid"}

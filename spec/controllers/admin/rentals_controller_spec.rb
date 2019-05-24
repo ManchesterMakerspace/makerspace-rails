@@ -22,7 +22,7 @@ RSpec.describe Admin::RentalsController, type: :controller do
 
   describe "POST #create" do
     context "with valid params" do
-      it "creates a new Admin::Rental" do
+      it "creates a new rental" do
         expect {
           post :create, params: {rental: valid_attributes}, format: :json
         }.to change(Rental, :count).by(1)
@@ -85,7 +85,7 @@ RSpec.describe Admin::RentalsController, type: :controller do
     end
 
      context "with invalid params" do
-      it "raises not found if member doens't exist" do
+      it "raises not found if rental doens't exist" do
         put :update, params: {id: "foo" }, format: :json
         expect(response).to have_http_status(404)
       end
