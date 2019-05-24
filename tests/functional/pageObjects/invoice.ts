@@ -60,7 +60,8 @@ export class InvoicePageObject extends TablePageObject {
   private deleteInvoiceModalId = "#delete-invoice";
   public deleteInvoiceModal = {
     id: `${this.deleteInvoiceModalId}-confirm`,
-    contact: `${this.deleteInvoiceModalId}-contact`,
+    member: `${this.deleteInvoiceModalId}-member`,
+    description: `${this.deleteInvoiceModalId}-description`,
     amount: `${this.deleteInvoiceModalId}-amount`,
     dueDate: `${this.deleteInvoiceModalId}-due-date`,
     submit: `${this.deleteInvoiceModalId}-submit`,

@@ -5,8 +5,8 @@ import { mockRequests, mock } from "../mockserver-client-helpers";
 import auth from "../pageObjects/auth";
 import utils from "../pageObjects/common";
 import memberPO from "../pageObjects/member";
-import invoicePo from "../pageObjects/invoice";
-import { pastDueInvoice, settledInvoice, defaultInvoice } from "../constants/invoice";
+import invoicePO from "../pageObjects/invoice";
+import { pastDueInvoice, settledInvoice, defaultInvoice, defaultInvoices } from "../constants/invoice";
 import { SortDirection } from "ui/common/table/constants";
 import { checkout } from "../pageObjects/checkout";
 import { paymentMethods, creditCard } from "../pageObjects/paymentMethods";
@@ -14,7 +14,7 @@ import { creditCard as defaultCreditCard, creditCardForm } from "../constants/pa
 
 const initInvoices = [defaultInvoice, pastDueInvoice, settledInvoice];
 
-xdescribe("Invoicing and Dues", () => {
+describe("Invoicing and Dues", () => {
   describe("Basic User", () => {
     const loadInvoices = async (invoices: Invoice[], login?: boolean) => {
       await mock(mockRequests.invoices.get.ok(invoices));
@@ -47,13 +47,13 @@ xdescribe("Invoicing and Dues", () => {
         nonce: "foobar"
       }
       await loadInvoices(initInvoices, true);
-      expect((await invoicePo.getAllRows()).length).toEqual(1);
-      expect(await invoicePo.getColumnText("name", defaultInvoice.id)).toEqual(defaultInvoice.name);
+      expect((await invoicePO.getAllRows()).length).toEqual(1);
+      expect(await invoicePO.getColumnText("name", defaultInvoice.id)).toEqual(defaultInvoice.name);
 
       // Get payment methods (none array)
       // Checkout
       await mock(mockRequests.paymentMethods.get.ok([newCard]));
-      await utils.clickElement(invoicePo.actionButtons.payNow);
+      await utils.clickElement(invoicePO.actionButtons.payNow);
       await utils.waitForPageLoad(checkout.checkoutUrl);
 
       // TODO Find a way to mock creating a payment method
@@ -80,16 +80,6 @@ xdescribe("Invoicing and Dues", () => {
       // TODO: Verify receipt
       await utils.waitForPageLoad(memberPO.getProfilePath(basicUser.id));
     });
-    it("Members can review their payment history", () => {
-      /* 1. Login as basic user
-         2. Setup mocks
-          - Load invoices (2 results: 1 upcoming, 1 past due)
-          - Load invoices (3 results: 1 upcoming, 1 past due, 1 paid)
-         3. Assert 2 invoices are displayed correctly in users profile w/ past due first
-         4. User clicks checkbox to view paid invoices
-         5. Assert 3 invoices are displayed correctly in users profile w/ past due first
-      */
-    });
   });
   describe("Admin User", () => {
     const targetUrl = memberPO.getProfilePath(basicUser.id);
@@ -112,23 +102,23 @@ xdescribe("Invoicing and Dues", () => {
          4. Fill out form & submit
          5. Assert new invoice loaded in profile page
       */
-      await mock(mockRequests.invoices.post.ok(defaultInvoice));
       await loadInvoices([], true);
-      const { submit, description, amount, dueDate, loading, id: invoiceForm } = invoicePo.invoiceForm;
-      expect(await utils.isElementDisplayed(invoicePo.getErrorRowId())).toBeFalsy();
-      expect(await utils.isElementDisplayed(invoicePo.getNoDataRowId())).toBeTruthy();
-      await utils.clickElement(invoicePo.actionButtons.create);
+      const { submit, description, amount, dueDate } = invoicePO.invoiceForm;
+      expect(await utils.isElementDisplayed(invoicePO.getErrorRowId())).toBeFalsy();
+      expect(await utils.isElementDisplayed(invoicePO.getNoDataRowId())).toBeTruthy();
+      await utils.clickElement(invoicePO.actionButtons.create);
       await utils.waitForVisible(submit);
       await utils.fillInput(description, defaultInvoice.description);
       await utils.fillInput(dueDate, new Date(defaultInvoice.dueDate).toDateString());
       await utils.fillInput(amount, `${defaultInvoice.amount}`);
 
+      await mock(mockRequests.invoices.post.ok(defaultInvoice));
       await mock(mockRequests.invoices.get.ok([defaultInvoice]));
       await utils.clickElement(submit);
       await utils.waitForNotVisible(submit);
-      expect((await invoicePo.getAllRows()).length).toEqual(1);
+      expect((await invoicePO.getAllRows()).length).toEqual(1);
     });
-    xit("Can edit invoices for memebrs", () => {
+    it("Can edit invoices for memebrs", async () => {
       /* 1. Login as admin and nav to basic user's profile
          2. Setup mocks
           - Load invoices (1 result)
@@ -138,27 +128,48 @@ xdescribe("Invoicing and Dues", () => {
          4. Fill out form & submit
          5. Assert updated invoice loaded in profile page
       */
+      const updatedInvoice = {
+        ...defaultInvoices[0],
+        description: "bar",
+        amount: 500
+      }
+      await invoicePO.selectRow(defaultInvoices[0].id);
+      await utils.clickElement(invoicePO.actionButtons.edit);
+      await utils.waitForVisible(invoicePO.invoiceForm.submit);
+
+      await utils.fillInput(invoicePO.invoiceForm.amount, updatedInvoice.amount);
+      await utils.fillInput(invoicePO.invoiceForm.description, updatedInvoice.description);
+      await mock(mockRequests.rentals.put.ok(updatedInvoice));
+      await mock(mockRequests.rentals.get.ok([updatedInvoice], undefined, true));
+      await utils.clickElement(invoicePO.invoiceForm.submit);
+      await utils.waitForNotVisible(invoicePO.invoiceForm.submit);
+      expect((await invoicePO.getAllRows()).length).toEqual(1);
+      await invoicePO.verifyFields(updatedInvoice, invoicePO.fieldEvaluator());
     });
-    xit("Can delete invoices for members", () => {
+    it("Can delete invoices for members", async () => {
       /* 1. Login as admin and nav to basic user's profile
          2. Setup mocks
-          - Load invoices (1 result)
+          - Load invoices
           - Delete invoice
           - Load invoices (0 result)
          3. Click 'Delete Invoice' button
          4. Confirm modal
          5. Assert invoice not loaded in profile page
       */
+      await invoicePO.selectRow(defaultInvoices[0].id);
+      await utils.clickElement(invoicePO.actionButtons.delete);
+      await utils.waitForVisible(invoicePO.deleteInvoiceModal.submit);
+      expect(await utils.getElementText(invoicePO.deleteInvoiceModal.member)).toEqual(defaultInvoices[0].memberName);
+      expect(await utils.getElementText(invoicePO.deleteInvoiceModal.amount)).toEqual(defaultInvoices[0].amount);
+      expect(await utils.getElementText(invoicePO.deleteInvoiceModal.description)).toEqual(defaultInvoices[0].description);
+      await mock(mockRequests.rentals.delete.ok(defaultInvoices[0].id));
+      await mock(mockRequests.rentals.get.ok([], undefined, true));
+      await utils.clickElement(invoicePO.deleteInvoiceModal.submit);
+      await utils.waitForNotVisible(invoicePO.deleteInvoiceModal.submit);
+      await utils.waitForVisible(invoicePO.getNoDataRowId());
     });
     xit("Invoice Form Validation", () => {
 
-    });
-    xit("Can see member's payment history", () => {
-      /* 1. Login as admin and nav to basic user's profile
-         2. Setup mocks
-          - Load invoices (3 results: 1 upcoming, 1 past due, 1 paid)
-         3. Assert invoices listed correctly in user's profile
-      */
     });
   });
 });

@@ -42,6 +42,9 @@ class DeleteInvoiceModal extends React.Component<OwnProps, {}> {
         <KeyValueItem label="Member">
           <span id="delete-invoice-member">{invoice.memberName}</span>
         </KeyValueItem>
+        <KeyValueItem label="Description">
+          <span id="delete-invoice-description">{invoice.description}</span>
+        </KeyValueItem>
         <KeyValueItem label="Amount">
           <span id="delete-invoice-amount">{`$${invoice.amount}`}</span>
         </KeyValueItem>

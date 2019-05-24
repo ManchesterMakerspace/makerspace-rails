@@ -1,23 +1,34 @@
 import * as moment from "moment";
-import { Invoice, InvoiceOperation, InvoiceableResource } from "app/entities/invoice";
-export const invoiceOptions: Partial<Invoice>[] = [
+import { Invoice, InvoiceOperation, InvoiceOption, InvoiceableResource } from "app/entities/invoice";
+export const defaultBillingOptions: Partial<InvoiceOption>[] = [
   {
     id: "standard_membership",
     name: "Standard",
     description: "Standard Membership Subscription",
-    amount: 65
+    amount: 65,
+    resourceClass: InvoiceableResource.Membership,
+    operation: InvoiceOperation.Renew,
+    disabled: false,
   }, {
     id: "foo",
     name: "Foo",
     description: "Foo Membership",
-    amount: 10000
+    amount: 10000,
+    disabled: false,
+    resourceClass: InvoiceableResource.Rental,
+    operation: InvoiceOperation.Renew,
   }, {
     id: "bar",
     name: "Bar",
     description: "Bar Membership",
-    amount: 45
+    amount: 45,
+    resourceClass: InvoiceableResource.Rental,
+    operation: InvoiceOperation.Renew,
+    disabled: false,
   }
 ];
+export const defaultBillingOption = defaultBillingOptions[0];
+
 export const baseInvoice: Invoice = {
   id: "foo",
   name: "random membership invoice",

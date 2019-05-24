@@ -49,6 +49,7 @@ export class MemberPageObject extends TablePageObject {
     openCardButton: `${this.memberDetailId}-open-card-modal`,
     duesTab: "#dues-tab",
     rentalsTab: "#rentals-tab",
+    transactionsTab: "#transactions-tab",
     notificationModal: "#notification-modal",
     notificationModalSubmit: "#notification-modal-submit",
     notificationModalCancel: "#notification-modal-cancel",
@@ -59,6 +60,9 @@ export class MemberPageObject extends TablePageObject {
 
   public goToMemberDues = () =>
     utils.clickElement(this.memberDetail.duesTab);
+
+  public goToMemberTransactions = () =>
+    utils.clickElement(this.memberDetail.transactionsTab);
 
   private cardFormId = "#card-form";
   public accessCardForm = {

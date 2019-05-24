@@ -8,9 +8,9 @@ class Billing extends TablePageObject {
   ]
 
   public actionButtons = {
-    "create": "#billing-list-create",
-    "renew": "#billing-list-renew",
-    "delete": "#billing-list-delete",
+    createButton: "#billing-list-create",
+    editButton: "#billing-list-edit",
+    deleteButton: "#billing-list-delete",
   }
 
   private invoiceOptionFormId = "#invoice-option-form"

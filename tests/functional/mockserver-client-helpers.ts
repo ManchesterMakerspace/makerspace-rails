@@ -10,6 +10,7 @@ import { Invoice, InvoiceQueryParams } from "app/entities/invoice";
 import { InvoiceOptionQueryParams } from "api/invoices/interfaces";
 import { PaymentMethod } from "app/entities/paymentMethod";
 import { Permission } from "app/entities/permission";
+import { Transaction } from "app/entities/transaction";
 import { EarnedMembership, Report } from "app/entities/earnedMembership";
 import { CollectionOf } from "app/interfaces";
 
@@ -99,7 +100,7 @@ export const mockRequests = {
   },
   billingPlans: {
     get: {
-      ok: (plans: Partial<BillingPlan>): MockRequest => ({
+      ok: (plans: Partial<BillingPlan>[]): MockRequest => ({
         httpRequest: {
           method: Method.Get,
           path: `/${Url.Billing.Plans}.json`,
@@ -121,6 +122,31 @@ export const mockRequests = {
         },
         httpResponse: {
           statusCode: 200,
+        }
+      })
+    },
+    get: {
+      ok: (transactions: Partial<Transaction>[], queryParams?: QueryParams, admin: boolean = false): MockRequest => ({
+        httpRequest: {
+          method: Method.Get,
+          path: admin ? `/${Url.Admin.Billing.Transactions}.json` : `/${Url.Billing.Transactions}.json`
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({ transactions }),
+        }
+      })
+    }
+  },
+  transaction: {
+    delete: {
+      ok: (transactionId: string, admin: boolean = false) => ({
+        httpRequest: {
+          method: Method.Delete,
+          path: `/${admin ? Url.Admin.Billing.Transactions : Url.Billing.Transactions}/${transactionId}.json`,
+        },
+        httpResponse: {
+          statusCode: 204,
         }
       })
     }
