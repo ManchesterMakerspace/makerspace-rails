@@ -15,13 +15,15 @@ RSpec.describe Invoice, type: :model do
                                     :subscription_id,
                                     :discount_id).of_type(String) }
     it { is_expected.to have_field(:amount).of_type(Float) }
-    it { is_expected.to have_fields(:due_date, :settled_at, :refund_requested).of_type(Time) }
-    it { is_expected.to have_field(:created_at).of_type(Time).with_default_value_of(Time.now) }
+    it { is_expected.to have_fields(:settled_at, :refund_requested).of_type(Time) }
+    it { is_expected.to have_field(:due_date).of_type(nil) }
+    it { is_expected.to have_field(:created_at).of_type(Time) }
+    it "sets created_at properly" do 
+      expect(build(:invoice).created_at.to_i).to be_within(10).of(Time.now.to_i) 
+    end
     it { is_expected.to have_field(:quantity).of_type(Integer).with_default_value_of(1) }
     it { is_expected.to have_field(:refunded).of_type(Mongoid::Boolean).with_default_value_of(false) }
     it { is_expected.to have_field(:operation).of_type(String).with_default_value_of('renew=') }
-    it { is_expected.to have_field(:memberContractOnFile).of_type(Mongoid::Boolean) }
-    it { is_expected.to have_field(:subscription).of_type(Mongoid::Boolean).with_default_value_of(false) }
   end 
 
   describe "ActiveModel validations" do 
@@ -36,15 +38,18 @@ RSpec.describe Invoice, type: :model do
   end
 
   context "validation" do
+    let(:member) { create(:member) }
+    let(:rental) { create(:rental) }
+
     it "validates resource class" do 
-      member_invoice = build(:invoice, resource_class: "member")
+      member_invoice = build(:invoice, resource_class: "member", resource_id: member.id)
       other_invoice = build(:invoice, resource_class: "foo")
       other_2_invoice = build(:invoice, resource_class: nil)
-      rental_invoice = build(:invoice, resource_class: "rental")
+      rental_invoice = build(:invoice, resource_class: "rental", resource_id: rental.id)
       expect(member_invoice).to be_valid
       expect(rental_invoice).to be_valid
-      expect(other_invoice).not.to be_valid
-      expect(other_2_invoice).not.to be_valid
+      expect(other_invoice).to_not be_valid
+      expect(other_2_invoice).to_not be_valid
     end
 
     it "validates operation" do 
@@ -54,20 +59,17 @@ RSpec.describe Invoice, type: :model do
       other_2_invoice = build(:invoice, resource_class: nil)
       expect(renew_invoice).to be_valid
       expect(renew_2_invoice).to be_valid
-      expect(other_invoice).not.to be_valid
-      expect(other_2_invoice).not.to be_valid
+      expect(other_invoice).to_not be_valid
+      expect(other_2_invoice).to_not be_valid
     end
 
     describe "validates one active invoice per resource" do 
-      let(:member) { create(:member) }
-      let(:rental) { create(:rental) }
-
       it "validates one per member" do 
         first_invoice = build(:invoice, member: member, resource_id: member.id, resource_class: "member")
         expect(first_invoice).to be_valid
         first_invoice.save
         second_invoice = build(:invoice, member: member, resource_id: member.id, resource_class: "member")
-        expect(second_invoice).not.to be_valid
+        expect(second_invoice).to_not be_valid
       end
 
       it "validates one per rental" do 
@@ -75,7 +77,7 @@ RSpec.describe Invoice, type: :model do
         expect(first_invoice).to be_valid
         first_invoice.save
         second_invoice = build(:invoice, member: member, resource_id: rental.id, resource_class: "rental")
-        expect(second_invoice).not.to be_valid
+        expect(second_invoice).to_not be_valid
       end
     end
 
@@ -85,7 +87,7 @@ RSpec.describe Invoice, type: :model do
       mixed_invoice = build(:invoice, member: member, resource_id: rental.id, resource_class: "member")
       expect(rental_invoice).to be_valid
       expect(member_invoice).to be_valid
-      expect(mixed_invoice).not.to be_valid
+      expect(mixed_invoice).to_not be_valid
     end
   end  
 
@@ -156,18 +158,23 @@ RSpec.describe Invoice, type: :model do
     end
 
     it "can fetch current active invoice for a resource" do 
-      old_invoice = create(:settled_invoice, member: member, resource_id: resource.id, resource_class: "rental")
-      old_invoice2 = create(:settled_invoice, member: member, resource_id: resource.id, resource_class: "rental")
-      active_invoice = create(:invoice, member: member, resource_id: resource.id, resource_class: "rental")
-      expect(Invoice.active_invoice_for_resource(resource.id)).to eq(active_invoice)
+      old_invoice = create(:settled_invoice, member: member, resource_id: rental.id, resource_class: "rental")
+      old_invoice2 = create(:settled_invoice, member: member, resource_id: rental.id, resource_class: "rental")
+      active_invoice = create(:invoice, member: member, resource_id: rental.id, resource_class: "rental")
+      expect(Invoice.active_invoice_for_resource(rental.id)).to eq(active_invoice)
     end
   end
 
 
   context "private methods" do 
     it "normalizes due date to time zone if set with string" do
-      # TODO need to determine how timezone would be set
-      expect(1).to be(2)
+      time = Time.now.midnight
+      time_as_string = time.strftime("%Y-%m-%d")
+
+      time_invoice = create(:invoice, due_date: time)
+      timestr_invoice = create(:invoice, due_date: time_as_string)
+
+      expect(time_invoice.due_date).to eq(timestr_invoice.due_date)
     end
   end
 end

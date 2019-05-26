@@ -30,7 +30,8 @@ class MemberMailer < ApplicationMailer
   end
 
   def member_registered(member)
-    @member = member
-    mail to: 'contact@manchestermakerspace.org', subject: 'New Member Registered'
+    @member = Member.new(member)
+    email = Rails.env.production? && ENV['BT_ENV'].to_sym == :production ? 'contact@manchestermakerspace.org' : 'test@manchestermakerspace.org'
+    mail to: email, subject: 'New Member Registered'
   end
 end

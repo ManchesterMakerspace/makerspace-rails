@@ -11,8 +11,6 @@ RSpec.describe InvoiceOption, type: :model do
     it { is_expected.to have_field(:quantity).of_type(Integer) }
     it { is_expected.to have_field(:disabled).of_type(Mongoid::Boolean).with_default_value_of(false) }
     it { is_expected.to have_field(:operation).of_type(String).with_default_value_of('renew=') }
-    it { is_expected.to have_field(:memberContractOnFile).of_type(Mongoid::Boolean) }
-    it { is_expected.to have_field(:subscription).of_type(Mongoid::Boolean).with_default_value_of(false) }
   end 
 
   describe "ActiveModel validations" do 
@@ -32,7 +30,7 @@ RSpec.describe InvoiceOption, type: :model do
       rental_io = build(:invoice_option, resource_class: "rental")
       expect(member_io).to be_valid
       expect(rental_io).to be_valid
-      expect(other_io).not.to be_valid
+      expect(other_io).to_not be_valid
     end
 
     it "validates operation" do 
@@ -41,7 +39,7 @@ RSpec.describe InvoiceOption, type: :model do
       other_io = build(:invoice_option, operation: "foo")
       expect(renew_io).to be_valid
       expect(renew_2_io).to be_valid
-      expect(other_io).not.to be_valid
+      expect(other_io).to_not be_valid
     end
   end  
 
@@ -52,18 +50,18 @@ RSpec.describe InvoiceOption, type: :model do
 
     describe "build_invoice" do
       it "will not create invoice without member, due date or resource" do 
-        expect(invoice_option.build_invoice).to raise_error
-        expect(invoice_option.build_invoice(member.id, nil, rental.id)).to raise_error
-        expect(invoice_option.build_invoice(member_id, Time.now, nil)).to raise_error
-        expect(invoice_option.build_invoice(nil, Time.now, rental.id)).to raise_error
+        expect { invoice_option.build_invoice(nil, nil, nil) }.to raise_error(Mongoid::Errors::Validations)
+        expect { invoice_option.build_invoice(member.id, nil, rental.id) }.to raise_error(Mongoid::Errors::Validations)
+        expect { invoice_option.build_invoice(member.id, Time.now, nil) }.to raise_error(Mongoid::Errors::Validations)
+        expect { invoice_option.build_invoice(nil, Time.now, rental.id) }.to raise_error(Mongoid::Errors::Validations)
       end
 
       it "builds invoice correctly" do 
         one_mo = Time.now + 1.month
-        invoice = invoice_option.build_invoice(member.id, one_mo, rental.id)
+        invoice = invoice_option.build_invoice(member.id, one_mo, member.id)
         expect(invoice).to be_persisted
         expect(invoice.name).to eq(invoice_option.name)
-        expect(invoice.name).to eq(invoice_option.amount)
+        expect(invoice.amount).to eq(invoice_option.amount)
         expect(invoice.description).to eq(invoice_option.description)
         expect(invoice.resource_class).to eq(invoice_option.resource_class)
         expect(invoice.quantity).to eq(invoice_option.quantity)
@@ -71,15 +69,26 @@ RSpec.describe InvoiceOption, type: :model do
         expect(invoice.operation).to eq(invoice_option.operation)
         expect(invoice.due_date).to eq(one_mo)
         expect(invoice.member).to eq(member)
-        expect(invoice.resource).to eq(rental)
+        expect(invoice.resource).to eq(member)
       end
 
       it "can build invoice with discount" do 
         one_mo = Time.now + 1.month
         discount = ::BraintreeService::Discount.standard_membership_discount
-        invoice = invoice_option.build_invoice(member.id, one_mo, rental.id, discount)
+        invoice = invoice_option.build_invoice(member.id, one_mo, member.id, discount)
         expect(invoice).to be_persisted
         expect(invoice.amount).to eq(invoice_option.amount - discount.amount)
+      end
+
+      it "can build rental or member based invoices" do 
+        member_io = build(:invoice_option, resource_class: "member")
+        rental_io = build(:invoice_option, resource_class: "rental")
+        one_mo = Time.now + 1.month
+        member_invoice = member_io.build_invoice(member.id, one_mo, member.id)
+        expect(member_invoice).to be_persisted
+
+        rental_invoice = rental_io.build_invoice(member.id, one_mo, rental.id)
+        expect(rental_invoice).to be_persisted
       end
     end
   end

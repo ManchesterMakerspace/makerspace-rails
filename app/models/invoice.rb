@@ -16,7 +16,7 @@ class Invoice
   field :created_at, type: Time, default: Time.now
   # When payment submitted.
   field :settled_at, type: Time
-  field :due_date, type: Time
+  field :due_date # Intentionally don't define type. Mongoid is coercing string so TZ not being applied
   field :amount, type: Float
   field :discount_id, type: String
   field :refunded, type: Boolean, default: false
@@ -44,11 +44,11 @@ class Invoice
   validates :resource_id, presence: true
   validates :due_date, presence: true
   validate :one_active_invoice_per_resource, on: :create
-  validate :resource_exists, on: :save
+  validate :resource_exists
 
   belongs_to :member
 
-  before_validation :set_due_date
+  before_save :set_due_date
 
   attr_accessor :found_resource, :payment_method_id
 
@@ -88,7 +88,7 @@ class Invoice
   end
 
   def self.resource(class_name, id)
-    Invoice::OPERATION_RESOURCES[class_name].find(id)
+    Invoice::OPERATION_RESOURCES[class_name].find(id) unless Invoice::OPERATION_RESOURCES[class_name].nil? || id.nil?
   end
 
   def resource
@@ -105,7 +105,7 @@ class Invoice
 
   private
   def set_due_date
-    self.due_date = Time.parse(self.due_date).in_time_zone('Eastern Time (US & Canada') if self.due_date.kind_of?(String)
+    self.due_date = Time.parse(self.due_date).in_time_zone('Eastern Time (US & Canada)') if self.due_date.kind_of?(String)
   end
 
   def execute_invoice_operation

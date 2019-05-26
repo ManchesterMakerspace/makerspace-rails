@@ -185,6 +185,6 @@ class Member
   end
 
   def send_member_registered_email
-    MemberMailer.member_registered(self).deliver_later
+    MemberMailer.member_registered(self.to_json).deliver_later
   end
 end

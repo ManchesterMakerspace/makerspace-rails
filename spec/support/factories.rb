@@ -192,7 +192,7 @@ FactoryBot.define do
   end
 
   factory :invoice do
-    association :member
+    association :member, strategy: :create
     name { "Some invoice" }
     description { "An invoice to pay or that's been paid"}
     due_date { Time.now + 1.month }
@@ -202,7 +202,7 @@ FactoryBot.define do
     resource_class { "member" }
 
     after(:build) do |invoice|
-      invoice.resource_id = invoice.member.id
+      invoice.resource_id ||= invoice.member.id
     end
   end
 
