@@ -25,7 +25,7 @@ class InvoiceOption
   validates :operation, inclusion: { in: Invoice::OPERATION_FUNCTIONS }, allow_nil: false
   validates_numericality_of :amount, greater_than: 0
   validates_numericality_of :quantity, greater_than: 0
-  validates_uniqueness_of :plan_id
+  validates_uniqueness_of :plan_id, unless: -> { plan_id.nil? }
 
   def build_invoice(member_id, due_date, resource_id, discount = nil)
     amount = self.amount

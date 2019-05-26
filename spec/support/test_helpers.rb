@@ -34,4 +34,8 @@ module TestHelpers
     token[:id] = token_parts.pop
     return token
   end
+
+  def number_to_currency(number)
+    number.truncate.to_s + '.' + sprintf('%02d', (BigDecimal(number.to_s).frac * 100).truncate)
+  end
 end

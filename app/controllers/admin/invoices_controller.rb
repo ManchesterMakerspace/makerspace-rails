@@ -10,7 +10,7 @@ class Admin::InvoicesController < AdminController
   end
 
   def create
-    if invoice_option_params
+    if params['invoice_option']
       raise ActionController::ParameterMissing.new(:id) if invoice_option_params[:id].nil?
       raise ActionController::ParameterMissing.new(:member_id) if invoice_option_params[:member_id].nil?
       member = Member.find(invoice_option_params[:member_id])
@@ -43,7 +43,7 @@ class Admin::InvoicesController < AdminController
 
   def destroy
     @invoice.delete
-    render json: @invoice and return
+    render json: {}, status: 204 and return
   end
 
   private
@@ -52,6 +52,7 @@ class Admin::InvoicesController < AdminController
                                     :items, 
                                     :settled, 
                                     :amount, 
+                                    :quantity,
                                     :payment_type, 
                                     :resource_id, 
                                     :resource_class, 

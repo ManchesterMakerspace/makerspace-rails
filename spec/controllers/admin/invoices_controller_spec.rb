@@ -3,6 +3,9 @@ require 'rails_helper'
 RSpec.describe Admin::InvoicesController, type: :controller do
 
   let(:member) { create(:member)}
+  let(:rental) { create(:rental)}
+  let(:invoice_option) { create(:invoice_option)}
+  let(:rental_io) { create(:invoice_option, resource_class: "rental")}
 
   let(:valid_invoice_attributes) {
     { 
@@ -18,8 +21,8 @@ RSpec.describe Admin::InvoicesController, type: :controller do
 
   let(:valid_invoice_option_attributes) {
     { 
-      id: "foo",
-      resource_id: member.id,
+      id: rental_io.id,
+      resource_id: rental.id,
       member_id: member.id,
     }
   }
@@ -40,12 +43,12 @@ RSpec.describe Admin::InvoicesController, type: :controller do
         }.to change(Invoice, :count).by(1)
 
         expect {
-          post :create, params: {invoice: valid_invoice_option_attributes}, format: :json
+          post :create, params: {invoice_option: valid_invoice_option_attributes}, format: :json
         }.to change(Invoice, :count).by(1)
       end
 
       it "renders json of the created invoice" do
-        post :create, params: {invoice: valid_attributes}, format: :json
+        post :create, params: {invoice: valid_invoice_attributes}, format: :json
 
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
@@ -56,10 +59,28 @@ RSpec.describe Admin::InvoicesController, type: :controller do
 
     context "with invalid params" do
       it "raises validation error with invalid params" do
-        post :create, params: {invoice: {quantity: -1}}, format: :json
+        post :create, params: {invoice: ({quantity: -1}).merge(valid_invoice_attributes)}, format: :json
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(422)
-        expect(parsed_response['message']).to match(/quantity/)
+        expect(parsed_response['message']).to match(/quantity/i)
+      end
+
+      it "validates invoice option id and member id exist and point to real documents" do 
+        post :create, params: {invoice_option: { member_id: member.id, }}, format: :json
+        expect(response).to have_http_status(422)
+        expect(JSON.parse(response.body)['message']).to match(/ id/i)
+
+        post :create, params: {invoice_option: { member_id: "foo", id: invoice_option.id }}, format: :json
+        expect(response).to have_http_status(404)
+        expect(JSON.parse(response.body)['message']).to match(/resource not found/i)
+
+        post :create, params: {invoice_option: { id: invoice_option.id, }}, format: :json
+        expect(response).to have_http_status(422)
+        expect(JSON.parse(response.body)['message']).to match(/ member_id/i)
+
+        post :create, params: {invoice_option: { id: "foo", member_id: member.id }}, format: :json
+        expect(response).to have_http_status(404)
+        expect(JSON.parse(response.body)['message']).to match(/resource not found/i)
       end
     end
   end
@@ -96,10 +117,10 @@ RSpec.describe Admin::InvoicesController, type: :controller do
       end
 
       it "doesn't update invoice with invalid params" do 
-        put :update, params: {invoice: {id: invoice.to_param, quantity: -1}}, format: :json
+        put :update, params: {id: invoice.to_param, invoice: {quantity: -1}}, format: :json
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(422)
-        expect(parsed_response['message']).to match(/quantity/)
+        expect(parsed_response['message']).to match(/quantity/i)
       end
     end
   end
@@ -108,6 +129,7 @@ RSpec.describe Admin::InvoicesController, type: :controller do
     let(:invoice) { create(:invoice) }
     context "with valid params" do 
       it "deletes the invoice" do 
+        invoice
         expect {
           delete :destroy, params: {id: invoice.to_param}, format: :json
         }.to change(Invoice, :count).by(-1)
@@ -118,7 +140,6 @@ RSpec.describe Admin::InvoicesController, type: :controller do
         delete :destroy, params: {id: invoice.to_param}, format: :json
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(204)
-        expect(response.content_type).to eq "application/json"
       end
     end 
 
