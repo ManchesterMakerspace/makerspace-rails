@@ -30,6 +30,6 @@ class BraintreeService::PaymentMethod < Braintree::PaymentMethodNonce
     elsif payment_method.kind_of?(Braintree::PayPalAccount)
       normalized_payment_method = ::BraintreeService::PaypalAccount._new(gateway, instance_to_hash(payment_method))
     end
-    normalized_payment_method
+    normalized_payment_method ||= payment_method
   end
 end
