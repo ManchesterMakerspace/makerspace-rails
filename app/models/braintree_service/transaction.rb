@@ -9,10 +9,15 @@ class BraintreeService::Transaction < Braintree::Transaction
   end
 
   def self.refund(gateway, transaction_id)
-    result = gateway.transaction.refund(id)
-    raise ::Error::Braintree:Result.new(result) unless result.success?
-    invoice.update({ refunded: true })
-    result.transaction
+    result = gateway.transaction.refund(transaction_id)
+    raise ::Error::Braintree::Result.new(result) unless result.success?
+    invoice = Invoice.find_by(transaction_id: transaction_id)
+    if invoice.nil?
+      # TODO: Send message as this is a critical error
+      raise ::Mongoid::Errors::DocumentNotFound.new(Invoice, { transaction_id: transaction_id })
+    end
+    invoice.update!({ refunded: true })
+    normalize(gateway, result.transaction)
   end
 
   def self.get_transactions(gateway, search_query = nil)
@@ -30,17 +35,18 @@ class BraintreeService::Transaction < Braintree::Transaction
 
   def self.get_transaction(gateway, id)
     transaction = gateway.transaction.find(id)
-    normalize(transaction)
+    normalize(gateway, transaction)
   end
 
   def self.submit_invoice_for_settlement(gateway, invoice)
      if invoice.plan_id
       result = ::BraintreeService::Subscription.create(gateway, invoice)
-      raise ::Error::Braintree:Result.new(result) unless result.success?
-      invoice.update({ subscription_id: subscription.id, transaction_id: subscription.transactions.first.id })
-      transaction = result.subscription.transactions.first
+      raise ::Error::Braintree::Result.new(result) unless result.success?
+      subscription = result.subscription
+      transaction = subscription.transactions.first
+      invoice.update!({ subscription_id: subscription.id, transaction_id: transaction.id })
     else
-      result = @gateway.transaction.sale(
+      result = gateway.transaction.sale(
         amount: invoice.amount,
         payment_method_token: invoice.payment_method_id,
         line_items: [{
@@ -54,13 +60,12 @@ class BraintreeService::Transaction < Braintree::Transaction
           submit_for_settlement: true
         },
       )
-      raise ::Error::Braintree:Result.new(result) unless result.success?
+      raise ::Error::Braintree::Result.new(result) unless result.success?
       transaction = result.transaction
-      invoice.update!({ tramsaction_id: transaction.id })
-      transaction
+      invoice.update!({ transaction_id: transaction.id })
     end
 
-    normalize(transaction)
+    normalize(gateway, transaction)
   end
 
   private

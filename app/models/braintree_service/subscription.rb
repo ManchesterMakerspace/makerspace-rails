@@ -34,7 +34,7 @@ class BraintreeService::Subscription < Braintree::Subscription
     subscription_obj = {
       payment_method_token: invoice.payment_method_id,
       plan_id: invoice.plan_id,
-      id: ::BraintreeService::Subscription.generate_id(invoice)
+      id: invoice.generate_subscription_id
     }
     if invoice.discount_id
       subscription_obj[:discounts] = {
