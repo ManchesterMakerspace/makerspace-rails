@@ -21,17 +21,17 @@ class BraintreeService::Subscription < Braintree::Subscription
     gateway.subscription.cancel(id)
   end
 
-  def self.update(gateway, subscription)
+  def self.update(gateway, subscription_hash)
     subscription = gateway.subscription.update(
-      subscription[:id], # id of subscription to update
-      :payment_method_token => subscription[:payment_method_token],
-      :plan_id => subscription[:plan_id],
+      subscription_hash[:id], # id of subscription to update
+      :payment_method_token => subscription_hash[:payment_method_token],
+      :plan_id => subscription_hash[:plan_id],
     )
     normalize_subscription(gateway, subscription)
   end
 
   def self.create(gateway, invoice)
-    subscription_obj = {
+    subscription_hash = {
       payment_method_token: invoice.payment_method_id,
       plan_id: invoice.plan_id,
       id: invoice.generate_subscription_id
@@ -41,7 +41,7 @@ class BraintreeService::Subscription < Braintree::Subscription
         add: [{ inherited_from_id: invoice.discount_id }]
       }
     end
-    subscription = gateway.subscription.create(subscription_obj)
+    subscription = gateway.subscription.create(subscription_hash)
     normalize_subscription(gateway, subscription)
   end
 
