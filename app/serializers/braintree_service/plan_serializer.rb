@@ -1,4 +1,4 @@
-class Braintree::PlanSerializer < ActiveModel::Serializer
+class BraintreeService::PlanSerializer < ActiveModel::Serializer
   attributes :id,
             :name,
             :description,

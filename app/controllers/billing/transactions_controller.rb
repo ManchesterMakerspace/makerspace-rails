@@ -29,7 +29,7 @@ class Billing::TransactionsController < BillingController
         t
       end
 
-      return render_with_total_items(transactions, { each_serializer: Braintree::TransactionSerializer, root: "transactions" })
+      return render_with_total_items(transactions, { each_serializer: BraintreeService::TransactionSerializer, root: "transactions" })
     end
 
     def destroy

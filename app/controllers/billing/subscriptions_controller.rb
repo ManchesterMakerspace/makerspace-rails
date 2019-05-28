@@ -5,14 +5,14 @@ class Billing::SubscriptionsController < BillingController
 
   def show
     subscription = ::BraintreeService::Subscription.get_subscription(@gateway, params[:id])
-    render json: subscription, serializer: Braintree::SubscriptionSerializer, root: "subscription" and return
+    render json: subscription, serializer: BraintreeService::SubscriptionSerializer, root: "subscription" and return
   end
 
   def update
     # 2 different types of updates (payment method or plan)
     result = ::BraintreeService::Subscription.update(@gateway, subscription_params)
     raise Error::Braintree::Result.new(result) unless result.success?
-    render json: subscription, serializer: Braintree::SubscriptionSerializer, root: "subscription" and return
+    render json: subscription, serializer: BraintreeService::SubscriptionSerializer, root: "subscription" and return
   end
 
   def destroy

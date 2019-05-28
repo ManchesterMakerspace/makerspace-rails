@@ -1,4 +1,4 @@
-class Braintree::DiscountSerializer < ActiveModel::Serializer
+class BraintreeService::DiscountSerializer < ActiveModel::Serializer
   attributes :id, :name, :description, :amount
 
   def amount

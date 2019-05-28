@@ -1,4 +1,4 @@
-class Braintree::PaymentMethodSerializer < ActiveModel::Serializer
+class BraintreeService::PaymentMethodSerializer < ActiveModel::Serializer
   private
   def common_attributes
     [
@@ -29,7 +29,7 @@ class Braintree::PaymentMethodSerializer < ActiveModel::Serializer
 
     if object.kind_of?(::BraintreeService::CreditCard)
       credit_card_attributes.each { |a| fields[a] = object.send(a) }
-      fields[:debit] = object.debit == Braintree::CreditCard::Debit::Yes
+      fields[:debit] = object.debit == BraintreeService::CreditCard::Debit::Yes
       fields[:payment_type] = :credit_card
     elsif object.kind_of?(::BraintreeService::PaypalAccount)
       paypal_attributes.each { |a| fields[a] = object.send(a) }

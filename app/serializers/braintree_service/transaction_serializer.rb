@@ -1,4 +1,4 @@
-class Braintree::TransactionSerializer < ActiveModel::Serializer
+class BraintreeService::TransactionSerializer < ActiveModel::Serializer
   attributes :created_at,
              :credit_card_details,
              :customer_details,

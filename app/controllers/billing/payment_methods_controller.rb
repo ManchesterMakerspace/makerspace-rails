@@ -47,7 +47,7 @@ class Billing::PaymentMethodsController < BillingController
     else
       payment_methods = ::BraintreeService::PaymentMethod.get_payment_methods_for_customer(@gateway, current_member.customer_id)
     end
-    render json: payment_methods, each_serializer: Braintree::PaymentMethodSerializer, status: 200, root: :payment_methods and return
+    render json: payment_methods, each_serializer: BraintreeService::PaymentMethodSerializer, status: 200, root: :payment_methods and return
   end
 
   def destroy

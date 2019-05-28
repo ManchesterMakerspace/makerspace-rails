@@ -1,4 +1,4 @@
-class Braintree::SubscriptionSerializer < ActiveModel::Serializer
+class BraintreeService::SubscriptionSerializer < ActiveModel::Serializer
   attributes  :id,
               :plan_id,
               :status,

@@ -34,7 +34,7 @@ class Admin::Billing::TransactionsController < Admin::BillingController
       t
     end
 
-    return render_with_total_items(transactions, { each_serializer: Braintree::TransactionSerializer, root: "transactions" })
+    return render_with_total_items(transactions, { each_serializer: BraintreeService::TransactionSerializer, root: "transactions" })
   end
 
   def show
@@ -50,7 +50,7 @@ class Admin::Billing::TransactionsController < Admin::BillingController
     BillingMailer.refund(email, transaction, invoice).deliver_later
     @messages.push("#{invoice.member.fullname}'s refund of #{invoice.amount} for #{invoice.name} from #{invoice.settled_at} completed.")
     render json: {
-      transaction: ActiveModel::Serializer.new(transaction, serializer: Braintree::TransactionSerializer),
+      transaction: ActiveModel::Serializer.new(transaction, serializer: BraintreeService::TransactionSerializer),
       invoice: ActiveModel::Serializer.new(invoice, serializer: InvoiceSerializer),
     } and return
   end
