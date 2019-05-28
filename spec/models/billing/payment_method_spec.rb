@@ -47,9 +47,3 @@ RSpec.describe BraintreeService::PaymentMethod, type: :model do
     end
   end
 end
-
-# credit card
-# billing_address, card_type, cardholder_name, created_at, customer_id, debit, default?, expiration_date, expired? last_4, subscriptions, token
-
-#paypal
-# billing_agreement_id, created_at, customer_id, default?, email, payer_id, subscriptions, revoked_at, token

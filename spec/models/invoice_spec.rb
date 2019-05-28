@@ -19,7 +19,7 @@ RSpec.describe Invoice, type: :model do
     it { is_expected.to have_field(:due_date).of_type(nil) }
     it { is_expected.to have_field(:created_at).of_type(Time) }
     it "sets created_at properly" do 
-      expect(build(:invoice).created_at.to_i).to be_within(10).of(Time.now.to_i) 
+      expect(build(:invoice).created_at.to_i).to be_within(120).of(Time.now.to_i) 
     end
     it { is_expected.to have_field(:quantity).of_type(Integer).with_default_value_of(1) }
     it { is_expected.to have_field(:refunded).of_type(Mongoid::Boolean).with_default_value_of(false) }

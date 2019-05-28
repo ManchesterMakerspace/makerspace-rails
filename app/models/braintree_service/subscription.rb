@@ -37,7 +37,7 @@ class BraintreeService::Subscription < Braintree::Subscription
       id: invoice.generate_subscription_id
     }
     if invoice.discount_id
-      subscription_obj[:discounts] = {
+      subscription_hash[:discounts] = {
         add: [{ inherited_from_id: invoice.discount_id }]
       }
     end

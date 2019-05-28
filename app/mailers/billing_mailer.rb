@@ -1,30 +1,32 @@
 class BillingMailer < ApplicationMailer
+  include Service::BraintreeGateway
+
   attr_accessor :email, :resource
 
   default from: 'contact@manchestermakerspace.org'
 
-  def new_subscription(email, subscription, invoice)
-    @subscription = subscription
-    @invoice = invoice
+  def new_subscription(email, subscription_id, invoice_id)
+    @subscription = BraintreeService::Subscription.get_subscription(connect_gateway, subscription_id)
+    @invoice = Invoice.find(invoice_id)
     send_mail(email, "Welcome to Manchester Makerspace!")
   end
 
-  def receipt(email, transaction, invoice)
-    @transaction = transaction
-    @invoice = invoice
+  def receipt(email, transaction_id, invoice_id)
+    @invoice = Invoice.find(invoice_id)
+    @transaction = BraintreeService::Transaction.get_transaction(connect_gateway, transaction_id)
     send_mail(email, "Receipt from Manchester Makerspace")
   end
 
-  def refund(email, transaction, invoice)
-    @transaction = transaction
-    @invoice = invoice
-    send_mail(email, "Refund Approved")
+  def refund(email, transaction_id, invoice_id)
+    @invoice = Invoice.find(invoice_id)
+    @transaction = BraintreeService::Transaction.get_transaction(connect_gateway, transaction_id)
+    send_mail(email, "Refund Approved for transaction #{@transaction.id}")
   end
 
-  def refund_requested(email, transaction, invoice)
-    @transaction = transaction
-    @invoice = invoice
-    send_mail(email, "Refund Requested")
+  def refund_requested(email, transaction_id, invoice_id)
+    @invoice = Invoice.find(invoice_id)
+    @transaction = BraintreeService::Transaction.get_transaction(connect_gateway, transaction_id)
+    send_mail(email, "Refund Requested for transaction #{@transaction.id}")
   end
 
   private

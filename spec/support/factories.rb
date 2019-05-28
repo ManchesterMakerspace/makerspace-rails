@@ -318,6 +318,25 @@ FactoryBot.define do
     initialize_with { new(attributes) }
   end
 
+  factory :dispute, class: ::BraintreeService::Dispute do 
+    amount_disputed { "60" }
+    amount { "60" }
+    amount_won { "0" }
+    received_date { Time.now.strftime("%d - %m - %Y") }
+    initialize_with { new(attributes) }
+  end
+
+  factory :notification, class: ::BraintreeService::Notification do 
+    kind { Braintree::WebhookNotification::Kind::SubscriptionChargedSuccessfully }
+    timestamp { Time.now }
+    payload { JSON.generate(build(:subscription)) }
+  end
+
+  factory :dispute_notification, parent: :notification do 
+    kind { Braintree::WebhookNotification::Kind::DisputeOpened }
+    payload { JSON.generate(build(:dispute)) }
+  end
+
   sequence :time_of do |n|
     (Time.now - n.days).to_i * 1000
   end
