@@ -1,4 +1,4 @@
-class Billing::PlansController < BillingController
+class Billing::PlansController < ApplicationController
     include FastQuery
     include BraintreeGateway
 

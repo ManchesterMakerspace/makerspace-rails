@@ -72,6 +72,8 @@ RSpec.describe Member, type: :model do
       end
     end
 
+    # TODO subscription helpers
+
     describe "permissions" do
       it "determines if member is allowed by permission" do
         enabled_permission = build(:permission, name: :foo, enabled: true, member_id: nil)
