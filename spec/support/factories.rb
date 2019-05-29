@@ -285,27 +285,20 @@ FactoryBot.define do
     initialize_with { new(braintree_gateway, attributes) }
   end
 
-  factory :payment_method, class: ::BraintreeService::PaymentMethod do
-    customer_id { generate(:uid) }
-    nonce { "g7291" }
-    type { ::Braintree::CreditCard }
-    details {{}}
-
-    initialize_with { new(braintree_gateway, attributes) }
-  end
-
-  factory :credit_card, parent: :payment_method, class: ::BraintreeService::CreditCard do
+  factory :credit_card, class: ::BraintreeService::CreditCard do
     card_type { ::Braintree::CreditCard::CardType::Visa }
     expiration_month { 10 }
     expiration_year { 2020 }
     expiration_date { 25 }
     last4 { 1234 }
+    token { "g7291" }
 
     initialize_with { new(braintree_gateway, attributes) }
   end
 
-  factory :paypal_account, parent: :payment_method, class: ::BraintreeService::PaypalAccount do
+  factory :paypal_account, class: ::BraintreeService::PaypalAccount do
     email { generate(:email) }
+    token { "g7291" }
 
     initialize_with { new(braintree_gateway, attributes) }
   end

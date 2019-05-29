@@ -40,7 +40,7 @@ RSpec.describe Billing::TransactionsController, type: :controller do
   let(:gateway) { double }
   let(:non_customer) { create(:member) }
   let(:member) { create(:member, customer_id: "bar") }
-  let(:payment_method) { build(:payment_method, customer_id: "bar") }
+  let(:payment_method) { build(:credit_card, customer_id: "bar") }
   let(:invoice) { create(:invoice, member: member) }
   let(:transaction) { build(:transaction) }
 

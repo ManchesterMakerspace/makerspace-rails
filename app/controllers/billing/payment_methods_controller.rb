@@ -4,7 +4,8 @@ class Billing::PaymentMethodsController < BillingController
 
   def new
     client_token = generate_client_token
-    render json: { client_token: client_token } and return
+    # TODO: why isn't this converting to camel case for me
+    render json: { clientToken: client_token } and return
   end
 
   def create
@@ -36,9 +37,9 @@ class Billing::PaymentMethodsController < BillingController
 
     # Parse Braintree result
     raise Error::Braintree::Result.new(result) unless result.success?
-    payment_method = result.try(:payment_method) ? result.payment_method.token : result.customer.payment_methods[0].token
+    payment_method = result.try(:payment_method) ? result.payment_method.token : result.customer.payment_methods.first.token
 
-    render json: payment_method, status: 200 and return
+    render json: payment_method, serializer: BraintreeService::PaymentMethodSerializer, root: "payment_method", status: 200 and return
   end
 
   def index
@@ -62,7 +63,7 @@ class Billing::PaymentMethodsController < BillingController
 
   private
   def payment_method_params
-    params.require(:payment_method).permit(:payment_method_nonce, :make_default, :payment_method_token)
+    params.require(:payment_method).permit(:payment_method_nonce, :make_default)
   end
 
   def generate_client_token

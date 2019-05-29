@@ -21,7 +21,7 @@ RSpec.describe Billing::BraintreeController, type: :controller do
       expect(gateway).to receive_message_chain(:webhook_notification, :parse).and_return(incoming_subscription_notification)
       allow(BraintreeService::Notification).to receive(:process).with(incoming_subscription_notification)
       expect(BraintreeService::Notification).to receive(:process).with(incoming_subscription_notification)
-      post '/billing/braintree_listener', params: valid_params, format: :json
+      post :webhooks, params: valid_params, format: :json
     end
   end
 end
