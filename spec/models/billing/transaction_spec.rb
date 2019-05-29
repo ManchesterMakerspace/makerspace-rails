@@ -87,6 +87,21 @@ RSpec.describe BraintreeService::Transaction, type: :model do
           expect(invoice.transaction_id).to eq(fake_transaction.id)
         end
 
+        it "reports payment and sends a receipt" do 
+          subscription = double(id: "foobar", transactions: [fake_transaction]) # Mock new subscription
+          # Setup calls
+          allow(success_result).to receive(:subscription).and_return(subscription)
+          allow(subscription).to receive_message_chain(:transactions, :first).and_return(fake_transaction)
+          allow(BraintreeService::Subscription).to receive(:create).with(gateway, invoice).and_return(success_result)
+          allow(BraintreeService::Transaction).to receive(:normalize).with(gateway, fake_transaction).and_return(fake_transaction)
+
+          allow(BillingMailer).to receive_message_chain(:receipt, :deliver_later)
+          expect(BillingMailer).to receive(:receipt).with(invoice.member.email, fake_transaction.id, invoice.id)
+          expect(BraintreeService::Transaction).to receive(:send_slack_message).with(/received for #{invoice.name}/i)
+          BraintreeService::Transaction.submit_invoice_for_settlement(gateway, invoice)
+      
+        end
+
         it "raises error if failed result" do
           error_result = double(success?: false) # Create a fake response
           allow(Error::Braintree::Result).to receive(:new).with(error_result).and_return(Error::Braintree::Result.new) # Bypass error instantiation
@@ -110,6 +125,18 @@ RSpec.describe BraintreeService::Transaction, type: :model do
 
           invoice.reload
           expect(invoice.transaction_id).to eq(fake_transaction.id)
+        end
+
+        it "reports payment and sends a receipt" do 
+          allow(success_result).to receive(:transaction).and_return(fake_transaction)
+          allow(gateway).to receive_message_chain(:transaction, sale: success_result) # Setup method calls to gateway
+          allow(BraintreeService::Transaction).to receive(:normalize).with(gateway, fake_transaction).and_return(fake_transaction)
+
+          expect(gateway.transaction).to receive(:sale).and_return(success_result)
+          allow(BillingMailer).to receive_message_chain(:receipt, :deliver_later)
+          expect(BillingMailer).to receive(:receipt).with(invoice.member.email, fake_transaction.id, invoice.id)
+          expect(BraintreeService::Transaction).to receive(:send_slack_message).with(/received for #{invoice.name}/i)
+          BraintreeService::Transaction.submit_invoice_for_settlement(gateway, invoice)
         end
 
         it "raises error if failed result" do

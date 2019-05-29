@@ -6,7 +6,7 @@ class Billing::BraintreeController < ApplicationController
     if @notification.kind == ::Braintree::WebhookNotification::Kind::Check
       @messages.push("Braintree Webhook test notification succeeded!")
     else
-      ::BraintreeService::Notification.process(@gateway, @notification)
+      ::BraintreeService::Notification.process(@notification)
     end
     render json: { }, status: 200 and return
   end

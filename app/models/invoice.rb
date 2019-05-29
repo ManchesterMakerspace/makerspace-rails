@@ -60,6 +60,16 @@ class Invoice
     self.settled_at ||= Time.now if !!value
   end
 
+  def set_refund_requested(value)
+    self.refund_requested ||= Time.now if !!value
+  end
+
+  def request_refund
+    set_refund_requested
+    send_slack_message("#{current_member.fullname} has requested a refund of #{amount} for #{name || description} from #{settled_at}. <#{request.base_url}/billing/transactions/#{transaction_id}|Process refund>")
+    BillingMailer.refund_requested(invoice.member.email, transaction).deliver_later
+  end
+
   def past_due
     self.due_date && self.due_date < Time.now
   end

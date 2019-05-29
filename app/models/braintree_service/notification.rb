@@ -71,8 +71,9 @@ class BraintreeService::Notification
     end
 
     send_slack_message("Received dispute from #{associated_invoice.member.fullname} for #{associated_invoice.name} which was paid #{associated_invoice.settled_at}. 
-    Braintree transaction ID #{disputed_transaction.id}")
-    associated_invoice.update!(refund_requested: Time.now)
+    Braintree transaction ID #{disputed_transaction.id} |  <#{request.base_url}/billing/transactions/#{associated_invoice.transaction_id}|Disputed Invoice>")
+    set_refund_requested # TODO should dispute requested be it's own prop?
+    # TODO send an email too
   end
 
   private

@@ -30,4 +30,8 @@ class BraintreeService::TransactionSerializer < ActiveModel::Serializer
       object.discount_amount.truncate.to_s + '.' + sprintf('%02d', (BigDecimal(object.discount_amount.to_s).frac * 100).truncate)
     end
   end
+
+  def invoice 
+    object.invoice.as_json
+  end
 end

@@ -1,5 +1,6 @@
 class BraintreeService::Transaction < Braintree::Transaction
   include ImportResource
+  extend Service::SlackConnector
   include ActiveModel::Serializers::JSON
 
   attr_accessor :invoice
@@ -65,6 +66,8 @@ class BraintreeService::Transaction < Braintree::Transaction
       invoice.update!({ transaction_id: transaction.id })
     end
 
+    send_slack_message("Payment from #{invoice.member.fullname} of $#{invoice.amount} received for #{invoice.name}")
+    BillingMailer.receipt(invoice.member.email, transaction.id, invoice.id).deliver_later
     normalize(gateway, transaction)
   end
 

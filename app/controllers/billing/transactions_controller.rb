@@ -1,5 +1,6 @@
 class Billing::TransactionsController < BillingController
     include FastQuery
+    include SlackService
     include BraintreeGateway
     before_action :transaction_params, only: [:create]
     before_action :verify_customer
@@ -11,12 +12,10 @@ class Billing::TransactionsController < BillingController
       invoice = Invoice.find(transaction_params[:invoice_id])
       raise ::Mongoid::Errors::DocumentNotFound.new(Invoice, { id: transaction_params[:invoice_id] }) if invoice.nil?
 
+      # Handling actual payment & related error handling is abstracted from this controller
       transaction = invoice.submit_for_settlement(@gateway, transaction_params[:payment_method_id])
-      raise Error::Braintree::Result.new(transaction_result) unless transaction_result.success?
 
-      @messages.push("Payment from #{invoice.member.fullname} of $#{invoice.amount} received for #{invoice.name}")
-      BillingMailer.receipt(invoice.member.email, transaction, invoice).deliver_later
-      render json: { }, status: 200 and return
+      render json: transaction, serializer: BraintreeService::TransactionSerializer, root: "transaction", status: 200 and return
     end
 
     def index
@@ -33,17 +32,16 @@ class Billing::TransactionsController < BillingController
     end
 
     def destroy
+      transaction = ::BraintreeService::Transaction.get_transaction(@gateway, params[:id])
       # Can only request refund for own invoices
-      invoice = Invoice.find_by(id: params[:id], :settled_at.nin => ["", nil])
-      raise ::Mongoid::Errors::DocumentNotFound.new(Invoice, { id: params[:id] }) if invoice.nil?
+      invoice = Invoice.find_by(transaction_id: transaction.id)
+      raise ::Mongoid::Errors::DocumentNotFound.new(Invoice, { transaction_id: transaction.id }) if invoice.nil?
       raise Error::Unauthorized.new unless invoice.member.id == current_member.id
 
       description = invoice.name || invoice.description
-      transaction = ::BraintreeService::Transaction.get_transaction(@gateway, invoice.transaction_id)
-      invoice.update!({ refund_requested: Time.now })
+      invoice.request_refund
 
-      @messages.push("#{current_member.fullname} has requested a refund of #{invoice.amount} for #{description} from #{invoice.settled_at}. <#{request.base_url}/billing/transactions/#{invoice.transaction_id}|Process refund>")
-      BillingMailer.refund_requested(invoice.member.email, transaction).deliver_later
+      render json: {}, status: 204 and return
     end
 
     private
