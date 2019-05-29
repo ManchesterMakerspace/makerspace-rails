@@ -34,9 +34,8 @@ class Billing::TransactionsController < BillingController
     def destroy
       transaction = ::BraintreeService::Transaction.get_transaction(@gateway, params[:id])
       # Can only request refund for own invoices
-      invoice = Invoice.find_by(transaction_id: transaction.id)
+      invoice = Invoice.find_by(transaction_id: transaction.id, member_id: current_member.id)
       raise ::Mongoid::Errors::DocumentNotFound.new(Invoice, { transaction_id: transaction.id }) if invoice.nil?
-      raise Error::Unauthorized.new unless invoice.member.id == current_member.id
 
       description = invoice.name || invoice.description
       invoice.request_refund

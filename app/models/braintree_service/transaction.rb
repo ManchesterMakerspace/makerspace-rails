@@ -13,11 +13,12 @@ class BraintreeService::Transaction < Braintree::Transaction
     result = gateway.transaction.refund(transaction_id)
     raise ::Error::Braintree::Result.new(result) unless result.success?
     invoice = Invoice.find_by(transaction_id: transaction_id)
-    if invoice.nil?
-      # TODO: Send message as this is a critical error
-      raise ::Mongoid::Errors::DocumentNotFound.new(Invoice, { transaction_id: transaction_id })
+    unless invoice.nil?
+      invoice.update!({ refunded: true })
     end
-    invoice.update!({ refunded: true })
+
+    BillingMailer.refund(invoice.member.email, transaction_id, invoice.id.to_s).deliver_later
+    send_slack_message("#{invoice.member.fullname}'s refund of #{invoice.amount} for #{invoice.name} from #{invoice.settled_at} completed.")
     normalize(gateway, result.transaction)
   end
 
@@ -67,7 +68,7 @@ class BraintreeService::Transaction < Braintree::Transaction
     end
 
     send_slack_message("Payment from #{invoice.member.fullname} of $#{invoice.amount} received for #{invoice.name}")
-    BillingMailer.receipt(invoice.member.email, transaction.id, invoice.id).deliver_later
+    BillingMailer.receipt(invoice.member.email, transaction.id, invoice.id.to_s).deliver_later
     normalize(gateway, transaction)
   end
 

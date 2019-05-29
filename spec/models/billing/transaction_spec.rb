@@ -18,17 +18,6 @@ RSpec.describe BraintreeService::Transaction, type: :model do
         expect{ BraintreeService::Transaction.refund(gateway, transaction_id) }.to raise_error(Error::Braintree::Result)
       end
 
-      it "raises error if invoice does not exist" do
-        allow(gateway).to receive_message_chain(:transaction, refund: success_result) # Setup method calls to gateway
-        allow(success_result).to receive(:transaction).and_return(fake_transaction)
-
-        expect{ BraintreeService::Transaction.refund(gateway, transaction_id) }.to raise_error(::Mongoid::Errors::DocumentNotFound)
-      end
-
-      it "notifies us if invoice does not exist" do 
-        # TODO
-      end
-
       it "sets invoice to refunded if successful" do 
         invoice = create(:invoice, transaction_id: transaction_id, refunded: false)
 
@@ -42,6 +31,21 @@ RSpec.describe BraintreeService::Transaction, type: :model do
         
         invoice.reload
         expect(invoice.refunded).to be(true)
+      end
+
+      it "reports refund and sends receipt" do 
+        invoice = create(:invoice, transaction_id: transaction_id, refunded: false)
+
+        allow(gateway).to receive_message_chain(:transaction, refund: success_result) # Setup method calls to gateway
+        allow(success_result).to receive(:transaction).and_return(fake_transaction)
+        allow(BraintreeService::Transaction).to receive(:normalize).with(gateway, fake_transaction).and_return(fake_transaction)
+
+        expect(gateway.transaction).to receive(:refund).with(transaction_id).and_return(success_result)
+
+        allow(BillingMailer).to receive_message_chain(:refund, :deliver_later)
+        expect(BillingMailer).to receive(:refund).with(invoice.member.email, fake_transaction.id, invoice.id)
+        expect(BraintreeService::Transaction).to receive(:send_slack_message).with(/refund .+ completed/i)
+        BraintreeService::Transaction.refund(gateway, transaction_id)
       end
     end
 
@@ -99,7 +103,6 @@ RSpec.describe BraintreeService::Transaction, type: :model do
           expect(BillingMailer).to receive(:receipt).with(invoice.member.email, fake_transaction.id, invoice.id)
           expect(BraintreeService::Transaction).to receive(:send_slack_message).with(/received for #{invoice.name}/i)
           BraintreeService::Transaction.submit_invoice_for_settlement(gateway, invoice)
-      
         end
 
         it "raises error if failed result" do

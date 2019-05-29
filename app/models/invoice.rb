@@ -60,8 +60,9 @@ class Invoice
     self.settled_at ||= Time.now if !!value
   end
 
-  def set_refund_requested(value)
-    self.refund_requested ||= Time.now if !!value
+  def set_refund_requested
+    self.refund_requested ||= Time.now
+    self.save!
   end
 
   def request_refund

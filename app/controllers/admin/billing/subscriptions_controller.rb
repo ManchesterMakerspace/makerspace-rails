@@ -11,7 +11,7 @@ class Admin::Billing::SubscriptionsController < Admin::BillingController
   def destroy
     subscription = ::BraintreeService::Subscription.get_subscription(@gateway, params[:id])
     result = ::BraintreeService::Subscription.cancel(@gateway, params[:id])
-    raise Error::BraintreeResultError.new(result) unless result.success?
+    raise Error::Braintree::Result.new(result) unless result.success?
 
     # Verify resource exists and call update on that resource
     subscription.resource.remove_subscription() unless subscription.resource.nil?

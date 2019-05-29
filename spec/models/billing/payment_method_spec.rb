@@ -6,7 +6,8 @@ RSpec.describe BraintreeService::PaymentMethod, type: :model do
   let(:fake_payment_method) { double(id: "foobar", customer_id: fake_customer.id) }
 
   it "has a factory" do
-    expect(build(:payment_method)).to be_truthy
+    expect(build(:credit_card)).to be_truthy
+    expect(build(:paypal_account)).to be_truthy
   end
 
   context "public methods" do

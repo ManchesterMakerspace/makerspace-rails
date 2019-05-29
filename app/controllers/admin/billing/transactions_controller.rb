@@ -39,20 +39,12 @@ class Admin::Billing::TransactionsController < Admin::BillingController
 
   def show
     transaction = ::BraintreeService::Transaction.get_transaction(@gateway, params[:id])
-    render json: transaction and return
+    render json: transaction, serializer: BraintreeService::TransactionSerializer, root: "transaction" and return
   end
 
   def destroy
-    invoice = Invoice.find_by(transaction_id: params[:id])
-    raise ::Mongoid::Errors::DocumentNotFound.new(Invoice, { id: params[:id] }) if invoice.nil?
-    transaction = ::BraintreeService::Transaction.refund(@gateway, params[:id])
-    invoice.reload
-    BillingMailer.refund(email, transaction, invoice).deliver_later
-    @messages.push("#{invoice.member.fullname}'s refund of #{invoice.amount} for #{invoice.name} from #{invoice.settled_at} completed.")
-    render json: {
-      transaction: ActiveModel::Serializer.new(transaction, serializer: BraintreeService::TransactionSerializer),
-      invoice: ActiveModel::Serializer.new(invoice, serializer: InvoiceSerializer),
-    } and return
+    ::BraintreeService::Transaction.refund(@gateway, params[:id])
+    render json: {}, status: 204 and return
   end
 
   private

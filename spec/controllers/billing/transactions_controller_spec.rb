@@ -135,8 +135,8 @@ RSpec.describe Billing::TransactionsController, type: :controller do
       allow(::BraintreeService::Transaction).to receive(:get_transaction).with(gateway, transaction.id).and_return(transaction)
       expect(::BraintreeService::Transaction).to receive(:get_transaction).with(gateway, transaction.id).and_return(transaction)
       
-      allow(Invoice).to receive(:find_by).with({ transaction_id: transaction.id }).and_return(transaction_invoice)
-      expect(Invoice).to receive(:find_by).with({ transaction_id: transaction.id }).and_return(transaction_invoice)
+      allow(Invoice).to receive(:find_by).with({ transaction_id: transaction.id, member_id: member.id }).and_return(transaction_invoice)
+      expect(Invoice).to receive(:find_by).with({ transaction_id: transaction.id, member_id: member.id }).and_return(transaction_invoice)
 
       allow(transaction_invoice).to receive(:request_refund)
       expect(transaction_invoice).to receive(:request_refund)
@@ -163,8 +163,8 @@ RSpec.describe Billing::TransactionsController, type: :controller do
       delete :destroy, params: { id: transaction.id }, format: :json
 
       parsed_response = JSON.parse(response.body)
-      expect(response).to have_http_status(401)
-      expect(parsed_response['message']).to match(/authentication failed/i)
+      expect(response).to have_http_status(404)
+      expect(parsed_response['message']).to match(/resource not found/i)
     end
 
     it "renders error about no customer" do 
