@@ -6,7 +6,7 @@ import { BillingPlan } from "app/entities/billingPlan";
 import { MemberDetails } from "app/entities/member";
 import { Subscription } from "app/entities/subscription";
 import { AuthForm } from "ui/auth/interfaces";
-import { Invoice, InvoiceQueryParams } from "app/entities/invoice";
+import { Invoice, InvoiceQueryParams, InvoiceOption } from "app/entities/invoice";
 import { InvoiceOptionQueryParams } from "api/invoices/interfaces";
 import { PaymentMethod } from "app/entities/paymentMethod";
 import { Permission } from "app/entities/permission";
@@ -144,6 +144,33 @@ export const mockRequests = {
         httpRequest: {
           method: Method.Delete,
           path: `/${admin ? Url.Admin.Billing.Transactions : Url.Billing.Transactions}/${transactionId}.json`,
+        },
+        httpResponse: {
+          statusCode: 204,
+        }
+      })
+    }
+  },
+  subscriptions: {
+    get: {
+      ok: (subscriptions: Partial<Subscription>[], queryParams?: QueryParams, admin: boolean = false): MockRequest => ({
+        httpRequest: {
+          method: Method.Get,
+          path: admin ? `/${Url.Admin.Billing.Subscriptions}.json` : `/${Url.Billing.Subscriptions}.json`
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({ subscriptions }),
+        }
+      })
+    }
+  },
+  subscription: {
+    delete: {
+      ok: (subscriptionId: string, admin: boolean = false) => ({
+        httpRequest: {
+          method: Method.Delete,
+          path: `/${admin ? Url.Admin.Billing.Subscriptions : Url.Billing.Subscriptions}/${subscriptionId}.json`,
         },
         httpResponse: {
           statusCode: 204,
@@ -471,23 +498,6 @@ export const mockRequests = {
       }
     })
   },
-  subscriptions: {
-    get: {
-      ok: (subscriptions: Partial<Subscription>[], queryParams?: QueryParams): MockRequest => ({
-        httpRequest: {
-          method: Method.Get,
-          path: `/${Url.Billing.Subscriptions}.json`,
-          ...queryParams && {
-            queryStringParameters: objectToQueryParams(queryParams)
-          }
-        },
-        httpResponse: {
-          statusCode: 200,
-          body: JSON.stringify(subscriptions)
-        }
-      })
-    }
-  },
   invoices: {
     get: {
       ok: (invoices: Partial<Invoice>[], queryParams?: InvoiceQueryParams, admin?: boolean): MockRequest => ({
@@ -532,7 +542,7 @@ export const mockRequests = {
     delete: {
       ok: (invoiceId: string): MockRequest => ({
         httpRequest: {
-          method: Method.Post,
+          method: Method.Delete,
           path: `/${Url.Admin.Invoices}/${invoiceId}.json`,
         },
         httpResponse: {
@@ -543,10 +553,10 @@ export const mockRequests = {
   },
   invoiceOptions: {
     get: {
-      ok: (invoiceOptions: Partial<Invoice>[], queryParams?: InvoiceOptionQueryParams): MockRequest => ({
+      ok: (invoiceOptions: Partial<InvoiceOption>[], queryParams?: InvoiceOptionQueryParams, admin = false): MockRequest => ({
         httpRequest: {
           method: Method.Get,
-          path: `/${Url.InvoiceOptions}.json`,
+          path: `/${admin ? Url.Admin.InvoiceOptions : Url.InvoiceOptions}.json`,
           ...queryParams && {
             queryStringParameters: objectToQueryParams(queryParams)
           }
@@ -555,6 +565,41 @@ export const mockRequests = {
           headers: [{ name: "total-items", value: String(invoiceOptions.length) }],
           statusCode: 200,
           body: JSON.stringify({invoiceOptions})
+        }
+      })
+    },
+    post: {
+      ok: (invoiceOption: Partial<InvoiceOption>): MockRequest => ({
+        httpRequest: {
+          method: Method.Post,
+          path: `/${Url.Admin.InvoiceOptions}.json`,
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({ invoiceOption })
+        }
+      })
+    },
+    put: {
+      ok: (invoiceOption: InvoiceOption): MockRequest => ({
+        httpRequest: {
+          method: Method.Put,
+          path: `/${Url.Admin.InvoiceOptions}/${invoiceOption.id}.json`,
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({ invoiceOption })
+        }
+      })
+    },
+    delete: {
+      ok: (invoiceOptionId: string): MockRequest => ({
+        httpRequest: {
+          method: Method.Delete,
+          path: `/${Url.Admin.InvoiceOptions}/${invoiceOptionId}.json`,
+        },
+        httpResponse: {
+          statusCode: 204,
         }
       })
     }

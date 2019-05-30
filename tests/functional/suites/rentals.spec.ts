@@ -17,7 +17,7 @@ describe("Rentals", () => {
       return auth.autoLogin(basicUser);
     });
     it("Can review and pay for their rentals", () => {
-
+      // TODO
     });
     it("Can request for a new rental", () => {
 

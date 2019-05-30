@@ -110,7 +110,7 @@ describe("Invoicing and Dues", () => {
       await utils.waitForVisible(submit);
       await utils.fillInput(description, defaultInvoice.description);
       await utils.fillInput(dueDate, new Date(defaultInvoice.dueDate).toDateString());
-      await utils.fillInput(amount, `${defaultInvoice.amount}`);
+      await utils.fillInput(amount, String(defaultInvoice.amount));
 
       await mock(mockRequests.invoices.post.ok(defaultInvoice));
       await mock(mockRequests.invoices.get.ok([defaultInvoice]));
@@ -137,7 +137,7 @@ describe("Invoicing and Dues", () => {
       await utils.clickElement(invoicePO.actionButtons.edit);
       await utils.waitForVisible(invoicePO.invoiceForm.submit);
 
-      await utils.fillInput(invoicePO.invoiceForm.amount, updatedInvoice.amount);
+      await utils.fillInput(invoicePO.invoiceForm.amount, String(updatedInvoice.amount));
       await utils.fillInput(invoicePO.invoiceForm.description, updatedInvoice.description);
       await mock(mockRequests.rentals.put.ok(updatedInvoice));
       await mock(mockRequests.rentals.get.ok([updatedInvoice], undefined, true));

@@ -4,7 +4,7 @@ import utils from "../pageObjects/common";
 import { mockRequests, mock } from "../mockserver-client-helpers";
 import memberPO from "../pageObjects/member";
 import { basicUser } from "../constants/member";
-import { invoiceOptions, membershipOptionQueryParams } from "../constants/invoice";
+import { defaultBillingOptions as invoiceOptions, membershipOptionQueryParams } from "../constants/invoice";
 import signup from "../pageObjects/signup";
 const member = Object.assign({}, basicUser);
 const memberId = member.id;

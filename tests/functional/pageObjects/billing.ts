@@ -1,17 +1,56 @@
+import { InvoiceOption } from "app/entities/invoice";
 import { Routing } from "app/constants";
-const paymentOptionsTableId = "#billing-options-table"
-class Billing extends TablePageObject {
-  public url = Routing.Billing
+import { TablePageObject } from "./table";
+import { MemberDetails } from "app/entities/member";
+import utils from "./common";
 
-  public fields = [
-    "name", "description", "quantity", "amount", "disabled"
-  ]
+const paymentOptionsTableId = "billing-options-table"
+const fields = [
+  "name", "description", "quantity", "amount", "disabled"
+];
+class Billing extends TablePageObject {
+  public url = Routing.Billing;
+
+  public fieldEvaluator = (member?: Partial<MemberDetails>) => (invoiceOption: Partial<InvoiceOption>) => (fieldContent: { field: string, text: string }) => {
+    const { field, text } = fieldContent;
+    if (field === "status") {
+      expect(
+        ["Active", "Expired"].some((status => new RegExp(status, 'i').test(text)))
+      ).toBeTruthy();
+    } else if (field === "member") {
+      if (member) {
+        expect(text).toEqual(`${member.firstname} ${member.lastname}`);
+      } else {
+        expect(text).toBeTruthy();
+      }
+    } else if (field === "disabled") {
+      const expectedText = invoiceOption[field] ? "Disabled" : "Enabled";
+      expect(text.includes(expectedText)).toBeTruthy();
+    } else {
+      expect(text.includes(invoiceOption[field])).toBeTruthy();
+    }
+  }
 
   public actionButtons = {
     createButton: "#billing-list-create",
     editButton: "#billing-list-edit",
     deleteButton: "#billing-list-delete",
   }
+
+  public billingTabs = {
+    subscriptionsTab: "#subscriptions-tab",
+    transactionsTab: "#transactions-tab",
+    optionsTab: "#options-tab",
+  }
+
+  public goToSubscriptions = () =>
+    utils.clickElement(this.billingTabs.subscriptionsTab);
+
+  public goToTransactions = () =>
+    utils.clickElement(this.billingTabs.transactionsTab);
+
+  public goToOptions = () =>
+    utils.clickElement(this.billingTabs.optionsTab);
 
   private invoiceOptionFormId = "#invoice-option-form"
   public invoiceOptionForm = {
@@ -21,7 +60,8 @@ class Billing extends TablePageObject {
     discountId: `${this.invoiceOptionFormId}-discount`,
     name: `${this.invoiceOptionFormId}-name`,
     description: `${this.invoiceOptionFormId}-description`,
-    amount: `${this.invoiceOptionFormId}-quantity`,
+    amount: `${this.invoiceOptionFormId}-amount`,
+    quantity: `${this.invoiceOptionFormId}-quantity`,
     disabled: `${this.invoiceOptionFormId}-disabled`,
     submit: `${this.invoiceOptionFormId}-submit`,
     cancel: `${this.invoiceOptionFormId}-cancel`,
@@ -38,4 +78,4 @@ class Billing extends TablePageObject {
   }
 }
 
-export default new Billing(paymentOptionsTableId)
+export default new Billing(paymentOptionsTableId, fields);

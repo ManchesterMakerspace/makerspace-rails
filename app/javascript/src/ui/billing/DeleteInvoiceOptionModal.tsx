@@ -5,6 +5,7 @@ import { InvoiceOption } from "app/entities/invoice";
 import FormModal from "ui/common/FormModal";
 import KeyValueItem from "ui/common/KeyValueItem";
 import Form from "ui/common/Form";
+import { numberAsCurrency } from "ui/utils/numberToCurrency";
 
 interface OwnProps {
   option: Partial<InvoiceOption>;
@@ -45,7 +46,7 @@ class DeleteInvoiceOptionModal extends React.Component<OwnProps, {}> {
           <span id="delete-invoice-option-description">{option.description}</span>
         </KeyValueItem>
         <KeyValueItem label="Amount">
-          <span id="delete-invoice-option-amount">{`$${option.amount}`}</span>
+          <span id="delete-invoice-option-amount">{numberAsCurrency(option.amount)}</span>
         </KeyValueItem>
       </FormModal>
     ) : null;

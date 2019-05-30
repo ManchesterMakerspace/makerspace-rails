@@ -19,7 +19,8 @@ class BraintreeService::TransactionSerializer < ActiveModel::Serializer
              :subscription_id,
              :tax_amount,
              :amount,
-             :invoice
+             :member_id,
+             :member_name
 
   def amount
     object.amount.truncate.to_s + '.' + sprintf('%02d', (BigDecimal(object.amount.to_s).frac * 100).truncate)
@@ -33,5 +34,17 @@ class BraintreeService::TransactionSerializer < ActiveModel::Serializer
 
   def invoice 
     object.invoice.as_json
+  end
+
+  def description
+    object.invoice && object.invoice.name
+  end
+
+  def member_id
+    object.invoice && object.invoice.member.id
+  end
+
+  def member_name
+    object.invoice && object.invoice.member.fullname
   end
 end

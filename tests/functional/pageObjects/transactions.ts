@@ -5,18 +5,18 @@ import { MemberDetails } from "app/entities/member";
 import { timeToDate } from "ui/utils/timeToDate";
 
 const tableId = "transactions-table";
-const transactionsListFields = ["createdAt", "description", "member", "amount", "status"];
+const transactionsListFields = ["createdAt", "description", "amount", "status"];
 
 class TransactionsPageObject extends TablePageObject {
-  public listUrl = Routing.Rentals
+  public listUrl = Routing.Billing
 
   public fieldEvaluator = (member?: Partial<MemberDetails>) => (transaction: Partial<Transaction>) => (fieldContent: { field: string, text: string }) => {
     const { field, text } = fieldContent;
     if (field === "createdAt") {
-      expect(text).toEqual(timeToDate(transaction.expiration));
+      expect(text).toEqual(timeToDate(transaction.createdAt));
     } else if (field === "status") {
       expect(
-        ["Active", "Expired"].some((status => new RegExp(status, 'i').test(text)))
+        ["Success", "Unknown", "Refunded", "Refund Requested"].some((status => new RegExp(status, 'i').test(text)))
       ).toBeTruthy();
     } else if (field === "member") {
       if (member) {
@@ -34,9 +34,9 @@ class TransactionsPageObject extends TablePageObject {
   }
 
   private refundTransactionModalId = "#refund-transaction";
-  public refundTransactionModal = {
+  public refundTransactionModal: { [key: string]: string } = {
     id: `${this.refundTransactionModalId}`,
-    number: `${this.refundTransactionModalId}-date`,
+    date: `${this.refundTransactionModalId}-date`,
     amount: `${this.refundTransactionModal}-amount`,
     description: `${this.refundTransactionModalId}-description`,
     member: `${this.refundTransactionModalId}-member`,

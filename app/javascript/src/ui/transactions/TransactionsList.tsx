@@ -25,6 +25,7 @@ import Form from "ui/common/Form";
 import { TransactionSearchCriteria } from "api/transactions/interfaces";
 import AsyncSelectFixed, { SelectOption } from "ui/common/AsyncSelect";
 import { getMembers } from "api/members/transactions";
+import { numberAsCurrency } from "ui/utils/numberToCurrency";
 
 interface OwnProps extends RouteComponentProps<{}> {
   member?: MemberDetails;
@@ -67,24 +68,25 @@ class TransactionsList extends React.Component<Props, State> {
       cell: (row: Transaction) => {
         const amount = Number(row.amount);
         const discount = Number(row.discountAmount);
+        let total = amount;
         if (discount) {
-          return amount - discount;
+          total -= discount;
         }
-        return amount;
+        return numberAsCurrency(total);
       },
       defaultSortDirection: SortDirection.Desc,
     },
     {
       id: "description",
       label: "Description",
-      cell: (row: Transaction) => row.invoice && row.invoice.name,
+      cell: (row: Transaction) => row.description || "N/A",
     },
     ...this.props.admin ? [{
       id: "member",
       label: "Member",
       cell: (row: Transaction) => {
-        if (row.invoice) {
-          return <Link to={`/members/${row.invoice.memberId}`}>{row.invoice.memberName}</Link>
+        if (row.memberId) {
+          return <Link to={`/members/${row.memberId}`}>{row.memberName}</Link>
         }
 
         if (row.customerDetails) {
@@ -101,14 +103,16 @@ class TransactionsList extends React.Component<Props, State> {
         if (!row.invoice) {
           return "Unknown";
         }
-        const { refunded, refundRequested } = row.invoice;
-        const color = refunded && Status.Info ||
-                      refundRequested && Status.Danger ||
-                      Status.Success;
+        const { refunded, refundRequested, settled } = row.invoice;
+
+        const color = refundRequested && Status.Danger ||
+                      settled && Status.Success ||
+                      Status.Info;
 
         const label = refunded && "Refunded" ||
                       refundRequested && "Refund Requested" ||
-                      "Complete";
+                      settled && "Complete" || 
+                      "Unknown";
         return (
           <StatusLabel label={label} color={color}/>
         );
@@ -139,8 +143,10 @@ class TransactionsList extends React.Component<Props, State> {
     const { selectedId } = this.state;
     const { admin, transactions } = this.props;
     const transaction = transactions && selectedId && transactions[selectedId];
-    const disabled = !(transaction && transaction.invoice) ||
-      (admin ? transaction.invoice.refunded : transaction.invoice.refunded || !!transaction.invoice.refundRequested);
+    // Disable if invoice already refunded.
+    // TODO This should be more deterministic about the transaction
+    const disabled = !transaction ||
+      (transaction.invoice && admin ? transaction.invoice.refunded : transaction.invoice.refunded || !!transaction.invoice.refundRequested);
 
     const actionButtons: ActionButton[] = [
       {
@@ -305,7 +311,8 @@ class TransactionsList extends React.Component<Props, State> {
     const transactionList = Object.values(transactions);
 
     let error = readError;
-    if (!error && member && !member.customerId) {
+    // Give better error if nothing loads for member
+    if (!transactionList.length && !error && member && !member.customerId) {
       error = `No online payment history for ${member.firstname} ${member.lastname}.`
     }
 
@@ -313,9 +320,7 @@ class TransactionsList extends React.Component<Props, State> {
       <Grid container spacing={24} justify="center">
         <Grid item xs={12}>
           {
-            admin && (
-              this.getActionButtons()
-            )
+            this.getActionButtons()
           }
         </Grid>
         <Grid item xs={12}>

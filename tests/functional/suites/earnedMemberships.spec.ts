@@ -1,6 +1,6 @@
 import * as moment from "moment";
 import { timeToDate } from "ui/utils/timeToDate";
-import { EarnedMembership, Report, Requirement, Term, ReportRequirement } from "app/entities/earnedMembership";
+import { EarnedMembership, Report, Requirement, ReportRequirement } from "app/entities/earnedMembership";
 import auth, { LoginMember } from "../pageObjects/auth";
 import { adminUser, defaultMembers, basicUser } from "../constants/member";
 import { mockRequests, mock } from "../mockserver-client-helpers";

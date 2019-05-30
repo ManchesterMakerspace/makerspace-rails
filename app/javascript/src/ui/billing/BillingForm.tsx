@@ -195,6 +195,9 @@ export class BillingFormComponent extends React.Component<OwnProps, State>{
     const { isOpen, onClose, isRequesting, error, onSubmit, option } = this.props;
     const { type, planId, disableOption } = this.state;
 
+    // TODO: The validation / when things are disabled doesn't make a lot of sense
+    // Need to work out how selecting discounts & plans will relate to fields
+
     return (
       <FormModal
         formRef={this.setFormRef}

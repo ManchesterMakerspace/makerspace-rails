@@ -20,14 +20,14 @@ export enum Action {
   ClearSelection = "BILLING/CLEAR_SELECTION",
 }
 
-const formPrefix = "billing-form";
+const formPrefix = "invoice-option-form";
 export const fields = {
   [Properties.ResourceClass]: {
     label: "Type",
     name: `${formPrefix}-type`,
     placeholder: "Enter Name",
     validate: (val: string) => Object.values(InvoiceableResource).includes(val),
-    error: "Name required"
+    error: "Invalid type"
   },
   [Properties.Name]: {
     label: "Name",

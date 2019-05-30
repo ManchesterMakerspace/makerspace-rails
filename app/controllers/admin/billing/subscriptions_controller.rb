@@ -3,6 +3,7 @@ class Admin::Billing::SubscriptionsController < Admin::BillingController
     include BraintreeGateway
 
   def index
+    # TODO actually query subscriptions instead of filtering results
     subs = ::BraintreeService::Subscription.get_subscriptions(@gateway)
     subs = subs.select { |s| s.status != Braintree::Subscription::Status::Canceled } if params[:hideCanceled]
     return render_with_total_items(subs, { :each_serializer => BraintreeService::SubscriptionSerializer, root: "subscriptions" })

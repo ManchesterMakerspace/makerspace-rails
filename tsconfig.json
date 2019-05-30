@@ -5,6 +5,5 @@
     "vendor",
     "public",
     "spec",
-    "tests",
   ],
 }

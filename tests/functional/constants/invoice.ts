@@ -1,11 +1,14 @@
 import * as moment from "moment";
 import { Invoice, InvoiceOperation, InvoiceOption, InvoiceableResource } from "app/entities/invoice";
-export const defaultBillingOptions: Partial<InvoiceOption>[] = [
+export const defaultBillingOptions: InvoiceOption[] = [
   {
     id: "standard_membership",
     name: "Standard",
     description: "Standard Membership Subscription",
     amount: 65,
+    quantity: 1,
+    discountId: undefined,
+    planId: "standard_membership",
     resourceClass: InvoiceableResource.Membership,
     operation: InvoiceOperation.Renew,
     disabled: false,
@@ -14,6 +17,9 @@ export const defaultBillingOptions: Partial<InvoiceOption>[] = [
     name: "Foo",
     description: "Foo Membership",
     amount: 10000,
+    quantity: 1,
+    planId: "foo",
+    discountId: undefined,
     disabled: false,
     resourceClass: InvoiceableResource.Rental,
     operation: InvoiceOperation.Renew,
@@ -22,6 +28,9 @@ export const defaultBillingOptions: Partial<InvoiceOption>[] = [
     name: "Bar",
     description: "Bar Membership",
     amount: 45,
+    quantity: 1,
+    planId: "bar",
+    discountId: undefined,
     resourceClass: InvoiceableResource.Rental,
     operation: InvoiceOperation.Renew,
     disabled: false,
@@ -45,6 +54,7 @@ export const baseInvoice: Invoice = {
   resourceId: "123",
   createdAt: "Some time",
   dueDate: moment().add(1, "months").calendar(),
+  refunded: false,
 }
 export const defaultInvoice: Invoice = {
   ...baseInvoice,
