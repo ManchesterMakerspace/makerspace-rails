@@ -19,6 +19,7 @@ class BraintreeService::TransactionSerializer < ActiveModel::Serializer
              :subscription_id,
              :tax_amount,
              :amount,
+             :invoice,
              :member_id,
              :member_name
 

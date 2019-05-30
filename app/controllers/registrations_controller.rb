@@ -12,7 +12,7 @@ class RegistrationsController < ApplicationController
         @messages.push(error)
         raise ::Error::AccountExists
       end
-      MemberMailer.welcome_email(email).deliver_now
+      MemberMailer.welcome_email(email).deliver_later
       render json: {}, status: 200 and return
     end
 
@@ -21,7 +21,7 @@ class RegistrationsController < ApplicationController
       @member.save!
       @member.reload
       sign_in(@member)
-      MemberMailer.member_registered(@member).deliver_now
+      MemberMailer.member_registered(@member.id.to_s).deliver_later
       render json: @member and return
     end
 

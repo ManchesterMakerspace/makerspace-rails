@@ -54,7 +54,6 @@ export const baseInvoice: Invoice = {
   resourceId: "123",
   createdAt: "Some time",
   dueDate: moment().add(1, "months").calendar(),
-  refunded: false,
 }
 export const defaultInvoice: Invoice = {
   ...baseInvoice,

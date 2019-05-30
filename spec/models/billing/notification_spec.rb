@@ -55,7 +55,7 @@ RSpec.describe BraintreeService::Notification, type: :model do
     let(:transaction) { build(:transaction, id: "foo") }
 
     it "Settles invoice and renews resource" do 
-      init_member_expiration = member.expiration_time
+      init_member_expiration = member.pretty_time
       allow(notification).to receive_message_chain(:subscription, :transactions, :last).and_return(transaction)
       allow(transaction).to receive(:line_items).and_return([])
       expect(BraintreeService::Notification).to receive(:send_slack_message).with(/recurring payment/i)
@@ -64,7 +64,7 @@ RSpec.describe BraintreeService::Notification, type: :model do
 
       member.reload
       invoice.reload
-      expect(member.expiration_time.to_i).to be > (init_member_expiration.to_i)
+      expect(member.pretty_time.to_i).to be > (init_member_expiration.to_i)
       expect(invoice.settled).to be_truthy
       expect(invoice.transaction_id).to eq(transaction.id)
     end 

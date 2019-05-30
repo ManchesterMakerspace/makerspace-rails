@@ -57,7 +57,8 @@ RSpec.describe RegistrationsController, type: :controller do
       end
 
       it "sends registration notification to us" do
-        expect(MemberMailer).to receive(:member_registered).and_call_original
+        allow(MemberMailer).to receive_message_chain(:member_registered, :deliver_later)
+        expect(MemberMailer).to receive_message_chain(:member_registered, :deliver_later)
         post :create, params: {member: valid_attributes}, format: :json
       end
     end
@@ -88,7 +89,9 @@ RSpec.describe RegistrationsController, type: :controller do
     end
 
     it "sends welcome email to new member" do
-      expect(MemberMailer).to receive(:welcome_email).with("foo@foo.com").and_call_original
+      allow(MemberMailer).to receive_message_chain(:welcome_email, :deliver_later)
+      expect(MemberMailer).to receive_message_chain(:welcome_email, :deliver_later)
+      expect(MemberMailer).to receive(:welcome_email).with("foo@foo.com")
       get :new, params: {email: "foo@foo.com"}, format: :json
     end
   end
