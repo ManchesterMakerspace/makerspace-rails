@@ -2,17 +2,17 @@
 # Many of these configuration options can be set straight in your model.
 Devise.setup do |config|
 
-  ActionDispatch::Callbacks.before do
-    # Reload the factories
-    return unless (Rails.env.development? || Rails.env.test?)
+  # Reload the factories
+  if (Rails.env.development? || Rails.env.test?)
+    ActionDispatch::Callbacks.before do
+      FactoryBot.definition_file_paths = [Rails.root.join('spec', 'support', 'factories')]
 
-    FactoryBot.definition_file_paths = [Rails.root.join('spec', 'support', 'factories')]
-
-    # first init will load factories, this should only run on subsequent reloads
-    unless FactoryBot.factories.blank?
-      FactoryBot.factories.clear
-      FactoryBot.sequences.clear
-      FactoryBot.find_definitions
+      # first init will load factories, this should only run on subsequent reloads
+      unless FactoryBot.factories.blank?
+        FactoryBot.factories.clear
+        FactoryBot.sequences.clear
+        FactoryBot.find_definitions
+      end
     end
   end
   # The secret key used by Devise. Devise uses this key to generate
