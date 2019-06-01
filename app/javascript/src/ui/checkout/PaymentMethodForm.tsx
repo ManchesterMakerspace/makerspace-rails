@@ -72,7 +72,7 @@ class PaymentMethodForm extends React.Component<Props, State> {
     let error = "";
     try {
       const response = await getClientToken();
-      token = response.data.client_token;
+      token = response.data.clientToken;
     } catch (e) {
       error = e.errorMessage;
     }

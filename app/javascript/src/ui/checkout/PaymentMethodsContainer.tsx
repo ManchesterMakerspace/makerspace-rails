@@ -76,7 +76,7 @@ class PaymentMethodsContainer extends React.Component<Props, State> {
 
   private selectPaymentMethod = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedPaymentMethodId = event.currentTarget.value;
-    this.props.onPaymentMethodChange(selectedPaymentMethodId);
+    this.props.onPaymentMethodChange && this.props.onPaymentMethodChange(selectedPaymentMethodId);
     this.setState({ selectedPaymentMethodId })
   }
 
@@ -136,6 +136,7 @@ class PaymentMethodsContainer extends React.Component<Props, State> {
     />;
 
     return displayRadio ? <FormControlLabel
+            classes={{label: "flex"}}
             key={paymentMethod.id}
             value={paymentMethod.id}
             label={label}
