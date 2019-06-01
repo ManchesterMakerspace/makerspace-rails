@@ -42,9 +42,7 @@ class BraintreeService::Transaction < Braintree::Transaction
 
   def self.submit_invoice_for_settlement(gateway, invoice)
      if invoice.plan_id
-      result = ::BraintreeService::Subscription.create(gateway, invoice)
-      raise ::Error::Braintree::Result.new(result) unless result.success?
-      subscription = result.subscription
+      subscription = ::BraintreeService::Subscription.create(gateway, invoice)
       transaction = subscription.transactions.first
       invoice.update!({ subscription_id: subscription.id, transaction_id: transaction.id })
     else

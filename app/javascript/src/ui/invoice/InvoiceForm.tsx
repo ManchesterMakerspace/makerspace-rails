@@ -154,7 +154,7 @@ export class InvoiceForm extends React.Component<Props, State> {
       isOpen, onClose, isRequesting, error,
       onSubmit, invoice, allowCustomBilling,
       invoiceOptions, optionsError, optionsLoading } = this.props;
-    const { rentals } = this.state;
+    const { rentals, rentalsError, rentalsLoading } = this.state;
 
     const rental = invoice && invoice.resourceId && invoice.resourceClass === InvoiceableResource.Rental &&
       (rentals || []).find(r => r.id === invoice.resourceId);
@@ -164,18 +164,21 @@ export class InvoiceForm extends React.Component<Props, State> {
     }
 
     const optionsList = Object.values(invoiceOptions);
-    const invoiceOptionsList = optionsList.length ?
-      [<MenuItem id={`${fields.invoiceOptionId.name}-option-none`} key="none" value={null}>None</MenuItem>,
+    const invoiceOptionsList =
+      [<option id={`${fields.invoiceOptionId.name}-option-none`} key="none" value={null}>
+        {optionsLoading ? "Loading..." :
+          optionsError ? "Error loading options" :
+           optionsList.length ? "None" : "No options"}
+      </option>,
         [...optionsList.map(
         (invoiceOption) =>
-          <MenuItem
+          <option
             id={`${fields.invoiceOptionId.name}-option-${invoiceOption.id}`}
             key={invoiceOption.id}
             value={invoiceOption.id}>
               {invoiceOption.name}
-          </MenuItem>)
+          </option>)
         ]]
-      : <MenuItem id={`${fields.invoiceOptionId.name}-option-none`}>No Options</MenuItem>
 
 
     return (
@@ -224,15 +227,21 @@ export class InvoiceForm extends React.Component<Props, State> {
               name={fields.rentalId.name}
               value={rental && rental.id || invoice.resourceId}
               fullWidth
-              native
               required
+              native
               placeholder={fields.rentalId.placeholder}
             >
-              {rentals.length ?
-                rentals.map(
-                  (rental) => <MenuItem id={`${fields.rentalId.name}-option-${rental.id}`} key={rental.id} value={rental.id}>{rental.number}</MenuItem>)
-                : invoice && <MenuItem id={`${fields.rentalId.name}-option-${invoice.resourceId}`} value={invoice.resourceClass}>{invoice.resourceId}</MenuItem>
-              }
+              {[
+                <option id={`${fields.rentalId.name}-option-none`} key="none" value={null}>
+                  {rentalsLoading ? "Loading..." :
+                    rentalsError ? "Error loading options" :
+                      rentals.length ? "None" : "No options"}
+                </option>,
+                [...rentals.length ?
+                  rentals.map(
+                    (rental) => <option id={`${fields.rentalId.name}-option-${rental.id}`} key={rental.id} value={rental.id}>{rental.number}</option>)
+                  : invoice && [<option id={`${fields.rentalId.name}-option-${invoice.resourceId}`} value={invoice.resourceClass}>{invoice.resourceId}</option>]
+                ]]}
             </Select>
           </Grid>}
           <Grid item xs={12}>
@@ -240,15 +249,16 @@ export class InvoiceForm extends React.Component<Props, State> {
             <Select
               name={fields.invoiceOptionId.name}
               fullWidth
-              native
               required
+              native
               disabled={!optionsList.length}
+              value={invoice && invoice.planId}
               placeholder={fields.invoiceOptionId.placeholder}
             >
               {invoiceOptionsList}
             </Select>
           </Grid>
-        {/* Who's it form - Member search */}
+        {/* Who's it for - Member search */}
         {/* If can find resource, ask how long to renew for
         Else, display sub form to create the resource */}
           {allowCustomBilling &&

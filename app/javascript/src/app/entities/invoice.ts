@@ -16,6 +16,7 @@ interface BaseInvoice {
   subscriptionId?: string;
   transactionId?: string;
   discountId?: string;
+  planId?: string;
 }
 
 export interface Invoice extends BaseInvoice {

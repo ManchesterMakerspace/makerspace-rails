@@ -160,7 +160,8 @@ class MemberDetail extends React.Component<Props, State> {
     const { member, isUpdatingMember, isRequestingMember, match, admin, goToSettings, billingEnabled, currentUserId } = this.props;
     const { memberId, resource } = match.params;
     const loading = isUpdatingMember || isRequestingMember;
-    const isEarnedMember = !!member.earnedMembershipId && (currentUserId === member.id || admin);
+    const { customerId, earnedMembershipId } = member;
+    const isEarnedMember = !!earnedMembershipId && (currentUserId === member.id || admin);
 
     return (
       <>
@@ -223,7 +224,7 @@ class MemberDetail extends React.Component<Props, State> {
                 />
               )
             },
-            ...billingEnabled ? [{
+            ...billingEnabled && !!customerId ? [{
               name: "transactions",
               displayName: "Payment History",
               content: (

@@ -76,6 +76,9 @@ class Invoice
   end
 
   def submit_for_settlement(gateway=nil, payment_method_id=nil, transaction_id=nil)
+    if settled
+      raise Error::UnprocessableEntity.new("Already paid")
+    end
     if payment_method_id && transaction_id
       raise Error::UnprocessableEntity.new("Cannot dictate transaction id when creating new transaction")    
     elsif payment_method_id
