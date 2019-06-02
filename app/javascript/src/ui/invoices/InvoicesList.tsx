@@ -359,7 +359,7 @@ class InvoicesListComponent extends React.Component<Props, State> {
     const deleteModal = (renderProps: UpdateInvoiceRenderProps) => {
       const submit = async (form: Form) => {
         const success = await renderProps.submit(form);
-        success && this.setState({ selectedIds: [] });
+        success && this.setState({ selectedIds: [] }); // TODO: I don't think renderProps.submit ever returns true?
       }
       return (
         <DeleteInvoiceModal

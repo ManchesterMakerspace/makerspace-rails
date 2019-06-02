@@ -5,6 +5,7 @@ import TextField from "@material-ui/core/TextField";
 import Select from "@material-ui/core/Select";
 import FormLabel from "@material-ui/core/FormLabel";
 import MenuItem from "@material-ui/core/MenuItem";
+import { Checkbox, FormControlLabel } from "@material-ui/core";
 
 import { MemberDetails } from "app/entities/member";
 
@@ -12,7 +13,6 @@ import FormModal from "ui/common/FormModal";
 import { fields as memberFormField, MemberStatusOptions, MemberRoleOptions } from "ui/member/constants";
 import Form from "ui/common/Form";
 import { toDatePicker } from "ui/utils/timeToDate";
-import { Checkbox, FormControlLabel } from "@material-ui/core";
 
 interface OwnProps {
   member: Partial<MemberDetails>;

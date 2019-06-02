@@ -1,6 +1,8 @@
 class Admin::PermissionsController < AdminController
+  before_action :find_member, only: [:update]
+
   def index
-    permissions = Permissions.list_permissions
+    permissions = Permission.list_permissions
     render json: permissions and return
   end
 

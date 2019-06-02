@@ -14,7 +14,7 @@ import Form from "ui/common/Form";
 import { reportRequirementFields, formPrefix } from "ui/reports/constants";
 import ButtonRow, { ActionButton } from "ui/common/ButtonRow";
 import { mapValues } from "lodash-es";
-import AsyncSelectFixed from "ui/common/AsyncSelect";
+import { AsyncCreatableSelect } from "ui/common/AsyncSelect";
 import { Select } from "@material-ui/core";
 
 interface OwnProps {
@@ -51,21 +51,33 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
         this.setState({ loadingMembersRequestId: requestId });
         await Promise.all(reportRequirement.memberIds.map((id, index) =>
           new Promise(async (resolve) => {
+            let member;
+
             try {
               const response = await getMember(id);
-              const { member } = response.data;
-              // Verify we're still fetching the same collection before setting form
-              if (member && this.state.loadingMembersRequestId === requestId) {
-                const option = { value: member.id, label: `${member.firstname} ${member.lastname}`, id: member.id }
-                const fieldName = this.getMemberInputName(index);
-                console.log(fieldName, option);
-                this.formRef && await this.formRef.setValue(fieldName, option);
-              }
+              member = response.data.member;
             } catch (e) {
-              console.log(e);
-            } finally {
-              resolve();
+              if (e && e.response && e.response.status === 404) {
+                member = {
+                  id,
+                };
+              } else {
+                console.log(e);
+              }
             }
+
+            // Verify we're still fetching the same collection before setting form
+            if (member && this.state.loadingMembersRequestId === requestId) {
+              const option = {
+                value: member.id,
+                label: member.firstname ? `${member.firstname} ${member.lastname || ""}` : member.id,
+                id: member.id,
+              };
+              const fieldName = this.getMemberInputName(index);
+              this.formRef && await this.formRef.setValue(fieldName, option);
+            }
+
+            resolve();
           })));
       } else {
         const fieldName = this.getMemberInputName(0);
@@ -193,9 +205,8 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
     return (
       <Grid item xs={12}>
         <FormLabel component="legend">{fields.memberId.label}</FormLabel>
-        <AsyncSelectFixed
+        <AsyncCreatableSelect
           isClearable
-          createable={true}
           name={fieldName}
           placeholder={fields.memberId.placeholder}
           id={fieldName}
