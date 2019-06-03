@@ -3,7 +3,8 @@
 Devise.setup do |config|
 
   # Reload the factories
-  if (Rails.env.development? || Rails.env.test?)
+  # if (Rails.env.development? || Rails.env.test?)
+  if (Rails.env.test?)
     ActionDispatch::Callbacks.before do
       FactoryBot.definition_file_paths = [Rails.root.join('spec', 'support', 'factories')]
 

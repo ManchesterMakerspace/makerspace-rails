@@ -5,9 +5,9 @@ import { handleApiError } from "api/utils/handleApiError";
 import { TransactionQueryParams } from "api/transactions/interfaces";
 import { buildTransactionsUrl, buildTransactionUrl } from "api/transactions/utils";
 
-export const postTransaction = async (payment_method_id: string, invoice_id: string) => {
+export const postTransaction = async (paymentMethodId: string, invoiceId: string) => {
   try {
-    return await axios.post(buildJsonUrl(Url.Billing.Transactions), { transaction: { payment_method_id, invoice_id } });
+    return await axios.post(buildJsonUrl(Url.Billing.Transactions), { transaction: { paymentMethodId, invoiceId } });
   } catch (e) {
     const error = handleApiError(e);
     throw error;

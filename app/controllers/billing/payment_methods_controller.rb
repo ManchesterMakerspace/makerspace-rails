@@ -37,7 +37,7 @@ class Billing::PaymentMethodsController < BillingController
 
     # Parse Braintree result
     raise Error::Braintree::Result.new(result) unless result.success?
-    payment_method = result.try(:payment_method) ? result.payment_method.token : result.customer.payment_methods.first.token
+    payment_method = result.try(:payment_method) ? result.payment_method : result.customer.payment_methods.first
 
     render json: payment_method, serializer: BraintreeService::PaymentMethodSerializer, root: "payment_method", status: 200 and return
   end

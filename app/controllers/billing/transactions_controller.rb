@@ -15,6 +15,7 @@ class Billing::TransactionsController < BillingController
       # Handling actual payment & related error handling is abstracted from this controller
       transaction = invoice.submit_for_settlement(@gateway, transaction_params[:payment_method_id])
 
+      transaction.invoice = invoice
       render json: transaction, serializer: BraintreeService::TransactionSerializer, root: "transaction", status: 200 and return
     end
 

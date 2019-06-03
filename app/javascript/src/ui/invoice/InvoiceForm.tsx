@@ -77,6 +77,7 @@ export class InvoiceForm extends React.Component<Props, State> {
     // Fetch new options on type change
     if (prevState.invoiceType !== this.state.invoiceType) {
       this.props.getInvoiceOptions(this.state.invoiceType);
+      this.formRef && this.formRef.setValue(fields.invoiceOptionId.name, undefined);
     }
   }
 
@@ -240,7 +241,7 @@ export class InvoiceForm extends React.Component<Props, State> {
                 [...rentals.length ?
                   rentals.map(
                     (rental) => <option id={`${fields.rentalId.name}-option-${rental.id}`} key={rental.id} value={rental.id}>{rental.number}</option>)
-                  : invoice && [<option id={`${fields.rentalId.name}-option-${invoice.resourceId}`} value={invoice.resourceClass}>{invoice.resourceId}</option>]
+                  : invoice && [<option id={`${fields.rentalId.name}-option-${invoice.resourceId}`} key={invoice.id} value={invoice.resourceClass}>{invoice.resourceId}</option>]
                 ]]}
             </Select>
           </Grid>}

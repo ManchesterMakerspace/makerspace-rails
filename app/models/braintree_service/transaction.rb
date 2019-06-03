@@ -45,6 +45,7 @@ class BraintreeService::Transaction < Braintree::Transaction
       subscription = ::BraintreeService::Subscription.create(gateway, invoice)
       transaction = subscription.transactions.first
       invoice.update!({ subscription_id: subscription.id, transaction_id: transaction.id })
+      BillingMailer.new_subscription(invoice.member.email, subscription.id, invoice.id.to_s).deliver_later
     else
       result = gateway.transaction.sale(
         amount: invoice.amount,
@@ -64,9 +65,9 @@ class BraintreeService::Transaction < Braintree::Transaction
       transaction = result.transaction
       invoice.update!({ transaction_id: transaction.id })
     end
-
-    send_slack_message("Payment from #{invoice.member.fullname} of $#{invoice.amount} received for #{invoice.name}")
+    
     BillingMailer.receipt(invoice.member.email, transaction.id, invoice.id.to_s).deliver_later
+    send_slack_message("Payment from #{invoice.member.fullname} of $#{invoice.amount} received for #{invoice.name}")
     normalize(gateway, transaction)
   end
 

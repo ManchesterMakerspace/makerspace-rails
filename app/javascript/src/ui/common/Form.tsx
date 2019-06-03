@@ -54,7 +54,7 @@ type ChildNode = React.ReactElement<HTMLFormElement>;
 
 class Form extends React.Component<FormModalProps, State> {
 
-  private extractInputNames = (values: CollectionOf<string>, input: ChildNode) => {
+  private extractInputNames = (values: CollectionOf<string>, input: ChildNode): CollectionOf<string> => {
     if (input && input.props) {
       // Get input name
       const formInput = this.getFormInput(input);
@@ -79,8 +79,8 @@ class Form extends React.Component<FormModalProps, State> {
     return values;
   }
 
-  private extractNamesFromChildren = (children: React.ReactNode, values: CollectionOf<string> = {}) => {
-    return React.Children.toArray(children).reduce(this.extractInputNames, values);
+  private extractNamesFromChildren = (children: React.ReactNode, values: CollectionOf<string> = {}): CollectionOf<string> => {
+    return React.Children.toArray(children).reduce(this.extractInputNames, values) as CollectionOf<string>;
   }
 
   /**
@@ -150,6 +150,10 @@ class Form extends React.Component<FormModalProps, State> {
             ...state.errors,
             [fieldName]: error
         }
+      },
+      touched: {
+        ...state.touched,
+        [fieldName]: true
       }
     }), resolve))
   }

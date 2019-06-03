@@ -28,7 +28,7 @@ const styles = {
 
 export const formDialogClass = "form-modal-dialog";
 
-const FormModal: React.SFC<FormModalProps> = (props: FormModalProps & { classes: any }) => {
+const FormModal = (props: FormModalProps & { classes: any }) => {
   const { formRef, isOpen, id, loading, title, closeHandler, cancelText,
     submitText, onSubmit, children, error, style, fullScreen, classes } = props;
 

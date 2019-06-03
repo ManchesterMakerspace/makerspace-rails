@@ -18,6 +18,7 @@ export const fields = {
     label: "Description",
     name: `${formPrefix}-description`,
     placeholder: "Enter description",
+    error: "Description required",
     // validate: (val: string) => !!val,
   },
   member: {
@@ -31,7 +32,7 @@ export const fields = {
     label: "Due Date",
     name: `${formPrefix}-due-date`,
     placeholder: "Select a due date",
-    validate: (val: string) => true,
+    // validate: (val: string) => true,
     error: "Due date required"
   },
   amount: {
@@ -44,6 +45,7 @@ export const fields = {
   resourceClass: {
     label: "Invoice Type",
     name: `${formPrefix}-type`,
+    error: "Resource type required",
     validate: (val: string) => !!val,
   },
   rentalId: {
@@ -56,6 +58,7 @@ export const fields = {
     label: "Billing Option",
     name: `${formPrefix}-option`,
     placeholder: "Select an option",
+    error: "Billing option required",
     validate: (val: string) => !!val,
   }
   // term: {

@@ -77,6 +77,9 @@ class UpdateInvoice extends React.Component<Props, {}> {
       }
       await this.props.dispatchInvoice(updatedInvoice);
     }
+    if (!this.props.error) {
+      return true;
+    }
   }
 
   public render(): JSX.Element {

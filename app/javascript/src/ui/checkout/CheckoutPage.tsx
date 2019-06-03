@@ -195,7 +195,7 @@ class CheckoutPage extends React.Component<PropsWithContext, State> {
     return (
       <Grid container spacing={16}>
         {isRequesting && <LoadingOverlay id="checkout-submitting-overlay" />}
-        <Grid item sm={6} xs={12}>
+        <Grid item sm={5} xs={12}>
           <Grid container spacing={16}>
             <Grid item xs={12}>
               <Card>
@@ -211,7 +211,7 @@ class CheckoutPage extends React.Component<PropsWithContext, State> {
         </Grid>
 
 
-        <Grid item sm={6} xs={12}>
+        <Grid item sm={7} xs={12}>
           {this.renderTotal()}
           {!isRequesting && error && <ErrorMessage id="checkout-submitting-error" error={error} />}
         </Grid>

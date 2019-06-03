@@ -101,6 +101,7 @@ export namespace Routing {
   export const Subscriptions = "/subscriptions";
   export const Rentals = "/rentals";
   export const Checkout = "/checkout";
+  export const Receipt = `${Checkout}/receipt`;
   export const PasswordReset = "/resetPassword";
   export const Settings = "/settings";
   export const SendRegistration = `/send_registration/${PathPlaceholder.Email}`

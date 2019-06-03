@@ -9,6 +9,11 @@ class InvoicesController < AuthenticationController
     return render_with_total_items(invoices)
   end
 
+  def show 
+    invoice = Invoice.find_by(member_id: current_member.id, id: params[:id])
+    raise ::Mongoid::Errors::DocumentNotFound.new(Invoice, { id: params[:id] }) if invoice.nil?
+  end
+
   def create
     raise ActionController::ParameterMissing.new(:id) if invoice_option_params[:id].nil?
     invoice_option = InvoiceOption.find(invoice_option_params[:id])

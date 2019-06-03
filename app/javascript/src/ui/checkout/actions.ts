@@ -20,8 +20,13 @@ export const submitPaymentAction = (
     dispatch({ type: CheckoutAction.StartTransactionRequest, data: invoiceId });
 
     try {
-      await postTransaction(paymentMethodToken, invoiceId);
-      dispatch({ type: CheckoutAction.FinishTransactionSuccess, data: invoiceId });
+      const response = await postTransaction(paymentMethodToken, invoiceId);
+      const{ transaction } = response.data;
+      dispatch({ type: CheckoutAction.FinishTransactionSuccess, data: {
+        ...transaction,
+        invoice,
+      } });
+      return transaction;
     } catch (e) {
       const { errorMessage } = e;
       dispatch({ type: CheckoutAction.FinishTransactionFailure, error: errorMessage, id: invoiceId });
@@ -105,13 +110,15 @@ export const checkoutReducer = (state: CheckoutState = defaultState, action: Any
         }
       }
     case CheckoutAction.FinishTransactionSuccess:
-      invoiceId = action.data;
+      const transaction = action.data;
+      console.log(transaction);
 
       return {
         ...state,
         transactions: {
           ...state.transactions,
-          [invoiceId]: {
+          [transaction.invoice.id]: {
+            ...transaction,
             isRequesting: false,
             error: ""
           }

@@ -5,7 +5,7 @@ import isEmpty from "lodash-es/isEmpty";
 
 import { Invoice } from "app/entities/invoice";
 import { Routing } from "app/constants";
-import { CollectionOf } from "app/interfaces";
+import { CollectionOf, RequestStatus } from "app/interfaces";
 
 import { submitPaymentAction } from "ui/checkout/actions";
 
@@ -13,13 +13,16 @@ import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import CheckoutPage from "ui/checkout/CheckoutPage";
 
 import { buildProfileRouting } from "ui/member/utils";
+import { Transaction } from "app/entities/transaction";
 
 interface OwnProps {}
 interface StateProps {
   invoices: CollectionOf<Invoice>;
+  transactions: CollectionOf<Transaction & RequestStatus>;
   userId: string;
   error: string;
   isRequesting: boolean;
+  transactionsLoading: boolean;
 }
 interface DispatchProps {
   submitCheckout: (invoices: Invoice[], paymentMethodId: string) => void;
@@ -38,13 +41,17 @@ class CheckoutContainer extends React.Component<Props> {
   }
 
   public componentDidUpdate(prevProps: Props) {
-    const { isRequesting, error, invoices, userId } = this.props;
-    const { isRequesting: wasRequesting } = prevProps;
+    const { isRequesting, error, invoices, transactions, userId, transactionsLoading } = this.props;
+    const { isRequesting: wasRequesting, transactionsLoading: wasTransacting } = prevProps;
     if (wasRequesting && !isRequesting && !error) {
       // If there are no invoices, redirect to profile since there's nothing to do here
       if (isEmpty(invoices)) {
         this.props.pushLocation(buildProfileRouting(userId));
       }
+    }
+
+    if (wasTransacting && !transactionsLoading && !isEmpty(transactions)) {
+      this.props.pushLocation(Routing.Receipt);
     }
   }
 
@@ -73,13 +80,18 @@ class CheckoutContainer extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: ReduxState, _ownProps: OwnProps): StateProps => {
-  const { invoices, isRequesting, error } = state.checkout;
+  const { invoices, transactions, isRequesting, error } = state.checkout;
   const { currentUser: { id: userId } } = state.auth;
+
+  const transactionsLoading = Object.values(transactions).some(transaction => transaction.isRequesting);
+
   return {
     invoices,
+    transactions,
     userId,
     isRequesting,
-    error
+    error,
+    transactionsLoading,
   }
 }
 

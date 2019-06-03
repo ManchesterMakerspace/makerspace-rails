@@ -88,6 +88,12 @@ class Invoice
     end
     self.transaction_id ||= transaction_id
     settle_invoice
+
+    # Build recurring invoice if applicable
+    unless self.plan_id.nil?
+      build_next_invoice
+    end
+
     return transaction
   end
 
@@ -97,8 +103,11 @@ class Invoice
 
   def build_next_invoice
     next_invoice = self.clone
+    next_invoice.created_at = Time.now
+    next_invoice.settled_at = nil
+    next_invoice.refunded = false 
     next_invoice.due_date = self.due_date + self.quantity.months
-    return next_invoice.save!
+    next_invoice.save!
   end
 
   def self.resource(class_name, id)

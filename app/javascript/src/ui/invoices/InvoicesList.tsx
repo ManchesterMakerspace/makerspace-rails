@@ -70,8 +70,16 @@ class InvoicesListComponent extends React.Component<Props, State> {
     // Select all invoices if viewing your own invoices page for quick checkout
     const invoicesList = Object.values(invoices);
     const ownAllInvoices = invoicesList.length && invoicesList.every(invoice => invoice.memberId === currentUserId);
+    
+    const selectedIds = ownAllInvoices ? Object.entries(invoices).reduce((ids, [id, invoice]) => {
+      if (!invoice.settled) {
+        ids.push(id);
+      }
+      return ids;
+    }, []) : [];
+
     this.state = {
-      selectedIds: ownAllInvoices ? Object.keys(invoices) : [],
+      selectedIds,
       pageNum: 0,
       orderBy: "",
       search: "",
@@ -172,15 +180,14 @@ class InvoicesListComponent extends React.Component<Props, State> {
     const selectedInvoices = pick(invoices, selectedIds);
     resetStagedInvoices();
     stageInvoices(selectedInvoices);
-    goToCheckout();
-  }
+    goToCheckout();  }
 
   private getActionButtons = () => {
     const { selectedIds } = this.state;
     const { admin, currentUserId, invoices, allowCustomBilling } = this.props;
     const selectedInvoices = Object.values(pick(invoices, selectedIds));
     const viewingOwnInvoices = (Object.values(invoices)).every(invoice => invoice.memberId === currentUserId);
-    const payNow = viewingOwnInvoices && selectedInvoices.length;
+    const payNow = viewingOwnInvoices && selectedInvoices.length && selectedInvoices.every(invoice => !invoice.settled && !invoice.subscriptionId)
 
     const actionButtons: ActionButton[] = [
       ...admin ? [{
@@ -205,12 +212,12 @@ class InvoicesListComponent extends React.Component<Props, State> {
             onClick: this.openDeleteInvoice,
             label: "Delete Invoice"
           }] as ActionButton[] : [],
-    ...payNow ? [{
+    ...viewingOwnInvoices ? [{
             id: "invoices-list-payNow",
             style: { float: "right" },
             variant: "contained",
             color: "primary",
-            disabled: !Array.isArray(selectedIds) || !selectedIds.length,
+            disabled: !payNow,
             onClick: this.goToCheckout,
             label: "Pay Selected Dues",
           }]  as ActionButton[] : []
@@ -242,7 +249,15 @@ class InvoicesListComponent extends React.Component<Props, State> {
         (prevState === this.state) // State is static - Nothing can happen during initial load
       ) {
       const viewingOwnInvoices = (Object.values(invoices)).every(invoice => invoice.memberId === currentUserId);
-      this.setState({ selectedIds: viewingOwnInvoices ? Object.keys(invoices) : [] });
+     
+      const selectedIds = viewingOwnInvoices ? Object.entries(invoices).reduce((ids, [id, invoice]) => {
+        if (!invoice.settled) {
+          ids.push(id);
+        }
+        return ids;
+      }, []) : [];
+      
+      this.setState({ selectedIds });
     }
 
     if ((wasCreating && !isCreating && !createError) || // refresh list on create
@@ -482,11 +497,9 @@ const mapStateToProps = (
     }
   } = state.invoice;
   const { currentUser: { isAdmin: admin, id: currentUserId }, permissions } = state.auth;
-  const invoiceList = Object.values(invoices);
-  const allOwn = invoiceList.length && invoiceList.every(i => i.memberId === currentUserId);
 
   return {
-    admin: admin && !allOwn,
+    admin: admin,
     allowCustomBilling: !!permissions[Whitelists.customBilling] || false,
     invoices,
     totalItems,
@@ -517,7 +530,7 @@ const mapDispatchToProps = (
       type: CheckoutAction.StageInvoicesForPayment,
       data: invoices
     }),
-    goToCheckout: () => dispatch(push(Routing.Checkout)),
+    goToCheckout: () => dispatch(push(Routing.Checkout)),  
   }
 }
 
