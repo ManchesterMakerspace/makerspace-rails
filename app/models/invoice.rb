@@ -80,7 +80,7 @@ class Invoice
       raise Error::UnprocessableEntity.new("Already paid")
     end
     if payment_method_id && transaction_id
-      raise Error::UnprocessableEntity.new("Cannot dictate transaction id when creating new transaction")    
+      raise Error::UnprocessableEntity.new("Cannot dictate transaction id when creating new transaction")
     elsif payment_method_id
       self.payment_method_id = payment_method_id
       transaction = ::BraintreeService::Transaction.submit_invoice_for_settlement(gateway, self)
@@ -105,7 +105,7 @@ class Invoice
     next_invoice = self.clone
     next_invoice.created_at = Time.now
     next_invoice.settled_at = nil
-    next_invoice.refunded = false 
+    next_invoice.refunded = false
     next_invoice.due_date = self.due_date + self.quantity.months
     next_invoice.save!
   end
@@ -133,13 +133,11 @@ class Invoice
 
   def execute_invoice_operation
     raise ::Error::NotFound.new if resource.nil?
+    raise ::Error::UnprocessableEntity.new("Unable to process invoice. Invalid operation for invoice #{self.id}") unless operation
     operation = OPERATION_FUNCTIONS.find{ |f| f == self.operation }
-    unless operation
-      raise ::Error::UnprocessableEntity.new("Unable to process invoice. Invalid operation for invoice #{self.id}")
-    end
-    unless resource && resource.execute_operation(operation, self)
-      raise ::Error::UnprocessableEntity.new("Unable to process invoice. Operation failed for invoice #{self.id}")
-    end
+    raise ::Error::UnprocessableEntity.new("Unable to process invoice. Operation failed for invoice #{self.id}") unless resource.execute_operation(operation, self)
+    self.settled = true
+    self.save!
   end
 
   def one_active_invoice_per_resource

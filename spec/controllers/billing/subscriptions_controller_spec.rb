@@ -48,7 +48,7 @@ RSpec.describe Billing::SubscriptionsController, type: :controller do
   let(:success_result) { double(success?: true) }
 
   let(:valid_params) {
-    { 
+    {
       payment_method_token: "some_token",
       invoice_option_id: "std_membership_option"
     }
@@ -60,8 +60,8 @@ RSpec.describe Billing::SubscriptionsController, type: :controller do
     sign_in member
   end
 
-  describe "GET #show" do 
-    it "fetches a subscription for customer" do 
+  describe "GET #show" do
+    it "fetches a subscription for customer" do
       # Mock current_member call to use double
       allow_any_instance_of(Billing::SubscriptionsController).to receive(:current_member).and_return(member)
       allow(member).to receive(:find_subscribed_resource).with("foobar").and_return(member)
@@ -74,7 +74,7 @@ RSpec.describe Billing::SubscriptionsController, type: :controller do
       expect(parsed_response['subscription']['id']).to eq("foobar")
     end
 
-    it "Raises error if subscription is not for customer" do 
+    it "Raises error if subscription is not for customer" do
       # Mock current_member call to use double
       allow_any_instance_of(Billing::SubscriptionsController).to receive(:current_member).and_return(member)
       allow(member).to receive(:find_subscribed_resource).with("foobar").and_return(nil)
@@ -86,7 +86,7 @@ RSpec.describe Billing::SubscriptionsController, type: :controller do
       expect(parsed_response['message']).to match(/resource not found/i)
     end
 
-    it "raises error if no customer" do 
+    it "raises error if no customer" do
       sign_in non_customer
       get :show, params: { id: "foobar" }, format: :json
       parsed_response = JSON.parse(response.body)
@@ -95,15 +95,14 @@ RSpec.describe Billing::SubscriptionsController, type: :controller do
     end
   end
 
-  describe "PUT #update" do 
-    it "updates a subscription for customer" do 
+  describe "PUT #update" do
+    it "updates a subscription for customer" do
       allow_any_instance_of(Billing::SubscriptionsController).to receive(:current_member).and_return(member)
       allow_any_instance_of(Billing::SubscriptionsController).to receive(:subscription_params).and_return(valid_params)
       allow(member).to receive(:find_subscribed_resource).with("foobar").and_return(member)
       expect(member).to receive(:find_subscribed_resource).with("foobar").and_return(member)
-      allow(::BraintreeService::Subscription).to receive(:update).with(gateway, valid_params).and_return(success_result)
-      expect(::BraintreeService::Subscription).to receive(:update).with(gateway, valid_params).and_return(success_result)
-      allow(success_result).to receive(:subscription).and_return(subscription)
+      allow(::BraintreeService::Subscription).to receive(:update).with(gateway, valid_params).and_return(subscription)
+      expect(::BraintreeService::Subscription).to receive(:update).with(gateway, valid_params).and_return(subscription)
 
       put :update, params: { id: "foobar", subscription: valid_params }, format: :json
       parsed_response = JSON.parse(response.body)
@@ -111,22 +110,7 @@ RSpec.describe Billing::SubscriptionsController, type: :controller do
       expect(parsed_response['subscription']['id']).to eq(subscription.id)
     end
 
-    it "raises error if update failed" do 
-      allow_any_instance_of(Billing::SubscriptionsController).to receive(:subscription_params).and_return(valid_params)
-      allow_any_instance_of(Billing::SubscriptionsController).to receive(:current_member).and_return(member)
-      allow(member).to receive(:find_subscribed_resource).with("foobar").and_return(member)
-      expect(member).to receive(:find_subscribed_resource).with("foobar").and_return(member)
-      allow(::BraintreeService::Subscription).to receive(:update).with(gateway, valid_params).and_return(failed_result)
-      expect(::BraintreeService::Subscription).to receive(:update).with(gateway, valid_params).and_return(failed_result)
-      allow(Error::Braintree::Result).to receive(:new).with(failed_result).and_return(Error::Braintree::Result.new) # Bypass error instantiation
-      
-      put :update, params: { id: "foobar", subscription: valid_params }, format: :json
-      parsed_response = JSON.parse(response.body)
-      expect(response).to have_http_status(503)
-      expect(parsed_response['message']).to match(/service unavailable/i)
-    end
-
-    it "Raises error if subscription is not for customer" do 
+    it "Raises error if subscription is not for customer" do
       # Mock current_member call to use double
       allow_any_instance_of(Billing::SubscriptionsController).to receive(:current_member).and_return(member)
       allow(member).to receive(:find_subscribed_resource).with("foobar").and_return(nil)
@@ -138,7 +122,7 @@ RSpec.describe Billing::SubscriptionsController, type: :controller do
       expect(parsed_response['message']).to match(/resource not found/i)
     end
 
-    it "raises error if no customer" do 
+    it "raises error if no customer" do
       sign_in non_customer
       put :update, params: { id: "foobar", subscription: valid_params }, format: :json
       parsed_response = JSON.parse(response.body)
@@ -147,7 +131,7 @@ RSpec.describe Billing::SubscriptionsController, type: :controller do
     end
   end
 
-  describe "DELETE #destroy" do 
+  describe "DELETE #destroy" do
     it "Cancels subscription for member" do
       allow_any_instance_of(Billing::SubscriptionsController).to receive(:current_member).and_return(member)
       allow(member).to receive(:find_subscribed_resource).with("foobar").and_return(member)
@@ -160,21 +144,7 @@ RSpec.describe Billing::SubscriptionsController, type: :controller do
       expect(response).to have_http_status(204)
     end
 
-    it "raises error if cancellation failed" do 
-      allow_any_instance_of(Billing::SubscriptionsController).to receive(:current_member).and_return(member)
-      allow(member).to receive(:find_subscribed_resource).with("foobar").and_return(member)
-      expect(member).to receive(:find_subscribed_resource).with("foobar").and_return(member)
-      allow(::BraintreeService::Subscription).to receive(:cancel).with(gateway, "foobar").and_return(failed_result)
-      expect(::BraintreeService::Subscription).to receive(:cancel).with(gateway, "foobar").and_return(failed_result)
-      allow(Error::Braintree::Result).to receive(:new).with(failed_result).and_return(Error::Braintree::Result.new) # Bypass error instantiation
-      
-      delete :destroy, params: { id: "foobar" }, format: :json
-      parsed_response = JSON.parse(response.body)
-      expect(response).to have_http_status(503)
-      expect(parsed_response['message']).to match(/service unavailable/i)
-    end
-
-    it "Raises error if subscription is not for customer" do 
+    it "Raises error if subscription is not for customer" do
       # Mock current_member call to use double
       allow_any_instance_of(Billing::SubscriptionsController).to receive(:current_member).and_return(member)
       allow(member).to receive(:find_subscribed_resource).with("foobar").and_return(nil)
@@ -185,8 +155,8 @@ RSpec.describe Billing::SubscriptionsController, type: :controller do
       expect(response).to have_http_status(404)
       expect(parsed_response['message']).to match(/resource not found/i)
     end
-    
-    it "raises error if no customer" do 
+
+    it "raises error if no customer" do
       sign_in non_customer
       delete :destroy, params: { id: "foobar" }, format: :json
       parsed_response = JSON.parse(response.body)
