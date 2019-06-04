@@ -23,8 +23,8 @@ RSpec.describe Admin::Billing::TransactionsController, type: :controller do
   end
 
   describe "GET #index" do 
-    let(:transaction) { build(:transaction) }
-    let(:related_invoice) { create(:invoice, transaction_id: transaction.id) }
+    let(:related_invoice) { create(:invoice) }
+    let(:transaction) { build(:transaction, invoice: related_invoice) }
     it "renders a list of transactions" do 
       related_invoice # call to initialize
       allow(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, {}).and_return([transaction])
@@ -53,7 +53,6 @@ RSpec.describe Admin::Billing::TransactionsController, type: :controller do
       end
 
       it "renders list of members transactions" do 
-        related_invoice # call to initialize
         search_params = {
           customer_id: member.customer_id
         }
@@ -70,7 +69,6 @@ RSpec.describe Admin::Billing::TransactionsController, type: :controller do
     end
 
     it "can filter transactions by subscription" do 
-      related_invoice # call to initialize
       allow(BraintreeService::Subscription).to receive_message_chain(:get_subscription, transactions: [transaction])
       expect(BraintreeService::Subscription).to receive(:get_subscription).with(gateway, "subscription_id")
       expect(BraintreeService::Transaction).not_to receive(:get_transactions)
@@ -83,7 +81,6 @@ RSpec.describe Admin::Billing::TransactionsController, type: :controller do
     end
 
     it "can filter transactions by date" do 
-      related_invoice # call to initialize
       start = "02-03-2001"
       end_date = "03-03-2001"
       search_params = {

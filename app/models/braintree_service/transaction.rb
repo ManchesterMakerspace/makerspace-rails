@@ -12,7 +12,8 @@ class BraintreeService::Transaction < Braintree::Transaction
   def self.refund(gateway, transaction_id)
     result = gateway.transaction.refund(transaction_id)
     raise ::Error::Braintree::Result.new(result) unless result.success?
-    invoice = Invoice.find_by(transaction_id: transaction_id)
+    transaction = normalize(gateway, result.transaction)
+    invoice = transaction.invoice
     unless invoice.nil?
       invoice.update!({ refunded: true })
     end
@@ -52,7 +53,7 @@ class BraintreeService::Transaction < Braintree::Transaction
         payment_method_token: invoice.payment_method_id,
         line_items: [{
           kind: "debit",
-          name: invoice.description,
+          name: invoice.name,
           quantity: 1,
           total_amount: invoice.amount,
           unit_amount: invoice.amount
@@ -74,5 +75,6 @@ class BraintreeService::Transaction < Braintree::Transaction
   private
   def self.normalize(gateway, transaction)
     self.new(gateway, instance_to_hash(transaction))
+    self.invoice ||= Invoice.find_by(transaction_id: self.id)
   end
 end

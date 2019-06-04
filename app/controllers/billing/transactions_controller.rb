@@ -14,8 +14,7 @@ class Billing::TransactionsController < BillingController
 
       # Handling actual payment & related error handling is abstracted from this controller
       transaction = invoice.submit_for_settlement(@gateway, transaction_params[:payment_method_id])
-
-      transaction.invoice = invoice
+     
       render json: transaction, serializer: BraintreeService::TransactionSerializer, root: "transaction", status: 200 and return
     end
 
@@ -23,11 +22,6 @@ class Billing::TransactionsController < BillingController
       # Can only view transactions for your own invoices
       # Transactions & Invoices are stored on different servers so we need to pull both in
       transactions = ::BraintreeService::Transaction.get_transactions(@gateway, { customer_id: current_member.customer_id })
-      invoices = Invoice.where(:transaction_id.in => transactions.map(&:id))
-      transactions = transactions.collect do |t|
-        t.invoice = invoices.detect { |i| i.transaction_id == t.id } || nil
-        t
-      end
 
       return render_with_total_items(transactions, { each_serializer: BraintreeService::TransactionSerializer, root: "transactions" })
     end

@@ -24,6 +24,7 @@ RSpec.describe BraintreeService::Transaction, type: :model do
         allow(gateway).to receive_message_chain(:transaction, refund: success_result) # Setup method calls to gateway
         allow(success_result).to receive(:transaction).and_return(fake_transaction)
         allow(BraintreeService::Transaction).to receive(:normalize).with(gateway, fake_transaction).and_return(fake_transaction)
+        allow(fake_transaction).to receive(:invoice).and_return(invoice)
 
         expect(gateway.transaction).to receive(:refund).with(transaction_id).and_return(success_result)
         result_transaction = BraintreeService::Transaction.refund(gateway, transaction_id)
@@ -39,6 +40,7 @@ RSpec.describe BraintreeService::Transaction, type: :model do
         allow(gateway).to receive_message_chain(:transaction, refund: success_result) # Setup method calls to gateway
         allow(success_result).to receive(:transaction).and_return(fake_transaction)
         allow(BraintreeService::Transaction).to receive(:normalize).with(gateway, fake_transaction).and_return(fake_transaction)
+        allow(fake_transaction).to receive(:invoice).and_return(invoice)
 
         expect(gateway.transaction).to receive(:refund).with(transaction_id).and_return(success_result)
 
@@ -78,9 +80,8 @@ RSpec.describe BraintreeService::Transaction, type: :model do
         it "creates a new subscription" do 
           subscription = double(id: "foobar", transactions: [fake_transaction]) # Mock new subscription
           # Setup calls
-          allow(success_result).to receive(:subscription).and_return(subscription)
+          allow(BraintreeService::Subscription).to receive(:create).with(gateway, invoice).and_return(subscription)
           allow(subscription).to receive_message_chain(:transactions, :first).and_return(fake_transaction)
-          allow(BraintreeService::Subscription).to receive(:create).with(gateway, invoice).and_return(success_result)
           allow(BraintreeService::Transaction).to receive(:normalize).with(gateway, fake_transaction).and_return(fake_transaction)
 
           result_transaction = BraintreeService::Transaction.submit_invoice_for_settlement(gateway, invoice)
@@ -94,23 +95,14 @@ RSpec.describe BraintreeService::Transaction, type: :model do
         it "reports payment and sends a receipt" do 
           subscription = double(id: "foobar", transactions: [fake_transaction]) # Mock new subscription
           # Setup calls
-          allow(success_result).to receive(:subscription).and_return(subscription)
+          allow(BraintreeService::Subscription).to receive(:create).with(gateway, invoice).and_return(subs)
           allow(subscription).to receive_message_chain(:transactions, :first).and_return(fake_transaction)
-          allow(BraintreeService::Subscription).to receive(:create).with(gateway, invoice).and_return(success_result)
           allow(BraintreeService::Transaction).to receive(:normalize).with(gateway, fake_transaction).and_return(fake_transaction)
 
           allow(BillingMailer).to receive_message_chain(:receipt, :deliver_later)
           expect(BillingMailer).to receive(:receipt).with(invoice.member.email, fake_transaction.id, invoice.id)
           expect(BraintreeService::Transaction).to receive(:send_slack_message).with(/received for #{invoice.name}/i)
           BraintreeService::Transaction.submit_invoice_for_settlement(gateway, invoice)
-        end
-
-        it "raises error if failed result" do
-          error_result = double(success?: false) # Create a fake response
-          allow(Error::Braintree::Result).to receive(:new).with(error_result).and_return(Error::Braintree::Result.new) # Bypass error instantiation
-          allow(BraintreeService::Subscription).to receive(:create).with(gateway, invoice).and_return(error_result)
-  
-          expect{ BraintreeService::Transaction.submit_invoice_for_settlement(gateway, invoice) }.to raise_error(Error::Braintree::Result)
         end
       end
 

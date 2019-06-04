@@ -3,6 +3,8 @@ require 'rails_helper'
 RSpec.describe BraintreeService::Subscription, type: :model do
   let(:gateway) { double } # Create a fake gateway
   let(:fake_subscription) { double(id: "foo") }
+  let(:success_result) { double(success?: true) }
+  let(:error_result) { double(success?: false) }
 
   it "has a factory" do
     expect(build(:subscription)).to be_truthy
@@ -52,9 +54,10 @@ RSpec.describe BraintreeService::Subscription, type: :model do
           plan_id: "bar",
           id: id
         }
-        allow(gateway).to receive_message_chain(:subscription, create: fake_subscription) # Setup method calls to gateway
+        allow(gateway).to receive_message_chain(:subscription, create: success_result) # Setup method calls to gateway
+        allow(success_result).to receive(:subscription).and_return(fake_subscription)
         allow(BraintreeService::Subscription).to receive(:normalize_subscription).with(gateway, fake_subscription).and_return(fake_subscription)
-        expect(gateway.subscription).to receive(:create).with(subscription_hash).and_return(fake_subscription)
+        expect(gateway.subscription).to receive(:create).with(subscription_hash).and_return(success_result)
         result = BraintreeService::Subscription.create(gateway, invoice)
         expect(result).to eq(fake_subscription)
       end
@@ -71,9 +74,10 @@ RSpec.describe BraintreeService::Subscription, type: :model do
           id: id,
           discounts: { add: [{ inherited_from_id: "discount" }] }
         }
-        allow(gateway).to receive_message_chain(:subscription, create: fake_subscription) # Setup method calls to gateway
+        allow(gateway).to receive_message_chain(:subscription, create: success_result) # Setup method calls to gateway
+        allow(success_result).to receive(:subscription).and_return(fake_subscription)
         allow(BraintreeService::Subscription).to receive(:normalize_subscription).with(gateway, fake_subscription).and_return(fake_subscription)
-        expect(gateway.subscription).to receive(:create).with(subscription_hash).and_return(fake_subscription)
+        expect(gateway.subscription).to receive(:create).with(subscription_hash).and_return(success_result)
         result = BraintreeService::Subscription.create(gateway, invoice)
         expect(result).to eq(fake_subscription)
       end

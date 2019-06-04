@@ -37,15 +37,15 @@
 require 'rails_helper'
 
 RSpec.describe Billing::PaymentMethodsController, type: :controller do
-  let(:gateway) { double }
+  let(:gateway) { double("Gateway") }
   let(:non_customer) { create(:member) }
   let(:member) { create(:member, customer_id: "bar") }
   let(:payment_method) { build(:credit_card) }
   let(:invoice) { create(:invoice, member: member) }
   let(:subscription) { build(:subscription, id: "foobar") }
 
-  let(:failed_result) { double(success?: false) }
-  let(:success_result) { double(success?: true) }
+  let(:failed_result) { double("Failed", success?: false) }
+  let(:success_result) { double("Success", success?: true) }
 
   let(:valid_params) {
     { 
@@ -96,11 +96,9 @@ RSpec.describe Billing::PaymentMethodsController, type: :controller do
   describe "POST #create" do 
     it "creates payment method for customer" do 
       expect(gateway).not_to receive(:customer)
-      allow(gateway).to receive_message_chain(:payment_method, create: success_result)
       expect(gateway).to receive_message_chain(:payment_method, create: success_result)
-      
-      allow(success_result).to receive(:try).with(:payment_method).and_return(true)
-      allow(success_result).to receive_message_chain(:payment_method, token: payment_method)
+      expect(success_result).to receive(:try).with(:payment_method).and_return(true)
+      expect(success_result).to receive(:payment_method).and_return(payment_method)
 
       post :create, params: { payment_method: valid_params }, format: :json
       parsed_response = JSON.parse(response.body)
@@ -118,7 +116,7 @@ RSpec.describe Billing::PaymentMethodsController, type: :controller do
       expect(success_result).to receive_message_chain(:customer, id: "new_customer")
 
       allow(success_result).to receive(:payment_method).and_return(false)
-      allow(success_result).to receive_message_chain(:customer, :payment_methods, :first, token: payment_method)
+      allow(success_result).to receive_message_chain(:customer, :payment_methods, first: payment_method)
 
       post :create, params: { payment_method: valid_params }, format: :json
       parsed_response = JSON.parse(response.body)

@@ -103,8 +103,8 @@ RSpec.describe Billing::TransactionsController, type: :controller do
   end
 
   describe "GET #index" do 
-    let(:transaction) { build(:transaction) }
-    let(:related_invoice) { create(:invoice, transaction_id: transaction.id) }
+    let(:related_invoice) { create(:invoice) }
+    let(:transaction) { build(:transaction, invoice: related_invoice) }
     it "renders a list of transactions" do 
       related_invoice # call to initialize
       allow(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, { customer_id: member.customer_id }).and_return([transaction])

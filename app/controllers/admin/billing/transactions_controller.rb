@@ -28,12 +28,6 @@ class Admin::Billing::TransactionsController < Admin::BillingController
     end
     transactions ||= ::BraintreeService::Transaction.get_transactions(@gateway, search_query)
 
-    invoices = Invoice.where(:transaction_id.in => transactions.map(&:id))
-    transactions = transactions.collect do |t|
-      t.invoice = invoices.detect { |i| i.transaction_id == t.id }
-      t
-    end
-
     return render_with_total_items(transactions, { each_serializer: BraintreeService::TransactionSerializer, root: "transactions" })
   end
 
