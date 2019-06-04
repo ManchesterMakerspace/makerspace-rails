@@ -94,7 +94,7 @@ class Invoice
       build_next_invoice
     end
 
-    return transaction
+    transaction
   end
 
   def settle_invoice

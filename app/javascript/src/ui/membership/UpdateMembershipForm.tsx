@@ -25,6 +25,7 @@ import FormModal from "ui/common/FormModal";
 import PaymentMethodsContainer from "ui/checkout/PaymentMethodsContainer";
 import { push } from "connected-react-router";
 import { MemberDetails } from "app/entities/member";
+import { readMemberAction } from "ui/member/actions";
 
 /*
 View Current Membership Info
@@ -57,6 +58,7 @@ Changing methods renders PaymentMethodsContainer w/ managing methods false
 interface DispatchProps {
   getSubscription: (id: string) => void;
   getInvoices: () => void;
+  getMember: () => void;
   goToCheckout: () => void;
 }
 interface OwnProps {
@@ -137,8 +139,8 @@ class UpdateMembershipForm extends React.Component<Props, State> {
 
     // Update can change payment method, subscription type, or create new subscription
     // Creating a new sub means one doesn't already exist
-    const onUpdate = (onSubmit: Function) => (form: Form) => {
-      onSubmit(form);
+    const onUpdate = (onSubmit: Function) => async (form: Form) => {
+      await onSubmit(form);
       if (!subscription) {
         this.props.goToCheckout();
       }
@@ -159,6 +161,11 @@ class UpdateMembershipForm extends React.Component<Props, State> {
       </FormModal>
     );
 
+    const onDelete = (onsubmit: Function) => async (form: Form) => {
+      await onsubmit(form);
+      this.props.getMember();
+    }
+
     const cancellationForm = (renderProps: UpdateSubscriptionRenderProps) => (
       <CancelMembershipModal
         ref={renderProps.setRef}
@@ -168,7 +175,7 @@ class UpdateMembershipForm extends React.Component<Props, State> {
         isRequesting={renderProps.isRequesting}
         error={renderProps.error}
         onClose={renderProps.closeHandler}
-        onSubmit={renderProps.submit}
+        onSubmit={onDelete(renderProps.submit)}
       />
     );
 
@@ -310,6 +317,7 @@ const mapStateToProps = (
   const { entities: invoices, read: {isRequesting: invoicesLoading, error: invoicesError }} = state.invoices;
   const subscription = subscriptions[subscriptionId];
   const invoice = Object.values(invoices).find(invoice => invoice.subscriptionId === subscriptionId);
+  
   return {
     invoice,
     subscription,
@@ -326,6 +334,7 @@ const mapDispatchToProps = (
   const { member, subscriptionId } = ownProps;
   return {
     getSubscription: () => dispatch(readSubscriptionAction(subscriptionId)),
+    getMember: () => dispatch(readMemberAction(member.id)),
     getInvoices: () => dispatch(readInvoicesAction(false, { resourceId: member.id })),
     goToCheckout: () => dispatch(push(Routing.Checkout)),
   }

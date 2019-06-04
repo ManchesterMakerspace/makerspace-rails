@@ -7,6 +7,7 @@ import { CrudOperation } from "app/constants";
 import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import Form from "ui/common/Form";
 import { Subscription } from "app/entities/subscription";
+import { Action as CheckoutAction } from "ui/checkout/constants";
 import DeleteSubscription from "ui/subscriptions/DeleteSubscriptionModal";
 import { deleteSubscriptionAction, updateSubscriptionAction } from "ui/subscriptions/actions";
 import CancelMembershipModal from "ui/membership/CancelMembershipModal";
@@ -98,24 +99,24 @@ const mapDispatchToProps = (
   const { operation, subscription, discountId, membershipOptionId, paymentMethodToken } = ownProps;
   return {
     dispatchSubscription: async () => {
-      let action;
       switch (operation) {
         case CrudOperation.Delete:
-          action = (deleteSubscriptionAction(subscription.id));
+          await dispatch(deleteSubscriptionAction(subscription.id));
           break;
         case CrudOperation.Update:
           if (subscription) {
-            action = (updateSubscriptionAction(subscription.id, {
+            await dispatch(updateSubscriptionAction(subscription.id, {
               discountId,
               paymentMethodToken,
               invoiceOptionId: membershipOptionId,
             }))
           } else {
-            action = (createInvoiceAction({ discountId, invoiceOptionId: membershipOptionId }, false))
+            const newInvoice = await dispatch(createInvoiceAction({ discountId, invoiceOptionId: membershipOptionId }, false));
+            console.log(newInvoice);
+            dispatch({ type: CheckoutAction.StageInvoicesForPayment, data: [newInvoice] })
           }
-
+          break;
       }
-      await dispatch(action);
     },
   }
 }

@@ -36,6 +36,7 @@ class CheckoutContainer extends React.Component<Props> {
     const redirectPath = userId ? buildProfileRouting(userId) : Routing.Login;
     const redirect = invoices && isEmpty(invoices) ? redirectPath : undefined;
     if (redirect) {
+      console.warn("Illegal transition to checkout detected. Transitioning")
       this.props.pushLocation(redirectPath);
     }
   }

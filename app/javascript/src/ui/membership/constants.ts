@@ -26,12 +26,19 @@ const membershipDetails = {
     type: "Earned Membership",
     allowMod: false,
   },
+  subscription: {
+    description: "Recurring membership subscription by Braintree",
+    type: "Subscription",
+    allowMod: true,
+  }
 }
 
 export const getDetailsForMember = (member: Partial<MemberDetails>) => {
   let details = membershipDetails.noSubscription;
   if (member.subscription && !member.subscriptionId) {
     details = membershipDetails.paypal;
+  } else if (member.subscriptionId) {
+    details = membershipDetails.subscription;
   } else if (!member.expirationTime) {
     details = membershipDetails.none;
   } else if (member.earnedMembershipId) {

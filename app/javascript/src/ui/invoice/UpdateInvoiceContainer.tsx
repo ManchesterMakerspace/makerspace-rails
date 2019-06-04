@@ -151,7 +151,8 @@ const mapDispatchToProps = (
           action = (deleteInvoiceAction(invoice.id));
           break;
       }
-      action && dispatch(action);
+      // TODO: Fix this any
+      action && dispatch(action as any);
     },
     dispatchInvoiceOptionSelect: (invoiceOption) => dispatch(createInvoiceAction(invoiceOption, true)),
     getInvoiceOptions: (type) => dispatch(readOptionsAction({ types: [type] }))

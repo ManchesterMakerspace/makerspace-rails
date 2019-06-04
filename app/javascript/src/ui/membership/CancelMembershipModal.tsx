@@ -36,7 +36,8 @@ class CancelMembershipModal extends React.Component<OwnProps, {}> {
         closeHandler={onClose}
         title="Cancel Membership"
         onSubmit={onSubmit}
-        submitText="Cancel"
+        submitText="Submit"
+        cancelText="Close"
         error={error}
       >
         <Typography gutterBottom>

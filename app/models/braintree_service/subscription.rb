@@ -18,7 +18,11 @@ class BraintreeService::Subscription < Braintree::Subscription
   end
 
   def self.cancel(gateway, id)
-    gateway.subscription.cancel(id)
+    result = gateway.subscription.cancel(id)
+    raise Error::Braintree::Result.new(result) unless result.success?
+    # Destroy invoices for this subscription that are still outstanding
+    Invoice.where(subscription_id: id, settled_at: nil).delete
+    result
   end
 
   def self.update(gateway, subscription_hash)
