@@ -75,7 +75,8 @@ RSpec.describe BraintreeService::Transaction, type: :model do
 
     describe "#submit_invoice_for_settlement" do 
       describe "subscription invoice" do 
-        let(:invoice) { create(:invoice, plan_id: "foo") }
+        let(:member) { create(:member) }
+        let(:invoice) { create(:invoice, plan_id: "foo", member: member) }
 
         it "creates a new subscription" do 
           subscription = double(id: "foobar", transactions: [fake_transaction]) # Mock new subscription
@@ -103,6 +104,17 @@ RSpec.describe BraintreeService::Transaction, type: :model do
           expect(BillingMailer).to receive(:receipt).with(invoice.member.email, fake_transaction.id, invoice.id)
           expect(BraintreeService::Transaction).to receive(:send_slack_message).with(/received for #{invoice.name}/i)
           BraintreeService::Transaction.submit_invoice_for_settlement(gateway, invoice)
+        end
+
+        it "Sets associated member to subscription" do 
+          subscription = double(id: "foobar", transactions: [fake_transaction]) # Mock new subscription
+          # Setup calls
+          allow(BraintreeService::Subscription).to receive(:create).with(gateway, invoice).and_return(subscription)
+          allow(subscription).to receive_message_chain(:transactions, :first).and_return(fake_transaction)
+          allow(BraintreeService::Transaction).to receive(:normalize).with(gateway, fake_transaction).and_return(fake_transaction)
+
+          result_transaction = BraintreeService::Transaction.submit_invoice_for_settlement(gateway, invoice)
+          expect(member.subscription_id).to eq("foobar")
         end
       end
 

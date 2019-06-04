@@ -45,7 +45,6 @@ class BraintreeService::Transaction < Braintree::Transaction
      if invoice.plan_id
       subscription = ::BraintreeService::Subscription.create(gateway, invoice)
       transaction = subscription.transactions.first
-      invoice.update!({ subscription_id: subscription.id, transaction_id: transaction.id })
       BillingMailer.new_subscription(invoice.member.email, subscription.id, invoice.id.to_s).deliver_later
     else
       result = gateway.transaction.sale(
@@ -64,8 +63,13 @@ class BraintreeService::Transaction < Braintree::Transaction
       )
       raise ::Error::Braintree::Result.new(result) unless result.success?
       transaction = result.transaction
-      invoice.update!({ transaction_id: transaction.id })
     end
+
+    invoice.update!({ 
+      subscription_id: subscription ? subscription.id : nil, 
+      transaction_id: transaction.id,
+      settled: true
+    })
     
     BillingMailer.receipt(invoice.member.email, transaction.id, invoice.id.to_s).deliver_later
     send_slack_message("Payment from #{invoice.member.fullname} of $#{invoice.amount} received for #{invoice.name}")
@@ -74,7 +78,7 @@ class BraintreeService::Transaction < Braintree::Transaction
 
   private
   def self.normalize(gateway, transaction)
-    self.new(gateway, instance_to_hash(transaction))
-    self.invoice ||= Invoice.find_by(transaction_id: self.id)
+    norm_transaction = self.new(gateway, instance_to_hash(transaction))
+    norm_transaction = invoice ||= Invoice.find_by(transaction_id: norm_transaction.id)
   end
 end

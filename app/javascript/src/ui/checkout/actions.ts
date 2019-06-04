@@ -93,7 +93,8 @@ export const checkoutReducer = (state: CheckoutState = defaultState, action: Any
     case CheckoutAction.ResetStagedInvoices:
       return {
         ...state,
-        invoices: defaultState.invoices
+        invoices: defaultState.invoices,
+        transactions: defaultState.transactions,
       }
 
     case CheckoutAction.StartTransactionRequest:

@@ -134,15 +134,12 @@ class Invoice
   def execute_invoice_operation
     raise ::Error::NotFound.new if resource.nil?
     operation = OPERATION_FUNCTIONS.find{ |f| f == self.operation }
-    if operation
-      if resource && resource.execute_operation(operation, self)
-        self.settled = true
-        self.save!
-        return
-      end
+    unless operation
+      raise ::Error::UnprocessableEntity.new("Unable to process invoice. Invalid operation for invoice #{self.id}")
+    end
+    unless resource && resource.execute_operation(operation, self)
       raise ::Error::UnprocessableEntity.new("Unable to process invoice. Operation failed for invoice #{self.id}")
     end
-    raise ::Error::UnprocessableEntity.new("Unable to process invoice. Invalid operation for invoice #{self.id}")
   end
 
   def one_active_invoice_per_resource
