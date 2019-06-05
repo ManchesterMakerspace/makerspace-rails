@@ -107,21 +107,25 @@ class UpdateMembershipForm extends React.Component<Props, State> {
 
   private getSubscriptionOptions = () => {
     const { isRequesting, error } = this.props;
-    return [{
-      id: "subscription-option-update",
-      color: "primary",
-      variant: "outlined",
-      disabled: isRequesting || !!error,
-      label: "Change Membership",
-      onClick: this.openMembershipSelect
-    },{
+    // TODO: Add support for changing payment method and membership type
+    return [
+    //   {
+    //   id: "subscription-option-update",
+    //   color: "primary",
+    //   variant: "outlined",
+    //   disabled: isRequesting || !!error,
+    //   label: "Change Membership",
+    //   onClick: this.openMembershipSelect
+    // },
+    {
       id: "subscription-option-payment-method",
       color: "primary",
       variant: "contained",
       disabled: isRequesting || !!error,
       label: "Change Payment Method",
       onClick: this.openPaymentMethodForm
-    }, {
+    },
+     {
       id: "subscription-option-cancel",
       color: "secondary",
       variant: "outlined",
@@ -180,10 +184,20 @@ class UpdateMembershipForm extends React.Component<Props, State> {
     );
 
     const paymentMethodForm = (renderProps: UpdateSubscriptionRenderProps) => (
-      <PaymentMethodsContainer
-        onPaymentMethodChange={this.updatePaymentMethodId}
-        title="Select or add a new payment method"
-      />
+      <FormModal
+        id="change-payment-method"
+        formRef={renderProps.setRef}
+        isOpen={renderProps.isOpen}
+        closeHandler={renderProps.closeHandler}
+        onSubmit={onUpdate(renderProps.submit)}
+        loading={renderProps.isRequesting}
+        error={renderProps.error}
+      >
+        <PaymentMethodsContainer
+          onPaymentMethodChange={this.updatePaymentMethodId}
+          title="Select or add a new payment method"
+        />
+      </FormModal>
     );
 
     return (
