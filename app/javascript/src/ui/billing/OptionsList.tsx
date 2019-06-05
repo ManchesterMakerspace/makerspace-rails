@@ -19,7 +19,7 @@ import UpdateBillingContainer, { UpdateBillingRenderProps } from "ui/billing/Upd
 import { InvoiceOptionQueryParams } from "api/invoices/interfaces";
 import StatusLabel from "ui/common/StatusLabel";
 import { Status } from "ui/constants";
-import { numberAsCurrency } from "ui/utils/numberToCurrency";
+import { numberAsCurrency } from "ui/utils/numberAsCurrency";
 
 interface OwnProps { }
 interface DispatchProps {

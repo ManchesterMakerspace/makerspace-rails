@@ -132,7 +132,8 @@ class PaymentMethodsContainer extends React.Component<Props, State> {
   private renderPaymentMethod = (paymentMethod: AnyPaymentMethod, displayDelete: boolean = false, displayRadio: boolean = false): JSX.Element => {
     const label = <PaymentMethodComponent
       {...paymentMethod}
-      key={paymentMethod.id}
+      key={`${paymentMethod.id}-label`}
+      id={`select-payment-method-${paymentMethod.id}`}
     />;
 
     return displayRadio ? <FormControlLabel

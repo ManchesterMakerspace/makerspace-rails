@@ -1,5 +1,6 @@
 import { InvoiceOption } from "app/entities/invoice";
 import { Routing } from "app/constants";
+import { numberAsCurrency } from "ui/utils/numberAsCurrency";
 import { TablePageObject } from "./table";
 import { MemberDetails } from "app/entities/member";
 import utils from "./common";
@@ -23,6 +24,8 @@ class Billing extends TablePageObject {
       } else {
         expect(text).toBeTruthy();
       }
+    } else if (field === "amount") {
+      expect(numberAsCurrency(invoiceOption[field])).toEqual(text);
     } else if (field === "disabled") {
       const expectedText = invoiceOption[field] ? "Disabled" : "Enabled";
       expect(text.includes(expectedText)).toBeTruthy();

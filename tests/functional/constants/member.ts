@@ -13,6 +13,7 @@ export const basicUser: LoginMember = {
   cardId: "test_member_card_1",
   expirationTime: (moment().add(1, "months").valueOf()),
   memberContractOnFile: true,
+  customerId: "test_customer_1",
 };
 export const adminUser: LoginMember = {
   id: "admin_member",
@@ -25,6 +26,7 @@ export const adminUser: LoginMember = {
   cardId: "admin_member_card_1",
   expirationTime: (moment().add(1, "months").valueOf()),
   memberContractOnFile: true,
+  customerId: "test_admin_customer_1",
 };
 export const defaultMembers: LoginMember[] = new Array(20).fill(undefined).map((_v, index) => {
   const expirationNum = (Date.now() % 6);

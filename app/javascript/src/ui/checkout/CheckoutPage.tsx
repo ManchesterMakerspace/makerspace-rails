@@ -12,7 +12,7 @@ import { CollectionOf } from "app/interfaces";
 
 import TableContainer from "ui/common/table/TableContainer";
 import Table, { Column } from "ui/common/table/Table";
-import { numberAsCurrency } from "ui/utils/numberToCurrency";
+import { numberAsCurrency } from "ui/utils/numberAsCurrency";
 import PaymentMethodsContainer from "ui/checkout/PaymentMethodsContainer";
 import ErrorMessage from "ui/common/ErrorMessage";
 import LoadingOverlay from "ui/common/LoadingOverlay";

@@ -7,9 +7,7 @@ import { CreditCard, Paypal } from "app/entities/paymentMethod";
 
 interface Props extends Partial<CreditCard>, Partial<Paypal> {}
 
-const PaymentMethodComponent: React.SFC<Props> = (props) => {
-  const { cardType, last4, debit, imageUrl, email } = props;
-
+const PaymentMethodComponent: React.SFC<Props> = ({ cardType, last4, debit, imageUrl, email, id }) => {
   const image = debit ? "" : imageUrl;
   const description = cardType ? `${cardType} ending in ${last4}` : `PayPal account ${email}`;
 
@@ -17,7 +15,7 @@ const PaymentMethodComponent: React.SFC<Props> = (props) => {
     <Grid container spacing={16}>
       <Grid item xs={12} style={{ border: "1px solid black", borderColor: "#9E3321", borderRadius: "4px", textAlign: "center" }}>
         <img style={{float: "left", marginRight: "2em"}} src={image} alt={cardType}/>
-        <Typography style={{ lineHeight: "2.5em" }} variant="subtitle1">{description}</Typography>
+        <Typography style={{ lineHeight: "2.5em" }} variant="subtitle1" id={id}>{description}</Typography>
       </Grid>
     </Grid>
   );

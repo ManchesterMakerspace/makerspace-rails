@@ -9,6 +9,7 @@ import utils from "../pageObjects/common";
 import memberPO from "../pageObjects/member";
 import rentalPO from "../pageObjects/rentals";
 import invoicePo from "../pageObjects/invoice";
+import transactionPO from "../pageObjects/transactions";
 import { defaultRental, defaultRentals } from "../constants/rental";
 import { defaultInvoice, defaultInvoices } from "../constants/invoice";
 import { defaultTransactions } from "../constants/transaction";
@@ -39,19 +40,25 @@ const reviewSubResource = async (member: LoginMember, admin: boolean = false) =>
   // Rentals displayed
   await mock(mockRequests.rentals.get.ok(rentals, { memberId: member.id }, admin));
   await memberPO.goToMemberRentals();
+  await utils.waitForVisible(rentalPO.getTitleId());
+  await utils.waitForNotVisible(rentalPO.getLoadingId());
   await rentalPO.verifyListView(rentals, rentalPO.fieldEvaluator());
 
   // Go to invoices
   // Invoices displayed
   await mock(mockRequests.invoices.get.ok(invoices, { resourceId: member.id }, admin));
   await memberPO.goToMemberDues();
+  await utils.waitForVisible(invoicePo.getTitleId());
+  await utils.waitForNotVisible(invoicePo.getLoadingId());
   await invoicePo.verifyListView(invoices, invoicePo.fieldEvaluator());
 
   // Go to transactions
-  // Invoices displayed
+  // Transactions displayed
   await mock(mockRequests.transactions.get.ok(transactions, { memberId: member.id }, admin));
   await memberPO.goToMemberTransactions();
-  await invoicePo.verifyListView(transactions, invoicePo.fieldEvaluator());
+  await utils.waitForVisible(transactionPO.getTitleId());
+  await utils.waitForNotVisible(transactionPO.getLoadingId());
+  await transactionPO.verifyListView(transactions, transactionPO.fieldEvaluator());
 }
 
 describe("Member Profiles", () => {
@@ -67,8 +74,8 @@ describe("Member Profiles", () => {
         /* 1. Login as basic user
            2. Assert profile shows tables for: Dues, Rentals,
         */
-        return auth.autoLogin(basicUser, undefined, { billing: true }).then(() => {
-          return reviewSubResource(basicUser);
+        return auth.autoLogin(basicUser, undefined, { billing: true }).then(async () => {
+          await reviewSubResource(basicUser);
         });
       });
     });
@@ -83,6 +90,7 @@ describe("Member Profiles", () => {
         await reviewMemberInfo(loggedInUser, viewingMember);
         expect(await utils.isElementDisplayed(memberPO.memberDetail.duesTab)).toBeFalsy();
         expect(await utils.isElementDisplayed(memberPO.memberDetail.rentalsTab)).toBeFalsy();
+        expect(await utils.isElementDisplayed(memberPO.memberDetail.transactionsTab)).toBeFalsy();
       });
     });
   });

@@ -131,7 +131,7 @@ export class InvoiceForm extends React.Component<Props, State> {
     }
   }
 
-  private memberToOption = (member: MemberDetails) => ({ value: member.email, label: `${member.firstname} ${member.lastname}`, id: member.id });
+  private memberToOption = (member: MemberDetails) => ({ value: member.id, label: `${member.firstname} ${member.lastname}`, id: member.id });
 
   // Need to update internal state and set form value since input is otherwise a controleld input
   private updateContactValue = (newMember: SelectOption) => {

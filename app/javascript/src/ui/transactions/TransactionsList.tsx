@@ -25,7 +25,7 @@ import Form from "ui/common/Form";
 import { TransactionSearchCriteria } from "api/transactions/interfaces";
 import AsyncSelectFixed, { SelectOption } from "ui/common/AsyncSelect";
 import { getMembers } from "api/members/transactions";
-import { numberAsCurrency } from "ui/utils/numberToCurrency";
+import { numberAsCurrency } from "ui/utils/numberAsCurrency";
 
 interface OwnProps extends RouteComponentProps<{}> {
   member?: MemberDetails;

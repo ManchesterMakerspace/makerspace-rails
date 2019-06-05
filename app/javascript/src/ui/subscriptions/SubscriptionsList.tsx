@@ -19,7 +19,7 @@ import DeleteSubscription from "ui/subscriptions/DeleteSubscriptionModal";
 import { CrudOperation } from "app/constants";
 import Form from "ui/common/Form";
 import UpdateSubscriptionContainer, { UpdateSubscriptionRenderProps } from "ui/subscriptions/UpdateSubscriptionContainer";
-import { numberAsCurrency } from "ui/utils/numberToCurrency";
+import { numberAsCurrency } from "ui/utils/numberAsCurrency";
 import { SubscriptionQueryParams } from "api/subscriptions/transactions";
 
 

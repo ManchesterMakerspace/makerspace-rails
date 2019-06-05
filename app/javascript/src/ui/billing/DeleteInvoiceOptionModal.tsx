@@ -5,7 +5,7 @@ import { InvoiceOption } from "app/entities/invoice";
 import FormModal from "ui/common/FormModal";
 import KeyValueItem from "ui/common/KeyValueItem";
 import Form from "ui/common/Form";
-import { numberAsCurrency } from "ui/utils/numberToCurrency";
+import { numberAsCurrency } from "ui/utils/numberAsCurrency";
 
 interface OwnProps {
   option: Partial<InvoiceOption>;

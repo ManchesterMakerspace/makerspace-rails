@@ -1,4 +1,5 @@
 import { TablePageObject } from "./table";
+import { numberAsCurrency } from "ui/utils/numberAsCurrency";
 import { Routing } from "app/constants";
 import { Transaction } from "app/entities/transaction";
 import { MemberDetails } from "app/entities/member";
@@ -24,6 +25,8 @@ class TransactionsPageObject extends TablePageObject {
       } else {
         expect(text).toBeTruthy();
       }
+    } else if (field === "amount") {
+      expect(numberAsCurrency(transaction[field])).toEqual(text);
     } else {
       expect(text.includes(transaction[field])).toBeTruthy();
     }

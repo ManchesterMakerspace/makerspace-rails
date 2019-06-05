@@ -9,7 +9,7 @@ import { State as ReduxState, ScopedThunkDispatch } from "ui/reducer";
 import ErrorMessage from "ui/common/ErrorMessage";
 import TableContainer from "ui/common/table/TableContainer";
 import { Column } from "ui/common/table/Table";
-import { numberAsCurrency } from "ui/utils/numberToCurrency";
+import { numberAsCurrency } from "ui/utils/numberAsCurrency";
 import { Button, FormControlLabel, Checkbox } from "@material-ui/core";
 import { readOptionsAction } from "ui/billing/actions";
 import { Action as InvoiceOptionAction } from "ui/billing/constants";

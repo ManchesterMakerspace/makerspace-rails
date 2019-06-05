@@ -27,7 +27,7 @@ class SettleInvoiceModal extends React.Component<OwnProps, {}> {
     return invoice ? (
       <FormModal
         formRef={this.setFormRef}
-        id="settle-invoice-confirm"
+        id="settle-invoice"
         loading={isRequesting}
         isOpen={isOpen}
         closeHandler={onClose}

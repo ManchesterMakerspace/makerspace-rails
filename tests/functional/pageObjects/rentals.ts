@@ -6,7 +6,8 @@ import { timeToDate } from "ui/utils/timeToDate";
 import utils from "./common";
 
 const tableId = "rentals-table";
-const rentalsListFields = ["number", "description", "member", "expiration", "status"];
+// Member removed as thats only for admins
+const rentalsListFields = ["number", "description", "expiration", "status"];
 
 class RentalsPageObject extends TablePageObject {
   public listUrl = Routing.Rentals

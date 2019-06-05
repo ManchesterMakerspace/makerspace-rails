@@ -67,7 +67,7 @@ class UpdateInvoice extends React.Component<Props, {}> {
       validUpdate = this.formRef.validate && await this.formRef.validate(form);
     }
     if (!form.isValid()) return;
-
+    
     if (validUpdate && isInvoiceOptionSelection(validUpdate)) {
       await this.props.dispatchInvoiceOptionSelect(validUpdate);
     } else {

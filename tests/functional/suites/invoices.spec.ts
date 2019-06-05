@@ -1,6 +1,7 @@
-import { Invoice } from "app/entities/invoice";
+import { Invoice, InvoiceableResource } from "app/entities/invoice";
+import { Routing } from "app/constants";
 
-import { basicUser, adminUser } from "../constants/member";
+import { basicUser, adminUser, defaultMembers } from "../constants/member";
 import { mockRequests, mock } from "../mockserver-client-helpers";
 import auth from "../pageObjects/auth";
 import utils from "../pageObjects/common";
@@ -8,9 +9,11 @@ import memberPO from "../pageObjects/member";
 import invoicePO from "../pageObjects/invoice";
 import { pastDueInvoice, settledInvoice, defaultInvoice, defaultInvoices } from "../constants/invoice";
 import { SortDirection } from "ui/common/table/constants";
+import { numberAsCurrency } from "ui/utils/numberAsCurrency";
 import { checkout } from "../pageObjects/checkout";
 import { paymentMethods, creditCard } from "../pageObjects/paymentMethods";
 import { creditCard as defaultCreditCard, creditCardForm } from "../constants/paymentMethod";
+import { defaultBillingOptions } from "../constants/invoice";
 
 const initInvoices = [defaultInvoice, pastDueInvoice, settledInvoice];
 
@@ -19,7 +22,7 @@ describe("Invoicing and Dues", () => {
     const loadInvoices = async (invoices: Invoice[], login?: boolean) => {
       await mock(mockRequests.invoices.get.ok(invoices));
       if (login) {
-        await auth.autoLogin(basicUser);
+        await auth.autoLogin(basicUser, undefined, { billing: true });
         expect(await browser.getCurrentUrl()).toEqual(utils.buildUrl(memberPO.getProfilePath(basicUser.id)));
       }
     }
@@ -46,9 +49,10 @@ describe("Invoicing and Dues", () => {
         ...defaultCreditCard,
         nonce: "foobar"
       }
+      // Upcoming, non subscription and past due invoices are automatically selected on load
       await loadInvoices(initInvoices, true);
-      expect((await invoicePO.getAllRows()).length).toEqual(1);
-      expect(await invoicePO.getColumnText("name", defaultInvoice.id)).toEqual(defaultInvoice.name);
+      expect((await invoicePO.getAllRows()).length).toEqual(initInvoices.length);
+      expect(await invoicePO.getColumnText("description", defaultInvoice.id)).toEqual(defaultInvoice.description);
 
       // Get payment methods (none array)
       // Checkout
@@ -73,12 +77,15 @@ describe("Invoicing and Dues", () => {
       await mock(mockRequests.transactions.post.ok(defaultInvoice.id, newCard.id));
       await mock(mockRequests.member.get.ok(basicUser.id, basicUser));
       await utils.clickElement(paymentMethods.getPaymentMethodSelectId(newCard.id));
-      expect(await utils.getElementText(checkout.total)).toEqual(`Total $${defaultInvoice.amount}.00`);
+      const total = numberAsCurrency(defaultInvoice.amount + pastDueInvoice.amount);
+
+      expect(await utils.getElementText(checkout.total)).toEqual(`Total ${total}`);
       await utils.clickElement(checkout.submit);
       await utils.assertNoInputError(checkout.checkoutError, true);
       // Wait for profile redirect
       // TODO: Verify receipt
-      await utils.waitForPageLoad(memberPO.getProfilePath(basicUser.id));
+      await utils.waitForPageLoad(Routing.Receipt)
+      // await utils.waitForPageLoad(memberPO.getProfilePath(basicUser.id));
     });
   });
   describe("Admin User", () => {
@@ -102,23 +109,34 @@ describe("Invoicing and Dues", () => {
          4. Fill out form & submit
          5. Assert new invoice loaded in profile page
       */
+     const newInvoice = {
+       ...defaultInvoice,
+       memberId: basicUser.id,
+       memberName: `${basicUser.firstname} ${basicUser.lastname}`
+     }
       await loadInvoices([], true);
       const { submit, description, amount, dueDate } = invoicePO.invoiceForm;
       expect(await utils.isElementDisplayed(invoicePO.getErrorRowId())).toBeFalsy();
       expect(await utils.isElementDisplayed(invoicePO.getNoDataRowId())).toBeTruthy();
+      await mock(mockRequests.invoiceOptions.get.ok(defaultBillingOptions, { types: [InvoiceableResource.Membership] }));
+      await mock(mockRequests.member.get.ok(basicUser.id, basicUser));
       await utils.clickElement(invoicePO.actionButtons.create);
       await utils.waitForVisible(submit);
-      await utils.fillInput(description, defaultInvoice.description);
-      await utils.fillInput(dueDate, new Date(defaultInvoice.dueDate).toDateString());
-      await utils.fillInput(amount, String(defaultInvoice.amount));
+     
+      await utils.selectDropdownByValue(invoicePO.invoiceForm.invoiceOption, defaultBillingOptions[0].id);
+      // TODO: Test rest of form once custom billing is enabled
+      // await utils.fillInput(description, defaultInvoice.description);
+      // await utils.fillInput(dueDate, new Date(defaultInvoice.dueDate).toDateString());
+      // await utils.fillInput(amount, String(defaultInvoice.amount));
 
-      await mock(mockRequests.invoices.post.ok(defaultInvoice));
-      await mock(mockRequests.invoices.get.ok([defaultInvoice]));
+      await mock(mockRequests.invoices.post.ok(newInvoice, true));
+      await mock(mockRequests.invoices.get.ok([newInvoice], { order: SortDirection.Asc, resourceId: basicUser.id }, true));
       await utils.clickElement(submit);
       await utils.waitForNotVisible(submit);
       expect((await invoicePO.getAllRows()).length).toEqual(1);
     });
-    it("Can edit invoices for memebrs", async () => {
+    // SKIPPING Test until custom billing enabled. Cant edit generated invoices
+    xit("Can edit invoices for memebrs", async () => {
       /* 1. Login as admin and nav to basic user's profile
          2. Setup mocks
           - Load invoices (1 result)
@@ -133,14 +151,15 @@ describe("Invoicing and Dues", () => {
         description: "bar",
         amount: 500
       }
+      await loadInvoices(defaultInvoices, true);
       await invoicePO.selectRow(defaultInvoices[0].id);
       await utils.clickElement(invoicePO.actionButtons.edit);
       await utils.waitForVisible(invoicePO.invoiceForm.submit);
 
       await utils.fillInput(invoicePO.invoiceForm.amount, String(updatedInvoice.amount));
       await utils.fillInput(invoicePO.invoiceForm.description, updatedInvoice.description);
-      await mock(mockRequests.rentals.put.ok(updatedInvoice));
-      await mock(mockRequests.rentals.get.ok([updatedInvoice], undefined, true));
+      await mock(mockRequests.invoices.put.ok(updatedInvoice));
+      await mock(mockRequests.invoices.get.ok([updatedInvoice], { order: SortDirection.Asc, resourceId: basicUser.id }, true));
       await utils.clickElement(invoicePO.invoiceForm.submit);
       await utils.waitForNotVisible(invoicePO.invoiceForm.submit);
       expect((await invoicePO.getAllRows()).length).toEqual(1);
@@ -156,14 +175,15 @@ describe("Invoicing and Dues", () => {
          4. Confirm modal
          5. Assert invoice not loaded in profile page
       */
+      await loadInvoices(defaultInvoices, true);
       await invoicePO.selectRow(defaultInvoices[0].id);
       await utils.clickElement(invoicePO.actionButtons.delete);
       await utils.waitForVisible(invoicePO.deleteInvoiceModal.submit);
       expect(await utils.getElementText(invoicePO.deleteInvoiceModal.member)).toEqual(defaultInvoices[0].memberName);
-      expect(await utils.getElementText(invoicePO.deleteInvoiceModal.amount)).toEqual(defaultInvoices[0].amount);
+      expect(await utils.getElementText(invoicePO.deleteInvoiceModal.amount)).toEqual(numberAsCurrency(defaultInvoices[0].amount));
       expect(await utils.getElementText(invoicePO.deleteInvoiceModal.description)).toEqual(defaultInvoices[0].description);
-      await mock(mockRequests.rentals.delete.ok(defaultInvoices[0].id));
-      await mock(mockRequests.rentals.get.ok([], undefined, true));
+      await mock(mockRequests.invoices.delete.ok(defaultInvoices[0].id));
+      await mock(mockRequests.invoices.get.ok([], { order: SortDirection.Asc, resourceId: basicUser.id }, true));
       await utils.clickElement(invoicePO.deleteInvoiceModal.submit);
       await utils.waitForNotVisible(invoicePO.deleteInvoiceModal.submit);
       await utils.waitForVisible(invoicePO.getNoDataRowId());

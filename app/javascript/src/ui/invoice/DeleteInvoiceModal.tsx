@@ -6,6 +6,7 @@ import FormModal from "ui/common/FormModal";
 import KeyValueItem from "ui/common/KeyValueItem";
 import Form from "ui/common/Form";
 import { timeToDate } from "ui/utils/timeToDate";
+import { numberAsCurrency } from "ui/utils/numberAsCurrency";
 
 interface OwnProps {
   invoice: Partial<Invoice>;
@@ -27,7 +28,7 @@ class DeleteInvoiceModal extends React.Component<OwnProps, {}> {
     return invoice ? (
       <FormModal
         formRef={this.setFormRef}
-        id="delete-invoice-confirm"
+        id="delete-invoice"
         loading={isRequesting}
         isOpen={isOpen}
         closeHandler={onClose}
@@ -46,7 +47,7 @@ class DeleteInvoiceModal extends React.Component<OwnProps, {}> {
           <span id="delete-invoice-description">{invoice.description}</span>
         </KeyValueItem>
         <KeyValueItem label="Amount">
-          <span id="delete-invoice-amount">{`$${invoice.amount}`}</span>
+          <span id="delete-invoice-amount">{numberAsCurrency(invoice.amount)}</span>
         </KeyValueItem>
         <KeyValueItem label="Due Date">
           <span id="delete-invoice-due-date">{timeToDate(invoice.dueDate)}</span>

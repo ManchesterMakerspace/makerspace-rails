@@ -7,7 +7,7 @@ import header from "../pageObjects/header";
 import utils from "../pageObjects/common";
 import billingPO from "../pageObjects/billing";
 import { defaultBillingOption, defaultBillingOptions } from "../constants/invoice";
-import { numberAsCurrency } from "ui/utils/numberToCurrency";
+import { numberAsCurrency } from "ui/utils/numberAsCurrency";
 
 describe("Admin Billing Options", () => {
   const initBillingOption = {
