@@ -17,7 +17,7 @@ class TransactionsPageObject extends TablePageObject {
       expect(text).toEqual(timeToDate(transaction.createdAt));
     } else if (field === "status") {
       expect(
-        ["Success", "Unknown", "Refunded", "Refund Requested"].some((status => new RegExp(status, 'i').test(text)))
+        ["Paid", "Failed", "In Progress", "Unknown"].some((status => new RegExp(status, 'i').test(text)))
       ).toBeTruthy();
     } else if (field === "member") {
       if (member) {
@@ -27,8 +27,15 @@ class TransactionsPageObject extends TablePageObject {
       }
     } else if (field === "amount") {
       expect(numberAsCurrency(transaction[field])).toEqual(text);
+    } else if (field === "description") {
+      expect(["Refund", "Subscription Payment", "Standard Payment"].some((status => new RegExp(status, 'i').test(text)))
+    ).toBeTruthy();
     } else {
-      expect(text.includes(transaction[field])).toBeTruthy();
+      const contained = text.includes(transaction[field]);
+      if (!contained) {
+        console.error(field, `${text} != ${transaction[field]}`);
+      }
+      expect(contained).toBeTruthy();
     }
   }
 

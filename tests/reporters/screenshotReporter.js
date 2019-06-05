@@ -37,7 +37,7 @@ export class ScreenshotReporter {
         } catch (e) {
           console.log("Error saving screenshot", e);
         } finally {
-          return resolve;
+          resolve();
         }
       }
     });

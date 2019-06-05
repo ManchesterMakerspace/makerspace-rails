@@ -120,7 +120,7 @@ class TransactionsList extends React.Component<Props, State> {
       id: "status",
       label: "Status",
       cell: (row: Transaction) => {
-        let label = "In progress";
+        let label = "In Progress";
         let color = Status.Info;
 
         switch (row.status) {
