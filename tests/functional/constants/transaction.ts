@@ -13,10 +13,9 @@ export const defaultTransaction: Transaction = {
   disputes: [],
   discounts: [],
   discountAmount: "0.00",
-  lineItems: [{
-    // TODO
-  }],
-  customerDetails: {}
+  lineItems: [],
+  customerDetails: {},
+  refundedTransactionId: null,
 };
 
 export const defaultTransactions: Transaction[] = new Array(20).fill(undefined).map((_v, index) => {

@@ -111,21 +111,21 @@ class UpdateMembershipForm extends React.Component<Props, State> {
       id: "subscription-option-update",
       color: "primary",
       variant: "outlined",
-      disabled: isRequesting || error,
+      disabled: isRequesting || !!error,
       label: "Change Membership",
       onClick: this.openMembershipSelect
     },{
       id: "subscription-option-payment-method",
       color: "primary",
       variant: "contained",
-      disabled: isRequesting || error,
+      disabled: isRequesting || !!error,
       label: "Change Payment Method",
       onClick: this.openPaymentMethodForm
     }, {
       id: "subscription-option-cancel",
       color: "secondary",
       variant: "outlined",
-      disabled: isRequesting || error,
+      disabled: isRequesting || !!error,
       label: "Cancel Membership",
       onClick: this.openCancelModal
     }] as ActionButton[]
@@ -241,12 +241,16 @@ class UpdateMembershipForm extends React.Component<Props, State> {
     return (
       <Grid container spacing={24}>
         <Grid item xs={12}>
-          <KeyValueItem label="Name">
-            <span id="cancel-subscription-name">{invoice.name}</span>
-          </KeyValueItem>
-          <KeyValueItem label="Description">
-            <span id="cancel-subscription-description">{invoice.description}</span>
-          </KeyValueItem>
+          { invoice &&
+            <>
+              <KeyValueItem label="Name">
+                <span id="cancel-subscription-name">{invoice.name}</span>
+              </KeyValueItem>
+              <KeyValueItem label="Description">
+                <span id="cancel-subscription-description">{invoice.description}</span>
+              </KeyValueItem>
+            </>
+          }
           <KeyValueItem label="Status">
             <span id="subscription-status">{`${subscription.status}`}</span>
           </KeyValueItem>

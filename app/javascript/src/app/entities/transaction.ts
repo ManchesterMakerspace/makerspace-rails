@@ -22,4 +22,14 @@ export interface Transaction {
   creditCardDetails?: any;
   disputes?: any[];
   gatewayRejectionReason?: string;
+  refundedTransactionId: string;
+}
+
+export enum TransactionStatus {
+  Settled = "settled",
+  Failed = "failed",
+  Declined = "processor_declined",
+  Rejected = "gateway_rejected",
+  Voided = "voided",
+  Unknown = "unrecognized"
 }

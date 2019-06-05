@@ -14,13 +14,15 @@ class BraintreeService::Transaction < Braintree::Transaction
     raise ::Error::Braintree::Result.new(result) unless result.success?
     transaction = normalize(gateway, result.transaction)
     invoice = transaction.invoice
-    unless invoice.nil?
+    if invoice.nil?
+      send_slack_message("Err: Refunded transaction #{transaction.id} without related invoice. Investigation required")
+    else
       invoice.update!({ refunded: true })
+      BillingMailer.refund(invoice.member.email, transaction_id, invoice.id.to_s).deliver_later
+      send_slack_message("#{invoice.member.fullname}'s refund of #{invoice.amount} for #{invoice.name} from #{invoice.settled_at} completed.")
     end
 
-    BillingMailer.refund(invoice.member.email, transaction_id, invoice.id.to_s).deliver_later
-    send_slack_message("#{invoice.member.fullname}'s refund of #{invoice.amount} for #{invoice.name} from #{invoice.settled_at} completed.")
-    normalize(gateway, result.transaction)
+    transaction
   end
 
   def self.get_transactions(gateway, search_query = nil)
@@ -80,6 +82,10 @@ class BraintreeService::Transaction < Braintree::Transaction
   private
   def self.normalize(gateway, transaction)
     norm_transaction = self.new(gateway, instance_to_hash(transaction))
-    norm_transaction = invoice ||= Invoice.find_by(transaction_id: norm_transaction.id)
+
+    # Search by refunded ID if it's a refund transaction
+    transaction_id = norm_transaction.refunded_transaction_id || norm_transaction.id
+    norm_transaction.invoice = invoice ||= Invoice.find_by(transaction_id: transaction_id)
+    norm_transaction
   end
 end

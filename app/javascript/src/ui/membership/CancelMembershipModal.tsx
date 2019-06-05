@@ -43,12 +43,17 @@ class CancelMembershipModal extends React.Component<OwnProps, {}> {
         <Typography gutterBottom>
           Are you sure you want to cancel your recurring membership?  This action cannot be undone.
         </Typography>
-        <KeyValueItem label="Name">
-          <span id="cancel-subscription-name">{invoice.name}</span>
-        </KeyValueItem>
-        <KeyValueItem label="Description">
-          <span id="cancel-subscription-description">{invoice.description}</span>
-        </KeyValueItem>
+        { invoice && 
+          <>
+            <KeyValueItem label="Name">
+              <span id="cancel-subscription-name">{invoice.name}</span>
+            </KeyValueItem>
+            <KeyValueItem label="Description">
+              <span id="cancel-subscription-description">{invoice.description}</span>
+            </KeyValueItem>
+          </>
+        }
+        
         <KeyValueItem label="Status">
           <span id="cancel-subscription-status">{`${subscription.status}`}</span>
         </KeyValueItem>

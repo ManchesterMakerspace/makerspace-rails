@@ -35,12 +35,16 @@ class DeleteTransactionModal extends React.Component<OwnProps, {}> {
         <KeyValueItem label="Amount">
           <span id="refund-transaction-amount">{(Number(transaction.amount) - Number(transaction.discountAmount))}</span>
         </KeyValueItem>
-        <KeyValueItem label="Member">
-          <span id="refund-transaction-member">{transaction.invoice.memberName}</span>
-        </KeyValueItem>
-        <KeyValueItem label="Description">
-          <span id="refund-transaction-description">{transaction.invoice.description}</span>
-        </KeyValueItem>
+        { transaction.invoice && 
+          <>
+            <KeyValueItem label="Member">
+              <span id="refund-transaction-member">{transaction.invoice.memberName}</span>
+            </KeyValueItem>
+            <KeyValueItem label="Description">
+              <span id="refund-transaction-description">{transaction.invoice.description}</span>
+            </KeyValueItem>
+          </>
+        }
       </>
     )
   }

@@ -8,7 +8,6 @@ class BraintreeService::TransactionSerializer < ActiveModel::Serializer
              :gateway_rejection_reason,
              :status,
              :id,
-             :line_items,
              :payment_instrument_type,
              :paypal_details,
              :plan_id,
@@ -19,9 +18,10 @@ class BraintreeService::TransactionSerializer < ActiveModel::Serializer
              :subscription_id,
              :tax_amount,
              :amount,
-             :invoice,
              :member_id,
              :member_name
+
+  has_one :invoice
 
   def amount
     object.amount.truncate.to_s + '.' + sprintf('%02d', (BigDecimal(object.amount.to_s).frac * 100).truncate)
@@ -31,10 +31,6 @@ class BraintreeService::TransactionSerializer < ActiveModel::Serializer
     unless object.discount_amount.nil?
       object.discount_amount.truncate.to_s + '.' + sprintf('%02d', (BigDecimal(object.discount_amount.to_s).frac * 100).truncate)
     end
-  end
-
-  def invoice 
-    object.invoice.as_json
   end
 
   def description

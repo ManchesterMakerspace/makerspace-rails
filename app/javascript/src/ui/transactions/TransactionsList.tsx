@@ -5,7 +5,7 @@ import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 
-import { Transaction } from "app/entities/transaction";
+import { Transaction, TransactionStatus } from "app/entities/transaction";
 import { QueryParams, CollectionOf } from "app/interfaces";
 import { MemberDetails } from "app/entities/member";
 
@@ -47,8 +47,8 @@ interface State {
   pageNum: number;
   orderBy: string;
   order: SortDirection;
-  startDate: Date;
-  endDate: Date;
+  startDate: Date | string;
+  endDate: Date | string;
   modalOperation: CrudOperation;
   openTransactionForm: boolean;
   member: SelectOption;
@@ -72,16 +72,36 @@ class TransactionsList extends React.Component<Props, State> {
         if (discount) {
           total -= discount;
         }
-        return numberAsCurrency(total);
+
+        const totalAsText = numberAsCurrency(total);
+        if (row.refundedTransactionId) {
+          return `(${totalAsText})`; 
+        }
+        return totalAsText;
       },
       defaultSortDirection: SortDirection.Desc,
     },
     {
       id: "description",
       label: "Description",
-      cell: (row: Transaction) => row.description || "N/A",
+      cell: (row: Transaction) => {
+        let description = "";
+        if (row.refundedTransactionId) {
+          description +=  "Refund"
+        } else if (row.subscriptionId) {
+          description += "Subscription Payment"
+        } else {
+          description += "Standard Payment"
+        }
+
+        if (row.invoice) {
+          description += ` for ${row.invoice.name}`;
+        }
+
+        return description;
+      },
     },
-    ...this.props.admin ? [{
+    ...this.props.member ? []: [{
       id: "member",
       label: "Member",
       cell: (row: Transaction) => {
@@ -95,24 +115,31 @@ class TransactionsList extends React.Component<Props, State> {
         return "Unknown";
       },
       width: 200
-    }] : [],
+    }],
     {
       id: "status",
       label: "Status",
       cell: (row: Transaction) => {
-        if (!row.invoice) {
-          return "Unknown";
+        let label = "In progress";
+        let color = Status.Info;
+
+        switch (row.status) {
+          case TransactionStatus.Settled:
+            color = Status.Success;
+            label = "Paid";
+            break;
+          case TransactionStatus.Failed:
+          case TransactionStatus.Declined:
+          case TransactionStatus.Rejected:
+          case TransactionStatus.Voided:
+            color = Status.Danger;
+            label = "Failed";
+            break;
+          case TransactionStatus.Unknown:
+            color = Status.Warn;
+            label = "Unknown";
         }
-        const { refunded, refundRequested, settled } = row.invoice;
 
-        const color = refundRequested && Status.Danger ||
-                      settled && Status.Success ||
-                      Status.Info;
-
-        const label = refunded && "Refunded" ||
-                      refundRequested && "Refund Requested" ||
-                      settled && "Complete" || 
-                      "Unknown";
         return (
           <StatusLabel label={label} color={color}/>
         );
@@ -145,8 +172,10 @@ class TransactionsList extends React.Component<Props, State> {
     const transaction = transactions && selectedId && transactions[selectedId];
     // Disable if invoice already refunded.
     // TODO This should be more deterministic about the transaction
-    const disabled = !transaction ||
-      (transaction.invoice && admin ? transaction.invoice.refunded : transaction.invoice.refunded || !!transaction.invoice.refundRequested);
+    let disabled = !transaction;
+    if (transaction && transaction.invoice) {
+      disabled = admin ? !!transaction.refundedTransactionId : (!!transaction.refundedTransactionId || !!transaction.invoice.refundRequested);
+    }
 
     const actionButtons: ActionButton[] = [
       {
@@ -296,11 +325,15 @@ class TransactionsList extends React.Component<Props, State> {
   }
 
   private updateStartDate = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ startDate: new Date(dateToTime(event.currentTarget.value)) },
+    const { value } = event.currentTarget;
+    const newDate = value ? new Date(dateToTime(value)) : "";
+    this.setState({ startDate: newDate },
       () => this.getTransactions(true));
   }
   private updateEndDate = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ endDate: new Date(dateToTime(event.currentTarget.value)) },
+    const { value } = event.currentTarget;
+    const newDate = value ? new Date(dateToTime(value)) : "";
+    this.setState({ endDate: newDate },
       () => this.getTransactions(true));
   }
 
@@ -352,7 +385,7 @@ class TransactionsList extends React.Component<Props, State> {
             />
           </span>
 
-          {admin && <span style={{ width: "200px", display: "inline-block" }}>
+          {!member && <span style={{ width: "200px", display: "inline-block" }}>
             <AsyncSelectFixed
               isClearable
               name="member-filter"

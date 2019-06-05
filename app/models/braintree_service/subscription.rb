@@ -36,6 +36,13 @@ class BraintreeService::Subscription < Braintree::Subscription
   end
 
   def self.create(gateway, invoice)
+
+    # Don't create a new subscription if already on subscription
+    if invoice.plan_id &&
+       (invoice.resource.try(:subscription) || invoice.resource.try(:subscription_id))
+      raise ::Error::UnprocessableEntity.new("Subscription already exists for #{invoice.member.fullname}. Please contact support")
+    end
+    
     subscription_hash = {
       payment_method_token: invoice.payment_method_id,
       plan_id: invoice.plan_id,
