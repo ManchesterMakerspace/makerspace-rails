@@ -14,7 +14,8 @@ export const defaultSubscription: Subscription = {
   billingDayOfMonth: 1,
   firstBillingDate: new Date(moment().subtract(1, "months").valueOf()),
   nextBillingDate: new Date(moment().add(1, "months").valueOf()),
-  planId: "foo"
+  planId: "foo",
+  paymentMethodToken: "test-payment-method-token",
 };
 
 export const defaultSubscriptions: Subscription[] = new Array(20).fill(undefined).map((_v, index) => {

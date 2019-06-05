@@ -50,7 +50,6 @@ RSpec.describe Billing::SubscriptionsController, type: :controller do
   let(:valid_params) {
     {
       payment_method_token: "some_token",
-      invoice_option_id: "std_membership_option"
     }
   }
 
@@ -97,12 +96,16 @@ RSpec.describe Billing::SubscriptionsController, type: :controller do
 
   describe "PUT #update" do
     it "updates a subscription for customer" do
+      update_hash = {
+        id: "foobar",
+        payment_method_token: valid_params[:payment_method_token]
+      }
       allow_any_instance_of(Billing::SubscriptionsController).to receive(:current_member).and_return(member)
       allow_any_instance_of(Billing::SubscriptionsController).to receive(:subscription_params).and_return(valid_params)
       allow(member).to receive(:find_subscribed_resource).with("foobar").and_return(member)
       expect(member).to receive(:find_subscribed_resource).with("foobar").and_return(member)
-      allow(::BraintreeService::Subscription).to receive(:update).with(gateway, valid_params).and_return(subscription)
-      expect(::BraintreeService::Subscription).to receive(:update).with(gateway, valid_params).and_return(subscription)
+      allow(::BraintreeService::Subscription).to receive(:update).with(gateway, update_hash).and_return(subscription)
+      expect(::BraintreeService::Subscription).to receive(:update).with(gateway, update_hash).and_return(subscription)
 
       put :update, params: { id: "foobar", subscription: valid_params }, format: :json
       parsed_response = JSON.parse(response.body)

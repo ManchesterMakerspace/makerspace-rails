@@ -91,8 +91,6 @@ class CreditCardForm extends React.Component<Props, State> {
     const { hostedFieldsInstance } = this.state;
     const { toggleLoading } = this.props;
 
-    console.log("SUBMIT");
-
     if (hostedFieldsInstance) {
       toggleLoading(true);
       hostedFieldsInstance.tokenize(async (err: Braintree.BraintreeError, payload:{ [key: string]: string }) => {

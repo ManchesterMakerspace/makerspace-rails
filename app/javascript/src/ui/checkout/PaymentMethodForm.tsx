@@ -48,8 +48,6 @@ const defaultState: State = {
 class PaymentMethodForm extends React.Component<Props, State> {
   public formRef: Form;
   private setFormRef = (ref: Form) => this.formRef = ref;
-  public ccRef: CreditCardForm;
-  private setCCRef = (ref: CreditCardForm) => this.ccRef = ref;
 
   constructor(props: Props) {
     super(props);
@@ -117,7 +115,6 @@ class PaymentMethodForm extends React.Component<Props, State> {
       case PaymentMethodType.CreditCard:
         return (
           <CreditCardForm
-            ref={this.setCCRef}
             toggleLoading={this.toggleMethodLoading}
             closeHandler={closeHandler}
             braintreeInstance={braintreeInstance}

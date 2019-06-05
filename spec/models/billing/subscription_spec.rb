@@ -110,7 +110,7 @@ RSpec.describe BraintreeService::Subscription, type: :model do
         expect{ BraintreeService::Subscription.create(gateway, invoice) }.to raise_error(Error::Braintree::Result)
       end
 
-      it "raises error if the resource already is on subscription" do 
+      it "raises error if the resource already is on subscription" do
         member = create(:member, subscription_id: "foobar")
         rental = create(:rental, subscription_id: "foobar")
         member_invoice = create(:invoice, resource_class: "member", resource_id: member.id, plan_id: "foo")
@@ -125,11 +125,9 @@ RSpec.describe BraintreeService::Subscription, type: :model do
         subscription_hash = {
           id: "foo",
           payment_method_token: "bar",
-          plan_id: "foobar"
         }
         dispatch_subscription_hash = {
           payment_method_token: "bar",
-          plan_id: "foobar"
         }
         allow(gateway).to receive_message_chain(:subscription, update: error_result) # Setup method calls to gateway
         expect(gateway.subscription).to receive(:update).with("foo", dispatch_subscription_hash).and_return(error_result)
