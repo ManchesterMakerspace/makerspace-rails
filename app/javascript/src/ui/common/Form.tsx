@@ -192,7 +192,7 @@ class Form extends React.Component<FormModalProps, State> {
     return validatedForm as T;
   }
 
-  private handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  private handleSubmit = (event: any) => {
     event.preventDefault();
     this.setState(state => {
       return {
@@ -334,7 +334,7 @@ class Form extends React.Component<FormModalProps, State> {
         </DialogContent>
 
         <DialogActions>
-          {onSubmit && <Button variant="contained" id={`${id}-submit`} color="primary" type="submit" disabled={submitDisabled}>{submitText || "Submit"}</Button>}
+          {onSubmit && <Button variant="contained" form={id} id={`${id}-submit`} onClick={this.handleSubmit} color="primary" type="submit" disabled={submitDisabled}>{submitText || "Submit"}</Button>}
           {onCancel && <Button variant="outlined" id={`${id}-cancel`}  onClick={this.closeForm}>{cancelText || "Cancel"}</Button>}
         </DialogActions>
       </>
@@ -345,7 +345,6 @@ class Form extends React.Component<FormModalProps, State> {
   public render(): JSX.Element {
     const { id, loading, style, onSubmit, onCancel } = this.props;
     const Wrapper = (onSubmit || onCancel) && <form
-      onSubmit={this.handleSubmit}
       noValidate
       autoComplete="off"
       id={id}

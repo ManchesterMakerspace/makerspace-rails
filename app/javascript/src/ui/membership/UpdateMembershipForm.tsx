@@ -196,6 +196,7 @@ class UpdateMembershipForm extends React.Component<Props, State> {
         <PaymentMethodsContainer
           onPaymentMethodChange={this.updatePaymentMethodId}
           title="Select or add a new payment method"
+          subscription={subscription}
         />
       </FormModal>
     );
@@ -335,7 +336,7 @@ const mapStateToProps = (
   const { entities: invoices, read: {isRequesting: invoicesLoading, error: invoicesError }} = state.invoices;
   const subscription = subscriptions[subscriptionId];
   const invoice = Object.values(invoices).find(invoice => invoice.subscriptionId === subscriptionId);
-  
+
   return {
     invoice,
     subscription,

@@ -27,6 +27,7 @@ interface StateProps {
   membershipOptions: CollectionOf<InvoiceOption>;
   invoiceOptionsLoading: boolean;
   invoiceOptionsError: string;
+  createInvoiceError: string;
   membershipOptionId: string;
   discountId: string;
 }
@@ -102,13 +103,23 @@ class MembershipSelectComponent extends React.Component<Props> {
   private byAmount = (a: InvoiceOption, b: InvoiceOption) =>  a.amount - b.amount;
 
   public render(): JSX.Element {
-    const { membershipOptions, invoiceOptionsError, invoiceOptionsLoading, discountId } = this.props;
+    const {
+      membershipOptions,
+      invoiceOptionsError,
+      createInvoiceError,
+      invoiceOptionsLoading,
+      discountId
+    } = this.props;
 
-    let normalizedError: JSX.Element = invoiceOptionsError && (
-      <>
-        Error reading membership options: {invoiceOptionsError}. Email <a href={`mailto: contact@manchestermakerspace.org`}>contact@manchestermakerspace.org</a> if your desired membership option is not present
-      </>
-    );
+    let normalizedError: JSX.Element =
+      (invoiceOptionsError && (
+        <>
+          Error reading membership options: {invoiceOptionsError}. Email{" "}
+          <a href={`mailto: contact@manchestermakerspace.org`}>contact@manchestermakerspace.org</a> if your desired
+          membership option is not present
+        </>
+      )) ||
+      (createInvoiceError && <>{createInvoiceError}</>);
     return (
       <>
         <TableContainer
@@ -150,6 +161,8 @@ const mapStateToProps = (
     }
   } = state.billing;
 
+  const createInvoiceError = state.invoices.create.error;
+
   const discountId = selectedOption && selectedOption.discountId;
   const membershipOptionId = selectedOption && selectedOption.invoiceOptionId;
 
@@ -157,6 +170,7 @@ const mapStateToProps = (
     membershipOptions,
     invoiceOptionsLoading,
     invoiceOptionsError,
+    createInvoiceError,
     membershipOptionId,
     discountId,
   }

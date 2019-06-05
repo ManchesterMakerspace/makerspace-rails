@@ -12,6 +12,7 @@ export interface Subscription {
   billingDayOfMonth: number;
   firstBillingDate: Date;
   nextBillingDate: Date;
+  paymentMethodToken: string;
 }
 
 export interface SubscriptionUpdate {

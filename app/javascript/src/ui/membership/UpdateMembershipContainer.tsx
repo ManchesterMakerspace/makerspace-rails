@@ -51,6 +51,7 @@ class UpdateSubscription extends React.Component<Props, {}> {
   }
 
   private submit = async (form: Form) => {
+    console.log(form);
     await this.props.dispatchSubscription();
     if (!this.props.error) {
       return true;
@@ -112,7 +113,6 @@ const mapDispatchToProps = (
             }))
           } else {
             const newInvoice = await dispatch(createInvoiceAction({ discountId, invoiceOptionId: membershipOptionId }, false));
-            console.log(newInvoice);
             dispatch({ type: CheckoutAction.StageInvoicesForPayment, data: [newInvoice] })
           }
           break;

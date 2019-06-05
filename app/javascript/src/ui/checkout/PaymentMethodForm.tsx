@@ -130,17 +130,6 @@ class PaymentMethodForm extends React.Component<Props, State> {
     }
   }
 
-  private submitPaymentMethod = () => {
-    const { paymentMethodType } = this.state;
-
-    switch (paymentMethodType) {
-      case PaymentMethodType.CreditCard:
-        this.ccRef && this.ccRef.requestPaymentMethod();
-      default:
-        return <></>;
-    }
-  }
-
   public render(): JSX.Element {
     const { paymentMethodType } = this.state;
 
@@ -149,31 +138,34 @@ class PaymentMethodForm extends React.Component<Props, State> {
     const { isOpen, closeHandler } = this.props;
     const loading = requestingClientToken || braintreeRequesting || methodLoading;
 
-
     return (
       <FormModal
         id="payment-method-form"
         title={!paymentMethodType && "Select a payment method type"}
         formRef={this.setFormRef}
         isOpen={isOpen}
-        closeHandler={closeHandler}
-        onSubmit={isOpen && this.submitPaymentMethod}
+        closeHandler={!paymentMethodType ? closeHandler : undefined}
         loading={loading}
         error={error}
       >
-        {paymentMethodType ? this.renderPaymentMethod() :
-        <Grid container justify="center" spacing={16}>
-          <Grid item xs={12} md={6}>
-            <Button fullWidth variant="outlined" onClick={this.selectCC} id="card-payment">Credit or debit card</Button>
+        {paymentMethodType ? (
+          this.renderPaymentMethod()
+        ) : (
+          <Grid container justify="center" spacing={16}>
+            <Grid item xs={12} md={6}>
+              <Button fullWidth variant="outlined" onClick={this.selectCC} id="card-payment">
+                Credit or debit card
+              </Button>
+            </Grid>
+            <Grid item xs={12}>
+              <PaypalButton
+                clientToken={clientToken}
+                braintreeInstance={braintreeInstance}
+                paymentMethodCallback={closeHandler}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <PaypalButton
-              clientToken={clientToken}
-              braintreeInstance={braintreeInstance}
-              paymentMethodCallback={closeHandler}
-            />
-          </Grid>
-        </Grid>}
+        )}
       </FormModal>
     );
   }

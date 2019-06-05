@@ -11,7 +11,8 @@ class BraintreeService::SubscriptionSerializer < ActiveModel::Serializer
               :member_id,
               :member_name,
               :resource_class,
-              :resource_id
+              :resource_id,
+              :payment_method_token
 
   # Convert BigDecimal price to currency
   def amount

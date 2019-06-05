@@ -10,7 +10,11 @@ class Billing::SubscriptionsController < BillingController
 
   def update
     # 2 different types of updates (payment method or plan)
-    subscription = ::BraintreeService::Subscription.update(@gateway, subscription_params)
+    subscription_update = {
+      id: params[:id],
+      payment_method_token: subscription_params[:payment_method_token]
+    }
+    subscription = ::BraintreeService::Subscription.update(@gateway, subscription_update)
     render json: subscription, serializer: BraintreeService::SubscriptionSerializer, root: "subscription" and return
   end
 
