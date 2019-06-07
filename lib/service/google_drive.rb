@@ -4,6 +4,10 @@ require_relative '../error/google/upload'
 module Service
   module GoogleDrive
     def load_gdrive
+      self.class.load_gdrive
+    end
+
+    def self.load_gdrive
       google = Google::Apis::DriveV3::DriveService.new
       google.authorization = Google::Auth::UserRefreshCredentials.new({
         client_id: ENV['GOOGLE_ID'],
@@ -26,6 +30,10 @@ module Service
     end
 
     def upload_signature(base64_img, file_name)
+      self.class.upload_signature(base64_img, file_name)
+    end
+
+    def self.upload_signature(base64_img, file_name)
       File.open("dump/signature.png", 'wb') do |f|
         f.write(Base64.decode64(base64_img))
       end
@@ -40,6 +48,20 @@ module Service
                           ) do |result, err|
         raise Error::Google::Upload.new(err) unless err.nil?
         File.delete("dump/signature.png")
+      end
+    end
+
+    def self.upload_backup(file_name)
+      backup_meta = {
+        name: file_name,
+        parents: [ENV['BACKUPS_FOLDER']]
+      }
+      load_gdrive.create_file(
+        backup_meta,
+        fields: 'id',
+        upload_source: Rails.root.join("dump", file_name).to_s,
+      ) do |result, err|
+        raise Error::Google::Upload.new(err) unless err.nil?
       end
     end
   end
