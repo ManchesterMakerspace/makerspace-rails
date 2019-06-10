@@ -4,7 +4,7 @@ require_relative '../error/google/upload'
 module Service
   module GoogleDrive
     def load_gdrive
-      self.class.load_gdrive
+      ::Service::GoogleDrive.load_gdrive
     end
 
     def self.load_gdrive
@@ -30,7 +30,7 @@ module Service
     end
 
     def upload_signature(base64_img, file_name)
-      self.class.upload_signature(base64_img, file_name)
+      ::Service::GoogleDrive.upload_signature(base64_img, file_name)
     end
 
     def self.upload_signature(base64_img, file_name)
