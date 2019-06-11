@@ -71,7 +71,7 @@ class RentalsList extends React.Component<Props, State> {
     {
       id: "expiration",
       label: "Expiration Date",
-      cell: (row: Rental) => timeToDate(row.expiration),
+      cell: (row: Rental) => row.expiration ? timeToDate(row.expiration) : "N/A",
       defaultSortDirection: SortDirection.Desc,
     },
     ...this.props.admin ? [{

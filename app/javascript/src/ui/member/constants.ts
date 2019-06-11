@@ -48,13 +48,14 @@ export const fields = (admin: boolean, member?: Partial<MemberDetails>): FormFie
       name: `${formPrefix}-groupName`,
       placeholder: "Select one",
     },
-    expirationTime: {
-      label: "Expiration Date",
-      name: `${formPrefix}-expirationTime`,
-      placeholder: "Membership Expiration",
-      validate: (val) => !!val,
-      transform: (val) => dateToTime(val),
-      error: "Invalid expiration"
+    ...member && member.id && {
+      expirationTime: {
+        label: "Expiration Date",
+        name: `${formPrefix}-expirationTime`,
+        placeholder: "Membership Expiration",
+        transform: (val) => dateToTime(val),
+        error: "Invalid expiration"
+      },
     },
     role: {
       label: "Role",

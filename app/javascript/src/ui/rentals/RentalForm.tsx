@@ -122,20 +122,21 @@ class RentalForm extends React.Component<OwnProps, State> {
               placeholder={fields.description.placeholder}
             />
           </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              required
-              value={toDatePicker(rental.expiration)}
-              label={fields.expiration.label}
-              name={fields.expiration.name}
-              placeholder={fields.expiration.placeholder}
-              type="date"
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
+          {rental && rental.id && (
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                value={toDatePicker(rental.expiration)}
+                label={fields.expiration.label}
+                name={fields.expiration.name}
+                placeholder={fields.expiration.placeholder}
+                type="date"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </Grid>
+          )}
           <Grid item xs={12}>
             <FormLabel component="legend">{fields.memberId.label}</FormLabel>
             <AsyncSelectFixed
