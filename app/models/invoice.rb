@@ -72,7 +72,13 @@ class Invoice
   end
 
   def past_due
-    self.due_date && self.due_date < Time.now
+    if self.due_date
+      if self.settled_at
+        self.due_date < self.settled_at # Already settled, was it on time?
+      else
+        self.due_date < Time.now # Still outstanding, request after due date
+      end
+    end
   end
 
   def submit_for_settlement(gateway=nil, payment_method_id=nil, transaction_id=nil)

@@ -5,16 +5,17 @@ class BillingMailerPreview < ActionMailer::Preview
       resource_class: "member",
       resource_id: member.id,
       member: member)
+    invoice = FactoryBot.build(:invoice,
+      subscription_id: subscription.id,
+      resource_id: member.id,
+      resource_class: "member",
+      member: member)
     member.subscription_id = subscription.id
 
     BillingMailer.new_subscription(
       member.email,
       subscription,
-      FactoryBot.build(:invoice,
-        subscription_id: subscription.id,
-        resource_id: member.id,
-        resource_class: "member",
-        member: member)
+      invoice
     )
   end
 

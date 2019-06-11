@@ -1,6 +1,5 @@
 class BraintreeService::TransactionSerializer < ActiveModel::Serializer
   attributes :created_at,
-             :credit_card_details,
              :customer_details,
              :disputes,
              :discount_amount,
@@ -8,18 +7,16 @@ class BraintreeService::TransactionSerializer < ActiveModel::Serializer
              :gateway_rejection_reason,
              :status,
              :id,
-             :payment_instrument_type,
-             :paypal_details,
              :plan_id,
              :recurring,
              :refund_ids,
              :refunded_transaction_id,
              :subscription_details,
              :subscription_id,
-             :tax_amount,
              :amount,
              :member_id,
-             :member_name
+             :member_name,
+             :payment_method_details
 
   has_one :invoice
 
@@ -43,5 +40,10 @@ class BraintreeService::TransactionSerializer < ActiveModel::Serializer
 
   def member_name
     object.invoice && object.invoice.member.fullname
+  end
+
+  def payment_method_details
+    payment_attr = object.payment_instrument_type
+    object.try(payment_attr.to_sym) unless payment_attr.nil?
   end
 end

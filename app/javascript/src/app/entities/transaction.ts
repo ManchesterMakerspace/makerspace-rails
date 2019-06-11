@@ -18,11 +18,10 @@ export interface Transaction {
   planId?: string;
   subscriptionId?: string;
   subscriptionDetails?: any;
-  paypalDetails?: any
-  creditCardDetails?: any;
   disputes?: any[];
   gatewayRejectionReason?: string;
   refundedTransactionId: string;
+  paymentMethodDetails?: any;
 }
 
 export enum TransactionStatus {

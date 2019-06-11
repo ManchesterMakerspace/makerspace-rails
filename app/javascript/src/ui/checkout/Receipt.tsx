@@ -34,8 +34,8 @@ class Receipt extends React.Component<Props> {
   public componentDidMount(): void {
     const { transactions, userId } = this.props;
     if (isEmpty(transactions)) {
-    const redirectPath = userId ? buildProfileRouting(userId) : Routing.Login;
-    this.props.pushLocation(redirectPath);
+      const redirectPath = userId ? buildProfileRouting(userId) : Routing.Login;
+      this.props.pushLocation(redirectPath);
     }
   }
 

@@ -5,10 +5,13 @@ class BillingMailer < ApplicationMailer
 
   default from: 'contact@manchestermakerspace.org'
 
-  def new_subscription(email, subscription_id, invoice_id)
-    @subscription = BraintreeService::Subscription.get_subscription(connect_gateway, subscription_id)
-    @invoice = Invoice.find(invoice_id)
-    send_mail(email, "Welcome to Manchester Makerspace!")
+  def new_subscription(email, subscription, inv)
+    @subscription = subscription
+    @invoice = inv 
+    @member = Member.find_by(email: email)
+    # @subscription = BraintreeService::Subscription.get_subscription(connect_gateway, subscription_id)
+    # @invoice = Invoice.find(invoice_id)
+    send_mail(email, "Subscription to Manchester Makerspace")
   end
 
   def receipt(email, transaction_id, invoice_id)
