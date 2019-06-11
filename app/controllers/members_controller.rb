@@ -8,9 +8,10 @@ class MembersController < AuthenticationController
       if is_admin? && (params[:currentMembers].nil? || params[:currentMembers].empty?)
         search = Mongoid::Criteria.new(Member)
       else
+        # Include unset or expired within grace period
         search = Member.where({
           :$or => [
-            { :expirationTime.gte => (Time.now.strftime('%s').to_i * 1000) },
+            { :expirationTime.gte => ((Time.now + 3.days).strftime('%s').to_i * 1000) },
             {  expirationTime: nil }
           ]
         })
