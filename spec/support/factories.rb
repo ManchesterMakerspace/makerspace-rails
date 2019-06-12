@@ -224,7 +224,7 @@ FactoryBot.define do
     id { "4t606y71" }
     status { ::Braintree::Transaction::Status::Settled }
     amount { "65.00" }
-    created_at { Time.now }
+    created_at { Time.now.to_s }
     recurring { false }
     line_items {[
       {
@@ -262,8 +262,8 @@ FactoryBot.define do
   factory :subscription_transaction, parent: :transaction do
     recurring { true }
     subscription {{
-      billing_period_end_date: Time.now + 1.month,
-      billing_period_start_date: Time.now,
+      billing_period_end_date: Time.now + 1.month.to_s,
+      billing_period_start_date: Time.now.to_s,
     }}
     subscription_id { generate(:uid) }
     payment_instrument_type { :credit_card }

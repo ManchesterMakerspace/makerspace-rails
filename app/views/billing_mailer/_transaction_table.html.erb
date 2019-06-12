@@ -10,7 +10,7 @@
           <%=friendly_type.titleize%>
         </td>
         <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
-          <%= isMembership ? @invoice.resource.fullname : @invoice.resource.name %>
+          <%= isMembership ? @invoice.resource.fullname : @invoice.resource.number %>
         </td>
     </tr>
     <% end %>
@@ -20,7 +20,7 @@
         <%=friendly_type.titleize%> expiration
       </td>
       <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
-        <%=@member.pretty_time.strftime("%m/%d/%Y")%>
+        <%=@invoice.resource.pretty_time.strftime("%m/%d/%Y")%>
       </td>
     </tr>
     <!-- description -->
@@ -39,7 +39,7 @@
           Billing Period Start Date
         </td>
         <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
-          <%=@subscription.billing_period_start_date.strftime("%m/%d/%Y")%>
+          <%=Date.parse(@subscription.billing_period_start_date).strftime("%m/%d/%Y")%>
         </td>
       </tr>
       <!-- next payment -->
@@ -48,7 +48,7 @@
           Billing Period End Date
         </td>
         <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
-          <%=@subscription.billing_period_end_date.strftime("%m/%d/%Y")%>
+          <%=Date.parse(@subscription.billing_period_end_date).strftime("%m/%d/%Y")%>
         </td>
       </tr>
     <% elsif @transaction %>
@@ -58,7 +58,7 @@
           Date
         </td>
         <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
-          <%=@transaction.created_at.strftime("%m/%d/%Y")%>
+          <%=Date.parse(@transaction.created_at).strftime("%m/%d/%Y")%>
         </td>
       </tr>
       <!-- status -->

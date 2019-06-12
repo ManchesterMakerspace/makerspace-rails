@@ -112,7 +112,6 @@ export const checkoutReducer = (state: CheckoutState = defaultState, action: Any
       }
     case CheckoutAction.FinishTransactionSuccess:
       const transaction = action.data;
-      console.log(transaction);
 
       return {
         ...state,

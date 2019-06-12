@@ -33,7 +33,7 @@ interface PropsWithContext extends Props {
 interface State {
   total: number;
   paymentMethodId: string;
-  error: string;
+  error: boolean;
   openLoginModal: boolean;
   openTransactionErrorModal: boolean;
 }
@@ -49,7 +49,7 @@ class CheckoutPage extends React.Component<PropsWithContext, State> {
 
     this.state = ({
       total: invoices && Object.values(invoices).reduce((a, b) => a + Number(b.amount), 0),
-      error: "",
+      error: false,
       paymentMethodId: undefined,
       openLoginModal: false,
       openTransactionErrorModal: false,
@@ -106,7 +106,7 @@ class CheckoutPage extends React.Component<PropsWithContext, State> {
     if (wasRequesting && !isRequesting) {
       // Open error modal if error exists after submitting payment
       if (error && paymentMethodId) {
-        this.setState({ openTransactionErrorModal: true });
+        this.setState({ error: !!error, openTransactionErrorModal: true });
         return
       }
     }

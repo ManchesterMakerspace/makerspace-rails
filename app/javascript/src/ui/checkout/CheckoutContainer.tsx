@@ -14,6 +14,7 @@ import CheckoutPage from "ui/checkout/CheckoutPage";
 
 import { buildProfileRouting } from "ui/member/utils";
 import { Transaction } from "app/entities/transaction";
+import { Action } from "ui/checkout/constants";
 
 interface OwnProps {}
 interface StateProps {
@@ -28,9 +29,21 @@ interface StateProps {
 interface DispatchProps {
   submitCheckout: (invoices: Invoice[], paymentMethodId: string) => void;
   pushLocation: (location: string) => void;
+  resetCheckoutState: () => void;
 }
 interface Props extends OwnProps, StateProps, DispatchProps {}
-class CheckoutContainer extends React.Component<Props> {
+interface State {
+  transactionsComplete: boolean;
+}
+
+class CheckoutContainer extends React.Component<Props, State> {
+  public constructor(props: Props) {
+    super(props);
+    this.state = {
+      transactionsComplete: false
+    }
+  }
+
   public componentDidMount() {
     // Redirect if there are no invoices to checkout
     const { userId, invoices } = this.props;
@@ -53,7 +66,14 @@ class CheckoutContainer extends React.Component<Props> {
     }
 
     if (wasTransacting && !transactionsLoading && isEmpty(transactionsError) && !isEmpty(transactions)) {
-      this.props.pushLocation(Routing.Receipt);
+      // Update state so component unmounts correctly
+      this.setState({ transactionsComplete: true }, () => this.props.pushLocation(Routing.Receipt));
+    }
+  }
+
+  public componentWillUnmount() {
+    if (!this.state.transactionsComplete) {
+      this.props.resetCheckoutState();
     }
   }
 
@@ -61,8 +81,6 @@ class CheckoutContainer extends React.Component<Props> {
     const { invoices } = this.props;
     if (!paymentMethodId) {
       return;
-    } else {
-      this.setState({ paymentMethodId });
     }
     this.props.submitCheckout(Object.values(invoices), paymentMethodId);
   }
@@ -110,7 +128,8 @@ const mapDispatchToProps = (
 ): DispatchProps => {
   return {
     submitCheckout: (invoices, paymentMethodId) => dispatch(submitPaymentAction(paymentMethodId, invoices)),
-    pushLocation: (location) => dispatch(push(location))
+    pushLocation: (location) => dispatch(push(location)),
+    resetCheckoutState: () => dispatch({ type: Action.ResetStagedInvoices }),
   };
 }
 
