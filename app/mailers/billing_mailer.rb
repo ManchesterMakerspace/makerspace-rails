@@ -5,30 +5,46 @@ class BillingMailer < ApplicationMailer
 
   default from: 'contact@manchestermakerspace.org'
 
-  def new_subscription(email, subscription, inv)
-    @subscription = subscription
-    @invoice = inv 
+  def new_subscription(email, subscription_id, invoice_id)
+    gateway = connect_gateway
     @member = Member.find_by(email: email)
-    # @subscription = BraintreeService::Subscription.get_subscription(connect_gateway, subscription_id)
-    # @invoice = Invoice.find(invoice_id)
+    @subscription = BraintreeService::Subscription.get_subscription(gateway, subscription_id)
+    @payment_method = ::BraintreeService::PaymentMethod.find_payment_method_for_customer(gateway, @subscription.payment_method_token, @member.customer_id)
+    @invoice = Invoice.find(invoice_id)
+    get_profile_url()
     send_mail(email, "Subscription to Manchester Makerspace")
   end
 
   def receipt(email, transaction_id, invoice_id)
+    payment_method_type = @transaction.payment_instrument_type
+    @payment_method = @transaction.payment_instrument_type == :credit_card ? @transaction.credit_card_details : @transaction.paypal_details unless @transaction.payment_instrument_type.nil?
+    @subscription = @transaction.subscription_details unless @transaction.subscription_id.nil?
+    @member = Member.find_by(email: email)
     @invoice = Invoice.find(invoice_id)
     @transaction = BraintreeService::Transaction.get_transaction(connect_gateway, transaction_id)
+    get_profile_url()
     send_mail(email, "Receipt from Manchester Makerspace")
   end
 
   def refund(email, transaction_id, invoice_id)
+    payment_method_type = @transaction.payment_instrument_type
+    @payment_method = @transaction.payment_instrument_type == :credit_card ? @transaction.credit_card_details : @transaction.paypal_details unless @transaction.payment_instrument_type.nil?
+    @subscription = @transaction.subscription_details unless @transaction.subscription_id.nil?
+    @member = Member.find_by(email: email)
     @invoice = Invoice.find(invoice_id)
     @transaction = BraintreeService::Transaction.get_transaction(connect_gateway, transaction_id)
+    get_profile_url()
     send_mail(email, "Refund Approved for transaction #{@transaction.id}")
   end
 
   def refund_requested(email, transaction_id, invoice_id)
+    payment_method_type = @transaction.payment_instrument_type
+    @payment_method = @transaction.payment_instrument_type == :credit_card ? @transaction.credit_card_details : @transaction.paypal_details unless @transaction.payment_instrument_type.nil?
+    @subscription = @transaction.subscription_details unless @transaction.subscription_id.nil?
+    @member = Member.find_by(email: email)
     @invoice = Invoice.find(invoice_id)
     @transaction = BraintreeService::Transaction.get_transaction(connect_gateway, transaction_id)
+    get_profile_url()
     send_mail(email, "Refund Requested for transaction #{@transaction.id}")
   end
 
@@ -39,5 +55,10 @@ class BillingMailer < ApplicationMailer
 
   def send_mail(email, subject)
     mail to: get_email(email), subject: subject
+  end
+
+  def get_profile_url()
+    @url = url_for(action: :application, controller: 'application')
+    @url += "members/#{@member.id}"
   end
 end

@@ -1,14 +1,90 @@
-New Subscription
-<br />
-<br />
-<%= ActiveModelSerializers::SerializableResource.new(@subscription).to_json %>
+<% type = @invoice.resource_class %>
+<% isMembership = type == "member" %>
+<% friendly_type = isMembership ? 'membership' : 'rental' %>
 
-
-<br />
-<br />
-<%= ActiveModelSerializers::SerializableResource.new(@invoice).to_json %>
-
-
-<br />
-<br />
-<%= ActiveModelSerializers::SerializableResource.new(@member).to_json %>
+<div style="width: 100%">
+  <h3> New <%= friendly_type %> subscription with Manchester Makerspace</h3>
+  <div>
+    <p>Hi <%=@member.fullname%>!</p>
+    <p>Thank you for setting up automatic payments for your <%=friendly_type%>.</p>
+    <p>Details regarding your recurring payments can be found below.</p>
+    <br/>
+    <table>
+      <tbody>
+        <!-- description -->
+        <%unless @invoice.resource.nil? %>
+        <tr>
+          <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
+            <%=friendly_type.titleize%>
+          </td>
+          <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
+            <%= isMembership ? @invoice.resource.fullname : @invoice.resource.name %>
+          </td>
+      </tr>
+      <% end %>
+      <!-- expiration -->
+      <tr>
+        <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
+          <%=friendly_type.titleize%> expiration
+        </td>
+        <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
+          <%=@member.pretty_time.strftime("%m/%d/%Y")%>
+        </td>
+      </tr>
+      <!-- description -->
+      <tr>
+        <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
+          Description
+        </td>
+        <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
+          <%=@invoice.name%>
+        </td>
+      </tr>
+      <!-- first payment -->
+      <tr>
+        <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
+          Start Date
+        </td>
+        <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
+          <%=@subscription.first_billing_date.strftime("%m/%d/%Y")%>
+        </td>
+      </tr>
+      <!-- next payment -->
+      <tr>
+        <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
+          Next Payment Date
+        </td>
+        <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
+          <%=@subscription.next_billing_date.strftime("%m/%d/%Y")%>
+        </td>
+      </tr>
+      <!-- Payment method -->
+      <tr>
+        <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
+          Payment Method
+        </td>
+        <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
+          <% description = @payment_method.card_type ? "#{@payment_method.card_type} ending in #{@payment_method.last_4}" : "Paypal account #{payment_method.email}" %>
+          <img style="float: left; marginRight: 2em;" src=<%=@payment_method.image_url%> />
+          <span style="line-height: 2.5em;"><%=description%></span>
+        </td>
+      </tr>
+      <!-- amount -->
+      <tr>
+        <td style="border: 1px solid black; border-right: none; padding: 0.5em">
+          Recurring payment amount
+        </td>
+        <td style="border: 1px solid black; border-left: none; padding: 0.5em">
+          $<%= @invoice.amount.truncate.to_s + '.' + sprintf('%02d', (BigDecimal(@invoice.amount.to_s).frac * 100).truncate) %>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <br />
+  <%= link_to 'Click here to view more details or modify your subscription', @url, id: "subscription-link"%>
+  <br/>
+  <p>Lastly, if you have any other questions, please reply to this email or email <a href="mailto:contact@manchestermakerspace.org?subject=Re:%20New%20Subscription" target="_top">contact@manchestermakerspace.org</a>. Hope to see you at the space soon!</p>
+  <br>
+  <p>--The Manchester Makerspace Team</p>
+</div>
+<div>

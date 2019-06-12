@@ -10,12 +10,14 @@ class BillingMailerPreview < ActionMailer::Preview
       resource_id: member.id,
       resource_class: "member",
       member: member)
+    payment_method = FactoryBot.build(:credit_card)
     member.subscription_id = subscription.id
 
     BillingMailer.new_subscription(
       member.email,
       subscription,
-      invoice
+      invoice,
+      payment_method
     )
   end
 
@@ -31,46 +33,72 @@ class BillingMailerPreview < ActionMailer::Preview
             resource_id: member.id,
             resource_class: "member",
             member: member)
+    transaction = FactoryBot.build(:subscription_transaction)
 
     BillingMailer.receipt(
       member.email,
-      FactoryBot.build(:transaction),
+      transaction,
       invoice
     )
   end
 
-  def single_transaction_receipt
+  def single_cc_transaction_receipt
     member = FactoryBot.build(:member)
     invoice = FactoryBot.build(:invoice,
             resource_id: member.id,
             resource_class: "member",
             member: member)
+    transaction = FactoryBot.build(:credit_card_transaction)
 
     BillingMailer.receipt(
       member.email,
-      FactoryBot.build(:transaction),
+      transaction,
+      invoice
+    )
+  end
+
+  def single_paypal_transaction_receipt
+    member = FactoryBot.build(:member)
+    invoice = FactoryBot.build(:invoice,
+            resource_id: member.id,
+            resource_class: "member",
+            member: member)
+    transaction = FactoryBot.build(:paypal_transaction)
+
+    BillingMailer.receipt(
+      member.email,
+      transaction,
       invoice
     )
   end
 
   def refund
+    member = FactoryBot.build(:member)
+    invoice = FactoryBot.build(:invoice,
+            resource_id: member.id,
+            resource_class: "member",
+            member: member)
+    transaction = FactoryBot.build(:credit_card_transaction)
+
     BillingMailer.refund(
-      FactoryBot.build(:member).email,
-      FactoryBot.build(:transaction)
+      member.email,
+      transaction,
+      invoice
     )
   end
 
   def refund_requested
-    BillingMailer.refund_requested(
-      FactoryBot.build(:member).email,
-      FactoryBot.build(:transaction)
-    )
-  end
+    member = FactoryBot.build(:member)
+    invoice = FactoryBot.build(:invoice,
+            resource_id: member.id,
+            resource_class: "member",
+            member: member)
+    transaction = FactoryBot.build(:credit_card_transaction)
 
-  def admin_refund_requested
-    BillingMailer.admin_refund_requested(
-      FactoryBot.build(:member).email,
-      FactoryBot.build(:transaction)
+    BillingMailer.refund_requested(
+      member.email,
+      transaction,
+      invoice
     )
   end
 end

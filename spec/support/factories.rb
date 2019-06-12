@@ -224,6 +224,7 @@ FactoryBot.define do
     id { "4t606y71" }
     status { ::Braintree::Transaction::Status::Settled }
     amount { "65.00" }
+    created_at { Time.now }
     recurring { false }
     line_items {[
       {
@@ -240,20 +241,41 @@ FactoryBot.define do
   end
 
   factory :paypal_transaction, parent: :transaction do
-    # TODO add paypal details
+    payment_instrument_type { :paypal_account }
+    paypal {({
+      payer_email: "foo@test_makerspace.com"
+    })}
   end
 
   factory :credit_card_transaction, parent: :transaction do
-    # TODO add CC details
+    payment_instrument_type { :credit_card }
+    credit_card {({
+      card_type: ::Braintree::CreditCard::CardType::Visa,
+      expiration_month: 10,
+      expiration_year: 2020,
+      expiration_date: 25,
+      last_4: 1234,
+      token: "g7291",
+    })}
   end
 
   factory :subscription_transaction, parent: :transaction do
     recurring { true }
-    subscription_details {{
+    subscription {{
       billing_period_end_date: Time.now + 1.month,
       billing_period_start_date: Time.now,
     }}
     subscription_id { generate(:uid) }
+    payment_instrument_type { :credit_card }
+    credit_card {({
+      card_type: ::Braintree::CreditCard::CardType::Visa,
+      expiration_month: 10,
+      expiration_year: 2020,
+      expiration_date: 25,
+      last_4: 1234,
+      token: "g7291",
+    })}
+    
   end
 
   factory :refunded_transaction, parent: :transaction do
@@ -290,7 +312,7 @@ FactoryBot.define do
     expiration_month { 10 }
     expiration_year { 2020 }
     expiration_date { 25 }
-    last4 { 1234 }
+    last_4 { 1234 }
     token { "g7291" }
 
     initialize_with { new(braintree_gateway, attributes) }

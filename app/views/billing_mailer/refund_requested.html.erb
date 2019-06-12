@@ -1,2 +1,20 @@
-Refund Requested
-<%= ActiveModel::SerializableResource.new(@transaction).to_json %>
+<% type = @invoice.resource_class %>
+<% isMembership = type == "member" %>
+<% friendly_type = isMembership ? 'membership' : 'rental' %>
+
+<div style="width: 100%">
+  <h3> Refund requested for <%= friendly_type %> payment to Manchester Makerspace</h3>
+  <div>
+    <p>Hi <%=@member.fullname%>!</p>
+    <p>Your request for refund of your <%=friendly_type%> purchase is being reviewed.</p>
+    <p>Details regarding your purchase can be found below.</p>
+    <br/>
+    <%= render 'transaction_table' %>
+    <br />
+    <%= link_to 'Click here to view more details for your purchase', @url, id: "transaction-link"%>
+    <br/>
+    <p>Lastly, if you have any other questions, please reply to this email or email <a href="mailto:contact@manchestermakerspace.org?subject=Re:%20New%20Subscription" target="_top">contact@manchestermakerspace.org</a>. Hope to see you at the space soon!</p>
+    <br>
+    <p>--The Manchester Makerspace Team</p>
+</div>
+<div>
