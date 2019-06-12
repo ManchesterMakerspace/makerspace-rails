@@ -50,7 +50,6 @@ describe("Rentals", () => {
         await utils.waitForVisible(rentalsPO.rentalForm.submit);
         await utils.fillInput(rentalsPO.rentalForm.number, initRental.number);
         await utils.fillInput(rentalsPO.rentalForm.description, initRental.description);
-        await utils.inputTime(rentalsPO.rentalForm.expiration, initRental.expiration);
 
         await mock(mockRequests.rentals.post.ok(initRental));
         await mock(mockRequests.rentals.get.ok([initRental], undefined, true));
@@ -154,7 +153,6 @@ describe("Rentals", () => {
         expect(await utils.getElementText(rentalsPO.rentalForm.member)).toEqual(`${basicUser.firstname} ${basicUser.lastname}`);
         await utils.fillInput(rentalsPO.rentalForm.number, initRental.number);
         await utils.fillInput(rentalsPO.rentalForm.description, initRental.description);
-        await utils.inputTime(rentalsPO.rentalForm.expiration, initRental.expiration);
 
         await mock(mockRequests.rentals.post.ok(initRental));
         await mock(mockRequests.rentals.get.ok([initRental], undefined, true));
