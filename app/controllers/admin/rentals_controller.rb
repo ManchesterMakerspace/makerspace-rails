@@ -38,7 +38,10 @@ class Admin::RentalsController < AdminController
 
   def notify_renewal(init)
     final = @rental.get_expiration
-    if (Time.at(final / 1000) - Time.at((init || 0) / 1000) > 1.day)
+    # Check if adding expiration too
+    if final &&
+        (init.nil? || 
+        (Time.at(final / 1000) - Time.at((init || 0) / 1000) > 1.day))
       @messages.push(@rental.get_renewal_slack_message)
     end
   end

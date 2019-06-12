@@ -16,7 +16,7 @@ class EarnedMembership
   validate :existing_subscription
   validate :requirements_exist
 
-  after_create :set_member_expiration
+  after_save :set_member_expiration
 
   def outstanding_requirements
     requirements.select do |requirement|

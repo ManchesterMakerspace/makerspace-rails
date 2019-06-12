@@ -104,20 +104,21 @@ class MemberForm extends React.Component<OwnProps, State> {
       </Grid>
       {isAdmin && (
         <>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              required
-              value={toDatePicker(member.expirationTime)}
-              label={fields.expirationTime.label}
-              name={fields.expirationTime.name}
-              placeholder={fields.expirationTime.placeholder}
-              type="date"
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
+          {fields.expirationTime && ( // Dont display expiration for creation
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                value={toDatePicker(member.expirationTime)}
+                label={fields.expirationTime.label}
+                name={fields.expirationTime.name}
+                placeholder={fields.expirationTime.placeholder}
+                type="date"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </Grid>
+          )}
           <Grid item xs={12}>
             <FormLabel component="legend">{fields.status.label}</FormLabel>
             <Select
