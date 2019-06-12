@@ -5,35 +5,21 @@ task :backup => :environment do
     file_name = "makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive"
     sh("mongodump --uri #{ENV['MLAB_URI']} --archive=dump/#{file_name}")
     Service::GoogleDrive.upload_backup(file_name)
-
-    if Rails.env.production?
-      notifier.chat_postMessage(
-        channel: 'interface-logs',
-        text: 'Daily backup complete.',
-        as_user: false,
-        username: 'Management Bot',
-        icon_emoji: ':ghost:'
-      )
-    end
+    slack_message = "Daily backup complete."
 
   rescue => e
-    if Rails.env.production?
-      notifier.chat_postMessage(
-        channel: 'members_relations',
-        text: "Error backing up database: #{e}",
-        as_user: false,
-        username: 'Management Bot',
-        icon_emoji: ':ghost:'
-      )
-    else 
-      notifier.chat_postMessage(
-        channel: 'test_channel',
-        text: "Error backing up database: #{e}",
-        as_user: false,
-        username: 'Management Bot',
-        icon_emoji: ':ghost:'
-      )
-    end
+    error = "#{e.message}\n#{e.backtrace.inspect}"
+    slack_message = "Error backing up database: #{error}"
   end
+
+  channel = Rails.env.production? ? "interface-logs" : "test_channel"
+
+  notifier.chat_postMessage(
+    channel: channel,
+    text: slack_message,
+    as_user: false,
+    username: 'Management Bot',
+    icon_emoji: ':ghost:'
+  )
 end
 
