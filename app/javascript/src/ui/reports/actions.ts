@@ -29,7 +29,6 @@ export const readReportsAction = (
     });
   } catch (e) {
     const { errorMessage } = e;
-    console.log(e)
     dispatch({
       type: ReportAction.GetReportsFailure,
       error: errorMessage

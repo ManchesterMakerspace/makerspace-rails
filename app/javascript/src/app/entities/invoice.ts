@@ -36,7 +36,7 @@ export interface RentalInvoice extends BaseInvoice {
 
 export type Invoice = MemberInvoice | RentalInvoice;
 export const isMemberInvoice = (item: any): item is MemberInvoice => {
-  return item && item.resource && !!item.resource.name;
+  return item && item.resource && item.resource.hasOwnProperty("firstname");
 }
 
 export interface InvoiceOption {

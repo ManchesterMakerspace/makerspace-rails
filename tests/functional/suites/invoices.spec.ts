@@ -1,4 +1,4 @@
-import { Invoice, InvoiceableResource } from "app/entities/invoice";
+import { Invoice, InvoiceableResource, MemberInvoice } from "app/entities/invoice";
 import { Routing } from "app/constants";
 
 import { basicUser, adminUser, defaultMembers } from "../constants/member";
@@ -14,6 +14,8 @@ import { checkout } from "../pageObjects/checkout";
 import { paymentMethods, creditCard } from "../pageObjects/paymentMethods";
 import { creditCard as defaultCreditCard, creditCardForm } from "../constants/paymentMethod";
 import { defaultBillingOptions } from "../constants/invoice";
+import { defaultTransactions } from "../constants/transaction";
+import CheckoutPage from "ui/checkout/CheckoutPage";
 
 const initInvoices = [defaultInvoice, pastDueInvoice, settledInvoice];
 
@@ -49,10 +51,25 @@ describe("Invoicing and Dues", () => {
         ...defaultCreditCard,
         nonce: "foobar"
       }
+      const processedDefaultTransaction = {
+        ...defaultTransactions[0],
+        paymentMethodDetails: {
+          ...newCard
+        }
+      }
+
+      const resourcedInvoices = initInvoices.map(invoice => ({
+        ...invoice,
+        resource: {
+          ...basicUser
+        }
+      })) as any as MemberInvoice[]; // TODO: Ooops, I messed up my typings somewhere      
+
       // Upcoming, non subscription and past due invoices are automatically selected on load
-      await loadInvoices(initInvoices, true);
-      expect((await invoicePO.getAllRows()).length).toEqual(initInvoices.length);
-      expect(await invoicePO.getColumnText("description", defaultInvoice.id)).toEqual(defaultInvoice.description);
+      // So 2 of initInvoices will be autoselected on load
+      await loadInvoices(resourcedInvoices, true);
+      expect((await invoicePO.getAllRows()).length).toEqual(resourcedInvoices.length);
+      expect(await invoicePO.getColumnText("description", resourcedInvoices[0].id)).toEqual(resourcedInvoices[0].description);
 
       // Get payment methods (none array)
       // Checkout
@@ -74,7 +91,10 @@ describe("Invoicing and Dues", () => {
       // await utils.clickElement(creditCard.creditCardForm.submit);
 
       // Submit payment
-      await mock(mockRequests.transactions.post.ok(defaultInvoice.id, newCard.id));
+      const pastDueTransaction = defaultTransactions[0];
+      const defaultTransaction = defaultTransactions[1];
+      await mock(mockRequests.transactions.post.ok(defaultInvoice.id, newCard.id, defaultTransaction));
+      await mock(mockRequests.transactions.post.ok(pastDueInvoice.id, newCard.id, pastDueTransaction));
       await mock(mockRequests.member.get.ok(basicUser.id, basicUser));
       await utils.clickElement(paymentMethods.getPaymentMethodSelectId(newCard.id));
       const total = numberAsCurrency(defaultInvoice.amount + pastDueInvoice.amount);
@@ -82,10 +102,15 @@ describe("Invoicing and Dues", () => {
       expect(await utils.getElementText(checkout.total)).toEqual(`Total ${total}`);
       await utils.clickElement(checkout.submit);
       await utils.assertNoInputError(checkout.checkoutError, true);
-      // Wait for profile redirect
-      // TODO: Verify receipt
+      // Wait for receipt
       await utils.waitForPageLoad(Routing.Receipt)
-      // await utils.waitForPageLoad(memberPO.getProfilePath(basicUser.id));
+      // Verify transactions are displayed
+      expect(await utils.isElementDisplayed(checkout.receiptTransactions(defaultTransaction.id))).toBeTruthy();
+      expect(await utils.isElementDisplayed(checkout.receiptTransactions(pastDueTransaction.id))).toBeTruthy();
+      // Return to profile
+      await utils.clickElement(checkout.backToProfileButton);
+      // Wait for profile redirect
+      await utils.waitForPageLoad(memberPO.getProfilePath(basicUser.id));
     });
   });
   describe("Admin User", () => {

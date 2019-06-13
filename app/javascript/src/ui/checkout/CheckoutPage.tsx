@@ -178,7 +178,6 @@ class CheckoutPage extends React.Component<PropsWithContext, State> {
   }
 
   private selectPaymentMethod = (paymentMethodId: string) => {
-    console.log(paymentMethodId);
     this.setState({ paymentMethodId });
   }
 

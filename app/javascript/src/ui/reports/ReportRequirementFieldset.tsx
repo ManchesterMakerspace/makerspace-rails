@@ -58,7 +58,6 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
               if (member && this.state.loadingMembersRequestId === requestId) {
                 const option = { value: member.id, label: `${member.firstname} ${member.lastname}`, id: member.id }
                 const fieldName = this.getMemberInputName(index);
-                console.log(fieldName, option);
                 this.formRef && await this.formRef.setValue(fieldName, option);
               }
             } catch (e) {

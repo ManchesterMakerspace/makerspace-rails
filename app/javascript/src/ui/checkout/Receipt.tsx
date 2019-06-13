@@ -56,14 +56,12 @@ class Receipt extends React.Component<Props> {
   }
 
   private renderGeneralReceipt = (transaction: Transaction) => {
-    const invoice = Object.values(this.props.invoices).find(invoice => invoice.transactionId === transaction.id);
-    
-    const { paymentMethodDetails, subscriptionDetails } = transaction;
+    const { paymentMethodDetails, subscriptionDetails, invoice } = transaction;
     
     const invoiceType = invoice && InvoiceableResourceDisplay[invoice.resourceClass];
-    
+    const id =`transaction-${transaction.id}`;
     return (
-      <Table>
+      <Table id={id} key={id}>
         <TableBody>
           {transaction && (
             <>
@@ -162,7 +160,7 @@ class Receipt extends React.Component<Props> {
     );
   }
 
-  private goToProfile() {
+  private goToProfile = () => {
     this.props.pushLocation(buildProfileRouting(this.props.userId));
   }
 
@@ -177,11 +175,11 @@ class Receipt extends React.Component<Props> {
             <Typography variant="subheading">Details regarding your purchase can be found below.</Typography>
           </Grid>
           <Grid item sm={6} xs={12}>
-            <Button variant="outlined" style={{float: "right"}} color="primary" onClick={this.goToProfile}>Return to profile</Button>
+            <Button id="return-to-profile" variant="outlined" style={{float: "right"}} color="primary" onClick={this.goToProfile}>Return to profile</Button>
           </Grid>
         </Grid>
         {(Object.values(transactions).map(transaction => (
-          <Card style={{ height: "100%" }}>
+          <Card style={{ height: "100%" }} key={transaction.id}>
             <CardContent>
               <Grid container spacing={16}>
                 <Grid item xs={12}>
