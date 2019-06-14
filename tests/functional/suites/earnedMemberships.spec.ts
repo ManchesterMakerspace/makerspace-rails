@@ -1,15 +1,16 @@
 import * as moment from "moment";
 import { timeToDate } from "ui/utils/timeToDate";
 import { EarnedMembership, Report, Requirement, ReportRequirement } from "app/entities/earnedMembership";
-import auth, { LoginMember } from "../pageObjects/auth";
-import { adminUser, defaultMembers, basicUser } from "../constants/member";
+import auth, { LoginMember } from "../../pageObjects/auth";
+import { adminUser, defaultMembers, basicUser } from "../../constants/member";
 import { mockRequests, mock } from "../mockserver-client-helpers";
-import { defaultMemberships, basicEarnedMembership, basicRequirement, defaultReports, basicReport, basicReportRequirement } from "../constants/earnedMembership";
-import membershipPO from "../pageObjects/earnedMembership";
-import reportPO from "../pageObjects/report";
-import utils from "../pageObjects/common";
-import header from "../pageObjects/header";
-import memberPO from "../pageObjects/member";
+import { defaultMemberships, basicEarnedMembership, basicRequirement, defaultReports, basicReport, basicReportRequirement } from "../../constants/earnedMembership";
+import membershipPO from "../../pageObjects/earnedMembership";
+import reportPO from "../../pageObjects/report";
+import utils from "../../pageObjects/common";
+import header from "../../pageObjects/header";
+import memberPO from "../../pageObjects/member";
+import { autoLogin } from "../autoLogin";
 
 describe("Earned Memberships", () => {
   describe("Admin user", () => {
@@ -39,7 +40,7 @@ describe("Earned Memberships", () => {
       };
 
       beforeEach(() => {
-        return auth.autoLogin(adminUser, undefined, { earned_membership: true }).then(async () => {
+        return autoLogin(adminUser, undefined, { earned_membership: true }).then(async () => {
             await mock(mockRequests.earnedMemberships.get.ok(membershipList, {}, true));
             await header.navigateTo(header.links.earnedMemberships);
             await utils.waitForPageLoad(membershipPO.listUrl);
@@ -161,7 +162,7 @@ describe("Earned Memberships", () => {
         return mock(mockRequests.earnedMembershipReports.get.ok(membership.id, reports, {}, true)).then(async () => {
           await mock(mockRequests.member.get.ok(membershipUser.id, membershipUser));
           await mock(mockRequests.earnedMemberships.show.ok(membership, true));
-          await auth.autoLogin(adminUser, memberPO.getProfilePath(membershipUser.id), { earned_membership: true });
+          await autoLogin(adminUser, memberPO.getProfilePath(membershipUser.id), { earned_membership: true });
           expect(await utils.isElementDisplayed(reportPO.getErrorRowId())).toBeFalsy();
           expect(await utils.isElementDisplayed(reportPO.getNoDataRowId())).toBeFalsy();
           expect(await utils.isElementDisplayed(reportPO.getLoadingId())).toBeFalsy();
@@ -201,7 +202,7 @@ describe("Earned Memberships", () => {
     beforeEach(() => {
       return mock(mockRequests.earnedMembershipReports.get.ok(membership.id, defaultReports, {})).then(async () => {
         await mock(mockRequests.earnedMemberships.show.ok(membership));
-        await auth.autoLogin(membershipUser, undefined, { earned_membership: true });
+        await autoLogin(membershipUser, undefined, { earned_membership: true });
         expect(await utils.isElementDisplayed(reportPO.getErrorRowId())).toBeFalsy();
         expect(await utils.isElementDisplayed(reportPO.getNoDataRowId())).toBeFalsy();
         expect(await utils.isElementDisplayed(reportPO.getLoadingId())).toBeFalsy();

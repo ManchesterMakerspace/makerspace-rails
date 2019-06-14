@@ -1,6 +1,5 @@
 import { Key } from "selenium-webdriver";
-import { toDatePicker, dateToTime } from "ui/utils/timeToDate";
-import * as moment from "moment";
+import { toDatePicker } from "ui/utils/timeToDate";
 
 export const rootURL = `http://${process.env.APP_DOMAIN || 'localhost'}:${process.env.PORT || 3002}`;
 

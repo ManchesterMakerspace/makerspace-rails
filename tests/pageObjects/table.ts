@@ -1,4 +1,4 @@
-import utils from "../pageObjects/common";
+import utils from "./common";
 import { By } from "selenium-webdriver";
 
 export class TablePageObject {

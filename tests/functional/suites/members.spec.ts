@@ -1,11 +1,12 @@
 import * as moment from "moment";
-import auth, { LoginMember } from "../pageObjects/auth";
-import utils from "../pageObjects/common";
-import header from "../pageObjects/header";
-import { basicUser, adminUser, defaultMembers } from "../constants/member";
+import { LoginMember } from "../../pageObjects/auth";
+import utils from "../../pageObjects/common";
+import header from "../../pageObjects/header";
+import { basicUser, adminUser, defaultMembers } from "../../constants/member";
 import { mockRequests, mock } from "../mockserver-client-helpers";
-import memberPo from "../pageObjects/member";
-import renewalPO from "../pageObjects/renewalForm";
+import memberPo from "../../pageObjects/member";
+import renewalPO from "../../pageObjects/renewalForm";
+import { autoLogin } from "../autoLogin";
 
 const verifyRouting = async (member: LoginMember) => {
   const id = member.id;
@@ -18,7 +19,7 @@ const verifyRouting = async (member: LoginMember) => {
 describe("Members page", () => {
   describe("Basic User", () => {
     beforeEach(() => {
-      return auth.autoLogin(basicUser).then(async () => {
+      return autoLogin(basicUser).then(async () => {
         await mock(mockRequests.members.get.ok(defaultMembers));
         await header.navigateTo(header.links.members);
       });
@@ -34,7 +35,7 @@ describe("Members page", () => {
   });
   describe("Admin User", () => {
     beforeEach(() => {
-      return auth.autoLogin(adminUser).then(async () => {
+      return autoLogin(adminUser).then(async () => {
         await mock(mockRequests.members.get.ok(defaultMembers));
         await header.navigateTo(header.links.members);
         await utils.waitForPageLoad(memberPo.membersListUrl);

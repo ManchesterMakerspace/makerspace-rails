@@ -1,8 +1,6 @@
 import { Routing } from "app/constants";
 import { MemberDetails } from "app/entities/member";
 import utils from "./common";
-import { mock, mockRequests } from "../mockserver-client-helpers";
-import memberPO from "../pageObjects/member";
 
 export interface LoginMember extends Partial<MemberDetails> {
   email: string;
@@ -43,25 +41,7 @@ export class AuthPageObject {
     submitButton: `${this.passwordResetRequestModalId}-submit`,
   }
 
-  /*
-  * Application tries to sign in the current user using cookies
-  * This fakes that iniital request to automatically sign in the user
-  * and skips the landing page
-  */
-  public autoLogin = async (user: LoginMember, destination?: string, permissions = {}) => {
-    const profileUrl = memberPO.getProfilePath(user.id);
-    const destinationUrl = destination || profileUrl;
-    await mock(mockRequests.signIn.ok(user));
-    await mock(mockRequests.permission.get.ok(user.id, permissions));
-    // If no destination, mock default member profile redirect
-    if (!destination) {
-      await mock(mockRequests.member.get.ok(user.id, user));
-    }
-    const fullUrl = utils.buildUrl(destinationUrl);
-    return browser.get(fullUrl).then(() => {
-      return utils.waitForPageLoad(fullUrl, true);
-    })
-  }
+
 
   public goToLogin = async () => {
     await browser.get(utils.buildUrl(this.loginUrl));

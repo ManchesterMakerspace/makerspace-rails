@@ -3,7 +3,6 @@ import { Routing } from "app/constants";
 import { Rental } from "app/entities/rental";
 import { MemberDetails } from "app/entities/member";
 import { timeToDate } from "ui/utils/timeToDate";
-import utils from "./common";
 
 const tableId = "rentals-table";
 // Member removed as thats only for admins

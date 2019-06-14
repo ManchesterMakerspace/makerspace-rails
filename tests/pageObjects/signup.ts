@@ -1,10 +1,6 @@
-
-
 import { Routing } from "app/constants";
 import { MemberDetails } from "app/entities/member";
 import utils from "./common";
-import { mock, mockRequests } from "../mockserver-client-helpers";
-import memberPO from "../pageObjects/member";
 
 export interface LoginMember extends Partial<MemberDetails> {
   email: string;

@@ -1,21 +1,20 @@
 import { Invoice, InvoiceableResource, MemberInvoice } from "app/entities/invoice";
 import { Routing } from "app/constants";
 
-import { basicUser, adminUser, defaultMembers } from "../constants/member";
+import { basicUser, adminUser } from "../../constants/member";
 import { mockRequests, mock } from "../mockserver-client-helpers";
-import auth from "../pageObjects/auth";
-import utils from "../pageObjects/common";
-import memberPO from "../pageObjects/member";
-import invoicePO from "../pageObjects/invoice";
-import { pastDueInvoice, settledInvoice, defaultInvoice, defaultInvoices } from "../constants/invoice";
+import utils from "../../pageObjects/common";
+import memberPO from "../../pageObjects/member";
+import invoicePO from "../../pageObjects/invoice";
+import { pastDueInvoice, settledInvoice, defaultInvoice, defaultInvoices } from "../../constants/invoice";
 import { SortDirection } from "ui/common/table/constants";
 import { numberAsCurrency } from "ui/utils/numberAsCurrency";
-import { checkout } from "../pageObjects/checkout";
-import { paymentMethods, creditCard } from "../pageObjects/paymentMethods";
-import { creditCard as defaultCreditCard, creditCardForm } from "../constants/paymentMethod";
-import { defaultBillingOptions } from "../constants/invoice";
-import { defaultTransactions } from "../constants/transaction";
-import CheckoutPage from "ui/checkout/CheckoutPage";
+import { checkout } from "../../pageObjects/checkout";
+import { paymentMethods } from "../../pageObjects/paymentMethods";
+import { creditCard as defaultCreditCard } from "../../constants/paymentMethod";
+import { defaultBillingOptions } from "../../constants/invoice";
+import { defaultTransactions } from "../../constants/transaction";
+import { autoLogin } from "../autoLogin";
 
 const initInvoices = [defaultInvoice, pastDueInvoice, settledInvoice];
 
@@ -24,7 +23,7 @@ describe("Invoicing and Dues", () => {
     const loadInvoices = async (invoices: Invoice[], login?: boolean) => {
       await mock(mockRequests.invoices.get.ok(invoices));
       if (login) {
-        await auth.autoLogin(basicUser, undefined, { billing: true });
+        await autoLogin(basicUser, undefined, { billing: true });
         expect(await browser.getCurrentUrl()).toEqual(utils.buildUrl(memberPO.getProfilePath(basicUser.id)));
       }
     }
@@ -50,12 +49,6 @@ describe("Invoicing and Dues", () => {
       const newCard = {
         ...defaultCreditCard,
         nonce: "foobar"
-      }
-      const processedDefaultTransaction = {
-        ...defaultTransactions[0],
-        paymentMethodDetails: {
-          ...newCard
-        }
       }
 
       const resourcedInvoices = initInvoices.map(invoice => ({
@@ -119,7 +112,7 @@ describe("Invoicing and Dues", () => {
       await mock(mockRequests.invoices.get.ok(invoices, { order: SortDirection.Asc, resourceId: basicUser.id }, true));
       if (login) {
         await mock(mockRequests.member.get.ok(basicUser.id, basicUser));
-        await auth.autoLogin(adminUser, targetUrl, { billing: true });
+        await autoLogin(adminUser, targetUrl, { billing: true });
         expect(await browser.getCurrentUrl()).toEqual(utils.buildUrl(targetUrl));
       }
     }

@@ -1,19 +1,17 @@
-import { basicUser, adminUser } from "../constants/member";
+import { basicUser, adminUser } from "../../constants/member";
 import { mockRequests, mock } from "../mockserver-client-helpers";
 
-import auth from "../pageObjects/auth";
-import header from "../pageObjects/header";
-import utils from "../pageObjects/common";
-import memberPO from "../pageObjects/member";
-import billingPO from "../pageObjects/billing";
-import subscriptionsPO from "../pageObjects/subscriptions";
-import { defaultSubscription, defaultSubscriptions } from "../constants/subscription";
-
+import header from "../../pageObjects/header";
+import utils from "../../pageObjects/common";
+import billingPO from "../../pageObjects/billing";
+import subscriptionsPO from "../../pageObjects/subscriptions";
+import { defaultSubscription, defaultSubscriptions } from "../../constants/subscription";
+import { autoLogin } from "../autoLogin";
 
 describe("Paid Subscriptions", () => {
   describe("Admin subscription", () => {
     beforeEach(async () => {
-      return auth.autoLogin(adminUser, undefined, { billing: true }).then(async () => {
+      return autoLogin(adminUser, undefined, { billing: true }).then(async () => {
         await mock(mockRequests.subscriptions.get.ok(defaultSubscriptions, {}, true));
         await header.navigateTo(header.links.billing);
         await utils.waitForPageLoad(billingPO.url);
@@ -50,7 +48,7 @@ describe("Paid Subscriptions", () => {
       memberName: `${basicUser.firstname} ${basicUser.lastname}`,
     };
     beforeEach(() => {
-      return auth.autoLogin(basicUser, undefined, { billing: true });
+      return autoLogin(basicUser, undefined, { billing: true });
     });
 
     it("Displays information about current subscriptions/membership", () => {
