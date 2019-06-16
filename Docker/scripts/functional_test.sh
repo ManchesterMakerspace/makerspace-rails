@@ -4,12 +4,17 @@
 PROJECT_NAME=mmsinterface
 INTERACTIVE=FALSE
 LOCAL=FALSE
+CONFIG=functional
+
 start() {
-  INTERACTIVE=${INTERACTIVE} LOCAL=${LOCAL} docker-compose -f Docker/docker-compose/functional.yml -p ${PROJECT_NAME} ${@}
+  INTERACTIVE=${INTERACTIVE} LOCAL=${LOCAL} docker-compose -f Docker/docker-compose/${CONFIG}.yml -p ${PROJECT_NAME} ${@}
 }
 
-for argument in "$@"; do
-    case $argument in
+# for argument in "$@"; do
+while [[ $# -gt 0 ]]
+do
+key="$1"
+    case $key in
         --build)
             BUILD=TRUE
             shift
@@ -22,8 +27,13 @@ for argument in "$@"; do
             LOCAL=TRUE
             shift
             ;;
+        --config)
+            CONFIG="$2"
+            shift
+            shift
+            ;;
         *)
-            echo "# ERROR: invalid argument $argument"
+            echo "# ERROR: invalid argument $key"
             exit 1
             ;;
     esac

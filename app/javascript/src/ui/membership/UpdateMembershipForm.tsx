@@ -302,7 +302,14 @@ class UpdateMembershipForm extends React.Component<Props, State> {
           <Typography>{details.description}</Typography>
         </Grid>
         <Grid item xs={12}>
-          <Button variant="contained" disabled={!details.allowMod} onClick={this.openMembershipSelect}>{member.expirationTime ? "Update Membership" : "Create Membership"}</Button>
+          <Button 
+            id="settings-create-membership-button"
+            variant="contained" 
+            disabled={!details.allowMod} 
+            onClick={this.openMembershipSelect}
+          >
+            {member.expirationTime ? "Update Membership" : "Create Membership"}
+          </Button>
         </Grid>
       </Grid>
     );

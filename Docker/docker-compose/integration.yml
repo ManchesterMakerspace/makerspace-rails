@@ -10,43 +10,8 @@ services:
       - SELENIUM_ADDRESS=http://selenium:4444/wd/hub
       - RAILS_ENV=test
       - APP_DOMAIN=interface
-      - API_DOMAIN=http://mockserver:1080
-      - MOCKSERVER_DOMAIN=mockserver
+      - API_DOMAIN=http://interface:3002
       - PORT=3002
-      - MLAB_URI
-      - SLACK_ADMIN_TOKEN
-      - GMAIL_PASSWORD
-      - GMAIL_USERNAME
-      - BT_ENV
-      - BT_PRIVATE_KEY
-      - BT_PUBLIC_KEY
-      - BT_MERCHANT_ID
-      - SIGNATURES_FOLDER
-      - SECRET_KEY_BASE
-      - BILLING_ENABLED=true
-    tty: false
-    logging:
-      driver: "none"
-  tester:
-    build:
-      context: ../..
-      dockerfile: Docker/Dockerfiles/tester
-    volumes_from:
-      - interface
-    links:
-      - selenium
-      - interface
-      - mockserver
-    depends_on:
-      - interface
-    environment:
-      - LOCAL
-      - INTERACTIVE
-      - RAILS_ENV=test
-      - APP_DOMAIN=interface
-      - PORT=3002
-      - SELENIUM_ADDRESS=http://selenium:4444/wd/hub
-      - MOCKSERVER_DOMAIN=mockserver
       - MLAB_URI
       - SLACK_ADMIN_TOKEN
       - GMAIL_PASSWORD
@@ -59,13 +24,36 @@ services:
       - SECRET_KEY_BASE
       - BILLING_ENABLED=true
     tty: true
-  mockserver:
-    image: jamesdbloom/mockserver:mockserver-5.4.1
-    ports:
-      - 1080:1080
-    tty: false
-    logging:
-      driver: "none"
+  tester:
+    build:
+      context: ../..
+      dockerfile: Docker/Dockerfiles/tester
+    volumes_from:
+      - interface
+    links:
+      - selenium
+      - interface
+    depends_on:
+      - interface
+    environment:
+      - LOCAL
+      - INTERACTIVE
+      - RAILS_ENV=test
+      - APP_DOMAIN=interface
+      - PORT=3002
+      - SELENIUM_ADDRESS=http://selenium:4444/wd/hub
+      - MLAB_URI
+      - SLACK_ADMIN_TOKEN
+      - GMAIL_PASSWORD
+      - GMAIL_USERNAME
+      - BT_ENV
+      - BT_PRIVATE_KEY
+      - BT_PUBLIC_KEY
+      - BT_MERCHANT_ID
+      - SIGNATURES_FOLDER
+      - SECRET_KEY_BASE
+      - BILLING_ENABLED=true
+    tty: true
   selenium:
     image: selenium/standalone-chrome:latest
     ports:

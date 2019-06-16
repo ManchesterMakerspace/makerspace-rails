@@ -1,13 +1,18 @@
+import utils from "./common";
+import { By } from "selenium-webdriver";
+
 class PaymentMethods {
   public addPaymentButton = "#add-payment-button"
   public paymentMethodFormSelect = {
     creditCard: "#card-payment",
     paypal: "#paypal-button",
     error: "#braintree-payment-method-error",
-    cancel: "#payment-method-cancel",
+    loading: "#payment-method-form-loading",
+    cancel: "#payment-method-form-cancel",
   }
 
   public paymentMethodSelect = {
+    loading: "#get-payment-methods",
     paymentMethodId: "#select-payment-method-{ID}",
     noneFound: "#none-found",
     error: "#get-payment-methods-error",
@@ -15,6 +20,13 @@ class PaymentMethods {
 
   public getPaymentMethodSelectId = (id: string) =>
     this.paymentMethodSelect.paymentMethodId.replace("{ID}", id)
+
+  public selectPaymentMethodByIndex = async (index: number) => {
+    const paymentmethodElementss = await this.getPaymentMethods();
+    await paymentmethodElementss[index].click();
+  }
+
+  public getPaymentMethods = () => browser.findElements(By.css(`[id^="select-payment-method-"]`));
 
   public deletePaymentButton = "#delete-payment-button"
   private paymentMethodDeleteId = "#delete-payment-method-confirm"
@@ -29,13 +41,15 @@ export const paymentMethods = new PaymentMethods();
 class CreditCard {
   private creditCardFormId = "#credit-card-form"
   public creditCardForm = {
-    cardNumber: `${this.creditCardFormId}-cardNumber`,
-    csv: `${this.creditCardFormId}-csv`,
-    expirationDate: `${this.creditCardFormId}-expirationDate`,
-    postalCode: `${this.creditCardFormId}-postalCode`,
+    cardNumber: `#credit-card-number`,
+    csv: `#csv`,
+    expirationDate: `#expiration`,
+    postalCode: `#postal-code`,
     submit: `${this.creditCardFormId}-submit`,
+    loading: `${this.creditCardFormId}-loading`,
   }
 }
+
 export const creditCard = new CreditCard();
 
 class Paypal {

@@ -46,6 +46,7 @@ export class SignUpPageObject {
     noData: `${this.membershipSelectTableId}-no-data-row`,
     loading: `${this.membershipSelectTableId}-loading`,
     discountCheckbox: "#discount-select",
+    submit: "#select-membership-submit"
   };
 
   private codeOfConductFormId = "#code-of-conduct-form";

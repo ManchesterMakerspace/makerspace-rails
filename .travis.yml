@@ -21,4 +21,8 @@ jobs:
       script: make start-unit
     - stage: functional tests
       script: make functional-up
-      after_failure: bundle exec rake upload_screenshots
+    - stage: integration tests
+      script: make integration-up
+
+after_failure: 
+  - bundle exec rake upload_screenshots

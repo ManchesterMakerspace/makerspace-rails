@@ -23,10 +23,7 @@ const reviewMemberInfo = async (loggedInUser: LoginMember, viewingMember?: Login
     await mock(mockRequests.member.get.ok(viewingMember.id, viewingMember, true));
     await autoLogin(loggedInUser, memberPO.getProfilePath(viewingMember.id), { billing: true });
   }
-  const { firstname, lastname, email, expirationTime } = viewingMember;
-  expect(await utils.getElementText(memberPO.memberDetail.title)).toEqual(`${firstname} ${lastname}`);
-  expect(await utils.getElementText(memberPO.memberDetail.email)).toEqual(email);
-  expect(await utils.getElementText(memberPO.memberDetail.expiration)).toEqual(expirationTime ? timeToDate(expirationTime) : "N/A");
+  await memberPO.verifyProfileInfo(viewingMember);
 }
 
 const reviewSubResource = async (member: LoginMember, admin: boolean = false) => {

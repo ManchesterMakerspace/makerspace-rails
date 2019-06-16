@@ -1,5 +1,6 @@
 import { Key } from "selenium-webdriver";
 import { toDatePicker } from "ui/utils/timeToDate";
+import { matchPath } from "react-router";
 
 export const rootURL = `http://${process.env.APP_DOMAIN || 'localhost'}:${process.env.PORT || 3002}`;
 
@@ -73,6 +74,21 @@ export class PageUtils {
       }
     } catch {
       throw new Error(`${targetUrl} never loaded`);
+    }
+  }
+
+  public waitForPageToMatch = async (targetMatch: string, exact: boolean = false, timeout: number = undefined) => {
+    try {
+      if (exact) {
+        await browser.wait(() => {
+          return browser.getCurrentUrl().then((url: string) => !!matchPath(url, {
+            exact,
+            path: targetMatch,
+          }));
+        });
+      }
+    } catch {
+      throw new Error(`${targetMatch} never loaded`);
     }
   }
 
@@ -224,6 +240,21 @@ export class PageUtils {
     }
   }
 
+  public waitForText = async (elementLocator: string, text: string) => {
+    try {
+      await browser.wait(() => {
+        return this.getElementText(elementLocator).then((content) => {
+          console.log("CONTENT", content);
+          console.log("text", text);
+          return content.test(new RegExp(text));
+        });
+      }, this.waitUntilTime);
+      await browser.sleep(200);
+    } catch {
+      throw new Error(`Error waiting for element ${elementLocator} to contain ${text}`);
+    }
+  }
+
   public waitForVisible = async (elementLocator: string) => {
     try {
       await browser.wait(() => {
@@ -246,7 +277,12 @@ export class PageUtils {
   }
 
   public fillSearchInput = async (elementLocator: string, searchVal: string, optionValue?: any) => {
-    const element = await this.getElementByCss(`${elementLocator} input`);
+    let element;
+    try {
+      element = await this.getElementByCss(`${elementLocator}`);
+    } catch {
+      element = await this.getElementByCss(`${elementLocator} input`);
+    }
     try {
       await element.clear();
       await element.sendKeys(searchVal);
