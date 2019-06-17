@@ -60,7 +60,7 @@ describe("Earned Memberships", () => {
         await utils.waitForVisible(membershipPO.membershipForm.submit);
 
         await mock(mockRequests.members.get.ok(defaultMembers), 0);
-        await utils.fillSearchInput(membershipPO.membershipForm.member, defaultMembers[0].email, defaultMembers[0].id);
+        await utils.fillAsyncSearchInput(membershipPO.membershipForm.member, defaultMembers[0].email, defaultMembers[0].id);
 
         await utils.selectDropdownByValue(membershipPO.requirementForm(0).nameSelect, "Other");
         await utils.fillInput(membershipPO.requirementForm(0).nameInput, newRequirement.name);
@@ -123,7 +123,11 @@ describe("Earned Memberships", () => {
         await utils.assertInputError(membershipPO.requirementForm(0).nameSelect)
 
         await mock(mockRequests.members.get.ok(defaultMembers), 0);
-        await utils.fillSearchInput(membershipPO.membershipForm.member, defaultMembers[0].email, defaultMembers[0].id);
+        await utils.fillAsyncSearchInput(
+          membershipPO.membershipForm.member,
+          defaultMembers[0].email,
+          defaultMembers[0].id
+        );
 
         await utils.selectDropdownByValue(membershipPO.requirementForm(0).nameSelect, "Other");
         await utils.fillInput(membershipPO.requirementForm(0).nameInput, newRequirement.name);
@@ -220,12 +224,20 @@ describe("Earned Memberships", () => {
 
       await mock(mockRequests.members.get.ok(defaultMembers));
       await utils.clickElement(reportPO.reportRequirementForm(0).addMemberButton);
-      await utils.fillSearchInput(reportPO.reportRequirementForm(0).member(0), defaultMembers[0].email, defaultMembers[0].id);
+      await utils.fillAsyncSearchInput(
+        reportPO.reportRequirementForm(0).member(0),
+        defaultMembers[0].email,
+        defaultMembers[0].id
+      );
       await utils.selectDropdownByValue(reportPO.reportRequirementForm(0).reportedCount, String(newReportRequirement.reportedCount));
 
       const newMemberSearch = defaultMembers.slice(5, 10);
       await mock(mockRequests.members.get.ok(newMemberSearch));
-      await utils.fillSearchInput(reportPO.reportRequirementForm(0).member(1), newMemberSearch[1].email, newMemberSearch[1].id);
+      await utils.fillAsyncSearchInput(
+        reportPO.reportRequirementForm(0).member(1),
+        newMemberSearch[1].email,
+        newMemberSearch[1].id
+      );
 
       await mock(mockRequests.earnedMembershipReports.post.ok(membership.id, initReport));
       await mock(mockRequests.earnedMembershipReports.get.ok(membership.id, [initReport]));

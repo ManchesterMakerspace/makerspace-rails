@@ -202,7 +202,7 @@ export class PageUtils {
       await element.click(); // Click it if its not checked and should be, or is checked and shouldn't be
     }
   }
-  
+
   public assertInputError = async (elementLocator: string, exact: boolean = false, errorMsg?: string) => {
     const errorLocator = exact ? elementLocator : `${elementLocator}-error`;
     try {
@@ -285,12 +285,18 @@ export class PageUtils {
   }
 
   public fillSearchInput = async (elementLocator: string, searchVal: string, optionValue?: any) => {
-    let element;
+    const element = await this.getElementByCss(`${elementLocator}`);
     try {
-      element = await this.getElementByCss(`${elementLocator}`);
-    } catch {
-      element = await this.getElementByCss(`${elementLocator} input`);
+      await element.clear();
+      await element.sendKeys(searchVal);
+      await element.sendKeys(Key.ENTER);
+    } catch (e) {
+      throw new Error(`Unable to enter keys: ${searchVal} in input: ${elementLocator}`);
     }
+  }
+
+  public fillAsyncSearchInput = async (elementLocator: string, searchVal: string, optionValue?: any) => {
+    const element = await this.getElementByCss(`${elementLocator} input`);
     try {
       await element.clear();
       await element.sendKeys(searchVal);
