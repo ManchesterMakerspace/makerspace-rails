@@ -1,10 +1,11 @@
-require 'database_cleaner'
-require 'factory_bot'
 
 namespace :db do
   desc "Clears the db for testing."
   task :db_reset => :environment do
     if Rails.env.test?
+      require 'factory_bot'
+      require 'database_cleaner'
+
       Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
       DatabaseCleaner.strategy = :truncation
       DatabaseCleaner.clean
@@ -25,6 +26,7 @@ namespace :db do
   end
 
   task :reject_card, [:number] => :environment do |t, args|
+    require 'factory_bot'
     Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
     if args[:number].nil? then
