@@ -16,8 +16,10 @@ import { autoLogin } from "../autoLogin";
 import { defaultTransactions } from "../../constants/transaction";
 import { defaultInvoice } from "../../constants/invoice";
 import { Routing } from "app/constants";
+import { MemberInvoice } from "app/entities/invoice";
 import { paymentMethods } from "../../pageObjects/paymentMethods";
 import memberPO from "../../pageObjects/member";
+import { LoginMember } from "../../pageObjects/auth";
 
 describe("Paid Subscriptions", () => {
   describe("Admin subscription", () => {
@@ -64,9 +66,12 @@ describe("Paid Subscriptions", () => {
       nonce: "foobar"
     }
       const membershipId = "foo";
-      const membershipOption = invoiceOptions.find((io) => io.id === membershipId);
+      const membershipOption = {
+        ...invoiceOptions.find((io) => io.id === membershipId),
+        amount: initSubscription.amount,
+      }
 
-    it("Displays information about current subscriptions/membership", async () => {
+    it("Displays information about current subscriptions and membership", async () => {
       await autoLogin(basicUser, undefined, { billing: true });
       await mock(mockRequests.subscription.get.ok(initSubscription))
 
@@ -78,21 +83,25 @@ describe("Paid Subscriptions", () => {
       await utils.waitForNotVisible(settingsPO.nonSubscriptionDetails.loading);
       expect(await utils.isElementDisplayed(settingsPO.nonSubscriptionDetails.status)).toBeTruthy();
 
+      await mock(mockRequests.invoices.post.ok({
+        ...membershipOption,
+        resource: basicUser,
+      } as Partial<MemberInvoice>, false)); // initial invoice creation
       await mock(mockRequests.invoiceOptions.get.ok([membershipOption], membershipOptionQueryParams));
+      await mock(mockRequests.paymentMethods.get.ok([newCard]));
       await utils.clickElement(settingsPO.nonSubscriptionDetails.createSubscription);
       await utils.waitForNotVisible(signup.membershipSelectForm.loading);
       await signup.selectMembershipOption(membershipId);
-      await mock(mockRequests.paymentMethods.get.ok([newCard]));
       await utils.clickElement(signup.membershipSelectForm.submit);
       await utils.waitForPageLoad(checkoutPo.checkoutUrl);
 
       // Submit payment
       const defaultTransaction = defaultTransactions[1];
-      await mock(mockRequests.transactions.post.ok(defaultInvoice.id, newCard.id, defaultTransaction));
+      await mock(mockRequests.transactions.post.ok(defaultTransaction));
       await mock(mockRequests.member.get.ok(basicUser.id, {
-        basicUser,
-        subcriptionId: initSubscription.id,
-      }));
+        ...basicUser,
+        subscriptionId: initSubscription.id,
+      } as LoginMember));
       await utils.clickElement(paymentMethods.getPaymentMethodSelectId(newCard.id));
       const total = numberAsCurrency(initSubscription.amount);
 
@@ -108,6 +117,13 @@ describe("Paid Subscriptions", () => {
       // Wait for profile redirect
       await utils.waitForPageLoad(memberPO.getProfilePath(basicUser.id));
 
+      const subscriptionInvoice = {
+        defaultInvoice,
+        subscriptionId: initSubscription.id,
+      };
+      await mock(mockRequests.subscription.get.ok(initSubscription))
+      await mock(mockRequests.invoices.get.ok([subscriptionInvoice], { resourceId: basicUser.id }));
+
       await header.navigateTo(header.links.settings);
       await utils.waitForPageLoad(settingsPO.pageUrl);
       await settingsPO.goToMembershipSettings();
@@ -121,11 +137,16 @@ describe("Paid Subscriptions", () => {
     it("Can cancel their subscriptions", async () => {
       await autoLogin({
         ...basicUser,
-        subcriptionId: initSubscription.id,
-      }, undefined, { billing: true });
+        subscriptionId: initSubscription.id,
+      } as LoginMember, undefined, { billing: true });
 
+      const subscriptionInvoice = {
+        defaultInvoice,
+        subscriptionId: initSubscription.id,
+      };
       await mock(mockRequests.subscription.get.ok(initSubscription))
-
+      await mock(mockRequests.invoices.get.ok([subscriptionInvoice]));
+     
       await header.navigateTo(header.links.settings);
       await utils.waitForPageLoad(settingsPO.pageUrl);
       await settingsPO.goToMembershipSettings();
@@ -136,14 +157,17 @@ describe("Paid Subscriptions", () => {
 
       await utils.clickElement(settingsPO.subscriptionDetails.cancelSubscription);
       await utils.waitForVisible(subscriptionsPO.cancelSubscriptionModal.submit);
-      expect(await utils.getElementText(subscriptionsPO.cancelSubscriptionModal.member)).toEqual(defaultSubscriptions[0].memberName);
       expect(await utils.getElementText(subscriptionsPO.cancelSubscriptionModal.status)).toEqual(defaultSubscriptions[0].status);
-      expect(await utils.getElementText(subscriptionsPO.cancelSubscriptionModal.resourceClass)).toEqual(defaultSubscriptions[0].resourceClass);
-      await mock(mockRequests.subscription.delete.ok(defaultSubscriptions[0].id, true));
-      await mock(mockRequests.subscriptions.get.ok([], undefined, true));
+
+      await mock(mockRequests.subscription.delete.ok(defaultSubscriptions[0].id));
+      await mock(mockRequests.member.get.ok(basicUser.id, basicUser));
+
       await utils.clickElement(subscriptionsPO.cancelSubscriptionModal.submit);
       await utils.waitForNotVisible(subscriptionsPO.cancelSubscriptionModal.submit);
-      await utils.waitForVisible(subscriptionsPO.getNoDataRowId());
+      await utils.waitForNotVisible(settingsPO.nonSubscriptionDetails.loading);
+      expect(await utils.isElementDisplayed(settingsPO.nonSubscriptionDetails.status)).toBeTruthy();
+      expect(await utils.isElementDisplayed(settingsPO.subscriptionDetails.status)).toBeFalsy();
+
     });
   })
 });

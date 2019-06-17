@@ -20,12 +20,12 @@ export class ScreenshotReporter {
   specDone(result) {
     return new Promise( async (resolve) => {
       if (result.status === 'failed') {
-        // this.browser.manage().logs().get("browser")
-        //   .then(function(entries) {
-        //       entries.forEach(function(entry) {
-        //         console.log('[%s] %s', entry.level.name, entry.message);
-        //       });
-        //   });
+        this.browser.manage().logs().get("browser")
+          .then(function(entries) {
+              entries.forEach(function(entry) {
+                console.log('[%s] %s', entry.level.name, entry.message);
+              });
+          });
         try {
           const screenshot = await this.browser.takeScreenshot();
 

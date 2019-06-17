@@ -114,11 +114,10 @@ export const mockRequests = {
   },
   transactions: {
     post: {
-      ok: (invoiceId: string, paymentMethodId: string, resultingTransaction: Transaction) => ({
+      ok: (resultingTransaction: Transaction) => ({
         httpRequest: {
           method: Method.Post,
           path: `/${Url.Billing.Transactions}.json`,
-          body: JSON.stringify({ transaction: {  paymentMethodId, invoiceId } }),
         },
         httpResponse: {
           statusCode: 200,

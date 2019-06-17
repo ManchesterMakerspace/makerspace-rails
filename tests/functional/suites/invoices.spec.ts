@@ -72,8 +72,8 @@ describe("Invoicing and Dues", () => {
       // Submit payment
       const pastDueTransaction = defaultTransactions[0];
       const defaultTransaction = defaultTransactions[1];
-      await mock(mockRequests.transactions.post.ok(defaultInvoice.id, newCard.id, defaultTransaction));
-      await mock(mockRequests.transactions.post.ok(pastDueInvoice.id, newCard.id, pastDueTransaction));
+      await mock(mockRequests.transactions.post.ok(defaultTransaction));
+      await mock(mockRequests.transactions.post.ok(pastDueTransaction));
       await mock(mockRequests.member.get.ok(basicUser.id, basicUser));
       await utils.clickElement(paymentMethods.getPaymentMethodSelectId(newCard.id));
       const total = numberAsCurrency(defaultInvoice.amount + pastDueInvoice.amount);
