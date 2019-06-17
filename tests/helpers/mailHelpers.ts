@@ -7,6 +7,7 @@ const mailDir = path.resolve(__dirname, '../../tmp/mail');
 const getMail = () => {
   return fs.readdirSync(mailDir);
 }
+const buildFileName = (emailAddress) => `${mailDir}/${emailAddress}`;
 
 export const emptyMail = () => {
   if (!fs.existsSync(mailDir)) {
@@ -24,11 +25,11 @@ export const emptyMail = () => {
 }
 
 export const readMail = (emailAddress: string) => {
-  return fs.readFileSync(`${mailDir}/${emailAddress}`, 'utf-8');
+  return fs.readFileSync(buildFileName(emailAddress), 'utf-8');
 }
 
 export const extractLinkFromEmail = (emailAddress: string) => {
-  const data = fs.readFileSync(`${mailDir}/${emailAddress}`, 'utf-8');
+  const data = readMail(emailAddress);
   const $ = cheerio.load(data);
   const link = $('a[href^="http://"]');
   return $(link).attr('href');
@@ -42,4 +43,8 @@ export const emailPresent = (emailAddress: string) => {
 export const emailCount = () => {
   const files = [getMail() || []].filter((file: any) => file.isFile());
   return files.length;
+}
+
+export const openEmail = (emailAddress: string) => {
+  return browser.get(buildFileName(emailAddress));
 }

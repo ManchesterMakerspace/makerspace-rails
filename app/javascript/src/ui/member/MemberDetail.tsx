@@ -332,7 +332,7 @@ class MemberDetail extends React.Component<Props, State> {
     const { displayDocuments } = this.state;
     return (
       <>
-        {isRequestingMember && <LoadingOverlay id="member-detail-loading"/>}
+        {isRequestingMember && <LoadingOverlay id="member-detail"/>}
         {member && (
           displayDocuments ?
           <SignDocuments onSubmit={this.closeAgreements}/>

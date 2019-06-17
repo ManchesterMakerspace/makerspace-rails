@@ -113,7 +113,7 @@ class DetailView extends React.Component<OwnProps, State> {
               {activeResource.content}
             </div>
           </>
-        ) || <LoadingOverlay id="detail-view-loading-overlay"/>}
+        ) || <LoadingOverlay id="detail-view"/>}
       </Grid>
     )
   }

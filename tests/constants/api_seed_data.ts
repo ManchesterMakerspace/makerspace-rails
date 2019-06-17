@@ -1,5 +1,3 @@
-import { resolve } from "dns";
-
 export const basicUserLogins = new Array(5).fill(undefined).map((_, index) => ({
   email: `basic_member${index}@test.com`,
   password: "password"
@@ -12,7 +10,11 @@ export const adminUserLogins = new Array(5).fill(undefined).map((_, index) => ({
 }));
 export const getAdminUserLogin = () => adminUserLogins.length && adminUserLogins.pop();
 
-export const invoiceOptionIds = ["one-month", "three-months", "one-year"];
+export const invoiceOptionIds = {
+  monthly: "one-month",
+  quarterly: "three-months", 
+  annualy: "one-year"
+};
 
 export const createRejectCard = (cardNumber: string) => {
   const cp = require('child_process');
@@ -21,8 +23,16 @@ export const createRejectCard = (cardNumber: string) => {
       if (error) {
         console.log(error);
       }
-      console.log("SUCCESS", cardNumber);
       resolve();
     })
   })
-}
+};
+
+export const creditCardNumbers = {
+  visa: "4111111111111111",
+  mastercard: "5555555555554444",
+  amex: "378282246310005",
+  discover: "6011111111111117",
+  debit: "4012000033330125",
+  invalid: "4000111111111115",
+};

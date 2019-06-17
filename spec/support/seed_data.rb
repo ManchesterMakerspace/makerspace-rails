@@ -70,7 +70,7 @@ class SeedData
   end
 
   def create_invoice_options
-    create(:invoice_option, name: "One Month", amount: 65.0, id: "one-month")
+    create(:invoice_option, name: "One Month", amount: 65.0, id: "one-month", plan_id: "monthly_membership_subscription")
     create(:invoice_option, name: "Three Months", amount: 200.0, id: "three-months")
     create(:invoice_option, name: "One Year", amount: 800.0, id: "one-year")
   end

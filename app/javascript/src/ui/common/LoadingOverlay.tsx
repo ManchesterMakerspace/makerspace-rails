@@ -5,6 +5,7 @@ interface LoadingProps {
   id: string;
   contained?: boolean;
 }
+// TODO: This is weird that it mutates an 'id' prop
 const LoadingOverlay: React.SFC<LoadingProps> = (props) => {
   const id = `${props.id}-loading`
   return (

@@ -18,6 +18,13 @@ class PaymentMethods {
     error: "#get-payment-methods-error",
   }
 
+  private changePaymentMethodId = "#change-payment-method";
+  public changePaymentMethod = {
+    error: `${this.changePaymentMethodId}-error`,
+    submit: `${this.changePaymentMethodId}-submit`,
+    cancel: `${this.changePaymentMethodId}-cancel`,
+  }
+
   public getPaymentMethodSelectId = (id: string) =>
     this.paymentMethodSelect.paymentMethodId.replace("{ID}", id)
 
@@ -42,11 +49,31 @@ class CreditCard {
   private creditCardFormId = "#credit-card-form"
   public creditCardForm = {
     cardNumber: `#credit-card-number`,
-    csv: `#csv`,
+    csv: `#cvv`,
     expirationDate: `#expiration`,
     postalCode: `#postal-code`,
     submit: `${this.creditCardFormId}-submit`,
     loading: `${this.creditCardFormId}-loading`,
+  }
+
+  public iframes = {
+    cardNumber: "braintree-hosted-field-number",
+    expirationDate: "braintree-hosted-field-expirationDate",
+    csv: "braintree-hosted-field-cvv",
+    postalCode: "braintree-hosted-field-postalCode",
+  }
+
+  public fillInput = async (field: string, input: string): Promise<void> => {
+    await browser.switchTo().frame(this.iframes[field]);
+    await utils.fillInput(this.creditCardForm[field], input);
+    await browser.switchTo().defaultContent();
+  }
+
+  public getInput = async (field: string): Promise<string> => {
+    await browser.switchTo().frame(this.iframes[field]);
+    const val = await utils.getElementText(this.creditCardForm[field]);
+    await browser.switchTo().defaultContent();
+    return val;
   }
 }
 

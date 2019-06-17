@@ -7,7 +7,7 @@ import rentalsPO from "../../pageObjects/rentals";
 import memberPo from "../../pageObjects/member";
 import renewPO from "../../pageObjects/renewalForm";
 import { Routing } from "app/constants";
-import { getAdminUserLogin, createRejectCard, getBasicUserLogin } from "../../constants/api_seed_data";
+import { getAdminUserLogin, getBasicUserLogin } from "../../constants/api_seed_data";
 import { defaultRentals } from "../../constants/rental";
 import { WebElement, By } from "selenium-webdriver";
 

@@ -12,15 +12,14 @@ import { defaultRental, defaultRentals } from "../../constants/rental";
 import { autoLogin } from "../autoLogin";
 
 describe("Rentals", () => {
+  // TODO: These features don't exist yet
   xdescribe("Basic user", () => {
     beforeEach(() => {
       return autoLogin(basicUser);
     });
     it("Can review and pay for their rentals", () => {
-      // TODO
     });
     it("Can request for a new rental", () => {
-
     });
   });
   describe("Admin user", () => {

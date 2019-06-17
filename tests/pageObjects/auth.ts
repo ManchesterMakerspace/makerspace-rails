@@ -45,6 +45,7 @@ export class AuthPageObject {
 
   public goToLogin = async () => {
     await browser.get(utils.buildUrl(this.loginUrl));
+    await utils.waitForPageLoad(Routing.Login);
   }
 
   public signInUser = async (user: { email: string, password: string }) => {

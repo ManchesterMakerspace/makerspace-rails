@@ -38,31 +38,19 @@ export class TablePageObject {
     return await utils.getElementText(`#${this.getRowBaseId(rowId)}-${field}`);
   }
   public selectRow = async (rowId: string, check: boolean = true) => {
-    const element: WebElement = browser.findElement(`#${this.getRowBaseId(rowId)}-select`);
-    const checked = element.getAttribute("checked");
-    if (!(checked && check)) {
-      await element.click(); // Click it if its not checked and should be, or is checked and shouldn't be
-    }
+    const element: WebElement = browser.findElement(By.css(`#${this.getRowBaseId(rowId)}-select`));
+    await utils.selectCheckbox(element, check);
   }
 
   public getRowByIndex = async (index: number): Promise<WebElement> => {
     const rows = await this.getAllRows();
-    console.log(rows.length);
     return rows[index];
   };
 
   public selectRowByIndex = async (index: number, check: boolean = true): Promise<void> => {
     const row = await this.getRowByIndex(index);
     const element: WebElement = row.findElement(By.css(`[id$="-select"]`));
-    const checked = await element.getAttribute("checked");
-    console.log("CHECKED", checked);
-    console.log("check", check);
-    if (!(checked && check)) {
-      console.log("CLICK IT");
-      await element.click(); // Click it if its not checked and should be, or is checked and shouldn't be
-    } else {
-      console.log("DONT CLICK IT");
-    }
+    await utils.selectCheckbox(element, check);
   }
 
   public getColumnByIndex = async (index: number, field: string): Promise<WebElement> => {
@@ -71,6 +59,12 @@ export class TablePageObject {
     return column;
   } 
 
+  public getColumnTextByIndex = async (index: number, field: string): Promise<string> => {
+    const column = await this.getColumnByIndex(index, field);
+    const text = await column.getText();
+    return text;
+  }
+
   public verifyFieldsByIndex = async <T extends { id: string }>(
     index: number,
     resource: T | Partial<T>,
@@ -78,8 +72,7 @@ export class TablePageObject {
   ): Promise<void> => {
     const fieldsContent: { field: string, text: string }[] = await Promise.all((this.fields as string[]).map((field: string) => {
       return new Promise(async (resolve) => {
-        const column =  await this.getColumnByIndex(index, field);
-        const text: string = await column.getText();
+        const text =  await this.getColumnTextByIndex(index, field);
         resolve({
           field,
           text

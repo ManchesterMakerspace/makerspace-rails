@@ -196,6 +196,7 @@ class SubscriptionsList extends React.Component<Props, State> {
               <Checkbox
                 name="hide-canceled"
                 value="hide-canceled"
+                id="hide-cancelled"
                 checked={!!hideCanceled}
                 onChange={this.toggleSubscriptionView}
                 color="default"

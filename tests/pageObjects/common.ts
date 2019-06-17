@@ -1,4 +1,4 @@
-import { Key } from "selenium-webdriver";
+import { Key, WebElement } from "selenium-webdriver";
 import { toDatePicker } from "ui/utils/timeToDate";
 import { matchPath } from "react-router";
 
@@ -195,6 +195,14 @@ export class PageUtils {
     // Select it
     await (matchingOptions[0] as { option: any, value: string }).option.click();
   }
+
+  public selectCheckbox = async (element: WebElement, check: boolean = true): Promise<void> => {
+    const checked = await element.getAttribute("checked");
+    if (!(checked && check)) {
+      await element.click(); // Click it if its not checked and should be, or is checked and shouldn't be
+    }
+  }
+  
   public assertInputError = async (elementLocator: string, exact: boolean = false, errorMsg?: string) => {
     const errorLocator = exact ? elementLocator : `${elementLocator}-error`;
     try {
@@ -229,11 +237,11 @@ export class PageUtils {
       throw new Error(`Unable to locate element ${elementLocator} to assert text`);
     }
   }
-  public waitForNotVisible = async (elementLocator: string) => {
+  public waitForNotVisible = async (elementLocator: string, timeout?: number) => {
     try {
       await browser.wait(() => {
         return this.isElementDisplayed(elementLocator).then((displayed) => !displayed);
-      }, this.waitUntilTime);
+      }, timeout || this.waitUntilTime);
       await browser.sleep(200);
     } catch {
       throw new Error(`Error waiting for element to not be visible: ${elementLocator}`);

@@ -114,7 +114,7 @@ class PaypalButton extends React.Component<Props, State> {
             {error && <ErrorMessage error={error} id="paypal-error"/>}
         </Grid>
 
-        {loading && <LoadingOverlay id="paypal-button-loading" />}
+        {loading && <LoadingOverlay id="paypal-button" />}
       </Grid>
     )
   }

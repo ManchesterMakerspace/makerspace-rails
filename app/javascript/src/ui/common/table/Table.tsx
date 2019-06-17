@@ -212,7 +212,7 @@ class EnhancedTable<T> extends React.Component<Props<T>, {}> {
 
     return (
       <>
-        {loading && <LoadingOverlay id={`${id}-loading`}/>}
+        {loading && <LoadingOverlay id={`${id}`}/>}
         <Table>
           {this.getHeaderRow()}
           <TableBody>

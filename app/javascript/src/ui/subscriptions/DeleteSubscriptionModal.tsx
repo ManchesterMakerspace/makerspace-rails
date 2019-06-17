@@ -26,7 +26,7 @@ class DeleteSubscription extends React.Component<OwnProps, {}> {
     return subscription ? (
       <FormModal
         formRef={this.setFormRef}
-        id="delete-subscription"
+        id="cancel-subscription"
         loading={isRequesting}
         isOpen={isOpen}
         closeHandler={onClose}

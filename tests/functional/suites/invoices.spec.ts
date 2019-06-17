@@ -38,7 +38,6 @@ describe("Invoicing and Dues", () => {
         4. Select past due invoice from table
         5. Click Checkout
         6. Assert directed to checkout form
-        TODO
         7. Select payment method & submit
         8. Assert checkout summary page
         9. Submit
@@ -69,19 +68,6 @@ describe("Invoicing and Dues", () => {
       await mock(mockRequests.paymentMethods.get.ok([newCard]));
       await utils.clickElement(invoicePO.actionButtons.payNow);
       await utils.waitForPageLoad(checkout.checkoutUrl);
-
-      // TODO Find a way to mock creating a payment method
-      // await mock(mockRequests.paymentMethods.new.ok("foo"));
-      // await utils.clickElement(paymentMethods.addPaymentButton);
-      // await utils.waitForVisible(paymentMethods.paymentMethodFormSelect.creditCard);
-      // await utils.clickElement(paymentMethods.paymentMethodFormSelect.creditCard);
-      // await utils.waitForVisible(creditCard.creditCardForm.submit);
-      // await utils.fillInput(creditCard.creditCardForm.cardNumber, creditCardForm.cardNumber);
-      // await utils.fillInput(creditCard.creditCardForm.expirationDate, creditCardForm.expiration);
-      // await utils.fillInput(creditCard.creditCardForm.postalCode, creditCardForm.postalCode);
-      // await utils.fillInput(creditCard.creditCardForm.csv, creditCardForm.csv);
-      // await mock(mockRequests.paymentMethods.post.ok(newCard.nonce, newCard.id));
-      // await utils.clickElement(creditCard.creditCardForm.submit);
 
       // Submit payment
       const pastDueTransaction = defaultTransactions[0];

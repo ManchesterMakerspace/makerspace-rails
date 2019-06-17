@@ -145,8 +145,10 @@ class UpdateMembershipForm extends React.Component<Props, State> {
     // Creating a new sub means one doesn't already exist
     const onUpdate = (onSubmit: Function) => async (form: Form) => {
       await onSubmit(form);
-      if (!subscription) {
+      if (!subscription) { // Pay if no subscription
         this.props.goToCheckout();
+      } else { // Refresh subscription if already exists
+        this.props.getSubscription(subscription.id);
       }
     }
 

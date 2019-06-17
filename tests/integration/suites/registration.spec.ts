@@ -1,21 +1,31 @@
 import * as moment from "moment";
-import auth, { LoginMember } from "../../pageObjects/auth";
+import auth from "../../pageObjects/auth";
 import utils from "../../pageObjects/common";
 import memberPO from "../../pageObjects/member";
 import { basicMembers } from "../../constants/member";
-import signup from "../../pageObjects/signup";
 import header from "../../pageObjects/header";
 import memberPo from "../../pageObjects/member";
 import renewalPO from "../../pageObjects/renewalForm";
+import invoicePO from "../../pageObjects/invoice";
+import { checkout } from "../../pageObjects/checkout";
 import { Routing } from "app/constants";
-import { getAdminUserLogin, createRejectCard } from "../../constants/api_seed_data";
+import { getAdminUserLogin, createRejectCard, creditCardNumbers } from "../../constants/api_seed_data";
 import { selfRegisterMember } from "../utils/auth";
+import { paymentMethods, creditCard } from "../../pageObjects/paymentMethods";
+
+const newVisa = {
+  number: creditCardNumbers.visa,
+  expiration: "022020",
+  csv: "123",
+  postalCode: "90210",
+}
 
 describe("Member management", () => {
   describe("Registering", () => {
     beforeEach(() => {
       return browser.get(utils.buildUrl());
-    })
+    });
+    // TODO customers should be able to skip picking a membership type (PayPal/ cash payments)
     test("Customers can register from home page", async () => {
       const newMember = Object.assign({}, basicMembers.pop());
       await selfRegisterMember(newMember);
@@ -23,6 +33,40 @@ describe("Member management", () => {
         ...newMember,
         expirationTime: null
       });
+      // TODO: pay for selected membership
+      await utils.clickElement(invoicePO.actionButtons.payNow);
+      await utils.waitForPageLoad(checkout.checkoutUrl);
+
+      // Add a payment method
+      await utils.waitForNotVisible(paymentMethods.paymentMethodSelect.loading);
+      expect((await paymentMethods.getPaymentMethods()).length).toEqual(0);
+      await utils.clickElement(paymentMethods.addPaymentButton);
+      await utils.waitForVisible(paymentMethods.paymentMethodFormSelect.creditCard);
+      await utils.waitForNotVisible(paymentMethods.paymentMethodFormSelect.loading);
+      await utils.clickElement(paymentMethods.paymentMethodFormSelect.creditCard);
+
+      await utils.waitForVisible(creditCard.creditCardForm.submit);
+      await utils.waitForNotVisible(creditCard.creditCardForm.loading);
+      await creditCard.fillInput("cardNumber", newVisa.number);
+      await creditCard.fillInput("csv", newVisa.csv);
+      await creditCard.fillInput("expirationDate", newVisa.expiration);
+      await creditCard.fillInput("postalCode", newVisa.postalCode);
+      await utils.clickElement(creditCard.creditCardForm.submit);
+      await utils.waitForNotVisible(creditCard.creditCardForm.loading);
+      await utils.waitForNotVisible(creditCard.creditCardForm.submit);
+
+      // Select the payment method
+      // TODO: new payment methods should be auto selected
+      await utils.waitForNotVisible(paymentMethods.paymentMethodSelect.loading);
+      expect((await paymentMethods.getPaymentMethods()).length).toEqual(1);
+      await paymentMethods.selectPaymentMethodByIndex(0);
+
+      // Submit payment, view receipt & return to profile
+      await utils.clickElement(checkout.submit);
+      await utils.waitForPageLoad(Routing.Receipt);
+      await utils.clickElement(checkout.backToProfileButton);
+      await utils.waitForPageToMatch(Routing.Profile);
+      // TODO: Verify new member, subscription & receipt emails
     });
   
     test("Admins can register a customer manually", async () => {

@@ -167,6 +167,18 @@ export const mockRequests = {
     }
   },
   subscription: {
+    get: {
+      ok: (subscription: Partial<Subscription>, admin: boolean = false): MockRequest => ({
+        httpRequest: {
+          method: Method.Get,
+          path: `/${admin ? Url.Admin.Billing.Subscriptions : Url.Billing.Subscriptions}/${subscription.id}.json`
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({ subscription }),
+        }
+      })
+    },
     delete: {
       ok: (subscriptionId: string, admin: boolean = false) => ({
         httpRequest: {
