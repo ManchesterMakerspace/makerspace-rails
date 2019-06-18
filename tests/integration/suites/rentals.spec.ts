@@ -26,11 +26,10 @@ describe("Rentals", () => {
     await header.navigateTo(header.links.members);
     await utils.waitForPageLoad(memberPo.membersListUrl);
     await utils.waitForNotVisible(memberPo.membersList.loading);
-    await utils.fillAsyncSearchInput(memberPo.membersList.searchInput, getBasicUserLogin().email);
+    await utils.fillSearchInput(memberPo.membersList.searchInput, getBasicUserLogin().email);
     await utils.waitForNotVisible(rentalsPO.getLoadingId());
     const link: WebElement = await memberPO.getColumnByIndex(0, "lastname");
     const memberName: string = await link.getText();
-    console.log(memberName);
     await link.findElement(By.css("a")).click();
     await utils.waitForPageToMatch(Routing.Profile);
     await utils.waitForNotVisible(memberPO.memberDetail.loading);
