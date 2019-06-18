@@ -40,7 +40,7 @@ if [ "${INTERACTIVE}" == "TRUE" ]; then
 else
   cd /usr/src/app && echo "Starting testing..."
   if [ ${SELENIUM_ADDRESS} ]; then
-    if [ "${CONFIG}" == "integration"]; then
+    if [ "${CONFIG}" == "integration" ]; then
       yarn test-integration
     else
       yarn test-functional

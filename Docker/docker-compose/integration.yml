@@ -23,6 +23,7 @@ services:
       - SIGNATURES_FOLDER
       - SECRET_KEY_BASE
       - BILLING_ENABLED=true
+      - CONFIG=integration
     tty: true
   tester:
     build:
@@ -53,6 +54,7 @@ services:
       - SIGNATURES_FOLDER
       - SECRET_KEY_BASE
       - BILLING_ENABLED=true
+      - CONFIG=integration
     tty: true
   selenium:
     image: selenium/standalone-chrome:latest
