@@ -1,5 +1,4 @@
 import utils, { rootURL } from "../../pageObjects/common";
-import header from "../../pageObjects/header";
 
 // Set locating timeout to 10s
 utils.setLocatorTimeout(10000);

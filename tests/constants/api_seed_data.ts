@@ -19,7 +19,7 @@ export const invoiceOptionIds = {
 export const createRejectCard = (cardNumber: string) => {
   const cp = require('child_process');
   return new Promise(resolve => {
-    cp.exec(`RAILS_ENV=test rails db:reject_card["${cardNumber}"]`, (error: Error) => {
+    cp.exec(`RAILS_ENV=test rake db:reject_card["${cardNumber}"]`, (error: Error) => {
       if (error) {
         console.log(error);
       }
