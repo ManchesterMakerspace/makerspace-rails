@@ -1,4 +1,5 @@
 import utils, { rootURL } from "../../pageObjects/common";
+import { resetDb } from "../../constants/api_seed_data";
 
 // Set locating timeout to 10s
 utils.setLocatorTimeout(10000);
@@ -7,6 +8,14 @@ utils.setLocatorTimeout(10000);
 // Make sure enough time is allowed so that test can complete
 // Locator timeout (10s) should fail these tests before this timeout is reached
 jest.setTimeout(180000);
+
+beforeAll(() => {
+  return resetDb();
+});
+
+beforeEach(() => {
+  return browser.manage().deleteAllCookies();
+});
 
 // Initialize browser context
 it('initialises the context', async () => {
@@ -20,10 +29,6 @@ it('should load the landing page', async () => {
   await browser.get(rootURL);
   expect(await utils.isElementDisplayed('[id="landing-page-graphic"]')).toBeTruthy();
 });
-
-beforeEach(() => {
-  return browser.manage().deleteAllCookies();
-})
 
 afterAll(function (done) {
   process.nextTick(done);

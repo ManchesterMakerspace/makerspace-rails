@@ -6,9 +6,7 @@
 (function (){
   const fs = require('fs');
   const path = require('path');
-  const cp = require('child_process');
 
-  cp.execSync('RAILS_ENV=test rake db:db_reset') // Reset to base before we start
   const suitesPath = path.resolve(__dirname, "suites");
   const suites = fs.readdirSync(suitesPath);
   const baseSpec = "base.spec.ts";
