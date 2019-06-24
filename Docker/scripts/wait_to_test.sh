@@ -41,6 +41,7 @@ else
   cd /usr/src/app && echo "Starting testing..."
   if [ ${SELENIUM_ADDRESS} ]; then
     if [ "${CONFIG}" == "integration" ]; then
+      RAILS_ENV=test bundle exec rake db:db_reset
       yarn test-integration
     else
       yarn test-functional

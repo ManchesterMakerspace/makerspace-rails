@@ -9,10 +9,6 @@ utils.setLocatorTimeout(10000);
 // Locator timeout (10s) should fail these tests before this timeout is reached
 jest.setTimeout(180000);
 
-beforeAll(() => {
-  return resetDb();
-});
-
 beforeEach(() => {
   return browser.manage().deleteAllCookies();
 });

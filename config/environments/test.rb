@@ -12,8 +12,10 @@ Rails.application.configure do
   # preloads Rails for running tests, you may have to set it to true.
   config.eager_load = false
 
-  config.logger = Logger.new(STDOUT)
-  config.level = 0
+  if ENV["LOG_TESTS"]
+    config.logger = Logger.new(STDOUT)
+    config.level = 0
+  end
 
   # Configure public file server for tests with Cache-Control for performance.
   config.public_file_server.enabled = true
