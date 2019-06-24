@@ -12,20 +12,8 @@ export const getAdminUserLogin = () => adminUserLogins.length && adminUserLogins
 
 export const invoiceOptionIds = {
   monthly: "one-month",
-  quarterly: "three-months", 
+  quarterly: "three-months",
   annualy: "one-year"
-};
-
-export const resetDb = async () => {
-  const cp = require('child_process');
-  return new Promise(resolve => {
-    cp.exec('RAILS_ENV=test bundle exec rake db:db_reset', (error: Error) => {
-      if (error) {
-        console.log(error);
-      }
-      resolve();
-    });
-  });
 };
 
 export const createRejectCard = (cardNumber: string) => {

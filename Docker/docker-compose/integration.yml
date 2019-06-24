@@ -24,7 +24,7 @@ services:
       - SECRET_KEY_BASE
       - BILLING_ENABLED=true
       - CONFIG=integration
-    tty: true
+    command: bash -c "RAILS_ENV=test bundle exec rake db:db_reset && /bin/start_dev.sh"
   tester:
     build:
       context: ../..

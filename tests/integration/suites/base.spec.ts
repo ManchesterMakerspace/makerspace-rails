@@ -1,5 +1,4 @@
 import utils, { rootURL } from "../../pageObjects/common";
-import { resetDb } from "../../constants/api_seed_data";
 
 // Set locating timeout to 10s
 utils.setLocatorTimeout(10000);

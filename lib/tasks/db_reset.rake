@@ -6,6 +6,8 @@ namespace :db do
       require 'factory_bot'
       require 'database_cleaner'
 
+      puts "Cleaning db..."
+
       Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
       DatabaseCleaner.strategy = :truncation
       DatabaseCleaner.clean
@@ -20,8 +22,10 @@ namespace :db do
         cancel_subscriptions(gateway) if braintree_options.include?(:subscriptions)
         delete_payment_methods(gateway) if braintree_options.include?(:payment_methods)
       end
+      puts "DB cleaned, seeding.."
 
       SeedData.new.call
+      puts "Seeding complete, done."
     end
   end
 

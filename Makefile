@@ -1,5 +1,6 @@
 PROJECT_NAME=mmsinterface
 DC_FUNCTIONAL=docker-compose -f Docker/docker-compose/functional.yml -p $(PROJECT_NAME)
+DC_INTEGRATION=docker-compose -f Docker/docker-compose/integration.yml -p $(PROJECT_NAME)
 DC_DEV=docker-compose -f Docker/docker-compose/dev.yml -p $(PROJECT_NAME)
 DC_TEST=docker-compose -f Docker/docker-compose/test.yml -p $(PROJECT_NAME)
 
@@ -35,6 +36,7 @@ dev-up:
 clean-test:
 	${DC_TEST} rm -f
 	${DC_FUNCTIONAL} rm -f
+	${DC_INTEGRATION} rm -f
 
 test-up:
 	${DC_TEST} up --exit-code-from interface
