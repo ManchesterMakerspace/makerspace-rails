@@ -1,28 +1,25 @@
-sudo: required
+language: node_js
+
 services:
   - docker
-language: ruby
-cache:
-  bundler: true
-  yarn: true
+
 addons:
   chrome: stable
-rvm:
-  - 2.6.1
-install:
-  - bundle install
-  - nvm install v10.15.3
-  - node -v
-  - npm i -g yarn
-  - yarn install
-jobs:
+
+before_install:
+- rvm install 2.6.1
+- nvm install v10.15.3
+
+matrix:
   include:
-    - stage: unit tests
-      script: make start-unit
-    - stage: functional tests
-      script: make functional-up
-    - stage: integration tests
-      script: make integration-up
+  - name: "Unit Test"
+    env: TEST_SUITE=start-unit
+  - name: "Functional Tests"
+    env: TEST_SUITE=start-func
+  - name: "Integration Tests"
+    env: TEST_SUITE=start-int
+
+script: make $TEST_SUITE
 
 after_failure: 
   - bundle exec rake upload_screenshots

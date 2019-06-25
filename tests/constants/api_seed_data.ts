@@ -16,10 +16,22 @@ export const invoiceOptionIds = {
   annualy: "one-year"
 };
 
+export const resetDb = async () => {
+  const cp = require('child_process');
+  return new Promise(resolve => {
+    cp.exec('RAILS_ENV=test bundle exec rake db:db_reset', (error: Error) => {
+      if (error) {
+        console.log(error);
+      }
+      resolve();
+    });
+  });
+};
+
 export const createRejectCard = (cardNumber: string) => {
   const cp = require('child_process');
   return new Promise(resolve => {
-    cp.exec(`RAILS_ENV=test rails db:reject_card["${cardNumber}"]`, (error: Error) => {
+    cp.exec(`RAILS_ENV=test bundle exec rake db:reject_card["${cardNumber}"]`, (error: Error) => {
       if (error) {
         console.log(error);
       }
