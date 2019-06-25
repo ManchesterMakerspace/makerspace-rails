@@ -7,8 +7,9 @@ addons:
   chrome: stable
 
 before_install:
-- rvm install 2.6.1
-- nvm install v10.15.3
+  - rvm install 2.6.1
+  - bundle install
+  - nvm install v10.15.3
 
 matrix:
   include:
