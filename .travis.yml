@@ -19,7 +19,12 @@ matrix:
   - name: "Integration Tests"
     env: TEST_SUITE=start-int
 
+before_script:
+  - echo fs.inotify.max_user_instances=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+  - echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+  - echo fs.inotify.max_queued_events=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+
 script: make $TEST_SUITE
 
-after_failure: 
+after_failure:
   - bundle exec rake upload_screenshots
