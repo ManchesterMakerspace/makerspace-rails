@@ -63,14 +63,19 @@ class CreditCard {
     postalCode: "braintree-hosted-field-postalCode",
   }
 
+  private switchToFrame = async (field: string): Promise<void> => {
+    const frame = browser.findElement(By.id(this.iframes[field]));
+    return browser.switchTo().frame(frame);
+  }
+
   public fillInput = async (field: string, input: string): Promise<void> => {
-    await browser.switchTo().frame(this.iframes[field]);
+    await this.switchToFrame(field);
     await utils.fillInput(this.creditCardForm[field], input);
     await browser.switchTo().defaultContent();
   }
 
   public getInput = async (field: string): Promise<string> => {
-    await browser.switchTo().frame(this.iframes[field]);
+    await this.switchToFrame(field);
     const val = await utils.getElementText(this.creditCardForm[field]);
     await browser.switchTo().defaultContent();
     return val;
