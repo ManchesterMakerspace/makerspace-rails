@@ -33,7 +33,7 @@ class SubscriptionsPageObject extends TablePageObject {
     delete: "#subscriptions-list-delete",
   }
 
-  private cancelSubscriptionModalId = "#delete-subscription";
+  private cancelSubscriptionModalId = "#cancel-subscription";
   public cancelSubscriptionModal = {
     id: `${this.cancelSubscriptionModalId}-confirm`,
     status: `${this.cancelSubscriptionModalId}-status`,
@@ -47,7 +47,7 @@ class SubscriptionsPageObject extends TablePageObject {
   }
 
   public filters = {
-    startDate: "hide-cancelled",
+    hideCancelled: "#hide-cancelled",
   }
 }
 

@@ -26,7 +26,7 @@ class DeleteSubscription extends React.Component<OwnProps, {}> {
     return subscription ? (
       <FormModal
         formRef={this.setFormRef}
-        id="delete-subscription"
+        id="cancel-subscription"
         loading={isRequesting}
         isOpen={isOpen}
         closeHandler={onClose}
@@ -39,16 +39,16 @@ class DeleteSubscription extends React.Component<OwnProps, {}> {
           Are you sure you want to cancel this subscription?  This action cannot be undone.
         </Typography>
         <KeyValueItem label="Member">
-          <span id="delete-subscription-member">{subscription.memberName}</span>
+          <span id="cancel-subscription-member">{subscription.memberName}</span>
         </KeyValueItem>
         <KeyValueItem label="Type">
-          <span id="delete-subscription-resource">{`${subscription.resourceClass}`}</span>
+          <span id="cancel-subscription-resource">{`${subscription.resourceClass}`}</span>
         </KeyValueItem>
         <KeyValueItem label="Status">
-          <span id="delete-subscription-status">{`${subscription.status}`}</span>
+          <span id="cancel-subscription-status">{`${subscription.status}`}</span>
         </KeyValueItem>
         <KeyValueItem label="Next Payment">
-          <span id="delete-subscription-next-payment">{timeToDate(subscription.nextBillingDate)}</span>
+          <span id="cancel-subscription-next-payment">{timeToDate(subscription.nextBillingDate)}</span>
         </KeyValueItem>
       </FormModal>
     ) : null;

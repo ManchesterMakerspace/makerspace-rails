@@ -1,5 +1,5 @@
-import { reset as resetMockserver } from "../mockserver-client-helpers";
 import utils, { rootURL } from "../../pageObjects/common";
+import { resetDb } from "../../constants/api_seed_data";
 
 // Set locating timeout to 10s
 utils.setLocatorTimeout(10000);
@@ -9,8 +9,12 @@ utils.setLocatorTimeout(10000);
 // Locator timeout (10s) should fail these tests before this timeout is reached
 jest.setTimeout(180000);
 
-beforeEach(async () => {
-  return resetMockserver();
+beforeAll(() => {
+  return resetDb();
+});
+
+beforeEach(() => {
+  return browser.manage().deleteAllCookies();
 });
 
 // Initialize browser context

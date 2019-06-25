@@ -3,7 +3,7 @@
 Devise.setup do |config|
 
   # Reload the factories in dev only if env var set
-  if (ENV["TEST_MAIL"] && Rails.env.development?) || Rails.env.test?
+  if (ENV["TEST_MAIL"] && Rails.env.development?)
     ActionDispatch::Callbacks.before do
       FactoryBot.definition_file_paths = [Rails.root.join('spec', 'support', 'factories')]
 

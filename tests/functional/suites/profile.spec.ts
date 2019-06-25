@@ -1,18 +1,19 @@
 import * as moment from "moment";
 import { timeToDate } from "ui/utils/timeToDate";
 
-import { basicUser, adminUser, basicMembers } from "../constants/member";
+import { basicUser, adminUser, basicMembers } from "../../constants/member";
 import { mockRequests, mock } from "../mockserver-client-helpers";
 import { CardStatus } from "app/entities/card";
-import auth, { LoginMember } from "../pageObjects/auth";
-import utils from "../pageObjects/common";
-import memberPO from "../pageObjects/member";
-import rentalPO from "../pageObjects/rentals";
-import invoicePo from "../pageObjects/invoice";
-import transactionPO from "../pageObjects/transactions";
-import { defaultRental, defaultRentals } from "../constants/rental";
-import { defaultInvoice, defaultInvoices } from "../constants/invoice";
-import { defaultTransactions } from "../constants/transaction";
+import { LoginMember } from "../../pageObjects/auth";
+import utils from "../../pageObjects/common";
+import memberPO from "../../pageObjects/member";
+import rentalPO from "../../pageObjects/rentals";
+import invoicePo from "../../pageObjects/invoice";
+import transactionPO from "../../pageObjects/transactions";
+import { defaultRentals } from "../../constants/rental";
+import { defaultInvoices } from "../../constants/invoice";
+import { defaultTransactions } from "../../constants/transaction";
+import { autoLogin } from "../autoLogin";
 
 const reviewMemberInfo = async (loggedInUser: LoginMember, viewingMember?: LoginMember, executeLogin: boolean = true) => {
   if (!viewingMember) viewingMember = loggedInUser;
@@ -20,12 +21,9 @@ const reviewMemberInfo = async (loggedInUser: LoginMember, viewingMember?: Login
   if (executeLogin) {
     await mock(mockRequests.member.get.ok(viewingMember.id, viewingMember));
     await mock(mockRequests.member.get.ok(viewingMember.id, viewingMember, true));
-    await auth.autoLogin(loggedInUser, memberPO.getProfilePath(viewingMember.id), { billing: true });
+    await autoLogin(loggedInUser, memberPO.getProfilePath(viewingMember.id), { billing: true });
   }
-  const { firstname, lastname, email, expirationTime } = viewingMember;
-  expect(await utils.getElementText(memberPO.memberDetail.title)).toEqual(`${firstname} ${lastname}`);
-  expect(await utils.getElementText(memberPO.memberDetail.email)).toEqual(email);
-  expect(await utils.getElementText(memberPO.memberDetail.expiration)).toEqual(expirationTime ? timeToDate(expirationTime) : "N/A");
+  await memberPO.verifyProfileInfo(viewingMember);
 }
 
 const reviewSubResource = async (member: LoginMember, admin: boolean = false) => {
@@ -74,7 +72,7 @@ describe("Member Profiles", () => {
         /* 1. Login as basic user
            2. Assert profile shows tables for: Dues, Rentals,
         */
-        return auth.autoLogin(basicUser, undefined, { billing: true }).then(async () => {
+        return autoLogin(basicUser, undefined, { billing: true }).then(async () => {
           await reviewSubResource(basicUser);
         });
       });
@@ -106,7 +104,7 @@ describe("Member Profiles", () => {
         /* 1. Login as admin
            2. Assert profile shows tables for: Dues, Rentals,
         */
-        return auth.autoLogin(adminUser, undefined, { billing: true }).then(() => {
+        return autoLogin(adminUser, undefined, { billing: true }).then(() => {
           return reviewSubResource(adminUser, true);
         })
       });
@@ -138,7 +136,7 @@ describe("Member Profiles", () => {
           5. Assert updated information is dislayed
         */
         await mock(mockRequests.member.get.ok(viewingMember.id, viewingMember));
-        await auth.autoLogin(adminUser, memberPO.getProfilePath(viewingMember.id));
+        await autoLogin(adminUser, memberPO.getProfilePath(viewingMember.id));
         await utils.clickElement(memberPO.memberDetail.openEditButton);
         await mock(mockRequests.member.put.ok(updatedMember.id, updatedMember, true));
         await mock(mockRequests.member.get.ok(updatedMember.id, updatedMember));
@@ -164,7 +162,7 @@ describe("Member Profiles", () => {
            10. Assert modal closes
         */
         await mock(mockRequests.member.get.ok(viewingMember.id, viewingMember));
-        await auth.autoLogin(adminUser, memberPO.getProfilePath(viewingMember.id));
+        await autoLogin(adminUser, memberPO.getProfilePath(viewingMember.id));
         await utils.clickElement(memberPO.memberDetail.openEditButton);
         await utils.fillInput(memberPO.memberForm.email, "");
         await utils.fillInput(memberPO.memberForm.firstname, "");
@@ -221,7 +219,7 @@ describe("Member Profiles", () => {
           timeOf: moment().subtract(1, "minute").calendar()
         };
         await mock(mockRequests.member.get.ok(foblessMember.id, foblessMember));
-        await auth.autoLogin(adminUser, memberPO.getProfilePath(foblessMember.id));
+        await autoLogin(adminUser, memberPO.getProfilePath(foblessMember.id));
         await mock(mockRequests.rejectionCard.get.ok(rejectionCard));
 
         expect(await utils.getElementText(memberPO.memberDetail.openCardButton)).toMatch(/Register Fob/i);
@@ -271,7 +269,7 @@ describe("Member Profiles", () => {
           timeOf: moment().subtract(1, "minute").calendar()
         };
         await mock(mockRequests.member.get.ok(fobbedMember.id, fobbedMember));
-        await auth.autoLogin(adminUser, memberPO.getProfilePath(fobbedMember.id));
+        await autoLogin(adminUser, memberPO.getProfilePath(fobbedMember.id));
         await mock(mockRequests.rejectionCard.get.ok(rejectionCard));
 
         expect(await utils.getElementText(memberPO.memberDetail.openCardButton)).toMatch(/Replace Fob/i);

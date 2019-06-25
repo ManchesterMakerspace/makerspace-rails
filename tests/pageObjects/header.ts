@@ -3,6 +3,8 @@ import utils from "./common";
 class HeaderPageObject {
   private navMenuButton = "#menu-button"
 
+  public loginLink = 'a[href="/login"]';
+  
   public links = {
     members: "#members",
     profile: "#profile",
@@ -15,7 +17,8 @@ class HeaderPageObject {
   public openNavMenu = () => utils.clickElement(this.navMenuButton);
 
   public navigateTo = async (menuLinkId: string) => {
-    const idSelector = `a${menuLinkId}`
+    const element = menuLinkId === this.links.logout ? "li" : "a"; // TODO: these should be consistent
+    const idSelector = `${element}${menuLinkId}`
     const displayed = await utils.isElementDisplayed(idSelector);
     if (!displayed) {
       await this.openNavMenu();

@@ -108,7 +108,10 @@ class SettingsContainer extends React.Component<Props, State> {
         >
           {/* <ListItemIcon>
           </ListItemIcon> */}
-          <ListItemText primary="Profile Details" />
+          <ListItemText 
+            id="settings-profile"
+            primary="Profile Details" 
+          />
         </ListItem>
         {billingEnabled && <>
           <ListItem
@@ -118,7 +121,10 @@ class SettingsContainer extends React.Component<Props, State> {
           >
             {/* <ListItemIcon>
             </ListItemIcon> */}
-            <ListItemText primary="Membership" />
+            <ListItemText 
+              id="settings-membership"
+              primary="Membership" 
+            />
           </ListItem>
           <ListItem
             button
@@ -127,7 +133,10 @@ class SettingsContainer extends React.Component<Props, State> {
           >
             {/* <ListItemIcon>
             </ListItemIcon> */}
-            <ListItemText primary="Payment Methods" />
+            <ListItemText 
+              id="settings-payment-methods"
+              primary="Payment Methods" 
+            />
           </ListItem>
         </>}
       </List>

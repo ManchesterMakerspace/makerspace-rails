@@ -1,10 +1,6 @@
-
-
 import { Routing } from "app/constants";
 import { MemberDetails } from "app/entities/member";
 import utils from "./common";
-import { mock, mockRequests } from "../mockserver-client-helpers";
-import memberPO from "../pageObjects/member";
 
 export interface LoginMember extends Partial<MemberDetails> {
   email: string;
@@ -50,6 +46,7 @@ export class SignUpPageObject {
     noData: `${this.membershipSelectTableId}-no-data-row`,
     loading: `${this.membershipSelectTableId}-loading`,
     discountCheckbox: "#discount-select",
+    submit: "#select-membership-submit"
   };
 
   private codeOfConductFormId = "#code-of-conduct-form";

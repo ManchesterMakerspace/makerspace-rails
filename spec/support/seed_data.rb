@@ -5,11 +5,13 @@ class SeedData
   include FactoryBot::Syntax::Methods
 
   def call
+    create_permissions
     create_members
     create_rentals
     create_payments
     create_group
     create_rejection_cards
+    create_invoice_options
   end
 
   private
@@ -65,5 +67,17 @@ class SeedData
     create(:rejection_card, uid: '0000')
     create(:rejection_card, uid: '0001')
     create(:rejection_card, uid: '0002')
+  end
+
+  def create_invoice_options
+    create(:invoice_option, name: "One Month", amount: 65.0, id: "one-month", plan_id: "monthly_membership_subscription")
+    create(:invoice_option, name: "Three Months", amount: 200.0, id: "three-months")
+    create(:invoice_option, name: "One Year", amount: 800.0, id: "one-year")
+  end
+
+  def create_permissions
+    DefaultPermission.create(name: :billing, enabled: true)
+    DefaultPermission.create(name: :custom_billing, enabled: false)
+    DefaultPermission.create(name: :earned_membership, enabled: true)
   end
 end

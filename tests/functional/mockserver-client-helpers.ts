@@ -114,11 +114,10 @@ export const mockRequests = {
   },
   transactions: {
     post: {
-      ok: (invoiceId: string, paymentMethodId: string, resultingTransaction: Transaction) => ({
+      ok: (resultingTransaction: Transaction) => ({
         httpRequest: {
           method: Method.Post,
           path: `/${Url.Billing.Transactions}.json`,
-          body: JSON.stringify({ transaction: {  paymentMethodId, invoiceId } }),
         },
         httpResponse: {
           statusCode: 200,
@@ -167,6 +166,18 @@ export const mockRequests = {
     }
   },
   subscription: {
+    get: {
+      ok: (subscription: Partial<Subscription>, admin: boolean = false): MockRequest => ({
+        httpRequest: {
+          method: Method.Get,
+          path: `/${admin ? Url.Admin.Billing.Subscriptions : Url.Billing.Subscriptions}/${subscription.id}.json`
+        },
+        httpResponse: {
+          statusCode: 200,
+          body: JSON.stringify({ subscription }),
+        }
+      })
+    },
     delete: {
       ok: (subscriptionId: string, admin: boolean = false) => ({
         httpRequest: {

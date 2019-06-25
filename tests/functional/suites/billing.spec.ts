@@ -1,13 +1,12 @@
-import * as moment from "moment";
-import { basicUser, adminUser } from "../constants/member";
+import { basicUser, adminUser } from "../../constants/member";
 import { mockRequests, mock } from "../mockserver-client-helpers";
 
-import auth from "../pageObjects/auth";
-import header from "../pageObjects/header";
-import utils from "../pageObjects/common";
-import billingPO from "../pageObjects/billing";
-import { defaultBillingOption, defaultBillingOptions } from "../constants/invoice";
+import header from "../../pageObjects/header";
+import utils from "../../pageObjects/common";
+import billingPO from "../../pageObjects/billing";
+import { defaultBillingOption, defaultBillingOptions } from "../../constants/invoice";
 import { numberAsCurrency } from "ui/utils/numberAsCurrency";
+import { autoLogin } from "../autoLogin";
 
 describe("Admin Billing Options", () => {
   const initBillingOption = {
@@ -15,7 +14,7 @@ describe("Admin Billing Options", () => {
   };
 
   beforeEach(async () => {
-    return auth.autoLogin(adminUser, undefined, { billing: true }).then(async () => {
+    return autoLogin(adminUser, undefined, { billing: true }).then(async () => {
       await mock(mockRequests.invoiceOptions.get.ok(defaultBillingOptions, { types: [] }));
       await header.navigateTo(header.links.billing);
       await utils.waitForPageLoad(billingPO.url);

@@ -1,6 +1,6 @@
-import { Key } from "selenium-webdriver";
-import { toDatePicker, dateToTime } from "ui/utils/timeToDate";
-import * as moment from "moment";
+import { Key, WebElement } from "selenium-webdriver";
+import { toDatePicker } from "ui/utils/timeToDate";
+import { matchPath } from "react-router";
 
 export const rootURL = `http://${process.env.APP_DOMAIN || 'localhost'}:${process.env.PORT || 3002}`;
 
@@ -74,6 +74,21 @@ export class PageUtils {
       }
     } catch {
       throw new Error(`${targetUrl} never loaded`);
+    }
+  }
+
+  public waitForPageToMatch = async (targetMatch: string, exact: boolean = false, timeout: number = undefined) => {
+    try {
+      if (exact) {
+        await browser.wait(() => {
+          return browser.getCurrentUrl().then((url: string) => !!matchPath(url, {
+            exact,
+            path: targetMatch,
+          }));
+        });
+      }
+    } catch {
+      throw new Error(`${targetMatch} never loaded`);
     }
   }
 
@@ -180,6 +195,14 @@ export class PageUtils {
     // Select it
     await (matchingOptions[0] as { option: any, value: string }).option.click();
   }
+
+  public selectCheckbox = async (element: WebElement, check: boolean = true): Promise<void> => {
+    const checked = await element.getAttribute("checked");
+    if (!(checked && check)) {
+      await element.click(); // Click it if its not checked and should be, or is checked and shouldn't be
+    }
+  }
+
   public assertInputError = async (elementLocator: string, exact: boolean = false, errorMsg?: string) => {
     const errorLocator = exact ? elementLocator : `${elementLocator}-error`;
     try {
@@ -214,14 +237,29 @@ export class PageUtils {
       throw new Error(`Unable to locate element ${elementLocator} to assert text`);
     }
   }
-  public waitForNotVisible = async (elementLocator: string) => {
+  public waitForNotVisible = async (elementLocator: string, timeout?: number) => {
     try {
       await browser.wait(() => {
         return this.isElementDisplayed(elementLocator).then((displayed) => !displayed);
-      }, this.waitUntilTime);
+      }, timeout || this.waitUntilTime);
       await browser.sleep(200);
     } catch {
       throw new Error(`Error waiting for element to not be visible: ${elementLocator}`);
+    }
+  }
+
+  public waitForText = async (elementLocator: string, text: string) => {
+    try {
+      await browser.wait(() => {
+        return this.getElementText(elementLocator).then((content) => {
+          console.log("CONTENT", content);
+          console.log("text", text);
+          return content.test(new RegExp(text));
+        });
+      }, this.waitUntilTime);
+      await browser.sleep(200);
+    } catch {
+      throw new Error(`Error waiting for element ${elementLocator} to contain ${text}`);
     }
   }
 
@@ -247,6 +285,17 @@ export class PageUtils {
   }
 
   public fillSearchInput = async (elementLocator: string, searchVal: string, optionValue?: any) => {
+    const element = await this.getElementByCss(`${elementLocator}`);
+    try {
+      await element.clear();
+      await element.sendKeys(searchVal);
+      await element.sendKeys(Key.ENTER);
+    } catch (e) {
+      throw new Error(`Unable to enter keys: ${searchVal} in input: ${elementLocator}`);
+    }
+  }
+
+  public fillAsyncSearchInput = async (elementLocator: string, searchVal: string, optionValue?: any) => {
     const element = await this.getElementByCss(`${elementLocator} input`);
     try {
       await element.clear();

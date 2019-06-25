@@ -69,7 +69,8 @@
     "start": "./bin/webpack-dev-server",
     "test": "$(npm bin)/jest --no-cache",
     "test-watch": "yarn test --watch",
-    "test-functional": "yarn test --testRegex='/tests/functional/runner.spec.ts' --setupTestFrameworkScriptFile='<rootDir>/tests/functional/setup.js'"
+    "test-functional": "yarn test --testRegex='/tests/functional/runner.spec.ts' --setupTestFrameworkScriptFile='<rootDir>/tests/functional/setup.js'",
+    "test-integration": "yarn test --testRegex='/tests/integration/runner.spec.ts' --setupTestFrameworkScriptFile='<rootDir>/tests/integration/setup.js'"
   },
   "jest": {
     "collectCoverage": false,

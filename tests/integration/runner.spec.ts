@@ -12,7 +12,6 @@
   const baseSpec = "base.spec.ts";
 
   const constructSuitePath = (testName: string) => `./suites/${testName}`;
-
   require(constructSuitePath(baseSpec));
   suites.map((suite: any) => {
     if (suite === baseSpec) { return; }

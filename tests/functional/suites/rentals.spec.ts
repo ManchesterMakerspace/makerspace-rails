@@ -1,26 +1,25 @@
 import * as moment from "moment";
-import { basicUser, adminUser } from "../constants/member";
+import { basicUser, adminUser } from "../../constants/member";
 import { mockRequests, mock } from "../mockserver-client-helpers";
 
-import auth from "../pageObjects/auth";
-import header from "../pageObjects/header";
-import utils from "../pageObjects/common";
-import memberPO from "../pageObjects/member";
-import rentalsPO from "../pageObjects/rentals";
-import renewPO from "../pageObjects/renewalForm";
+import header from "../../pageObjects/header";
+import utils from "../../pageObjects/common";
+import memberPO from "../../pageObjects/member";
+import rentalsPO from "../../pageObjects/rentals";
+import renewPO from "../../pageObjects/renewalForm";
 import { Rental } from "app/entities/rental";
-import { defaultRental, defaultRentals } from "../constants/rental";
+import { defaultRental, defaultRentals } from "../../constants/rental";
+import { autoLogin } from "../autoLogin";
 
 describe("Rentals", () => {
+  // TODO: These features don't exist yet
   xdescribe("Basic user", () => {
     beforeEach(() => {
-      return auth.autoLogin(basicUser);
+      return autoLogin(basicUser);
     });
     it("Can review and pay for their rentals", () => {
-      // TODO
     });
     it("Can request for a new rental", () => {
-
     });
   });
   describe("Admin user", () => {
@@ -31,7 +30,7 @@ describe("Rentals", () => {
         memberName: `${basicUser.firstname} ${basicUser.lastname}`,
       };
       beforeEach(async () => {
-        return auth.autoLogin(adminUser, undefined, { billing: true }).then(async () => {
+        return autoLogin(adminUser, undefined, { billing: true }).then(async () => {
           await mock(mockRequests.rentals.get.ok(defaultRentals, {}, true));
           await header.navigateTo(header.links.rentals);
           await utils.waitForPageLoad(rentalsPO.listUrl);
@@ -133,7 +132,7 @@ describe("Rentals", () => {
           // 1. Login as admin and nav to basic user's profile
           await mock(mockRequests.invoices.get.ok([], undefined));
           await mock(mockRequests.member.get.ok(basicUser.id, basicUser));
-          return auth.autoLogin(adminUser, targetUrl, { billing: true }).then(() => resolve())
+          return autoLogin(adminUser, targetUrl, { billing: true }).then(() => resolve())
         })
       });
       it("Can create new rentals for members", async () => {
