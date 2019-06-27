@@ -277,7 +277,7 @@ describe("Earned Memberships", () => {
       // Mock no search results found
       await mock(mockRequests.members.get.ok([]));
       await utils.selectDropdownByValue(reportPO.reportRequirementForm(0).reportedCount, String(nonMemberRR.reportedCount));
-      await utils.fillSearchInput(reportPO.reportRequirementForm(0).member(0), "foo@foo.com");
+      await utils.fillAsyncSearchInput(reportPO.reportRequirementForm(0).member(0), "foo@foo.com");
 
       await mock(mockRequests.earnedMembershipReports.post.ok(membership.id, initReport));
       await mock(mockRequests.earnedMembershipReports.get.ok(membership.id, [initReport]));
