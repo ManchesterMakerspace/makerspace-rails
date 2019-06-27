@@ -3,6 +3,7 @@ import utils from "./common";
 import { TablePageObject } from "./table";
 import { timeToDate } from "ui/utils/timeToDate"
 import { MemberDetails } from "app/entities/member";
+import { LoginMember } from "./auth";
 
 const membersListTableId = "members-table";
 const membersListFields = ["lastname", "expirationTime", "status"];
@@ -41,6 +42,7 @@ export class MemberPageObject extends TablePageObject {
   private memberDetailId = "#member-detail";
   public memberDetail = {
     title: "#detail-view-title",
+    loading: "#member-detail-loading",
     email: `${this.memberDetailId}-email`,
     expiration: `${this.memberDetailId}-expiration`,
     status: `${this.memberDetailId}-status`,
@@ -53,6 +55,15 @@ export class MemberPageObject extends TablePageObject {
     notificationModal: "#notification-modal",
     notificationModalSubmit: "#notification-modal-submit",
     notificationModalCancel: "#notification-modal-cancel",
+  }
+  
+  public verifyProfileInfo = async (member: LoginMember) => { 
+    const { firstname, lastname, email, expirationTime } = member;
+    expect(await utils.getElementText(this.memberDetail.title)).toEqual(`${firstname} ${lastname}`);
+    expect(await utils.getElementText(this.memberDetail.email)).toEqual(email);
+    if ( expirationTime) {
+      expect(await utils.getElementText(this.memberDetail.expiration)).toEqual(expirationTime ? timeToDate(expirationTime) : "N/A");
+    }
   }
 
   public goToMemberRentals = () =>

@@ -23,7 +23,7 @@ import Form from "ui/common/Form";
 
 interface Props {
   invoices: CollectionOf<Invoice>;
-  error: string;
+  error: string | { [key: string]: string };
   isRequesting: boolean;
   onSubmit: (paymentMethodId: string) => void;
 }
@@ -33,7 +33,7 @@ interface PropsWithContext extends Props {
 interface State {
   total: number;
   paymentMethodId: string;
-  error: string;
+  error: boolean;
   openLoginModal: boolean;
   openTransactionErrorModal: boolean;
 }
@@ -49,20 +49,20 @@ class CheckoutPage extends React.Component<PropsWithContext, State> {
 
     this.state = ({
       total: invoices && Object.values(invoices).reduce((a, b) => a + Number(b.amount), 0),
-      error: "",
+      error: false,
       paymentMethodId: undefined,
       openLoginModal: false,
       openTransactionErrorModal: false,
     });
   }
 
-  private getFields = (): Column<Invoice>[] => [
+  private getFields = (errorState: boolean = false): Column<Invoice>[] => [
     {
       id: "name",
       label: "Name",
       cell: (row: Invoice) => row.name,
     },
-    {
+    ...errorState ? []: [{
       id: "description",
       label: "Description",
       cell: (row: Invoice) => {
@@ -80,12 +80,23 @@ class CheckoutPage extends React.Component<PropsWithContext, State> {
           </>
         )
       },
-    },
+    }],
     {
       id: "amount",
       label: "Amount",
       cell: (row: Invoice) => numberAsCurrency(row.amount),
     },
+    ...errorState ? [{
+      id: "error",
+      label: "Error",
+      cell: (row: Invoice) => {
+        const error = typeof this.props.error === 'object' ? 
+                      this.props.error[row.id]
+                      : this.props.error;
+
+        return <ErrorMessage error={error}/>;
+      },
+    }]: [],
   ];
 
   public componentDidUpdate(prevProps: Props) {
@@ -95,7 +106,7 @@ class CheckoutPage extends React.Component<PropsWithContext, State> {
     if (wasRequesting && !isRequesting) {
       // Open error modal if error exists after submitting payment
       if (error && paymentMethodId) {
-        this.setState({ openTransactionErrorModal: true });
+        this.setState({ error: !!error, openTransactionErrorModal: true });
         return
       }
     }
@@ -121,9 +132,9 @@ class CheckoutPage extends React.Component<PropsWithContext, State> {
           <Grid item xs={12}>
             <Table
               id="payment-invoices-table"
-              error={error}
+              error={typeof error === 'string' && error}
               data={Object.values(invoices)}
-              columns={this.getFields()}
+              columns={this.getFields(true)}
               rowId={this.rowId}
             />
           </Grid>
@@ -213,7 +224,7 @@ class CheckoutPage extends React.Component<PropsWithContext, State> {
 
         <Grid item sm={7} xs={12}>
           {this.renderTotal()}
-          {!isRequesting && error && <ErrorMessage id="checkout-submitting-error" error={error} />}
+          {!isRequesting && error && <ErrorMessage id="checkout-submitting-error" error={typeof error === 'string' && error} />}
         </Grid>
         {this.renderLoginModal()}
         {this.renderErrorModal()}

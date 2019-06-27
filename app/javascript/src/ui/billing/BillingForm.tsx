@@ -111,7 +111,9 @@ export class BillingFormComponent extends React.Component<OwnProps, State>{
 
   private applyPlanToForm = () => {
     const { plans: { data: billingPlans } } = this.props.context;
-    const billingPlan = billingPlans[this.state.planId];
+    const billingPlan = billingPlans.find(plan => plan.id === this.state.planId);
+
+    if (!billingPlan) { return; }
 
     const planToValues = Object.entries(billingPlan).reduce((invoiceOptionForm, [key, val]) => {
       // Convert billing plan key to option key

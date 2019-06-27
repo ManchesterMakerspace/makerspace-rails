@@ -1,0 +1,96 @@
+<% type = @invoice.resource_class %>
+<% isMembership = type == "member" %>
+<% friendly_type = isMembership ? 'membership' : 'rental' %>
+  <table>
+    <tbody>
+      <!-- description -->
+      <%unless @invoice.resource.nil? %>
+      <tr>
+        <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
+          <%=friendly_type.titleize%>
+        </td>
+        <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
+          <%= isMembership ? @invoice.resource.fullname : @invoice.resource.number %>
+        </td>
+    </tr>
+    <% end %>
+    <!-- expiration -->
+    <tr>
+      <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
+        <%=friendly_type.titleize%> expiration
+      </td>
+      <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
+        <%=@invoice.resource.pretty_time.strftime("%m/%d/%Y")%>
+      </td>
+    </tr>
+    <!-- description -->
+    <tr>
+      <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
+        Description
+      </td>
+      <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
+        <%=@invoice.name%>
+      </td>
+    </tr>
+    <% if @subscription %>
+      <!-- first payment -->
+      <tr>
+        <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
+          Billing Period Start Date
+        </td>
+        <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
+          <%=Date.parse(@subscription.billing_period_start_date).strftime("%m/%d/%Y")%>
+        </td>
+      </tr>
+      <!-- next payment -->
+      <tr>
+        <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
+          Billing Period End Date
+        </td>
+        <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
+          <%=Date.parse(@subscription.billing_period_end_date).strftime("%m/%d/%Y")%>
+        </td>
+      </tr>
+    <% elsif @transaction %>
+      <!-- date -->
+      <tr>
+        <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
+          Date
+        </td>
+        <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
+          <%=Date.parse(@transaction.created_at).strftime("%m/%d/%Y")%>
+        </td>
+      </tr>
+      <!-- status -->
+      <tr>
+        <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
+          Status
+        </td>
+        <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
+          <%=@transaction.status%>
+        </td>
+      </tr>
+    <% end %>
+    
+    <!-- Payment method -->
+    <tr>
+      <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
+        Payment Method
+      </td>
+      <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
+        <% description = @payment_method.try(:card_type) ? "#{@payment_method.card_type} ending in #{@payment_method.last_4}" : "Paypal account #{@payment_method.payer_email}" %>
+        <img style="float: left; marginRight: 2em;" src=<%=@payment_method.image_url%> />
+        <span style="line-height: 2.5em;"><%=description%></span>
+      </td>
+    </tr>
+    <!-- amount -->
+    <tr>
+      <td style="border: 1px solid black; border-right: none; padding: 0.5em">
+        Recurring payment amount
+      </td>
+      <td style="border: 1px solid black; border-left: none; padding: 0.5em">
+        $<%= @invoice.amount.truncate.to_s + '.' + sprintf('%02d', (BigDecimal(@invoice.amount.to_s).frac * 100).truncate) %>
+      </td>
+    </tr>
+  </tbody>
+</table>

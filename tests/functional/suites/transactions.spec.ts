@@ -1,14 +1,14 @@
-import { basicUser, adminUser } from "../constants/member";
+import { basicUser, adminUser } from "../../constants/member";
 import { mockRequests, mock } from "../mockserver-client-helpers";
 
-import auth from "../pageObjects/auth";
-import header from "../pageObjects/header";
-import utils from "../pageObjects/common";
-import memberPO from "../pageObjects/member";
-import transactionsPO from "../pageObjects/transactions";
-import billingPO from "../pageObjects/billing";
-import { defaultTransaction, defaultTransactions } from "../constants/transaction";
+import header from "../../pageObjects/header";
+import utils from "../../pageObjects/common";
+import memberPO from "../../pageObjects/member";
+import transactionsPO from "../../pageObjects/transactions";
+import billingPO from "../../pageObjects/billing";
+import { defaultTransaction, defaultTransactions } from "../../constants/transaction";
 import { timeToDate } from "ui/utils/timeToDate";
+import { autoLogin } from "../autoLogin";
 
 xdescribe("Transactions", () => {
   describe("Basic user", () => {
@@ -22,7 +22,7 @@ xdescribe("Transactions", () => {
       memberName: `${customer.firstname} ${customer.lastname}`,
     };
     beforeEach(() => {
-      return auth.autoLogin(customer, undefined, { billing: true });
+      return autoLogin(customer, undefined, { billing: true });
     });
     it("Can review their transactions", async () => {
       await mock(mockRequests.transactions.get.ok(defaultTransactions));
@@ -53,7 +53,7 @@ xdescribe("Transactions", () => {
   describe("Admin user", () => {
     describe("From list view", () => {
       beforeEach(async () => {
-        return auth.autoLogin(adminUser, undefined, { billing: true }).then(async () => {
+        return autoLogin(adminUser, undefined, { billing: true }).then(async () => {
           await mock(mockRequests.transactions.get.ok(defaultTransactions, {}, true));
           await header.navigateTo(header.links.billing);
           await utils.waitForPageLoad(billingPO.url);
@@ -97,7 +97,7 @@ xdescribe("Transactions", () => {
         return new Promise(async (resolve) => {
           // 1. Login as admin and nav to basic user's profile
           await mock(mockRequests.member.get.ok(customer.id, customer));
-          return auth.autoLogin(adminUser, targetUrl, { billing: true }).then(() => resolve())
+          return autoLogin(adminUser, targetUrl, { billing: true }).then(() => resolve())
         })
       });
       it("Can refund transactions for member", async () => {

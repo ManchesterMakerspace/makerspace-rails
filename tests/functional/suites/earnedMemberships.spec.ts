@@ -1,15 +1,16 @@
 import * as moment from "moment";
 import { timeToDate } from "ui/utils/timeToDate";
 import { EarnedMembership, Report, Requirement, ReportRequirement } from "app/entities/earnedMembership";
-import auth, { LoginMember } from "../pageObjects/auth";
-import { adminUser, defaultMembers, basicUser } from "../constants/member";
+import auth, { LoginMember } from "../../pageObjects/auth";
+import { adminUser, defaultMembers, basicUser } from "../../constants/member";
 import { mockRequests, mock } from "../mockserver-client-helpers";
-import { defaultMemberships, basicEarnedMembership, basicRequirement, defaultReports, basicReport, basicReportRequirement } from "../constants/earnedMembership";
-import membershipPO from "../pageObjects/earnedMembership";
-import reportPO from "../pageObjects/report";
-import utils from "../pageObjects/common";
-import header from "../pageObjects/header";
-import memberPO from "../pageObjects/member";
+import { defaultMemberships, basicEarnedMembership, basicRequirement, defaultReports, basicReport, basicReportRequirement } from "../../constants/earnedMembership";
+import membershipPO from "../../pageObjects/earnedMembership";
+import reportPO from "../../pageObjects/report";
+import utils from "../../pageObjects/common";
+import header from "../../pageObjects/header";
+import memberPO from "../../pageObjects/member";
+import { autoLogin } from "../autoLogin";
 
 describe("Earned Memberships", () => {
   describe("Admin user", () => {
@@ -39,7 +40,7 @@ describe("Earned Memberships", () => {
       };
 
       beforeEach(() => {
-        return auth.autoLogin(adminUser, undefined, { earned_membership: true }).then(async () => {
+        return autoLogin(adminUser, undefined, { earned_membership: true }).then(async () => {
             await mock(mockRequests.earnedMemberships.get.ok(membershipList, {}, true));
             await header.navigateTo(header.links.earnedMemberships);
             await utils.waitForPageLoad(membershipPO.listUrl);
@@ -59,7 +60,7 @@ describe("Earned Memberships", () => {
         await utils.waitForVisible(membershipPO.membershipForm.submit);
 
         await mock(mockRequests.members.get.ok(defaultMembers), 0);
-        await utils.fillSearchInput(membershipPO.membershipForm.member, defaultMembers[0].email, defaultMembers[0].id);
+        await utils.fillAsyncSearchInput(membershipPO.membershipForm.member, defaultMembers[0].email, defaultMembers[0].id);
 
         await utils.selectDropdownByValue(membershipPO.requirementForm(0).nameSelect, "Other");
         await utils.fillInput(membershipPO.requirementForm(0).nameInput, newRequirement.name);
@@ -122,7 +123,11 @@ describe("Earned Memberships", () => {
         await utils.assertInputError(membershipPO.requirementForm(0).nameSelect)
 
         await mock(mockRequests.members.get.ok(defaultMembers), 0);
-        await utils.fillSearchInput(membershipPO.membershipForm.member, defaultMembers[0].email, defaultMembers[0].id);
+        await utils.fillAsyncSearchInput(
+          membershipPO.membershipForm.member,
+          defaultMembers[0].email,
+          defaultMembers[0].id
+        );
 
         await utils.selectDropdownByValue(membershipPO.requirementForm(0).nameSelect, "Other");
         await utils.fillInput(membershipPO.requirementForm(0).nameInput, newRequirement.name);
@@ -161,7 +166,7 @@ describe("Earned Memberships", () => {
         return mock(mockRequests.earnedMembershipReports.get.ok(membership.id, reports, {}, true)).then(async () => {
           await mock(mockRequests.member.get.ok(membershipUser.id, membershipUser));
           await mock(mockRequests.earnedMemberships.show.ok(membership, true));
-          await auth.autoLogin(adminUser, memberPO.getProfilePath(membershipUser.id), { earned_membership: true });
+          await autoLogin(adminUser, memberPO.getProfilePath(membershipUser.id), { earned_membership: true });
           expect(await utils.isElementDisplayed(reportPO.getErrorRowId())).toBeFalsy();
           expect(await utils.isElementDisplayed(reportPO.getNoDataRowId())).toBeFalsy();
           expect(await utils.isElementDisplayed(reportPO.getLoadingId())).toBeFalsy();
@@ -201,7 +206,7 @@ describe("Earned Memberships", () => {
     beforeEach(() => {
       return mock(mockRequests.earnedMembershipReports.get.ok(membership.id, defaultReports, {})).then(async () => {
         await mock(mockRequests.earnedMemberships.show.ok(membership));
-        await auth.autoLogin(membershipUser, undefined, { earned_membership: true });
+        await autoLogin(membershipUser, undefined, { earned_membership: true });
         expect(await utils.isElementDisplayed(reportPO.getErrorRowId())).toBeFalsy();
         expect(await utils.isElementDisplayed(reportPO.getNoDataRowId())).toBeFalsy();
         expect(await utils.isElementDisplayed(reportPO.getLoadingId())).toBeFalsy();
@@ -219,12 +224,20 @@ describe("Earned Memberships", () => {
 
       await mock(mockRequests.members.get.ok(defaultMembers));
       await utils.clickElement(reportPO.reportRequirementForm(0).addMemberButton);
-      await utils.fillSearchInput(reportPO.reportRequirementForm(0).member(0), defaultMembers[0].email, defaultMembers[0].id);
+      await utils.fillAsyncSearchInput(
+        reportPO.reportRequirementForm(0).member(0),
+        defaultMembers[0].email,
+        defaultMembers[0].id
+      );
       await utils.selectDropdownByValue(reportPO.reportRequirementForm(0).reportedCount, String(newReportRequirement.reportedCount));
 
       const newMemberSearch = defaultMembers.slice(5, 10);
       await mock(mockRequests.members.get.ok(newMemberSearch));
-      await utils.fillSearchInput(reportPO.reportRequirementForm(0).member(1), newMemberSearch[1].email, newMemberSearch[1].id);
+      await utils.fillAsyncSearchInput(
+        reportPO.reportRequirementForm(0).member(1),
+        newMemberSearch[1].email,
+        newMemberSearch[1].id
+      );
 
       await mock(mockRequests.earnedMembershipReports.post.ok(membership.id, initReport));
       await mock(mockRequests.earnedMembershipReports.get.ok(membership.id, [initReport]));

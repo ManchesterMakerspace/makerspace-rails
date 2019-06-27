@@ -2,9 +2,8 @@
 # Many of these configuration options can be set straight in your model.
 Devise.setup do |config|
 
-  # Reload the factories
-  # if (Rails.env.development? || Rails.env.test?)
-  if (Rails.env.test?)
+  # Reload the factories in dev only if env var set
+  if (ENV["TEST_MAIL"] && Rails.env.development?)
     ActionDispatch::Callbacks.before do
       FactoryBot.definition_file_paths = [Rails.root.join('spec', 'support', 'factories')]
 

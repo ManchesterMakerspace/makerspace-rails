@@ -1,11 +1,13 @@
 import { Routing } from "app/constants";
-import auth, { LoginMember } from "../pageObjects/auth";
-import utils from "../pageObjects/common";
+import auth, { LoginMember } from "../../pageObjects/auth";
+import utils from "../../pageObjects/common";
 import { mockRequests, mock } from "../mockserver-client-helpers";
-import memberPO from "../pageObjects/member";
-import { basicUser } from "../constants/member";
-import { defaultBillingOptions as invoiceOptions, membershipOptionQueryParams } from "../constants/invoice";
-import signup from "../pageObjects/signup";
+import memberPO from "../../pageObjects/member";
+import { basicUser } from "../../constants/member";
+import { defaultBillingOptions as invoiceOptions, membershipOptionQueryParams } from "../../constants/invoice";
+import signup from "../../pageObjects/signup";
+import { autoLogin } from "../autoLogin";
+
 const member = Object.assign({}, basicUser);
 const memberId = member.id;
 const profileUrl = memberPO.getProfilePath(memberId);
@@ -36,7 +38,7 @@ describe("Authentication", () => {
       /* 1. Execute autoLogin util
          2. Wait for profile to load
       */
-      await auth.autoLogin(member);
+      await autoLogin(member);
       const url = await browser.getCurrentUrl();
       expect(url).toEqual(utils.buildUrl(profileUrl));
     });

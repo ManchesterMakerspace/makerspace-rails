@@ -24,6 +24,9 @@ services:
       - SIGNATURES_FOLDER
       - SECRET_KEY_BASE
       - BILLING_ENABLED=true
+    tty: false
+    logging:
+      driver: "none"
   tester:
     build:
       context: ../..

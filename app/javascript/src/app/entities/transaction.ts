@@ -1,5 +1,6 @@
 import { Discount } from "app/entities/billingPlan";
 import { Invoice } from "app/entities/invoice";
+import { Paypal, CreditCard } from "app/entities/paymentMethod";
 
 export interface Transaction {
   id: string;
@@ -17,12 +18,14 @@ export interface Transaction {
   invoice?: Invoice;
   planId?: string;
   subscriptionId?: string;
-  subscriptionDetails?: any;
-  paypalDetails?: any
-  creditCardDetails?: any;
+  subscriptionDetails?: {
+    billingPeriodStartDate: Date;
+    billingPeriodEndDate: Date;
+  };
   disputes?: any[];
   gatewayRejectionReason?: string;
   refundedTransactionId: string;
+  paymentMethodDetails?: CreditCard | Paypal;
 }
 
 export enum TransactionStatus {

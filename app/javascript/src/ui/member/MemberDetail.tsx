@@ -329,11 +329,10 @@ class MemberDetail extends React.Component<Props, State> {
 
   public render(): JSX.Element {
     const { member, isRequestingMember, match } = this.props;
-    const { memberId } = match.params;
     const { displayDocuments } = this.state;
     return (
       <>
-        {isRequestingMember && <LoadingOverlay id={memberId}/>}
+        {isRequestingMember && <LoadingOverlay id="member-detail"/>}
         {member && (
           displayDocuments ?
           <SignDocuments onSubmit={this.closeAgreements}/>

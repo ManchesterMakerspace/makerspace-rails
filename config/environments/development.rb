@@ -29,24 +29,25 @@ config.webpacker.check_yarn_integrity = false
     config.cache_store = :null_store
   end
 
-  response = RestClient::Resource.new("https://mailtrap.io/api/v1/inboxes.json?api_token=#{ENV['MAILTRAP_API_TOKEN']}").get
-  inbox = JSON.parse(response)[0]
+  if ENV['MAILTRAP_API_TOKEN']
+    response = RestClient::Resource.new("https://mailtrap.io/api/v1/inboxes.json?api_token=#{ENV['MAILTRAP_API_TOKEN']}").get
+    inbox = JSON.parse(response)[0]
 
-  config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.default_url_options = { host: "http://#{ENV["APP_DOMAIN"] || "localhost"}", port: ENV["PORT"] || 3002 }
-  config.action_mailer.perform_caching = false
-  config.action_mailer.perform_deliveries = true
+    config.action_mailer.raise_delivery_errors = true
+    config.action_mailer.default_url_options = { host: "http://#{ENV["APP_DOMAIN"] || "localhost"}", port: ENV["PORT"] || 3002 }
+    config.action_mailer.perform_caching = false
+    config.action_mailer.perform_deliveries = true
 
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    :user_name => inbox['username'],
-    :password => inbox['password'],
-    :address => inbox['domain'],
-    :domain => inbox['domain'],
-    :port => 2525,
-    :authentication => :plain
-  }
-
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = {
+      :user_name => inbox['username'],
+      :password => inbox['password'],
+      :address => inbox['domain'],
+      :domain => inbox['domain'],
+      :port => 2525,
+      :authentication => :plain
+    }
+  end
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 

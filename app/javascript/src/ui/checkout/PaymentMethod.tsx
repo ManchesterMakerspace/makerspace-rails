@@ -8,7 +8,7 @@ import { CreditCard, Paypal } from "app/entities/paymentMethod";
 interface Props extends Partial<CreditCard>, Partial<Paypal> {}
 
 const PaymentMethodComponent: React.SFC<Props> = ({ cardType, last4, debit, imageUrl, email, id }) => {
-  const image = debit ? "" : imageUrl;
+  const image = imageUrl;
   const description = cardType ? `${cardType} ending in ${last4}` : `PayPal account ${email}`;
 
   return (

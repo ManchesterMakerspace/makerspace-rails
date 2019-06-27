@@ -14,8 +14,6 @@ import { SortDirection } from "ui/common/table/constants";
 import TableContainer from "ui/common/table/TableContainer";
 import { Column } from "ui/common/table/Table";
 import { readTransactionsAction } from "ui/transactions/actions";
-import { Status } from "ui/constants";
-import StatusLabel from "ui/common/StatusLabel";
 import { timeToDate, toDatePicker, dateToTime } from "ui/utils/timeToDate";
 import { CrudOperation } from "app/constants";
 import UpdateTransactionContainer, { UpdateTransactionRenderProps } from "ui/transactions/UpdateTransactionContainer";
@@ -26,6 +24,7 @@ import { TransactionSearchCriteria } from "api/transactions/interfaces";
 import AsyncSelectFixed, { SelectOption } from "ui/common/AsyncSelect";
 import { getMembers } from "api/members/transactions";
 import { numberAsCurrency } from "ui/utils/numberAsCurrency";
+import { renderTransactionStatus } from "ui/transactions/utils";
 
 interface OwnProps extends RouteComponentProps<{}> {
   member?: MemberDetails;
@@ -119,31 +118,7 @@ class TransactionsList extends React.Component<Props, State> {
     {
       id: "status",
       label: "Status",
-      cell: (row: Transaction) => {
-        let label = "In Progress";
-        let color = Status.Info;
-
-        switch (row.status) {
-          case TransactionStatus.Settled:
-            color = Status.Success;
-            label = "Paid";
-            break;
-          case TransactionStatus.Failed:
-          case TransactionStatus.Declined:
-          case TransactionStatus.Rejected:
-          case TransactionStatus.Voided:
-            color = Status.Danger;
-            label = "Failed";
-            break;
-          case TransactionStatus.Unknown:
-            color = Status.Warn;
-            label = "Unknown";
-        }
-
-        return (
-          <StatusLabel label={label} color={color}/>
-        );
-      },
+      cell: renderTransactionStatus
     }
   ];
 
@@ -170,21 +145,34 @@ class TransactionsList extends React.Component<Props, State> {
     const { selectedId } = this.state;
     const { admin, transactions } = this.props;
     const transaction = transactions && selectedId && transactions[selectedId];
-    // Disable if invoice already refunded.
-    // TODO This should be more deterministic about the transaction
-    let disabled = !transaction;
-    if (transaction && transaction.invoice) {
-      disabled = admin ? !!transaction.refundedTransactionId : (!!transaction.refundedTransactionId || !!transaction.invoice.refundRequested);
+
+    // Disable if invoice already refunded or not yet settled
+    let disabled: boolean = true;
+    let label: string = "Refund transaction";
+    if (transaction) {
+      if (transaction.status !== TransactionStatus.Settled) {
+        disabled = true;
+        label = "Transaction in progress";
+      } else {
+        if (admin) {
+          label = "Refund Transaction";
+          disabled = !!transaction.refundedTransactionId;
+        } else {
+          label = "Request Refund";
+          disabled = !!transaction.refundedTransactionId || 
+                     !!(transaction.invoice && transaction.invoice.refundRequested)
+        }
+      }
     }
 
     const actionButtons: ActionButton[] = [
       {
+        label,
         id: "transactions-list-delete",
         variant: "contained",
         color: "secondary",
         disabled: disabled,
         onClick: this.openDeleteModal,
-        label: admin ? "Refund Transaction" : "Request Refund"
       },
     ];
 

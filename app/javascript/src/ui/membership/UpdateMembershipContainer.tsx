@@ -51,7 +51,6 @@ class UpdateSubscription extends React.Component<Props, {}> {
   }
 
   private submit = async (form: Form) => {
-    console.log(form);
     await this.props.dispatchSubscription();
     if (!this.props.error) {
       return true;

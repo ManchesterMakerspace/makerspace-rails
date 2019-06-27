@@ -1,0 +1,68 @@
+version: '2'
+services:
+  interface:
+    extends:
+      file: app.yml
+      service: interface
+    environment:
+      - INTERACTIVE
+      - LOCAL
+      - SELENIUM_ADDRESS=http://selenium:4444/wd/hub
+      - RAILS_ENV=test
+      - APP_DOMAIN=interface
+      - API_DOMAIN=http://interface:3002
+      - PORT=3002
+      - MLAB_URI
+      - SLACK_ADMIN_TOKEN
+      - GMAIL_PASSWORD
+      - GMAIL_USERNAME
+      - BT_ENV
+      - BT_PRIVATE_KEY
+      - BT_PUBLIC_KEY
+      - BT_MERCHANT_ID
+      - SIGNATURES_FOLDER
+      - SECRET_KEY_BASE
+      - BILLING_ENABLED=true
+      - CONFIG=integration
+    command: bash -c "RAILS_ENV=test bundle exec rake db:db_reset && /bin/start_dev.sh"
+  tester:
+    build:
+      context: ../..
+      dockerfile: Docker/Dockerfiles/tester
+    volumes_from:
+      - interface
+    links:
+      - selenium
+      - interface
+    depends_on:
+      - interface
+    environment:
+      - LOCAL
+      - INTERACTIVE
+      - RAILS_ENV=test
+      - APP_DOMAIN=interface
+      - PORT=3002
+      - SELENIUM_ADDRESS=http://selenium:4444/wd/hub
+      - MLAB_URI
+      - SLACK_ADMIN_TOKEN
+      - GMAIL_PASSWORD
+      - GMAIL_USERNAME
+      - BT_ENV
+      - BT_PRIVATE_KEY
+      - BT_PUBLIC_KEY
+      - BT_MERCHANT_ID
+      - SIGNATURES_FOLDER
+      - SECRET_KEY_BASE
+      - BILLING_ENABLED=true
+      - CONFIG=integration
+    tty: true
+  selenium:
+    image: selenium/standalone-chrome:latest
+    ports:
+    - 4444:4444
+    - 5900
+    links:
+      - interface
+    tty: false
+    logging:
+      driver: "none"

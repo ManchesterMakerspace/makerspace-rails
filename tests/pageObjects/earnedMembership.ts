@@ -1,7 +1,7 @@
 import { TablePageObject } from "./table";
 import { Routing } from "app/constants";
 import { timeToDate } from "ui/utils/timeToDate";
-import { EarnedMembership, Report, Requirement, Term, ReportRequirement } from "app/entities/earnedMembership";
+import { EarnedMembership } from "app/entities/earnedMembership";
 
 const tableId = "memberships-table";
 const emListFields = ["lastname", "expirationTime", "status"];

@@ -9,7 +9,7 @@ export const creditCard: CreditCard = {
   expirationYear: "2022",
   cardType: "Visa",
   debit: false,
-  imageUrl: "https://foo.com",
+  imageUrl: "",
   default: false,
 }
 

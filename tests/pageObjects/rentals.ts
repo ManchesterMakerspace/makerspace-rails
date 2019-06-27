@@ -3,7 +3,6 @@ import { Routing } from "app/constants";
 import { Rental } from "app/entities/rental";
 import { MemberDetails } from "app/entities/member";
 import { timeToDate } from "ui/utils/timeToDate";
-import utils from "./common";
 
 const tableId = "rentals-table";
 // Member removed as thats only for admins
@@ -15,7 +14,7 @@ class RentalsPageObject extends TablePageObject {
   public fieldEvaluator = (member?: Partial<MemberDetails>) => (rental: Partial<Rental>) => (fieldContent: { field: string, text: string }) => {
     const { field, text } = fieldContent;
     if (field === "expiration") {
-      expect(text).toEqual(timeToDate(rental.expiration));
+      expect(text).toEqual(rental.expiration ? timeToDate(rental.expiration) : "N/A");
     } else if (field === "status") {
       expect(
         ["Active", "Expired"].some((status => new RegExp(status, 'i').test(text)))
