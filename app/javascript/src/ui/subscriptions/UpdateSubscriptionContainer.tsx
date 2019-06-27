@@ -12,7 +12,7 @@ import { deleteSubscriptionAction } from "ui/subscriptions/actions";
 
 
 export interface UpdateSubscriptionRenderProps extends Props {
-  submit: (form: Form) => void;
+  submit: (form: Form) => Promise<boolean>;
   setRef: (ref: DeleteSubscription) => void;
 }
 interface OwnProps {

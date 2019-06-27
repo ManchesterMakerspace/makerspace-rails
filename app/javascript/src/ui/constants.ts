@@ -11,3 +11,5 @@ export enum ItemsPerPage {
   TwentyFive = 26,
 }
 export const defaultItemsPerPage = ItemsPerPage.TwentyFive;
+
+export const mongoIdRegex = /^[a-f\d]{24}$/i
