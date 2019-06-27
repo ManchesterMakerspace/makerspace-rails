@@ -67,7 +67,6 @@ describe("Members page", () => {
       await utils.clickElement(memberPo.memberForm.submit);
       await utils.assertInputError(memberPo.memberForm.firstname);
       await utils.assertInputError(memberPo.memberForm.lastname);
-      await utils.assertInputError(memberPo.memberForm.expiration);
       await utils.assertInputError(memberPo.memberForm.email);
       await utils.assertInputError(memberPo.memberForm.contract);
       await utils.clickElement(memberPo.memberForm.contract);
@@ -79,8 +78,6 @@ describe("Members page", () => {
       await utils.fillInput(memberPo.memberForm.email, "");
       await utils.fillInput(memberPo.memberForm.lastname, newMember.lastname);
       await utils.assertNoInputError(memberPo.memberForm.lastname);
-      await utils.inputTime(memberPo.memberForm.expiration, newMember.expirationTime);
-      await utils.assertNoInputError(memberPo.memberForm.expiration);
 
       await utils.clickElement(memberPo.memberForm.submit);
       await utils.assertInputError(memberPo.memberForm.email);

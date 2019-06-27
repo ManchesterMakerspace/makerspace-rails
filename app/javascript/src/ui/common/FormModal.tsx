@@ -17,7 +17,7 @@ interface FormModalProps {
   children?: React.ReactNode;
   error?: string;
   fullScreen?: boolean;
-  style?: { [key: string]: string }
+  style?: { [key: string]: string };
 }
 
 const styles = {

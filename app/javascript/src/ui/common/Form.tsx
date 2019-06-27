@@ -79,8 +79,8 @@ class Form extends React.Component<FormModalProps, State> {
     return values;
   }
 
-  private extractNamesFromChildren = (children: React.ReactNode, values: CollectionOf<string> = {}): CollectionOf<string> => {
-    return React.Children.toArray(children).reduce(this.extractInputNames, values) as CollectionOf<string>;
+  private extractNamesFromChildren = (children: React.ReactNode, values: CollectionOf<string> = {}) => {
+    return React.Children.toArray(children).reduce<CollectionOf<string>>(this.extractInputNames, values);
   }
 
   /**

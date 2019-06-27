@@ -1,10 +1,11 @@
 import { TablePageObject } from "./table";
+import utils from "./common";
 const tableId = "membership-reports-table";
 import { MemberDetails } from "app/entities/member";
 import { Report } from "app/entities/earnedMembership";
 import { timeToDate } from "ui/utils/timeToDate";
 
-const rentalsListFields = ["date", "view"];
+const reportsListFields = ["date", "view"];
 class ReportsPageObject extends TablePageObject {
   public actionButtons = {
     create: "#report-list-create",
@@ -17,6 +18,11 @@ class ReportsPageObject extends TablePageObject {
     } else {
       expect(text.includes(report[field])).toBeTruthy();
     }
+  }
+
+  public viewReport = (rowId: string) => {
+    const { view: viewId } = this.getColumnIds(reportsListFields, rowId);
+    return utils.clickElement(`${viewId} button`);
   }
 
   private reportFormId = "#report-form";
@@ -50,4 +56,4 @@ class ReportsPageObject extends TablePageObject {
   }
 }
 
-export default new ReportsPageObject(tableId, rentalsListFields);
+export default new ReportsPageObject(tableId, reportsListFields);

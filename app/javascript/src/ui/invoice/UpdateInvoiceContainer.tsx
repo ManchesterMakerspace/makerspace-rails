@@ -22,7 +22,7 @@ import { CollectionOf } from "app/interfaces";
 
 
 export interface UpdateInvoiceRenderProps extends Props {
-  submit: (form: Form) => void;
+  submit: (form: Form) => Promise<boolean>;
   setRef: (ref: InvoiceForm | SettleInvoiceModal | DeleteInvoiceModal) => void;
 }
 interface OwnProps {
@@ -60,7 +60,7 @@ class UpdateInvoice extends React.Component<Props, {}> {
     }
   }
 
-  private submit = async (form: Form) => {
+  private submit = async (form: Form): Promise<boolean> => {
     const { invoice } = this.props;
     let validUpdate: Invoice;
     if (this.formRef.validate) {

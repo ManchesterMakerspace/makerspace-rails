@@ -5,6 +5,7 @@ import TextField from "@material-ui/core/TextField";
 import Select from "@material-ui/core/Select";
 import FormLabel from "@material-ui/core/FormLabel";
 import MenuItem from "@material-ui/core/MenuItem";
+import { Checkbox, FormControlLabel } from "@material-ui/core";
 
 import { MemberDetails } from "app/entities/member";
 
@@ -12,7 +13,6 @@ import FormModal from "ui/common/FormModal";
 import { fields as memberFormField, MemberStatusOptions, MemberRoleOptions } from "ui/member/constants";
 import Form from "ui/common/Form";
 import { toDatePicker } from "ui/utils/timeToDate";
-import { Checkbox, FormControlLabel } from "@material-ui/core";
 
 interface OwnProps {
   member: Partial<MemberDetails>;
@@ -104,20 +104,21 @@ class MemberForm extends React.Component<OwnProps, State> {
       </Grid>
       {isAdmin && (
         <>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              required
-              value={toDatePicker(member.expirationTime)}
-              label={fields.expirationTime.label}
-              name={fields.expirationTime.name}
-              placeholder={fields.expirationTime.placeholder}
-              type="date"
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
+          {fields.expirationTime && ( // Dont display expiration for creation
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                value={toDatePicker(member.expirationTime)}
+                label={fields.expirationTime.label}
+                name={fields.expirationTime.name}
+                placeholder={fields.expirationTime.placeholder}
+                type="date"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </Grid>
+          )}
           <Grid item xs={12}>
             <FormLabel component="legend">{fields.status.label}</FormLabel>
             <Select

@@ -14,8 +14,9 @@ import Form from "ui/common/Form";
 import { reportRequirementFields, formPrefix } from "ui/reports/constants";
 import ButtonRow, { ActionButton } from "ui/common/ButtonRow";
 import { mapValues } from "lodash-es";
-import AsyncSelectFixed from "ui/common/AsyncSelect";
+import { AsyncCreatableSelect } from "ui/common/AsyncSelect";
 import { Select } from "@material-ui/core";
+import { mongoIdRegex } from "ui/constants";
 
 interface OwnProps {
   requirement: Requirement;
@@ -48,25 +49,43 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
       if (reportRequirement.memberIds && reportRequirement.memberIds.length) {
         this.setState({ memberCount: (reportRequirement.memberIds || []).length || 1 });
         const requestId = crypto.randomBytes(20).toString('hex');
-        this.setState({ loadingMembersRequestId: requestId });
-        await Promise.all(reportRequirement.memberIds.map((id, index) =>
-          new Promise(async (resolve) => {
-            try {
-              const response = await getMember(id);
-              const { member } = response.data;
+        this.setState({ loadingMembersRequestId: requestId }, () => {
+          Promise.all(reportRequirement.memberIds.map( async (id, index) =>
+            new Promise(async (resolve) => {
+              let member;
+
+              try {
+                // Only request if its a Mongo ID
+                // It could be name or email if not a member
+                if (id.match(mongoIdRegex)) {
+                  const response = await getMember(id);
+                  member = response.data.member;
+                }
+              } catch (e) {
+                if (!(e && e.response && e.response.status === 404)) {
+                  // Log the error if its anything other than 404
+                  console.log(e);
+                }
+              } finally {
+                if (!member) {
+                  member = { id };
+                }
+              }
+
               // Verify we're still fetching the same collection before setting form
               if (member && this.state.loadingMembersRequestId === requestId) {
-                const option = { value: member.id, label: `${member.firstname} ${member.lastname}`, id: member.id }
+                const option = {
+                  value: member.id,
+                  label: member.firstname ? `${member.firstname} ${member.lastname || ""}` : member.id,
+                  id: member.id,
+                };
                 const fieldName = this.getMemberInputName(index);
-                console.log(fieldName, option);
                 this.formRef && await this.formRef.setValue(fieldName, option);
               }
-            } catch (e) {
-              console.log(e);
-            } finally {
+
               resolve();
-            }
-          })));
+            })));
+        });
       } else {
         const fieldName = this.getMemberInputName(0);
         const option: SelectOption = { value: null, label: "None reported", id: 'none' }
@@ -193,9 +212,8 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
     return (
       <Grid item xs={12}>
         <FormLabel component="legend">{fields.memberId.label}</FormLabel>
-        <AsyncSelectFixed
+        <AsyncCreatableSelect
           isClearable
-          createable={true}
           name={fieldName}
           placeholder={fields.memberId.placeholder}
           id={fieldName}
@@ -233,7 +251,7 @@ class ReportRequirementFieldset extends React.Component<OwnProps, State> {
             <Select
               fullWidth
               required
-              defaultValue={reportRequirement && reportRequirement.reportedCount || "0"}
+              value={reportRequirement && reportRequirement.reportedCount || 0}
               disabled={disabled}
               name={`${fields.reportedCount.name}`}
               id={`${fields.reportedCount.name}`}

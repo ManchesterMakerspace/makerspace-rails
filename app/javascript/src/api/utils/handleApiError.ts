@@ -4,6 +4,10 @@ import isString from "lodash-es/isString";
 import { isObject } from "util";
 import { isUndefined } from "lodash-es";
 
+export const isApiErrorResponse = (response: any): response is ApiErrorResponse => {
+  return isObject(response) && response.errorMessage;
+}
+
 const defaultMessage = "Unknown Error.  Contact an administrator";
 export const handleApiError = (e: any): ApiErrorResponse => {
   const apiErrorResponse: ApiErrorResponse = {

@@ -70,7 +70,7 @@ class InvoicesListComponent extends React.Component<Props, State> {
     // Select all invoices if viewing your own invoices page for quick checkout
     const invoicesList = Object.values(invoices);
     const ownAllInvoices = invoicesList.length && invoicesList.every(invoice => invoice.memberId === currentUserId);
-    
+
     const selectedIds = ownAllInvoices ? Object.entries(invoices).reduce((ids, [id, invoice]) => {
       if (!invoice.settled) {
         ids.push(id);
@@ -249,14 +249,14 @@ class InvoicesListComponent extends React.Component<Props, State> {
         (prevState === this.state) // State is static - Nothing can happen during initial load
       ) {
       const viewingOwnInvoices = (Object.values(invoices)).every(invoice => invoice.memberId === currentUserId);
-     
+
       const selectedIds = viewingOwnInvoices ? Object.entries(invoices).reduce((ids, [id, invoice]) => {
         if (!invoice.settled) {
           ids.push(id);
         }
         return ids;
       }, []) : [];
-      
+
       this.setState({ selectedIds });
     }
 
@@ -375,8 +375,7 @@ class InvoicesListComponent extends React.Component<Props, State> {
       const submit = async (form: Form) => {
         const success = await renderProps.submit(form);
         if (success) {
-          this.setState({ selectedIds: [] });
-          this.getInvoices(true);
+          this.setState({ selectedIds: [] }, () => this.getInvoices(true));
         }
       }
       return (
@@ -533,7 +532,7 @@ const mapDispatchToProps = (
       type: CheckoutAction.StageInvoicesForPayment,
       data: invoices
     }),
-    goToCheckout: () => dispatch(push(Routing.Checkout)),  
+    goToCheckout: () => dispatch(push(Routing.Checkout)),
   }
 }
 

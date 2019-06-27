@@ -12,7 +12,7 @@ import RentalForm from "ui/rentals/RentalForm";
 import DeleteRentalModal from "ui/rentals/DeleteRentalModal";
 
 export interface UpdateRentalRenderProps extends Props {
-  submit: (form: Form) => void;
+  submit: (form: Form) => Promise<boolean>;
   setRef: (ref: RentalForm | RenewalForm | DeleteRentalModal) => void;
 }
 interface OwnProps {

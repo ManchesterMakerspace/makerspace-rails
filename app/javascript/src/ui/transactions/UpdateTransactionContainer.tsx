@@ -10,7 +10,7 @@ import { CrudOperation } from "app/constants";
 import RefundTransactionModal from "ui/transactions/RefundTransactionModal";
 
 export interface UpdateTransactionRenderProps extends Props {
-  submit: (form: Form) => void;
+  submit: (form: Form) => Promise<boolean>;
   setRef: (ref: RefundTransactionModal) => void;
 }
 interface OwnProps {

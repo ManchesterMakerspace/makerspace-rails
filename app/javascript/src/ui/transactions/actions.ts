@@ -41,7 +41,7 @@ export const readTransactionsAction = (
 export const refundTransactionAction = (
   transactionId: string,
   admin: boolean,
-): ThunkAction<Promise<void>, {}, {}, AnyAction> => async (dispatch) => {
+): ThunkAction<Promise<boolean>, {}, {}, AnyAction> => async (dispatch) => {
   dispatch({ type: TransactionsAction.StartDeleteRequest });
 
   try {
@@ -55,6 +55,7 @@ export const refundTransactionAction = (
       type: TransactionsAction.DeleteTransactionSuccess,
       data: refundedTransaction
     });
+    return true;
   } catch (e) {
     const { errorMessage } = e;
     dispatch({
