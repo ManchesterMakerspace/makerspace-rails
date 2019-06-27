@@ -234,21 +234,66 @@ describe("Earned Memberships", () => {
       await utils.waitForNotVisible(reportPO.reportForm.submit);
       expect((await reportPO.getAllRows()).length).toEqual(1);
       await reportPO.verifyFields(initReport, reportPO.fieldEvaluator);
+
+
+      await mock(mockRequests.member.get.ok(defaultMembers[0].id, defaultMembers[0]));
+      await mock(mockRequests.member.get.ok(defaultMembers[1].id, defaultMembers[1]));
+
+      await reportPO.viewReport(initReport.id);
+      expect(await utils.getElementText(reportPO.reportRequirementForm(0).member(0))).toEqual(newReportRequirement.memberIds[0]);
+      expect(await utils.getElementText(reportPO.reportRequirementForm(0).member(1))).toEqual(newReportRequirement.memberIds[1]);
+      expect(await utils.getElementAttribute(reportPO.reportRequirementForm(0).reportedCount, "value")).toEqual(String(newReportRequirement.reportedCount));
+      expect(await utils.getElementText(reportPO.reportForm.reportDate)).toEqual(timeToDate(initReport.date));
+      done();
+    });
+    it("Can create new reports for mentoring non-members", async (done) => {
+      const nonMemberRR: ReportRequirement = {
+        ...basicReportRequirement,
+        memberIds: ["foo@foo.com"]
+      };
+      const initReport: Report = {
+        ...basicReport,
+        earnedMembershipId: membership.id,
+        reportRequirements: [nonMemberRR]
+      };
+
+
+      await utils.clickElement(reportPO.actionButtons.create);
+      await utils.waitForVisible(reportPO.reportForm.submit);
+
+      // Mock no search results found
+      await mock(mockRequests.members.get.ok([]));
+      await utils.selectDropdownByValue(reportPO.reportRequirementForm(0).reportedCount, String(nonMemberRR.reportedCount));
+      await utils.fillSearchInput(reportPO.reportRequirementForm(0).member(0), "foo@foo.com");
+
+      await mock(mockRequests.earnedMembershipReports.post.ok(membership.id, initReport));
+      await mock(mockRequests.earnedMembershipReports.get.ok(membership.id, [initReport]));
+      await mock(mockRequests.earnedMemberships.show.ok(membership), 2);
+      await mock(mockRequests.member.get.ok(updatedMember.id, updatedMember));
+      await utils.clickElement(reportPO.reportForm.submit);
+      await utils.waitForNotVisible(reportPO.reportForm.submit);
+      expect((await reportPO.getAllRows()).length).toEqual(1);
+      await reportPO.verifyFields(initReport, reportPO.fieldEvaluator);
+
+      await reportPO.viewReport(initReport.id);
+      expect(await utils.getElementText(reportPO.reportRequirementForm(0).member(0))).toEqual(nonMemberRR.memberIds[0]);
+      expect(await utils.isElementDisplayed(reportPO.reportRequirementForm(0).member(1))).toBeFalsy();
+      expect(await utils.getElementAttribute(reportPO.reportRequirementForm(0).reportedCount, "value")).toEqual(String(nonMemberRR.reportedCount));
+      expect(await utils.getElementText(reportPO.reportForm.reportDate)).toEqual(timeToDate(initReport.date));
       done();
     });
     it("Create report form validation", async (done) => {
       await utils.clickElement(reportPO.actionButtons.create);
       await utils.waitForVisible(reportPO.reportForm.submit);
 
-      await utils.clickElement(reportPO.reportForm.submit);
-      await utils.selectDropdownByValue(reportPO.reportRequirementForm(0).reportedCount, String(newReportRequirement.reportedCount));
 
       expect(await utils.isElementDisplayed(reportPO.reportRequirementForm(0).member(1))).toBeFalsy();
       await utils.clickElement(reportPO.reportRequirementForm(0).addMemberButton);
       expect(await utils.isElementDisplayed(reportPO.reportRequirementForm(0).member(1))).toBeTruthy();
+      await utils.selectDropdownByValue(reportPO.reportRequirementForm(0).reportedCount, String(newReportRequirement.reportedCount));
 
       // No create mock, should display API error
-      expect(await utils.isElementDisplayed(reportPO.reportForm.error)).toBeTruthy();
+      expect(await utils.isElementDisplayed(reportPO.reportForm.error)).toBeFalsy();
       await utils.clickElement(reportPO.reportForm.submit);
       await utils.waitForVisible(reportPO.reportForm.error);
       await mock(mockRequests.earnedMembershipReports.post.ok(membership.id, initReport));
