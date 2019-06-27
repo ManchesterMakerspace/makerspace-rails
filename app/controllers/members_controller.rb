@@ -8,7 +8,13 @@ class MembersController < AuthenticationController
       if is_admin? && (params[:currentMembers].nil? || params[:currentMembers].empty?)
         search = Mongoid::Criteria.new(Member)
       else
-        search = Member.where(:expirationTime => { '$gt' => (Time.now.strftime('%s').to_i * 1000) })
+        # Include unset or expired within grace period
+        search = Member.where({
+          :$or => [
+            { :expirationTime.gte => ((Time.now + 3.days).strftime('%s').to_i * 1000) },
+            {  expirationTime: nil }
+          ]
+        })
       end
       @members = query_params[:search].nil? || query_params[:search].empty? ? search.all : Member.rough_search_members(query_params[:search], search)
       @members = query_resource(@members)
