@@ -6,7 +6,6 @@ gem 'rack-cors'
 gem 'puma', '~> 3.0'
 gem 'active_model_serializers'
 gem 'dotenv-rails'
-gem 'webpacker'
 
 #authentication
 gem 'devise'
@@ -44,3 +43,6 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+
+# Frontend
+gem "makerspace-react-rails", ">=0.1.0"

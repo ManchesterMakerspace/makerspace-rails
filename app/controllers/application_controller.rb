@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
 
   def application
-    render 'layouts/application'
+    render "layouts/application"
   end
 
   def set_csrf_cookie_for_ng

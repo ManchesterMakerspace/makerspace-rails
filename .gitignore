@@ -18,7 +18,6 @@ dump/*.png
 config.json
 old-config.json
 
-/node_modules
 /public
 /public-coverage
 
@@ -56,12 +55,4 @@ test.env
 .byebug_history
 
 # Reporter file for integration  tests and screenshots
-/spec/frontend/test_results
 /spec/rspec_results.html
-/spec/frontend/reporter
-/public/packs
-/public/packs-test
-/node_modules
-yarn-debug.log*
-.yarn-integrity
-yarn-error.log*
