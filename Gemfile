@@ -21,6 +21,7 @@ gem 'google-api-client', require: ['google/apis/drive_v3']
 gem 'mini_magick'
 
 gem 'rest-client'
+gem 'rswag'
 
 group :development do
   # Spring speeds up development by keeping your application running in the background.

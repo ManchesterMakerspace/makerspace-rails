@@ -7,6 +7,9 @@ DC_TEST=docker-compose -f Docker/docker-compose/test.yml -p $(PROJECT_NAME)
 start: clean-dev dev-up
 test: clean-test test-up functional-up
 
+docs:
+	rake rswag:specs:swaggerize
+
 rebuild-dev: clean-dev build-up-dev
 start-unit: clean-test test-up
 start-func: clean-test functional-up
