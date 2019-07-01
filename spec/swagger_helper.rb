@@ -19,8 +19,11 @@ RSpec.configure do |config|
       swagger: '2.0',
       info: {
         title: 'Makerspace Server V1',
-        version: 'v1'
+        version: 'v1',
       },
+      basePath: '/api',
+      consumes: ['application/json'],
+      produces: ['application/json'],
       definitions: {
         Card: {
           type: :object,
@@ -79,8 +82,8 @@ RSpec.configure do |config|
           type: :object,
           properties: {
             message: { type: :string },
-            code: { type: :number },
-            status: { type: :string },
+            status: { type: :number },
+            error: { type: :string },
           }
         },
 
