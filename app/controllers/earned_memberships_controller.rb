@@ -1,6 +1,6 @@
 class EarnedMembershipsController < AuthenticationController
-  before_action :is_earned_member
   before_action :set_earned_membership, only: [:show]
+  before_action :is_earned_member
   before_action :authenticate_member!
 
   def show
@@ -9,9 +9,8 @@ class EarnedMembershipsController < AuthenticationController
 
   private
   def is_earned_member
-     unless current_member && current_member.earned_membership? &&
-      current_member.earned_membership.id.to_s === params[:id]
-      raise ::Error::InsufficientPermissions.new()
+    unless @membership == current_member.earned_membership
+      raise ::Error::Forbidden.new()
     end
   end
 

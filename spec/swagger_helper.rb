@@ -7,7 +7,7 @@ RSpec.configure do |config|
   # NOTE: If you're using the rswag-api to serve API descriptions, you'll need
   # to ensure that it's configured to serve Swagger from the same folder
   config.swagger_root = Rails.root.to_s + '/swagger'
-
+  config.include Devise::Test::IntegrationHelpers, type: :request
   # Define one or more Swagger documents and provide global metadata for each one
   # When you run the 'rswag:specs:to_swagger' rake task, the complete Swagger will
   # be generated at the provided relative path under swagger_root
@@ -98,12 +98,12 @@ RSpec.configure do |config|
             createdAt: { type: :date },
             dueDate: { type: :date },
             amount: { type: :string },
-            subscriptionId: { type: :string },
-            planId: { type: :string },
+            subscriptionId: { type: :string, 'x-nullable': true },
+            planId: { type: :string, 'x-nullable': true },
             resourceClass: { type: :string },
             resourceId: { type: :string },
             quantity: { type: :number },
-            discountId: { type: :string },
+            discountId: { type: :string, 'x-nullable': true },
             memberName: { type: :string },
             resource: { 
               type: :object,
@@ -122,10 +122,10 @@ RSpec.configure do |config|
             name: { type: :string },
             description: { type: :string },
             amount: { type: :string },
-            planId: { type: :string },
+            planId: { type: :string, 'x-nullable': true },
             resourceClass: { type: :string },
             quantity: { type: :number },
-            discountId: { type: :string },
+            discountId: { type: :string, 'x-nullable': true },
             disabled: { type: :boolean },
           }
         },
@@ -141,10 +141,10 @@ RSpec.configure do |config|
             role: { type: :string },
             expirationTime: { type: :integer },
             memberContractOnFile: { type: :boolean },
-            cardId: { type: :string },
-            subscriptionId: { type: :string },
-            customerId: { type: :string },
-            earnedMembershipId: { type: :string },
+            cardId: { type: :string, 'x-nullable': true },
+            subscriptionId: { type: :string, 'x-nullable': true },
+            customerId: { type: :string, 'x-nullable': true },
+            earnedMembershipId: { type: :string, 'x-nullable': true },
           }
         },
         

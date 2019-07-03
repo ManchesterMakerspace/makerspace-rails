@@ -10,6 +10,6 @@ class PermissionsController < AuthenticationController
     # Look up member if admin is looking for another user
     @member = Member.find(params[:id])
     raise ::Mongoid::Errors::DocumentNotFound.new(Member, { id: params[:id] }) if @member.nil?
-    raise ::Error::Unauthorized.new unless @member.id == current_member.id || is_admin?
+    raise ::Error::Forbidden.new unless @member.id == current_member.id || is_admin?
   end
 end

@@ -8,7 +8,7 @@ class EarnedMemberships::ReportsController < AuthenticationController
   end
 
   def create
-    raise ::Error::InsufficientPermissions.new() unless current_member.earned_membership.id.as_json == report_params[:earned_membership_id]
+    raise ::Error::Forbidden.new() unless current_member.earned_membership.id.as_json == report_params[:earned_membership_id]
     @report = EarnedMembership::Report.new(report_params)
     @report.save!
     @messages.push("#{@report.earned_membership.member.fullname} just submitted a report.")
@@ -24,6 +24,6 @@ class EarnedMemberships::ReportsController < AuthenticationController
   end
 
   def verify_earned_member
-    raise ::Error::InsufficientPermissions.new() unless current_member.earned_membership?
+    raise ::Error::Forbidden.new() unless current_member.earned_membership?
   end
 end

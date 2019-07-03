@@ -1,15 +1,18 @@
 require 'swagger_helper'
 
-describe 'Members API' do 
+describe 'Members API', type: :request do 
   path '/members' do 
     get 'Gets a list of members' do 
       tags 'Members'
-      parameter name: :pageNum, in: :query, type: :integer
-      parameter name: :orderBy, in: :query, type: :string
-      parameter name: :order, in: :query, type: :string
-      parameter name: :currentMembers, in: :query, type: :boolean
+      parameter name: :pageNum, in: :query, type: :integer, required: false
+      parameter name: :orderBy, in: :query, type: :string, required: false
+      parameter name: :order, in: :query, type: :string, required: false
+      parameter name: :currentMembers, in: :query, type: :boolean, required: false
 
-      response '200', 'members found' do 
+      response '200', 'Members found' do 
+        let(:members) { create_list(:member) }
+        before { sign_in create(:member) }
+
         schema type: :object,
         properties: {
           members: { 
@@ -19,7 +22,12 @@ describe 'Members API' do
         },
         required: [ 'members' ]
 
-        let(:members) { create_list(:member) }
+        run_test!
+      end
+
+      response '401', 'User not authenciated' do 
+        schema '$ref' => '#/definitions/error'
+        let(:id) { create(:member).id }
         run_test!
       end
     end
@@ -30,7 +38,10 @@ describe 'Members API' do
       tags 'Members'
       parameter name: :id, in: :path, type: :string
 
-      response '200', 'member found' do
+      response '200', 'Member found' do
+        before { sign_in create(:member) }
+        let(:id) { create(:member).id }
+
         schema type: :object,
           properties: {
             member: {
@@ -39,21 +50,25 @@ describe 'Members API' do
           },
           required: [ 'member' ]
 
-        let(:id) { create(:member).id }
         run_test!
       end
 
-      response '404', 'rental not found' do
+      response '404', 'Member not found' do
+        before { sign_in create(:member) }
         schema '$ref' => '#/definitions/error'
         let(:id) { 'invalid' }
+        run_test!
+      end
+
+      response '401', 'User not authenciated' do 
+        schema '$ref' => '#/definitions/error'
+        let(:id) { create(:member).id }
         run_test!
       end
     end
 
     put 'Updates a member and uploads signature' do
       tags 'Members'
-      produces 'application/json'
-      consumes 'application/json'
       parameter name: :id, in: :path, type: :string
       parameter name: :member, in: :body, schema: {
         type: :object,
@@ -65,7 +80,13 @@ describe 'Members API' do
         }
       }
 
+      # Update object
+      let(:member) {{ firstname: "new firstname", lastname: "new lastname", email: "foo@foo.com" }}
+
       response '200', 'member updated' do
+        let(:current_member) { create(:member) }
+        before { sign_in current_member }
+
         schema type: :object,
           properties: {
             member: {
@@ -74,20 +95,29 @@ describe 'Members API' do
           },
           required: [ 'member' ]
 
-        let(:id) { create(:member).id }
+        let(:id) { current_member.id }
         run_test!
       end
 
-      response '401', 'unauthorized' do 
+      response '403', 'Forbidden updating different member' do 
+        let(:current_member) { create(:member) }
+        before { sign_in current_member }
+        
         schema '$ref' => '#/definitions/error'
 
-        let(:logged_in_user) { create(:member) }
         let(:other_user) { create(:member) }
         let(:id) { other_user.id }
         run_test!
       end
 
+      response '401', 'User not authenciated or authorized' do 
+        schema '$ref' => '#/definitions/error'
+        let(:id) { create(:member).id }
+        run_test!
+      end
+
       response '404', 'member not found' do
+        before { sign_in create(:member) }
         schema '$ref' => '#/definitions/error'
 
         let(:id) { 'invalid' }

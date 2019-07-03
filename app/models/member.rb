@@ -11,9 +11,8 @@ class Member
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
-  field :cardID
 
-  #split first and last
+  field :cardID # TODO: I think this can be removed since its an assoc now. Doorboto checks card collection directly
   field :firstname
   field :lastname
   field :status,                         default: "activeMember" # activeMember, nonMember, revoked, inactive

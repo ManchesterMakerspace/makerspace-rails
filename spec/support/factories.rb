@@ -13,7 +13,6 @@ FactoryBot.define do
   factory :member do
     firstname {generate(:firstname)}
     lastname {generate(:lastname)}
-    cardID {generate(:cardID)}
     expirationTime {generate(:expiry)}
     email {generate(:email)}
     encrypted_password { BCrypt::Password.create('password') }
@@ -52,6 +51,10 @@ FactoryBot.define do
     end
   end
 
+  factory :member_with_card, parent: :member do
+    association :access_card, factory: :card 
+  end
+
   factory :earned_member, parent: :member do
     association :earned_membership
   end
@@ -71,7 +74,8 @@ FactoryBot.define do
   end
 
   factory :rental do
-    number { generate(:number)}
+    number { generate(:number) }
+    description { "A rental for x amount" }
     expiration { generate(:expiry) }
   end
 
