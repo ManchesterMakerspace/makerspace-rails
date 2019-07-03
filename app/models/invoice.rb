@@ -1,6 +1,7 @@
 class Invoice
   include Mongoid::Document
   include ActiveModel::Serializers::JSON
+  include Service::SlackConnector
 
   OPERATION_RESOURCES = {
     "member" => Member,
@@ -67,8 +68,9 @@ class Invoice
 
   def request_refund
     set_refund_requested
-    send_slack_message("#{current_member.fullname} has requested a refund of #{amount} for #{name || description} from #{settled_at}. <#{request.base_url}/billing/transactions/#{transaction_id}|Process refund>")
-    BillingMailer.refund_requested(invoice.member.email, transaction).deliver_later
+    base_url = ActionMailer::Base.default_url_options[:host]
+    send_slack_message("#{member.fullname} has requested a refund of #{amount} for #{name || description} from #{settled_at}. <#{base_url}/billing/transactions/#{transaction_id}|Process refund>")
+    BillingMailer.refund_requested(member.email, transaction_id).deliver_later
   end
 
   def past_due

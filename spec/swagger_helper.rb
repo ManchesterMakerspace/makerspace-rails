@@ -46,10 +46,10 @@ RSpec.configure do |config|
               items: { '$ref' => '#/definitions/Subscription' }
             },
             cardType: { type: :string },
-            expirationMonth: { type: :string },
-            expirationYear: { type: :string },
+            expirationMonth: { type: :integer },
+            expirationYear: { type: :integer },
             expirationDate: { type: :string },
-            last4: { type: :string },
+            last4: { type: :integer },
           }
         },
 
@@ -175,7 +175,7 @@ RSpec.configure do |config|
             name: { type: :string },
             description: { type: :string },
             amount: { type: :string },
-            billingFrequency: { type: :string },
+            billingFrequency: { type: :integer },
             discounts: {
               type: :array,
               items: {
@@ -282,30 +282,31 @@ RSpec.configure do |config|
             disputes: { type: :array },
             discountAmount: { type: :string },
             discounts: { type: :array },
-            gatewayRejectionReason: { type: :string },
+            gatewayRejectionReason: { type: :string, 'x-nullable': true },
             status: { type: :string },
             id: { type: :string },
-            planId: { type: :string },
+            planId: { type: :string, 'x-nullable': true },
             recurring: { type: :boolean },
             refundIds: { type: :array, items: { type: :string } },
-            refundedTransactionId: { type: :string },
-            subscriptionDetails: { 
-              type: :object,
-              properties: {
-                billingPeriodStartDate: { type: :date },
-                billingPeriodEndDate: { type: :date },
-              }
-            },
-            subscriptionId: { type: :string },
+            refundedTransactionId: { type: :string, 'x-nullable': true },
+            # TODO
+            # subscriptionDetails: { 
+            #   type: :object,
+            #   properties: {
+            #     billingPeriodStartDate: { type: :date },
+            #     billingPeriodEndDate: { type: :date },
+            #   }
+            # },
+            subscriptionId: { type: :string, 'x-nullable': true },
             amount: { type: :string },
             memberId: { type: :string },
             memberName: { type: :string },
-            paymentMethodDetails: {
-              oneOf: [
-                '$ref' => '#/definitions/CreditCard',
-                '$ref' => '#/definitions/PayPalAccount',
-              ]
-            }
+            # paymentMethodDetails: {
+            #   oneOf: [
+            #     '$ref' => '#/definitions/CreditCard',
+            #     '$ref' => '#/definitions/PayPalAccount',
+            #   ]
+            # }
           }
         },
 

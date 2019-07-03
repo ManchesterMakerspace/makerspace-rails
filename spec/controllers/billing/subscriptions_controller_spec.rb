@@ -54,6 +54,8 @@ RSpec.describe Billing::SubscriptionsController, type: :controller do
   }
 
   before(:each) do
+    create(:billing_permission, member: member)
+    create(:billing_permission, member: non_customer)
     allow_any_instance_of(Service::BraintreeGateway).to receive(:connect_gateway).and_return(gateway)
     @request.env["devise.mapping"] = Devise.mappings[:member]
     sign_in member
@@ -89,7 +91,7 @@ RSpec.describe Billing::SubscriptionsController, type: :controller do
       sign_in non_customer
       get :show, params: { id: "foobar" }, format: :json
       parsed_response = JSON.parse(response.body)
-      expect(response).to have_http_status(422)
+      expect(response).to have_http_status(403)
       expect(parsed_response['message']).to match(/customer/i)
     end
   end
@@ -129,7 +131,7 @@ RSpec.describe Billing::SubscriptionsController, type: :controller do
       sign_in non_customer
       put :update, params: { id: "foobar", subscription: valid_params }, format: :json
       parsed_response = JSON.parse(response.body)
-      expect(response).to have_http_status(422)
+      expect(response).to have_http_status(403)
       expect(parsed_response['message']).to match(/customer/i)
     end
   end
@@ -163,7 +165,7 @@ RSpec.describe Billing::SubscriptionsController, type: :controller do
       sign_in non_customer
       delete :destroy, params: { id: "foobar" }, format: :json
       parsed_response = JSON.parse(response.body)
-      expect(response).to have_http_status(422)
+      expect(response).to have_http_status(403)
       expect(parsed_response['message']).to match(/customer/i)
     end
   end

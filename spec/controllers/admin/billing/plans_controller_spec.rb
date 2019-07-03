@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Billing::PlansController, type: :controller do
+RSpec.describe Admin::Billing::PlansController, type: :controller do
   let(:gateway) { double }
   let(:non_customer) { create(:member) }
   let(:membership_plan) { build(:plan, id: "membership_plan") }
@@ -13,6 +13,8 @@ RSpec.describe Billing::PlansController, type: :controller do
       invoice_id: invoice.id
     }
   }
+
+  login_admin
 
   before(:each) do
     allow_any_instance_of(Service::BraintreeGateway).to receive(:connect_gateway).and_return(gateway)

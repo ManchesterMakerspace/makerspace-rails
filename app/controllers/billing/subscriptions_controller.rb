@@ -9,7 +9,6 @@ class Billing::SubscriptionsController < BillingController
   end
 
   def update
-    # 2 different types of updates (payment method or plan)
     subscription_update = {
       id: params[:id],
       payment_method_token: subscription_params[:payment_method_token]
@@ -27,7 +26,7 @@ class Billing::SubscriptionsController < BillingController
 
   private
   def subscription_params
-    params.require(:subscription).permit(:id, :payment_method_token, :invoice_option_id)
+    params.require(:subscription).permit(:payment_method_token)
   end
 
   def verify_own_subscription

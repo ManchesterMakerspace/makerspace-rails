@@ -9,9 +9,9 @@ describe 'Invoices API', type: :request do
       parameter name: :order, in: :query, type: :string, required: false
 
       response '200', 'invoices found' do 
-        let(:admin) { create(:member, :admin) }
-        let(:invoices) { create_list(:invoice, member: admin) }
-        before { sign_in admin }
+        let(:member) { create(:member) }
+        let(:invoices) { create_list(:invoice, member: member) }
+        before { sign_in member }
 
         schema type: :object,
         properties: {
@@ -27,7 +27,6 @@ describe 'Invoices API', type: :request do
 
       response '401', 'User not authenticated' do 
         schema '$ref' => '#/definitions/error'
-        let(:invoices) { create_list(:invoice) }
         run_test!
       end
     end

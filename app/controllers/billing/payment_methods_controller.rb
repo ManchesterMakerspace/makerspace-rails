@@ -4,7 +4,6 @@ class Billing::PaymentMethodsController < BillingController
 
   def new
     client_token = generate_client_token
-    # TODO: why isn't this converting to camel case for me
     render json: { clientToken: client_token } and return
   end
 

@@ -58,7 +58,7 @@ class BraintreeService::TransactionSerializer < ActiveModel::Serializer
     elsif payment_attr == "paypal"
       details_hash = object.paypal_details
       details = {
-        email: details_hash.email,
+        email: details_hash.payer_email,
         imageUrl: details_hash.image_url
       }
     end
