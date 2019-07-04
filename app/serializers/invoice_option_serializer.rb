@@ -8,4 +8,8 @@ class InvoiceOptionSerializer < ApplicationSerializer
              :resource_class,
              :disabled,
              :discount_id
+
+  def amount
+    object.amount.truncate.to_s + '.' + sprintf('%02d', (BigDecimal(object.amount.to_s).frac * 100).truncate)
+  end
 end
