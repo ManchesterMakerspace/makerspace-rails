@@ -18,6 +18,7 @@ describe 'Billing::Subscriptions API', type: :request do
   path '/billing/subscriptions/{id}' do 
     get 'Gets a subscription' do 
       tags 'Subscriptions'
+      operationId "listSubscriptions"
       parameter name: :id, in: :path, type: :string
 
       response '200', 'subscription found' do 
@@ -61,6 +62,7 @@ describe 'Billing::Subscriptions API', type: :request do
 
     put "Update a subscription" do 
       tags 'Subscriptions'
+      operationId "updateSubscription"
       parameter name: :id, in: :path, type: :string
       parameter name: :resource_payload, in: :body, schema: {
         type: :object,
@@ -131,6 +133,7 @@ describe 'Billing::Subscriptions API', type: :request do
       end
 
       tags 'Subscriptions'
+      operationId "cancelSubscription"
       parameter name: :id, in: :path, type: :string
 
       response '204', 'refund requested' do

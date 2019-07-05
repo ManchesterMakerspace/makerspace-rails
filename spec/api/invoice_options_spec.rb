@@ -4,6 +4,7 @@ describe 'InvoiceOptions API', type: :request do
   path '/invoice_options' do 
     get 'Gets a list of invoice_options' do 
       tags 'InvoiceOptions'
+      operationId "listInvoiceOptions"
       parameter name: :pageNum, in: :query, type: :integer, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false

@@ -51,16 +51,16 @@
           "type": "string"
         },
         "expirationMonth": {
-          "type": "string"
+          "type": "integer"
         },
         "expirationYear": {
-          "type": "string"
+          "type": "integer"
         },
         "expirationDate": {
           "type": "string"
         },
         "last4": {
-          "type": "string"
+          "type": "integer"
         }
       }
     },
@@ -297,7 +297,7 @@
           "type": "string"
         },
         "billingFrequency": {
-          "type": "string"
+          "type": "integer"
         },
         "discounts": {
           "type": "array",
@@ -531,17 +531,6 @@
           "type": "string",
           "x-nullable": true
         },
-        "subscriptionDetails": {
-          "type": "object",
-          "properties": {
-            "billingPeriodStartDate": {
-              "type": "date"
-            },
-            "billingPeriodEndDate": {
-              "type": "date"
-            }
-          }
-        },
         "subscriptionId": {
           "type": "string",
           "x-nullable": true
@@ -554,24 +543,1967 @@
         },
         "memberName": {
           "type": "string"
-        },
-        "paymentMethodDetails": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/PayPalAccount"
-            }
-          ]
         }
       }
     }
   },
   "paths": {
+    "/admin/billing/plans": {
+      "get": {
+        "summary": "Gets a list of billing plans",
+        "tags": [
+          "Plans"
+        ],
+        "operationId": "adminListBillingPlans",
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "type": "integer",
+            "required": false
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "types",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "billing plans found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "plans": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Plan"
+                  }
+                }
+              },
+              "required": [
+                "plans"
+              ]
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/billing/plans/discounts": {
+      "get": {
+        "summary": "Gets a list of billing plan discounts",
+        "tags": [
+          "Discounts"
+        ],
+        "operationId": "adminListBillingPlanDiscounts",
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "type": "integer",
+            "required": false
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "subscriptionOnly",
+            "in": "query",
+            "type": "boolean",
+            "required": false
+          },
+          {
+            "name": "types",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "billing plan discounts found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "discounts": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Discount"
+                  }
+                }
+              },
+              "required": [
+                "discounts"
+              ]
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/billing/subscriptions": {
+      "get": {
+        "summary": "Gets a subscription",
+        "tags": [
+          "Subscriptions"
+        ],
+        "operationId": "adminListSubscriptions",
+        "responses": {
+          "200": {
+            "description": "subscription found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "subscriptions": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Subscription"
+                  }
+                }
+              },
+              "required": [
+                "subscriptions"
+              ]
+            }
+          },
+          "401": {
+            "description": "User not authenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "User not authorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/billing/subscriptions/{id}": {
+      "delete": {
+        "summary": "Cancels a subscription",
+        "tags": [
+          "Subscriptions"
+        ],
+        "operationId": "adminCancelSubscription",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "refund requested"
+          },
+          "401": {
+            "description": "User not authenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "User not authorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/billing/transactions": {
+      "get": {
+        "summary": "Gets a list of transactions",
+        "tags": [
+          "Transactions"
+        ],
+        "operationId": "adminListTransaction",
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "type": "integer",
+            "required": false
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "searchId",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "searchBy",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "type": "string",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "transactions found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "transactions": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Transaction"
+                  }
+                }
+              },
+              "required": [
+                "transactions"
+              ]
+            }
+          },
+          "401": {
+            "description": "User not authenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "User not authorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/billing/transactions/{id}": {
+      "get": {
+        "summary": "Gets a transaction",
+        "tags": [
+          "Transactions"
+        ],
+        "operationId": "adminGetTransaction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "transaction found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "transaction": {
+                  "$ref": "#/definitions/Transaction"
+                }
+              },
+              "required": [
+                "transaction"
+              ]
+            }
+          },
+          "401": {
+            "description": "User not authenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "User not authorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Request refund for a transaction",
+        "tags": [
+          "Transactions"
+        ],
+        "operationId": "adminDeleteTransaction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "refund requested"
+          },
+          "403": {
+            "description": "User not authorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User not authenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/cards/new": {
+      "get": {
+        "summary": "Initiate new card creation",
+        "tags": [
+          "Cards"
+        ],
+        "operationId": "adminGetNewCard",
+        "responses": {
+          "200": {
+            "description": "Card intilized",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "card": {
+                  "type": "object",
+                  "properties": {
+                    "uid": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "required": [
+                "card"
+              ]
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/cards": {
+      "get": {
+        "summary": "Gets a list of members cards",
+        "tags": [
+          "Cards"
+        ],
+        "operationId": "adminListCards",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "cards found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "cards": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Card"
+                  }
+                }
+              },
+              "required": [
+                "cards"
+              ]
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "member not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Creates an access card",
+        "tags": [
+          "Cards"
+        ],
+        "operationId": "adminCreateCard",
+        "parameters": [
+          {
+            "name": "new_resource",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "card": {
+                  "type": "object",
+                  "properties": {
+                    "memberId": {
+                      "type": "string"
+                    },
+                    "uid": {
+                      "type": "string"
+                    },
+                    "cardLocation": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "access card created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "card": {
+                  "$ref": "#/definitions/Card"
+                }
+              },
+              "required": [
+                "card"
+              ]
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "422": {
+            "description": "missing parameter",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "member not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/cards/{id}": {
+      "put": {
+        "summary": "Updates a card",
+        "tags": [
+          "Cards"
+        ],
+        "operationId": "adminUpdateCard",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "new_resource",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "card": {
+                  "type": "object",
+                  "properties": {
+                    "memberId": {
+                      "type": "string"
+                    },
+                    "uid": {
+                      "type": "string"
+                    },
+                    "cardLocation": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "card updated",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "card": {
+                  "$ref": "#/definitions/Card"
+                }
+              },
+              "required": [
+                "card"
+              ]
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Invoice not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/earned_memberships/{id}/reports": {
+      "get": {
+        "summary": "Gets a list of reports",
+        "tags": [
+          "Reports"
+        ],
+        "operationId": "adminGetEarnedMembershipReports",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "pageNum",
+            "in": "query",
+            "type": "integer",
+            "required": false
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "type": "string",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "reports found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "reports": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Report"
+                  }
+                }
+              },
+              "required": [
+                "reports"
+              ]
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Earned membership not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/earned_memberships": {
+      "get": {
+        "summary": "Gets a list of earned memberships",
+        "tags": [
+          "EarnedMemberships"
+        ],
+        "operationId": "adminListEarnedMembership",
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "type": "integer",
+            "required": false
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "type": "string",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "earned memberships found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "earnedMemberships": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/EarnedMembership"
+                  }
+                }
+              },
+              "required": [
+                "earnedMemberships"
+              ]
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Creates an earned membership",
+        "tags": [
+          "EarnedMemberships"
+        ],
+        "operationId": "adminCreateEarnedMembership",
+        "parameters": [
+          {
+            "name": "new_resource",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "earnedMembership": {
+                  "$ref": "#/definitions/EarnedMembership"
+                }
+              }
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "earned membership created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "earnedMembership": {
+                  "$ref": "#/definitions/EarnedMembership"
+                }
+              },
+              "required": [
+                "earnedMembership"
+              ]
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/earned_memberships/{id}": {
+      "get": {
+        "summary": "Gets an earned membership",
+        "operationId": "adminGetEarnedMembership",
+        "tags": [
+          "EarnedMemberships"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "earned membership found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "earnedMembership": {
+                  "$ref": "#/definitions/EarnedMembership"
+                }
+              },
+              "required": [
+                "earnedMembership"
+              ]
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "EarnedMembership not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Updates an earned membership",
+        "tags": [
+          "EarnedMemberships"
+        ],
+        "operationId": "adminUpdateEarnedMembership",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "new_resource",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "earnedMembership": {
+                  "$ref": "#/definitions/EarnedMembership"
+                }
+              }
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "earned membership updated",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "earnedMembership": {
+                  "$ref": "#/definitions/EarnedMembership"
+                }
+              },
+              "required": [
+                "earnedMembership"
+              ]
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "EarnedMembership not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/invoice_options": {
+      "post": {
+        "summary": "Creates an invoice option",
+        "tags": [
+          "InvoiceOptions"
+        ],
+        "operationId": "adminCreateInvoiceOption",
+        "parameters": [
+          {
+            "name": "new_resource",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "invoiceOption": {
+                  "$ref": "#/definitions/InvoiceOption"
+                }
+              }
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "invoice option created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "invoiceOption": {
+                  "$ref": "#/definitions/InvoiceOption"
+                }
+              },
+              "required": [
+                "invoiceOption"
+              ]
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/invoice_options/{id}": {
+      "put": {
+        "summary": "Updates an invoice option",
+        "tags": [
+          "InvoiceOptions"
+        ],
+        "operationId": "adminUpdateInvoiceOption",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "new_resource",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "invoiceOption": {
+                  "$ref": "#/definitions/InvoiceOption"
+                }
+              }
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "invoice option updated",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "invoiceOption": {
+                  "$ref": "#/definitions/InvoiceOption"
+                }
+              },
+              "required": [
+                "invoiceOption"
+              ]
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Invoice option not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes an invoice option",
+        "tags": [
+          "InvoiceOptions"
+        ],
+        "operationId": "adminDeleteInvoiceOption",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "invoice option deleted"
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Invoice Option not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/invoices": {
+      "get": {
+        "summary": "Gets a list of invoices",
+        "tags": [
+          "Invoices"
+        ],
+        "operationId": "listInvoices",
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "type": "integer",
+            "required": false
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "resourceId",
+            "in": "query",
+            "type": "string",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "invoices found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "invoices": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Invoice"
+                  }
+                }
+              },
+              "required": [
+                "invoices"
+              ]
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Creates an invoice",
+        "tags": [
+          "Invoices"
+        ],
+        "operationId": "adminCreateInvoices",
+        "parameters": [
+          {
+            "name": "new_resource",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "invoiceOption": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "discountId": {
+                      "type": "string"
+                    },
+                    "memberId": {
+                      "type": "string"
+                    },
+                    "resourceId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "invoice created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "invoice": {
+                  "$ref": "#/definitions/Invoice"
+                }
+              },
+              "required": [
+                "invoice"
+              ]
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "422": {
+            "description": "missing parameter",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "invoice option not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/invoices/{id}": {
+      "put": {
+        "summary": "Updates an invoice",
+        "tags": [
+          "Invoices"
+        ],
+        "operationId": "adminUpdateInvoice",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "new_resource",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "invoice": {
+                  "$ref": "#/definitions/Invoice"
+                }
+              }
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "invoice updated",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "invoice": {
+                  "$ref": "#/definitions/Invoice"
+                }
+              },
+              "required": [
+                "invoice"
+              ]
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Invoice not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes an invoice",
+        "tags": [
+          "Invoices"
+        ],
+        "operationId": "adminDeleteInvoice",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "invoice deleted"
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Invoice not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/members": {
+      "post": {
+        "summary": "Creates a member",
+        "tags": [
+          "Members"
+        ],
+        "operationId": "adminCreateMember",
+        "parameters": [
+          {
+            "name": "new_resource",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "member": {
+                  "$ref": "#/definitions/Member"
+                }
+              }
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "member created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "member": {
+                  "$ref": "#/definitions/Member"
+                }
+              },
+              "required": [
+                "member"
+              ]
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/members/{id}": {
+      "put": {
+        "summary": "Updates a member",
+        "tags": [
+          "Members"
+        ],
+        "operationId": "adminUpdateMember",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "new_resource",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "member": {
+                  "$ref": "#/definitions/Member"
+                }
+              }
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "member updated",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "member": {
+                  "$ref": "#/definitions/Member"
+                }
+              },
+              "required": [
+                "member"
+              ]
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Member not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/rentals": {
+      "get": {
+        "summary": "Gets a list of rentals",
+        "tags": [
+          "Rentals"
+        ],
+        "operationId": "amdinListRentals",
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "type": "integer",
+            "required": false
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "memberId",
+            "in": "query",
+            "type": "string",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "rentals found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "rentals": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Rental"
+                  }
+                }
+              },
+              "required": [
+                "rentals"
+              ]
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Creates a rental",
+        "tags": [
+          "Rentals"
+        ],
+        "operationId": "adminCreateRental",
+        "parameters": [
+          {
+            "name": "new_resource",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "rental": {
+                  "$ref": "#/definitions/Rental"
+                }
+              }
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "rental created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "rental": {
+                  "$ref": "#/definitions/Rental"
+                }
+              },
+              "required": [
+                "rental"
+              ]
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/rentals/{id}": {
+      "put": {
+        "summary": "Updates a rental",
+        "tags": [
+          "Rentals"
+        ],
+        "operationId": "adminUpdateRental",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "new_resource",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "rental": {
+                  "$ref": "#/definitions/Rental"
+                }
+              }
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "rental updated",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "rental": {
+                  "$ref": "#/definitions/Rental"
+                }
+              },
+              "required": [
+                "rental"
+              ]
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Rental not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/billing/payment_methods/new": {
+      "get": {
+        "summary": "Initiate new payment method creation",
+        "tags": [
+          "PaymentMethods"
+        ],
+        "operationId": "getNewPaymentMethod",
+        "responses": {
+          "200": {
+            "description": "Token created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "clientToken": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "clientToken"
+              ]
+            }
+          },
+          "401": {
+            "description": "User not authenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/billing/payment_methods": {
+      "get": {
+        "summary": "Gets a list of payment_methods",
+        "tags": [
+          "PaymentMethods"
+        ],
+        "operationId": "listPaymentMethods",
+        "responses": {
+          "200": {
+            "description": "payment_methodss found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "paymentMethods": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/CreditCard"
+                  }
+                }
+              },
+              "required": [
+                "paymentMethods"
+              ]
+            }
+          },
+          "401": {
+            "description": "User not authenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create an payment_method",
+        "tags": [
+          "PaymentMethods"
+        ],
+        "operationId": "createPaymentMethod",
+        "parameters": [
+          {
+            "name": "resource_payload",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "resource_payload": {
+                  "type": "object",
+                  "properties": {
+                    "payment_method": {
+                      "type": "object",
+                      "properties": {
+                        "payment_method_nonce": {
+                          "type": "string"
+                        },
+                        "make_default": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "payment_method_nonce"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "payment_method"
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "payment_method created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "paymentMethod": {
+                  "$ref": "#/definitions/CreditCard"
+                }
+              },
+              "required": [
+                "paymentMethod"
+              ]
+            }
+          },
+          "401": {
+            "description": "User not authenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "422": {
+            "description": "parameter missing",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/billing/payment_methods/{id}": {
+      "delete": {
+        "summary": "Deletes a payment method",
+        "tags": [
+          "PaymentMethods"
+        ],
+        "operationId": "deletePaymentMethod",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Payment method deleted"
+          },
+          "401": {
+            "description": "User not authenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "User not authorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/billing/subscriptions/{id}": {
+      "get": {
+        "summary": "Gets a subscription",
+        "tags": [
+          "Subscriptions"
+        ],
+        "operationId": "listSubscriptions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "subscription found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "subscription": {
+                  "$ref": "#/definitions/Subscription"
+                }
+              },
+              "required": [
+                "subscription"
+              ]
+            }
+          },
+          "401": {
+            "description": "User not authenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "User not authorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Subscription not for user",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a subscription",
+        "tags": [
+          "Subscriptions"
+        ],
+        "operationId": "updateSubscription",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "resource_payload",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "resource_payload": {
+                  "type": "object",
+                  "properties": {
+                    "subscription": {
+                      "type": "object",
+                      "properties": {
+                        "payment_method_token": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "payment_method_token"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "subscription"
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "subscription updated",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "subscription": {
+                  "$ref": "#/definitions/Subscription"
+                }
+              },
+              "required": [
+                "subscription"
+              ]
+            }
+          },
+          "401": {
+            "description": "User not authenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "User not authorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Subscription not for user",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Cancels a subscription",
+        "tags": [
+          "Subscriptions"
+        ],
+        "operationId": "cancelSubscription",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "refund requested"
+          },
+          "401": {
+            "description": "User not authenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "User not authorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Subscription not for user",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/billing/transactions": {
       "get": {
         "summary": "Gets a list of transactions",
         "tags": [
           "Transactions"
         ],
+        "operationId": "listTransactions",
         "parameters": [
           {
             "name": "pageNum",
@@ -629,6 +2561,7 @@
         "tags": [
           "Transactions"
         ],
+        "operationId": "createTransaction",
         "parameters": [
           {
             "name": "resource_payload",
@@ -704,12 +2637,53 @@
         }
       }
     },
+    "/billing/transactions/{id}": {
+      "delete": {
+        "summary": "Request refund for a transaction",
+        "tags": [
+          "Transactions"
+        ],
+        "operationId": "deleteTransaction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "refund requested"
+          },
+          "403": {
+            "description": "User not authorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User not authenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "invoice not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/earned_memberships/{id}/reports": {
       "get": {
         "summary": "Gets a list of reports for current member",
         "tags": [
           "Reports"
         ],
+        "operationId": "listEarnedMembershipReports",
         "parameters": [
           {
             "name": "id",
@@ -852,6 +2826,7 @@
         "tags": [
           "EarnedMemberships"
         ],
+        "operationId": "getEarnedMembership",
         "parameters": [
           {
             "name": "id",
@@ -902,6 +2877,7 @@
         "tags": [
           "InvoiceOptions"
         ],
+        "operationId": "listInvoiceOptions",
         "parameters": [
           {
             "name": "pageNum",
@@ -966,6 +2942,7 @@
         "tags": [
           "Invoices"
         ],
+        "operationId": "listInvoices",
         "parameters": [
           {
             "name": "pageNum",
@@ -1087,6 +3064,7 @@
         "tags": [
           "Members"
         ],
+        "operationId": "listMembers",
         "parameters": [
           {
             "name": "pageNum",
@@ -1146,6 +3124,7 @@
         "tags": [
           "Members"
         ],
+        "operationId": "getMember",
         "parameters": [
           {
             "name": "id",
@@ -1188,6 +3167,7 @@
         "tags": [
           "Members"
         ],
+        "operationId": "updateMember",
         "parameters": [
           {
             "name": "id",
@@ -1259,6 +3239,7 @@
         "tags": [
           "Rentals"
         ],
+        "operationId": "listRentals",
         "parameters": [
           {
             "name": "pageNum",
@@ -1306,6 +3287,7 @@
         "tags": [
           "Rentals"
         ],
+        "operationId": "getRental",
         "parameters": [
           {
             "name": "id",

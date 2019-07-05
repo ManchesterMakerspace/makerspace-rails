@@ -13,6 +13,7 @@ describe 'Billing::Transactions API', type: :request do
   path '/admin/billing/transactions' do 
     get 'Gets a list of transactions' do 
       tags 'Transactions'
+      operationId "adminListTransaction"
       parameter name: :pageNum, in: :query, type: :integer, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
@@ -60,6 +61,7 @@ describe 'Billing::Transactions API', type: :request do
       let(:transaction) { build(:transaction, invoice: invoice, id: "foo") }
 
       tags 'Transactions'
+      operationId "adminGetTransaction"
       parameter name: :id, in: :path, type: :string
       response '200', 'transaction found' do 
         before do 
@@ -98,6 +100,7 @@ describe 'Billing::Transactions API', type: :request do
       end
 
       tags 'Transactions'
+      operationId 'adminDeleteTransaction'
       parameter name: :id, in: :path, type: :string
 
       response '204', 'refund requested' do

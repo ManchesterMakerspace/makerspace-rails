@@ -6,6 +6,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
   path '/admin/earned_memberships' do 
     get 'Gets a list of earned memberships' do 
       tags 'EarnedMemberships'
+      operationId "adminListEarnedMembership"
       parameter name: :pageNum, in: :query, type: :integer, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
@@ -38,6 +39,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
 
     post 'Creates an earned membership' do 
       tags 'EarnedMemberships'
+      operationId "adminCreateEarnedMembership"
       parameter name: :new_resource, in: :body, schema: {
         type: :object,
         properties: {
@@ -91,6 +93,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
 
   path "/admin/earned_memberships/{id}" do 
     get 'Gets an earned membership' do 
+      operationId "adminGetEarnedMembership"
       tags 'EarnedMemberships'
       parameter name: :id, in: :path, type: :string
 
@@ -148,6 +151,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
 
     put 'Updates an earned membership' do 
       tags 'EarnedMemberships'
+      operationId "adminUpdateEarnedMembership"
       parameter name: :id, in: :path, type: :string
 
       parameter name: :new_resource, in: :body, schema: {

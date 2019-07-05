@@ -17,6 +17,7 @@ describe 'Billing::Subscriptions API', type: :request do
   path '/admin/billing/subscriptions' do 
     get 'Gets a subscription' do 
       tags 'Subscriptions'
+      operationId "adminListSubscriptions"
       response '200', 'subscription found' do 
         before do 
           sign_in admin
@@ -57,6 +58,7 @@ describe 'Billing::Subscriptions API', type: :request do
       end
 
       tags 'Subscriptions'
+      operationId "adminCancelSubscription"
       parameter name: :id, in: :path, type: :string
 
       response '204', 'refund requested' do

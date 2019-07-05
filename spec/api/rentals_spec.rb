@@ -4,6 +4,7 @@ describe 'Rentals API', type: :request do
   path '/rentals' do 
     get 'Gets a list of rentals' do 
       tags 'Rentals'
+      operationId "listRentals"
       parameter name: :pageNum, in: :query, type: :integer, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
@@ -29,6 +30,7 @@ describe 'Rentals API', type: :request do
   path '/rentals/{id}' do
     get 'Gets a rental' do 
       tags 'Rentals'
+      operationId "getRental"
       parameter name: :id, in: :path, type: :string
 
       response '200', 'rental found' do

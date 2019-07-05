@@ -7,6 +7,7 @@ describe 'Admin::EarnedMembership::Report API', type: :request do
   path '/admin/earned_memberships/{id}/reports' do 
     get 'Gets a list of reports' do 
       tags 'Reports'
+      operationId "adminGetEarnedMembershipReports"
       parameter name: :id, in: :path, type: :string
       parameter name: :pageNum, in: :query, type: :integer, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false

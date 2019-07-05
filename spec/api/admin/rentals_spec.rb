@@ -8,6 +8,7 @@ describe 'Admin::Rentals API', type: :request do
   path '/admin/rentals' do 
     get 'Gets a list of rentals' do 
       tags 'Rentals'
+      operationId "amdinListRentals"
       parameter name: :pageNum, in: :query, type: :integer, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
@@ -41,6 +42,7 @@ describe 'Admin::Rentals API', type: :request do
 
     post 'Creates a rental' do 
       tags 'Rentals'
+      operationId "adminCreateRental"
       parameter name: :new_resource, in: :body, schema: {
         type: :object,
         properties: {
@@ -99,6 +101,7 @@ describe 'Admin::Rentals API', type: :request do
   path "/admin/rentals/{id}" do 
     put 'Updates a rental' do 
       tags 'Rentals'
+      operationId "adminUpdateRental"
       parameter name: :id, in: :path, type: :string
 
       parameter name: :new_resource, in: :body, schema: {

@@ -7,6 +7,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
   path '/admin/invoice_options' do 
     post 'Creates an invoice option' do 
       tags 'InvoiceOptions'
+      operationId "adminCreateInvoiceOption"
       parameter name: :new_resource, in: :body, schema: {
         type: :object,
         properties: {
@@ -73,6 +74,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
   path "/admin/invoice_options/{id}" do 
     put 'Updates an invoice option' do 
       tags 'InvoiceOptions'
+      operationId "adminUpdateInvoiceOption"
       parameter name: :id, in: :path, type: :string
 
       parameter name: :new_resource, in: :body, schema: {
@@ -158,6 +160,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
 
     delete 'Deletes an invoice option' do 
       tags 'InvoiceOptions'
+      operationId "adminDeleteInvoiceOption"
       parameter name: :id, in: :path, type: :string
 
       response '204', 'invoice option deleted' do 

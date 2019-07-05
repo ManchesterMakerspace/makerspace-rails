@@ -8,6 +8,7 @@ describe 'Admin::Members API', type: :request do
   path '/admin/members' do 
     post 'Creates a member' do 
       tags 'Members'
+      operationId "adminCreateMember"
       parameter name: :new_resource, in: :body, schema: {
         type: :object,
         properties: {
@@ -71,6 +72,7 @@ describe 'Admin::Members API', type: :request do
   path "/admin/members/{id}" do 
     put 'Updates a member' do 
       tags 'Members'
+      operationId "adminUpdateMember"
       parameter name: :id, in: :path, type: :string
 
       parameter name: :new_resource, in: :body, schema: {

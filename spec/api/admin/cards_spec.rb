@@ -7,6 +7,7 @@ describe 'Admin::AccessCards API', type: :request do
   path '/admin/cards/new' do 
     get 'Initiate new card creation' do 
       tags 'Cards'
+      operationId "adminGetNewCard"
       response '200', 'Card intilized' do 
         before do 
           sign_in admin 
@@ -53,6 +54,7 @@ describe 'Admin::AccessCards API', type: :request do
   path '/admin/cards' do 
     get 'Gets a list of members cards' do 
       tags 'Cards'
+      operationId "adminListCards"
       parameter name: :memberId, in: :query, type: :string, required: true
 
       response '200', 'cards found' do 
@@ -94,6 +96,7 @@ describe 'Admin::AccessCards API', type: :request do
 
     post 'Creates an access card' do 
       tags 'Cards'
+      operationId "adminCreateCard"
       parameter name: :new_resource, in: :body, schema: {
         type: :object,
         properties: {
@@ -178,6 +181,7 @@ describe 'Admin::AccessCards API', type: :request do
   path "/admin/cards/{id}" do 
     put 'Updates a card' do 
       tags 'Cards'
+      operationId "adminUpdateCard"
       parameter name: :id, in: :path, type: :string
 
       parameter name: :new_resource, in: :body, schema: {

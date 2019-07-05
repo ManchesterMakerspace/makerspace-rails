@@ -15,6 +15,7 @@ describe 'Billing::PaymentMethods API', type: :request do
   path '/billing/payment_methods/new' do 
     get 'Initiate new payment method creation' do 
       tags 'PaymentMethods'
+      operationId "getNewPaymentMethod"
       response '200', 'Token created' do 
         before do 
           sign_in customer
@@ -42,6 +43,7 @@ describe 'Billing::PaymentMethods API', type: :request do
   path '/billing/payment_methods' do 
     get 'Gets a list of payment_methods' do 
       tags 'PaymentMethods'
+      operationId "listPaymentMethods"
 
       response '200', 'payment_methodss found' do 
         let(:invoice) { create(:invoice, member: customer)}
@@ -72,6 +74,7 @@ describe 'Billing::PaymentMethods API', type: :request do
     
     post 'Create an payment_method' do 
       tags 'PaymentMethods'
+      operationId "createPaymentMethod"
       parameter name: :resource_payload, in: :body, schema: {
         type: :object,
         properties: {
@@ -136,6 +139,7 @@ describe 'Billing::PaymentMethods API', type: :request do
       end
 
       tags 'PaymentMethods'
+      operationId "deletePaymentMethod"
       parameter name: :id, in: :path, type: :string
 
       response '204', 'Payment method deleted' do

@@ -4,6 +4,7 @@ describe 'Reports API', type: :request do
   path '/earned_memberships/{id}/reports' do 
     get 'Gets a list of reports for current member' do 
       tags 'Reports'
+      operationId "listEarnedMembershipReports"
       parameter name: :id, :in => :path, :type => :string
       parameter name: :pageNum, in: :query, type: :integer, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false

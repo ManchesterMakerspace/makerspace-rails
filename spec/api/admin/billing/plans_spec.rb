@@ -17,6 +17,7 @@ describe 'Plans API', type: :request do
   path '/admin/billing/plans' do 
     get 'Gets a list of billing plans' do 
       tags 'Plans'
+      operationId "adminListBillingPlans"
       parameter name: :pageNum, in: :query, type: :integer, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
@@ -56,6 +57,7 @@ describe 'Plans API', type: :request do
   path '/admin/billing/plans/discounts' do 
     get 'Gets a list of billing plan discounts' do 
       tags 'Discounts'
+      operationId "adminListBillingPlanDiscounts"
       parameter name: :pageNum, in: :query, type: :integer, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false

@@ -13,6 +13,7 @@ describe 'Billing::Transactions API', type: :request do
   path '/billing/transactions' do 
     get 'Gets a list of transactions' do 
       tags 'Transactions'
+      operationId "listTransactions"
       parameter name: :pageNum, in: :query, type: :integer, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
@@ -59,6 +60,7 @@ describe 'Billing::Transactions API', type: :request do
       end
 
       tags 'Transactions'
+      operationId "createTransaction"
       parameter name: :resource_payload, in: :body, schema: {
         type: :object,
         properties: {
@@ -138,6 +140,7 @@ describe 'Billing::Transactions API', type: :request do
       end
 
       tags 'Transactions'
+      operationId "deleteTransaction"
       parameter name: :id, in: :path, type: :string
 
       response '204', 'refund requested' do

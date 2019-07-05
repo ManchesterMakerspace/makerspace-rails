@@ -8,6 +8,7 @@ describe 'Admin::Invoices API', type: :request do
   path '/admin/invoices' do 
     get 'Gets a list of invoices' do 
       tags 'Invoices'
+      operationId "listInvoices"
       parameter name: :pageNum, in: :query, type: :integer, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
@@ -41,6 +42,7 @@ describe 'Admin::Invoices API', type: :request do
 
     post 'Creates an invoice' do 
       tags 'Invoices'
+      operationId "adminCreateInvoices"
       parameter name: :new_resource, in: :body, schema: {
         type: :object,
         properties: {
@@ -144,6 +146,7 @@ describe 'Admin::Invoices API', type: :request do
   path "/admin/invoices/{id}" do 
     put 'Updates an invoice' do 
       tags 'Invoices'
+      operationId "adminUpdateInvoice"
       parameter name: :id, in: :path, type: :string
 
       parameter name: :new_resource, in: :body, schema: {
@@ -229,6 +232,7 @@ describe 'Admin::Invoices API', type: :request do
 
     delete 'Deletes an invoice' do 
       tags 'Invoices'
+      operationId "adminDeleteInvoice"
       parameter name: :id, in: :path, type: :string
 
       response '204', 'invoice deleted' do 

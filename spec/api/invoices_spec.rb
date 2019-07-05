@@ -4,6 +4,7 @@ describe 'Invoices API', type: :request do
   path '/invoices' do 
     get 'Gets a list of invoices' do 
       tags 'Invoices'
+      operationId "listInvoices"
       parameter name: :pageNum, in: :query, type: :integer, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
@@ -85,46 +86,4 @@ describe 'Invoices API', type: :request do
       end
     end
   end
-
-  # Path doesn't exist
-  # path '/invoices/{id}' do
-  #   get 'Gets a invoice' do 
-  #     tags 'Invoices'
-  #     parameter name: :id, in: :path, type: :string
-
-  #     response '200', 'invoice found' do
-  #       before { sign_in create(:member) }
-  #       schema type: :object,
-  #         properties: {
-  #           invoice: {
-  #             '$ref' => '#/definitions/Invoice'
-  #           }
-  #         },
-  #         required: [ 'invoice' ]
-
-  #       let(:id) { create(:invoice).id }
-  #       run_test!
-  #     end
-
-  #     response '401', 'User not authorized' do 
-  #       before { sign_in create(:member) }
-  #       let(:invoice) { create(:invoice, member: create(:member)) }
-  #       schema '$ref' => '#/definitions/error'
-  #       let(:id) { invoice.id }
-  #       run_test!
-  #     end
-
-  #     response '401', 'User not authenticated' do 
-  #       schema '$ref' => '#/definitions/error'
-  #       let(:id) { create(:invoice).id }
-  #       run_test!
-  #     end
-
-  #     response '404', 'invoice not found' do
-  #       schema '$ref' => '#/definitions/error'
-  #       let(:id) { 'invalid' }
-  #       run_test!
-  #     end
-  #   end
-  # end
 end

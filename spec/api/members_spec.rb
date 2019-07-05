@@ -4,6 +4,7 @@ describe 'Members API', type: :request do
   path '/members' do 
     get 'Gets a list of members' do 
       tags 'Members'
+      operationId "listMembers"
       parameter name: :pageNum, in: :query, type: :integer, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
@@ -36,6 +37,7 @@ describe 'Members API', type: :request do
   path '/members/{id}' do
     get 'Gets a member' do 
       tags 'Members'
+      operationId "getMember"
       parameter name: :id, in: :path, type: :string
 
       response '200', 'Member found' do
@@ -69,6 +71,7 @@ describe 'Members API', type: :request do
 
     put 'Updates a member and uploads signature' do
       tags 'Members'
+      operationId "updateMember"
       parameter name: :id, in: :path, type: :string
       parameter name: :member, in: :body, schema: {
         type: :object,
