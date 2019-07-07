@@ -14,7 +14,7 @@ describe 'Billing::Transactions API', type: :request do
     get 'Gets a list of transactions' do 
       tags 'Transactions'
       operationId "adminListTransaction"
-      parameter name: :pageNum, in: :query, type: :integer, required: false
+      parameter name: :pageNum, in: :query, type: :number, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
       parameter name: :searchId, in: :query, type: :string, required: false

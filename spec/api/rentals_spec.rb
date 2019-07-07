@@ -5,7 +5,7 @@ describe 'Rentals API', type: :request do
     get 'Gets a list of rentals' do 
       tags 'Rentals'
       operationId "listRentals"
-      parameter name: :pageNum, in: :query, type: :integer, required: false
+      parameter name: :pageNum, in: :query, type: :number, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
 

@@ -5,7 +5,7 @@ describe 'Invoices API', type: :request do
     get 'Gets a list of invoices' do 
       tags 'Invoices'
       operationId "listInvoices"
-      parameter name: :pageNum, in: :query, type: :integer, required: false
+      parameter name: :pageNum, in: :query, type: :number, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
 
@@ -34,6 +34,7 @@ describe 'Invoices API', type: :request do
     
     post 'Create an invoice' do 
       tags 'Invoices'
+      operationId 'createInvoice'
       parameter name: :resource_payload, in: :body, schema: {
         type: :object,
         properties: {

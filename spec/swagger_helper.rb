@@ -46,10 +46,10 @@ RSpec.configure do |config|
               items: { '$ref' => '#/definitions/Subscription' }
             },
             cardType: { type: :string },
-            expirationMonth: { type: :integer },
-            expirationYear: { type: :integer },
+            expirationMonth: { type: :number  },
+            expirationYear: { type: :number  },
             expirationDate: { type: :string },
-            last4: { type: :integer },
+            last4: { type: :number  },
           }
         },
 
@@ -60,6 +60,19 @@ RSpec.configure do |config|
             name: { type: :string },
             description: { type: :string },
             amount: { type: :string }
+          }
+        },
+
+        Dispute: {
+          type: :object,
+          properties: {
+            id: { type: :string },
+            kind: { type: :string },
+            reason: { type: :string },
+            createdAt: { type: :string },
+            amountDisputed: { type: :number },
+            status: { type: :string },
+            transaction: { '$ref' => '#/definitions/Transaction' }
           }
         },
 
@@ -95,8 +108,8 @@ RSpec.configure do |config|
             description: { type: :string },
             settled: { type: :boolean },
             pastDue: { type: :boolean },
-            createdAt: { type: :date },
-            dueDate: { type: :date },
+            createdAt: { type: :string },
+            dueDate: { type: :string },
             amount: { type: :string },
             subscriptionId: { type: :string, 'x-nullable': true },
             planId: { type: :string, 'x-nullable': true },
@@ -105,13 +118,14 @@ RSpec.configure do |config|
             quantity: { type: :number },
             discountId: { type: :string, 'x-nullable': true },
             memberName: { type: :string },
-            resource: { 
-              type: :object,
-              oneOf: [
-                '$ref' => '#/definitions/Member',
-                '$ref' => '#/definitions/Rental'
-              ]
-            }
+            # TODO
+            # resource: { 
+            #   type: :object,
+            #   oneOf: [
+            #     '$ref' => '#/definitions/Member',
+            #     '$ref' => '#/definitions/Rental'
+            #   ]
+            # }
           }
         },
 
@@ -139,7 +153,7 @@ RSpec.configure do |config|
             email: { type: :string },
             status: { type: :string },
             role: { type: :string },
-            expirationTime: { type: :integer },
+            expirationTime: { type: :number  },
             memberContractOnFile: { type: :boolean },
             cardId: { type: :string, 'x-nullable': true },
             subscriptionId: { type: :string, 'x-nullable': true },
@@ -175,7 +189,7 @@ RSpec.configure do |config|
             name: { type: :string },
             description: { type: :string },
             amount: { type: :string },
-            billingFrequency: { type: :integer },
+            billingFrequency: { type: :number  },
             discounts: {
               type: :array,
               items: {
@@ -201,8 +215,8 @@ RSpec.configure do |config|
             targetCount: { type: :number },
             strict: { type: :boolean },
             currentCount: { type: :number },
-            termStartDate: { type: :date },
-            termEndDate: { type: :date },
+            termStartDate: { type: :string },
+            termEndDate: { type: :string },
             termId: { type: :string },
             satisfied: { type: :boolean }
           }
@@ -222,8 +236,8 @@ RSpec.configure do |config|
                 type: :string
               }
             },
-            termStartDate: { type: :date },
-            termEndDate: { type: :date },
+            termStartDate: { type: :string },
+            termEndDate: { type: :string },
             satisfied: { type: :boolean }
           }
         },
@@ -232,7 +246,7 @@ RSpec.configure do |config|
           type: :object,
           properties: {
             id: { type: :string },
-            date: { type: :date },
+            date: { type: :string },
             earnedMembershipId: { type: :string },
             reportRequirements: {
               type: :array,
@@ -249,7 +263,7 @@ RSpec.configure do |config|
             description: { type: :string },
             memberName: { type: :string },
             memberId: { type: :string },
-            expiration: { type: :date }
+            expiration: { type: :string }
           }
         },
 
@@ -263,8 +277,8 @@ RSpec.configure do |config|
             failureCount: { type: :number },
             daysPastDue: { type: :number },
             billingDayOfMonth: { type: :string },
-            firstBillingDate: { type: :date },
-            nextBillingDate: { type: :date },
+            firstBillingDate: { type: :string },
+            nextBillingDate: { type: :string },
             memberId: { type: :string },
             memberName: { type: :string },
             resourceClass: { type: :string },
@@ -277,11 +291,11 @@ RSpec.configure do |config|
         Transaction: {
           type: :object,
           properties: {
-            createdAt: { type: :date },
+            createdAt: { type: :string },
             customerDetails: { type: :object },
-            disputes: { type: :array },
+            disputes: { type: :array, items: { '$ref' => '#/definitions/Dispute' } },
             discountAmount: { type: :string },
-            discounts: { type: :array },
+            discounts: { type: :array, items: { '$ref' => '#/definitions/Discount' } },
             gatewayRejectionReason: { type: :string, 'x-nullable': true },
             status: { type: :string },
             id: { type: :string },
@@ -293,8 +307,8 @@ RSpec.configure do |config|
             # subscriptionDetails: { 
             #   type: :object,
             #   properties: {
-            #     billingPeriodStartDate: { type: :date },
-            #     billingPeriodEndDate: { type: :date },
+            #     billingPeriodStartDate: { type: :string },
+            #     billingPeriodEndDate: { type: :string },
             #   }
             # },
             subscriptionId: { type: :string, 'x-nullable': true },

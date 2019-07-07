@@ -70,7 +70,7 @@ class Invoice
     set_refund_requested
     base_url = ActionMailer::Base.default_url_options[:host]
     send_slack_message("#{member.fullname} has requested a refund of #{amount} for #{name || description} from #{settled_at}. <#{base_url}/billing/transactions/#{transaction_id}|Process refund>")
-    BillingMailer.refund_requested(member.email, transaction_id).deliver_later
+    BillingMailer.refund_requested(member.email, transaction_id, id.as_json).deliver_later
   end
 
   def past_due

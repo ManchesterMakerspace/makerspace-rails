@@ -8,8 +8,8 @@ describe 'Admin::Invoices API', type: :request do
   path '/admin/invoices' do 
     get 'Gets a list of invoices' do 
       tags 'Invoices'
-      operationId "listInvoices"
-      parameter name: :pageNum, in: :query, type: :integer, required: false
+      operationId "adminListInvoices"
+      parameter name: :pageNum, in: :query, type: :number, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
       parameter name: :resourceId, in: :query, type: :string, required: false

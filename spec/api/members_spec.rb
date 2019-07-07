@@ -5,7 +5,7 @@ describe 'Members API', type: :request do
     get 'Gets a list of members' do 
       tags 'Members'
       operationId "listMembers"
-      parameter name: :pageNum, in: :query, type: :integer, required: false
+      parameter name: :pageNum, in: :query, type: :number, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
       parameter name: :currentMembers, in: :query, type: :boolean, required: false

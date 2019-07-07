@@ -18,13 +18,10 @@ describe 'Plans API', type: :request do
     get 'Gets a list of billing plans' do 
       tags 'Plans'
       operationId "adminListBillingPlans"
-      parameter name: :pageNum, in: :query, type: :integer, required: false
+      parameter name: :pageNum, in: :query, type: :number, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
-      parameter name: :types, in: :query, schema: {
-        type: :array,
-        items: { type: :string }
-      }, required: false
+      parameter name: :types, in: :query, type: :array, items: { type: :string }, required: false
 
       response '200', 'billing plans found' do 
         before { sign_in admin }
@@ -58,14 +55,11 @@ describe 'Plans API', type: :request do
     get 'Gets a list of billing plan discounts' do 
       tags 'Discounts'
       operationId "adminListBillingPlanDiscounts"
-      parameter name: :pageNum, in: :query, type: :integer, required: false
+      parameter name: :pageNum, in: :query, type: :number, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
       parameter name: :subscriptionOnly, in: :query, type: :boolean, required: false
-      parameter name: :types, in: :query, schema: {
-        type: :array,
-        items: { type: :string }
-      }, required: false
+      parameter name: :types, in: :query, type: :array, items: { type: :string }, required: false
 
       response '200', 'billing plan discounts found' do 
         before { sign_in admin }

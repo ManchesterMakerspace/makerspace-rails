@@ -6,7 +6,7 @@ describe 'Reports API', type: :request do
       tags 'Reports'
       operationId "listEarnedMembershipReports"
       parameter name: :id, :in => :path, :type => :string
-      parameter name: :pageNum, in: :query, type: :integer, required: false
+      parameter name: :pageNum, in: :query, type: :number, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
 
@@ -42,6 +42,7 @@ describe 'Reports API', type: :request do
     
     post 'Create an report' do 
       tags 'Reports'
+      operationId 'createEarnedMembershipReport'
       parameter name: :id, :in => :path, :type => :string
       parameter name: :new_report, in: :body, schema: {
         type: :object,

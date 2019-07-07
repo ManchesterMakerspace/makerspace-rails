@@ -51,16 +51,16 @@
           "type": "string"
         },
         "expirationMonth": {
-          "type": "integer"
+          "type": "number"
         },
         "expirationYear": {
-          "type": "integer"
+          "type": "number"
         },
         "expirationDate": {
           "type": "string"
         },
         "last4": {
-          "type": "integer"
+          "type": "number"
         }
       }
     },
@@ -78,6 +78,32 @@
         },
         "amount": {
           "type": "string"
+        }
+      }
+    },
+    "Dispute": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "amountDisputed": {
+          "type": "number"
+        },
+        "status": {
+          "type": "string"
+        },
+        "transaction": {
+          "$ref": "#/definitions/Transaction"
         }
       }
     },
@@ -140,10 +166,10 @@
           "type": "boolean"
         },
         "createdAt": {
-          "type": "date"
+          "type": "string"
         },
         "dueDate": {
-          "type": "date"
+          "type": "string"
         },
         "amount": {
           "type": "string"
@@ -171,14 +197,6 @@
         },
         "memberName": {
           "type": "string"
-        },
-        "resource": {
-          "type": "object",
-          "oneOf": [
-            {
-              "$ref": "#/definitions/Rental"
-            }
-          ]
         }
       }
     },
@@ -238,7 +256,7 @@
           "type": "string"
         },
         "expirationTime": {
-          "type": "integer"
+          "type": "number"
         },
         "memberContractOnFile": {
           "type": "boolean"
@@ -297,7 +315,7 @@
           "type": "string"
         },
         "billingFrequency": {
-          "type": "integer"
+          "type": "number"
         },
         "discounts": {
           "type": "array",
@@ -348,10 +366,10 @@
           "type": "number"
         },
         "termStartDate": {
-          "type": "date"
+          "type": "string"
         },
         "termEndDate": {
-          "type": "date"
+          "type": "string"
         },
         "termId": {
           "type": "string"
@@ -386,10 +404,10 @@
           }
         },
         "termStartDate": {
-          "type": "date"
+          "type": "string"
         },
         "termEndDate": {
-          "type": "date"
+          "type": "string"
         },
         "satisfied": {
           "type": "boolean"
@@ -403,7 +421,7 @@
           "type": "string"
         },
         "date": {
-          "type": "date"
+          "type": "string"
         },
         "earnedMembershipId": {
           "type": "string"
@@ -435,7 +453,7 @@
           "type": "string"
         },
         "expiration": {
-          "type": "date"
+          "type": "string"
         }
       }
     },
@@ -464,10 +482,10 @@
           "type": "string"
         },
         "firstBillingDate": {
-          "type": "date"
+          "type": "string"
         },
         "nextBillingDate": {
-          "type": "date"
+          "type": "string"
         },
         "memberId": {
           "type": "string"
@@ -490,19 +508,25 @@
       "type": "object",
       "properties": {
         "createdAt": {
-          "type": "date"
+          "type": "string"
         },
         "customerDetails": {
           "type": "object"
         },
         "disputes": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Dispute"
+          }
         },
         "discountAmount": {
           "type": "string"
         },
         "discounts": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Discount"
+          }
         },
         "gatewayRejectionReason": {
           "type": "string",
@@ -559,7 +583,7 @@
           {
             "name": "pageNum",
             "in": "query",
-            "type": "integer",
+            "type": "number",
             "required": false
           },
           {
@@ -577,11 +601,9 @@
           {
             "name": "types",
             "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
+            "type": "array",
+            "items": {
+              "type": "string"
             },
             "required": false
           }
@@ -630,7 +652,7 @@
           {
             "name": "pageNum",
             "in": "query",
-            "type": "integer",
+            "type": "number",
             "required": false
           },
           {
@@ -654,11 +676,9 @@
           {
             "name": "types",
             "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
+            "type": "array",
+            "items": {
+              "type": "string"
             },
             "required": false
           }
@@ -781,7 +801,7 @@
           {
             "name": "pageNum",
             "in": "query",
-            "type": "integer",
+            "type": "number",
             "required": false
           },
           {
@@ -1192,7 +1212,7 @@
           {
             "name": "pageNum",
             "in": "query",
-            "type": "integer",
+            "type": "number",
             "required": false
           },
           {
@@ -1258,7 +1278,7 @@
           {
             "name": "pageNum",
             "in": "query",
-            "type": "integer",
+            "type": "number",
             "required": false
           },
           {
@@ -1630,12 +1650,12 @@
         "tags": [
           "Invoices"
         ],
-        "operationId": "listInvoices",
+        "operationId": "adminListInvoices",
         "parameters": [
           {
             "name": "pageNum",
             "in": "query",
-            "type": "integer",
+            "type": "number",
             "required": false
           },
           {
@@ -1995,7 +2015,7 @@
           {
             "name": "pageNum",
             "in": "query",
-            "type": "integer",
+            "type": "number",
             "required": false
           },
           {
@@ -2508,7 +2528,7 @@
           {
             "name": "pageNum",
             "in": "query",
-            "type": "integer",
+            "type": "number",
             "required": false
           },
           {
@@ -2694,7 +2714,7 @@
           {
             "name": "pageNum",
             "in": "query",
-            "type": "integer",
+            "type": "number",
             "required": false
           },
           {
@@ -2747,6 +2767,7 @@
         "tags": [
           "Reports"
         ],
+        "operationId": "createEarnedMembershipReport",
         "parameters": [
           {
             "name": "id",
@@ -2882,7 +2903,7 @@
           {
             "name": "pageNum",
             "in": "query",
-            "type": "integer",
+            "type": "number",
             "required": false
           },
           {
@@ -2906,11 +2927,9 @@
           {
             "name": "types",
             "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
+            "type": "array",
+            "items": {
+              "type": "string"
             },
             "required": false
           }
@@ -2947,7 +2966,7 @@
           {
             "name": "pageNum",
             "in": "query",
-            "type": "integer",
+            "type": "number",
             "required": false
           },
           {
@@ -2994,6 +3013,7 @@
         "tags": [
           "Invoices"
         ],
+        "operationId": "createInvoice",
         "parameters": [
           {
             "name": "resource_payload",
@@ -3069,7 +3089,7 @@
           {
             "name": "pageNum",
             "in": "query",
-            "type": "integer",
+            "type": "number",
             "required": false
           },
           {
@@ -3244,7 +3264,7 @@
           {
             "name": "pageNum",
             "in": "query",
-            "type": "integer",
+            "type": "number",
             "required": false
           },
           {
