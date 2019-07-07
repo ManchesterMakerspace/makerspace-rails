@@ -64,23 +64,18 @@ describe 'Billing::Subscriptions API', type: :request do
       tags 'Subscriptions'
       operationId "updateSubscription"
       parameter name: :id, in: :path, type: :string
-      parameter name: :resource_payload, in: :body, schema: {
+      parameter name: :updateSubscriptionDetails, in: :body, schema: {
         type: :object,
         properties: {
-          resource_payload: {
+          subscription: {
             type: :object,
             properties: {
-              subscription: {
-                type: :object,
-                properties: {
-                  payment_method_token: { type: :string }
-                },
-                required: [:payment_method_token]
-              }
+              payment_method_token: { type: :string }
             },
-            required: [:subscription]
-            }
+            required: [:payment_method_token]
           }
+        },
+        required: [:subscription]
       }
 
       response '200', 'subscription updated' do 
@@ -97,7 +92,7 @@ describe 'Billing::Subscriptions API', type: :request do
         },
         required: [ 'subscription' ]
         let(:id) { subscription.id }
-        let(:resource_payload) {{ subscription: { payment_method_token: "54321" } }}
+        let(:updateSubscriptionDetails) {{ subscription: { payment_method_token: "54321" } }}
 
         run_test!
       end
@@ -105,7 +100,7 @@ describe 'Billing::Subscriptions API', type: :request do
       response '401', 'User not authenticated' do 
         schema '$ref' => '#/definitions/error'
         let(:id) { subscription.id }
-        let(:resource_payload) {{ subscription: { payment_method_token: "54321" } }}
+        let(:updateSubscriptionDetails) {{ subscription: { payment_method_token: "54321" } }}
         run_test!
       end
 
@@ -113,7 +108,7 @@ describe 'Billing::Subscriptions API', type: :request do
         before { sign_in non_customer }
         schema '$ref' => '#/definitions/error'
         let(:id) { subscription.id }
-        let(:resource_payload) {{ subscription: { payment_method_token: "54321" } }}
+        let(:updateSubscriptionDetails) {{ subscription: { payment_method_token: "54321" } }}
         run_test!
       end
 
@@ -121,7 +116,7 @@ describe 'Billing::Subscriptions API', type: :request do
         before { sign_in customer }
         schema '$ref' => '#/definitions/error'
         let(:id) { subscription.id }
-        let(:resource_payload) {{ subscription: { payment_method_token: "54321" } }}
+        let(:updateSubscriptionDetails) {{ subscription: { payment_method_token: "54321" } }}
         run_test!
       end
     end

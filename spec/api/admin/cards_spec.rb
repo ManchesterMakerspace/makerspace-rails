@@ -29,23 +29,11 @@ describe 'Admin::AccessCards API', type: :request do
       response '403', 'User unauthorized' do 
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
-          card: {
-            memberId: basic.id,
-            uid: "12ggh34"
-          }
-        }}
         run_test!
       end
 
       response '401', 'User unauthenticated' do 
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
-          card: {
-            memberId: basic.id,
-            uid: "12ggh34"
-          }
-        }}
         run_test!
       end
     end
@@ -97,7 +85,7 @@ describe 'Admin::AccessCards API', type: :request do
     post 'Creates an access card' do 
       tags 'Cards'
       operationId "adminCreateCard"
-      parameter name: :new_resource, in: :body, schema: {
+      parameter name: :createAccessCardDetails, in: :body, schema: {
         type: :object,
         properties: {
           card: { 
@@ -120,7 +108,7 @@ describe 'Admin::AccessCards API', type: :request do
         },
         required: [ 'card' ]
 
-        let(:new_resource) {{
+        let(:createAccessCardDetails) {{
           card: {
             memberId: basic.id,
             uid: "12ggh34"
@@ -133,7 +121,7 @@ describe 'Admin::AccessCards API', type: :request do
       response '403', 'User unauthorized' do 
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:createAccessCardDetails) {{
           card: {
             memberId: basic.id,
             uid: "12ggh34"
@@ -144,7 +132,7 @@ describe 'Admin::AccessCards API', type: :request do
 
       response '401', 'User unauthenticated' do 
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:createAccessCardDetails) {{
           card: {
             memberId: basic.id,
             uid: "12ggh34"
@@ -156,7 +144,7 @@ describe 'Admin::AccessCards API', type: :request do
       response '422', 'missing parameter' do 
         before { sign_in admin }
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:createAccessCardDetails) {{
           card: {
             uid: "12ggh34"
           }
@@ -167,7 +155,7 @@ describe 'Admin::AccessCards API', type: :request do
       response '404', 'member not found' do 
         before { sign_in admin }
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:createAccessCardDetails) {{
           card: {
             memberId: 'invalid',
             uid: "12ggh34"
@@ -184,7 +172,7 @@ describe 'Admin::AccessCards API', type: :request do
       operationId "adminUpdateCard"
       parameter name: :id, in: :path, type: :string
 
-      parameter name: :new_resource, in: :body, schema: {
+      parameter name: :updateAccessCardDetails, in: :body, schema: {
         type: :object,
         properties: {
           card: { 
@@ -207,7 +195,7 @@ describe 'Admin::AccessCards API', type: :request do
         },
         required: [ 'card' ]
 
-        let(:new_resource) {{
+        let(:updateAccessCardDetails) {{
           card: {
             cardLocation: "lost"
           }
@@ -219,7 +207,7 @@ describe 'Admin::AccessCards API', type: :request do
       response '403', 'User unauthorized' do 
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:updateAccessCardDetails) {{
           card: {
             cardLocation: "lost"
           }
@@ -230,7 +218,7 @@ describe 'Admin::AccessCards API', type: :request do
 
       response '401', 'User unauthenticated' do 
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:updateAccessCardDetails) {{
           card: {
             cardLocation: "lost"
           }
@@ -242,7 +230,7 @@ describe 'Admin::AccessCards API', type: :request do
       response '404', 'Invoice not found' do 
         before { sign_in admin }
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:updateAccessCardDetails) {{
           card: {
             cardLocation: "lost"
           }

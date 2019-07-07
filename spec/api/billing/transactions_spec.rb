@@ -61,24 +61,19 @@ describe 'Billing::Transactions API', type: :request do
 
       tags 'Transactions'
       operationId "createTransaction"
-      parameter name: :resource_payload, in: :body, schema: {
+      parameter name: :createTransactionDetails, in: :body, schema: {
         type: :object,
         properties: {
-          resource_payload: {
+          transaction: {
             type: :object,
             properties: {
-              transaction: {
-                type: :object,
-                properties: {
-                  id: { type: :string },
-                  discountId: { type: :string }
-                },
-                required: [:id]
-              }
+              id: { type: :string },
+              discountId: { type: :string }
             },
-            required: [:transaction]
-            }
+            required: [:id]
           }
+        },
+        required: [:transaction]
       }
 
       response '200', 'transaction created' do 
@@ -94,28 +89,28 @@ describe 'Billing::Transactions API', type: :request do
         },
         required: [ 'transaction' ]
 
-        let(:resource_payload) {{ transaction: { invoiceId: invoice.id, paymentMethodId: "1234" } }}
+        let(:createTransactionDetails) {{ transaction: { invoiceId: invoice.id, paymentMethodId: "1234" } }}
 
         run_test!
       end
 
       response '401', 'User not authenticated' do 
         schema '$ref' => '#/definitions/error'
-        let(:resource_payload) {{ transaction: { invoiceId: "1234" , paymentMethodId: "1234" } }}
+        let(:createTransactionDetails) {{ transaction: { invoiceId: "1234" , paymentMethodId: "1234" } }}
         run_test!
       end
 
       response '403', 'User not authorized' do 
         before { sign_in non_customer }
         schema '$ref' => '#/definitions/error'
-        let(:resource_payload) {{ transaction: { invoiceId: "1234" , paymentMethodId: "1234" } }}
+        let(:createTransactionDetails) {{ transaction: { invoiceId: "1234" , paymentMethodId: "1234" } }}
         run_test!
       end
 
       response '422', 'parameter missing' do 
         before { sign_in customer }
         schema '$ref' => '#/definitions/error'
-        let(:resource_payload)  {{ transaction: { invoiceId: 'some invoice' } }}
+        let(:createTransactionDetails)  {{ transaction: { invoiceId: 'some invoice' } }}
         run_test!
       end
   
@@ -125,7 +120,7 @@ describe 'Billing::Transactions API', type: :request do
           allow(Invoice).to receive(:find).and_return(nil)
         }
         schema '$ref' => '#/definitions/error'
-        let(:resource_payload) {{ transaction: { invoiceId: 'invalid', paymentMethodId: "1234" } }}
+        let(:createTransactionDetails) {{ transaction: { invoiceId: 'invalid', paymentMethodId: "1234" } }}
         run_test!
       end
     end

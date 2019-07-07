@@ -8,7 +8,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
     post 'Creates an invoice option' do 
       tags 'InvoiceOptions'
       operationId "adminCreateInvoiceOption"
-      parameter name: :new_resource, in: :body, schema: {
+      parameter name: :createInvoiceOptionDetails, in: :body, schema: {
         type: :object,
         properties: {
           invoiceOption: { '$ref' => '#/definitions/InvoiceOption'   }
@@ -24,7 +24,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
         },
         required: [ 'invoiceOption' ]
 
-        let(:new_resource) {{
+        let(:createInvoiceOptionDetails) {{
           invoiceOption: {
             name: "something",
             description: "some description",
@@ -41,7 +41,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
       response '403', 'User unauthorized' do 
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:createInvoiceOptionDetails) {{
           invoiceOption: {
             name: "something",
             description: "some description",
@@ -56,7 +56,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
 
       response '401', 'User unauthenticated' do 
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:createInvoiceOptionDetails) {{
           invoiceOption: {
             name: "something",
             description: "some description",
@@ -77,7 +77,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
       operationId "adminUpdateInvoiceOption"
       parameter name: :id, in: :path, type: :string
 
-      parameter name: :new_resource, in: :body, schema: {
+      parameter name: :updateInvoiceOptionDetails, in: :body, schema: {
         type: :object,
         properties: {
           invoiceOption: { '$ref' => '#/definitions/InvoiceOption'   }
@@ -93,7 +93,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
         },
         required: [ 'invoiceOption' ]
 
-        let(:new_resource) {{
+        let(:updateInvoiceOptionDetails) {{
           invoiceOption: {
             name: "something",
             description: "some description",
@@ -110,7 +110,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
       response '403', 'User unauthorized' do 
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:updateInvoiceOptionDetails) {{
           invoiceOption: {
             name: "something",
             description: "some description",
@@ -126,7 +126,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
 
       response '401', 'User unauthenticated' do 
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:updateInvoiceOptionDetails) {{
           invoiceOption: {
             name: "something",
             description: "some description",
@@ -143,7 +143,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
       response '404', 'Invoice option not found' do 
         before { sign_in admin }
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:updateInvoiceOptionDetails) {{
           invoiceOption: {
             name: "something",
             description: "some description",
@@ -172,32 +172,12 @@ describe 'Admin::InvoiceOptions API', type: :request do
       response '403', 'User unauthorized' do 
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
-          invoiceOption: {
-            name: "something",
-            description: "some description",
-            resourceClass: "member",
-            amount: "65",
-            planId: "8765",
-            quantity: "2"
-          }
-        }}
         let(:id) { create(:invoice_option).id }
         run_test!
       end
 
       response '401', 'User unauthenticated' do 
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
-          invoiceOption: {
-            name: "something",
-            description: "some description",
-            resourceClass: "member",
-            amount: "65",
-            planId: "8765",
-            quantity: "2"
-          }
-        }}
         let(:id) { create(:invoice_option).id }
         run_test!
       end
@@ -205,16 +185,6 @@ describe 'Admin::InvoiceOptions API', type: :request do
       response '404', 'Invoice Option not found' do 
         before { sign_in admin }
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
-          invoiceOption: {
-            name: "something",
-            description: "some description",
-            resourceClass: "member",
-            amount: "65",
-            planId: "8765",
-            quantity: "2"
-          }
-        }}
         let(:id) { 'invalid' }
         run_test!
       end

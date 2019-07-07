@@ -40,7 +40,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
     post 'Creates an earned membership' do 
       tags 'EarnedMemberships'
       operationId "adminCreateEarnedMembership"
-      parameter name: :new_resource, in: :body, schema: {
+      parameter name: :createEarnedMembershipDetails, in: :body, schema: {
         type: :object,
         properties: {
           earnedMembership: { '$ref' => '#/definitions/EarnedMembership' },
@@ -56,7 +56,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
         },
         required: [ 'earnedMembership' ]
 
-        let(:new_resource) {{
+        let(:createEarnedMembershipDetails) {{
           earnedMembership: {
             memberId: basic.id,
             requirements: create_list(:requirement, 2)
@@ -69,7 +69,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
       response '403', 'User unauthorized' do 
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:createEarnedMembershipDetails) {{
           earnedMembership: {
             memberId: basic.id,
             requirements: create_list(:requirement, 2)
@@ -80,7 +80,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
 
       response '401', 'User unauthenticated' do 
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:createEarnedMembershipDetails) {{
           earnedMembership: {
             memberId: basic.id,
             requirements: create_list(:requirement, 2)
@@ -113,24 +113,12 @@ describe 'Admin::EarnedMemberships API', type: :request do
       response '403', 'User unauthorized' do 
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
-          earnedMembership: {
-            memberId: basic.id,
-            requirements: create_list(:requirement, 2)
-          }
-        }}
         let(:id) { create(:earned_membership).id }
         run_test!
       end
 
       response '401', 'User unauthenticated' do 
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
-          earnedMembership: {
-            memberId: basic.id,
-            requirements: create_list(:requirement, 2)
-          }
-        }}
         let(:id) { create(:earned_membership).id }
         run_test!
       end
@@ -138,12 +126,6 @@ describe 'Admin::EarnedMemberships API', type: :request do
       response '404', 'EarnedMembership not found' do 
         before { sign_in admin }
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
-          earnedMembership: {
-            memberId: basic.id,
-            requirements: create_list(:requirement, 2)
-          }
-        }}
         let(:id) { 'invalid' }
         run_test!
       end
@@ -154,7 +136,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
       operationId "adminUpdateEarnedMembership"
       parameter name: :id, in: :path, type: :string
 
-      parameter name: :new_resource, in: :body, schema: {
+      parameter name: :updateEarnedMembershipDetails, in: :body, schema: {
         type: :object,
         properties: {
           earnedMembership: { '$ref' => '#/definitions/EarnedMembership' },
@@ -170,7 +152,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
         },
         required: [ 'earnedMembership' ]
 
-        let(:new_resource) {{
+        let(:updateEarnedMembershipDetails) {{
           earnedMembership: {
             memberId: basic.id,
             requirements: create_list(:requirement, 2)
@@ -183,7 +165,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
       response '403', 'User unauthorized' do 
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:updateEarnedMembershipDetails) {{
           earnedMembership: {
             memberId: basic.id,
             requirements: create_list(:requirement, 2)
@@ -195,7 +177,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
 
       response '401', 'User unauthenticated' do 
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:updateEarnedMembershipDetails) {{
           earnedMembership: {
             memberId: basic.id,
             requirements: create_list(:requirement, 2)
@@ -208,7 +190,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
       response '404', 'EarnedMembership not found' do 
         before { sign_in admin }
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:updateEarnedMembershipDetails) {{
           earnedMembership: {
             memberId: basic.id,
             requirements: create_list(:requirement, 2)

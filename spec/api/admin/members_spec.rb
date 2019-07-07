@@ -9,7 +9,7 @@ describe 'Admin::Members API', type: :request do
     post 'Creates a member' do 
       tags 'Members'
       operationId "adminCreateMember"
-      parameter name: :new_resource, in: :body, schema: {
+      parameter name: :createMemberDetails, in: :body, schema: {
         type: :object,
         properties: {
           member: { '$ref' => '#/definitions/Member'   }
@@ -25,7 +25,7 @@ describe 'Admin::Members API', type: :request do
         },
         required: [ 'member' ]
 
-        let(:new_resource) {{
+        let(:createMemberDetails) {{
           member: {
             firstname: "first",
             lastname: "last",
@@ -41,7 +41,7 @@ describe 'Admin::Members API', type: :request do
       response '403', 'User unauthorized' do 
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:createMemberDetails) {{
           member: {
             firstname: "first",
             lastname: "last",
@@ -55,7 +55,7 @@ describe 'Admin::Members API', type: :request do
 
       response '401', 'User unauthenticated' do 
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:createMemberDetails) {{
           member: {
             firstname: "first",
             lastname: "last",
@@ -75,7 +75,7 @@ describe 'Admin::Members API', type: :request do
       operationId "adminUpdateMember"
       parameter name: :id, in: :path, type: :string
 
-      parameter name: :new_resource, in: :body, schema: {
+      parameter name: :updateMemberDetails, in: :body, schema: {
         type: :object,
         properties: {
           member: { '$ref' => '#/definitions/Member'   }
@@ -91,7 +91,7 @@ describe 'Admin::Members API', type: :request do
         },
         required: [ 'member' ]
 
-        let(:new_resource) {{
+        let(:updateMemberDetails) {{
           member: {
             firstname: "first",
             lastname: "last",
@@ -107,7 +107,7 @@ describe 'Admin::Members API', type: :request do
       response '403', 'User unauthorized' do 
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:updateMemberDetails) {{
           member: {
             firstname: "first",
             lastname: "last",
@@ -122,7 +122,7 @@ describe 'Admin::Members API', type: :request do
 
       response '401', 'User unauthenticated' do 
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:updateMemberDetails) {{
           member: {
             firstname: "first",
             lastname: "last",
@@ -138,7 +138,7 @@ describe 'Admin::Members API', type: :request do
       response '404', 'Member not found' do 
         before { sign_in admin }
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:updateMemberDetails) {{
           member: {
             firstname: "first",
             lastname: "last",

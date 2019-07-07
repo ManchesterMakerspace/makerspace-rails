@@ -263,7 +263,7 @@ RSpec.configure do |config|
             description: { type: :string },
             memberName: { type: :string },
             memberId: { type: :string },
-            expiration: { type: :string }
+            expiration: { type: :number }
           }
         },
 

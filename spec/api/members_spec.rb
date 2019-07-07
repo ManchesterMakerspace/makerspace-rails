@@ -73,7 +73,7 @@ describe 'Members API', type: :request do
       tags 'Members'
       operationId "updateMember"
       parameter name: :id, in: :path, type: :string
-      parameter name: :member, in: :body, schema: {
+      parameter name: :updateMemberDetails, in: :body, schema: {
         type: :object,
         properties: {
           firstname: { type: :string },
@@ -84,7 +84,7 @@ describe 'Members API', type: :request do
       }
 
       # Update object
-      let(:member) {{ firstname: "new firstname", lastname: "new lastname", email: "foo@foo.com" }}
+      let(:updateMemberDetails) {{ firstname: "new firstname", lastname: "new lastname", email: "foo@foo.com" }}
 
       response '200', 'member updated' do
         let(:current_member) { create(:member) }

@@ -43,7 +43,7 @@ describe 'Admin::Rentals API', type: :request do
     post 'Creates a rental' do 
       tags 'Rentals'
       operationId "adminCreateRental"
-      parameter name: :new_resource, in: :body, schema: {
+      parameter name: :createRentalDetails, in: :body, schema: {
         type: :object,
         properties: {
           rental: { '$ref' => '#/definitions/Rental'   }
@@ -59,7 +59,7 @@ describe 'Admin::Rentals API', type: :request do
         },
         required: [ 'rental' ]
 
-        let(:new_resource) {{
+        let(:createRentalDetails) {{
           rental: {
             number: "something",
             description: "some description",
@@ -74,7 +74,7 @@ describe 'Admin::Rentals API', type: :request do
       response '403', 'User unauthorized' do 
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:createRentalDetails) {{
           rental: {
             number: "something",
             description: "some description",
@@ -86,7 +86,7 @@ describe 'Admin::Rentals API', type: :request do
 
       response '401', 'User unauthenticated' do 
         schema '$ref' => '#/definitions/error'
-        let(:new_resource) {{
+        let(:createRentalDetails) {{
           rental: {
             number: "something",
             description: "some description",

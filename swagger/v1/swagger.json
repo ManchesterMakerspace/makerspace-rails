@@ -1054,7 +1054,7 @@
         "operationId": "adminCreateCard",
         "parameters": [
           {
-            "name": "new_resource",
+            "name": "createAccessCardDetails",
             "in": "body",
             "schema": {
               "type": "object",
@@ -1135,7 +1135,7 @@
             "required": true
           },
           {
-            "name": "new_resource",
+            "name": "updateAccessCardDetails",
             "in": "body",
             "schema": {
               "type": "object",
@@ -1334,7 +1334,7 @@
         "operationId": "adminCreateEarnedMembership",
         "parameters": [
           {
-            "name": "new_resource",
+            "name": "createEarnedMembershipDetails",
             "in": "body",
             "schema": {
               "type": "object",
@@ -1441,7 +1441,7 @@
             "required": true
           },
           {
-            "name": "new_resource",
+            "name": "updateEarnedMembershipDetails",
             "in": "body",
             "schema": {
               "type": "object",
@@ -1499,7 +1499,7 @@
         "operationId": "adminCreateInvoiceOption",
         "parameters": [
           {
-            "name": "new_resource",
+            "name": "createInvoiceOptionDetails",
             "in": "body",
             "schema": {
               "type": "object",
@@ -1557,7 +1557,7 @@
             "required": true
           },
           {
-            "name": "new_resource",
+            "name": "updateInvoiceOptionDetails",
             "in": "body",
             "schema": {
               "type": "object",
@@ -1717,7 +1717,7 @@
         "operationId": "adminCreateInvoices",
         "parameters": [
           {
-            "name": "new_resource",
+            "name": "createInvoiceDetails",
             "in": "body",
             "schema": {
               "type": "object",
@@ -1801,7 +1801,7 @@
             "required": true
           },
           {
-            "name": "new_resource",
+            "name": "updateInvoiceDetails",
             "in": "body",
             "schema": {
               "type": "object",
@@ -1897,7 +1897,7 @@
         "operationId": "adminCreateMember",
         "parameters": [
           {
-            "name": "new_resource",
+            "name": "createMemberDetails",
             "in": "body",
             "schema": {
               "type": "object",
@@ -1955,7 +1955,7 @@
             "required": true
           },
           {
-            "name": "new_resource",
+            "name": "updateMemberDetails",
             "in": "body",
             "schema": {
               "type": "object",
@@ -2077,7 +2077,7 @@
         "operationId": "adminCreateRental",
         "parameters": [
           {
-            "name": "new_resource",
+            "name": "createRentalDetails",
             "in": "body",
             "schema": {
               "type": "object",
@@ -2256,34 +2256,29 @@
         "operationId": "createPaymentMethod",
         "parameters": [
           {
-            "name": "resource_payload",
+            "name": "createPaymentMethodDetails",
             "in": "body",
             "schema": {
               "type": "object",
               "properties": {
-                "resource_payload": {
+                "payment_method": {
                   "type": "object",
                   "properties": {
-                    "payment_method": {
-                      "type": "object",
-                      "properties": {
-                        "payment_method_nonce": {
-                          "type": "string"
-                        },
-                        "make_default": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "payment_method_nonce"
-                      ]
+                    "payment_method_nonce": {
+                      "type": "string"
+                    },
+                    "make_default": {
+                      "type": "string"
                     }
                   },
                   "required": [
-                    "payment_method"
+                    "payment_method_nonce"
                   ]
                 }
-              }
+              },
+              "required": [
+                "payment_method"
+              ]
             }
           }
         ],
@@ -2415,31 +2410,26 @@
             "required": true
           },
           {
-            "name": "resource_payload",
+            "name": "updateSubscriptionDetails",
             "in": "body",
             "schema": {
               "type": "object",
               "properties": {
-                "resource_payload": {
+                "subscription": {
                   "type": "object",
                   "properties": {
-                    "subscription": {
-                      "type": "object",
-                      "properties": {
-                        "payment_method_token": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "payment_method_token"
-                      ]
+                    "payment_method_token": {
+                      "type": "string"
                     }
                   },
                   "required": [
-                    "subscription"
+                    "payment_method_token"
                   ]
                 }
-              }
+              },
+              "required": [
+                "subscription"
+              ]
             }
           }
         ],
@@ -2584,34 +2574,29 @@
         "operationId": "createTransaction",
         "parameters": [
           {
-            "name": "resource_payload",
+            "name": "createTransactionDetails",
             "in": "body",
             "schema": {
               "type": "object",
               "properties": {
-                "resource_payload": {
+                "transaction": {
                   "type": "object",
                   "properties": {
-                    "transaction": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "discountId": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "id"
-                      ]
+                    "id": {
+                      "type": "string"
+                    },
+                    "discountId": {
+                      "type": "string"
                     }
                   },
                   "required": [
-                    "transaction"
+                    "id"
                   ]
                 }
-              }
+              },
+              "required": [
+                "transaction"
+              ]
             }
           }
         ],
@@ -3196,7 +3181,7 @@
             "required": true
           },
           {
-            "name": "member",
+            "name": "updateMemberDetails",
             "in": "body",
             "schema": {
               "type": "object",

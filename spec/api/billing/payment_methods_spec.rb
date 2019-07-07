@@ -75,24 +75,19 @@ describe 'Billing::PaymentMethods API', type: :request do
     post 'Create an payment_method' do 
       tags 'PaymentMethods'
       operationId "createPaymentMethod"
-      parameter name: :resource_payload, in: :body, schema: {
+      parameter name: :createPaymentMethodDetails, in: :body, schema: {
         type: :object,
         properties: {
-          resource_payload: {
+          payment_method: {
             type: :object,
             properties: {
-              payment_method: {
-                type: :object,
-                properties: {
-                  payment_method_nonce: { type: :string },
-                  make_default: { type: :string }
-                },
-                required: [:payment_method_nonce]
-              }
+              payment_method_nonce: { type: :string },
+              make_default: { type: :string }
             },
-            required: [:payment_method]
-            }
+            required: [:payment_method_nonce]
           }
+        },
+        required: [:payment_method]
       }
 
       response '200', 'payment_method created' do 
@@ -111,21 +106,21 @@ describe 'Billing::PaymentMethods API', type: :request do
         },
         required: [ 'paymentMethod' ]
 
-        let(:resource_payload) {{ payment_method: { paymentMethodNonce: "1234" } }}
+        let(:createPaymentMethodDetails) {{ payment_method: { paymentMethodNonce: "1234" } }}
 
         run_test!
       end
 
       response '401', 'User not authenticated' do 
         schema '$ref' => '#/definitions/error'
-        let(:resource_payload) {{ payment_method: { paymentMethodNonce: "1234" } }}
+        let(:createPaymentMethodDetails) {{ payment_method: { paymentMethodNonce: "1234" } }}
         run_test!
       end
 
       response '422', 'parameter missing' do 
         before { sign_in customer }
         schema '$ref' => '#/definitions/error'
-        let(:resource_payload) {{ payment_method: { makeDefault: true } }}
+        let(:createPaymentMethodDetails) {{ payment_method: { makeDefault: true } }}
         run_test!
       end
     end
