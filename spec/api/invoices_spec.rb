@@ -48,7 +48,7 @@ describe 'Invoices API', type: :request do
           }
         },
         required: [:invoiceOption]
-      }
+      }, required: true
 
       response '200', 'invoice created' do 
         before { sign_in create(:member) }

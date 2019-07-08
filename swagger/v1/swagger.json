@@ -2431,7 +2431,8 @@
               "required": [
                 "subscription"
               ]
-            }
+            },
+            "required": true
           }
         ],
         "responses": {
@@ -2598,7 +2599,8 @@
               "required": [
                 "transaction"
               ]
-            }
+            },
+            "required": true
           }
         ],
         "responses": {
@@ -2800,7 +2802,8 @@
                   ]
                 }
               }
-            }
+            },
+            "required": true
           }
         ],
         "responses": {
@@ -3025,7 +3028,8 @@
               "required": [
                 "invoiceOption"
               ]
-            }
+            },
+            "required": true
           }
         ],
         "responses": {
@@ -3205,7 +3209,8 @@
                   }
                 }
               }
-            }
+            },
+            "required": true
           }
         ],
         "responses": {
@@ -3305,7 +3310,8 @@
                   }
                 }
               }
-            }
+            },
+            "required": true
           }
         ],
         "responses": {
@@ -3357,18 +3363,21 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "member": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string"
-                  },
-                  "password": {
-                    "type": "string"
+              "properties": {
+                "member": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    },
+                    "password": {
+                      "type": "string"
+                    }
                   }
                 }
               }
-            }
+            },
+            "required": true
           }
         ],
         "responses": {
@@ -3393,7 +3402,7 @@
         "tags": [
           "Authentication"
         ],
-        "operationId": "Sign out",
+        "operationId": "signOut",
         "responses": {
           "204": {
             "description": "User signed out"
@@ -3425,9 +3434,7 @@
                 }
               }
             },
-            "required": [
-              "passwordResetDetails"
-            ]
+            "required": true
           }
         ],
         "responses": {
@@ -3470,7 +3477,8 @@
                   }
                 }
               }
-            }
+            },
+            "required": true
           }
         ],
         "responses": {

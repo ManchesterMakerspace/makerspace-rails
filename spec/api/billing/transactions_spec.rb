@@ -74,7 +74,7 @@ describe 'Billing::Transactions API', type: :request do
           }
         },
         required: [:transaction]
-      }
+      }, required: true
 
       response '200', 'transaction created' do 
         before do

@@ -16,18 +16,20 @@ describe 'Registrations API', type: :request do
       operationId 'signIn'
       parameter name: :signInDetails, in: :body, schema: {
         type: :object,
-        member: {
-          type: :object,
-          properties: {
-            email: {
-              type: :string
-            },
-            password: {
-              type: :string
+        properties: {
+          member: {
+            type: :object,
+            properties: {
+              email: {
+                type: :string
+              },
+              password: {
+                type: :string
+              }
             }
           }
         }
-      }
+      }, required: true
 
       response '201', 'User signed in' do 
         schema '$ref' => '#/definitions/Member'
@@ -46,7 +48,7 @@ describe 'Registrations API', type: :request do
   path '/members/sign_out' do 
     delete 'Signs out user' do 
       tags 'Authentication'
-      operationId 'Sign out'
+      operationId 'signOut'
 
       response '204', 'User signed out' do 
         before { sign_in create(:member) }
@@ -71,7 +73,7 @@ describe 'Registrations API', type: :request do
             }
           }
         }
-      }, required: [:passwordResetDetails]
+      }, required: true
 
       response '201', 'Instructions sent' do 
         before { auth_member }
@@ -105,7 +107,7 @@ describe 'Registrations API', type: :request do
             }
           }
         }
-      }
+      }, required: true
 
       response '204', 'Password reset' do 
         raw_token, hashed_token = Devise.token_generator.generate(Member, :reset_password_token)
@@ -152,7 +154,7 @@ describe 'Registrations API', type: :request do
             }
           }
         }
-      }
+      }, required: true
 
       response '200', 'Member registered' do 
         schema '$ref' => '#/definitions/Member'

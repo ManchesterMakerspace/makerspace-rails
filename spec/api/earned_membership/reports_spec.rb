@@ -66,7 +66,7 @@ describe 'Reports API', type: :request do
             required: [:earnedMembershipId, :reportRequirements]
           }
         }
-      }
+      }, required: true
 
       response '200', 'report created' do 
         let(:em) { create(:earned_membership) }

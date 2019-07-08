@@ -76,7 +76,7 @@ describe 'Billing::Subscriptions API', type: :request do
           }
         },
         required: [:subscription]
-      }
+      }, required: true
 
       response '200', 'subscription updated' do 
         before do 

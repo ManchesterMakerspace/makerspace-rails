@@ -86,7 +86,7 @@ describe 'Members API', type: :request do
             }
           }
         }
-      }
+      }, required: true
 
       # Update object
       let(:updateMemberDetails) {{ firstname: "new firstname", lastname: "new lastname", email: "foo@foo.com" }}
