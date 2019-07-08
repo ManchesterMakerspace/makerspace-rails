@@ -35,7 +35,7 @@ describe 'Invoices API', type: :request do
     post 'Create an invoice' do 
       tags 'Invoices'
       operationId 'createInvoice'
-      parameter name: :resource_payload, in: :body, schema: {
+      parameter name: :createInvoiceDetails, in: :body, schema: {
         type: :object,
         properties: {
           invoiceOption: {
@@ -61,28 +61,28 @@ describe 'Invoices API', type: :request do
         },
         required: [ 'invoice' ]
 
-        let(:resource_payload) {{ invoiceOption: { id: create(:invoice_option).id } }}
+        let(:createInvoiceDetails) {{ invoiceOption: { id: create(:invoice_option).id } }}
 
         run_test!
       end
 
       response '401', 'User not authenticated' do 
         schema '$ref' => '#/definitions/error'
-        let(:resource_payload) {{ invoiceOption: { id: create(:invoice_option).id } }}
+        let(:createInvoiceDetails) {{ invoiceOption: { id: create(:invoice_option).id } }}
         run_test!
       end
 
       response '422', 'parameter missing' do 
         before { sign_in create(:member) }
         schema '$ref' => '#/definitions/error'
-        let(:resource_payload)  {{ invoiceOption: { discountId: 'some_discount' } }}
+        let(:createInvoiceDetails)  {{ invoiceOption: { discountId: 'some_discount' } }}
         run_test!
       end
   
       response '404', 'invoice option not found' do
         before { sign_in create(:member) }
         schema '$ref' => '#/definitions/error'
-        let(:resource_payload) {{ invoiceOption: { id: 'invalid' } }}
+        let(:createInvoiceDetails) {{ invoiceOption: { id: 'invalid' } }}
         run_test!
       end
     end

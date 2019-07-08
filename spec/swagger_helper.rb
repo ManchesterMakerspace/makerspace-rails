@@ -193,6 +193,7 @@ RSpec.configure do |config|
             discounts: {
               type: :array,
               items: {
+                type: :object,
                 properties: {
                   id: { type: :string },
                   name: { type: :string },

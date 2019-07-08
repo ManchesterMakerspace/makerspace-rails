@@ -20,10 +20,13 @@ Rails.application.routes.draw do
     resources :invoice_options, only: [:index]
 
     authenticate :member do
-      resources :members, only: [:show, :index, :update]
+      resources :members, only: [:show, :index, :update] do 
+        scope module: :members do
+          resources :permissions, only: [:index]
+        end
+      end
       resources :rentals, only: [:show, :index]
       resources :invoices, only: [:index, :create]
-      resources :permissions, only: [:show]
 
       namespace :billing do
         resources :payment_methods, only: [:new, :create, :index, :destroy]

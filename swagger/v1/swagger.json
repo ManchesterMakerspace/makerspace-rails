@@ -320,6 +320,7 @@
         "discounts": {
           "type": "array",
           "items": {
+            "type": "object",
             "properties": {
               "id": {
                 "type": "string"
@@ -453,7 +454,7 @@
           "type": "string"
         },
         "expiration": {
-          "type": "string"
+          "type": "number"
         }
       }
     },
@@ -2135,7 +2136,7 @@
             "required": true
           },
           {
-            "name": "new_resource",
+            "name": "updateRentalDetails",
             "in": "body",
             "schema": {
               "type": "object",
@@ -2761,7 +2762,7 @@
             "required": true
           },
           {
-            "name": "new_report",
+            "name": "createEarnedMembershipReportDetails",
             "in": "body",
             "schema": {
               "type": "object",
@@ -3001,7 +3002,7 @@
         "operationId": "createInvoice",
         "parameters": [
           {
-            "name": "resource_payload",
+            "name": "createInvoiceDetails",
             "in": "body",
             "schema": {
               "type": "object",
@@ -3063,6 +3064,57 @@
         }
       }
     },
+    "/members/{id}/permissions": {
+      "get": {
+        "summary": "Gets a member's permissions",
+        "tags": [
+          "Permissions"
+        ],
+        "operationId": "listMembersPermissions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Permissions found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "permissions": {
+                  "type": "object"
+                }
+              },
+              "required": [
+                "permissions"
+              ]
+            }
+          },
+          "404": {
+            "description": "Member not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "Member not authorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User not authenciated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/members": {
       "get": {
         "summary": "Gets a list of members",
@@ -3116,6 +3168,55 @@
           },
           "401": {
             "description": "User not authenciated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Registers new member",
+        "tags": [
+          "Authentication"
+        ],
+        "operationId": "registerMember",
+        "parameters": [
+          {
+            "name": "registerMemberDetails",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "member": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    },
+                    "password": {
+                      "type": "string"
+                    },
+                    "firstname": {
+                      "type": "string"
+                    },
+                    "lastname": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Member registered",
+            "schema": {
+              "$ref": "#/definitions/Member"
+            }
+          },
+          "422": {
+            "description": "Email already exists",
             "schema": {
               "$ref": "#/definitions/error"
             }
@@ -3186,17 +3287,22 @@
             "schema": {
               "type": "object",
               "properties": {
-                "firstname": {
-                  "type": "string"
-                },
-                "lastname": {
-                  "type": "string"
-                },
-                "email": {
-                  "type": "string"
-                },
-                "signature": {
-                  "type": "string"
+                "member": {
+                  "type": "object",
+                  "properties": {
+                    "firstname": {
+                      "type": "string"
+                    },
+                    "lastname": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "signature": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             }
@@ -3231,6 +3337,148 @@
           },
           "404": {
             "description": "member not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/members/sign_in": {
+      "post": {
+        "summary": "Signs in user",
+        "tags": [
+          "Authentication"
+        ],
+        "operationId": "signIn",
+        "parameters": [
+          {
+            "name": "signInDetails",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "member": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User signed in",
+            "schema": {
+              "$ref": "#/definitions/Member"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/members/sign_out": {
+      "delete": {
+        "summary": "Signs out user",
+        "tags": [
+          "Authentication"
+        ],
+        "operationId": "Sign out",
+        "responses": {
+          "204": {
+            "description": "User signed out"
+          }
+        }
+      }
+    },
+    "/members/password": {
+      "post": {
+        "summary": "Sends password reset instructions",
+        "tags": [
+          "Password"
+        ],
+        "operationId": "requestPasswordReset",
+        "parameters": [
+          {
+            "name": "passwordResetDetails",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "member": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "required": [
+              "passwordResetDetails"
+            ]
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Instructions sent",
+            "schema": {
+              "$ref": "#/definitions/Member"
+            }
+          },
+          "422": {
+            "description": "Email not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Updates member password",
+        "tags": [
+          "Password"
+        ],
+        "operationId": "resetPassword",
+        "parameters": [
+          {
+            "name": "passwordResetDetails",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "member": {
+                  "type": "object",
+                  "properties": {
+                    "resetPasswordToken": {
+                      "type": "string"
+                    },
+                    "password": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Password reset"
+          },
+          "422": {
+            "description": "Invalid token",
             "schema": {
               "$ref": "#/definitions/error"
             }

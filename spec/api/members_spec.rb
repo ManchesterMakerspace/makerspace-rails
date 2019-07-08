@@ -76,10 +76,15 @@ describe 'Members API', type: :request do
       parameter name: :updateMemberDetails, in: :body, schema: {
         type: :object,
         properties: {
-          firstname: { type: :string },
-          lastname: { type: :string },
-          email: { type: :string },
-          signature: { type: :string }
+          member: {
+            type: :object,
+            properties: {
+              firstname: { type: :string },
+              lastname: { type: :string },
+              email: { type: :string },
+              signature: { type: :string }
+            }
+          }
         }
       }
 

@@ -44,7 +44,7 @@ describe 'Reports API', type: :request do
       tags 'Reports'
       operationId 'createEarnedMembershipReport'
       parameter name: :id, :in => :path, :type => :string
-      parameter name: :new_report, in: :body, schema: {
+      parameter name: :createEarnedMembershipReportDetails, in: :body, schema: {
         type: :object,
         properties: {
           report: {
@@ -79,7 +79,7 @@ describe 'Reports API', type: :request do
         },
         required: [ 'report' ]
 
-        let(:new_report) { {
+        let(:createEarnedMembershipReportDetails) { {
           report: { 
             earnedMembershipId: em.id,
             reportRequirements: [
@@ -104,7 +104,7 @@ describe 'Reports API', type: :request do
         before { sign_in create(:member) }
         schema '$ref' => '#/definitions/error'
 
-        let(:new_report) { {
+        let(:createEarnedMembershipReportDetails) { {
           report: { 
             earnedMembershipId: "foo",
             reportRequirements: [
