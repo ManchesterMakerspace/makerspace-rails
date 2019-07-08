@@ -256,7 +256,8 @@
           "type": "string"
         },
         "expirationTime": {
-          "type": "number"
+          "type": "number",
+          "x-nullable": true
         },
         "memberContractOnFile": {
           "type": "boolean"
@@ -556,6 +557,17 @@
           "type": "string",
           "x-nullable": true
         },
+        "subscriptionDetails": {
+          "type": "object",
+          "properties": {
+            "billingPeriodStartDate": {
+              "type": "string"
+            },
+            "billingPeriodEndDate": {
+              "type": "string"
+            }
+          }
+        },
         "subscriptionId": {
           "type": "string",
           "x-nullable": true
@@ -568,6 +580,15 @@
         },
         "memberName": {
           "type": "string"
+        },
+        "paymentMethodDetails": {
+          "schema": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/PayPalAccount"
+              }
+            ]
+          }
         }
       }
     }
@@ -3217,7 +3238,15 @@
           "200": {
             "description": "Member registered",
             "schema": {
-              "$ref": "#/definitions/Member"
+              "type": "object",
+              "properties": {
+                "member": {
+                  "$ref": "#/definitions/Member"
+                }
+              },
+              "required": [
+                "member"
+              ]
             }
           },
           "422": {
@@ -3376,15 +3405,22 @@
                   }
                 }
               }
-            },
-            "required": true
+            }
           }
         ],
         "responses": {
           "201": {
             "description": "User signed in",
             "schema": {
-              "$ref": "#/definitions/Member"
+              "type": "object",
+              "properties": {
+                "member": {
+                  "$ref": "#/definitions/Member"
+                }
+              },
+              "required": [
+                "member"
+              ]
             }
           },
           "401": {
@@ -3439,10 +3475,7 @@
         ],
         "responses": {
           "201": {
-            "description": "Instructions sent",
-            "schema": {
-              "$ref": "#/definitions/Member"
-            }
+            "description": "Instructions sent"
           },
           "422": {
             "description": "Email not found",

@@ -153,7 +153,7 @@ RSpec.configure do |config|
             email: { type: :string },
             status: { type: :string },
             role: { type: :string },
-            expirationTime: { type: :number  },
+            expirationTime: { type: :number, 'x-nullable': true },
             memberContractOnFile: { type: :boolean },
             cardId: { type: :string, 'x-nullable': true },
             subscriptionId: { type: :string, 'x-nullable': true },
@@ -174,13 +174,6 @@ RSpec.configure do |config|
             email: { type: :string },
           }
         },
-
-        # permission: {
-        #   type: :object,
-        #   properties: {
-            
-        #   }
-        # },
 
         Plan: {
           type: :object,
@@ -304,14 +297,13 @@ RSpec.configure do |config|
             recurring: { type: :boolean },
             refundIds: { type: :array, items: { type: :string } },
             refundedTransactionId: { type: :string, 'x-nullable': true },
-            # TODO
-            # subscriptionDetails: { 
-            #   type: :object,
-            #   properties: {
-            #     billingPeriodStartDate: { type: :string },
-            #     billingPeriodEndDate: { type: :string },
-            #   }
-            # },
+            subscriptionDetails: { 
+              type: :object,
+              properties: {
+                billingPeriodStartDate: { type: :string, 'x-nullable': true },
+                billingPeriodEndDate: { type: :string, 'x-nullable': true },
+              },
+            },
             subscriptionId: { type: :string, 'x-nullable': true },
             amount: { type: :string },
             memberId: { type: :string },

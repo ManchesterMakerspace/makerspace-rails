@@ -70,6 +70,6 @@ class BraintreeService::TransactionSerializer < ActiveModel::Serializer
     {
       billingPeriodStartDate: object.subscription_details.billing_period_start_date,
       billingPeriodEndDate: object.subscription_details.billing_period_end_date,
-    }
+    } unless object.subscription_details.nil?
   end
 end

@@ -29,11 +29,18 @@ describe 'Registrations API', type: :request do
             }
           }
         }
-      }, required: true
+      }
 
       response '201', 'User signed in' do 
-        schema '$ref' => '#/definitions/Member'
-        let(:signInDetails) {{ member: { email: auth_member.email, password: "password" } }}
+        schema type: :object,
+          properties: {
+            member: {
+              '$ref' => '#/definitions/Member'
+            }
+          },
+          required: [ 'member' ]
+
+          let(:signInDetails) {{ member: { email: auth_member.email, password: "password" } }}
         run_test!
       end
 
@@ -77,7 +84,6 @@ describe 'Registrations API', type: :request do
 
       response '201', 'Instructions sent' do 
         before { auth_member }
-        schema '$ref' => '#/definitions/Member'
         let(:passwordResetDetails) {{ member: { email: auth_member.email } }}
         run_test!
       end
@@ -157,7 +163,15 @@ describe 'Registrations API', type: :request do
       }, required: true
 
       response '200', 'Member registered' do 
-        schema '$ref' => '#/definitions/Member'
+
+        schema type: :object,
+          properties: {
+            member: {
+              '$ref' => '#/definitions/Member'
+            }
+          },
+          required: [ 'member' ]
+          
         let(:registerMemberDetails) {{ member: { firstname: "First", lastname: "Last", email: "first@last.com", password: "password" } }}
         run_test!
       end

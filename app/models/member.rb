@@ -20,7 +20,7 @@ class Member
   field :startDate, default: Time.now
   field :groupName #potentially member is in a group/partner membership
   field :role,                          default: "member" #admin,officer,member
-  field :memberContractOnFile, type: Boolean
+  field :memberContractOnFile, type: Boolean, default: false
   field :subscription,    type: Boolean,   default: false
   ## Database authenticatable
   field :email,              type: String, default: ""

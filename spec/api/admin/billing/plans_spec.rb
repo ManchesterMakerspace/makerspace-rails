@@ -64,13 +64,13 @@ describe 'Plans API', type: :request do
       response '200', 'billing plan discounts found' do 
         before { sign_in admin }
         schema type: :object,
-        properties: {
-          discounts: { 
-            type: :array,
-            items: { '$ref' => '#/definitions/Discount' }
-          }
-        },
-        required: [ 'discounts' ]
+          properties: {
+            discounts: { 
+              type: :array,
+              items: { '$ref' => '#/definitions/Discount' }
+            }
+          },
+          required: [ 'discounts' ]
 
         run_test!
       end

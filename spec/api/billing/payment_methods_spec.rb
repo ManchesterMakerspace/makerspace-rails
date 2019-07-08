@@ -88,7 +88,7 @@ describe 'Billing::PaymentMethods API', type: :request do
           }
         },
         required: [:payment_method]
-      }
+      }, required: true
 
       response '200', 'payment_method created' do 
         before do
