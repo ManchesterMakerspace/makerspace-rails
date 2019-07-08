@@ -25,7 +25,16 @@
           "type": "number"
         },
         "validity": {
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "activeMember",
+            "expired",
+            "inactive",
+            "lost",
+            "nonMember",
+            "revoked",
+            "stolen"
+          ]
         },
         "uid": {
           "type": "string"
@@ -120,7 +129,13 @@
           "type": "string"
         },
         "memberStatus": {
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "activeMember",
+            "inactive",
+            "nonMember",
+            "revoked"
+          ]
         },
         "memberExpiration": {
           "type": "number"
@@ -183,7 +198,11 @@
           "x-nullable": true
         },
         "resourceClass": {
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "member",
+            "rental"
+          ]
         },
         "resourceId": {
           "type": "string"
@@ -250,10 +269,20 @@
           "type": "string"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "activeMember",
+            "inactive",
+            "nonMember",
+            "revoked"
+          ]
         },
         "role": {
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "admin",
+            "member"
+          ]
         },
         "expirationTime": {
           "type": "number",
@@ -535,7 +564,15 @@
           "x-nullable": true
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "failed",
+            "gateway_rejected",
+            "processor_declined",
+            "settled",
+            "unrecognized",
+            "voided"
+          ]
         },
         "id": {
           "type": "string"
@@ -561,10 +598,12 @@
           "type": "object",
           "properties": {
             "billingPeriodStartDate": {
-              "type": "string"
+              "type": "string",
+              "x-nullable": true
             },
             "billingPeriodEndDate": {
-              "type": "string"
+              "type": "string",
+              "x-nullable": true
             }
           }
         },
@@ -580,15 +619,6 @@
         },
         "memberName": {
           "type": "string"
-        },
-        "paymentMethodDetails": {
-          "schema": {
-            "oneOf": [
-              {
-                "$ref": "#/definitions/PayPalAccount"
-              }
-            ]
-          }
         }
       }
     }
@@ -2301,7 +2331,8 @@
               "required": [
                 "payment_method"
               ]
-            }
+            },
+            "required": true
           }
         ],
         "responses": {

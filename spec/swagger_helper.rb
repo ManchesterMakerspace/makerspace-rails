@@ -31,7 +31,10 @@ RSpec.configure do |config|
             id: { type: :string },
             holder: { type: :string },
             expiry: { type: :number },
-            validity: { type: :string },
+            validity: { 
+              type: :string,
+              enum: ["activeMember", "expired", "inactive", "lost", "nonMember", "revoked", "stolen"]
+            },
             uid: { type: :string },
           }
         },
@@ -82,7 +85,7 @@ RSpec.configure do |config|
             id: { type: :string },
             memberId: { type: :string },
             memberName: { type: :string },
-            memberStatus: { type: :string },
+            memberStatus: { type: :string, enum: ["activeMember", "inactive", "nonMember", "revoked"] },
             memberExpiration: { type: :number },
             requirements: {
               type: :array,
@@ -113,7 +116,7 @@ RSpec.configure do |config|
             amount: { type: :string },
             subscriptionId: { type: :string, 'x-nullable': true },
             planId: { type: :string, 'x-nullable': true },
-            resourceClass: { type: :string },
+            resourceClass: { type: :string, enum: ["member", "rental"] },
             resourceId: { type: :string },
             quantity: { type: :number },
             discountId: { type: :string, 'x-nullable': true },
@@ -151,8 +154,8 @@ RSpec.configure do |config|
             firstname: { type: :string },
             lastname: { type: :string },
             email: { type: :string },
-            status: { type: :string },
-            role: { type: :string },
+            status: { type: :string, enum: ["activeMember", "inactive", "nonMember", "revoked"] },
+            role: { type: :string, enum: ["admin", "member"] },
             expirationTime: { type: :number, 'x-nullable': true },
             memberContractOnFile: { type: :boolean },
             cardId: { type: :string, 'x-nullable': true },
@@ -291,7 +294,10 @@ RSpec.configure do |config|
             discountAmount: { type: :string },
             discounts: { type: :array, items: { '$ref' => '#/definitions/Discount' } },
             gatewayRejectionReason: { type: :string, 'x-nullable': true },
-            status: { type: :string },
+            status: { 
+              type: :string, 
+              enum: ["failed", "gateway_rejected", "processor_declined", "settled", "unrecognized", "voided"]
+            },
             id: { type: :string },
             planId: { type: :string, 'x-nullable': true },
             recurring: { type: :boolean },
