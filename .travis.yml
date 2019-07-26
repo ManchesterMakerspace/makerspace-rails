@@ -9,5 +9,5 @@ services:
 addons:
   chrome: stable
 
-script: make start-unit
+script: bundle exec rspec
 

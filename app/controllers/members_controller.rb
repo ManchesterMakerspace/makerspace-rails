@@ -28,7 +28,7 @@ class MembersController < AuthenticationController
 
     def update
       # Non admins can only update themselves
-      raise Error::Unauthorized.new unless @member.id == current_member.id
+      raise Error::Forbidden.new unless @member.id == current_member.id
 
       if signature_params[:signature]
         begin

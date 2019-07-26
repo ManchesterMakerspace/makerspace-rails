@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
 
+  unless Rails.env.production? 
+    mount Rswag::Ui::Engine => '/api-docs'
+    mount Rswag::Api::Engine => '/api-docs'
+  end
+  
   root to: "application#application"
   post '/ipnlistener', to: 'paypal#notify'
   namespace :billing do 
@@ -15,17 +20,18 @@ Rails.application.routes.draw do
     resources :invoice_options, only: [:index]
 
     authenticate :member do
-      resources :members, only: [:show, :index, :update]
+      resources :members, only: [:show, :index, :update] do 
+        scope module: :members do
+          resources :permissions, only: [:index]
+        end
+      end
       resources :rentals, only: [:show, :index]
       resources :invoices, only: [:index, :create]
-      resources :permissions, only: [:show]
 
       namespace :billing do
-        resources :plans, only: [:index]
         resources :payment_methods, only: [:new, :create, :index, :destroy]
         resources :subscriptions, only: [:show, :update, :destroy]
         resources :transactions, only: [:create, :index, :destroy]
-        get '/plans/discounts', to: "plans#discounts"
       end
 
       resources :earned_memberships, only: [:show] do
@@ -42,6 +48,10 @@ Rails.application.routes.draw do
         resources :members, only: [:create, :update]
         resources :permissions, only: [:index, :update]
         namespace :billing do
+          resources :plans, only: [:index]
+          scope :plans do 
+            get '/discounts', to: "plans#discounts"
+          end
           resources :subscriptions, only: [:index, :destroy]
           resources :transactions, only: [:show, :index, :destroy]
         end

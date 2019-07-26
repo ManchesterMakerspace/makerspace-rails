@@ -1,6 +1,13 @@
 class EarnedMembership::ReportRequirementSerializer < ActiveModel::Serializer
-  attributes :id, :requirement_id, :reported_count, :applied_count, :member_ids,
-      :term_end_date, :term_start_date, :current_count, :satisfied
+  attributes :id, 
+             :requirement_id, 
+             :reported_count, 
+             :applied_count, 
+             :current_count, 
+             :member_ids,
+             :term_end_date, 
+             :term_start_date, 
+             :satisfied
 
   def term_end_date
     object.term.end_date
