@@ -5,20 +5,20 @@ describe 'Admin::Rentals API', type: :request do
   let(:basic) { create(:member) }
   let(:rentals) { build_list(:rental, 3, member: create(:member)) }
 
-  path '/admin/rentals' do 
-    get 'Gets a list of rentals' do 
+  path '/admin/rentals' do
+    get 'Gets a list of rentals' do
       tags 'Rentals'
-      operationId "amdinListRentals"
+      operationId "adminListRentals"
       parameter name: :pageNum, in: :query, type: :number, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
       parameter name: :memberId, in: :query, type: :string, required: false
 
-      response '200', 'rentals found' do 
+      response '200', 'rentals found' do
         before { sign_in admin }
         schema type: :object,
         properties: {
-          rentals: { 
+          rentals: {
             type: :array,
             items: { '$ref' => '#/definitions/Rental' }
           }
@@ -28,29 +28,29 @@ describe 'Admin::Rentals API', type: :request do
         run_test!
       end
 
-      response '403', 'User unauthorized' do 
+      response '403', 'User unauthorized' do
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
         run_test!
       end
 
-      response '401', 'User unauthenticated' do 
+      response '401', 'User unauthenticated' do
         schema '$ref' => '#/definitions/error'
         run_test!
       end
     end
 
-    post 'Creates a rental' do 
+    post 'Creates a rental' do
       tags 'Rentals'
       operationId "adminCreateRental"
       parameter name: :createRentalDetails, in: :body, schema: {
         type: :object,
         properties: {
-          rental: { '$ref' => '#/definitions/Rental'   }
+          rental: { '$ref' => '#/definitions/NewRental'   }
         }
       }, required: true
 
-      response '200', 'rental created' do 
+      response '200', 'rental created' do
         before { sign_in admin }
 
         schema type: :object,
@@ -71,7 +71,7 @@ describe 'Admin::Rentals API', type: :request do
         run_test!
       end
 
-      response '403', 'User unauthorized' do 
+      response '403', 'User unauthorized' do
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
         let(:createRentalDetails) {{
@@ -84,7 +84,7 @@ describe 'Admin::Rentals API', type: :request do
         run_test!
       end
 
-      response '401', 'User unauthenticated' do 
+      response '401', 'User unauthenticated' do
         schema '$ref' => '#/definitions/error'
         let(:createRentalDetails) {{
           rental: {
@@ -98,8 +98,8 @@ describe 'Admin::Rentals API', type: :request do
     end
   end
 
-  path "/admin/rentals/{id}" do 
-    put 'Updates a rental' do 
+  path "/admin/rentals/{id}" do
+    put 'Updates a rental' do
       tags 'Rentals'
       operationId "adminUpdateRental"
       parameter name: :id, in: :path, type: :string
@@ -111,7 +111,7 @@ describe 'Admin::Rentals API', type: :request do
         }
       }, required: true
 
-      response '200', 'rental updated' do 
+      response '200', 'rental updated' do
         before { sign_in admin }
 
         schema type: :object,
@@ -131,7 +131,7 @@ describe 'Admin::Rentals API', type: :request do
         run_test!
       end
 
-      response '403', 'User unauthorized' do 
+      response '403', 'User unauthorized' do
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
         let(:updateRentalDetails) {{
@@ -145,7 +145,7 @@ describe 'Admin::Rentals API', type: :request do
         run_test!
       end
 
-      response '401', 'User unauthenticated' do 
+      response '401', 'User unauthenticated' do
         schema '$ref' => '#/definitions/error'
         let(:updateRentalDetails) {{
           rental: {
@@ -158,7 +158,7 @@ describe 'Admin::Rentals API', type: :request do
         run_test!
       end
 
-      response '404', 'Rental not found' do 
+      response '404', 'Rental not found' do
         before { sign_in admin }
         schema '$ref' => '#/definitions/error'
         let(:updateRentalDetails) {{
@@ -168,6 +168,38 @@ describe 'Admin::Rentals API', type: :request do
             expiration: (Time.now + 1.month).to_i * 1000
           }
         }}
+        let(:id) { 'invalid' }
+        run_test!
+      end
+    end
+
+    delete 'Deletes a rental' do
+      tags 'Rentals'
+      operationId "adminDeleteRental"
+      parameter name: :id, in: :path, type: :string
+
+      response '204', 'rental deleted' do
+        before { sign_in admin }
+        let(:id) { create(:rental).id }
+        run_test!
+      end
+
+      response '403', 'User unauthorized' do
+        before { sign_in basic }
+        schema '$ref' => '#/definitions/error'
+        let(:id) { create(:rental).id }
+        run_test!
+      end
+
+      response '401', 'User unauthenticated' do
+        schema '$ref' => '#/definitions/error'
+        let(:id) { create(:rental).id }
+        run_test!
+      end
+
+      response '404', 'Rental not found' do
+        before { sign_in admin }
+        schema '$ref' => '#/definitions/error'
         let(:id) { 'invalid' }
         run_test!
       end

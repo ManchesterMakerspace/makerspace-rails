@@ -31,7 +31,7 @@ RSpec.configure do |config|
             id: { type: :string },
             holder: { type: :string },
             expiry: { type: :number },
-            validity: { 
+            validity: {
               type: :string,
               enum: ["activeMember", "expired", "inactive", "lost", "nonMember", "revoked", "stolen"]
             },
@@ -79,6 +79,19 @@ RSpec.configure do |config|
           }
         },
 
+        NewEarnedMembership: {
+          type: :object,
+          properties: {
+            memberId: { type: :string },
+            memberName: { type: :string },
+            memberStatus: { type: :string, enum: ["activeMember", "inactive", "nonMember", "revoked"] },
+            memberExpiration: { type: :number },
+            requirements: {
+              type: :array,
+              items: { '$ref' => '#/definitions/NewRequirement' }
+            }
+          }
+        },
         EarnedMembership: {
           type: :object,
           properties: {
@@ -122,7 +135,7 @@ RSpec.configure do |config|
             discountId: { type: :string, 'x-nullable': true },
             memberName: { type: :string },
             # TODO
-            # resource: { 
+            # resource: {
             #   type: :object,
             #   oneOf: [
             #     '$ref' => '#/definitions/Member',
@@ -132,6 +145,19 @@ RSpec.configure do |config|
           }
         },
 
+        NewInvoiceOption:  {
+          type: :object,
+          properties: {
+            name: { type: :string },
+            description: { type: :string },
+            amount: { type: :string },
+            planId: { type: :string, 'x-nullable': true },
+            resourceClass: { type: :string },
+            quantity: { type: :number },
+            discountId: { type: :string, 'x-nullable': true },
+            disabled: { type: :boolean },
+          }
+        },
         InvoiceOption: {
           type: :object,
           properties: {
@@ -147,6 +173,17 @@ RSpec.configure do |config|
           }
         },
 
+        NewMember: {
+          type: :object,
+          properties: {
+            firstname: { type: :string },
+            lastname: { type: :string },
+            email: { type: :string },
+            status: { type: :string, enum: ["activeMember", "inactive", "nonMember", "revoked"] },
+            role: { type: :string, enum: ["admin", "member"] },
+            memberContractOnFile: { type: :boolean },
+          }
+        },
         Member: {
           type: :object,
           properties: {
@@ -164,7 +201,7 @@ RSpec.configure do |config|
             earnedMembershipId: { type: :string, 'x-nullable': true },
           }
         },
-        
+
         PayPalAccount: {
           type: :object,
           properties: {
@@ -201,6 +238,16 @@ RSpec.configure do |config|
           }
         },
 
+        NewRequirement: {
+          type: :object,
+          properties: {
+            name: { type: :string },
+            rolloverLimit: { type: :number },
+            termLength: { type: :number },
+            targetCount: { type: :number },
+            strict: { type: :boolean },
+          }
+        },
         Requirement: {
           type: :object,
           properties: {
@@ -219,6 +266,19 @@ RSpec.configure do |config|
           }
         },
 
+        NewReportRequirement: {
+          type: :object,
+          properties: {
+            requirementId: { type: :string },
+            reportedCount: { type: :number },
+            memberIds: {
+              type: :array,
+              items: {
+                type: :string
+              }
+            },
+          }
+        },
         ReportRequirement: {
           type: :object,
           properties: {
@@ -239,6 +299,16 @@ RSpec.configure do |config|
           }
         },
 
+        NewReport: {
+          type: :object,
+          properties: {
+            earnedMembershipId: { type: :string },
+            reportRequirements: {
+              type: :array,
+              items: { '$ref' => '#/definitions/NewReportRequirement' }
+            }
+          }
+        },
         Report: {
           type: :object,
           properties: {
@@ -252,6 +322,15 @@ RSpec.configure do |config|
           }
         },
 
+        NewRental: {
+          type: :object,
+          properties: {
+            number: { type: :string },
+            description: { type: :string },
+            memberId: { type: :string },
+            expiration: { type: :number }
+          }
+        },
         Rental: {
           type: :object,
           properties: {
@@ -283,7 +362,7 @@ RSpec.configure do |config|
             paymentMethodToken: { type: :string }
           }
         },
-       
+
 
         Transaction: {
           type: :object,
@@ -294,8 +373,8 @@ RSpec.configure do |config|
             discountAmount: { type: :string },
             discounts: { type: :array, items: { '$ref' => '#/definitions/Discount' } },
             gatewayRejectionReason: { type: :string, 'x-nullable': true },
-            status: { 
-              type: :string, 
+            status: {
+              type: :string,
               enum: ["failed", "gateway_rejected", "processor_declined", "settled", "unrecognized", "voided"]
             },
             id: { type: :string },
@@ -303,7 +382,7 @@ RSpec.configure do |config|
             recurring: { type: :boolean },
             refundIds: { type: :array, items: { type: :string } },
             refundedTransactionId: { type: :string, 'x-nullable': true },
-            subscriptionDetails: { 
+            subscriptionDetails: {
               type: :object,
               properties: {
                 billingPeriodStartDate: { type: :string, 'x-nullable': true },

@@ -4,18 +4,18 @@ describe 'Admin::InvoiceOptions API', type: :request do
   let(:admin) { create(:member, :admin) }
   let(:basic) { create(:member) }
 
-  path '/admin/invoice_options' do 
-    post 'Creates an invoice option' do 
+  path '/admin/invoice_options' do
+    post 'Creates an invoice option' do
       tags 'InvoiceOptions'
       operationId "adminCreateInvoiceOption"
       parameter name: :createInvoiceOptionDetails, in: :body, schema: {
         type: :object,
         properties: {
-          invoiceOption: { '$ref' => '#/definitions/InvoiceOption'   }
+          invoiceOption: { '$ref' => '#/definitions/NewInvoiceOption'   }
         }
       }, required: true
 
-      response '200', 'invoice option created' do 
+      response '200', 'invoice option created' do
         before { sign_in admin }
 
         schema type: :object,
@@ -38,7 +38,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
         run_test!
       end
 
-      response '403', 'User unauthorized' do 
+      response '403', 'User unauthorized' do
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
         let(:createInvoiceOptionDetails) {{
@@ -54,7 +54,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
         run_test!
       end
 
-      response '401', 'User unauthenticated' do 
+      response '401', 'User unauthenticated' do
         schema '$ref' => '#/definitions/error'
         let(:createInvoiceOptionDetails) {{
           invoiceOption: {
@@ -71,8 +71,8 @@ describe 'Admin::InvoiceOptions API', type: :request do
     end
   end
 
-  path "/admin/invoice_options/{id}" do 
-    put 'Updates an invoice option' do 
+  path "/admin/invoice_options/{id}" do
+    put 'Updates an invoice option' do
       tags 'InvoiceOptions'
       operationId "adminUpdateInvoiceOption"
       parameter name: :id, in: :path, type: :string
@@ -84,7 +84,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
         }
       }, required: true
 
-      response '200', 'invoice option updated' do 
+      response '200', 'invoice option updated' do
         before { sign_in admin }
 
         schema type: :object,
@@ -107,7 +107,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
         run_test!
       end
 
-      response '403', 'User unauthorized' do 
+      response '403', 'User unauthorized' do
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
         let(:updateInvoiceOptionDetails) {{
@@ -124,7 +124,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
         run_test!
       end
 
-      response '401', 'User unauthenticated' do 
+      response '401', 'User unauthenticated' do
         schema '$ref' => '#/definitions/error'
         let(:updateInvoiceOptionDetails) {{
           invoiceOption: {
@@ -140,7 +140,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
         run_test!
       end
 
-      response '404', 'Invoice option not found' do 
+      response '404', 'Invoice option not found' do
         before { sign_in admin }
         schema '$ref' => '#/definitions/error'
         let(:updateInvoiceOptionDetails) {{
@@ -158,31 +158,31 @@ describe 'Admin::InvoiceOptions API', type: :request do
       end
     end
 
-    delete 'Deletes an invoice option' do 
+    delete 'Deletes an invoice option' do
       tags 'InvoiceOptions'
       operationId "adminDeleteInvoiceOption"
       parameter name: :id, in: :path, type: :string
 
-      response '204', 'invoice option deleted' do 
+      response '204', 'invoice option deleted' do
         before { sign_in admin }
         let(:id) { create(:invoice_option).id }
         run_test!
       end
 
-      response '403', 'User unauthorized' do 
+      response '403', 'User unauthorized' do
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
         let(:id) { create(:invoice_option).id }
         run_test!
       end
 
-      response '401', 'User unauthenticated' do 
+      response '401', 'User unauthenticated' do
         schema '$ref' => '#/definitions/error'
         let(:id) { create(:invoice_option).id }
         run_test!
       end
 
-      response '404', 'Invoice Option not found' do 
+      response '404', 'Invoice Option not found' do
         before { sign_in admin }
         schema '$ref' => '#/definitions/error'
         let(:id) { 'invalid' }

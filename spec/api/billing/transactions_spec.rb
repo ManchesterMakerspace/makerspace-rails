@@ -4,31 +4,31 @@ describe 'Billing::Transactions API', type: :request do
   let(:customer) { create(:member, customer_id: "foo") }
   let(:non_customer) { create(:member) }
   let(:gateway) { double }
-  before do 
+  before do
     create(:permission, member: customer, name: :billing, enabled: true )
     create(:permission, member: non_customer, name: :billing, enabled: true )
     allow_any_instance_of(Service::BraintreeGateway).to receive(:connect_gateway).and_return(gateway)
   end
 
-  path '/billing/transactions' do 
-    get 'Gets a list of transactions' do 
+  path '/billing/transactions' do
+    get 'Gets a list of transactions' do
       tags 'Transactions'
       operationId "listTransactions"
       parameter name: :pageNum, in: :query, type: :number, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
 
-      response '200', 'transactions found' do 
+      response '200', 'transactions found' do
         let(:invoice) { create(:invoice, member: customer)}
         let(:transactions) { build_list(:transaction, 3, invoice: invoice) }
-        before do 
+        before do
           sign_in customer
           allow(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, { customer_id: "foo" }).and_return(transactions)
         end
 
         schema type: :object,
         properties: {
-          transactions: { 
+          transactions: {
             type: :array,
             items: { '$ref' => '#/definitions/Transaction' }
           }
@@ -38,19 +38,19 @@ describe 'Billing::Transactions API', type: :request do
         run_test!
       end
 
-      response '401', 'User not authenticated' do 
+      response '401', 'User not authenticated' do
         schema '$ref' => '#/definitions/error'
         run_test!
       end
 
-      response '403', 'User not authorized' do 
+      response '403', 'User not authorized' do
         before { sign_in non_customer }
         schema '$ref' => '#/definitions/error'
         run_test!
       end
     end
-    
-    post 'Create an transaction' do 
+
+    post 'Create an transaction' do
       let(:invoice) { create(:invoice, member: customer) }
       let(:transaction) { build(:transaction, invoice: invoice) }
       before do
@@ -64,26 +64,20 @@ describe 'Billing::Transactions API', type: :request do
       parameter name: :createTransactionDetails, in: :body, schema: {
         type: :object,
         properties: {
-          transaction: {
-            type: :object,
-            properties: {
-              id: { type: :string },
-              discountId: { type: :string }
-            },
-            required: [:id]
-          }
+          invoiceId: { type: :string },
+          paymentMethodId: { type: :string }
         },
-        required: [:transaction]
+        required: [:invoiceId, :paymentMethodId]
       }, required: true
 
-      response '200', 'transaction created' do 
+      response '200', 'transaction created' do
         before do
           sign_in customer
         end
 
         schema type: :object,
         properties: {
-          transaction: { 
+          transaction: {
             '$ref' => '#/definitions/Transaction'
           }
         },
@@ -94,28 +88,28 @@ describe 'Billing::Transactions API', type: :request do
         run_test!
       end
 
-      response '401', 'User not authenticated' do 
+      response '401', 'User not authenticated' do
         schema '$ref' => '#/definitions/error'
         let(:createTransactionDetails) {{ transaction: { invoiceId: "1234" , paymentMethodId: "1234" } }}
         run_test!
       end
 
-      response '403', 'User not authorized' do 
+      response '403', 'User not authorized' do
         before { sign_in non_customer }
         schema '$ref' => '#/definitions/error'
         let(:createTransactionDetails) {{ transaction: { invoiceId: "1234" , paymentMethodId: "1234" } }}
         run_test!
       end
 
-      response '422', 'parameter missing' do 
+      response '422', 'parameter missing' do
         before { sign_in customer }
         schema '$ref' => '#/definitions/error'
         let(:createTransactionDetails)  {{ transaction: { invoiceId: 'some invoice' } }}
         run_test!
       end
-  
+
       response '404', 'invoice not found' do
-        before { 
+        before {
           sign_in customer
           allow(Invoice).to receive(:find).and_return(nil)
         }
@@ -127,11 +121,11 @@ describe 'Billing::Transactions API', type: :request do
   end
 
   path '/billing/transactions/{id}' do
-    delete 'Request refund for a transaction' do 
+    delete 'Request refund for a transaction' do
       let(:transaction) { build(:transaction, id: "foo") }
-      before do 
+      before do
         allow(BraintreeService::Transaction).to receive(:get_transaction).with(gateway, transaction.id).and_return(transaction)
-        create(:invoice, transaction_id: transaction.id, member: customer) 
+        create(:invoice, transaction_id: transaction.id, member: customer)
       end
 
       tags 'Transactions'
@@ -145,14 +139,14 @@ describe 'Billing::Transactions API', type: :request do
         run_test!
       end
 
-      response '403', 'User not authorized' do 
+      response '403', 'User not authorized' do
         before { sign_in non_customer }
         schema '$ref' => '#/definitions/error'
         let(:id) { build(:transaction).id }
         run_test!
       end
 
-      response '401', 'User not authenticated' do 
+      response '401', 'User not authenticated' do
         schema '$ref' => '#/definitions/error'
         let(:id) { build(:transaction).id }
         run_test!
@@ -160,7 +154,7 @@ describe 'Billing::Transactions API', type: :request do
 
       response '404', 'invoice not found' do
         let(:other_transaction) { build(:transaction, id: "bar") }
-        before do 
+        before do
           sign_in customer
           allow(BraintreeService::Transaction).to receive(:get_transaction).with(gateway, other_transaction.id).and_return(other_transaction)
         end

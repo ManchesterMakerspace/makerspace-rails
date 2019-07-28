@@ -1,22 +1,23 @@
 require 'swagger_helper'
 
-describe 'Members API', type: :request do 
-  path '/members' do 
-    get 'Gets a list of members' do 
+describe 'Members API', type: :request do
+  path '/members' do
+    get 'Gets a list of members' do
       tags 'Members'
       operationId "listMembers"
       parameter name: :pageNum, in: :query, type: :number, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
       parameter name: :currentMembers, in: :query, type: :boolean, required: false
+      parameter name: :search, in: :query, type: :string, required: false
 
-      response '200', 'Members found' do 
+      response '200', 'Members found' do
         let(:members) { create_list(:member) }
         before { sign_in create(:member) }
 
         schema type: :object,
         properties: {
-          members: { 
+          members: {
             type: :array,
             items: { '$ref' => '#/definitions/Member' }
           }
@@ -26,7 +27,7 @@ describe 'Members API', type: :request do
         run_test!
       end
 
-      response '401', 'User not authenciated' do 
+      response '401', 'User not authenciated' do
         schema '$ref' => '#/definitions/error'
         let(:id) { create(:member).id }
         run_test!
@@ -35,7 +36,7 @@ describe 'Members API', type: :request do
   end
 
   path '/members/{id}' do
-    get 'Gets a member' do 
+    get 'Gets a member' do
       tags 'Members'
       operationId "getMember"
       parameter name: :id, in: :path, type: :string
@@ -62,7 +63,7 @@ describe 'Members API', type: :request do
         run_test!
       end
 
-      response '401', 'User not authenciated' do 
+      response '401', 'User not authenciated' do
         schema '$ref' => '#/definitions/error'
         let(:id) { create(:member).id }
         run_test!
@@ -107,10 +108,10 @@ describe 'Members API', type: :request do
         run_test!
       end
 
-      response '403', 'Forbidden updating different member' do 
+      response '403', 'Forbidden updating different member' do
         let(:current_member) { create(:member) }
         before { sign_in current_member }
-        
+
         schema '$ref' => '#/definitions/error'
 
         let(:other_user) { create(:member) }
@@ -118,7 +119,7 @@ describe 'Members API', type: :request do
         run_test!
       end
 
-      response '401', 'User not authenciated or authorized' do 
+      response '401', 'User not authenciated or authorized' do
         schema '$ref' => '#/definitions/error'
         let(:id) { create(:member).id }
         run_test!

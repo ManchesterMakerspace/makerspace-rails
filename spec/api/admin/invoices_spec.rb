@@ -5,8 +5,8 @@ describe 'Admin::Invoices API', type: :request do
   let(:basic) { create(:member) }
   let(:invoice_option) { create(:invoice_option) }
   let(:invoices) { create_list(:invoice, 3) }
-  path '/admin/invoices' do 
-    get 'Gets a list of invoices' do 
+  path '/admin/invoices' do
+    get 'Gets a list of invoices' do
       tags 'Invoices'
       operationId "adminListInvoices"
       parameter name: :pageNum, in: :query, type: :number, required: false
@@ -14,11 +14,11 @@ describe 'Admin::Invoices API', type: :request do
       parameter name: :order, in: :query, type: :string, required: false
       parameter name: :resourceId, in: :query, type: :string, required: false
 
-      response '200', 'invoices found' do 
+      response '200', 'invoices found' do
         before { sign_in admin }
         schema type: :object,
         properties: {
-          invoices: { 
+          invoices: {
             type: :array,
             items: { '$ref' => '#/definitions/Invoice' }
           }
@@ -28,29 +28,29 @@ describe 'Admin::Invoices API', type: :request do
         run_test!
       end
 
-      response '403', 'User unauthorized' do 
+      response '403', 'User unauthorized' do
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
         run_test!
       end
 
-      response '401', 'User unauthenticated' do 
+      response '401', 'User unauthenticated' do
         schema '$ref' => '#/definitions/error'
         run_test!
       end
     end
 
-    post 'Creates an invoice' do 
+    post 'Creates an invoice' do
       tags 'Invoices'
       operationId "adminCreateInvoices"
       parameter name: :createInvoiceDetails, in: :body, schema: {
         type: :object,
         properties: {
-          invoiceOption: { 
+          invoiceOption: {
             type: :object,
             properties: {
               id: { type: :string },
-              discountId: { type: :string },
+              discountId: { type: :string, 'x-nullable': true },
               memberId: { type: :string },
               resourceId: { type: :string },
             }
@@ -58,7 +58,7 @@ describe 'Admin::Invoices API', type: :request do
         }
       }, required: true
 
-      response '200', 'invoice created' do 
+      response '200', 'invoice created' do
         before { sign_in admin }
 
         schema type: :object,
@@ -78,7 +78,7 @@ describe 'Admin::Invoices API', type: :request do
         run_test!
       end
 
-      response '403', 'User unauthorized' do 
+      response '403', 'User unauthorized' do
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
         let(:createInvoiceDetails) {{
@@ -91,7 +91,7 @@ describe 'Admin::Invoices API', type: :request do
         run_test!
       end
 
-      response '401', 'User unauthenticated' do 
+      response '401', 'User unauthenticated' do
         schema '$ref' => '#/definitions/error'
         let(:createInvoiceDetails) {{
           invoiceOption: {
@@ -103,7 +103,7 @@ describe 'Admin::Invoices API', type: :request do
         run_test!
       end
 
-      response '422', 'missing parameter' do 
+      response '422', 'missing parameter' do
         before { sign_in admin }
         schema '$ref' => '#/definitions/error'
         let(:createInvoiceDetails) {{
@@ -115,7 +115,7 @@ describe 'Admin::Invoices API', type: :request do
         run_test!
       end
 
-      response '404', 'member not found' do 
+      response '404', 'member not found' do
         before { sign_in admin }
         schema '$ref' => '#/definitions/error'
         let(:createInvoiceDetails) {{
@@ -128,7 +128,7 @@ describe 'Admin::Invoices API', type: :request do
         run_test!
       end
 
-      response '404', 'invoice option not found' do 
+      response '404', 'invoice option not found' do
         before { sign_in admin }
         schema '$ref' => '#/definitions/error'
         let(:createInvoiceDetails) {{
@@ -143,8 +143,8 @@ describe 'Admin::Invoices API', type: :request do
     end
   end
 
-  path "/admin/invoices/{id}" do 
-    put 'Updates an invoice' do 
+  path "/admin/invoices/{id}" do
+    put 'Updates an invoice' do
       tags 'Invoices'
       operationId "adminUpdateInvoice"
       parameter name: :id, in: :path, type: :string
@@ -156,7 +156,7 @@ describe 'Admin::Invoices API', type: :request do
         }
       }, required: true
 
-      response '200', 'invoice updated' do 
+      response '200', 'invoice updated' do
         before { sign_in admin }
 
         schema type: :object,
@@ -179,7 +179,7 @@ describe 'Admin::Invoices API', type: :request do
         run_test!
       end
 
-      response '403', 'User unauthorized' do 
+      response '403', 'User unauthorized' do
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
         let(:updateInvoiceDetails) {{
@@ -196,7 +196,7 @@ describe 'Admin::Invoices API', type: :request do
         run_test!
       end
 
-      response '401', 'User unauthenticated' do 
+      response '401', 'User unauthenticated' do
         schema '$ref' => '#/definitions/error'
         let(:updateInvoiceDetails) {{
           invoice: {
@@ -212,7 +212,7 @@ describe 'Admin::Invoices API', type: :request do
         run_test!
       end
 
-      response '404', 'Invoice not found' do 
+      response '404', 'Invoice not found' do
         before { sign_in admin }
         schema '$ref' => '#/definitions/error'
         let(:updateInvoiceDetails) {{
@@ -230,31 +230,31 @@ describe 'Admin::Invoices API', type: :request do
       end
     end
 
-    delete 'Deletes an invoice' do 
+    delete 'Deletes an invoice' do
       tags 'Invoices'
       operationId "adminDeleteInvoice"
       parameter name: :id, in: :path, type: :string
 
-      response '204', 'invoice deleted' do 
+      response '204', 'invoice deleted' do
         before { sign_in admin }
         let(:id) { create(:invoice).id }
         run_test!
       end
 
-      response '403', 'User unauthorized' do 
+      response '403', 'User unauthorized' do
         before { sign_in basic }
         schema '$ref' => '#/definitions/error'
         let(:id) { create(:invoice).id }
         run_test!
       end
 
-      response '401', 'User unauthenticated' do 
+      response '401', 'User unauthenticated' do
         schema '$ref' => '#/definitions/error'
         let(:id) { create(:invoice).id }
         run_test!
       end
 
-      response '404', 'Invoice not found' do 
+      response '404', 'Invoice not found' do
         before { sign_in admin }
         schema '$ref' => '#/definitions/error'
         let(:id) { 'invalid' }
