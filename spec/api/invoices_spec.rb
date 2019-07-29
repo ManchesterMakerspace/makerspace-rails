@@ -1,22 +1,22 @@
 require 'swagger_helper'
 
 describe 'Invoices API', type: :request do
-  path '/invoices' do 
-    get 'Gets a list of invoices' do 
+  path '/invoices' do
+    get 'Gets a list of invoices' do
       tags 'Invoices'
       operationId "listInvoices"
       parameter name: :pageNum, in: :query, type: :number, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
 
-      response '200', 'invoices found' do 
+      response '200', 'invoices found' do
         let(:member) { create(:member) }
         let(:invoices) { create_list(:invoice, member: member) }
         before { sign_in member }
 
         schema type: :object,
         properties: {
-          invoices: { 
+          invoices: {
             type: :array,
             items: { '$ref' => '#/definitions/Invoice' }
           }
@@ -26,13 +26,13 @@ describe 'Invoices API', type: :request do
         run_test!
       end
 
-      response '401', 'User not authenticated' do 
+      response '401', 'User not authenticated' do
         schema '$ref' => '#/definitions/error'
         run_test!
       end
     end
-    
-    post 'Create an invoice' do 
+
+    post 'Create an invoice' do
       tags 'Invoices'
       operationId 'createInvoice'
       parameter name: :createInvoiceDetails, in: :body, schema: {
@@ -42,7 +42,7 @@ describe 'Invoices API', type: :request do
             type: :object,
             properties: {
               id: { type: :string },
-              discountId: { type: :string }
+              discountId: { type: :string, 'x-nullable': true }
             },
             required: [:id]
           }
@@ -50,12 +50,12 @@ describe 'Invoices API', type: :request do
         required: [:invoiceOption]
       }, required: true
 
-      response '200', 'invoice created' do 
+      response '200', 'invoice created' do
         before { sign_in create(:member) }
 
         schema type: :object,
         properties: {
-          invoice: { 
+          invoice: {
             '$ref' => '#/definitions/Invoice'
           }
         },
@@ -66,19 +66,19 @@ describe 'Invoices API', type: :request do
         run_test!
       end
 
-      response '401', 'User not authenticated' do 
+      response '401', 'User not authenticated' do
         schema '$ref' => '#/definitions/error'
         let(:createInvoiceDetails) {{ invoiceOption: { id: create(:invoice_option).id } }}
         run_test!
       end
 
-      response '422', 'parameter missing' do 
+      response '422', 'parameter missing' do
         before { sign_in create(:member) }
         schema '$ref' => '#/definitions/error'
         let(:createInvoiceDetails)  {{ invoiceOption: { discountId: 'some_discount' } }}
         run_test!
       end
-  
+
       response '404', 'invoice option not found' do
         before { sign_in create(:member) }
         schema '$ref' => '#/definitions/error'

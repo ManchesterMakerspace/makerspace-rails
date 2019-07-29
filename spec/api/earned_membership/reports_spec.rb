@@ -1,8 +1,8 @@
 require 'swagger_helper'
 
 describe 'Reports API', type: :request do
-  path '/earned_memberships/{id}/reports' do 
-    get 'Gets a list of reports for current member' do 
+  path '/earned_memberships/{id}/reports' do
+    get 'Gets a list of reports for current member' do
       tags 'Reports'
       operationId "listEarnedMembershipReports"
       parameter name: :id, :in => :path, :type => :string
@@ -10,37 +10,37 @@ describe 'Reports API', type: :request do
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
 
-      response '200', 'reports found' do 
+      response '200', 'reports found' do
         let(:em) { create(:earned_membership) }
         before { sign_in create(:earned_member, earned_membership: em) }
         schema type: :object,
         properties: {
-          reports: { 
+          reports: {
             type: :array,
             items: { '$ref' => '#/definitions/Report' }
           }
         },
         required: [ 'reports' ]
 
-        let(:id) { em.id }        
+        let(:id) { em.id }
         run_test!
       end
 
-      response '403', 'Forbidden not an earned member' do 
+      response '403', 'Forbidden not an earned member' do
         before { sign_in create(:member) }
         schema '$ref' => '#/definitions/error'
         let(:id) { create(:earned_membership).id }
         run_test!
       end
 
-      response '401', "Unauthorized" do 
+      response '401', "Unauthorized" do
         schema '$ref' => '#/definitions/error'
         let(:id) { create(:earned_membership).id }
         run_test!
       end
     end
-    
-    post 'Create an report' do 
+
+    post 'Create an report' do
       tags 'Reports'
       operationId 'createEarnedMembershipReport'
       parameter name: :id, :in => :path, :type => :string
@@ -48,39 +48,24 @@ describe 'Reports API', type: :request do
         type: :object,
         properties: {
           report: {
-            type: :object,
-            properties: {
-              earnedMembershipId: { type: :string },
-              reportRequirements: {
-                type: :array,
-                items: {
-                  type: :object,
-                  properties: {
-                    requirementId: { type: :string },
-                    reportedCount: { type: :number },
-                    memberIds: { type: :array, items: { type: :string } }
-                  }
-                }
-              }
-            },
-            required: [:earnedMembershipId, :reportRequirements]
+            '$ref' => '#/definitions/NewReport'
           }
         }
       }, required: true
 
-      response '200', 'report created' do 
+      response '200', 'report created' do
         let(:em) { create(:earned_membership) }
         before { sign_in create(:earned_member, earned_membership: em) }
         schema type: :object,
         properties: {
-          report: { 
+          report: {
             '$ref' => '#/definitions/Report'
           }
         },
         required: [ 'report' ]
 
         let(:createEarnedMembershipReportDetails) { {
-          report: { 
+          report: {
             earnedMembershipId: em.id,
             reportRequirements: [
               {
@@ -95,17 +80,17 @@ describe 'Reports API', type: :request do
           }
         } }
 
-        let(:id) { em.id }        
+        let(:id) { em.id }
 
         run_test!
       end
 
-      response '403', 'unauthorized' do 
+      response '403', 'unauthorized' do
         before { sign_in create(:member) }
         schema '$ref' => '#/definitions/error'
 
         let(:createEarnedMembershipReportDetails) { {
-          report: { 
+          report: {
             earnedMembershipId: "foo",
             reportRequirements: [
               {

@@ -116,6 +116,35 @@
         }
       }
     },
+    "NewEarnedMembership": {
+      "type": "object",
+      "properties": {
+        "memberId": {
+          "type": "string"
+        },
+        "memberName": {
+          "type": "string"
+        },
+        "memberStatus": {
+          "type": "string",
+          "enum": [
+            "activeMember",
+            "inactive",
+            "nonMember",
+            "revoked"
+          ]
+        },
+        "memberExpiration": {
+          "type": "number"
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NewRequirement"
+          }
+        }
+      }
+    },
     "EarnedMembership": {
       "type": "object",
       "properties": {
@@ -219,6 +248,37 @@
         }
       }
     },
+    "NewInvoiceOption": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string"
+        },
+        "planId": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "resourceClass": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "number"
+        },
+        "discountId": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "disabled": {
+          "type": "boolean"
+        }
+      }
+    },
     "InvoiceOption": {
       "type": "object",
       "properties": {
@@ -249,6 +309,39 @@
           "x-nullable": true
         },
         "disabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "NewMember": {
+      "type": "object",
+      "properties": {
+        "firstname": {
+          "type": "string"
+        },
+        "lastname": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "activeMember",
+            "inactive",
+            "nonMember",
+            "revoked"
+          ]
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "admin",
+            "member"
+          ]
+        },
+        "memberContractOnFile": {
           "type": "boolean"
         }
       }
@@ -369,6 +462,26 @@
         }
       }
     },
+    "NewRequirement": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "rolloverLimit": {
+          "type": "number"
+        },
+        "termLength": {
+          "type": "number"
+        },
+        "targetCount": {
+          "type": "number"
+        },
+        "strict": {
+          "type": "boolean"
+        }
+      }
+    },
     "Requirement": {
       "type": "object",
       "properties": {
@@ -410,6 +523,23 @@
         }
       }
     },
+    "NewReportRequirement": {
+      "type": "object",
+      "properties": {
+        "requirementId": {
+          "type": "string"
+        },
+        "reportedCount": {
+          "type": "number"
+        },
+        "memberIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "ReportRequirement": {
       "type": "object",
       "properties": {
@@ -445,6 +575,20 @@
         }
       }
     },
+    "NewReport": {
+      "type": "object",
+      "properties": {
+        "earnedMembershipId": {
+          "type": "string"
+        },
+        "reportRequirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NewReportRequirement"
+          }
+        }
+      }
+    },
     "Report": {
       "type": "object",
       "properties": {
@@ -462,6 +606,23 @@
           "items": {
             "$ref": "#/definitions/EarnedMembership"
           }
+        }
+      }
+    },
+    "NewRental": {
+      "type": "object",
+      "properties": {
+        "number": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "memberId": {
+          "type": "string"
+        },
+        "expiration": {
+          "type": "number"
         }
       }
     },
@@ -1253,7 +1414,7 @@
         "tags": [
           "Reports"
         ],
-        "operationId": "adminGetEarnedMembershipReports",
+        "operationId": "adminListEarnedMembershipReports",
         "parameters": [
           {
             "name": "id",
@@ -1325,7 +1486,7 @@
         "tags": [
           "EarnedMemberships"
         ],
-        "operationId": "adminListEarnedMembership",
+        "operationId": "adminListEarnedMemberships",
         "parameters": [
           {
             "name": "pageNum",
@@ -1392,7 +1553,7 @@
               "type": "object",
               "properties": {
                 "earnedMembership": {
-                  "$ref": "#/definitions/EarnedMembership"
+                  "$ref": "#/definitions/NewEarnedMembership"
                 }
               }
             },
@@ -1557,7 +1718,7 @@
               "type": "object",
               "properties": {
                 "invoiceOption": {
-                  "$ref": "#/definitions/InvoiceOption"
+                  "$ref": "#/definitions/NewInvoiceOption"
                 }
               }
             },
@@ -1781,7 +1942,8 @@
                       "type": "string"
                     },
                     "discountId": {
-                      "type": "string"
+                      "type": "string",
+                      "x-nullable": true
                     },
                     "memberId": {
                       "type": "string"
@@ -1955,7 +2117,7 @@
               "type": "object",
               "properties": {
                 "member": {
-                  "$ref": "#/definitions/Member"
+                  "$ref": "#/definitions/NewMember"
                 }
               }
             },
@@ -2062,7 +2224,7 @@
         "tags": [
           "Rentals"
         ],
-        "operationId": "amdinListRentals",
+        "operationId": "adminListRentals",
         "parameters": [
           {
             "name": "pageNum",
@@ -2135,7 +2297,7 @@
               "type": "object",
               "properties": {
                 "rental": {
-                  "$ref": "#/definitions/Rental"
+                  "$ref": "#/definitions/NewRental"
                 }
               }
             },
@@ -2214,6 +2376,44 @@
                 "rental"
               ]
             }
+          },
+          "403": {
+            "description": "User unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Rental not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes a rental",
+        "tags": [
+          "Rentals"
+        ],
+        "operationId": "adminDeleteRental",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "rental deleted"
           },
           "403": {
             "description": "User unauthorized",
@@ -2320,7 +2520,7 @@
                       "type": "string"
                     },
                     "make_default": {
-                      "type": "string"
+                      "type": "boolean"
                     }
                   },
                   "required": [
@@ -2405,7 +2605,7 @@
         "tags": [
           "Subscriptions"
         ],
-        "operationId": "listSubscriptions",
+        "operationId": "getSubscription",
         "parameters": [
           {
             "name": "id",
@@ -2633,23 +2833,16 @@
             "schema": {
               "type": "object",
               "properties": {
-                "transaction": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "discountId": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "id"
-                  ]
+                "invoiceId": {
+                  "type": "string"
+                },
+                "paymentMethodId": {
+                  "type": "string"
                 }
               },
               "required": [
-                "transaction"
+                "invoiceId",
+                "paymentMethodId"
               ]
             },
             "required": true
@@ -2822,36 +3015,7 @@
               "type": "object",
               "properties": {
                 "report": {
-                  "type": "object",
-                  "properties": {
-                    "earnedMembershipId": {
-                      "type": "string"
-                    },
-                    "reportRequirements": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "requirementId": {
-                            "type": "string"
-                          },
-                          "reportedCount": {
-                            "type": "number"
-                          },
-                          "memberIds": {
-                            "type": "array",
-                            "items": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "required": [
-                    "earnedMembershipId",
-                    "reportRequirements"
-                  ]
+                  "$ref": "#/definitions/NewReport"
                 }
               }
             },
@@ -3069,7 +3233,8 @@
                       "type": "string"
                     },
                     "discountId": {
-                      "type": "string"
+                      "type": "string",
+                      "x-nullable": true
                     }
                   },
                   "required": [
@@ -3201,6 +3366,12 @@
             "name": "currentMembers",
             "in": "query",
             "type": "boolean",
+            "required": false
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string",
             "required": false
           }
         ],
@@ -3551,6 +3722,41 @@
           },
           "422": {
             "description": "Invalid token",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/send_registration": {
+      "post": {
+        "summary": "Sends registration email",
+        "tags": [
+          "Authentication"
+        ],
+        "operationId": "sendRegistrationEmail",
+        "parameters": [
+          {
+            "name": "registrationEmailDetails",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Registration email sent"
+          },
+          "409": {
+            "description": "Email already exists",
             "schema": {
               "$ref": "#/definitions/error"
             }
