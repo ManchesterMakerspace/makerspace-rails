@@ -45,7 +45,7 @@ describe 'Billing::PaymentMethods API', type: :request do
       tags 'PaymentMethods'
       operationId "listPaymentMethods"
 
-      response '200', 'payment_methodss found' do
+      response '200', 'payment_methods found' do
         let(:invoice) { create(:invoice, member: customer)}
         let(:payment_methodss) { build_list(:credit_card, 3) }
         before do
