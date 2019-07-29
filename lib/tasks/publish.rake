@@ -1,11 +1,7 @@
 require 'git'
 
-patchRegex = /#(patch)\b/m;
-minorRegex = /#(minor)\b/m;
-majorRegex = /#(major)\b/m;
-
 desc 'Tag repo and, if swagger changed, publish updated makerspace-ts-api-client package'
-task :publish do 
+task :publish do
   # Checkout this repo
   rails_repo_dir = File.expand_path("tmp/makerspace-rails");
   rails_repo_url = "https://#{ENV["USERNAME"]}:#{ENV["PASSPHRASE"]}@github.com/ManchesterMakerspace/makerspace-rails.git"
@@ -33,7 +29,7 @@ task :publish do
       system("yarn && yarn generate -f #{swagger_path}")
 
       # Copy commit message from rails
-      last_rails_commit = rails_git.log.last
+      last_rails_commit = rails_git.log.first
       ts_git.commit(last_rails_commit.message, { allow_empty: true })
 
       # Tag and publish new package
@@ -46,7 +42,7 @@ task :publish do
 end
 
 def swagger_changed?(git)
-  swagger_changed = false 
+  swagger_changed = false
 
   last_commit = git.log.last
   diff = git.diff(last_commit.sha, "HEAD")
@@ -64,11 +60,16 @@ def clone_repo(repo, dir)
     git = Git.clone(repo, dir, log: Logger.new("/dev/null")) # Silence logs to prevent cred leak
   else
     git = Git.open(dir, log: Logger.new("/dev/null")) # Silence logs to prevent cred leak
+    git.pull
   end
   return git
 end
 
 def tag_repo(git)
+  patchRegex = /#(patch)\b/m;
+  minorRegex = /#(minor)\b/m;
+  majorRegex = /#(major)\b/m;
+
   tags = git.tags()
   last_tag = (tags || []).pop()
 
@@ -81,7 +82,7 @@ def tag_repo(git)
 
   last_commit = git.log.first
   begin
-    commit_tag = git.describe(last_commit.sha, { tags: true })
+    commit_tag = git.describe(last_commit.sha, { tags: true, exact_match: true })
   rescue Git::GitExecuteError
   end
 
@@ -93,14 +94,14 @@ def tag_repo(git)
 
   commit_message = last_commit.message
   major, minor, patch = last_tag.name.split(".")
-  if major.match(commit_message)
+  if !!majorRegex.match(commit_message)
     next_tag = "#{major.to_i + 1}.0.0"
-  elsif minor.match(commit_message)
+  elsif !!minorRegex.match(commit_message)
     next_tag = "#{major}.#{minor.to_i + 1}.0"
-  elsif patch.match(commit_message)
+  elsif !!patchRegex.match(commit_message)
     next_tag = "#{major}.#{minor}.#{patch.to_i + 1}"
   end
-  
+
   if !next_tag
     puts "No tagging for this commit"
   else
