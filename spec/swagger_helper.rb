@@ -42,6 +42,9 @@ RSpec.configure do |config|
         CreditCard: {
           type: :object,
           properties: {
+            id: { type: :string },
+            default: { type: :boolean },
+            paymentType: { type: :string, 'x-nullable': true },
             customerId: { type: :string },
             imageUrl: { type: :string },
             subscriptions: {
@@ -205,6 +208,9 @@ RSpec.configure do |config|
         PayPalAccount: {
           type: :object,
           properties: {
+            id: { type: :string },
+            default: { type: :boolean },
+            paymentType: { type: :string, 'x-nullable': true },
             customerId: { type: :string },
             imageUrl: { type: :string },
             subscriptions: {

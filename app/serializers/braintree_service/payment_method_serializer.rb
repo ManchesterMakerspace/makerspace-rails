@@ -36,7 +36,7 @@ class BraintreeService::PaymentMethodSerializer < ActiveModel::Serializer
       fields[:payment_type] = :paypal
     end
     fields[:id] ||= object.token
-    fields[:default] = object.default?
+    fields[:default] = !!object.default?
     fields
   end
 end

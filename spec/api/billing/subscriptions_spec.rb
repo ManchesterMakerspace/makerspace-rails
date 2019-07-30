@@ -71,9 +71,9 @@ describe 'Billing::Subscriptions API', type: :request do
           subscription: {
             type: :object,
             properties: {
-              payment_method_token: { type: :string }
+              paymentMethodToken: { type: :string }
             },
-            required: [:payment_method_token]
+            required: [:paymentMethodToken]
           }
         },
         required: [:subscription]
