@@ -44,6 +44,16 @@
     "CreditCard": {
       "type": "object",
       "properties": {
+        "id": {
+          "type": "string"
+        },
+        "default": {
+          "type": "boolean"
+        },
+        "paymentType": {
+          "type": "string",
+          "x-nullable": true
+        },
         "customerId": {
           "type": "string"
         },
@@ -405,6 +415,16 @@
     "PayPalAccount": {
       "type": "object",
       "properties": {
+        "id": {
+          "type": "string"
+        },
+        "default": {
+          "type": "boolean"
+        },
+        "paymentType": {
+          "type": "string",
+          "x-nullable": true
+        },
         "customerId": {
           "type": "string"
         },
@@ -2476,7 +2496,7 @@
         "operationId": "listPaymentMethods",
         "responses": {
           "200": {
-            "description": "payment_methodss found",
+            "description": "payment_methods found",
             "schema": {
               "type": "object",
               "properties": {
@@ -2671,12 +2691,12 @@
                 "subscription": {
                   "type": "object",
                   "properties": {
-                    "payment_method_token": {
+                    "paymentMethodToken": {
                       "type": "string"
                     }
                   },
                   "required": [
-                    "payment_method_token"
+                    "paymentMethodToken"
                   ]
                 }
               },
