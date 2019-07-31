@@ -86,9 +86,6 @@ RSpec.configure do |config|
           type: :object,
           properties: {
             memberId: { type: :string },
-            memberName: { type: :string },
-            memberStatus: { type: :string, enum: ["activeMember", "inactive", "nonMember", "revoked"] },
-            memberExpiration: { type: :number },
             requirements: {
               type: :array,
               items: { '$ref' => '#/definitions/NewRequirement' }
@@ -137,6 +134,7 @@ RSpec.configure do |config|
             quantity: { type: :number },
             discountId: { type: :string, 'x-nullable': true },
             memberName: { type: :string },
+            memberId: { type: :string },
             # TODO
             # resource: {
             #   type: :object,
