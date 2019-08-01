@@ -56,6 +56,7 @@ RSpec.configure do |config|
             expirationYear: { type: :number  },
             expirationDate: { type: :string },
             last4: { type: :number  },
+            debit: { type: :boolean },
           }
         },
 
@@ -131,10 +132,13 @@ RSpec.configure do |config|
             planId: { type: :string, 'x-nullable': true },
             resourceClass: { type: :string, enum: ["member", "rental"] },
             resourceId: { type: :string },
+            resource: { type: :any },
             quantity: { type: :number },
             discountId: { type: :string, 'x-nullable': true },
             memberName: { type: :string },
             memberId: { type: :string },
+            refunded: { type: :boolean },
+            refundRequested: { type: :string, 'x-nullable': true },
             # TODO
             # resource: {
             #   type: :object,
@@ -171,6 +175,7 @@ RSpec.configure do |config|
             quantity: { type: :number },
             discountId: { type: :string, 'x-nullable': true },
             disabled: { type: :boolean },
+            operation: { type: :string }
           }
         },
 
@@ -198,6 +203,7 @@ RSpec.configure do |config|
             memberContractOnFile: { type: :boolean },
             cardId: { type: :string, 'x-nullable': true },
             subscriptionId: { type: :string, 'x-nullable': true },
+            subscription: { type: :boolean },
             customerId: { type: :string, 'x-nullable': true },
             earnedMembershipId: { type: :string, 'x-nullable': true },
           }
@@ -321,7 +327,7 @@ RSpec.configure do |config|
             earnedMembershipId: { type: :string },
             reportRequirements: {
               type: :array,
-              items: { '$ref' => '#/definitions/EarnedMembership' }
+              items: { '$ref' => '#/definitions/ReportRequirement' }
             }
           }
         },
@@ -397,6 +403,7 @@ RSpec.configure do |config|
             amount: { type: :string },
             memberId: { type: :string },
             memberName: { type: :string },
+            invoice: { '$ref' => '#/definitions/Invoice', 'x-nullable': true }
             # paymentMethodDetails: {
             #   oneOf: [
             #     '$ref' => '#/definitions/CreditCard',
