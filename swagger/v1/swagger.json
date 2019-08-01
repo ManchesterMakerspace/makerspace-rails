@@ -132,21 +132,6 @@
         "memberId": {
           "type": "string"
         },
-        "memberName": {
-          "type": "string"
-        },
-        "memberStatus": {
-          "type": "string",
-          "enum": [
-            "activeMember",
-            "inactive",
-            "nonMember",
-            "revoked"
-          ]
-        },
-        "memberExpiration": {
-          "type": "number"
-        },
         "requirements": {
           "type": "array",
           "items": {
@@ -254,6 +239,9 @@
           "x-nullable": true
         },
         "memberName": {
+          "type": "string"
+        },
+        "memberId": {
           "type": "string"
         }
       }
