@@ -80,6 +80,9 @@
         },
         "last4": {
           "type": "number"
+        },
+        "debit": {
+          "type": "boolean"
         }
       }
     },
@@ -231,6 +234,9 @@
         "resourceId": {
           "type": "string"
         },
+        "resource": {
+          "type": "any"
+        },
         "quantity": {
           "type": "number"
         },
@@ -243,6 +249,13 @@
         },
         "memberId": {
           "type": "string"
+        },
+        "refunded": {
+          "type": "boolean"
+        },
+        "refundRequested": {
+          "type": "string",
+          "x-nullable": true
         }
       }
     },
@@ -308,6 +321,9 @@
         },
         "disabled": {
           "type": "boolean"
+        },
+        "operation": {
+          "type": "string"
         }
       }
     },
@@ -389,6 +405,9 @@
         "subscriptionId": {
           "type": "string",
           "x-nullable": true
+        },
+        "subscription": {
+          "type": "boolean"
         },
         "customerId": {
           "type": "string",
@@ -612,7 +631,7 @@
         "reportRequirements": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/EarnedMembership"
+            "$ref": "#/definitions/ReportRequirement"
           }
         }
       }
@@ -788,6 +807,10 @@
         },
         "memberName": {
           "type": "string"
+        },
+        "invoice": {
+          "$ref": "#/definitions/Invoice",
+          "x-nullable": true
         }
       }
     }

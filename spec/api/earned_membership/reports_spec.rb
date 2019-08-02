@@ -71,10 +71,12 @@ describe 'Reports API', type: :request do
               {
                 requirementId: create(:requirement).id,
                 reportedCount: 1,
+                memberIds: [],
               },
               {
                 requirementId: create(:requirement).id,
                 reportedCount: 1,
+                memberIds: [],
               }
             ]
           }
