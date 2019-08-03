@@ -132,14 +132,16 @@ RSpec.configure do |config|
             planId: { type: :string, 'x-nullable': true },
             resourceClass: { type: :string, enum: ["member", "rental"] },
             resourceId: { type: :string },
-            resource: { type: :any },
             quantity: { type: :number },
             discountId: { type: :string, 'x-nullable': true },
             memberName: { type: :string },
             memberId: { type: :string },
             refunded: { type: :boolean },
             refundRequested: { type: :string, 'x-nullable': true },
+            operation: { type: :string },
             # TODO
+            member: { type: :object, 'x-nullable': true, properties: { '$ref' => '#/definitions/Member' } },
+            rental: { type: :object, 'x-nullable': true, properties: { '$ref' => '#/definitions/Rental' } },
             # resource: {
             #   type: :object,
             #   oneOf: [
@@ -403,7 +405,10 @@ RSpec.configure do |config|
             amount: { type: :string },
             memberId: { type: :string },
             memberName: { type: :string },
-            invoice: { '$ref' => '#/definitions/Invoice', 'x-nullable': true }
+            invoice: { '$ref' => '#/definitions/Invoice', 'x-nullable': true },
+            # TODO
+            creditCardDetails: { type: :object, properties: { '$ref' => '#/definitions/CreditCard' }, 'x-nullable': true },
+            paypalDetails: { type: :object, properties: { '$ref' => '#/definitions/PayPalAccount' }, 'x-nullable': true },
             # paymentMethodDetails: {
             #   oneOf: [
             #     '$ref' => '#/definitions/CreditCard',

@@ -234,9 +234,6 @@
         "resourceId": {
           "type": "string"
         },
-        "resource": {
-          "type": "any"
-        },
         "quantity": {
           "type": "number"
         },
@@ -256,6 +253,23 @@
         "refundRequested": {
           "type": "string",
           "x-nullable": true
+        },
+        "operation": {
+          "type": "string"
+        },
+        "member": {
+          "type": "object",
+          "x-nullable": true,
+          "properties": {
+            "$ref": "#/definitions/Member"
+          }
+        },
+        "rental": {
+          "type": "object",
+          "x-nullable": true,
+          "properties": {
+            "$ref": "#/definitions/Rental"
+          }
         }
       }
     },
@@ -810,6 +824,20 @@
         },
         "invoice": {
           "$ref": "#/definitions/Invoice",
+          "x-nullable": true
+        },
+        "creditCardDetails": {
+          "type": "object",
+          "properties": {
+            "$ref": "#/definitions/CreditCard"
+          },
+          "x-nullable": true
+        },
+        "paypalDetails": {
+          "type": "object",
+          "properties": {
+            "$ref": "#/definitions/PayPalAccount"
+          },
           "x-nullable": true
         }
       }
