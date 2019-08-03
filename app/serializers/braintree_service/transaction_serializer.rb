@@ -16,7 +16,8 @@ class BraintreeService::TransactionSerializer < ActiveModel::Serializer
              :amount,
              :member_id,
              :member_name,
-             :payment_method_details
+             :credit_card_details,
+             :paypal_details
 
   has_one :invoice
 
@@ -42,8 +43,7 @@ class BraintreeService::TransactionSerializer < ActiveModel::Serializer
     object.invoice && object.invoice.member.fullname
   end
 
-  # TODO this shouldn't be hardcoded
-  def payment_method_details
+  def credit_card_details
     payment_attr = object.payment_instrument_type
     if payment_attr == "credit_card"
       details_hash = object.credit_card_details
@@ -55,7 +55,13 @@ class BraintreeService::TransactionSerializer < ActiveModel::Serializer
         last4: details_hash.last_4,
         imageUrl: details_hash.image_url
       }
-    elsif payment_attr == "paypal"
+    end
+    details
+  end
+
+  def paypal_details
+    payment_attr = object.payment_instrument_type
+    if payment_attr == "paypal"
       details_hash = object.paypal_details
       details = {
         email: details_hash.payer_email,
