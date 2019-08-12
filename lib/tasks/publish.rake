@@ -30,6 +30,7 @@ task :publish do
 
       # Copy commit message from rails
       last_rails_commit = rails_git.log.first
+      ts_git.add
       ts_git.commit(last_rails_commit.message, { allow_empty: true })
 
       # Tag and publish new package
