@@ -2892,16 +2892,20 @@
             "schema": {
               "type": "object",
               "properties": {
-                "invoiceId": {
-                  "type": "string"
-                },
-                "paymentMethodId": {
-                  "type": "string"
+                "transaction": {
+                  "type": "object",
+                  "properties": {
+                    "invoiceId": {
+                      "type": "string"
+                    },
+                    "paymentMethodId": {
+                      "type": "string"
+                    }
+                  }
                 }
               },
               "required": [
-                "invoiceId",
-                "paymentMethodId"
+                "transaction"
               ]
             },
             "required": true
