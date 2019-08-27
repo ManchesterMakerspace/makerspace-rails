@@ -64,10 +64,15 @@ describe 'Billing::Transactions API', type: :request do
       parameter name: :createTransactionDetails, in: :body, schema: {
         type: :object,
         properties: {
-          invoiceId: { type: :string },
-          paymentMethodId: { type: :string }
+          transaction: {
+            type: :object,
+            properties: {
+              invoiceId: { type: :string },
+              paymentMethodId: { type: :string }
+            }
+          }
         },
-        required: [:invoiceId, :paymentMethodId]
+        required: [:transaction]
       }, required: true
 
       response '200', 'transaction created' do
@@ -83,28 +88,36 @@ describe 'Billing::Transactions API', type: :request do
         },
         required: [ 'transaction' ]
 
-        let(:createTransactionDetails) {{ invoiceId: invoice.id, paymentMethodId: "1234" }}
+        let(:createTransactionDetails) {{
+          transaction: { invoiceId: invoice.id, paymentMethodId: "1234" }
+        }}
 
         run_test!
       end
 
       response '401', 'User not authenticated' do
         schema '$ref' => '#/definitions/error'
-        let(:createTransactionDetails) {{ invoiceId: "1234" , paymentMethodId: "1234" }}
+        let(:createTransactionDetails) {{
+          transaction: { invoiceId: "1234" , paymentMethodId: "1234" }
+        }}
         run_test!
       end
 
       response '403', 'User not authorized' do
         before { sign_in non_customer }
         schema '$ref' => '#/definitions/error'
-        let(:createTransactionDetails) {{ invoiceId: "1234" , paymentMethodId: "1234" }}
+        let(:createTransactionDetails) {{
+          transaction: { invoiceId: "1234" , paymentMethodId: "1234" }
+        }}
         run_test!
       end
 
       response '422', 'parameter missing' do
         before { sign_in customer }
         schema '$ref' => '#/definitions/error'
-        let(:createTransactionDetails)  {{ invoiceId: 'some invoice' }}
+        let(:createTransactionDetails)  {{
+          transaction: { invoiceId: 'some invoice' }
+        }}
         run_test!
       end
 
