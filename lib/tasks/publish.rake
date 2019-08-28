@@ -94,7 +94,7 @@ def tag_repo(git)
   end
 
   commit_message = last_commit.message
-  major, minor, patch = last_tag.name.split(".")
+  major, minor, patch = last_tag.name.match(/\d+.\d+.\d+/)[0]
   if !!majorRegex.match(commit_message)
     next_tag = "#{major.to_i + 1}.0.0"
   elsif !!minorRegex.match(commit_message)
