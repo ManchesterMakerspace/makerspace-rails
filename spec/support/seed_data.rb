@@ -64,9 +64,9 @@ class SeedData
   end
 
   def create_rejection_cards
-    create(:rejection_card, uid: '0000')
-    create(:rejection_card, uid: '0001')
-    create(:rejection_card, uid: '0002')
+    create(:rejection_card, uid: '0000', timeOf: Date.today)
+    create(:rejection_card, uid: '0001', timeOf: Date.today)
+    create(:rejection_card, uid: '0002', timeOf: Date.today)
   end
 
   def create_invoice_options

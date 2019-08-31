@@ -14,8 +14,10 @@ addons:
 
 jobs:
   include:
-    - stage: test
+    - stage: unit-test
       script: bundle exec rspec
+    - stage: integration-test
+      script: bundle exec rake integration
     - stage: deploy
       script: rake publish
       if: branch = master AND type = push
