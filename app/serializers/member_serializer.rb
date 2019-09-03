@@ -8,6 +8,7 @@ class MemberSerializer < ActiveModel::Serializer
              :role,
              :card_id,
              :memberContractOnFile,
+             :subscription,
              :subscription_id,
              :earned_membership_id,
              :customer_id,
