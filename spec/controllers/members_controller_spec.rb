@@ -54,10 +54,10 @@ RSpec.describe MembersController, type: :controller do
       expect(parsed_response['member']['firstname']).to eq("foo")
     end
 
-    it "raises unauthed if not updating current member" do
+    it "raises forbidden if not updating current member" do
       member = create(:member)
       put :update, params: { id: member.id, member: member_params }, format: :json
-      expect(response).to have_http_status(401)
+      expect(response).to have_http_status(403)
     end
 
     it "raises not found if member doens't exist" do

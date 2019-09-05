@@ -43,7 +43,8 @@ RSpec.describe Admin::Billing::SubscriptionsController, type: :controller do
   let(:payment_method) { build(:payment_method, customer_id: "bar") }
   let(:invoice) { create(:invoice, member: member) }
   let(:subscription) { build(:subscription, id: "foobar") }
-
+  let(:admin) { create(:member, :admin) }
+  
   let(:failed_result) { double(success?: false) }
   let(:success_result) { double(success?: true) }
 
@@ -54,11 +55,11 @@ RSpec.describe Admin::Billing::SubscriptionsController, type: :controller do
     }
   }
 
-  login_admin
-
   before(:each) do
+    create(:permission, member: admin, name: :billing, enabled: true )
     allow_any_instance_of(Service::BraintreeGateway).to receive(:connect_gateway).and_return(gateway)
     @request.env["devise.mapping"] = Devise.mappings[:member]
+    sign_in admin
   end
 
   describe "GET #index" do 

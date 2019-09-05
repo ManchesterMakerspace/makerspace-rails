@@ -89,6 +89,7 @@ GEM
       faraday (>= 0.7.4, < 1.0)
     fast-stemmer (1.0.2)
     ffi (1.9.25)
+    git (1.5.0)
     gli (2.18.0)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
@@ -114,6 +115,8 @@ GEM
     i18n (1.5.3)
       concurrent-ruby (~> 1.0)
     json (2.2.0)
+    json-schema (2.8.1)
+      addressable (>= 2.4)
     jsonapi-renderer (0.2.0)
     jwt (2.1.0)
     listen (3.1.5)
@@ -125,7 +128,7 @@ GEM
       nokogiri (>= 1.5.9)
     mail (2.7.1)
       mini_mime (>= 0.1.1)
-    makerspace-react-rails (0.1.0)
+    makerspace-react-rails (0.2.3)
     marcel (0.3.3)
       mimemagic (~> 0.3.2)
     memoist (0.16.0)
@@ -236,6 +239,19 @@ GEM
       rspec-mocks (~> 3.8.0)
       rspec-support (~> 3.8.0)
     rspec-support (3.8.0)
+    rswag (2.0.5)
+      rswag-api (= 2.0.5)
+      rswag-specs (= 2.0.5)
+      rswag-ui (= 2.0.5)
+    rswag-api (2.0.5)
+      railties (>= 3.1, < 6.0)
+    rswag-specs (2.0.5)
+      activesupport (>= 3.1, < 6.0)
+      json-schema (~> 2.2)
+      railties (>= 3.1, < 6.0)
+    rswag-ui (2.0.5)
+      actionpack (>= 3.1, < 6.0)
+      railties (>= 3.1, < 6.0)
     ruby_dep (1.5.0)
     signet (0.11.0)
       addressable (~> 2.3)
@@ -293,8 +309,9 @@ DEPENDENCIES
   devise
   dotenv-rails
   factory_bot_rails
+  git
   google-api-client
-  makerspace-react-rails (>= 0.1.0)
+  makerspace-react-rails (>= 0.2.3)
   mini_magick
   mongoid (~> 7.0.2)
   mongoid-rspec
@@ -306,6 +323,7 @@ DEPENDENCIES
   rails-controller-testing
   rest-client
   rspec-rails
+  rswag
   simplecov
   slack-ruby-client
   spring

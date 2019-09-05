@@ -3,11 +3,21 @@ language: ruby
 rvm:
   - 2.6.1
 
+install:
+  - bundle install
+
 services:
   - docker
 
 addons:
   chrome: stable
 
-script: make start-unit
-
+jobs:
+  include:
+    - stage: unit-test
+      script: bundle exec rspec
+    - stage: integration-test
+      script: bundle exec rake integration
+    - stage: deploy
+      script: rake publish
+      if: branch = master AND type = push

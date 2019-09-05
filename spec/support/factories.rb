@@ -13,7 +13,6 @@ FactoryBot.define do
   factory :member do
     firstname {generate(:firstname)}
     lastname {generate(:lastname)}
-    cardID {generate(:cardID)}
     expirationTime {generate(:expiry)}
     email {generate(:email)}
     encrypted_password { BCrypt::Password.create('password') }
@@ -52,6 +51,10 @@ FactoryBot.define do
     end
   end
 
+  factory :member_with_card, parent: :member do
+    association :access_card, factory: :card 
+  end
+
   factory :earned_member, parent: :member do
     association :earned_membership
   end
@@ -71,7 +74,8 @@ FactoryBot.define do
   end
 
   factory :rental do
-    number { generate(:number)}
+    number { generate(:number) }
+    description { "A rental for x amount" }
     expiration { generate(:expiry) }
   end
 
@@ -137,6 +141,11 @@ FactoryBot.define do
         permission.enabled = true
       end
     end
+  end
+
+  factory :billing_permission, parent: :permission do
+    name { :billing }
+    enabled {true}
   end
 
   factory :earned_membership do
@@ -236,6 +245,11 @@ FactoryBot.define do
         transaction_id: "1234"
       }
     ]}
+    disputes { [] }
+    discount_amount { 0 }
+    discounts { [] }
+    refund_ids { [] }
+    payment_instrument_type { "paypal" }
 
     initialize_with { new(braintree_gateway, attributes) }
   end
@@ -292,11 +306,17 @@ FactoryBot.define do
     transactions { [] }
     add_ons { [] }
     discounts { [] }
+    plan_id { "33556" }
+    failure_count { 0 }
+    days_past_due { 0 }
+    billing_day_of_month { "10" }
+    payment_method_token { "g7291" }
 
     initialize_with { new(braintree_gateway, attributes) }
   end
 
   factory :plan, class: ::BraintreeService::Plan do
+    id { generate(:uid) }
     name { "A Billing Plan" }
     description { "A billing plan to charge custoemrs" }
     price { "65.00" }
@@ -314,6 +334,8 @@ FactoryBot.define do
     expiration_date { 25 }
     last_4 { 1234 }
     token { "g7291" }
+    customer_id { generate(:uid) }
+    image_url { "mockurl://foo.com" }
 
     initialize_with { new(braintree_gateway, attributes) }
   end
@@ -321,11 +343,14 @@ FactoryBot.define do
   factory :paypal_account, class: ::BraintreeService::PaypalAccount do
     email { generate(:email) }
     token { "g7291" }
+    customer_id { generate(:uid) }
+    image_url { "mockurl://foo.com" }
 
     initialize_with { new(braintree_gateway, attributes) }
   end
 
   factory :discount, class: ::BraintreeService::Discount do
+    id { generate(:uid) }
     name { "10% Discount" }
     description { "A discount for 10%" }
     amount { 6.50 }

@@ -7,7 +7,8 @@ RSpec.describe Admin::Billing::TransactionsController, type: :controller do
   let(:payment_method) { build(:credit_card, customer_id: "bar") }
   let(:invoice) { create(:invoice, member: member) }
   let(:transaction) { build(:transaction) }
-
+  let(:admin) { create(:member, :admin) }
+  
   let(:valid_params) {
     { 
       payment_method_id: "foo",
@@ -15,11 +16,11 @@ RSpec.describe Admin::Billing::TransactionsController, type: :controller do
     }
   }
 
-  login_admin
-
   before(:each) do
+    create(:permission, member: admin, name: :billing, enabled: true )
     allow_any_instance_of(Service::BraintreeGateway).to receive(:connect_gateway).and_return(gateway)
     @request.env["devise.mapping"] = Devise.mappings[:member]
+    sign_in admin
   end
 
   describe "GET #index" do 
@@ -41,7 +42,7 @@ RSpec.describe Admin::Billing::TransactionsController, type: :controller do
       it "renders error if member is not a customer" do 
         get :index, params: { searchBy: "member", searchId: non_customer.id }, format: :json
         parsed_response = JSON.parse(response.body)
-        expect(response).to have_http_status(422)
+        expect(response).to have_http_status(403)
         expect(parsed_response['message']).to match(/customer/i)
       end
 

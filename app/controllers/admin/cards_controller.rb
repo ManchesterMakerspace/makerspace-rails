@@ -2,7 +2,7 @@ class Admin::CardsController < AdminController
 
   def new
     @card = Card.new()
-    reject = RejectionCard.where({'holder' => nil, 'timeOf' => {'$gt' => (Date.today - 1.day)}}).last
+    reject = RejectionCard.where({holder: nil, timeOf: {'$gt' => (Date.today - 1.day)}}).last
     @card.uid = reject.uid if !!reject
     render json: @card and return
   end
@@ -22,9 +22,9 @@ class Admin::CardsController < AdminController
   end
 
   def index
-    raise ::ActionController::ParameterMissing.new(:member_id) unless card_params[:member_id]
-    member = Member.find(card_params[:member_id])
-    raise ::Mongoid::Errors::DocumentNotFound.new(Member, { id: card_params[:member_id] }) if member.nil?
+    raise ::ActionController::ParameterMissing.new(:member_id) unless params[:memberId]
+    member = Member.find(params[:memberId])
+    raise ::Mongoid::Errors::DocumentNotFound.new(Member, { id: params[:memberId] }) if member.nil?
     @cards = Card.where(member: member)
     render json: @cards and return
   end

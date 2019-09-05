@@ -41,7 +41,7 @@ RSpec.describe Admin::CardsController, type: :controller do
         also_member_card = Card.create! duplicate_member_card
         diff_member_card = Card.create! different_member_cards
 
-        get :index, params: {card: { member_id: card.member.id.as_json }}
+        get :index, params: { memberId: card.member.id.as_json }
         expect(assigns(:cards).to_a).to include(card, also_member_card)
         expect(assigns(:cards).to_a).not_to include(diff_member_card)
       end

@@ -1,11 +1,12 @@
 require 'rails_helper'
 
-RSpec.describe Billing::PlansController, type: :controller do
+RSpec.describe Admin::Billing::PlansController, type: :controller do
   let(:gateway) { double }
   let(:non_customer) { create(:member) }
   let(:membership_plan) { build(:plan, id: "membership_plan") }
   let(:rental_plan) { build(:plan, id: "rental_plan") }
   let(:discount) { build(:discount, id: "foo") }
+  let(:admin) { create(:member, :admin) }
 
   let(:valid_params) {
     { 
@@ -15,7 +16,10 @@ RSpec.describe Billing::PlansController, type: :controller do
   }
 
   before(:each) do
+    create(:permission, member: admin, name: :billing, enabled: true )
     allow_any_instance_of(Service::BraintreeGateway).to receive(:connect_gateway).and_return(gateway)
+    @request.env["devise.mapping"] = Devise.mappings[:member]
+    sign_in admin
   end
 
   describe "GET #index" do 
