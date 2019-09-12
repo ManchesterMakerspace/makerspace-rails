@@ -23,7 +23,7 @@ RSpec.configure do |config|
       },
       basePath: '/api',
       consumes: ['application/json'],
-      produces: ['application/json'],
+      produces: ['application/json', 'text/html'],
       definitions: {
         Card: {
           type: :object,

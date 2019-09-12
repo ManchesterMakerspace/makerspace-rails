@@ -1,6 +1,5 @@
 class Admin::Billing::PlansController < Admin::BillingController
     include FastQuery
-    include BraintreeGateway
 
   def index
     plans = ::BraintreeService::Plan.get_plans(@gateway)

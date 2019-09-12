@@ -1,7 +1,6 @@
 class Billing::TransactionsController < BillingController
     include FastQuery
     include SlackService
-    include BraintreeGateway
     before_action :transaction_params, only: [:create]
     before_action :verify_customer
 

@@ -1,3 +1,3 @@
 class Admin::BillingController < AdminController
-  include BillingGate
+  include BraintreeGateway
 end
