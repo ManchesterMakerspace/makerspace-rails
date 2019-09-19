@@ -57,6 +57,7 @@ RSpec.describe Member, type: :model do
         initial_expiration = member.pretty_time
         member.send(:renew=, 10)
         expected_renewal = conv_to_ms(initial_expiration + 10.months)
+        expect(member.expirationTime).to eq(expected_renewal)
       end
 
       it "Lost or stolen card is not reactivated by renewal" do
@@ -69,6 +70,23 @@ RSpec.describe Member, type: :model do
         expired_card.reload
         expect(expired_card.validity).to eq('lost')
         expect(expired_card.expiry).to eq(new_expiration)
+      end
+    end
+
+    describe "invoicing" do 
+      it "delays renewal if no access cards exist" do 
+        active_member = create(:member, access_cards: create_list(:card, 1))
+        expect(member.delay_invoice_operation(:renew=)).to be_truthy
+        expect(active_member.delay_invoice_operation(:renew=)).to be_falsy
+      end
+
+      it "settles invoices on first access card" do 
+        invoice_1 = create(:invoice, member: member, transaction_id: "123", quantity: 3)
+        initial_expiration = member.pretty_time
+        Card.create(uid: "1234", member: member)
+        member.reload
+        expected_renewal = conv_to_ms(initial_expiration + 3.months)
+        expect(member.expirationTime).to eq(expected_renewal)
       end
     end
 

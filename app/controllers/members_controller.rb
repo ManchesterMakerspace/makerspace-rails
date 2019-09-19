@@ -38,10 +38,10 @@ class MembersController < AuthenticationController
         rescue Error::Google::Upload => err
           @messages.push("Error uploading #{@member.fullname}'s signature'. Error: #{err}")
         end
-        render json: {}, status: 204 and return
+      else 
+        @member.update_attributes!(member_params)
       end
 
-      @member.update_attributes!(member_params)
       render json: @member and return
     end
 
