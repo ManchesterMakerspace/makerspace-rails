@@ -34,7 +34,7 @@ module Service
     end
 
     def self.upload_signature(base64_img, file_name)
-      File.open("dump/signature.png", 'wb') do |f|
+      File.open(Rails.root.join("dump/signature.png"), 'wb') do |f|
         f.write(Base64.decode64(base64_img))
       end
       signature_meta = {

@@ -8,6 +8,7 @@ class InvoiceSerializer < ApplicationSerializer
              :due_date,
              :amount,
              :subscription_id,
+             :transaction_id,
              :plan_id,
              :resource_class,
              :resource_id,

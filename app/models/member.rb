@@ -68,7 +68,7 @@ class Member
   # Not to be used for Payment association
   def self.rough_search_members(searchTerms, criteria = Mongoid::Criteria.new(Member))
     members = self.search_members(searchTerms, criteria)
-    memebrs = Member.full_text_search(searchTerms).sort_by(&:relevance).reverse unless (members.size > 0)
+    members = Member.full_text_search(searchTerms).sort_by(&:relevance).reverse unless (members.size > 0)
     return members
   end
 
@@ -116,6 +116,12 @@ class Member
 
   def is_allowed?(permission_name)
     permissions.detect { |p| p.name == permission_name.to_sym && !!p.enabled }
+  end
+
+  def delay_invoice_operation(operation)
+    if operation.to_sym == :renew=
+      (self.access_cards || []).length == 0
+    end
   end
 
   protected

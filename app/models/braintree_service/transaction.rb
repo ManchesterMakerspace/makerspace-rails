@@ -71,7 +71,6 @@ class BraintreeService::Transaction < Braintree::Transaction
     invoice.update!({ 
       subscription_id: subscription ? subscription.id : nil, 
       transaction_id: transaction.id,
-      settled: true
     })
     
     BillingMailer.receipt(invoice.member.email, transaction.id, invoice.id.to_s).deliver_later

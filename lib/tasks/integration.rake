@@ -14,6 +14,8 @@ task :integration do
     react_git.pull
   end
 
+  react_git.fetch
+
   if version 
     react_git.checkout(version)
   end

@@ -129,6 +129,7 @@ RSpec.configure do |config|
             dueDate: { type: :string },
             amount: { type: :string },
             subscriptionId: { type: :string, 'x-nullable': true },
+            transactionId: { type: :string, 'x-nullable': true },
             planId: { type: :string, 'x-nullable': true },
             resourceClass: { type: :string, enum: ["member", "rental"] },
             resourceId: { type: :string },

@@ -30,7 +30,7 @@ class SeedData
   def create_expired_members
     20.times do |n|
       create(:member, :expired,
-        email: "expired_memebr#{n}@test.com",
+        email: "expired_member#{n}@test.com",
         firstname: "Expired",
         lastname: "Member#{n}"
       )
