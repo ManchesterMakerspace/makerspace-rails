@@ -32,6 +32,7 @@ Rails.application.routes.draw do
         resources :payment_methods, only: [:new, :create, :index, :destroy]
         resources :subscriptions, only: [:show, :update, :destroy]
         resources :transactions, only: [:create, :index, :destroy]
+        resources :receipts, only: [:show], defaults: { format: :html }
       end
 
       resources :earned_memberships, only: [:show] do

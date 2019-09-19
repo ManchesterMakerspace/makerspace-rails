@@ -1,3 +1,3 @@
 class BillingController < AuthenticationController
-  include BillingGate
+  include BraintreeGateway
 end

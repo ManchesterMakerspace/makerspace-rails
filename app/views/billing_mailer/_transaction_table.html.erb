@@ -1,9 +1,27 @@
 <% type = @invoice.resource_class %>
 <% isMembership = type == "member" %>
 <% friendly_type = isMembership ? 'membership' : 'rental' %>
-  <table>
+  <table style="border-collapse: collapse; width: 100%">
     <tbody>
-      <!-- description -->
+      <!-- date -->
+      <tr>
+        <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
+          Transaction Date
+        </td>
+        <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
+          <%=@transaction.created_at.kind_of?(String) ? @transaction.created_at : @transaction.created_at.strftime("%m/%d/%Y")%>
+        </td>
+      </tr>
+      <!-- status -->
+      <tr>
+        <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
+          Status
+        </td>
+        <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
+          <%=@transaction.pretty_status%>
+        </td>
+      </tr>
+      <!-- name -->
       <%unless @invoice.resource.nil? %>
       <tr>
         <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
@@ -51,27 +69,7 @@
           <%=Date.parse(@subscription.billing_period_end_date).strftime("%m/%d/%Y")%>
         </td>
       </tr>
-    <% elsif @transaction %>
-      <!-- date -->
-      <tr>
-        <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
-          Date
-        </td>
-        <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
-          <%=Date.parse(@transaction.created_at).strftime("%m/%d/%Y")%>
-        </td>
-      </tr>
-      <!-- status -->
-      <tr>
-        <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
-          Status
-        </td>
-        <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
-          <%=@transaction.status%>
-        </td>
-      </tr>
     <% end %>
-    
     <!-- Payment method -->
     <tr>
       <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
@@ -86,7 +84,7 @@
     <!-- amount -->
     <tr>
       <td style="border: 1px solid black; border-right: none; padding: 0.5em">
-        Recurring payment amount
+      <%= @invoice.plan_id ? "Recurring Payment Amount" : "Amount"%>
       </td>
       <td style="border: 1px solid black; border-left: none; padding: 0.5em">
         $<%= @invoice.amount.truncate.to_s + '.' + sprintf('%02d', (BigDecimal(@invoice.amount.to_s).frac * 100).truncate) %>
@@ -94,3 +92,5 @@
     </tr>
   </tbody>
 </table>
+<br />
+<%= link_to 'Click here to view your account', @url, id: "profile-link"%>

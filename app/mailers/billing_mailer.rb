@@ -52,13 +52,12 @@ class BillingMailer < ApplicationMailer
   end
 
   def get_profile_url()
-    @url = url_for(action: :application, controller: 'application')
+    @url = url_for(action: :application, controller: :application)
     @url += "members/#{@member.id}"
   end
 
   def get_details_from_transaction
-    payment_method_type = @transaction.payment_instrument_type
     @subscription = @transaction.subscription_details unless @transaction.subscription_id.nil?
-    @payment_method = @transaction.payment_instrument_type == "credit_card" ? @transaction.credit_card_details : @transaction.paypal_details unless @transaction.payment_instrument_type.nil?
+    @payment_method = @transaction.payment_method
   end
 end
