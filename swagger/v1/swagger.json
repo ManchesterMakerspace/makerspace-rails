@@ -1012,9 +1012,39 @@
         "operationId": "adminListSubscriptions",
         "parameters": [
           {
-            "name": "hideCanceled",
+            "name": "startDate",
             "in": "query",
-            "type": "boolean",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "planId",
+            "in": "query",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "subscriptionStatus",
+            "in": "query",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
             "required": false
           }
         ],
@@ -1094,31 +1124,7 @@
         "operationId": "adminListTransaction",
         "parameters": [
           {
-            "name": "pageNum",
-            "in": "query",
-            "type": "number",
-            "required": false
-          },
-          {
-            "name": "orderBy",
-            "in": "query",
-            "type": "string",
-            "required": false
-          },
-          {
-            "name": "order",
-            "in": "query",
-            "type": "string",
-            "required": false
-          },
-          {
-            "name": "searchId",
-            "in": "query",
-            "type": "string",
-            "required": false
-          },
-          {
-            "name": "searchBy",
+            "name": "startDate",
             "in": "query",
             "type": "string",
             "required": false
@@ -1130,9 +1136,30 @@
             "required": false
           },
           {
-            "name": "startDate",
+            "name": "search",
             "in": "query",
             "type": "string",
+            "required": false
+          },
+          {
+            "name": "refund",
+            "in": "query",
+            "type": "boolean",
+            "required": false
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "transactionStatus",
+            "in": "query",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
             "required": false
           }
         ],
@@ -1963,19 +1990,64 @@
             "required": false
           },
           {
-            "name": "resourceId",
+            "name": "search",
             "in": "query",
             "type": "string",
             "required": false
           },
           {
-            "name": "hideSettled",
+            "name": "settled",
             "in": "query",
             "type": "boolean",
             "required": false
           },
           {
-            "name": "types",
+            "name": "past_due",
+            "in": "query",
+            "type": "boolean",
+            "required": false
+          },
+          {
+            "name": "refunded",
+            "in": "query",
+            "type": "boolean",
+            "required": false
+          },
+          {
+            "name": "refund_requested",
+            "in": "query",
+            "type": "boolean",
+            "required": false
+          },
+          {
+            "name": "planId",
+            "in": "query",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "resourceId",
+            "in": "query",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "memberId",
+            "in": "query",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "resourceClass",
             "in": "query",
             "type": "array",
             "items": {
@@ -2374,6 +2446,12 @@
           },
           {
             "name": "order",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "search",
             "in": "query",
             "type": "string",
             "required": false
@@ -2984,21 +3062,45 @@
         "operationId": "listTransactions",
         "parameters": [
           {
-            "name": "pageNum",
-            "in": "query",
-            "type": "number",
-            "required": false
-          },
-          {
-            "name": "orderBy",
+            "name": "startDate",
             "in": "query",
             "type": "string",
             "required": false
           },
           {
-            "name": "order",
+            "name": "endDate",
             "in": "query",
             "type": "string",
+            "required": false
+          },
+          {
+            "name": "refund",
+            "in": "query",
+            "type": "boolean",
+            "required": false
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "transactionStatus",
+            "in": "query",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "paymentMethodToken",
+            "in": "query",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
             "required": false
           }
         ],
@@ -3170,6 +3272,12 @@
             "in": "path",
             "type": "string",
             "required": true
+          },
+          {
+            "name": "resourceId",
+            "in": "query",
+            "type": "string",
+            "required": false
           }
         ],
         "responses": {

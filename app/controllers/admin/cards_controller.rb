@@ -22,9 +22,9 @@ class Admin::CardsController < AdminController
   end
 
   def index
-    raise ::ActionController::ParameterMissing.new(:member_id) unless params[:memberId]
-    member = Member.find(params[:memberId])
-    raise ::Mongoid::Errors::DocumentNotFound.new(Member, { id: params[:memberId] }) if member.nil?
+    raise ::ActionController::ParameterMissing.new(:member_id) unless card_query_params[:member_id]
+    member = Member.find(card_query_params[:member_id])
+    raise ::Mongoid::Errors::DocumentNotFound.new(Member, { id: card_query_params[:member_id] }) if member.nil?
     @cards = Card.where(member: member)
     render json: @cards and return
   end
@@ -39,5 +39,9 @@ class Admin::CardsController < AdminController
   private
   def card_params
     params.require(:card).permit(:member_id, :uid, :card_location)
+  end
+
+  def card_query_params
+    params.permit(:member_id)
   end
 end

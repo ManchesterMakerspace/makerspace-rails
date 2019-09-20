@@ -50,7 +50,7 @@ class SeedData
   def create_rentals
     20.times do |n|
        create(:rental,
-        member: Member.all[n]
+        member: Member.skip(n).limit(1).first
       )
     end
   end

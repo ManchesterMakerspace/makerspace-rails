@@ -1,7 +1,7 @@
 class DocumentsController < AuthenticationController
 
   def show
-    template = params[:id]
+    template = resource_params[:id]
     raise ::Error::NotFound.new() unless allowed_documents.include?(template)
     render template: "documents/#{template}", layout: false, locals: get_locals(template)
   end
@@ -11,6 +11,10 @@ class DocumentsController < AuthenticationController
     Dir["#{Rails.root}/app/views/documents/*.html.erb"].collect { |f| File.basename(f, ".html.erb") }
   end
 
+  def resource_params
+    params.permit(:resource_id, :id)
+  end
+
   def get_locals(template)
     case template 
     when "code_of_conduct"
@@ -18,7 +22,7 @@ class DocumentsController < AuthenticationController
     when "member_contract"
       { member: current_member, signature: nil }
     when "rental_agreement"
-      rental = Rental.find(params[:resourceId]) unless params[:resourceId].nil?
+      rental = Rental.find(resource_params[:resource_id]) unless resource_params[:resource_id].nil?
       raise ::Error::NotFound.new() if rental.nil?
       { member: current_member, rental: rental, signature: nil }
     end

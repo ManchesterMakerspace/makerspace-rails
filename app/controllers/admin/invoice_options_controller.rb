@@ -1,5 +1,5 @@
 class Admin::InvoiceOptionsController < AdminController
-  include FastQuery
+  include FastQuery::MongoidQuery
   before_action :find_invoice_option, only: [:update, :destroy]
 
    def create

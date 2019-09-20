@@ -1,5 +1,4 @@
 class Billing::TransactionsController < BillingController
-    include FastQuery
     include SlackService
     before_action :transaction_params, only: [:create]
     before_action :verify_customer
@@ -38,7 +37,7 @@ class Billing::TransactionsController < BillingController
     def index
       # Can only view transactions for your own invoices
       # Transactions & Invoices are stored on different servers so we need to pull both in
-      transactions = ::BraintreeService::Transaction.get_transactions(@gateway, { customer_id: current_member.customer_id })
+      transactions = ::BraintreeService::Transaction.get_transactions(@gateway, construct_query)
 
       return render_with_total_items(transactions, { each_serializer: BraintreeService::TransactionSerializer, root: "transactions" })
     end
@@ -66,5 +65,36 @@ class Billing::TransactionsController < BillingController
 
     def transaction_params
       params.require(:transaction).permit(:payment_method_id, :invoice_id, :invoice_option_id, :discount_id)
+    end
+
+    def construct_query
+      Proc.new do |search|
+        search.customer_id.is(current_member.customer_id)
+
+        if (transaction_query_params[:end_date] && transaction_query_params[:start_date])
+          search.created_at.between(transaction_query_params[:start_date], transaction_query_params[:end_date])
+        elsif transaction_query_params[:start_date]
+          search.created_at >= transaction_query_params[:start_date]
+        elsif transaction_query_params[:end_date]
+          search.created_at <= transaction_query_params[:end_date]
+        end
+
+        if transaction_query_params[:refund]
+          if transaction_query_params[:type].nil?
+            raise ::Error::UnprocessableEntity.new("Type required with refund search")
+          else 
+            search.refund.is(transaction_query_params[:refund])
+          end
+        end
+
+        search.type.is(transaction_query_params[:type]) unless transaction_query_params[:type].nil?
+
+        query_array(transaction_query_params[:transaction_status], search.status) unless transaction_query_params[:transaction_status].nil?
+        query_array(transaction_query_params[:payment_method_token], search.payment_method_token) unless transaction_query_params[:payment_method_token].nil?
+      end
+    end
+
+    def transaction_query_params
+      params.permit(:start_date, :end_date, :refund, :type, :transaction_status => [], :payment_method_token => [])
     end
   end

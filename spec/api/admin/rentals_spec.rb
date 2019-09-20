@@ -12,6 +12,7 @@ describe 'Admin::Rentals API', type: :request do
       parameter name: :pageNum, in: :query, type: :number, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
+      parameter name: :search, in: :query, type: :string, required: false
       parameter name: :memberId, in: :query, type: :string, required: false
 
       response '200', 'rentals found' do

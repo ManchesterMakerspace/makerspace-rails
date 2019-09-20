@@ -28,70 +28,10 @@ RSpec.describe Admin::Billing::TransactionsController, type: :controller do
     let(:transaction) { build(:transaction, invoice: related_invoice) }
     it "renders a list of transactions" do 
       related_invoice # call to initialize
-      allow(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, {}).and_return([transaction])
-      expect(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, {}).and_return([transaction])
+      allow(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, anything).and_return([transaction])
+      expect(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, anything).and_return([transaction])
       
       get :index, format: :json
-      parsed_response = JSON.parse(response.body)
-      expect(response).to have_http_status(200)
-      expect(parsed_response['transactions'].first['id']).to eq(transaction.id)
-      expect(parsed_response['transactions'].first['invoice']['id']).to eq(related_invoice.id.to_s)
-    end
-
-    describe "filter transactions by member" do
-      it "renders error if member is not a customer" do 
-        get :index, params: { searchBy: "member", searchId: non_customer.id }, format: :json
-        parsed_response = JSON.parse(response.body)
-        expect(response).to have_http_status(403)
-        expect(parsed_response['message']).to match(/customer/i)
-      end
-
-      it "renders error if member not found" do 
-        get :index, params: { searchBy: "member", searchId: "foo" }, format: :json
-        parsed_response = JSON.parse(response.body)
-        expect(response).to have_http_status(404)
-        expect(parsed_response['message']).to match(/resource not found/i)
-      end
-
-      it "renders list of members transactions" do 
-        search_params = {
-          customer_id: member.customer_id
-        }
-
-        allow(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, search_params).and_return([transaction])
-        expect(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, search_params).and_return([transaction])
-        
-        get :index, params: { searchBy: "member", searchId: member.id }, format: :json
-        parsed_response = JSON.parse(response.body)
-        expect(response).to have_http_status(200)
-        expect(parsed_response['transactions'].first['id']).to eq(transaction.id)
-        expect(parsed_response['transactions'].first['invoice']['id']).to eq(related_invoice.id.to_s)
-      end
-    end
-
-    it "can filter transactions by subscription" do 
-      allow(BraintreeService::Subscription).to receive_message_chain(:get_subscription, transactions: [transaction])
-      expect(BraintreeService::Subscription).to receive(:get_subscription).with(gateway, "subscription_id")
-      expect(BraintreeService::Transaction).not_to receive(:get_transactions)
-      
-      get :index, params: { searchBy: "subscription", searchId: "subscription_id" }, format: :json
-      parsed_response = JSON.parse(response.body)
-      expect(response).to have_http_status(200)
-      expect(parsed_response['transactions'].first['id']).to eq(transaction.id)
-      expect(parsed_response['transactions'].first['invoice']['id']).to eq(related_invoice.id.to_s)
-    end
-
-    it "can filter transactions by date" do 
-      start = "02-03-2001"
-      end_date = "03-03-2001"
-      search_params = {
-        start_date: start,
-        end_date: end_date
-      }
-      allow(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, search_params).and_return([transaction])
-      expect(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, search_params).and_return([transaction])
-      
-      get :index, params: { startDate: start, endDate: end_date }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
       expect(parsed_response['transactions'].first['id']).to eq(transaction.id)

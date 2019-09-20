@@ -1,5 +1,5 @@
 class RentalsController < AuthenticationController
-    include FastQuery
+    include FastQuery::MongoidQuery
     include ::Service::GoogleDrive
     before_action :set_rental, only: [:show, :update]
 

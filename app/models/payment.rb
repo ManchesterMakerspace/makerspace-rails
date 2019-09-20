@@ -38,7 +38,7 @@ class Payment
 
   def find_member
     unless !!self.member
-      self.member = Member.search_members("#{self.firstname} #{self.lastname} #{self.payer_email}").first
+      self.member = Member.search("#{self.firstname} #{self.lastname} #{self.payer_email}").first
       if !self.member && self.payer_email then
         payments = Payment.where(member: !nil, payer_email: self.payer_email).order_by(payment_date: :desc);
         self.member = payments.first.member unless payments.empty?

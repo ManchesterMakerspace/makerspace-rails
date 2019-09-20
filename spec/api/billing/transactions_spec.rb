@@ -16,16 +16,20 @@ describe 'Billing::Transactions API', type: :request do
     get 'Gets a list of transactions' do
       tags 'Transactions'
       operationId "listTransactions"
-      parameter name: :pageNum, in: :query, type: :number, required: false
-      parameter name: :orderBy, in: :query, type: :string, required: false
-      parameter name: :order, in: :query, type: :string, required: false
+      parameter name: :startDate, in: :query, type: :string, required: false
+      parameter name: :endDate, in: :query, type: :string, required: false
+      parameter name: :refund, in: :query, type: :boolean, required: false
+      parameter name: :type, in: :query, type: :string, required: false
+
+      parameter name: :transactionStatus, in: :query, type: :array, items: { type: :string }, required: false
+      parameter name: :paymentMethodToken, in: :query, type: :array, items: { type: :string }, required: false
 
       response '200', 'transactions found' do
         let(:invoice) { create(:invoice, member: customer)}
         let(:transactions) { build_list(:transaction, 3, invoice: invoice) }
         before do
           sign_in customer
-          allow(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, { customer_id: "foo" }).and_return(transactions)
+          allow(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, anything).and_return(transactions)
         end
 
         schema type: :object,

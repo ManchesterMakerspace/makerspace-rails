@@ -35,6 +35,8 @@ class Member
   field :subscription_id, type: String # Braintree relation
 
   search_in :email, :lastname
+  search_in :firstname, index: :_firstname_keywords
+  
   validates :firstname, presence: true
   validates :lastname, presence: true
   validates :email, uniqueness: true
@@ -58,19 +60,11 @@ class Member
   has_one :group, class_name: "Group", inverse_of: :member
   has_one :earned_membership, class_name: 'EarnedMembership', dependent: :destroy
 
-  def self.search_members(searchTerms, criteria = Mongoid::Criteria.new(Member))
-    members = criteria.where(email: searchTerms)
-    members = Member.full_text_search(searchTerms).sort_by(&:relevance).reverse unless (members.size > 0)
-    members = Member.full_text_search(searchTerms).sort_by(&:relevance).reverse unless (members.size > 0)
-    return members
-  end
-
-  # Includes firstname if cant find anything else
-  # Not to be used for Payment association
-  def self.rough_search_members(searchTerms, criteria = Mongoid::Criteria.new(Member))
-    members = self.search_members(searchTerms, criteria)
-    members = Member.full_text_search(searchTerms).sort_by(&:relevance).reverse unless (members.size > 0)
-    return members
+  # Searches by firstname if cant find anything else
+  def self.search(searchTerms, criteria = Mongoid::Criteria.new(Member))
+    members1 = criteria.full_text_search(searchTerms).sort_by(&:relevance).reverse
+    members2 = criteria.full_text_search(searchTerms, index: :_firstname_keywords).sort_by(&:relevance).reverse
+    return members1 | members2
   end
 
   def fullname

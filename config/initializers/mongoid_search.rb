@@ -16,7 +16,7 @@ Mongoid::Search.setup do |config|
   # config.stem_proc = Proc.new { |word| Lingua.stemmer(word, :language => 'nl') }
 
   ## Words to ignore
-  config.ignore_list = ["manchestermakerspace", "gmail", "gmail.com", "yahoo", "yahoo.com", "comcast", "comcast.com", "org", "com", "net", "edu"]
+  config.ignore_list = ["gmail", "gmail.com", "yahoo", "yahoo.com", "comcast", "comcast.com", "org", "com", "net", "edu"]
 
   ## An array of words
   # config.ignore_list = %w{ a an to from as }
@@ -41,7 +41,7 @@ Mongoid::Search.setup do |config|
   config.ligatures = { "œ"=>"oe", "æ"=>"ae" }
 
   # Strip symbols regex to be replaced. These symbols will be replaced by space
-  config.strip_symbols = /[._:;'\"`,?|+={}()!@#%^&*<>~\$\-\\\/\[\]]/
+  config.strip_symbols = /[._:;'\"`,?|+={}()!#%^&*<>~\$\-\\\/\[\]]|(@.*\z)/
 
   # Strip accents regex to be replaced. These sybols will be removed after strip_symbols replacing
   config.strip_accents = /[^\s\p{Alnum}]/

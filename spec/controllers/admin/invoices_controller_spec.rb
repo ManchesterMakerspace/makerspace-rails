@@ -42,21 +42,21 @@ RSpec.describe Admin::InvoicesController, type: :controller do
       expect(parsed_response['invoices'].length).to eq(2)
     end
 
-    it "filters invoices by rental types" do 
+    it "filters invoices by rentals" do 
       member_invoice = create(:invoice, resource_class: "member", resource_id: create(:member).id)
       rental_invoice = create(:invoice, resource_class: "rental", resource_id: create(:rental).id)
       
-      get :index, params: { types: ["rental"] }, format: :json
+      get :index, params: { resourceClass: ["rental"] }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
       expect(parsed_response['invoices'].first['id']).to eq(rental_invoice.id.to_s)
     end
 
-    it "filters invoices by member types" do 
+    it "filters invoices by members" do 
       member_invoice = create(:invoice, resource_class: "member", resource_id: create(:member).id)
       rental_invoice = create(:invoice, resource_class: "rental", resource_id: create(:rental).id)
       
-      get :index, params: { types: ["member"] }, format: :json
+      get :index, params: { resourceClass: ["member"] }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
       expect(parsed_response['invoices'].first['id']).to eq(member_invoice.id.to_s)
@@ -76,7 +76,7 @@ RSpec.describe Admin::InvoicesController, type: :controller do
       invoice2 = create(:invoice, member: new_memb)
       invoices = [settled_invoice, invoice]
 
-      get :index, params: { resourceId: new_memb.id }, format: :json
+      get :index, params: { resourceId: [new_memb.id] }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
       expect(parsed_response['invoices'].first['id']).to eq(invoice2.id.to_s)
@@ -87,7 +87,7 @@ RSpec.describe Admin::InvoicesController, type: :controller do
       invoice2 = create(:invoice, resource_id: rental.id, resource_class: "rental")
       invoices = [settled_invoice, invoice]
 
-      get :index, params: { resourceId: rental.id }, format: :json
+      get :index, params: { resourceId: [rental.id] }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
       expect(parsed_response['invoices'].first['id']).to eq(invoice2.id.to_s)
