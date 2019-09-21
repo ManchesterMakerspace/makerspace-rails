@@ -78,7 +78,18 @@ describe 'Admin::Members API', type: :request do
       parameter name: :updateMemberDetails, in: :body, schema: {
         type: :object,
         properties: {
-          member: { '$ref' => '#/definitions/Member'   }
+          member: {
+            type: :object,
+            properties: {
+              firstname: { type: :string, 'x-nullable': true },
+              lastname: { type: :string, 'x-nullable': true },
+              email: { type: :string, 'x-nullable': true },
+              status: { type: :string, enum: ["activeMember", "inactive", "nonMember", "revoked"], 'x-nullable': true },
+              role: { type: :string, enum: ["admin", "member"], 'x-nullable': true },
+              renew: { type: :number, 'x-nullable': true },
+              memberContractOnFile: { type: :boolean, 'x-nullable': true },
+            }
+          }
         }
       }, required: true
 

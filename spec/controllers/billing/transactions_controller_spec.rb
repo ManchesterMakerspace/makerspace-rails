@@ -43,6 +43,7 @@ RSpec.describe Billing::TransactionsController, type: :controller do
   let(:payment_method) { build(:credit_card, customer_id: "bar") }
   let(:invoice) { create(:invoice, member: member) }
   let(:transaction) { build(:transaction) }
+  let(:invoice_option) { create(:invoice_option, id: "444") }
 
   let(:valid_params) {
     { 
@@ -67,6 +68,20 @@ RSpec.describe Billing::TransactionsController, type: :controller do
       expect(parsed_response['message']).to match(/payment_method_id/i)
     end
 
+    it "renders error if no invoice or invoice option ID" do 
+      post :create, params: { transaction: { payment_method_id: "123" } }, format: :json
+      parsed_response = JSON.parse(response.body)
+      expect(response).to have_http_status(422)
+      expect(parsed_response['message']).to match(/invoice_id/i)
+    end
+
+    it "renders error if invoice and invoice option ID" do 
+      post :create, params: { transaction: { payment_method_id: "123", invoice_id: invoice.id, invoice_option_id: invoice_option.id } }, format: :json
+      parsed_response = JSON.parse(response.body)
+      expect(response).to have_http_status(422)
+      expect(parsed_response['message']).to match(/invoice and invoice option/i)
+    end
+
     it "verifies the payment method belongs to customer" do 
       allow(BraintreeService::PaymentMethod).to receive(:find_payment_method_for_customer).with(gateway, "foo", member.customer_id).and_raise(Error::Braintree::CustomerMismatch)
       expect(BraintreeService::PaymentMethod).to receive(:find_payment_method_for_customer).with(gateway, "foo", member.customer_id).and_raise(Error::Braintree::CustomerMismatch)
@@ -84,12 +99,64 @@ RSpec.describe Billing::TransactionsController, type: :controller do
       expect(parsed_response['message']).to match(/resource not found/i)
     end
 
+    it "renders error if no invoice option exists" do 
+      allow(BraintreeService::PaymentMethod).to receive(:find_payment_method_for_customer).with(gateway, "123", member.customer_id)
+      post :create, params: { transaction: { payment_method_id: "123", invoice_option_id: "missing" } }, format: :json
+      parsed_response = JSON.parse(response.body)
+      expect(response).to have_http_status(404)
+      expect(parsed_response['message']).to match(/resource not found/i)
+    end
+
+    it "renders error if no discount exists" do 
+      allow(BraintreeService::PaymentMethod).to receive(:find_payment_method_for_customer).with(gateway, "123", member.customer_id)
+      post :create, params: { transaction: { payment_method_id: "123", invoice_option_id: "444", discount_id: "missing" } }, format: :json
+      allow(BraintreeService::Discount).to receive(:get_discounts).and_return([])
+      parsed_response = JSON.parse(response.body)
+      expect(response).to have_http_status(404)
+      expect(parsed_response['message']).to match(/resource not found/i)
+    end
+
     it "renders error about no customer" do 
       sign_in non_customer
       post :create, params: { transaction: valid_params }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(403)
       expect(parsed_response['message']).to match(/customer/i)
+    end
+
+    it "renders error if using a rental invoice option" do 
+      allow(BraintreeService::PaymentMethod).to receive(:find_payment_method_for_customer).and_return(payment_method)
+      rental_io = create(:invoice_option, resource_class: "rental")
+      post :create, params: { transaction: { payment_method_id: "123", invoice_option_id: rental_io.id } }, format: :json
+      parsed_response = JSON.parse(response.body)
+      expect(response).to have_http_status(422)
+      expect(parsed_response['message']).to match(/rental invoice option/i)
+    end
+
+    it "creates and settles the invoice w/ a discount if using an invoice option and discount" do 
+      discount = build(:discount)
+      allow(BraintreeService::Discount).to receive(:get_discounts).and_return([discount])
+      allow(BraintreeService::PaymentMethod).to receive(:find_payment_method_for_customer).and_return(payment_method)
+      allow(InvoiceOption).to receive(:find).with(invoice_option.id).and_return(invoice_option) # Mock this return so that it returns a double instead
+      allow(invoice_option).to receive(:build_invoice).with(member.id, anything, member.id, discount).and_return(invoice)
+      allow(invoice).to receive(:submit_for_settlement).with(gateway, "foo").and_return(transaction)
+
+      post :create, params: { transaction: { payment_method_id: "foo", invoice_option_id: invoice_option.id, discount_id: discount.id } }, format: :json
+      parsed_response = JSON.parse(response.body)
+      expect(response).to have_http_status(200)
+      expect(parsed_response['transaction']['id']).to eq(transaction.id)
+    end
+
+    it "creates and settles the invoice if using an invoice option" do 
+      allow(BraintreeService::PaymentMethod).to receive(:find_payment_method_for_customer).and_return(payment_method)
+      allow(InvoiceOption).to receive(:find).with(invoice_option.id).and_return(invoice_option) # Mock this return so that it returns a double instead
+      allow(invoice_option).to receive(:build_invoice).with(member.id, anything, member.id, nil).and_return(invoice)
+      allow(invoice).to receive(:submit_for_settlement).with(gateway, "foo").and_return(transaction)
+
+      post :create, params: { transaction: { payment_method_id: "foo", invoice_option_id: invoice_option.id } }, format: :json
+      parsed_response = JSON.parse(response.body)
+      expect(response).to have_http_status(200)
+      expect(parsed_response['transaction']['id']).to eq(transaction.id)
     end
 
     it "settles the invoice" do 
