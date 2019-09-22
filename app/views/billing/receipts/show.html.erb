@@ -1,1 +1,25 @@
-<%= render :partial => 'billing_mailer/transaction_table' %>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style>
+      /* Email styles need to be inline */
+    </style>
+  </head>
+
+  <body>
+    <div class="col-xs-12">
+      <a href="http://manchestermakerspace.org/">
+        <img src="https://makerspace-interface.herokuapp.com/assets/makerspace.png"
+          alt="Manchester Makerspace"
+          style="max-height: 116px;"/>
+      </a>
+    </div>
+
+    <div style="width: 100%">
+      <% friendly_type = @invoice.resource_class == "member" ? 'membership' : 'rental' %>
+      <h3> New <%= friendly_type %> payment to Manchester Makerspace</h3>
+      <%= render :partial => 'billing_mailer/transaction_table' %>
+    <div>
+  </body>
+</html>

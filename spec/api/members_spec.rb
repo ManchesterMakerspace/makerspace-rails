@@ -80,10 +80,10 @@ describe 'Members API', type: :request do
           member: {
             type: :object,
             properties: {
-              firstname: { type: :string },
-              lastname: { type: :string },
-              email: { type: :string },
-              signature: { type: :string }
+              firstname: { type: :string, 'x-nullable': true },
+              lastname: { type: :string, 'x-nullable': true },
+              email: { type: :string, 'x-nullable': true },
+              signature: { type: :string, 'x-nullable': true }
             }
           }
         }

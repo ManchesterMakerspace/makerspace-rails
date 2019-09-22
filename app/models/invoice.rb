@@ -128,7 +128,7 @@ class Invoice
   end
 
   def self.active_invoice_for_resource(resource_id)
-    active = self.find_by(resource_id: resource_id, settled_at: nil)
+    active = self.find_by(resource_id: resource_id, settled_at: nil, transaction_id: nil)
   end
 
   private
@@ -150,8 +150,8 @@ class Invoice
   end
 
   def one_active_invoice_per_resource
-    active = self.class.where(resource_id: resource_id, settled_at: nil, transaction_id: nil)
-    errors.add(:base, "Active invoices already exist for this resource") if active.size > 0
+    active = self.class.active_invoice_for_resource(resource_id)
+    errors.add(:base, "Active invoices already exist for this resource") unless active.nil?
   end
 
   def resource_exists
