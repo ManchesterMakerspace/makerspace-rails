@@ -3081,6 +3081,37 @@
         }
       }
     },
+    "/documents/{id}": {
+      "get": {
+        "summary": "Get a document",
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "getDocument",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Document found"
+          },
+          "302": {
+            "description": "User not authenticated"
+          },
+          "404": {
+            "description": "Document not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/earned_memberships/{id}/reports": {
       "get": {
         "summary": "Gets a list of reports for current member",

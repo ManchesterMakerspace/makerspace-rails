@@ -4,33 +4,35 @@
   <table style="border-collapse: collapse; width: 100%">
     <tbody>
       <!-- date -->
-      <tr>
-        <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
-          Transaction Date
-        </td>
-        <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
-          <%=@transaction.created_at.kind_of?(String) ? @transaction.created_at : @transaction.created_at.strftime("%m/%d/%Y")%>
-        </td>
-      </tr>
-      <!-- status -->
-      <tr>
-        <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
-          Status
-        </td>
-        <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
-          <%=@transaction.pretty_status%>
-        </td>
-      </tr>
+      <% if @transaction %>
+        <tr>
+          <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
+            Transaction Date
+          </td>
+          <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
+            <%=@transaction.created_at.kind_of?(String) ? @transaction.created_at : @transaction.created_at.strftime("%m/%d/%Y")%>
+          </td>
+        </tr>
+        <!-- status -->
+        <tr>
+          <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
+            Status
+          </td>
+          <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
+            <%=@transaction.pretty_status%>
+          </td>
+        </tr>
+      <% end %>
       <!-- name -->
       <%unless @invoice.resource.nil? %>
-      <tr>
-        <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
-          <%=friendly_type.titleize%>
-        </td>
-        <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
-          <%= isMembership ? @invoice.resource.fullname : @invoice.resource.number %>
-        </td>
-    </tr>
+        <tr>
+          <td style="border-top: 1px solid black; border-left: 1px solid black; padding: 0.5em">
+            <%=friendly_type.titleize%>
+          </td>
+          <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
+            <%= isMembership ? @invoice.resource.fullname : @invoice.resource.number %>
+          </td>
+      </tr>
     <% end %>
     <!-- expiration -->
     <tr>

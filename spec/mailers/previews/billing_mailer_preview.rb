@@ -15,9 +15,8 @@ class BillingMailerPreview < ActionMailer::Preview
 
     BillingMailer.new_subscription(
       member.email,
-      subscription,
-      invoice,
-      payment_method
+      subscription.id,
+      invoice.id,
     )
   end
 
@@ -37,8 +36,8 @@ class BillingMailerPreview < ActionMailer::Preview
 
     BillingMailer.receipt(
       member.email,
-      transaction,
-      invoice
+      transaction.id,
+      invoice.id
     )
   end
 
@@ -52,8 +51,8 @@ class BillingMailerPreview < ActionMailer::Preview
 
     BillingMailer.receipt(
       member.email,
-      transaction,
-      invoice
+      transaction.id,
+      invoice.id
     )
   end
 
@@ -67,8 +66,8 @@ class BillingMailerPreview < ActionMailer::Preview
 
     BillingMailer.receipt(
       member.email,
-      transaction,
-      invoice
+      transaction.id,
+      invoice.id
     )
   end
 
@@ -82,8 +81,8 @@ class BillingMailerPreview < ActionMailer::Preview
 
     BillingMailer.refund(
       member.email,
-      transaction,
-      invoice
+      transaction.id,
+      invoice.id
     )
   end
 
@@ -97,8 +96,8 @@ class BillingMailerPreview < ActionMailer::Preview
 
     BillingMailer.refund_requested(
       member.email,
-      transaction,
-      invoice
+      transaction.id,
+      invoice.id
     )
   end
 end
