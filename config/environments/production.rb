@@ -19,7 +19,7 @@ Rails.application.configure do
       user_name: ENV['GMAIL_USERNAME'],
       password: ENV['GMAIL_PASSWORD']
     }
-  else
+  elsif ENV['MAILTRAP_API_TOKEN']
     response = RestClient::Resource.new("https://mailtrap.io/api/v1/inboxes.json?api_token=#{ENV['MAILTRAP_API_TOKEN']}").get
     inbox = JSON.parse(response)[0]
     config.action_mailer.smtp_settings = {
