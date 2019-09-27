@@ -44,7 +44,14 @@ namespace :db do
 end
 
 def cancel_subscriptions(gateway)
-  subscriptions = ::BraintreeService::Subscription.get_subscriptions(gateway)
+  subscriptions = ::BraintreeService::Subscription.get_subscriptions(gateway, Proc.new do |search| 
+    search.status.in(
+      Braintree::Subscription::Status::Active,
+      Braintree::Subscription::Status::Expired,
+      Braintree::Subscription::Status::PastDue,
+      Braintree::Subscription::Status::Pending
+    )
+  end)
   results = subscriptions.map do |subscription|
     result = ::BraintreeService::Subscription.cancel(gateway, subscription.id)
   end

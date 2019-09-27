@@ -18,6 +18,7 @@ jobs:
       script: bundle exec rspec
     - stage: integration-test
       script: bundle exec rake integration
+      after_failure: bundle exec rake upload_screenshots
     - stage: deploy
       script: rake publish
       if: branch = master AND type = push

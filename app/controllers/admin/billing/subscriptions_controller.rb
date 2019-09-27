@@ -1,6 +1,5 @@
 class Admin::Billing::SubscriptionsController < Admin::BillingController
     include FastQuery
-    include BraintreeGateway
 
   def index
     # TODO actually query subscriptions instead of filtering results

@@ -8,7 +8,7 @@ class Card
 
   before_create :set_expiration, :set_holder
   before_update :set_expiration
-  after_create :update_rejection_card
+  after_create :update_rejection_card, :settle_open_member_invoices
 
   validates :uid, presence: true, uniqueness: true
 
@@ -55,5 +55,12 @@ class Card
   def update_rejection_card
     rejection_card = RejectionCard.find_by(uid: self.uid)
     rejection_card.update_attributes!(holder: self.member.fullname) unless rejection_card.nil?
+  end
+
+  def settle_open_member_invoices
+    if self == self.member.access_cards.first
+      open_invoices = self.member.invoices.where(:transaction_id.nin => ["", nil], settled_at: nil)
+      open_invoices.each { |i| i.send(:execute_invoice_operation) }
+    end
   end
 end

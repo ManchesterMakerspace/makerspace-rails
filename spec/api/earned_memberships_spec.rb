@@ -7,7 +7,7 @@ describe 'EarnedMemberships API', type: :request do
       operationId "getEarnedMembership"
       parameter name: :id, in: :path, type: :string
 
-      response '200', 'earned memebrship found' do
+      response '200', 'earned membership found' do
         let(:em) { create(:earned_membership) }
         before { sign_in create(:earned_member, earned_membership: em) }
         schema type: :object,

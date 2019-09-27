@@ -1,16 +1,33 @@
 class Billing::TransactionsController < BillingController
     include FastQuery
     include SlackService
-    include BraintreeGateway
     before_action :transaction_params, only: [:create]
     before_action :verify_customer
 
     def create
+      if transaction_params[:invoice_id] && transaction_params[:invoice_option_id]
+        raise ::Error::UnprocessableEntity.new("Cannot create transaction from invoice and invoice option") 
+      elsif transaction_params[:invoice_id].nil? && transaction_params[:invoice_option_id].nil?
+        raise ActionController::ParameterMissing.new(:invoice_id)
+      end
+      
       raise ActionController::ParameterMissing.new(:payment_method_id) if transaction_params[:payment_method_id].nil?
       verify_payment_method
 
-      invoice = Invoice.find(transaction_params[:invoice_id])
-      raise ::Mongoid::Errors::DocumentNotFound.new(Invoice, { id: transaction_params[:invoice_id] }) if invoice.nil?
+      if transaction_params[:invoice_id]
+        invoice = Invoice.find(transaction_params[:invoice_id])
+        raise ::Mongoid::Errors::DocumentNotFound.new(Invoice, { id: transaction_params[:invoice_id] }) if invoice.nil?
+      else 
+        invoice_option = InvoiceOption.find(transaction_params[:invoice_option_id])
+        raise ::Mongoid::Errors::DocumentNotFound.new(InvoiceOption, { id: transaction_params[:invoice_option_id] }) if invoice_option.nil?
+        raise ::Error::UnprocessableEntity.new("Cannot create transaction from rental invoice option") if invoice_option.resource_class == "rental"
+        if (transaction_params[:discount_id])
+          discounts = ::BraintreeService::Discount.get_discounts(@gateway)
+          invoice_discount = discounts.find { |d| d.id == transaction_params[:discount_id]}
+          raise ::Error::NotFound.new() if invoice_discount.nil?
+        end
+        invoice = invoice_option.build_invoice(current_member.id, Time.now, current_member.id, invoice_discount)
+      end
 
       # Handling actual payment & related error handling is abstracted from this controller
       transaction = invoice.submit_for_settlement(@gateway, transaction_params[:payment_method_id])
@@ -48,6 +65,6 @@ class Billing::TransactionsController < BillingController
     end
 
     def transaction_params
-      params.require(:transaction).permit(:payment_method_id, :invoice_id)
+      params.require(:transaction).permit(:payment_method_id, :invoice_id, :invoice_option_id, :discount_id)
     end
   end

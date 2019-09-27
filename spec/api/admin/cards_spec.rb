@@ -93,7 +93,6 @@ describe 'Admin::AccessCards API', type: :request do
             properties: {
               memberId: { type: :string },
               uid: { type: :string },
-              cardLocation: { type: :string }
             }
           }
         }

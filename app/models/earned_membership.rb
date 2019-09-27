@@ -44,11 +44,7 @@ class EarnedMembership
   end
 
   def existing_subscription
-    if self.member.nil?
-      errors.add(:memebr, "Member required")
-      return
-    end
-    if self.member.subscription || self.member.subscription_id
+    if !self.member.nil? && (self.member.subscription || self.member.subscription_id)
       errors.add(:member, "#{self.member.fullname} is still on subscription. Must cancel subscription first")
     end
   end
@@ -67,7 +63,7 @@ class EarnedMembership
 
   def set_member_expiration
     # TODO change this to use member exp helper
-    if get_shortest_term_end_time && get_shortest_term_end_time > self.member.expirationTime
+    if get_shortest_term_end_time && get_shortest_term_end_time > (self.member.expirationTime || 0)
       renew_member
     end
   end

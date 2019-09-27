@@ -1,6 +1,5 @@
 class Admin::Billing::TransactionsController < Admin::BillingController
   include FastQuery
-  include BraintreeGateway
 
   def index
     search_by = transactions_params[:searchBy]

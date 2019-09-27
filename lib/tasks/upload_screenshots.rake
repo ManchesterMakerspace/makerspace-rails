@@ -16,4 +16,15 @@ task :upload_screenshots => :environment do
                       upload_source: screenshot,
                       content_type: 'image/png')
   end
+
+  Dir.glob("#{Rails.root}/tmp/makerspace-react/tmp/screenshots/*.png") do |screenshot|
+    file_meta = {
+      name: screenshot,
+      parents: ["1im4l-Ub3qEOd-ZPwBQTx7_KUkObNSPPw"]
+    }
+    google.create_file(file_meta,
+                      fields: 'id',
+                      upload_source: screenshot,
+                      content_type: 'image/png')
+  end
 end

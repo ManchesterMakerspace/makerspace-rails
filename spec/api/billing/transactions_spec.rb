@@ -4,6 +4,8 @@ describe 'Billing::Transactions API', type: :request do
   let(:customer) { create(:member, customer_id: "foo") }
   let(:non_customer) { create(:member) }
   let(:gateway) { double }
+  let(:invoice_option) { create(:invoice_option, resource_class: "rental") }
+
   before do
     create(:permission, member: customer, name: :billing, enabled: true )
     create(:permission, member: non_customer, name: :billing, enabled: true )
@@ -67,7 +69,9 @@ describe 'Billing::Transactions API', type: :request do
           transaction: {
             type: :object,
             properties: {
-              invoiceId: { type: :string },
+              invoiceId: { type: :string, 'x-nullable': true },
+              invoiceOptionId: { type: :string, 'x-nullable': true },
+              discountId: { type: :string, 'x-nullable': true },
               paymentMethodId: { type: :string }
             }
           }
@@ -121,6 +125,15 @@ describe 'Billing::Transactions API', type: :request do
         run_test!
       end
 
+      response '422', 'Wrong invoice option type' do
+        before { sign_in customer }
+        schema '$ref' => '#/definitions/error'
+        let(:createTransactionDetails)  {{
+          transaction: { invoiceOptionId: invoice_option.id }
+        }}
+        run_test!
+      end
+
       response '404', 'invoice not found' do
         before {
           sign_in customer
@@ -128,6 +141,16 @@ describe 'Billing::Transactions API', type: :request do
         }
         schema '$ref' => '#/definitions/error'
         let(:createTransactionDetails) {{ transaction: { invoiceId: 'invalid', paymentMethodId: "1234" } }}
+        run_test!
+      end
+
+      response '404', 'invoice option not found' do
+        before {
+          sign_in customer
+          allow(Invoice).to receive(:find).and_return(nil)
+        }
+        schema '$ref' => '#/definitions/error'
+        let(:createTransactionDetails) {{ transaction: { invoiceOptionId: 'invalid', paymentMethodId: "1234" } }}
         run_test!
       end
     end

@@ -71,12 +71,20 @@ class BraintreeService::Transaction < Braintree::Transaction
     invoice.update!({ 
       subscription_id: subscription ? subscription.id : nil, 
       transaction_id: transaction.id,
-      settled: true
     })
     
     BillingMailer.receipt(invoice.member.email, transaction.id, invoice.id.to_s).deliver_later
     send_slack_message("Payment from #{invoice.member.fullname} of $#{invoice.amount} received for #{invoice.name}")
     normalize(gateway, transaction)
+  end
+
+  def payment_method
+    payment_method_type = self.payment_instrument_type
+    payment_method_type == "credit_card" ? self.credit_card_details : self.paypal_details unless payment_method_type.nil?
+  end
+
+  def pretty_status
+    status.titleize
   end
 
   private

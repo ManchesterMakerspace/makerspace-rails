@@ -117,22 +117,51 @@ RSpec.describe Invoice, type: :model do
       end
 
       describe "submit for settlement" do 
+        let(:gateway) { double } # Create a fake gateway
+        let(:transaction) { build(:transaction) }
+        let(:success_result) { double(success?: true) }
+        let(:error_result) { double(success?: false) }
         let(:invoice) { create(:invoice) }
 
-        # TODO need to figure how to mock stuff
         it "Will create a new transaction if payment method ID provided" do 
+          allow(BraintreeService::Transaction).to receive(:submit_invoice_for_settlement).with(gateway, invoice).and_return(transaction)
+          expect(BraintreeService::Transaction).to receive(:submit_invoice_for_settlement).with(gateway, invoice).and_return(transaction)
+          expect(invoice).to receive(:settle_invoice)
+          expect(invoice).to_not receive(:build_next_invoice)
+          result = invoice.submit_for_settlement(gateway, "1234")
+          expect(result).to be(transaction)
+          expect(invoice.payment_method_id).to eq("1234")
         end
 
         it "Will not create a new transaction if transaction ID provided" do 
+          plan_invoice = create(:invoice, plan_id: "567")
+          expect(plan_invoice).to receive(:settle_invoice)
+          expect(plan_invoice).to receive(:build_next_invoice)
+          result = plan_invoice.submit_for_settlement(nil, nil, "1234")
+
+          expect(plan_invoice.transaction_id).to eq("1234")
+          expect(result).to be(nil)
+        end
+
+        it "Cannot be settled twice" do 
+          settled_invoice = create(:invoice, settled_at: Time.now)
+          expect { settled_invoice.submit_for_settlement(gateway, "foo") }.to raise_error(Error::UnprocessableEntity)
         end
 
         it "Cannot process both payment method and transaction IDs" do 
+          expect { invoice.submit_for_settlement(gateway, "foo", "bar") }.to raise_error(Error::UnprocessableEntity)
         end
+      end
 
-        it "executes the invoice operation" do 
-        end
-
-        it "builds the next invoice" do 
+      describe "build_next_invoice" do 
+        it "copys the calling invoice and resets with updated dates" do 
+          base_invoice = create(:invoice, settled_at: Time.now, refunded: true, due_date: Time.now, created_at: Time.now - 1.month)
+          base_invoice.build_next_invoice
+          new_invoice = Invoice.last 
+          expect(new_invoice.settled).to be_falsey
+          expect(new_invoice.refunded).to be_falsey
+          expect(new_invoice.past_due).to be_falsey
+          expect(new_invoice.quantity).to eq(base_invoice.quantity)
         end
       end
     end
@@ -176,6 +205,45 @@ RSpec.describe Invoice, type: :model do
       timestr_invoice = create(:invoice, due_date: time_as_string)
 
       expect(time_invoice.due_date).to eq(timestr_invoice.due_date)
+    end
+
+    describe "delay_invoice_operation" do 
+      let(:invoice) { create(:invoice) }
+
+      it "validates resource exists" do 
+        no_resource = build(:invoice)
+        no_resource.resource_id = nil
+        expect(no_resource.resource).to be(nil)
+        expect { no_resource.send(:execute_invoice_operation) }.to raise_error(Error::NotFound)
+      end
+
+      it "raises error if operation invalid" do 
+        no_operation = build(:invoice)
+        no_operation.operation = nil
+        expect(no_operation.operation).to be(nil)
+        expect { no_operation.send(:execute_invoice_operation) }.to raise_error(Error::UnprocessableEntity)
+      end
+
+      it "delays invoice operation if delay callback exists" do 
+        allow(invoice).to receive_message_chain(:resource, :delay_invoice_operation).with(invoice.operation).and_return(true)
+        expect(invoice).to receive_message_chain(:resource, :delay_invoice_operation).with(invoice.operation).and_return(true)
+        invoice.send(:execute_invoice_operation)
+        expect(invoice.settled).to be_falsey
+      end
+
+      it "raises error if operation fails" do 
+        allow(invoice).to receive_message_chain(:resource, :delay_invoice_operation).with(invoice.operation).and_return(false)
+        expect(invoice).to receive_message_chain(:resource, :execute_operation).with(invoice.operation, invoice).and_return(false)
+        expect { invoice.send(:execute_invoice_operation) }.to raise_error(Error::UnprocessableEntity)
+      end
+
+      it "Settles the invoice if successful" do 
+        allow(invoice).to receive_message_chain(:resource, :delay_invoice_operation).with(invoice.operation).and_return(false)
+        expect(invoice).to receive_message_chain(:resource, :delay_invoice_operation).with(invoice.operation).and_return(false)
+        expect(invoice).to receive_message_chain(:resource, :execute_operation).with(invoice.operation, invoice).and_return(true)
+        invoice.send(:execute_invoice_operation)
+        expect(invoice.settled).to be_truthy
+      end
     end
   end
 end
