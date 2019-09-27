@@ -33,3 +33,11 @@ task :integration do
   end
 end
 
+task :start_test_server do 
+  server_started = system("RAILS_ENV=test rake db:db_reset && RAILS_ENV=test rails s -b 0.0.0.0 -p 3002")
+  unless server_started
+    puts("--------------- FAILED STARTING SERVER ---------------")
+    exit(-1)
+  end
+end
+

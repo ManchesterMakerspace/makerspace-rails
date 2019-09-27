@@ -28,6 +28,8 @@ Rails.application.routes.draw do
       resources :rentals, only: [:show, :index]
       resources :invoices, only: [:index, :create]
 
+      resources :documents, only: [:show], defaults: { format: :html }
+
       namespace :billing do
         resources :payment_methods, only: [:new, :create, :index, :destroy]
         resources :subscriptions, only: [:show, :update, :destroy]
