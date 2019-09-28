@@ -42,7 +42,7 @@ class Admin::RentalsController < AdminController
     if final &&
         (init.nil? ||
         (Time.at(final / 1000) - Time.at((init || 0) / 1000) > 1.day))
-      @messages.push(@rental.get_renewal_slack_message)
+      @rental.send_renewal_slack_message(current_member)
     end
   end
 end

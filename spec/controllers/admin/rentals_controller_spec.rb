@@ -2,21 +2,26 @@ require 'rails_helper'
 
 RSpec.describe Admin::RentalsController, type: :controller do
 
+  def conv_to_ms(time)
+    time.to_i * 1000
+  end
   let(:member) { create(:member)}
 
   let(:valid_attributes) {
     { number: '1',
       member_id: member.id,
-      expiration: (Time.now + 1.month)
+      expiration: conv_to_ms(Time.now + 1.month)
     }
   }
 
   let(:invalid_attributes) {
     {
       number: nil,
-      expiration: Time.now
+      expiration: conv_to_ms(Time.now)
     }
   }
+
+
 
   login_admin
 
@@ -81,6 +86,17 @@ RSpec.describe Admin::RentalsController, type: :controller do
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
         expect(parsed_response['rental']['id']).to eq(rental.id.as_json)
+      end
+
+      it "Sends a slack notificsation" do
+        rental = Rental.create(valid_attributes)
+        initial_expiration = rental.pretty_time
+        expect(Rental).to receive(:find).and_return(rental) # Mock find to return the double
+        expect(rental).to receive(:send_renewal_slack_message)
+        put :update, params: {id: rental.to_param, rental: { renew: 10 }}, format: :json
+        expected_renewal = conv_to_ms(initial_expiration + 10.months)
+        rental.reload
+        expect(rental.expiration).to eq(expected_renewal)
       end
     end
 
