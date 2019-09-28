@@ -73,14 +73,14 @@ RSpec.describe Member, type: :model do
       end
     end
 
-    describe "invoicing" do 
-      it "delays renewal if no access cards exist" do 
+    describe "invoicing" do
+      it "delays renewal if no access cards exist" do
         active_member = create(:member, access_cards: create_list(:card, 1))
         expect(member.delay_invoice_operation(:renew=)).to be_truthy
         expect(active_member.delay_invoice_operation(:renew=)).to be_falsy
       end
 
-      it "settles invoices on first access card" do 
+      it "settles invoices on first access card" do
         invoice_1 = create(:invoice, member: member, transaction_id: "123", quantity: 3)
         initial_expiration = member.pretty_time
         Card.create(uid: "1234", member: member)
@@ -125,7 +125,7 @@ RSpec.describe Member, type: :model do
         expect(Permission.all.size).to eq(2)
       end
 
-      it "applies default permissions to user" do 
+      it "applies default permissions to user" do
         permission1 = create(:default_permission, name: :foo, enabled: false)
         permission2 = create(:default_permission, name: :bar, enabled: true)
         member = create(:member)
@@ -166,6 +166,16 @@ RSpec.describe Member, type: :model do
 
         expired_member.update({ expirationTime: first_expiration + 10})
         expect(expired_card.expiry).to eq(first_expiration + 10)
+      end
+
+      it "Doesn't reinvite for normal changes" do
+        expect(member).not_to receive(:reinvite_to_services)
+        member.update!({ firstname: "foo_changed" })
+      end
+
+      it "Reinvites to services if email changes" do
+        expect(member).to receive(:reinvite_to_services)
+        member.update!({ email: "foo_changed@test.com" })
       end
     end
   end
