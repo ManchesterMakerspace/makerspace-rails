@@ -2,7 +2,7 @@ Rails.application.configure do
 
   # Settings specified here will take precedence over those in config/application.rb.
   config.action_mailer.default_url_options = {
-    host: "https://#{ENV['BT_ENV'] == 'production' ? 'members.manchestermakerspace.org' : 'makerspace-test.herokuapp.com'}",
+    host: "https://#{::Util.is_prod? ? 'members.manchestermakerspace.org' : 'makerspace-test.herokuapp.com'}",
     protocol: "https"
   }
   config.action_mailer.delivery_method = :smtp
@@ -10,7 +10,7 @@ Rails.application.configure do
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.default :charset => "utf-8"
 
-  if ENV['BT_ENV'] == 'production'
+  if ::Util.is_prod?
     config.action_mailer.smtp_settings = {
       authentication: :plain,
       address: 'smtp.gmail.com',
