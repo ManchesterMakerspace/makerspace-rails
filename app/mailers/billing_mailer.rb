@@ -43,12 +43,8 @@ class BillingMailer < ApplicationMailer
   end
 
   private
-  def get_email(email)
-    Rails.env.production? && ENV['BT_ENV'].to_sym == :production ? email : 'test@manchestermakerspace.org'
-  end
-
   def send_mail(email, subject)
-    mail to: get_email(email), subject: subject
+    mail to: email, subject: subject
   end
 
   def get_profile_url()

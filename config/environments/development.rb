@@ -27,15 +27,14 @@ Rails.application.configure do
     config.cache_store = :null_store
   end
 
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default_url_options = { host: "http://#{ENV["APP_DOMAIN"] || "localhost"}", port: ENV["PORT"] || 3002 }
+  config.action_mailer.perform_caching = false
+  config.action_mailer.perform_deliveries = true
+
   if ENV['MAILTRAP_API_TOKEN']
     response = RestClient::Resource.new("https://mailtrap.io/api/v1/inboxes.json?api_token=#{ENV['MAILTRAP_API_TOKEN']}").get
     inbox = JSON.parse(response)[0]
-
-    config.action_mailer.raise_delivery_errors = true
-    config.action_mailer.default_url_options = { host: "http://#{ENV["APP_DOMAIN"] || "localhost"}", port: ENV["PORT"] || 3002 }
-    config.action_mailer.perform_caching = false
-    config.action_mailer.perform_deliveries = true
-
     config.action_mailer.delivery_method = :smtp
     config.action_mailer.smtp_settings = {
       :user_name => inbox['username'],
