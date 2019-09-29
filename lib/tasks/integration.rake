@@ -26,6 +26,7 @@ task :integration do
     tests_pass = system("APP_DOMAIN=localhost PORT=3002 make integration")
     unless tests_pass
       puts("--------------- TESTS FAILED ---------------")
+      exit(-1)
     end
   else
     puts("--------------- FAILED STARTING SERVER ---------------")

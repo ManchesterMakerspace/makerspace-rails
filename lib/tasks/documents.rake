@@ -1,4 +1,5 @@
 require 'google/apis/drive_v3'
+require_relative '../service/google_drive'
 
 namespace :documents do
   desc "Task to download Member Contract and Code of Conduct from GDrive and save to HTML"
@@ -12,8 +13,16 @@ namespace :documents do
       scope: ["https://www.googleapis.com/auth/drive"]
       })
 
-    # Export as ERB
-    drive.export_file(ENV['CONTRACT_ID'], 'text/html', download_dest: ("#{Rails.public_path.to_s}/member_contract.html.erb"))
-    drive.export_file(ENV['CODE_CONDUCT_ID'], 'text/html', download_dest: ("#{Rails.public_path.to_s}/code_of_conduct.html.erb"))
+    # Download as HTML
+    Service::GoogleDrive.get_templates().each do |template_name, template|
+      file = Tempfile.new()
+      drive.export_file(template[:file_id], 'text/html', download_dest: file.path)
+      document = File.read(file.path)
+      # Replace encoded <>
+      new_contents = document.gsub(/(&lt;)/, "<").gsub(/(&gt;)/, ">")
+      File.open(template[:template_location], "w") { |file| file.puts new_contents }
+      file.close()
+      file.unlink()
+    end
   end
 end

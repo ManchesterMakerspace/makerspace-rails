@@ -25,6 +25,10 @@ gem 'git'
 gem 'rswag-api'
 gem 'rswag-ui'
 
+# PDF generation
+gem 'wicked_pdf'
+gem 'wkhtmltopdf-binary'
+
 group :development do
   # Spring speeds up development by keeping your application running in the background.
   gem 'spring'
@@ -49,4 +53,4 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # Frontend
-gem "makerspace-react-rails", "0.3.0"
+gem "makerspace-react-rails", "0.4.2"
