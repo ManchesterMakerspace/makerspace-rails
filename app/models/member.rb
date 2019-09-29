@@ -46,6 +46,7 @@ class Member
   before_update :update_initial_expiration_from_invoice, :if => proc { !cardID && cardID_changed? }
   before_save :update_braintree_customer_info
   after_update :update_card
+  after_update :reinvite_to_services, :if => proc { !!email && email_changed? }
   after_create :apply_default_permissions, :send_slack_invite, :send_google_invite
 
   has_many :permissions, class_name: 'Permission', dependent: :destroy, :autosave => true
@@ -171,6 +172,12 @@ class Member
 
   def password_required?
     false
+  end
+
+  def reinvite_to_services
+    send_slack_invite()
+    send_google_invite()
+    send_slack_message("Re-invited #{self.fullname} to Slack and Google with new email: #{self.email}")
   end
 
   def send_slack_invite
