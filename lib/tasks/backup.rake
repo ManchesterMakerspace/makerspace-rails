@@ -1,6 +1,5 @@
 desc "This task is called by the Heroku scheduler add-on and backs up the Mongo DB to local dump."
 task :backup => :environment do
-  notifier = Slack::Web::Client.new(token: ENV['SLACK_ADMIN_TOKEN'])
   begin
     file_name = "makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive"
     sh("mongodump --uri #{ENV['MLAB_URI']} --archive=dump/#{file_name}")
@@ -12,14 +11,5 @@ task :backup => :environment do
     slack_message = "Error backing up database: #{error}"
   end
 
-  channel = Rails.env.production? ? "interface-logs" : "test_channel"
-
-  notifier.chat_postMessage(
-    channel: channel,
-    text: slack_message,
-    as_user: false,
-    username: 'Management Bot',
-    icon_emoji: ':ghost:'
-  )
+  ::Service::SlackConnector.send_slack_messages([slack_message], ::Service::SlackConnector.logs_channel)
 end
-

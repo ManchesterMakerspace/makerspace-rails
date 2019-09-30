@@ -2,7 +2,7 @@ require_relative '../custom_error'
 module Error::Braintree
   class Result < ::Error::CustomError
     ErrorStruct = Struct.new(:attribute, :code, :message)
-    
+
     def initialize(result=nil)
       error = ErrorStruct.new(:service_unavailable, 503, "Service Unavailable")
       unless result.nil?

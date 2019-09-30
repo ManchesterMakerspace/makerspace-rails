@@ -3,6 +3,34 @@ require_relative '../error/google/upload'
 
 module Service
   module GoogleDrive
+    def self.build_template_location(document)
+      Rails.root.join("app/views/documents/#{document}.html.erb")
+    end
+
+    def self.get_folder_id(id)
+      Rails.env.production? ? id : ENV['SIGNATURES_FOLDER']
+    end
+
+    def self.get_templates()
+      {
+        member_contract: {
+          folder_id: get_folder_id(ENV['MEMBER_CONTRACT_FOLDER']),
+          file_id: ENV["CONTRACT_ID"],
+          template_location: build_template_location("member_contract")
+        },
+        code_of_conduct: {
+          folder_id: get_folder_id(ENV['CODE_CONDUCT_FOLDER']),
+          file_id: ENV["CODE_CONDUCT_ID"],
+          template_location: build_template_location("code_of_conduct")
+        },
+        # rental_agreement: {
+        #   folder_id: ENV['RENTAL_AGREEMENT_FOLDER'],
+        #   file_id: ENV["CODE_CONDUCT_ID"],
+        #   template_location: Rails.root.join("app/views/documents/rental_agreement.html.erb")
+        # },
+      }
+    end
+
     def load_gdrive
       ::Service::GoogleDrive.load_gdrive
     end
@@ -19,7 +47,7 @@ module Service
     end
 
     def invite_gdrive(email_address)
-      if Rails.env.production? && ENV['BT_ENV'].to_sym == :production
+      if ::Util.is_prod?
         permission = Google::Apis::DriveV3::Permission.new(type: :user,
             email_address: email_address,
             role: :reader)
@@ -29,26 +57,56 @@ module Service
       end
     end
 
-    def upload_signature(base64_img, file_name)
-      ::Service::GoogleDrive.upload_signature(base64_img, file_name)
+    def self.upload_document(document_name, member, base64_signature)
+      sym_name = document_name.to_sym
+      raise Error::NotFound.new unless (::Service::GoogleDrive.get_templates().keys.any? { |key| key.to_sym === sym_name })
+
+      template_hash = ::Service::GoogleDrive.get_templates()[sym_name]
+      pdf_string = ::Service::GoogleDrive.generate_document_string(sym_name, { member: member }, base64_signature)
+      pdf_meta = {
+        name: ::Service::GoogleDrive.get_document_name(member, sym_name),
+        parents: [template_hash[:folder_id]]
+      }
+      pdf = Tempfile.new("document", encoding: 'ascii-8bit')
+      pdf.write(pdf_string)
+      load_gdrive.create_file(pdf_meta,
+                  fields: 'id',
+                  upload_source: pdf.path,
+                  content_type: 'application/pdf'
+                  ) do |result, err|
+        pdf.close()
+        pdf.unlink()
+        raise Error::Google::Upload.new(err) unless err.nil?
+      end
     end
 
-    def self.upload_signature(base64_img, file_name)
-      File.open(Rails.root.join("dump/signature.png"), 'wb') do |f|
-        f.write(Base64.decode64(base64_img))
+    def self.get_document_name(member, document_name)
+      unique_id = member.kind_of?(Member) ? member.fullname : member.as_json
+      "#{unique_id}_#{document_name}_#{Time.now.strftime('%m-%d-%Y')}.pdf"
+    end
+
+    def self.generate_document_string(document_name, locals = {}, base64_signature)
+      file_name = ::Service::GoogleDrive.get_document_name(locals[:member], document_name)
+      template_hash = ::Service::GoogleDrive.get_templates()[document_name]
+
+      full_locals = {}.merge(locals)
+      if base64_signature
+        signature = "<h3>Signature:</h3><img width='100%' src='data:image/png;base64, #{base64_signature}' style='border: 1px solid black' />".html_safe
+        full_locals[:signature] = signature
       end
-      signature_meta = {
-        name: file_name,
-        parents: [ENV['SIGNATURES_FOLDER']]
-      }
-      load_gdrive.create_file(signature_meta,
-                          fields: 'id',
-                          upload_source: Rails.root.join("dump/signature.png").to_s,
-                          content_type: 'image/png'
-                          ) do |result, err|
-        raise Error::Google::Upload.new(err) unless err.nil?
-        File.delete("dump/signature.png")
-      end
+
+      document = ApplicationController.new.render_to_string(
+        "documents/#{document_name.to_s}.html.erb",
+        locals: full_locals,
+        layout: false,
+        encoding: "UTF-8"
+      )
+
+      WickedPdf.new.pdf_from_string(document, page_size: "Letter", dpi: "300")
+    end
+
+    def upload_document(base64_signature, member, document_name)
+      ::Service::GoogleDrive.upload_document(base64_signature, member, document_name)
     end
 
     def self.upload_backup(file_name)

@@ -7,16 +7,6 @@ class MemberMailer < ApplicationMailer
   #
   #   en.model_mailer.expired_member_notification.subject
   #
-  def expired_member_notification(member)
-    @member = member
-    mail to: "will.lynch91@gmail.com", subject: 'Test Mailer'
-  end
-
-  def expiring_member_notification(member)
-    @member = member
-    mail to: "will.lynch91@gmail.com", subject: 'Test Mailer'
-  end
-
   def welcome_email(email)
     @url = url_for(action: :application, controller: 'application')
     mail to: email, subject: "Welcome to Manchester Makerspace!"
@@ -31,7 +21,14 @@ class MemberMailer < ApplicationMailer
 
   def member_registered(member_id)
     @member = Member.find(member_id)
-    email = Rails.env.production? && ENV['BT_ENV'].to_sym == :production ? 'contact@manchestermakerspace.org' : 'test@manchestermakerspace.org'
-    mail to: email, subject: 'New Member Registered'
+    mail to: "contact@manchestermakerspace.org", subject: 'New Member Registered'
+  end
+
+  def send_document(document_name, member_id, signature = nil)
+    member = Member.find(member_id)
+    document = ::Service::GoogleDrive.generate_document_string(document_name, { member: member }, signature)
+    attachments["#{document_name}.pdf"] = document
+    @doc_name = document_name.titleize
+    mail to: member.email, subject: "Manchester Makerspace - Signed #{document_name.titleize}"
   end
 end

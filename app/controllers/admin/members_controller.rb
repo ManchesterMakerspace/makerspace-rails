@@ -45,7 +45,7 @@ class Admin::MembersController < AdminController
     if final &&
         (init.nil? ||
         (Time.at(final / 1000) - Time.at((init || 0) / 1000) > 1.day))
-      @messages.push(@member.get_renewal_slack_message)
+      @member.send_renewal_slack_message(current_member)
     end
   end
 

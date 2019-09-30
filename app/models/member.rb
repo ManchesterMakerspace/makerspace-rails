@@ -46,6 +46,7 @@ class Member
   before_update :update_initial_expiration_from_invoice, :if => proc { !cardID && cardID_changed? }
   before_save :update_braintree_customer_info
   after_update :update_card
+  after_update :reinvite_to_services, :if => proc { !!email && email_changed? }
   after_create :apply_default_permissions, :send_slack_invite, :send_google_invite
 
   has_many :permissions, class_name: 'Permission', dependent: :destroy, :autosave => true
@@ -124,6 +125,13 @@ class Member
     end
   end
 
+  # Emit to Member & Management channels on renwal
+  def send_renewal_slack_message(current_user)
+    slack_user = SlackUser.find_by(member_id: id)
+    send_slack_message(get_renewal_slack_message, ::Service::SlackConnector.safe_channel(slack_user.slack_id)) unless slack_user.nil?
+    send_slack_message(get_renewal_slack_message(current_user), ::Service::SlackConnector.members_relations_channel)
+  end
+
   protected
   def base_slack_message
     self.fullname
@@ -173,6 +181,13 @@ class Member
     false
   end
 
+  def reinvite_to_services
+    slack_user = SlackUser.find_by(member_id: id)
+    send_slack_invite() if slack_user.nil?
+    send_google_invite()
+    send_slack_message("Re-invited #{self.fullname} to #{slack_user.nil? ? "Slack and ": ""}Google with new email: #{self.email}")
+  end
+
   def send_slack_invite
     invite_to_slack()
   end
@@ -184,6 +199,8 @@ class Member
       send_slack_message("Error sharing Member Resources folder with #{self.fullname}. Error: #{err}")
     end
   end
+
+
 
   def apply_default_permissions
     update_permissions(DefaultPermission.list_as_hash)
