@@ -29,9 +29,10 @@ module InvoiceableResource
       self[self.expiration_attr]
     end
 
-    def get_renewal_slack_message
+    def get_renewal_slack_message(current_member = nil)
       time = self.pretty_time.strftime("%m/%d/%Y")
-      "#{base_slack_message} renewed. Now expiring #{time}"
+      by = current_member.nil? ? "" : " by #{current_member.fullname}"
+      "#{base_slack_message} renewed#{by}. Now expiring #{time}"
     end
 
     protected

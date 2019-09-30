@@ -55,7 +55,7 @@ module Error
         error_type = "Unknown"
       end
       user = self.try(:current_member) ? "User #{current_member.fullname}" : ""
-      message = "#{error_type} Error: #{user} \n * status: #{_status} \n * error: #{_error} \n * message:#{_message}"
+      message = "#{error_type} Error: #{user} \n * status: #{_status} \n * error: #{_error} \n * message: #{_message}"
       send_slack_message(message, ::Service::SlackConnector.logs_channel)
     end
   end
