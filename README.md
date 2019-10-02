@@ -1,40 +1,13 @@
-# Makerspace Interface
+# Makerspace Rails
 Application to handle member management at the Manchester Makerspace.  Connects with
 key fob system for facility entry and PayPal API for payment processing.
 
-# Docker Installation
-1. [Install Docker](https://docs.docker.com/compose/install/#prerequisites)
-2. Configure `.env` file
-See `sample.env` for required environment variables per feature.
-Contact @lynch16 for variables for the Manchester Makerspace.
-3. Start local server `make start-dev`
-4. Application available at `http://localhost:3002`
+# Development
 
-# Local Installation
-1. [Install MongoDB](https://docs.mongodb.com/manual/installation/)
-2. Spin up mongodb on default port 27017 and create a database
-```
-$ mongod &
-$ mongo
->use <db_name>
->quit()
-```
-3. Fork and clone repository
-4. Install Ruby dependencies
-```
-$ ruby -v
-$ gem install bundler
-$ bundle install
-```
-5. Install JS dependencies
-```
-$ npm -v
-$ npm install
-```
-6. Configure `.env` file
+1. Configure `.env` file
 See `sample.env` for required environment variables per feature.
 Contact @lynch16 for variables for the Manchester Makerspace.
-7. Spin up rails server
+2. Spin up rails server
 ```
 $ rails s
 ```
@@ -51,15 +24,14 @@ mongorestore --db <target_db> -h <host:port> --username <name> --password <passw
 ```
 
 # Testing
-Rspec is used for unit testing the ruby backend.  Can be run with Docker using Make.
+Rspec is used for unit testing the ruby backend.
 ```
-$ make start-unit
+$ rspec
 ```
-Selenium integration tests using Protractor can also be run with Docker using Make.
+Selenium integration tests for the [makerspace-react](https://github.com/ManchesterMakerspace/makerspace-react) can be run with
 ```
-$ make start-integration
+$ rake integration
 ```
-Test both together with `make test`
 
 # CONTRIBUTIONS
 
