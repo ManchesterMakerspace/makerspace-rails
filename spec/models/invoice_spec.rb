@@ -241,6 +241,7 @@ RSpec.describe Invoice, type: :model do
         allow(invoice).to receive_message_chain(:resource, :delay_invoice_operation).with(invoice.operation).and_return(false)
         expect(invoice).to receive_message_chain(:resource, :delay_invoice_operation).with(invoice.operation).and_return(false)
         expect(invoice).to receive_message_chain(:resource, :execute_operation).with(invoice.operation, invoice).and_return(true)
+        expect(invoice).to receive_message_chain(:resource, :send_renewal_slack_message)
         invoice.send(:execute_invoice_operation)
         expect(invoice.settled).to be_truthy
       end
