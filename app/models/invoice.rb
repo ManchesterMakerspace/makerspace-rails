@@ -144,6 +144,7 @@ class Invoice
     # Test a validation function if it exists
     if !OPERATION_RESOURCES[self.resource_class].method_defined?(:delay_invoice_operation) || !self.resource.delay_invoice_operation(operation)
       raise ::Error::UnprocessableEntity.new("Unable to process invoice. Operation failed for invoice #{self.id}") unless resource.execute_operation(operation, self)
+      resource.send_renewal_slack_message()
       self.settled = true
       self.save!
     end
