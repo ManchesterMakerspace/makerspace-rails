@@ -1,0 +1,22 @@
+<% type = @invoice.resource_class %>
+<% isMembership = type == "member" %>
+<% friendly_type = isMembership ? 'membership' : 'rental' %>
+
+<div style="width: 100%">
+  <h3> Canceled <%= friendly_type %> subscription with Manchester Makerspace</h3>
+  <div>
+    <p>Hi <%=@member.fullname%>!</p>
+    <p>Your <%= friendly_type %> subscription with Manchester Makerspace has been cancelled. 
+    
+      <% if isMembership %>
+        Your key fob will continue working until the end of your current membership term.
+      <% end %>
+    <p>
+    <br/>
+    <p>To sign up again or review previous transactions, <%= link_to 'view your account', @url, id: "profile-link"%></p>
+    <br/>
+    <p>Lastly, if you have any other questions, please reply to this email or email <a href="mailto:contact@manchestermakerspace.org?subject=Re:<%=message.subject%>" target="_top">contact@manchestermakerspace.org</a>. Hope to see you at the space soon!</p>
+    <br>
+    <p>--The Manchester Makerspace Team</p>
+  </div>
+</div>
