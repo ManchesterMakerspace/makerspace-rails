@@ -47,7 +47,7 @@ class BraintreeService::Transaction < Braintree::Transaction
      if invoice.plan_id
       subscription = ::BraintreeService::Subscription.create(gateway, invoice)
       transaction = subscription.transactions.first
-      invoice.member.update!({ subscription_id: subscription.id })
+      invoice.member.update!({ subscription_id: subscription.id, subscription: true })
       BillingMailer.new_subscription(invoice.member.email, subscription.id, invoice.id.to_s).deliver_later
     else
       result = gateway.transaction.sale(

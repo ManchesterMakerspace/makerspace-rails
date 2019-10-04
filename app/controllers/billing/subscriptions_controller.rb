@@ -19,7 +19,6 @@ class Billing::SubscriptionsController < BillingController
   def destroy
     result = ::BraintreeService::Subscription.cancel(@gateway, params[:id])
     @subscription_resource.remove_subscription()
-    # TODO: Email should be sent when email cancelled
     render json: {}, status: 204 and return
   end
 

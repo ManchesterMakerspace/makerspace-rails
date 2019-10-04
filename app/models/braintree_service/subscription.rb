@@ -2,6 +2,7 @@
 class BraintreeService::Subscription < Braintree::Subscription
   include ImportResource
   include ActiveModel::Serializers::JSON
+  extend Service::SlackConnector
 
   attr_accessor :resource, :member
 
@@ -21,7 +22,18 @@ class BraintreeService::Subscription < Braintree::Subscription
     result = gateway.subscription.cancel(id)
     raise Error::Braintree::Result.new(result) unless result.success?
     # Destroy invoices for this subscription that are still outstanding
-    Invoice.where(subscription_id: id, settled_at: nil).delete
+    invoice = Invoice.find_by(subscription_id: id)
+    Invoice.where(subscription_id: id, settled_at: nil, transaction_id: nil).delete
+
+    if invoice
+      slack_user = SlackUser.find_by(member_id: invoice.member_id)
+      type = invoice.resource_class == "member" ? "membership" : "rental"
+      message = "#{invoice.member.fullname}'s #{type} subscription has been cancelled."
+      send_slack_message(message, ::Service::SlackConnector.safe_channel(slack_user.slack_id)) unless slack_user.nil?
+      send_slack_message(message, ::Service::SlackConnector.members_relations_channel)
+      BillingMailer.canceled_subscription(invoice.member.email, invoice.id.to_s).deliver_later
+    end
+
     result
   end
 

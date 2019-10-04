@@ -42,6 +42,13 @@ class BillingMailer < ApplicationMailer
     send_mail(email, "Refund Requested for transaction #{@transaction.id}")
   end
 
+  def canceled_subscription(email, invoice_id)
+    @member = Member.find_by(email: email)
+    @invoice = Invoice.find(invoice_id)
+    get_profile_url()
+    send_mail(email, "Canceled Manchester Makerspace Subscription")
+  end
+
   private
   def send_mail(email, subject)
     mail to: email, subject: subject
