@@ -43,10 +43,10 @@ class Member
   validates_inclusion_of :role, in: ["admin", "member"]
 
   after_initialize :verify_group_expiry
-  before_update :update_initial_expiration_from_invoice, :if => proc { !cardID && cardID_changed? }
   before_save :update_braintree_customer_info
+  # Make sure email is actually spelled differently
+  before_update :reinvite_to_services, :if => proc { !!self.email && (!self.email_was || self.email.downcase != self.email_was.downcase) && self.valid? }
   after_update :update_card
-  after_update :reinvite_to_services, :if => proc { !!email && email_changed? }
   after_create :apply_default_permissions, :send_slack_invite, :send_google_invite
 
   has_many :permissions, class_name: 'Permission', dependent: :destroy, :autosave => true
@@ -156,14 +156,6 @@ class Member
     self.access_cards.each do |c|
       c.update(expiry: self.expirationTime)
     end
-  end
-
-  # Update expiration by giving time back that has elapsed since signing up
-  def update_initial_expiration_from_invoice
-    start = startDate.to_i * 1000
-    expirationTime ||= Time.now
-    lag = expirationTime - start
-    update!({ expirationTime: (expirationTime + lag)})
   end
 
   def benefits_from_group
