@@ -59,7 +59,6 @@ class Member
 
   def self.search_members(searchTerms, criteria = Mongoid::Criteria.new(Member))
     members = criteria.where(email: searchTerms)
-    members = criteria.where("(this.firstname + ' ' + this.lastname).match(new RegExp('#{searchTerms}', 'i'))") unless (members.size > 0)
     members = Member.full_text_search(searchTerms).sort_by(&:relevance).reverse unless (members.size > 0)
     members = Member.full_text_search(searchTerms).sort_by(&:relevance).reverse unless (members.size > 0)
     return members
