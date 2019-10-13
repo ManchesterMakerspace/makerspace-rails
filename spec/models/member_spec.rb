@@ -169,12 +169,12 @@ RSpec.describe Member, type: :model do
       end
 
       it "Doesn't reinvite for normal changes" do
-        expect(member).not_to receive(:reinvite_to_services)
+        expect(member).not_to receive(:send_google_invite)
         member.update!({ firstname: "foo_changed" })
       end
 
       it "Reinvites to services if email changes" do
-        expect(member).to receive(:reinvite_to_services)
+        expect(member).to receive(:send_google_invite)
         member.update!({ email: "foo_changed@test.com" })
       end
     end

@@ -24,15 +24,16 @@ module Service
     end
 
     def invite_to_slack()
-      ::Service::SlackConnector.invite_to_slack()
+      # Call with self since this is the instance method
+      ::Service::SlackConnector.invite_to_slack(self)
     end
 
-    def self.invite_to_slack()
+    def self.invite_to_slack(member)
       if ::Util.is_prod?
         client.users_admin_invite(
-          email: self.email,
-          first_name: self.firstname,
-          last_name: self.lastname
+          email: member.email,
+          first_name: member.firstname,
+          last_name: member.lastname
         )
       end
     end

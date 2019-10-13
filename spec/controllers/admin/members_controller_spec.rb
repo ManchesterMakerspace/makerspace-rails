@@ -119,10 +119,10 @@ RSpec.describe Admin::MembersController, type: :controller do
           expect(parsed_response['member']['id']).to eq(member.id.as_json)
         end
 
-        it "Sends a slack notificsation" do
+        it "Sends a slack notification" do
           member = Member.create valid_attributes
           initial_expiration = member.pretty_time
-          expect(Member).to receive(:find).and_return(member) # Mock find to return the double
+          expect(Member).to receive(:find).and_return(member).exactly(3).times # Mock find to return the double
           expect(member).to receive(:send_renewal_slack_message)
           put :update, params: {id: member.to_param, member: { renew: 10 }}, format: :json
           expected_renewal = conv_to_ms(initial_expiration + 10.months)
