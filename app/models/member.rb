@@ -45,7 +45,7 @@ class Member
   after_initialize :verify_group_expiry
   before_save :update_braintree_customer_info
   # Make sure email is actually spelled differently
-  before_update :reinvite_to_services, :if => proc { !!self.email && (!self.email_was || self.email.downcase != self.email_was.downcase) && self.valid? }
+  before_update :reinvite_to_services
   after_update :update_card
   after_create :apply_default_permissions, :send_slack_invite, :send_google_invite
 
@@ -173,10 +173,13 @@ class Member
   end
 
   def reinvite_to_services
-    slack_user = SlackUser.find_by(member_id: id)
-    send_slack_invite() if slack_user.nil?
-    send_google_invite()
-    send_slack_message("Re-invited #{self.fullname} to #{slack_user.nil? ? "Slack and ": ""}Google with new email: #{self.email}")
+    stored_mem = Member.find(id)
+    if (!stored_mem || !stored_mem.email || stored_mem.email.downcase != self.email.downcase)
+      slack_user = SlackUser.find_by(member_id: id)
+      send_slack_invite() if slack_user.nil?
+      send_google_invite()
+      send_slack_message("Re-invited #{self.fullname} to #{slack_user.nil? ? "Slack and ": ""}Google with new email: #{self.email}")
+    end
   end
 
   def send_slack_invite
