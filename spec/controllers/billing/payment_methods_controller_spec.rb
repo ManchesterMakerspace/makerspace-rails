@@ -76,7 +76,6 @@ RSpec.describe Billing::PaymentMethodsController, type: :controller do
 
   describe "GET #index" do 
     it "fetches payment methods for customer" do 
-
       allow(::BraintreeService::PaymentMethod).to receive(:get_payment_methods_for_customer).with(gateway, "bar").and_return([payment_method])
       expect(::BraintreeService::PaymentMethod).to receive(:get_payment_methods_for_customer).with(gateway, "bar").and_return([payment_method])
       get :index, format: :json
@@ -92,6 +91,28 @@ RSpec.describe Billing::PaymentMethodsController, type: :controller do
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
       expect(parsed_response['paymentMethods']).to eq([])
+    end
+  end
+
+
+  describe "GET #show" do
+    it "renders found payment method" do
+      token = "foo"
+      allow(::BraintreeService::PaymentMethod).to receive(:find_payment_method_for_customer).with(gateway, token, member.customer_id).and_return(payment_method)
+      expect(::BraintreeService::PaymentMethod).to receive(:find_payment_method_for_customer).with(gateway, token, member.customer_id).and_return(payment_method)
+      
+      get :show, params: {id: token}, format: :json
+      parsed_response = JSON.parse(response.body)
+      expect(response).to have_http_status(200)
+      expect(parsed_response['paymentMethod']['id']).to eq(payment_method.token)
+    end
+
+    it "raises error if no customer" do
+      sign_in non_customer
+      get :show, params: { id: "foobar" }, format: :json
+      parsed_response = JSON.parse(response.body)
+      expect(response).to have_http_status(403)
+      expect(parsed_response['message']).to match(/customer/i)
     end
   end
 

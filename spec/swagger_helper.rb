@@ -341,7 +341,8 @@ RSpec.configure do |config|
             number: { type: :string },
             description: { type: :string },
             memberId: { type: :string },
-            expiration: { type: :number }
+            expiration: { type: :number },
+            contractOnFile: { type: :boolean }
           }
         },
         Rental: {
@@ -352,7 +353,9 @@ RSpec.configure do |config|
             description: { type: :string },
             memberName: { type: :string },
             memberId: { type: :string },
-            expiration: { type: :number }
+            expiration: { type: :number },
+            subscriptionId: { type: :string, 'x-nullable': true },
+            contractOnFile: { type: :boolean }
           }
         },
 

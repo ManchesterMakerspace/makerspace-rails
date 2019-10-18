@@ -6,9 +6,9 @@ class BraintreeService::Subscription < Braintree::Subscription
 
   attr_accessor :resource, :member
 
-  def self.get_subscriptions(gateway, &search_query)
-    subscriptions = gateway.subscription.search { search_query && search_query.call }
-    subscriptions.map do |subscription|
+  def self.get_subscriptions(gateway, search_query = nil)
+     subscriptions = gateway.subscription.search { |search| search_query && search_query.call(search) }
+     subscriptions.map do |subscription|
       normalize_subscription(gateway, subscription)
     end
   end
@@ -28,7 +28,7 @@ class BraintreeService::Subscription < Braintree::Subscription
     if invoice
       slack_user = SlackUser.find_by(member_id: invoice.member_id)
       type = invoice.resource_class == "member" ? "membership" : "rental"
-      message = "#{invoice.member.fullname}'s #{type} subscription has been cancelled."
+      message = "#{invoice.member.fullname}'s #{type} subscription has been canceled."
       send_slack_message(message, ::Service::SlackConnector.safe_channel(slack_user.slack_id)) unless slack_user.nil?
       send_slack_message(message, ::Service::SlackConnector.members_relations_channel)
       BillingMailer.canceled_subscription(invoice.member.email, invoice.id.to_s).deliver_later

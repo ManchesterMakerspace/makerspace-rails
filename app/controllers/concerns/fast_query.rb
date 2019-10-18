@@ -22,6 +22,11 @@ module FastQuery
     response.set_header("total-items", current_query.count)
     render render_payload and return
   end
+
+  def to_bool(param)
+    truthy = (param == "true" || param == true)
+    return truthy
+  end
 end
 
 def query_params

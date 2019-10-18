@@ -28,7 +28,7 @@ class Admin::RentalsController < AdminController
 
   private
   def rental_params
-    params.require(:rental).permit(:number, :member_id, :expiration, :description, :renew)
+    params.require(:rental).permit(:number, :member_id, :expiration, :description, :renew, :contract_on_file)
   end
 
   def set_rental

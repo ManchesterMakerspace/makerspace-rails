@@ -11,6 +11,9 @@ class Admin::Billing::PlansController < Admin::BillingController
 
   def discounts
     discounts = ::BraintreeService::Discount.get_discounts(@gateway)
+    unless plan_params[:types].nil?
+      discounts = ::BraintreeService::Discount.select_discounts_for_types(plan_params[:types], discounts)
+    end
     return render_with_total_items(discounts, { :each_serializer => BraintreeService::DiscountSerializer, root: "discounts" })
   end
 

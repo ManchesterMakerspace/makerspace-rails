@@ -3,7 +3,27 @@ class Admin::InvoicesController < AdminController
   before_action :find_invoice, only: [:update, :destroy]
 
   def index
-    invoices = admin_index_params["resourceId"] ? Invoice.where(resource_id: admin_index_params["resourceId"]) : Invoice.all
+    query = {}
+    query[:resource_id] = admin_index_params[:resourceId] unless admin_index_params[:resourceId].nil?
+    unless admin_index_params[:settled].nil?
+      if to_bool(admin_index_params[:settled])
+        query = query.merge({ :settled_at.ne => nil })
+      else
+        query = query.merge({ :settled_at => nil })
+      end
+    end
+
+    unless admin_index_params[:types].nil?
+      if admin_index_params[:types].include?("member") && admin_index_params[:types].include?("rental") 
+        query = query.merge({ :resource_class.in => ["member", "rental"] })
+      elsif admin_index_params[:types].include?("member") 
+        query[:resource_class] = "member"
+      elsif admin_index_params[:types].include?("rental") 
+        query[:resource_class] = "rental"
+      end
+    end
+
+    invoices = query.length > 0 ? Invoice.where(query) : Invoice.all
     invoices = query_resource(invoices)
 
     return render_with_total_items(invoices)
@@ -65,7 +85,7 @@ class Admin::InvoicesController < AdminController
   end
 
   def admin_index_params
-    params.permit(:resourceId)
+    params.permit(:resourceId, :settled, types: [])
   end
 
   def find_invoice

@@ -114,6 +114,7 @@ RSpec.describe BraintreeService::Transaction, type: :model do
           allow(BraintreeService::Transaction).to receive(:normalize).with(gateway, fake_transaction).and_return(fake_transaction)
 
           result_transaction = BraintreeService::Transaction.submit_invoice_for_settlement(gateway, invoice)
+          member.reload
           expect(member.subscription_id).to eq("foobar")
         end
       end

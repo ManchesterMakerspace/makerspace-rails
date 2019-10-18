@@ -24,6 +24,25 @@ class BraintreeService::Discount < Braintree::Discount
     discounts
   end
 
+  def self.select_discounts_for_types(types, discounts_to_filter)
+    discounts = []
+    if types.include?("member")
+      discounts.concat(self.get_membership_discounts(discounts_to_filter))
+    end
+    if types.include?("rental")
+      discounts.concat(self.get_rental_discounts(discounts_to_filter))
+    end
+    discounts
+  end
+
+  def self.get_membership_discounts(discounts)
+    discounts.select { |plan| /membership/.match(plan.id) }
+  end
+
+  def self.get_rental_discounts(discounts)
+    discounts.select { |plan| /rental/.match(plan.id) }
+  end
+
   private
   def self.standard_membership_discount
     self.new({

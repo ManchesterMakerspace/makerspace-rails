@@ -7,7 +7,7 @@
   <div>
     <p>Hi <%=@member.fullname%>!</p>
     <p>Thank you for setting up automatic payments for your <%=friendly_type%>. 
-    These payments will occur every <%= @invoice.quantity %> months until cancelled. 
+    These payments will occur every <%= @invoice.quantity %> months until canceled. 
     The next payment will occur on or around <%=Date.parse(@subscription.billing_period_end_date).strftime("%m/%d/%Y")%>.</p>
     <br/>
     <p>To review prior transactions, edit your subscription, or change payment settings, <%= link_to 'view your account', @url, id: "profile-link"%></p>

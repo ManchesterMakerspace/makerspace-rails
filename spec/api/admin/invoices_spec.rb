@@ -13,6 +13,8 @@ describe 'Admin::Invoices API', type: :request do
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
       parameter name: :resourceId, in: :query, type: :string, required: false
+      parameter name: :hideSettled, in: :query, type: :boolean, required: false
+      parameter name: :types, in: :query, type: :array, items: { type: :string }, required: false
 
       response '200', 'invoices found' do
         before { sign_in admin }
