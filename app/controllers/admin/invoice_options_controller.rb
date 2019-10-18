@@ -14,7 +14,7 @@ class Admin::InvoiceOptionsController < AdminController
   end
 
   def destroy
-    @invoice_option.delete
+    @invoice_option.destroy
     render json: {}, status: 204 and return
   end
 

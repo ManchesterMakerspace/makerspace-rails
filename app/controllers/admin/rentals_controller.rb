@@ -22,7 +22,7 @@ class Admin::RentalsController < AdminController
   end
 
   def destroy
-    @rental.delete
+    @rental.destroy
     render json: {}, status: 204 and return
   end
 

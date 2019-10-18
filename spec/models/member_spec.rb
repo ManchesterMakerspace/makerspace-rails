@@ -178,5 +178,28 @@ RSpec.describe Member, type: :model do
         member.update!({ email: "foo_changed@test.com" })
       end
     end
+
+    describe "on destroy" do 
+      it "cancels its subscription if subscription_id exists" do 
+        member = create(:member, subscription_id: "124")
+        expect(BraintreeService::Subscription).to receive(:cancel).with(anything, "124")
+        member.destroy
+      end
+    
+      it "Doesnt touch subscription if subscription_id doesn't exist" do 
+        member = create(:member)
+        expect(BraintreeService::Subscription).not_to receive(:cancel).with(anything, "124")
+        member.destroy
+      end
+
+      it "Deletes rentals if rentals exists" do 
+        member = create(:member)
+        create(:rental, member: member)
+        create(:rental, member: member)
+        expect(Rental.all.length).to eq(2)
+        member.destroy
+        expect(Rental.all.length).to eq(0)
+      end
+    end
   end
 end

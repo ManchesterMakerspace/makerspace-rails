@@ -17,4 +17,18 @@ RSpec.describe Rental, type: :model do
   it "has a valid factory" do
     expect(build(:rental)).to be_valid
   end
+
+  describe "on destroy" do 
+    it "cancels its subscription if subscription_id exists" do 
+      rental = create(:rental, subscription_id: "124")
+      expect(BraintreeService::Subscription).to receive(:cancel).with(anything, "124")
+      rental.destroy
+    end
+  
+    it "Doesnt touch subscription if subscription_id doesn't exist" do 
+      rental = create(:rental)
+      expect(BraintreeService::Subscription).not_to receive(:cancel).with(anything, "124")
+      rental.destroy
+    end
+  end
 end

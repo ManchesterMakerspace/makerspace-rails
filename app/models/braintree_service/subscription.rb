@@ -23,7 +23,7 @@ class BraintreeService::Subscription < Braintree::Subscription
     raise Error::Braintree::Result.new(result) unless result.success?
     # Destroy invoices for this subscription that are still outstanding
     invoice = Invoice.find_by(subscription_id: id)
-    Invoice.where(subscription_id: id, settled_at: nil, transaction_id: nil).delete
+    Invoice.where(subscription_id: id, settled_at: nil, transaction_id: nil).destroy
 
     if invoice
       slack_user = SlackUser.find_by(member_id: invoice.member_id)
