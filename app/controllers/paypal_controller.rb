@@ -64,11 +64,11 @@ class PaypalController < ApplicationController
     when 'subscr_payment'
         @messages.push("Subscription payment - " + completed_message)
     when 'subscr_eot' || 'subscr_cancel'
-        @messages.push("#{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email} has cancelled their subscription")
+        @messages.push("#{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email} has canceled their subscription")
     when 'subscr_failed'
         @messages.push("Failed subscription payment - " + failed_message)
     when 'subscr_cancel'
-        @messages.push("#{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email} has cancelled their subscription")
+        @messages.push("#{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email} has canceled their subscription")
     when 'cart'
         msg = "Standard payment - "
         msg += (@payment.status == 'Completed') ? completed_message : failed_message

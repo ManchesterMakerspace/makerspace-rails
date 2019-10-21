@@ -31,7 +31,7 @@ Rails.application.routes.draw do
       resources :documents, only: [:show], defaults: { format: :html }
 
       namespace :billing do
-        resources :payment_methods, only: [:new, :create, :index, :destroy]
+        resources :payment_methods, only: [:new, :create, :show, :index, :destroy]
         resources :subscriptions, only: [:show, :update, :destroy]
         resources :transactions, only: [:create, :index, :destroy]
         resources :receipts, only: [:show], defaults: { format: :html }

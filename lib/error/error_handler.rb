@@ -7,9 +7,11 @@ module Error
       include ::Service::SlackConnector
       clazz.class_eval do
         rescue_from StandardError do |e|
-          message = "Unhandled Error: #{e.message}"
-          send_slack_message(message, ::Service::SlackConnector.logs_channel)
-          respond(:interal_server_error, 500, "Internal Server Error")
+          if Rails.env.production?
+            message = "Unhandled Error: #{e.message}"
+            send_slack_message(message, ::Service::SlackConnector.logs_channel)
+            respond(:interal_server_error, 500, "Internal Server Error")
+          end
         end
         rescue_from ::Mongoid::Errors::MongoidError do |e|
           slack_alert(:interal_server_error, 500, e.summary || "Internal Server Error")

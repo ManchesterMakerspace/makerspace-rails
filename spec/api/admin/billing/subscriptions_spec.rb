@@ -15,9 +15,11 @@ describe 'Billing::Subscriptions API', type: :request do
   end
 
   path '/admin/billing/subscriptions' do 
-    get 'Gets a subscription' do 
+    get 'Lists subscription' do 
       tags 'Subscriptions'
       operationId "adminListSubscriptions"
+      parameter name: :hideCanceled, in: :query, type: :boolean, required: false
+
       response '200', 'subscription found' do 
         before do 
           sign_in admin

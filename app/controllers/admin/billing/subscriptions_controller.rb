@@ -1,10 +1,20 @@
 class Admin::Billing::SubscriptionsController < Admin::BillingController
-    include FastQuery
+  include FastQuery
 
   def index
     # TODO actually query subscriptions instead of filtering results
-    subs = ::BraintreeService::Subscription.get_subscriptions(@gateway)
-    subs = subs.select { |s| s.status != Braintree::Subscription::Status::Canceled } if params[:hideCanceled]
+    if to_bool(params[:hideCanceled])
+      subs = ::BraintreeService::Subscription.get_subscriptions(@gateway, Proc.new do |search| 
+        search.status.in(
+          Braintree::Subscription::Status::Active,
+          Braintree::Subscription::Status::Expired,
+          Braintree::Subscription::Status::PastDue,
+          Braintree::Subscription::Status::Pending
+        )
+      end)
+    else
+      subs = ::BraintreeService::Subscription.get_subscriptions(@gateway)
+    end
     return render_with_total_items(subs, { :each_serializer => BraintreeService::SubscriptionSerializer, root: "subscriptions" })
   end
 
@@ -16,5 +26,10 @@ class Admin::Billing::SubscriptionsController < Admin::BillingController
     # Verify resource exists and call update on that resource
     subscription.resource.remove_subscription() unless subscription.resource.nil?
     render json: {}, status: 204 and return
+  end
+
+  private 
+  def admin_index_params
+    params.permit(:hideCanceled)
   end
 end

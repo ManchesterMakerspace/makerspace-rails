@@ -49,6 +49,14 @@ class Billing::PaymentMethodsController < BillingController
     render json: payment_methods, each_serializer: BraintreeService::PaymentMethodSerializer, status: 200, root: :payment_methods and return
   end
 
+  def show 
+    payment_method_token = params[:id]
+    raise Error::Braintree::MissingCustomer.new unless current_member.customer_id
+    # Only allowed to modify own payment methods
+    payment_method = ::BraintreeService::PaymentMethod.find_payment_method_for_customer(@gateway, payment_method_token, current_member.customer_id)
+    render json: payment_method, serializer: BraintreeService::PaymentMethodSerializer, root: "payment_method", status: 200 and return
+  end
+
   def destroy
     payment_method_token = params[:id]
     raise Error::Braintree::MissingCustomer.new unless current_member.customer_id

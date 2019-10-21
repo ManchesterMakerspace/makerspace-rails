@@ -669,6 +669,9 @@
         },
         "expiration": {
           "type": "number"
+        },
+        "contractOnFile": {
+          "type": "boolean"
         }
       }
     },
@@ -692,6 +695,13 @@
         },
         "expiration": {
           "type": "number"
+        },
+        "subscriptionId": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "contractOnFile": {
+          "type": "boolean"
         }
       }
     },
@@ -995,11 +1005,19 @@
     },
     "/admin/billing/subscriptions": {
       "get": {
-        "summary": "Gets a subscription",
+        "summary": "Lists subscription",
         "tags": [
           "Subscriptions"
         ],
         "operationId": "adminListSubscriptions",
+        "parameters": [
+          {
+            "name": "hideCanceled",
+            "in": "query",
+            "type": "boolean",
+            "required": false
+          }
+        ],
         "responses": {
           "200": {
             "description": "subscription found",
@@ -1949,6 +1967,21 @@
             "in": "query",
             "type": "string",
             "required": false
+          },
+          {
+            "name": "hideSettled",
+            "in": "query",
+            "type": "boolean",
+            "required": false
+          },
+          {
+            "name": "types",
+            "in": "query",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "required": false
           }
         ],
         "responses": {
@@ -2667,6 +2700,49 @@
       }
     },
     "/billing/payment_methods/{id}": {
+      "get": {
+        "summary": "Get a payment method",
+        "tags": [
+          "PaymentMethods"
+        ],
+        "operationId": "getPaymentMethod",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payment method deleted",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "paymentMethod": {
+                  "$ref": "#/definitions/CreditCard"
+                }
+              },
+              "required": [
+                "paymentMethod"
+              ]
+            }
+          },
+          "401": {
+            "description": "User not authenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "User not authorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "delete": {
         "summary": "Deletes a payment method",
         "tags": [

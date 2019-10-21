@@ -127,6 +127,44 @@ describe 'Billing::PaymentMethods API', type: :request do
   end
 
   path '/billing/payment_methods/{id}' do
+    get 'Get a payment method' do
+      before do
+        allow(BraintreeService::PaymentMethod).to receive(:find_payment_method_for_customer).with(gateway, payment_method.token, customer.customer_id).and_return(payment_method)
+      end
+
+      tags 'PaymentMethods'
+      operationId "getPaymentMethod"
+      parameter name: :id, in: :path, type: :string
+
+      response '200', 'Payment method deleted' do
+        before { sign_in customer }
+
+        schema type: :object,
+        properties: {
+          paymentMethod: {
+            '$ref' => '#/definitions/CreditCard'
+          }
+        },
+        required: [ 'paymentMethod' ]
+
+        let(:id) { payment_method.token }
+        run_test!
+      end
+
+      response '401', 'User not authenticated' do
+        schema '$ref' => '#/definitions/error'
+        let(:id) { payment_method.token }
+        run_test!
+      end
+
+      response '403', 'User not authorized' do
+        before { sign_in non_customer }
+        schema '$ref' => '#/definitions/error'
+        let(:id) { payment_method.token }
+        run_test!
+      end
+    end
+
     delete 'Deletes a payment method' do
       before do
         allow(BraintreeService::PaymentMethod).to receive(:find_payment_method_for_customer).with(gateway, payment_method.token, customer.customer_id).and_return(payment_method)
