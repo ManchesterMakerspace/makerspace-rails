@@ -4117,6 +4117,74 @@
             }
           }
         }
+      },
+      "put": {
+        "summary": "Updates a rental and uploads signature",
+        "tags": [
+          "Rentals"
+        ],
+        "operationId": "updateRental",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "updateRentalDetails",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "rental": {
+                  "type": "object",
+                  "properties": {
+                    "signature": {
+                      "type": "string",
+                      "x-nullable": true
+                    }
+                  }
+                }
+              }
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "rental updated",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "rental": {
+                  "$ref": "#/definitions/Rental"
+                }
+              },
+              "required": [
+                "rental"
+              ]
+            }
+          },
+          "403": {
+            "description": "Forbidden updating different member's rental",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "User not authenciated or authorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Rental not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
       }
     }
   }

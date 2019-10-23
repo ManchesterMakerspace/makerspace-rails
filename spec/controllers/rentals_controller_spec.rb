@@ -51,4 +51,38 @@ RSpec.describe RentalsController, type: :controller do
       expect(parsed_response['rental']['id']).to eq(Rental.last.id.to_s)
     end
   end
+
+  describe "PUT #update" do
+    let!(:current_user) { create(:member) }
+    let(:rental) { create(:rental, member: current_user) }
+    before(:each) do
+      sign_in current_user
+    end
+
+    it "renders json of the updated rental" do
+      put :update, params: { id: rental.id, rental: { signature: "foo,bar" } }, format: :json
+      expect(response).to have_http_status(200)
+      expect(response.content_type).to eq "application/json"
+      parsed_response = JSON.parse(response.body)
+      expect(parsed_response['rental']['id']).to eq(rental.id.as_json)
+      expect(parsed_response['rental']['contractOnFile']).to eq(true)
+    end
+
+    it "raises forbidden if not updating own rental" do
+      member = create(:member)
+      rental = create(:rental, member: member)
+      put :update, params: { id: rental.id, rental: { signature: "foo" } }, format: :json
+      expect(response).to have_http_status(403)
+    end
+
+    it "raises not found if rental doens't exist" do
+      put :update, params: { id: "foo", rental: { signature: "foo" } }, format: :json
+      expect(response).to have_http_status(404)
+    end
+
+    it "raises missing parameter if signature not provided" do 
+      put :update, params: { id: rental.id, rental: {} }, format: :json
+      expect(response).to have_http_status(422)
+    end
+  end
 end

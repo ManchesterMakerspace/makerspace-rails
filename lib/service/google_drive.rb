@@ -23,11 +23,11 @@ module Service
           file_id: ENV["CODE_CONDUCT_ID"],
           template_location: build_template_location("code_of_conduct")
         },
-        # rental_agreement: {
-        #   folder_id: ENV['RENTAL_AGREEMENT_FOLDER'],
-        #   file_id: ENV["CODE_CONDUCT_ID"],
-        #   template_location: Rails.root.join("app/views/documents/rental_agreement.html.erb")
-        # },
+        rental_agreement: {
+          folder_id: get_folder_id(ENV['RENTAL_AGREEMENT_FOLDER']),
+          file_id: ENV["RENTAL_AGREEMENT_ID"],
+          template_location: build_template_location("rental_agreement")
+        },
       }
     end
 
@@ -57,26 +57,30 @@ module Service
       end
     end
 
-    def self.upload_document(document_name, member, base64_signature)
+    def self.upload_document(document_name, member, locals, base64_signature)
       sym_name = document_name.to_sym
       raise Error::NotFound.new unless (::Service::GoogleDrive.get_templates().keys.any? { |key| key.to_sym === sym_name })
 
+      merged_locals = (locals || {}).merge({ member: member })
+
       template_hash = ::Service::GoogleDrive.get_templates()[sym_name]
-      pdf_string = ::Service::GoogleDrive.generate_document_string(sym_name, { member: member }, base64_signature)
+      pdf_string = ::Service::GoogleDrive.generate_document_string(sym_name, merged_locals, base64_signature)
       pdf_meta = {
         name: ::Service::GoogleDrive.get_document_name(member, sym_name),
         parents: [template_hash[:folder_id]]
       }
       pdf = Tempfile.new("document", encoding: 'ascii-8bit')
       pdf.write(pdf_string)
-      load_gdrive.create_file(pdf_meta,
-                  fields: 'id',
-                  upload_source: pdf.path,
-                  content_type: 'application/pdf'
-                  ) do |result, err|
-        pdf.close()
-        pdf.unlink()
-        raise Error::Google::Upload.new(err) unless err.nil?
+      unless Rails.env.test?
+        load_gdrive.create_file(pdf_meta,
+                    fields: 'id',
+                    upload_source: pdf.path,
+                    content_type: 'application/pdf'
+                    ) do |result, err|
+          pdf.close()
+          pdf.unlink()
+          raise Error::Google::Upload.new(err) unless err.nil?
+        end
       end
     end
 
@@ -105,8 +109,8 @@ module Service
       WickedPdf.new.pdf_from_string(document, page_size: "Letter", dpi: "300")
     end
 
-    def upload_document(base64_signature, member, document_name)
-      ::Service::GoogleDrive.upload_document(base64_signature, member, document_name)
+    def upload_document(base64_signature, member, locals, document_name)
+      ::Service::GoogleDrive.upload_document(base64_signature, member, locals, document_name)
     end
 
     def self.upload_backup(file_name)

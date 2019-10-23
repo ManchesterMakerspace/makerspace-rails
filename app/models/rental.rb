@@ -2,6 +2,7 @@ class Rental
   include Mongoid::Document
   include InvoiceableResource
   include Service::SlackConnector
+  include ActiveModel::Serializers::JSON
 
   belongs_to :member, optional: true
 

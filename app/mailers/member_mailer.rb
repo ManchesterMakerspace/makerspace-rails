@@ -29,6 +29,6 @@ class MemberMailer < ApplicationMailer
     document = ::Service::GoogleDrive.generate_document_string(document_name, { member: member }, signature)
     attachments["#{document_name}.pdf"] = document
     @doc_name = document_name.titleize
-    mail to: member.email, subject: "Manchester Makerspace - Signed #{document_name.titleize}"
+    mail to: member.email, subject: "Manchester Makerspace - Signed #{@doc_name}"
   end
 end

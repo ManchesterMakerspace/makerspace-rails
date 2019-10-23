@@ -33,11 +33,11 @@ class MembersController < AuthenticationController
       if signature_params[:signature]
         begin
           encoded_signature = signature_params[:signature].split(",")[1]
-          upload_document("member_contract", @member, encoded_signature)
+          upload_document("member_contract", @member, {}, encoded_signature)
           MemberMailer.send_document("member_contract", @member.id.as_json, encoded_signature).deliver_later
           @member.update_attributes!(memberContractOnFile: true)
         rescue Error::Google::Upload => err
-          @messages.push("Error uploading #{@member.fullname}'s signature'. Error: #{err}")
+          @messages.push("Error uploading #{@member.fullname}'s member contract signature'. Error: #{err}")
         end
       else
         @member.update_attributes!(member_params)
