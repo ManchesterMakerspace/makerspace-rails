@@ -28,7 +28,6 @@ RSpec.describe MembersController, type: :controller do
 
     it "raises not found if member doens't exist" do
       get :show, params: {id: "foo" }, format: :json
-      parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(404)
     end
   end
@@ -62,7 +61,6 @@ RSpec.describe MembersController, type: :controller do
 
     it "raises not found if member doens't exist" do
       put :update, params: {id: "foo" }, format: :json
-      parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(404)
     end
   end

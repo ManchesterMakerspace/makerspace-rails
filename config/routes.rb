@@ -25,7 +25,7 @@ Rails.application.routes.draw do
           resources :permissions, only: [:index]
         end
       end
-      resources :rentals, only: [:show, :index]
+      resources :rentals, only: [:show, :index, :update]
       resources :invoices, only: [:index, :create]
 
       resources :documents, only: [:show], defaults: { format: :html }
