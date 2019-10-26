@@ -12,6 +12,7 @@ class Rental
   field :subscription_id, type: String # Braintree relation
   field :contract_on_file, type: Boolean, default: false
 
+  before_destroy :delete_subscription
   validates :number, presence: true, uniqueness: true
 
   # Emit to Member & Management channels on renwal
@@ -32,5 +33,11 @@ class Rental
 
   def base_slack_message
     "#{self.member ? "#{self.member.fullname}'s rental of " : ""} Locker/Plot # #{self.number}"
+  end
+
+  def delete_subscription
+    if subscription_id
+      ::BraintreeService::Subscription.cancel(::Service::BraintreeGateway.connect_gateway(), subscription_id)
+    end
   end
 end

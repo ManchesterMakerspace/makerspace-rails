@@ -48,6 +48,7 @@ class Member
   before_update :reinvite_to_services
   after_update :update_card
   after_create :apply_default_permissions, :send_slack_invite, :send_google_invite
+  before_destroy :delete_subscription, :delete_rentals
 
   has_many :permissions, class_name: 'Permission', dependent: :destroy, :autosave => true
   has_many :rentals, class_name: 'Rental'
@@ -194,9 +195,20 @@ class Member
     end
   end
 
-
-
   def apply_default_permissions
     update_permissions(DefaultPermission.list_as_hash)
+  end
+
+  def delete_subscription
+    if subscription_id
+      ::BraintreeService::Subscription.cancel(::Service::BraintreeGateway.connect_gateway(), subscription_id)
+    end
+  end
+
+  def delete_rentals
+    if rentals.length
+      success = rentals.map { |rental| rental.destroy }
+      success.all? { |s| !!s }
+    end
   end
 end

@@ -62,7 +62,7 @@ class Admin::InvoicesController < AdminController
   end
 
   def destroy
-    @invoice.delete
+    @invoice.destroy
     render json: {}, status: 204 and return
   end
 
