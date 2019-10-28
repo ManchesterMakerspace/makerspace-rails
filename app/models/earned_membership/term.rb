@@ -28,6 +28,8 @@ class EarnedMembership::Term
     # Determine initial count of next instance
     excess = current_count > requirement.target_count ? (current_count - requirement.target_count) : 0
     start_count = excess >= requirement.rollover_limit ? requirement.rollover_limit : excess
+    # Reset start date if they have fallen behind
+    start_date = (end_date + (self.requirement.term_length.to_i.months)) < Time.now ? Time.now : end_date
     # Create next requirement
     next_term = EarnedMembership::Term.new(
       start_date: end_date,
