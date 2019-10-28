@@ -50,7 +50,7 @@ class BraintreeService::Subscription < Braintree::Subscription
     # Don't create a new subscription if already on subscription
     if invoice.plan_id &&
        (invoice.resource.try(:subscription) || invoice.resource.try(:subscription_id))
-      raise ::Error::UnprocessableEntity.new("Subscription already exists for #{invoice.member.fullname}. Please contact support")
+      raise ::Error::UnprocessableEntity.new("Subscription already exists for #{invoice.resource_name}. Please contact support")
     end
 
     subscription_hash = {

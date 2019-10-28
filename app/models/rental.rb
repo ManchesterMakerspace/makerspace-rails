@@ -4,7 +4,7 @@ class Rental
   include Service::SlackConnector
   include ActiveModel::Serializers::JSON
 
-  belongs_to :member, optional: true
+  belongs_to :member
 
   field :number
   field :description

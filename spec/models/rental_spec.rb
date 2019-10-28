@@ -6,6 +6,7 @@ RSpec.describe Rental, type: :model do
     it { is_expected.to be_stored_in(collection: 'rentals') }
 
     it { is_expected.to have_fields(:number, :expiration) }
+    it { is_expected.to belong_to(:member) }
   end
 
   describe "ActiveModel validations" do

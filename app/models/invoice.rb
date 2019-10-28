@@ -123,6 +123,15 @@ class Invoice
     found_resource ||= self.class.resource(self.resource_class, self.resource_id)
   end
 
+  def resource_name
+    options = {
+      member: "fullname",
+      rental: "number"
+    }
+    option = options[self.resource_class.to_sym]
+    self.try(option.to_sym)
+  end
+
   def generate_subscription_id
     "#{resource_class}_#{resource_id}_#{SecureRandom.hex[0...6]}"
   end

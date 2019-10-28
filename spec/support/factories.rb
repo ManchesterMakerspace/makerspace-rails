@@ -74,6 +74,7 @@ FactoryBot.define do
   end
 
   factory :rental do
+    association :member, strategy: :create
     number { generate(:number) }
     description { "A rental for x amount" }
     expiration { generate(:expiry) }
