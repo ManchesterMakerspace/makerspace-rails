@@ -112,7 +112,7 @@ RSpec.describe BraintreeService::Subscription, type: :model do
 
       it "raises error if the resource already is on subscription" do
         member = create(:member, subscription_id: "foobar")
-        rental = create(:rental, subscription_id: "foobar")
+        rental = create(:rental, subscription_id: "barfoo")
         member_invoice = create(:invoice, resource_class: "member", resource_id: member.id, plan_id: "foo")
         rental_invoice = create(:invoice, resource_class: "rental", resource_id: rental.id, plan_id: "foo")
         expect{ BraintreeService::Subscription.create(gateway, member_invoice) }.to raise_error(Error::UnprocessableEntity)
