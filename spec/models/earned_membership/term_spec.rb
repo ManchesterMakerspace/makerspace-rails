@@ -10,7 +10,7 @@ RSpec.describe EarnedMembership::Term, type: :model do
       requirement = create(:requirement, term_length: 3)
       term = build(:term, start_date: time_now, requirement: requirement)
       expected_end_date = time_now + 3.months
-      expect(term.end_date).to eq(expected_end_date)
+      expect(term.end_date.strftime("%m/%d/%Y")).to eq(expected_end_date.strftime("%m/%d/%Y"))
     end
   end
 
@@ -29,6 +29,16 @@ RSpec.describe EarnedMembership::Term, type: :model do
     it "creates next term" do
       requirement = create(:requirement, target_count: 3, rollover_limit: 1)
       term = create(:term, current_count: 5, requirement: requirement)
+      term.send(:create_next_term)
+      new_term = EarnedMembership::Term.last
+      expect(new_term.current_count).to eq(1)
+      expect(new_term.requirement_id).to eq(requirement.id)
+      expect(new_term.start_date.to_i).to eq(term.end_date.to_i)
+    end
+
+    it "will restart term to now if satisfied an old term" do
+      requirement = create(:requirement, target_count: 3, rollover_limit: 1)
+      term = create(:term, current_count: 5, requirement: requirement, start_date: Time.now - 6.months)
       term.send(:create_next_term)
       new_term = EarnedMembership::Term.last
       expect(new_term.current_count).to eq(1)
