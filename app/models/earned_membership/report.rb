@@ -1,10 +1,13 @@
 class EarnedMembership::Report
   include Mongoid::Document
+  include Mongoid::Search
 
   store_in collection: 'earned_membership__report'
 
   belongs_to :earned_membership, class_name: 'EarnedMembership'
   embeds_many :report_requirements, class_name: 'EarnedMembership::ReportRequirement'
+
+  search_in :report_search
 
   field :date, type: Time, default: Time.now
 
@@ -15,7 +18,7 @@ class EarnedMembership::Report
   validate :no_future_reporting, on: :create
   after_create :process_report
   before_validation :apply_term, on: :create
-
+  
   private
   def apply_term
     report_requirements.each { |rr| rr.term.nil? and rr.term = rr.requirement.current_term }
@@ -49,5 +52,11 @@ class EarnedMembership::Report
     if future_terms.size > 0
       errors.add(:requirement, "Cannot submit reports for future terms")
     end
+  end
+
+  # Search EM member and requirements
+  def report_search
+    member = self.earned_membership.member
+    "#{member.fullname} #{member.email} " + self.earned_membership.requirements.collect(&:name).join(" ")
   end
 end

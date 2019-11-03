@@ -1,5 +1,5 @@
 class Admin::EarnedMemberships::ReportsController < AdminController
-  include FastQuery
+  include FastQuery::MongoidQuery
   before_action :set_membership
 
   def index

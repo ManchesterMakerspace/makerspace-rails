@@ -25,6 +25,30 @@ RSpec.describe Admin::RentalsController, type: :controller do
 
   login_admin
 
+  describe "GET index" do
+    it "Renders the requested rentals as json" do
+      rentals = FactoryBot.create_list(:rental, 3)
+      get :index, format: :json
+      expect(response).to have_http_status(200)
+      parsed_response = JSON.parse(response.body)
+      expect(parsed_response["rentals"].count).to eq(Rental.count)
+    end
+
+    it "Can filter by member" do 
+      member1 = create(:member)
+      member2 = create(:member)
+      rental = create(:rental, member: member1)
+      rental2 = create(:rental, member: member2)
+
+      get :index, params: { memberId: member2.id.to_s }, format: :json
+
+      parsed_response = JSON.parse(response.body)
+      expect(response).to have_http_status(200)
+      expect(response.content_type).to eq "application/json"
+      expect(parsed_response['rentals'].first['id']).to eq(rental2.id.to_s)
+    end
+  end
+
   describe "POST #create" do
     context "with valid params" do
       it "creates a new rental" do

@@ -1,6 +1,4 @@
 class Admin::Billing::PlansController < Admin::BillingController
-    include FastQuery
-
   def index
     plans = ::BraintreeService::Plan.get_plans(@gateway)
     unless plan_params[:types].nil?

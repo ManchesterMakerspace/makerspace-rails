@@ -12,9 +12,17 @@ describe 'Admin::Invoices API', type: :request do
       parameter name: :pageNum, in: :query, type: :number, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
-      parameter name: :resourceId, in: :query, type: :string, required: false
-      parameter name: :hideSettled, in: :query, type: :boolean, required: false
-      parameter name: :types, in: :query, type: :array, items: { type: :string }, required: false
+      parameter name: :search, in: :query, type: :string, required: false
+
+      parameter name: :settled, in: :query, type: :boolean, required: false
+      parameter name: :past_due, in: :query, type: :boolean, required: false
+      parameter name: :refunded, in: :query, type: :boolean, required: false
+      parameter name: :refund_requested, in: :query, type: :boolean, required: false
+
+      parameter name: :planId, in: :query, type: :array, items: { type: :string }, required: false
+      parameter name: :resourceId, in: :query, type: :array, items: { type: :string }, required: false
+      parameter name: :memberId, in: :query, type: :array, items: { type: :string }, required: false
+      parameter name: :resourceClass, in: :query, type: :array, items: { type: :string }, required: false
 
       response '200', 'invoices found' do
         before { sign_in admin }

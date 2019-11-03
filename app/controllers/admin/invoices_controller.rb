@@ -1,30 +1,31 @@
 class Admin::InvoicesController < AdminController
-  include FastQuery
+  include FastQuery::MongoidQuery
   before_action :find_invoice, only: [:update, :destroy]
 
   def index
-    query = {}
-    query[:resource_id] = admin_index_params[:resourceId] unless admin_index_params[:resourceId].nil?
-    unless admin_index_params[:settled].nil?
-      if to_bool(admin_index_params[:settled])
-        query = query.merge({ :settled_at.ne => nil })
-      else
-        query = query.merge({ :settled_at => nil })
+    @queries = invoice_query_params.keys.map do |k|
+      key = k.to_sym 
+
+      if key === :settled
+        query = { "$or" => [
+          query_existance_by_name(invoice_query_params[:settled], :settled_at),
+          query_existance_by_name(invoice_query_params[:settled], :transaction_id)
+        ]}
+      elsif key === :past_due
+        query = query_existance_by_name(invoice_query_params[:past_due], :due_date)
+      elsif bool_params.include?(key)
+        query = query_bool_by_name(invoice_query_params[key], key)
+      elsif array_params.include?(key)
+        query = query_array_by_name(invoice_query_params[key], key)
+      elsif exist_params.include?(key)
+        query = query_existance_by_name(invoice_query_params[key], key)
       end
+
+      build_query(query) 
     end
 
-    unless admin_index_params[:types].nil?
-      if admin_index_params[:types].include?("member") && admin_index_params[:types].include?("rental") 
-        query = query.merge({ :resource_class.in => ["member", "rental"] })
-      elsif admin_index_params[:types].include?("member") 
-        query[:resource_class] = "member"
-      elsif admin_index_params[:types].include?("rental") 
-        query[:resource_class] = "rental"
-      end
-    end
-
-    invoices = query.length > 0 ? Invoice.where(query) : Invoice.all
-    invoices = query_resource(invoices)
+    invoices = @queries.length > 0 ? Invoice.where(@queries.reduce(&:merge)) : Invoice.all
+    invoices = query_resource(invoices) # Query with the usual sorting, paging and searching
 
     return render_with_total_items(invoices)
   end
@@ -84,12 +85,28 @@ class Admin::InvoicesController < AdminController
     params.require(:invoice_option).permit(:id, :discount_id, :member_id, :resource_id)
   end
 
-  def admin_index_params
-    params.permit(:resourceId, :settled, types: [])
-  end
-
   def find_invoice
     @invoice = Invoice.find(params[:id])
     raise ::Mongoid::Errors::DocumentNotFound.new(Invoice, { id: params[:id] }) if @invoice.nil?
+  end
+
+  def invoice_query_params
+    params.permit(:settled, :past_due, :refunded, :refund_requested, :plan_id => [], :resource_class => [], :resource_id => [], :member_id => [])
+  end
+
+  def bool_params
+    [:refunded]
+  end
+
+  def array_params
+    [:resource_class, :resource_id, :member_id, :plan_id]
+  end
+
+  def exist_params
+    [:refund_requested]
+  end
+
+  def build_query(query)
+    query || {}
   end
 end

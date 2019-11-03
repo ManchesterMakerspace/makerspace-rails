@@ -1,5 +1,6 @@
 class EarnedMembership
   include Mongoid::Document
+  include Mongoid::Search
   include ActiveModel::Serializers::JSON
   include Service::SlackConnector
 
@@ -8,6 +9,8 @@ class EarnedMembership
   belongs_to :member, class_name: 'Member'
   has_many :requirements, class_name: 'EarnedMembership::Requirement', dependent: :destroy
   has_many :reports, class_name: 'EarnedMembership::Report', dependent: :destroy
+
+  search_in member: %i[firstname lastname email], requirements: :name
 
   accepts_nested_attributes_for :requirements, reject_if: :all_blank, allow_destroy: true
 
@@ -27,6 +30,10 @@ class EarnedMembership
   def evaluate_for_renewal
     # Find requirements not satisfied and that are not in future terms
     renew_member if outstanding_requirements.size == 0
+  end
+
+  def self.search(searchTerms, criteria = Mongoid::Criteria.new(EarnedMembership))
+    criteria.full_text_search(searchTerms).sort_by(&:relevance).reverse
   end
 
   private

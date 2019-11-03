@@ -1,5 +1,6 @@
 class Rental
   include Mongoid::Document
+  include Mongoid::Search
   include InvoiceableResource
   include Service::SlackConnector
   include ActiveModel::Serializers::JSON
@@ -12,6 +13,8 @@ class Rental
   field :subscription_id, type: String # Braintree relation
   field :contract_on_file, type: Boolean, default: false
 
+  search_in :number, :description, member: %i[firstname lastname email]
+
   before_destroy :delete_subscription
   validates :number, presence: true, uniqueness: true
 
@@ -20,6 +23,10 @@ class Rental
     slack_user = SlackUser.find_by(member_id: member_id)
     send_slack_message(get_renewal_slack_message, ::Service::SlackConnector.safe_channel(slack_user.slack_id)) unless slack_user.nil?
     send_slack_message(get_renewal_slack_message(current_user), ::Service::SlackConnector.members_relations_channel)
+  end
+
+  def self.search(searchTerms, criteria = Mongoid::Criteria.new(Rental))
+    criteria.full_text_search(searchTerms).sort_by(&:relevance).reverse
   end
 
   protected

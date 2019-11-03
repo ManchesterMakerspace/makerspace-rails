@@ -1,5 +1,6 @@
 class InvoiceOption
   include Mongoid::Document
+  include Mongoid::Search
   include ActiveModel::Serializers::JSON
 
   ## Transaction Information
@@ -21,11 +22,17 @@ class InvoiceOption
 
   field :disabled, type: Boolean, default: false
 
+  search_in :name, :description
+
   validates :resource_class, inclusion: { in: Invoice::OPERATION_RESOURCES.keys }, allow_nil: false
   validates :operation, inclusion: { in: Invoice::OPERATION_FUNCTIONS }, allow_nil: false
   validates_numericality_of :amount, greater_than: 0
   validates_numericality_of :quantity, greater_than: 0
   validates_uniqueness_of :plan_id, unless: -> { plan_id.nil? }
+
+  def self.search(searchTerms, criteria = Mongoid::Criteria.new(InvoiceOption))
+    criteria.full_text_search(searchTerms).sort_by(&:relevance).reverse
+  end
 
   def build_invoice(member_id, due_date, resource_id, discount = nil)
     amount = self.amount

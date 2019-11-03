@@ -11,6 +11,8 @@ module Error
             message = "Unhandled Error: #{e.message}"
             send_slack_message(message, ::Service::SlackConnector.logs_channel)
             respond(:interal_server_error, 500, "Internal Server Error")
+          else 
+            raise e
           end
         end
         rescue_from ::Mongoid::Errors::MongoidError do |e|

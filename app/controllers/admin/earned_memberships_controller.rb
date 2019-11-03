@@ -1,5 +1,5 @@
 class Admin::EarnedMembershipsController < AdminController
-  include FastQuery
+  include FastQuery::MongoidQuery
   before_action :set_membership, only: [:update, :show]
 
   def index

@@ -74,17 +74,6 @@ RSpec.describe Admin::Billing::SubscriptionsController, type: :controller do
       expect(response).to have_http_status(200)
       expect(parsed_response['subscriptions'].first['id']).to eq(canceled_subscription.id.to_s)
     end
-
-    it "can filter out canceled subscriptions" do 
-      subscriptions = [canceled_subscription, subscription]
-      allow(BraintreeService::Subscription).to receive(:get_subscriptions).and_return([subscription])
-      expect(BraintreeService::Subscription).to receive(:get_subscriptions).and_return([subscription])
-
-      get :index, params: { hideCanceled: true }, format: :json
-      parsed_response = JSON.parse(response.body)
-      expect(response).to have_http_status(200)
-      expect(parsed_response['subscriptions'].first['id']).to eq(subscription.id.to_s)
-    end
   end
 
   describe "DELETE #destroy" do 

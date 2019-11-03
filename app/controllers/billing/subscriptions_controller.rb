@@ -1,5 +1,4 @@
 class Billing::SubscriptionsController < BillingController
-    include FastQuery
     before_action :verify_customer, :verify_own_subscription
 
   def show
