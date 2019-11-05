@@ -1,6 +1,7 @@
 class Billing::BraintreeController < ApplicationController
   include BraintreeGateway
   before_action :validate_notification
+  protect_from_forgery except: [:webhooks]
 
   def webhooks
     if @notification.kind == ::Braintree::WebhookNotification::Kind::Check
