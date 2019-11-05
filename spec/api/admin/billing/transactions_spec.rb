@@ -20,6 +20,7 @@ describe 'Billing::Transactions API', type: :request do
       parameter name: :refund, in: :query, type: :boolean, required: false
       parameter name: :type, in: :query, type: :string, required: false
       parameter name: :transactionStatus, in: :query, type: :array, items: { type: :string }, required: false
+      parameter name: :customerId, in: :query, type: :string, required: false
 
       response '200', 'transactions found' do 
         let(:invoice) { create(:invoice, member: basic)}

@@ -233,6 +233,10 @@ RSpec.configure do |config|
           properties: {
             id: { type: :string },
             name: { type: :string },
+            type: { 
+              type: :string,
+              enum: ["membership", "rental"]
+            },
             description: { type: :string },
             amount: { type: :string },
             billingFrequency: { type: :number  },
@@ -364,7 +368,16 @@ RSpec.configure do |config|
           properties: {
             id: { type: :string },
             planId: { type: :string },
-            status: { type: :string },
+            status: { 
+              type: :string,
+              enum: [
+                "Active",
+                "Canceled",
+                "PastDue",
+                "Pending",
+                "Expired"
+              ]
+            },
             amount: { type: :string },
             failureCount: { type: :number },
             daysPastDue: { type: :number },
