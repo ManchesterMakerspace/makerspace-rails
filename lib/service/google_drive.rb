@@ -82,6 +82,7 @@ module Service
           raise Error::Google::Upload.new(err) unless err.nil?
         end
       end
+      pdf_string
     end
 
     def self.get_document_name(member, document_name)

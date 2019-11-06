@@ -24,10 +24,9 @@ class MemberMailer < ApplicationMailer
     mail to: "contact@manchestermakerspace.org", subject: 'New Member Registered'
   end
 
-  def send_document(document_name, member_id, signature = nil)
+  def send_document(document_name, member_id, document_string)
     member = Member.find(member_id)
-    document = ::Service::GoogleDrive.generate_document_string(document_name, { member: member }, signature)
-    attachments["#{document_name}.pdf"] = document
+    attachments["#{document_name}.pdf"] = document_string
     @doc_name = document_name.titleize
     mail to: member.email, subject: "Manchester Makerspace - Signed #{@doc_name}"
   end
