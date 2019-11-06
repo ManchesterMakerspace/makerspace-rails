@@ -21,9 +21,9 @@ class RentalsController < AuthenticationController
     begin
       encoded_signature = update_params[:signature].split(",")[1]
       if encoded_signature
-        upload_document("rental_agreement", @member, { rental: @rental }, encoded_signature)
-        MemberMailer.send_document("rental_agreement", @member.id.as_json, encoded_signature).deliver_later
+        document = upload_document("rental_agreement", @member, { rental: @rental }, encoded_signature)
         @rental.update_attributes!(contract_on_file: true)
+        MemberMailer.send_document("rental_agreement", @member.id.as_json, document).deliver_later
       end
     rescue Error::Google::Upload => err
       @messages.push("Error uploading #{@member.fullname}'s rental agreement signature'. Error: #{err}")
