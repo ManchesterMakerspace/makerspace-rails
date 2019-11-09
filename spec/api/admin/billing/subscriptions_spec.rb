@@ -23,6 +23,7 @@ describe 'Billing::Subscriptions API', type: :request do
       parameter name: :search, in: :query, type: :string, required: false
       parameter name: :planId, in: :query, type: :array, items: { type: :string }, required: false
       parameter name: :subscriptionStatus, in: :query, type: :array, items: { type: :string }, required: false
+      parameter name: :customerIdd, in: :query, type: :string, required: false
 
       response '200', 'subscription found' do 
         before do 

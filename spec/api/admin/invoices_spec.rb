@@ -15,9 +15,9 @@ describe 'Admin::Invoices API', type: :request do
       parameter name: :search, in: :query, type: :string, required: false
 
       parameter name: :settled, in: :query, type: :boolean, required: false
-      parameter name: :past_due, in: :query, type: :boolean, required: false
+      parameter name: :pastDue, in: :query, type: :boolean, required: false
       parameter name: :refunded, in: :query, type: :boolean, required: false
-      parameter name: :refund_requested, in: :query, type: :boolean, required: false
+      parameter name: :refundRequested, in: :query, type: :boolean, required: false
 
       parameter name: :planId, in: :query, type: :array, items: { type: :string }, required: false
       parameter name: :resourceId, in: :query, type: :array, items: { type: :string }, required: false

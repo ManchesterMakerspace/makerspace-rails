@@ -46,4 +46,12 @@ class BraintreeService::Plan < Braintree::Plan
     plans = self.get_plans(gateway)
     plans.find { |plan| plan.id == id } unless plans.nil?
   end
+
+  def type
+    if /rental/.match(self.id)
+      :rental
+    elsif /membership/.match(self.id)
+      :membership
+    end
+  end
 end

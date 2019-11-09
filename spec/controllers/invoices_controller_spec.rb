@@ -17,7 +17,7 @@ RSpec.describe InvoicesController, type: :controller do
         create(:invoice, member: member),
         create(:invoice, member: member, resource_id: rental.id, resource_class: "rental"),
       ]
-      get :index, params: {}
+      get :index, params: { settled: false }
 
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
