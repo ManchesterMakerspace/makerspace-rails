@@ -797,12 +797,18 @@
         "status": {
           "type": "string",
           "enum": [
-            "failed",
-            "gateway_rejected",
-            "processor_declined",
-            "settled",
-            "unrecognized",
-            "voided"
+            "Authorizing",
+            "Authorized",
+            "AuthorizationExpired",
+            "SubmittedForSettlement",
+            "Settling",
+            "SettlementPending",
+            "SettlementDeclined",
+            "Settled",
+            "Voided",
+            "ProcessorDeclined",
+            "GatewayRejected",
+            "Failed"
           ]
         },
         "id": {
@@ -1062,7 +1068,7 @@
             "required": false
           },
           {
-            "name": "customerIdd",
+            "name": "customerId",
             "in": "query",
             "type": "string",
             "required": false

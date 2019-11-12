@@ -402,10 +402,7 @@ RSpec.configure do |config|
             discountAmount: { type: :string },
             discounts: { type: :array, items: { '$ref' => '#/definitions/Discount' } },
             gatewayRejectionReason: { type: :string, 'x-nullable': true },
-            status: {
-              type: :string,
-              enum: ["failed", "gateway_rejected", "processor_declined", "settled", "unrecognized", "voided"]
-            },
+            status: { type: :string },
             id: { type: :string },
             planId: { type: :string, 'x-nullable': true },
             recurring: { type: :boolean },
