@@ -18,6 +18,7 @@ class Admin::Billing::TransactionsController < Admin::BillingController
   def construct_query
     Proc.new do |search|
       search_customers(transaction_query_params[:search], search) unless transaction_query_params[:search].nil?
+      by_customer(transaction_query_params[:customer_id], search) unless transaction_query_params[:customer_id].nil?
 
       if (transaction_query_params[:end_date] && transaction_query_params[:start_date])
         search.created_at.between(transaction_query_params[:start_date], transaction_query_params[:end_date])
@@ -42,6 +43,6 @@ class Admin::Billing::TransactionsController < Admin::BillingController
   end
 
   def transaction_query_params
-    params.permit(:start_date, :end_date, :refund, :type, :search, :transaction_status => [])
+    params.permit(:start_date, :end_date, :refund, :type, :search, :customer_id, :transaction_status => [])
   end
 end

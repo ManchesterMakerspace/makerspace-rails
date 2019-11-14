@@ -233,6 +233,10 @@ RSpec.configure do |config|
           properties: {
             id: { type: :string },
             name: { type: :string },
+            type: { 
+              type: :string,
+              enum: ["membership", "rental"]
+            },
             description: { type: :string },
             amount: { type: :string },
             billingFrequency: { type: :number  },
@@ -364,7 +368,16 @@ RSpec.configure do |config|
           properties: {
             id: { type: :string },
             planId: { type: :string },
-            status: { type: :string },
+            status: { 
+              type: :string,
+              enum: [
+                "Active",
+                "Canceled",
+                "PastDue",
+                "Pending",
+                "Expired"
+              ]
+            },
             amount: { type: :string },
             failureCount: { type: :number },
             daysPastDue: { type: :number },
@@ -389,10 +402,7 @@ RSpec.configure do |config|
             discountAmount: { type: :string },
             discounts: { type: :array, items: { '$ref' => '#/definitions/Discount' } },
             gatewayRejectionReason: { type: :string, 'x-nullable': true },
-            status: {
-              type: :string,
-              enum: ["failed", "gateway_rejected", "processor_declined", "settled", "unrecognized", "voided"]
-            },
+            status: { type: :string },
             id: { type: :string },
             planId: { type: :string, 'x-nullable': true },
             recurring: { type: :boolean },

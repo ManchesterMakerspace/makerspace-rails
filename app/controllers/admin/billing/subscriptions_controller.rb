@@ -18,6 +18,7 @@ class Admin::Billing::SubscriptionsController < Admin::BillingController
   def construct_query
     Proc.new do |search|
       search_customers(subscription_query_params[:search], search) unless subscription_query_params[:search].nil?
+      by_customer(subscription_query_params[:customer_id], search) unless subscription_query_params[:customer_id].nil?
 
       if (subscription_query_params[:end_date] && subscription_query_params[:start_date])
         search.created_at.between(subscription_query_params[:start_date], subscription_query_params[:end_date])
@@ -33,6 +34,6 @@ class Admin::Billing::SubscriptionsController < Admin::BillingController
   end
 
   def subscription_query_params
-    params.permit(:start_date, :end_date, :search, :subscription_status => [], :plan_id => [])
+    params.permit(:start_date, :end_date, :search, :customer_id, :subscription_status => [], :plan_id => [])
   end
 end

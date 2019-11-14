@@ -477,6 +477,13 @@
         "name": {
           "type": "string"
         },
+        "type": {
+          "type": "string",
+          "enum": [
+            "membership",
+            "rental"
+          ]
+        },
         "description": {
           "type": "string"
         },
@@ -715,7 +722,14 @@
           "type": "string"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "Active",
+            "Canceled",
+            "PastDue",
+            "Pending",
+            "Expired"
+          ]
         },
         "amount": {
           "type": "string"
@@ -783,12 +797,18 @@
         "status": {
           "type": "string",
           "enum": [
-            "failed",
-            "gateway_rejected",
-            "processor_declined",
-            "settled",
-            "unrecognized",
-            "voided"
+            "Authorizing",
+            "Authorized",
+            "AuthorizationExpired",
+            "SubmittedForSettlement",
+            "Settling",
+            "SettlementPending",
+            "SettlementDeclined",
+            "Settled",
+            "Voided",
+            "ProcessorDeclined",
+            "GatewayRejected",
+            "Failed"
           ]
         },
         "id": {
@@ -1046,6 +1066,12 @@
               "type": "string"
             },
             "required": false
+          },
+          {
+            "name": "customerId",
+            "in": "query",
+            "type": "string",
+            "required": false
           }
         ],
         "responses": {
@@ -1160,6 +1186,12 @@
             "items": {
               "type": "string"
             },
+            "required": false
+          },
+          {
+            "name": "customerId",
+            "in": "query",
+            "type": "string",
             "required": false
           }
         ],
@@ -2002,7 +2034,7 @@
             "required": false
           },
           {
-            "name": "past_due",
+            "name": "pastDue",
             "in": "query",
             "type": "boolean",
             "required": false
@@ -2014,7 +2046,7 @@
             "required": false
           },
           {
-            "name": "refund_requested",
+            "name": "refundRequested",
             "in": "query",
             "type": "boolean",
             "required": false
@@ -3550,6 +3582,57 @@
             "name": "order",
             "in": "query",
             "type": "string",
+            "required": false
+          },
+          {
+            "name": "settled",
+            "in": "query",
+            "type": "boolean",
+            "required": false
+          },
+          {
+            "name": "pastDue",
+            "in": "query",
+            "type": "boolean",
+            "required": false
+          },
+          {
+            "name": "refunded",
+            "in": "query",
+            "type": "boolean",
+            "required": false
+          },
+          {
+            "name": "refundRequested",
+            "in": "query",
+            "type": "boolean",
+            "required": false
+          },
+          {
+            "name": "planId",
+            "in": "query",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "resourceId",
+            "in": "query",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "name": "resourceClass",
+            "in": "query",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
             "required": false
           }
         ],

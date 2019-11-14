@@ -9,6 +9,15 @@ describe 'Invoices API', type: :request do
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
 
+      parameter name: :settled, in: :query, type: :boolean, required: false
+      parameter name: :pastDue, in: :query, type: :boolean, required: false
+      parameter name: :refunded, in: :query, type: :boolean, required: false
+      parameter name: :refundRequested, in: :query, type: :boolean, required: false
+
+      parameter name: :planId, in: :query, type: :array, items: { type: :string }, required: false
+      parameter name: :resourceId, in: :query, type: :array, items: { type: :string }, required: false
+      parameter name: :resourceClass, in: :query, type: :array, items: { type: :string }, required: false
+
       response '200', 'invoices found' do
         let(:member) { create(:member) }
         let(:invoices) { create_list(:invoice, member: member) }
