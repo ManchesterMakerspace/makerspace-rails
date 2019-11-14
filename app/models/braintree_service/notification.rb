@@ -14,17 +14,39 @@ class BraintreeService::Notification
     self.create({
       kind: notification.kind,
       timestamp: notification.timestamp,
-      payload: JSON.generate(notification)
+      payload: as_json(notification)
     })
 
     if subscription_notifications.include?(notification.kind)
-      self.process_subscription(notification)
+      process_subscription(notification)
     elsif dispute_notifications.include?(notification.kind)
-      self.process_dispute(notification)
+      process_dispute(notification)
     end
   end
 
   protected
+  def self.as_json(notification)
+    JSON.generate(get_details_for_notification(notification))
+  end
+
+  def self.get_details_for_notification(notification)
+    if subscription_notifications.include?(notification.kind)
+      {
+        subscription_id: notification.subscription.id,
+        transaction_id: notification.subscription.transactions.last.id,
+      }
+    elsif dispute_notifications.include?(notification.kind)
+      {
+        dispute_status: notification.dispute.status,
+        reason: notification.dispute.reason,
+        transaction_id: notification.dispute.transaction.id,
+
+      }
+    else
+      notification
+    end
+  end
+
   def self.process_subscription(notification)
     if notification.subscription.nil?
       send_slack_message("Received malformed subscription notification. Do not know how to process.")
@@ -36,24 +58,55 @@ class BraintreeService::Notification
 
     invoice = Invoice.active_invoice_for_resource(resource_id)
     if invoice.nil?
-      send_slack_message("Unable to process recurring payment. No active invoice found for #{resource_class} ID #{resource_id}.")
+      send_slack_message("Unable to process subscription notification. No active invoice found for #{resource_class} ID #{resource_id}.")
       return
     end
 
-    begin
-      # Don't need to pass gateway or payment method since payment has already been made
-      invoice.submit_for_settlement(nil, nil, last_transaction.id)
-    rescue ::Error::NotFound
-      send_slack_message("Unable to process recurring payment. Unknown resource for invoice ID #{invoice.id}.")
-      return
-    rescue ::Error::UnprocessableEntity => err
-      send_slack_message("Unable to process recurring payment for invoice ID #{invoice.id}. Error: #{err.message}")
-      return
+    if (notification.kind === ::Braintree::WebhookNotification::Kind::SubscriptionChargedSuccessfully)
+      process_subscription_charge_success(invoice, last_transaction)
+    elsif (notification.kind === ::Braintree::WebhookNotification::Kind::SubscriptionChargedUnsuccessfully)
+      process_subscription_charge_failure(invoice)
+    elsif (notification.kind === ::Braintree::WebhookNotification::Kind::SubscriptionCanceled)
+      process_subscription_cancellation(invoice)
+    else
+      send_slack_message("Received the following notification from Braintree regarding #{invoice.member.fullname}'s subscription':
+Type: #{notification.kind}.
+Payload: #{notification.as_json}.
+No automated actions have been taken at this time.")
     end
+  end
 
-    send_slack_message("Recurring payment from #{invoice.member.fullname} successful. #{invoice.resource.get_renewal_slack_message}")
+  def self.process_subscription_charge_success(invoice, last_transaction)
+    dupe_invoice = Invoice.find_by(transaction_id: last_transaction.id)
+    if dupe_invoice.nil?
+      begin
+        # Don't need to pass gateway or payment method since payment has already been made
+        invoice.submit_for_settlement(nil, nil, last_transaction.id)
+      rescue ::Error::NotFound
+        send_slack_message("Unable to process recurring payment. Unknown resource for invoice ID #{invoice.id}.")
+        return
+      rescue ::Error::UnprocessableEntity => err
+        send_slack_message("Unable to process recurring payment for invoice ID #{invoice.id}. Error: #{err.message}")
+        return
+      end
 
-    BillingMailer.receipt(invoice.member.email, last_transaction.id.as_json, invoice.id.as_json).deliver_later
+      send_slack_message("Recurring payment from #{invoice.member.fullname} successful. #{invoice.resource.get_renewal_slack_message}")
+
+      BillingMailer.receipt(invoice.member.email, last_transaction.id.as_json, invoice.id.as_json).deliver_later
+    else
+      send_slack_message("Received duplicate notification regarding #{invoice.name} for #{invoice.member.fullname}. TID: #{last_transaction.id}", ::Service::SlackConnector.treasurer_channel)
+    end
+  end
+
+  def self.process_subscription_charge_failure(invoice)
+    slack_member = SlackUser.find_by(member_id: invoice.member.id)
+    member_notified = slack_member ? "The member has been notified via Slack as well." : "Unable to notify member via Slack. Reach out to member to resolve."
+    send_slack_message("Your recurring payment for #{invoice.name} was unsuccessful. Please <#{Rails.configuration.action_mailer.default_url_options[:host]}/#{invoice.member.id}/settings|review your payment settings> or contact an administrator for assistance.", slack_member.slack_id) unless slack_member.nil?
+    send_slack_message("Recurring payment from #{invoice.member.fullname} failed. #{member_notified}")
+  end
+
+  def self.process_subscription_cancellation(invoice)
+    Invoice.process_cancellation(invoice.subscription_id)
   end
 
   def self.process_dispute(notification)
@@ -72,8 +125,11 @@ class BraintreeService::Notification
 
     send_slack_message("Received dispute from #{associated_invoice.member.fullname} for #{associated_invoice.name} which was paid #{associated_invoice.settled_at}.
     Braintree transaction ID #{disputed_transaction.id} |  <#{Rails.configuration.action_mailer.default_url_options[:host]}/billing/transactions/#{associated_invoice.transaction_id}|Disputed Invoice>")
-    associated_invoice.set_refund_requested # TODO should dispute requested be it's own prop?
-    # TODO send an email too
+    if notification.kind === ::Braintree::WebhookNotification::Kind::DisputeOpened
+      associated_invoice.set_dispute_requested
+    else
+      associated_invoice.set_disputed
+    end
   end
 
   private

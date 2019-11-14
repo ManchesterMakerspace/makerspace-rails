@@ -70,12 +70,4 @@ class BraintreeService::TransactionSerializer < ActiveModel::Serializer
     end
     details
   end
-
-  # TODO this shouldn't be hardcoded
-  def subscription_details
-    {
-      billingPeriodStartDate: object.subscription_details.billing_period_start_date,
-      billingPeriodEndDate: object.subscription_details.billing_period_end_date,
-    } unless object.subscription_details.nil?
-  end
 end

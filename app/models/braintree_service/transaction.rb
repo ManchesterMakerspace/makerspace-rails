@@ -48,7 +48,7 @@ class BraintreeService::Transaction < Braintree::Transaction
       subscription = ::BraintreeService::Subscription.create(gateway, invoice)
       transaction = subscription.transactions.first
       invoice.resource.update!({ subscription_id: subscription.id })
-      # TODO: Remove this when renewal reminders is updated
+      # Required due to renewal reminders service
       if invoice.resource_class == "member"
         invoice.resource.update!({ subscription: true })
       end
@@ -72,11 +72,11 @@ class BraintreeService::Transaction < Braintree::Transaction
       transaction = result.transaction
     end
 
-    invoice.update!({ 
-      subscription_id: subscription ? subscription.id : nil, 
+    invoice.update!({
+      subscription_id: subscription ? subscription.id : nil,
       transaction_id: transaction.id,
     })
-    
+
     BillingMailer.receipt(invoice.member.email, transaction.id, invoice.id.to_s).deliver_later
     send_slack_message("Payment from #{invoice.member.fullname} of $#{invoice.amount} received for #{invoice.name}")
     normalize(gateway, transaction)
