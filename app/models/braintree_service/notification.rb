@@ -14,7 +14,7 @@ class BraintreeService::Notification
     self.create({
       kind: notification.kind,
       timestamp: notification.timestamp,
-      payload: JSON.generate(notification.except("kind", "timestamp"))
+      payload: JSON.generate(notification)
     })
 
     if subscription_notifications.include?(notification.kind)
@@ -52,7 +52,7 @@ class BraintreeService::Notification
     end
 
     send_slack_message("Recurring payment from #{invoice.member.fullname} successful. #{invoice.resource.get_renewal_slack_message}")
-    
+
     BillingMailer.receipt(invoice.member.email, last_transaction.id.as_json, invoice.id.as_json).deliver_later
   end
 
@@ -70,7 +70,7 @@ class BraintreeService::Notification
       return
     end
 
-    send_slack_message("Received dispute from #{associated_invoice.member.fullname} for #{associated_invoice.name} which was paid #{associated_invoice.settled_at}. 
+    send_slack_message("Received dispute from #{associated_invoice.member.fullname} for #{associated_invoice.name} which was paid #{associated_invoice.settled_at}.
     Braintree transaction ID #{disputed_transaction.id} |  <#{Rails.configuration.action_mailer.default_url_options[:host]}/billing/transactions/#{associated_invoice.transaction_id}|Disputed Invoice>")
     associated_invoice.set_refund_requested # TODO should dispute requested be it's own prop?
     # TODO send an email too
