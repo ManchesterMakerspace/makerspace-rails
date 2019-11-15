@@ -18,12 +18,17 @@ describe 'Billing::Subscriptions API', type: :request do
     get 'Lists subscription' do 
       tags 'Subscriptions'
       operationId "adminListSubscriptions"
-      parameter name: :hideCanceled, in: :query, type: :boolean, required: false
+      parameter name: :startDate, in: :query, type: :string, required: false
+      parameter name: :endDate, in: :query, type: :string, required: false
+      parameter name: :search, in: :query, type: :string, required: false
+      parameter name: :planId, in: :query, type: :array, items: { type: :string }, required: false
+      parameter name: :subscriptionStatus, in: :query, type: :array, items: { type: :string }, required: false
+      parameter name: :customerId, in: :query, type: :string, required: false
 
       response '200', 'subscription found' do 
         before do 
           sign_in admin
-          allow(BraintreeService::Subscription).to receive(:get_subscriptions).with(gateway).and_return(subscriptions)
+          allow(BraintreeService::Subscription).to receive(:get_subscriptions).with(gateway, anything).and_return(subscriptions)
         end
 
         schema type: :object,

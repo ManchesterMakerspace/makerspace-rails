@@ -1,5 +1,6 @@
 class Invoice
   include Mongoid::Document
+  include Mongoid::Search
   include ActiveModel::Serializers::JSON
   include Service::SlackConnector
 
@@ -37,6 +38,8 @@ class Invoice
   field :plan_id, type: String
   # ID of transaction used to settle invoice
   field :transaction_id, type: String
+
+  search_in :name, :description, member: %i[firstname lastname email]
 
   validates :resource_class, inclusion: { in: OPERATION_RESOURCES.keys }, allow_nil: false
   validates :operation, inclusion: { in: OPERATION_FUNCTIONS }, allow_nil: false
@@ -138,6 +141,10 @@ class Invoice
 
   def self.active_invoice_for_resource(resource_id)
     active = self.find_by(resource_id: resource_id, settled_at: nil, transaction_id: nil)
+  end
+
+  def self.search(searchTerms, criteria = Mongoid::Criteria.new(Invoice))
+    criteria.full_text_search(searchTerms).sort_by(&:relevance).reverse
   end
 
   private

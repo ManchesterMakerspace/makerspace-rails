@@ -1,5 +1,5 @@
 class EarnedMemberships::ReportsController < AuthenticationController
-  include FastQuery
+  include FastQuery::MongoidQuery
   before_action :verify_earned_member
 
   def index

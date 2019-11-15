@@ -14,20 +14,20 @@ describe 'Billing::Transactions API', type: :request do
     get 'Gets a list of transactions' do 
       tags 'Transactions'
       operationId "adminListTransaction"
-      parameter name: :pageNum, in: :query, type: :number, required: false
-      parameter name: :orderBy, in: :query, type: :string, required: false
-      parameter name: :order, in: :query, type: :string, required: false
-      parameter name: :searchId, in: :query, type: :string, required: false
-      parameter name: :searchBy, in: :query, type: :string, required: false
-      parameter name: :endDate, in: :query, type: :string, required: false
       parameter name: :startDate, in: :query, type: :string, required: false
+      parameter name: :endDate, in: :query, type: :string, required: false
+      parameter name: :search, in: :query, type: :string, required: false
+      parameter name: :refund, in: :query, type: :boolean, required: false
+      parameter name: :type, in: :query, type: :string, required: false
+      parameter name: :transactionStatus, in: :query, type: :array, items: { type: :string }, required: false
+      parameter name: :customerId, in: :query, type: :string, required: false
 
       response '200', 'transactions found' do 
         let(:invoice) { create(:invoice, member: basic)}
         let(:transactions) { build_list(:transaction, 3, invoice: invoice) }
         before do 
           sign_in admin
-          allow(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, { }).and_return(transactions)
+          allow(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, anything).and_return(transactions)
         end
 
         schema type: :object,

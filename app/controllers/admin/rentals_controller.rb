@@ -1,9 +1,9 @@
 class Admin::RentalsController < AdminController
-  include FastQuery
+  include FastQuery::MongoidQuery
   before_action :set_rental, only: [:update, :destroy]
 
   def index
-    rentals = params[:memberId] ? Rental.where(member_id: params[:memberId]) : Rental.all
+    rentals = search_params[:member_id] ? Rental.where(member_id: search_params[:member_id]) : Rental.all
     return render_with_total_items(query_resource(rentals))
   end
 
@@ -29,6 +29,10 @@ class Admin::RentalsController < AdminController
   private
   def rental_params
     params.require(:rental).permit(:number, :member_id, :expiration, :description, :renew, :contract_on_file)
+  end
+
+  def search_params
+    params.permit(:member_id)
   end
 
   def set_rental

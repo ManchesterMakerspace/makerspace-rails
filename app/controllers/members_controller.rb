@@ -1,13 +1,11 @@
 class MembersController < AuthenticationController
-    include FastQuery
+    include FastQuery::MongoidQuery
     include ::Service::GoogleDrive
     before_action :set_member, only: [:show, :update]
 
     def index
       # Limit index to only current members unless authorized and requesting full records
-      if is_admin? && (params[:currentMembers].nil? || params[:currentMembers].empty?)
-        search = Mongoid::Criteria.new(Member)
-      else
+      if !is_admin? || to_bool(search_params[:current_members])
         # Include unset or expired within grace period
         search = Member.where({
           :$or => [
@@ -15,9 +13,10 @@ class MembersController < AuthenticationController
             {  expirationTime: nil }
           ]
         })
+      else
+        search = Mongoid::Criteria.new(Member)
       end
-      @members = query_params[:search].nil? || query_params[:search].empty? ? search.all : Member.rough_search_members(query_params[:search], search)
-      @members = query_resource(@members)
+      @members = query_resource(search)
 
       return render_with_total_items(@members, root: :members)
     end
@@ -58,5 +57,9 @@ class MembersController < AuthenticationController
 
     def member_params
       params.require(:member).permit(:firstname, :lastname, :email)
+    end
+
+    def search_params
+      params.permit(:current_members)
     end
 end

@@ -1,32 +1,6 @@
 class Admin::Billing::TransactionsController < Admin::BillingController
-  include FastQuery
-
   def index
-    search_by = transactions_params[:searchBy]
-    search_id = transactions_params[:searchId]
-
-    search_query = {}
-    search_query[:start_date] = transactions_params[:startDate] unless transactions_params[:startDate].nil?
-    search_query[:end_date] = transactions_params[:endDate] unless transactions_params[:endDate].nil?
-    if search_by && search_id
-
-      # Get transactions for specific member
-      if search_by == "member"
-        member = Member.find(search_id)
-        raise ::Mongoid::Errors::DocumentNotFound.new(Member, { id: search_id }) if member.nil?
-        raise Error::Braintree::MissingCustomer.new unless member.customer_id
-
-        search_query[:customer_id] = member.customer_id
-
-        # Get transactions for subscription
-      elsif search_by == "subscription"
-        transactions = ::BraintreeService::Subscription.get_subscription(@gateway, search_id).transactions
-      else
-        transactions = []
-      end
-    end
-    transactions ||= ::BraintreeService::Transaction.get_transactions(@gateway, search_query)
-
+    transactions = ::BraintreeService::Transaction.get_transactions(@gateway, construct_query)
     return render_with_total_items(transactions, { each_serializer: BraintreeService::TransactionSerializer, root: "transactions" })
   end
 
@@ -41,7 +15,34 @@ class Admin::Billing::TransactionsController < Admin::BillingController
   end
 
   private
-  def transactions_params
-    params.permit(:searchBy, :searchId, :startDate, :endDate)
+  def construct_query
+    Proc.new do |search|
+      search_customers(transaction_query_params[:search], search) unless transaction_query_params[:search].nil?
+      by_customer(transaction_query_params[:customer_id], search) unless transaction_query_params[:customer_id].nil?
+
+      if (transaction_query_params[:end_date] && transaction_query_params[:start_date])
+        search.created_at.between(transaction_query_params[:start_date], transaction_query_params[:end_date])
+      elsif transaction_query_params[:start_date]
+        search.created_at >= transaction_query_params[:start_date]
+      elsif transaction_query_params[:end_date]
+        search.created_at <= transaction_query_params[:end_date]
+      end
+
+      if transaction_query_params[:refund]
+        if transaction_query_params[:type].nil?
+          raise ::Error::UnprocessableEntity.new("Type required with refund search")
+        else 
+          search.refund.is(transaction_query_params[:refund])
+        end
+      end
+
+      search.type.is(transaction_query_params[:type]) unless transaction_query_params[:type].nil?
+
+      query_array(transaction_query_params[:transaction_status], search.status) unless transaction_query_params[:transaction_status].nil?
+    end
+  end
+
+  def transaction_query_params
+    params.permit(:start_date, :end_date, :refund, :type, :search, :customer_id, :transaction_status => [])
   end
 end

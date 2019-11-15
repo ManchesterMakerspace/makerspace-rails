@@ -1,5 +1,5 @@
 class InvoiceOptionsController < ApplicationController
-  include FastQuery
+  include FastQuery::MongoidQuery
 
   def index
     enabled_options = is_admin? ? InvoiceOption.all : InvoiceOption.where(disabled: false)

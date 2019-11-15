@@ -5,6 +5,7 @@ class BraintreeService::PlanSerializer < ActiveModel::Serializer
             :amount,
             :billing_frequency,
             :discounts
+            :type
 
 
   def amount
