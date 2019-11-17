@@ -69,8 +69,7 @@ class EarnedMembership
   end
 
   def set_member_expiration
-    # TODO change this to use member exp helper
-    if get_shortest_term_end_time && get_shortest_term_end_time > (self.member.expirationTime || 0)
+    if get_shortest_term_end_time && get_shortest_term_end_time > (self.member.get_expiration || 0)
       renew_member
     end
   end

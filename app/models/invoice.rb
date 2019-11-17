@@ -23,6 +23,8 @@ class Invoice
   field :discount_id, type: String
   field :refunded, type: Boolean, default: false
   field :refund_requested, type: Time
+  field :dispute_requested, type: Time
+  field :dispute_settled, type: Boolean
 
   ## Admin/Operation Information
   # How many operations to perform (eg, num of months renewed)
@@ -66,6 +68,16 @@ class Invoice
 
   def set_refund_requested
     self.refund_requested ||= Time.now
+    self.save!
+  end
+
+  def set_disputed
+    self.dispute_settled = true
+    self.save!
+  end
+
+  def set_dispute_requested
+    self.dispute_requested ||= Time.now
     self.save!
   end
 
@@ -116,6 +128,22 @@ class Invoice
     next_invoice.transaction_id = nil
     next_invoice.due_date = self.due_date + self.quantity.months
     next_invoice.save!
+  end
+
+  def send_cancellation_notification
+    slack_user = SlackUser.find_by(member_id: self.member_id)
+    type = self.resource_class == "member" ? "membership" : "rental"
+    message = "#{self.member.fullname}'s #{type} subscription has been canceled."
+    send_slack_message(message, ::Service::SlackConnector.safe_channel(slack_user.slack_id)) unless slack_user.nil?
+    send_slack_message(message, ::Service::SlackConnector.members_relations_channel)
+    BillingMailer.canceled_subscription(self.member.email, self.id.to_s).deliver_later
+  end
+
+  def self.process_cancellation(subscription_id)
+    invoice = Invoice.where(subscription_id: subscription_id).last
+    invoice.send_cancellation_notification unless invoice.nil?
+    # Destroy invoices for this subscription that are still outstanding
+    Invoice.where(subscription_id: subscription_id, settled_at: nil, transaction_id: nil).destroy
   end
 
   def self.resource(class_name, id)

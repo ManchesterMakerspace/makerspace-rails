@@ -2,10 +2,13 @@ require 'rails_helper'
 
 RSpec.describe BraintreeService::Notification, type: :model do
   let(:gateway) { double } # Create a fake gateway
-  let(:subscription) { build(:subscription) }
-  let(:dispute) { build(:dispute) }
-  let(:incoming_subscription_notification) { double(kind: ::Braintree::WebhookNotification::Kind::SubscriptionChargedSuccessfully, subscription: subscription, timestamp: Time.now) }
+  let(:member) { create(:member) }
+  let(:invoice) { create(:invoice, member: member) }
+  let(:subscription) { build(:subscription, id: invoice.generate_subscription_id) }
+  let(:transaction) { build(:transaction, id: "foo") }
+  let(:successful_charge_notification) { double(kind: ::Braintree::WebhookNotification::Kind::SubscriptionChargedSuccessfully, subscription: subscription, timestamp: Time.now) }
   let(:incoming_dispute_notification) { double(kind: ::Braintree::WebhookNotification::Kind::DisputeOpened, dispute: dispute, timestamp: Time.now) }
+  let(:dispute) { build(:dispute) }
 
   describe "Mongoid validations" do
     it { is_expected.to be_mongoid_document }
@@ -20,17 +23,37 @@ RSpec.describe BraintreeService::Notification, type: :model do
   end
 
   describe "#process" do
+    before(:each) do
+      allow(successful_charge_notification).to receive_message_chain(:subscription, :transactions, :last).and_return(transaction)
+    end
+
     it "reads notification and stores in db" do
       expect {
-        BraintreeService::Notification.process(incoming_subscription_notification).to change(BraintreeService::Notification, :count).by(1)
+        BraintreeService::Notification.process(successful_charge_notification).to change(BraintreeService::Notification, :count).by(1)
       }
     end
 
     it "processes subscription payment" do
-      serialized_subscription = BraintreeService::SubscriptionSerializer.new(incoming_subscription_notification.subscription)
-      expect(BraintreeService::Notification).to receive(:process_subscription).with(incoming_subscription_notification)
-      BraintreeService::Notification.process(incoming_subscription_notification)
+      # expect(BraintreeService::Notification).to receive(:process_subscription).with(successful_charge_notification)
+      expect(BraintreeService::Notification).to receive(:process_subscription_charge_success).with(invoice, transaction)
+      BraintreeService::Notification.process(successful_charge_notification)
     end
+
+    it "processes subscription payment failure" do
+      failure = double(kind: ::Braintree::WebhookNotification::Kind::SubscriptionChargedUnsuccessfully, subscription: subscription, timestamp: Time.now)
+      allow(failure).to receive_message_chain(:subscription, :transactions, :last).and_return(transaction)
+      # expect(BraintreeService::Notification).to receive(:process_subscription).with(failure)
+      expect(BraintreeService::Notification).to receive(:process_subscription_charge_failure).with(invoice)
+      BraintreeService::Notification.process(failure)
+    end
+
+    it "processes subscription cancellation" do
+      cancellation = double(kind: ::Braintree::WebhookNotification::Kind::SubscriptionCanceled, subscription: subscription, timestamp: Time.now)
+      # expect(BraintreeService::Notification).to receive(:process_subscription).with(cancellation)
+      expect(BraintreeService::Notification).to receive(:process_subscription_cancellation).with(invoice)
+      BraintreeService::Notification.process(cancellation)
+    end
+
 
     it "processes dispute" do
       expect(BraintreeService::Notification).to receive(:process_dispute).with(incoming_dispute_notification)
@@ -39,20 +62,17 @@ RSpec.describe BraintreeService::Notification, type: :model do
   end
 
   describe "#process subscription" do
-    let(:member) { create(:member) }
-    let(:invoice) { create(:invoice, member: member) }
-    let(:subscription) { build(:subscription, id: invoice.generate_subscription_id) }
-    let(:notification) { double(kind: ::Braintree::WebhookNotification::Kind::SubscriptionChargedSuccessfully, subscription: subscription) }
-    let(:transaction) { build(:transaction, id: "foo") }
+    before(:each) do
+      allow(successful_charge_notification).to receive_message_chain(:subscription, :transactions, :last).and_return(transaction)
+    end
 
     it "Settles invoice and renews resource" do
       create(:card, member: member)
       init_member_expiration = member.pretty_time
-      allow(notification).to receive_message_chain(:subscription, :transactions, :last).and_return(transaction)
       allow(transaction).to receive(:line_items).and_return([])
       expect(BraintreeService::Notification).to receive(:send_slack_message).with(/recurring payment/i)
 
-      BraintreeService::Notification.process_subscription(notification)
+      BraintreeService::Notification.process_subscription(successful_charge_notification)
       member.reload
       invoice.reload
       expect(invoice.settled).to be_truthy
@@ -61,32 +81,32 @@ RSpec.describe BraintreeService::Notification, type: :model do
     end
 
     it "Reports error if no subscription is found" do
-      allow(notification).to receive_message_chain(:subscription).and_return(nil)
+      allow(successful_charge_notification).to receive_message_chain(:subscription).and_return(nil)
       expect(BraintreeService::Notification).to receive(:send_slack_message).with(/malformed subscription/i)
-      BraintreeService::Notification.process_subscription(notification)
+      BraintreeService::Notification.process_subscription(successful_charge_notification)
     end
 
     it "reports error if no invoice is found" do
-      allow(notification).to receive_message_chain(:subscription, :transactions, :last).and_return(transaction)
+      allow(successful_charge_notification).to receive_message_chain(:subscription, :transactions, :last).and_return(transaction)
       allow(Invoice).to receive(:active_invoice_for_resource).and_return(nil)
       expect(BraintreeService::Notification).to receive(:send_slack_message).with(/no active invoice/i)
-      BraintreeService::Notification.process_subscription(notification)
+      BraintreeService::Notification.process_subscription(successful_charge_notification)
     end
 
     it "reports error if no resoruce is found" do
       allow(Invoice).to receive(:active_invoice_for_resource).and_return(invoice)
       allow(invoice).to receive(:submit_for_settlement).and_raise(Error::NotFound)
-      allow(notification).to receive_message_chain(:subscription, :transactions, :last).and_return(transaction)
+      allow(successful_charge_notification).to receive_message_chain(:subscription, :transactions, :last).and_return(transaction)
       expect(BraintreeService::Notification).to receive(:send_slack_message).with(/unknown resource/i)
-      BraintreeService::Notification.process_subscription(notification)
+      BraintreeService::Notification.process_subscription(successful_charge_notification)
     end
 
     it "reports error if unable to renew resource" do
       allow(Invoice).to receive(:active_invoice_for_resource).and_return(invoice)
       allow(invoice).to receive(:submit_for_settlement).and_raise(Error::UnprocessableEntity, "Some error")
-      allow(notification).to receive_message_chain(:subscription, :transactions, :last).and_return(transaction)
+      allow(successful_charge_notification).to receive_message_chain(:subscription, :transactions, :last).and_return(transaction)
       expect(BraintreeService::Notification).to receive(:send_slack_message).with(/some error/i)
-      BraintreeService::Notification.process_subscription(notification)
+      BraintreeService::Notification.process_subscription(successful_charge_notification)
     end
   end
 
@@ -96,7 +116,7 @@ RSpec.describe BraintreeService::Notification, type: :model do
     let(:notification) { double(kind: ::Braintree::WebhookNotification::Kind::DisputeOpened, dispute: dispute) }
     let(:transaction) { build(:transaction, id: "foo") }
 
-    it "Notifies and sets invoice to refund requested" do
+    it "Notifies and sets invoice to dispute requested" do
       invoice # Call to initialize
       allow(notification).to receive_message_chain(:dispute, :transaction).and_return(transaction)
       allow(transaction).to receive(:line_items).and_return([])
@@ -104,7 +124,7 @@ RSpec.describe BraintreeService::Notification, type: :model do
 
       BraintreeService::Notification.process_dispute(notification)
       invoice.reload
-      expect(invoice.refund_requested).to be_truthy
+      expect(invoice.dispute_requested).to be_truthy
     end
 
     it "Reports error if no transaction is found" do
