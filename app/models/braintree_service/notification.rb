@@ -104,7 +104,7 @@ No automated actions have been taken at this time.")
     send_slack_message("Your recurring payment for #{invoice.name} was unsuccessful. Please <#{Rails.configuration.action_mailer.default_url_options[:host]}/#{invoice.member.id}/settings|review your payment settings> or contact an administrator for assistance.", slack_member.slack_id) unless slack_member.nil?
     send_slack_message("Recurring payment from #{invoice.member.fullname} failed. #{member_notified}")
   end
-
+  
   def self.process_subscription_cancellation(invoice)
     Invoice.process_cancellation(invoice.subscription_id)
   end

@@ -53,8 +53,7 @@ RSpec.describe BraintreeService::Notification, type: :model do
       expect(BraintreeService::Notification).to receive(:process_subscription_cancellation).with(invoice)
       BraintreeService::Notification.process(cancellation)
     end
-
-
+    
     it "processes dispute" do
       expect(BraintreeService::Notification).to receive(:process_dispute).with(incoming_dispute_notification)
       BraintreeService::Notification.process(incoming_dispute_notification)
