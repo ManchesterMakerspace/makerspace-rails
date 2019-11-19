@@ -4,7 +4,7 @@ class Admin::RentalsController < AdminController
 
   def index
     rentals = search_params[:member_id] ? Rental.where(member_id: search_params[:member_id]) : Rental.all
-    return render_with_total_items(query_resource(rentals))
+    return render_with_total_items(query_resource(rentals), { each_serializer: RentalSerializer, root: "rentals" })
   end
 
   def create

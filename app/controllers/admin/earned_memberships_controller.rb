@@ -4,7 +4,7 @@ class Admin::EarnedMembershipsController < AdminController
 
   def index
     memberships = EarnedMembership.all
-    return render_with_total_items(query_resource(memberships))
+    return render_with_total_items(query_resource(memberships), { each_serializer: EarnedMembershipSerializer, root: "earned_memberships" })
   end
 
   def show

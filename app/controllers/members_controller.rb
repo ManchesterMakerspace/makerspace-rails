@@ -18,7 +18,7 @@ class MembersController < AuthenticationController
       end
       @members = query_resource(search)
 
-      return render_with_total_items(@members, root: :members)
+      return render_with_total_items(@members, { each_serializer: MemberSerializer, root: "members" })
     end
 
     def show
