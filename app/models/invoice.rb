@@ -41,7 +41,7 @@ class Invoice
   # ID of transaction used to settle invoice
   field :transaction_id, type: String
 
-  search_in :name, :description, member: %i[firstname lastname email]
+  search_in :name, member: %i[firstname lastname email]
 
   validates :resource_class, inclusion: { in: OPERATION_RESOURCES.keys }, allow_nil: false
   validates :operation, inclusion: { in: OPERATION_FUNCTIONS }, allow_nil: false

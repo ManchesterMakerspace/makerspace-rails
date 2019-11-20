@@ -5,7 +5,7 @@ class InvoicesController < AuthenticationController
   def index
 
     @queries = invoice_query_params.keys.map do |k|
-      key = k.to_sym 
+      key = k.to_sym
 
       if key === :settled
         query = query_to_bool(invoice_query_params[:settled],
@@ -16,19 +16,19 @@ class InvoicesController < AuthenticationController
           {"$and" => [
             { settled_at: nil },
             { transaction_id: nil }
-          ]}, 
+          ]},
         )
       elsif key === :past_due
         query = query_to_bool(invoice_query_params[:past_due],
           {"$or" => [
             { settled_at: nil },
             { transaction_id: nil }
-          ], :due_date.lt => Time.now }, 
+          ], :due_date.lt => Time.now },
           {"$or" => [
             {"$and" => [
               { :settled_at.ne => nil },
               { :transaction_id.ne => nil }
-            ]}, 
+            ]},
             :due_date.gte => Time.now] }
         )
       elsif bool_params.include?(key)
@@ -39,7 +39,7 @@ class InvoicesController < AuthenticationController
         query = query_existance_by_name(invoice_query_params[key], key)
       end
 
-      build_query(query) 
+      build_query(query)
     end
 
     invoices =  Invoice.where(member_id: current_member.id)
@@ -47,7 +47,7 @@ class InvoicesController < AuthenticationController
     invoices = @queries.length > 0 ? invoices.where(@queries.reduce(&:merge)) : invoices
     invoices = query_resource(invoices) # Query with the usual sorting, paging and searching
 
-    return render_with_total_items(invoices)
+    return render_with_total_items(invoices, { each_serializer: InvoiceSerializer, root: "invoices" })
   end
 
   def create

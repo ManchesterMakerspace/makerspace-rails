@@ -31,7 +31,7 @@ class Admin::Billing::TransactionsController < Admin::BillingController
       if transaction_query_params[:refund]
         if transaction_query_params[:type].nil?
           raise ::Error::UnprocessableEntity.new("Type required with refund search")
-        else 
+        else
           search.refund.is(transaction_query_params[:refund])
         end
       end

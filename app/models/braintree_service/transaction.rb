@@ -26,13 +26,7 @@ class BraintreeService::Transaction < Braintree::Transaction
   end
 
   def self.get_transactions(gateway, search_query = nil)
-    transactions = gateway.transaction.search do |search|
-      if search_query.kind_of? Hash
-        search.customer_id.is search_query[:customer_id] unless search_query[:customer_id].nil?
-        search.created_at >= search_query[:start_date] unless search_query[:start_date].nil?
-        search.created_at <= search_query[:end_date] unless search_query[:end_date].nil?
-      end
-    end
+    transactions = gateway.transaction.search { |search| search_query && search_query.call(search) }
     transactions.map do |transaction|
       normalize(gateway, transaction)
     end

@@ -13,7 +13,7 @@ class Rental
   field :subscription_id, type: String # Braintree relation
   field :contract_on_file, type: Boolean, default: false
 
-  search_in :number, :description, member: %i[firstname lastname email]
+  search_in :number, member: %i[firstname lastname email]
 
   before_destroy :delete_subscription
   validates :number, presence: true, uniqueness: true

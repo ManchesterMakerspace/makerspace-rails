@@ -5,7 +5,7 @@ class RentalsController < AuthenticationController
 
   def index
     @rentals = Rental.where(member_id: current_member.id)
-    return render_with_total_items(query_resource(@rentals))
+    return render_with_total_items(query_resource(@rentals), { each_serializer: RentalSerializer, root: "rentals" })
   end
 
   def show

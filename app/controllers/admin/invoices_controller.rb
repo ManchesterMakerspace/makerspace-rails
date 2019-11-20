@@ -4,7 +4,7 @@ class Admin::InvoicesController < AdminController
 
   def index
     @queries = invoice_query_params.keys.map do |k|
-      key = k.to_sym 
+      key = k.to_sym
 
       if key === :settled
         query = { "$or" => [
@@ -21,13 +21,13 @@ class Admin::InvoicesController < AdminController
         query = query_existance_by_name(invoice_query_params[key], key)
       end
 
-      build_query(query) 
+      build_query(query)
     end
 
     invoices = @queries.length > 0 ? Invoice.where(@queries.reduce(&:merge)) : Invoice.all
     invoices = query_resource(invoices) # Query with the usual sorting, paging and searching
 
-    return render_with_total_items(invoices)
+    return render_with_total_items(invoices, { each_serializer: InvoiceSerializer, root: "invoices" })
   end
 
   def create
@@ -69,15 +69,15 @@ class Admin::InvoicesController < AdminController
 
   private
   def invoice_params
-    params.require(:invoice).permit(:description, 
-                                    :items, 
-                                    :settled, 
-                                    :amount, 
+    params.require(:invoice).permit(:description,
+                                    :items,
+                                    :settled,
+                                    :amount,
                                     :quantity,
-                                    :payment_type, 
-                                    :resource_id, 
-                                    :resource_class, 
-                                    :due_date, 
+                                    :payment_type,
+                                    :resource_id,
+                                    :resource_class,
+                                    :due_date,
                                     :member_id)
   end
 

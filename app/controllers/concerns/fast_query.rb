@@ -38,21 +38,21 @@ module FastQuery
     def query_resource(current_query)
       # Only works for Mongoid collections
       return current_query unless current_query.class == Mongoid::Criteria
-  
+
       query_criteria = query_params()
 
       items_per_page = @@items_per_page
-  
+
       # Normalize params
       page_num = query_criteria[:page_num].to_i || 0
       start_index = items_per_page * page_num
       sort_by = query_criteria[:order_by].nil? || query_criteria[:order_by].empty? ? :lastname : query_criteria[:order_by].to_sym
       order = query_criteria[:order].nil? || query_criteria[:order].empty? ? :asc : query_criteria[:order].to_sym
-      
+
       # Search if needed. Raises error if search doesnt exist on class
       unless query_criteria[:search].nil? || query_criteria[:search].empty?
         q = current_query.klass.search(query_criteria[:search], current_query).sort_by(&sort_by)
-        q.reverse! if order != :asc 
+        q.reverse! if order != :asc
         q.slice(start_index, items_per_page)
       else
         current_query.order_by(sort_by => order).skip(start_index).limit(items_per_page)
@@ -66,7 +66,7 @@ module FastQuery
         { db_name => param }
       )
     end
-  
+
     def query_bool_by_name(param, db_name)
       query_to_bool(
         param,
@@ -74,7 +74,7 @@ module FastQuery
         { db_name => false }
       )
     end
-  
+
     def query_existance_by_name(param, db_name)
       query_to_bool(
         param,
@@ -86,7 +86,7 @@ module FastQuery
 
   module BraintreeQuery
     include FastQuery
-    
+
     private
     def query_array(param, search)
       query_is_array(
