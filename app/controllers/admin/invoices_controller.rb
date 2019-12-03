@@ -53,9 +53,8 @@ class Admin::InvoicesController < AdminController
   end
 
   def update
-    # TODO this should be handled by the model not controller
     if !!invoice_params[:settled] && !@invoice.settled
-      @invoice.settle_invoice
+      @invoice.submit_for_settlement(nil, nil, nil)
     else
       @invoice.update_attributes!(invoice_params)
     end
