@@ -3,7 +3,7 @@ ruby '2.6.1'
 
 gem 'rails', '~> 5.2.2'
 gem 'rack-cors'
-gem 'puma', '~> 3.0'
+gem 'puma', '~> 3.12'
 gem 'active_model_serializers'
 gem 'dotenv-rails'
 
