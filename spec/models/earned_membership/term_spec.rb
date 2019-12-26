@@ -37,13 +37,14 @@ RSpec.describe EarnedMembership::Term, type: :model do
     end
 
     it "will restart term to now if satisfied an old term" do
+      init_time = Time.now
       requirement = create(:requirement, target_count: 3, rollover_limit: 1)
-      term = create(:term, current_count: 5, requirement: requirement, start_date: Time.now - 6.months)
+      term = create(:term, current_count: 5, requirement: requirement, start_date: init_time - 6.months)
       term.send(:create_next_term)
       new_term = EarnedMembership::Term.last
       expect(new_term.current_count).to eq(1)
       expect(new_term.requirement_id).to eq(requirement.id)
-      expect(new_term.start_date.to_i).to eq(term.end_date.to_i)
+      expect(new_term.start_date).to be > init_time
     end
 
     it "dispatches satisfaction chain" do
