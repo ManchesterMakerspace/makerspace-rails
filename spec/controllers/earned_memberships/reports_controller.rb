@@ -80,6 +80,33 @@ RSpec.describe EarnedMemberships::ReportsController, type: :controller do
         parsed_response = JSON.parse(response.body)
         expect(parsed_response['report']['id']).to eq(EarnedMembership::Report.last.id.as_json)
       end
+
+      it "Renews member if they have fallen behind reporting" do 
+        init_time = Time.now
+        start_time = (Time.now - 5.months).to_i
+        expired_user = create(:member, expirationTime: start_time * 1000)
+        sign_in expired_user
+        report_params = {
+          earned_membership_id: membership.id,
+          report_requirements: report_requirements
+        }
+        post :create, params: { report: report_params }, format: :json
+        expired_user.reload
+        expect(expired_user.expirationTime).to be_greater_than(init_time + 1.month)
+      end
+
+      it "Renews member if submitted report within required timeline" do 
+        init_time = Time.now
+        curr_user = create(:member, expirationTime: init_time * 1000)
+        sign_in curr_user
+        report_params = {
+          earned_membership_id: membership.id,
+          report_requirements: report_requirements
+        }
+        post :create, params: { report: report_params }, format: :json
+        curr_user.reload
+        expect(curr_user.expirationTime).to be_greater_than(init_time + 1.month)
+      end
     end
   end
 

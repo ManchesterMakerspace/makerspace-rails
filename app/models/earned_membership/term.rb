@@ -18,7 +18,7 @@ class EarnedMembership::Term
   private
   def evaluate_for_satisfaction
     if !satisfied && current_count >= requirement.target_count
-      self.update(satisfied: true)
+      self.set(satisfied: true)
       create_next_term
       self.requirement.earned_membership.evaluate_for_renewal
     end
@@ -32,7 +32,7 @@ class EarnedMembership::Term
     start_date = (end_date + (self.requirement.term_length.to_i.months)) < Time.now ? Time.now : end_date
     # Create next requirement
     next_term = EarnedMembership::Term.new(
-      start_date: end_date,
+      start_date: start_date,
       current_count: start_count,
       requirement_id: self.requirement_id
     )
