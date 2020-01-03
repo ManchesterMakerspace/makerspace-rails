@@ -3,10 +3,15 @@ require 'rails_helper'
 RSpec.describe BraintreeService::Notification, type: :model do
   let(:gateway) { double } # Create a fake gateway
   let(:member) { create(:member) }
-  let(:invoice) { create(:invoice, member: member) }
+  let(:invoice) { create(:invoice, member: member, subscription_id: "some_id") }
   let(:subscription) { build(:subscription, id: invoice.generate_subscription_id) }
   let(:transaction) { build(:transaction, id: "foo") }
+
+  let(:pd_transaction) { build(:transaction, id: "bar") }
+
   let(:successful_charge_notification) { double(kind: ::Braintree::WebhookNotification::Kind::SubscriptionChargedSuccessfully, subscription: subscription, timestamp: Time.now) }
+  let(:failed_transaction_notification) { double(kind: ::Braintree::WebhookNotification::Kind::TransactionSettlementDeclined, transaction: pd_transaction, timestamp: Time.now) }
+  let(:success_transaction_notification) { double(kind: ::Braintree::WebhookNotification::Kind::TransactionSettled, transaction: transaction, timestamp: Time.now) }
   let(:incoming_dispute_notification) { double(kind: ::Braintree::WebhookNotification::Kind::DisputeOpened, dispute: dispute, timestamp: Time.now) }
   let(:dispute) { build(:dispute) }
 
@@ -137,6 +142,50 @@ RSpec.describe BraintreeService::Notification, type: :model do
       allow(Invoice).to receive(:active_invoice_for_resource).and_return(nil)
       expect(BraintreeService::Notification).to receive(:send_slack_message).with(/cannot find related invoice/i)
       BraintreeService::Notification.process_dispute(notification)
+    end
+  end
+
+  describe "#process_transaction" do 
+    before(:each) do
+      allow(failed_transaction_notification).to receive(:transaction).and_return(pd_transaction)
+    end
+
+    it "Unsettles invoice and un-renews resource on failure" do
+      new_member = create(:member)
+      settled_invoice = create(:invoice, member: new_member, transaction_id: pd_transaction.id) 
+      create(:card, member: new_member)
+      new_member.reload
+      init_member_expiration = new_member.pretty_time
+      allow(pd_transaction).to receive(:line_items).and_return([])
+      expect(BraintreeService::Notification).to receive(:send_slack_message).with(/failed with status/i)
+
+      BraintreeService::Notification.process_transaction(failed_transaction_notification)
+      new_member.reload
+      settled_invoice.reload
+      expect(settled_invoice.settled).to be_falsy
+      expect(new_member.pretty_time.to_i).to be < (init_member_expiration.to_i)
+      expect(settled_invoice.transaction_id).to eq(pd_transaction.id)
+    end
+
+    it "reports error if no invoice is found" do
+      allow(Invoice).to receive(:active_invoice_for_resource).and_return(nil)
+      expect(BraintreeService::Notification).to receive(:send_slack_message).with(/no invoice found/i)
+      BraintreeService::Notification.process_transaction(failed_transaction_notification)
+    end
+
+    it "Settles invoice on success if not already settled" do 
+      new_member = create(:member)
+      create(:card, member: new_member)
+      settled_invoice = create(:invoice, member: new_member, transaction_id: transaction.id) 
+      init_member_expiration = new_member.pretty_time
+      allow(transaction).to receive(:line_items).and_return([])
+      expect(BraintreeService::Notification).to receive(:send_slack_message).with(/one-time payment/i)
+
+      BraintreeService::Notification.process_transaction(success_transaction_notification)
+      new_member.reload
+      settled_invoice.reload
+      expect(settled_invoice.settled).to be_truthy
+      expect(new_member.pretty_time.to_i).to be > (init_member_expiration.to_i)
     end
   end
 end

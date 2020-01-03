@@ -21,6 +21,8 @@ class BraintreeService::Notification
       process_subscription(notification)
     elsif dispute_notifications.include?(notification.kind)
       process_dispute(notification)
+    elsif transaction_notifications.include?(notification.kind)
+      process_transaction(notification)
     end
   end
 
@@ -41,6 +43,11 @@ class BraintreeService::Notification
         reason: notification.dispute.reason,
         transaction_id: notification.dispute.transaction.id,
 
+      }
+    elsif transaction_notifications.include?(notification.kind)
+      {
+        transaction_id: notification.transaction.id,
+        status: notification.transaction.status
       }
     else
       notification
@@ -77,22 +84,9 @@ No automated actions have been taken at this time.")
   end
 
   def self.process_subscription_charge_success(invoice, last_transaction)
-    dupe_invoice = Invoice.find_by(transaction_id: last_transaction.id)
+    dupe_invoice = Invoice.find_by(transaction_id: last_transaction.id, :id.ne => invoice.id)
     if dupe_invoice.nil?
-      begin
-        # Don't need to pass gateway or payment method since payment has already been made
-        invoice.submit_for_settlement(nil, nil, last_transaction.id)
-      rescue ::Error::NotFound
-        send_slack_message("Unable to process recurring payment. Unknown resource for invoice ID #{invoice.id}.")
-        return
-      rescue ::Error::UnprocessableEntity => err
-        send_slack_message("Unable to process recurring payment for invoice ID #{invoice.id}. Error: #{err.message}")
-        return
-      end
-
-      send_slack_message("Recurring payment from #{invoice.member.fullname} successful. #{invoice.resource.get_renewal_slack_message}")
-
-      BillingMailer.receipt(invoice.member.email, last_transaction.id.as_json, invoice.id.as_json).deliver_later
+      self.process_success(invoice, last_transaction)
     else
       send_slack_message("Received duplicate notification regarding #{invoice.name} for #{invoice.member.fullname}. TID: #{last_transaction.id}", ::Service::SlackConnector.treasurer_channel)
     end
@@ -132,6 +126,31 @@ No automated actions have been taken at this time.")
     end
   end
 
+  def self.process_transaction(notification)
+    last_transaction = notification.transaction
+    processed_invoice = Invoice.find_by(transaction_id: last_transaction.id)
+    
+    if processed_invoice.nil?
+      send_slack_message("Unable to process transaction notification. No invoice found matching transaction ID #{last_transaction.id}.")
+      return 
+    end
+
+    slack_member = SlackUser.find_by(member_id: processed_invoice.member.id)
+
+    if notification.kind === Braintree::WebhookNotification::Kind::TransactionSettled
+      if (processed_invoice.settled)
+        send_slack_message("Pending transaction from #{processed_invoice.member.fullname} successful. No further action needed", ::Service::SlackConnector.treasurer_channel)
+      else 
+        self.process_success(processed_invoice, last_transaction)
+      end
+    elsif notification.kind === Braintree::WebhookNotification::Kind::TransactionSettlementDeclined
+      processed_invoice.reverse_settlement
+      member_notified = slack_member ? "The member has been notified via Slack as well." : "Unable to notify member via Slack. Reach out to member to resolve."
+      send_slack_message("Your payment for #{processed_invoice.name} was unsuccessful. Please <#{Rails.configuration.action_mailer.default_url_options[:host]}/#{processed_invoice.member.id}/settings|review your payment settings> or contact an administrator for assistance.", slack_member.slack_id) unless slack_member.nil?
+      send_slack_message("Recent transaction from #{processed_invoice.member.fullname} for #{processed_invoice.name} failed with status: #{last_transaction.status}. #{member_notified}")
+    end
+  end
+
   private
   def self.subscription_notifications
     [
@@ -151,5 +170,29 @@ No automated actions have been taken at this time.")
       ::Braintree::WebhookNotification::Kind::DisputeOpened,
       ::Braintree::WebhookNotification::Kind::DisputeWon,
     ]
+  end
+
+  def self.transaction_notifications
+    [
+      Braintree::WebhookNotification::Kind::TransactionSettlementDeclined,
+      Braintree::WebhookNotification::Kind::TransactionSettled
+    ]
+  end
+
+  def self.process_success(invoice, transaction)
+    begin
+      # Don't need to pass gateway or payment method since payment has already been made
+      invoice.submit_for_settlement(nil, nil, transaction.id)
+    rescue ::Error::NotFound
+      send_slack_message("Unable to process recurring payment. Unknown resource for invoice ID #{invoice.id}.")
+      return
+    rescue ::Error::UnprocessableEntity => err
+      send_slack_message("Unable to process recurring payment for invoice ID #{invoice.id}. Error: #{err.message}")
+      return
+    end
+
+    send_slack_message("#{invoice.subscription_id ? "Recurring" : "One-time"} payment from #{invoice.member.fullname} successful. #{invoice.resource.get_renewal_slack_message}")
+
+    BillingMailer.receipt(invoice.member.email, transaction.id.as_json, invoice.id.as_json).deliver_later
   end
 end
