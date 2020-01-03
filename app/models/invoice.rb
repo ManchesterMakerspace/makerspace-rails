@@ -63,7 +63,11 @@ class Invoice
   end
 
   def settled=(value)
-    self.settled_at ||= Time.now if !!value
+    if value
+      self.settled_at ||= Time.now
+    else 
+      self.settled_at = nil
+    end
   end
 
   def set_refund_requested
@@ -115,6 +119,10 @@ class Invoice
     transaction
   end
 
+  def reverse_settlement()
+    reverse_invoice_operation()
+  end
+
   def settle_invoice
     execute_invoice_operation
   end
@@ -164,7 +172,7 @@ class Invoice
   end
 
   def generate_subscription_id
-    "#{resource_class}_#{resource_id}_#{SecureRandom.hex[0...6]}"
+    "#{resource_class}_#{resource_id}_#{id}"
   end
 
   def self.active_invoice_for_resource(resource_id)
@@ -192,6 +200,17 @@ class Invoice
       self.settled = true
       self.save!
     end
+  end
+
+  def reverse_invoice_operation
+    raise ::Error::NotFound.new if resource.nil?
+    operation = OPERATION_FUNCTIONS.find{ |f| f == self.operation }
+    raise ::Error::UnprocessableEntity.new("Unable to reverse invoice. Invalid operation for invoice #{self.id}") if operation.nil?
+
+    raise ::Error::UnprocessableEntity.new("Unable to reverse invoice. Operation failed for invoice #{self.id}") unless resource.reverse_operation(operation, self)
+    resource.send_renewal_reversal_slack_message()
+    self.settled = false
+    self.save!
   end
 
   def one_active_invoice_per_resource

@@ -116,6 +116,22 @@ RSpec.describe Invoice, type: :model do
         expect(invoice.settled_at).to be < timestamp_after
       end
 
+      it "can be reset" do 
+        timestamp_before = Time.now
+        invoice = create(:invoice)
+        invoice.settled = true
+        timestamp_after = Time.now
+        expect(invoice.settled_at).to be > timestamp_before
+        expect(invoice.settled_at).to be < timestamp_after
+
+        invoice.settled = false
+        expect(invoice.settled_at).to be_nil
+        invoice.settled = true
+
+        invoice.settled = true # Set again and make sure it's not updated
+        expect(invoice.settled_at).to be > timestamp_after
+      end
+
       describe "submit for settlement" do
         let(:gateway) { double } # Create a fake gateway
         let(:transaction) { build(:transaction) }
