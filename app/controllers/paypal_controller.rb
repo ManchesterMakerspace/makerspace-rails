@@ -77,6 +77,11 @@ class PaypalController < ApplicationController
         msg = "Custom payment - "
         msg += (@payment.status == 'Completed') ? completed_message : failed_message
         @messages.push(msg)
+    when 'mp_signup'
+      send_slack_message(
+        "Paypal registration from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}",
+        ::Service::SlackConnector.treasurer_channel
+      )
     else
         @messages.push("Unknown transaction type (#{@payment.txn_type}) from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}.  Details: $#{@payment.amount} for #{@payment.product}. Status: #{@payment.status}")
     end

@@ -726,7 +726,7 @@
           "enum": [
             "Active",
             "Canceled",
-            "PastDue",
+            "Past Due",
             "Pending",
             "Expired"
           ]
@@ -797,18 +797,18 @@
         "status": {
           "type": "string",
           "enum": [
-            "Authorizing",
-            "Authorized",
-            "AuthorizationExpired",
-            "SubmittedForSettlement",
-            "Settling",
-            "SettlementPending",
-            "SettlementDeclined",
-            "Settled",
-            "Voided",
-            "ProcessorDeclined",
-            "GatewayRejected",
-            "Failed"
+            "authorization_expired",
+            "authorized",
+            "authorizing",
+            "settlement_pending",
+            "settlement_declined",
+            "failed",
+            "gateway_rejected",
+            "processor_declined",
+            "settled",
+            "settling",
+            "submmitted_for_settlement",
+            "voided"
           ]
         },
         "id": {

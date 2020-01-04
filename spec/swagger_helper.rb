@@ -373,7 +373,7 @@ RSpec.configure do |config|
               enum: [
                 "Active",
                 "Canceled",
-                "PastDue",
+                "Past Due",
                 "Pending",
                 "Expired"
               ]
@@ -402,7 +402,23 @@ RSpec.configure do |config|
             discountAmount: { type: :string },
             discounts: { type: :array, items: { '$ref' => '#/definitions/Discount' } },
             gatewayRejectionReason: { type: :string, 'x-nullable': true },
-            status: { type: :string },
+            status: { 
+              type: :string,
+              enum: [
+                "authorization_expired",
+                "authorized",
+                "authorizing",
+                "settlement_pending",
+                "settlement_declined",
+                "failed",
+                "gateway_rejected",
+                "processor_declined",
+                "settled",
+                "settling",
+                "submmitted_for_settlement",
+                "voided"
+              ]
+            },
             id: { type: :string },
             planId: { type: :string, 'x-nullable': true },
             recurring: { type: :boolean },
