@@ -435,6 +435,10 @@
         "earnedMembershipId": {
           "type": "string",
           "x-nullable": true
+        },
+        "notes": {
+          "type": "string",
+          "x-nullable": true
         }
       }
     },
@@ -709,6 +713,10 @@
         },
         "contractOnFile": {
           "type": "boolean"
+        },
+        "notes": {
+          "type": "string",
+          "x-nullable": true
         }
       }
     },

@@ -6,7 +6,8 @@ class RentalSerializer < ActiveModel::Serializer
              :member_name, 
              :member_id,
              :subscription_id,
-             :contract_on_file
+             :contract_on_file,
+             :notes,
 
   def member_name
     object.member && "#{object.member.fullname}"

@@ -12,6 +12,7 @@ class Rental
   field :expiration, type: Integer
   field :subscription_id, type: String # Braintree relation
   field :contract_on_file, type: Boolean, default: false
+  field :notes, type: String
 
   search_in :number, member: %i[firstname lastname email]
 
