@@ -17,6 +17,7 @@ class Billing::PaymentMethodsController < BillingController
       result = @gateway.customer.create(
         first_name: current_member.firstname,
         last_name: current_member.lastname,
+        email: current_member.email,
         payment_method_nonce: payment_method_nonce,
       )
       current_member.update_attributes!({ customer_id: result.customer.id }) if result.success?

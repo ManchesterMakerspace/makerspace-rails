@@ -191,7 +191,7 @@ No automated actions have been taken at this time.")
       return
     end
 
-    send_slack_message("#{invoice.subscription_id ? "Recurring" : "One-time"} payment from #{invoice.member.fullname} successful. #{invoice.resource.get_renewal_slack_message}")
+    send_slack_message("#{invoice.subscription_id ? "Recurring" : "One-time"} payment from #{invoice.member.fullname} successful. Processing invoice...")
 
     BillingMailer.receipt(invoice.member.email, transaction.id.as_json, invoice.id.as_json).deliver_later
   end
