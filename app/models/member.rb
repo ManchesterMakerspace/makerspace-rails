@@ -34,6 +34,8 @@ class Member
   field :customer_id, type: String # Braintree customer relation
   field :subscription_id, type: String # Braintree relation
 
+  field :notes, type: String
+
   search_in :email, :lastname
   search_in :firstname, index: :_firstname_keywords
   

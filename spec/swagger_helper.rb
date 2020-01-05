@@ -209,6 +209,7 @@ RSpec.configure do |config|
             subscription: { type: :boolean },
             customerId: { type: :string, 'x-nullable': true },
             earnedMembershipId: { type: :string, 'x-nullable': true },
+            notes: { type: :string, 'x-nullable': true },
           }
         },
 
@@ -359,7 +360,8 @@ RSpec.configure do |config|
             memberId: { type: :string },
             expiration: { type: :number },
             subscriptionId: { type: :string, 'x-nullable': true },
-            contractOnFile: { type: :boolean }
+            contractOnFile: { type: :boolean },
+            notes: { type: :string, 'x-nullable': true },
           }
         },
 

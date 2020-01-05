@@ -71,8 +71,7 @@ def tag_repo(git)
   minorRegex = /#(minor)\b/m;
   majorRegex = /#(major)\b/m;
 
-  tags = git.tags()
-  last_tag = (tags || []).pop()
+  last_tag = git.describe(last_commit.sha, { tags: true })
 
   if last_tag.nil?
     puts "No tags for repo. Setting initial tag 0.0.0"
