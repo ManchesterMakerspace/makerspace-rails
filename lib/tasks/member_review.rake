@@ -36,7 +36,7 @@ task :member_review => :environment do
 
       if no_rental_contract.length != 0
         notfiy_management("Members who need to sign Rental Agreements", no_rental_contract)
-        no_rental_contract_slack_users = SlackUser.in(member_id: no_member_contract.map(&:id))
+        no_rental_contract_slack_users = SlackUser.in(member_id: no_rental_contract.map(&:id))
         no_rental_contract_slack_users.each { |slack_user| notify_member(
           "Hi #{slack_user.real_name}, our records indicate we're missing a Rental Agreement from you.", slack_user) }
       end
