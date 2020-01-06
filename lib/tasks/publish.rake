@@ -45,7 +45,7 @@ end
 def swagger_changed?(git)
   swagger_changed = false
 
-  last_commit = git.log.last
+  last_commit = git.log.first
   diff = git.diff(last_commit.sha, "HEAD")
   swagg_diff = diff.find { |d| /^(swagger\/)/.match(d.path) }
 
@@ -71,7 +71,9 @@ def tag_repo(git)
   minorRegex = /#(minor)\b/m;
   majorRegex = /#(major)\b/m;
 
+  last_commit = git.log.first
   last_tag = git.describe(last_commit.sha, { tags: true })
+  last_tag = last_tag.split("-")[0] unless last_tag.nil?
 
   if last_tag.nil?
     puts "No tags for repo. Setting initial tag 0.0.0"
@@ -80,7 +82,6 @@ def tag_repo(git)
     return next_tag
   end
 
-  last_commit = git.log.first
   begin
     commit_tag = git.describe(last_commit.sha, { tags: true, exact_match: true })
   rescue Git::GitExecuteError
@@ -93,7 +94,7 @@ def tag_repo(git)
   end
 
   commit_message = last_commit.message
-  major, minor, patch = last_tag.name.match(/\d+.\d+.\d+/)[0].split(".")
+  major, minor, patch = last_tag.match(/\d+.\d+.\d+/)[0].split(".")
   if !!majorRegex.match(commit_message)
     next_tag = "#{major.to_i + 1}.0.0"
   elsif !!minorRegex.match(commit_message)
