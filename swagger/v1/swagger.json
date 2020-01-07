@@ -887,6 +887,51 @@
     }
   },
   "paths": {
+    "/admin/analytics": {
+      "get": {
+        "summary": "Lists analytic counts",
+        "tags": [
+          "Analytics"
+        ],
+        "operationId": "listAnalytics",
+        "responses": {
+          "200": {
+            "description": "analytics read",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "analytics": {
+                  "type": "object",
+                  "properties": {
+                    "totalMembers": {
+                      "type": "number"
+                    },
+                    "activeMembers": {
+                      "type": "number"
+                    },
+                    "newMemebrs": {
+                      "type": "number"
+                    },
+                    "subscribedMembers": {
+                      "type": "number"
+                    },
+                    "pastDueInvoices": {
+                      "type": "number"
+                    },
+                    "refundsPending": {
+                      "type": "number"
+                    }
+                  }
+                }
+              },
+              "required": [
+                "analytics"
+              ]
+            }
+          }
+        }
+      }
+    },
     "/admin/billing/plans": {
       "get": {
         "summary": "Gets a list of billing plans",

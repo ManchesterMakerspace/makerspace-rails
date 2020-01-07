@@ -1,13 +1,13 @@
 Rails.application.routes.draw do
 
-  unless Rails.env.production? 
+  unless Rails.env.production?
     mount Rswag::Ui::Engine => '/api-docs'
     mount Rswag::Api::Engine => '/api-docs'
   end
-  
+
   root to: "application#application"
   post '/ipnlistener', to: 'paypal#notify'
-  namespace :billing do 
+  namespace :billing do
     post '/braintree_listener', to: 'braintree#webhooks'
   end
 
@@ -20,7 +20,7 @@ Rails.application.routes.draw do
     resources :invoice_options, only: [:index]
 
     authenticate :member do
-      resources :members, only: [:show, :index, :update] do 
+      resources :members, only: [:show, :index, :update] do
         scope module: :members do
           resources :permissions, only: [:index]
         end
@@ -50,9 +50,11 @@ Rails.application.routes.draw do
         resources :rentals, only: [:create, :update, :destroy, :index]
         resources :members, only: [:create, :update]
         resources :permissions, only: [:index, :update]
+        resources :analytics, only: [:index]
+
         namespace :billing do
           resources :plans, only: [:index]
-          scope :plans do 
+          scope :plans do
             get '/discounts', to: "plans#discounts"
           end
           resources :subscriptions, only: [:index, :destroy]

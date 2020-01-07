@@ -5,11 +5,10 @@ task :member_review => :environment do
   # Only run this task on Sundays
   if should_run
     begin
-      sign_up_only = Member.in(expirationTime: ["", nil])
-      no_member_contract = Member.where(:expirationTime.gt => (Time.now.to_i * 1000), memberContractOnFile: false)
-      no_rental_contract = Member.find(Rental.where(:expiration.gt => (Time.now.to_i * 1000), contract_on_file: false).pluck(:member_id))
-      members_with_cards = Card.pluck(:member_id)
-      no_fobs = Member.not_in(id: members_with_cards)
+      sign_up_only = Service::Analytics::Members.query_no_expiration()
+      no_member_contract = Service::Analytics::Members.query_no_member_contract()
+      no_rental_contract = Member.find(Service::Analytics::Rentals.query_no_rental_contract().pluck(:member_id))
+      no_fobs = Service::Analytics::Members.query_no_fobs()
 
       def notfiy_management(title, members)
         base_url = ActionMailer::Base.default_url_options[:host]
@@ -25,22 +24,17 @@ task :member_review => :environment do
         ::Service::SlackConnector.send_slack_messages(messages, channel)
       end
 
+      def notify_missing_contracts(missing_contracts, contract_type)
+        notfiy_management("Members who need to sign #{contract_type}s", missing_contracts)
+        slack_users = SlackUser.in(member_id: missing_contracts.map(&:id))
+        slack_users.each { |slack_user| notify_member(
+          "Hi #{slack_user.real_name}, our records indicate we're missing a #{contract_type} from you.", slack_user) }
+      end
+
       notfiy_management("Members who registered but have not started membership", sign_up_only) if sign_up_only.length != 0
       notfiy_management("Members who still need keys to the space", no_fobs) if no_fobs.length != 0
-      if no_member_contract.length != 0
-        notfiy_management("Members who need to sign Member Contracts", no_member_contract)
-        no_member_contract_slack_users = SlackUser.in(member_id: no_member_contract.map(&:id))
-        no_member_contract_slack_users.each { |slack_user| notify_member(
-          "Hi #{slack_user.real_name}, our records indicate we're missing a Member Contract from you.", slack_user) }
-      end
-
-      if no_rental_contract.length != 0
-        notfiy_management("Members who need to sign Rental Agreements", no_rental_contract)
-        no_rental_contract_slack_users = SlackUser.in(member_id: no_rental_contract.map(&:id))
-        no_rental_contract_slack_users.each { |slack_user| notify_member(
-          "Hi #{slack_user.real_name}, our records indicate we're missing a Rental Agreement from you.", slack_user) }
-      end
-
+      notify_missing_contracts(no_member_contract, "Member Contract") if no_member_contract.length != 0
+      notify_missing_contracts(no_rental_contract, "Rental Agreement") if no_rental_contract.length != 0
 
     rescue => e
       error = "#{e.message}\n#{e.backtrace.inspect}"
