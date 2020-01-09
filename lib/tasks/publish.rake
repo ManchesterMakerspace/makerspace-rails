@@ -45,12 +45,10 @@ end
 def swagger_changed?(git)
   swagger_changed = false
 
-  last_commit = git.log.first
-  diff = git.diff(last_commit.sha, "HEAD")
-  swagg_diff = diff.find { |d| /^(swagger\/)/.match(d.path) }
+  swagg_diff = git.diff().find { |d| /^(swagger\/)/.match(d.path) }
 
   if swagg_diff
-    swagger_changed = swagg_diff.path
+    swagger_changed = true
   end
 
   return swagger_changed
