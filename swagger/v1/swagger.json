@@ -906,10 +906,7 @@
                     "totalMembers": {
                       "type": "number"
                     },
-                    "activeMembers": {
-                      "type": "number"
-                    },
-                    "newMemebrs": {
+                    "newMembers": {
                       "type": "number"
                     },
                     "subscribedMembers": {
