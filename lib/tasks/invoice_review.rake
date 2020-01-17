@@ -10,7 +10,7 @@ task :invoice_review => :environment do
       earned_this_week = Service::Analytics::Invoices.query_earned(1.week)
       past_due = Service::Analytics::Invoices.query_past_due()
       refunds_pending = Service::Analytics::Invoices.query_refunds_pending()
-      pending_settlement = Service::Analytics::Invoices.query_settemnent_pending()
+      pending_settlement = Service::Analytics::Invoices.query_settlement_pending()
 
       def build_member_url(member)
         base_url = ActionMailer::Base.default_url_options[:host]
