@@ -59,6 +59,7 @@ Rails.application.routes.draw do
           end
           resources :subscriptions, only: [:index, :destroy]
           resources :transactions, only: [:show, :index, :destroy]
+          resources :receipts, only: [:show], defaults: { format: :html }
         end
 
         resources :earned_memberships, only: [:index, :show, :create, :update] do

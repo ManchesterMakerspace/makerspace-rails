@@ -893,7 +893,7 @@
         "tags": [
           "Analytics"
         ],
-        "operationId": "listAnalytics",
+        "operationId": "adminListAnalytics",
         "responses": {
           "200": {
             "description": "analytics read",
@@ -1066,6 +1066,43 @@
           },
           "401": {
             "description": "User unauthenticated",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/billing/receipts/{id}": {
+      "get": {
+        "summary": "Get a receipt for an invoice",
+        "tags": [
+          "Receipts"
+        ],
+        "operationId": "adminGetReceipt",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Receipt found"
+          },
+          "302": {
+            "description": "User not authenticated"
+          },
+          "404": {
+            "description": "Transaction not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "User unauthorized",
             "schema": {
               "$ref": "#/definitions/error"
             }
