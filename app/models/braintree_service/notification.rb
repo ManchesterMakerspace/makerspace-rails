@@ -67,6 +67,9 @@ class BraintreeService::Notification
     if invoice.nil?
       send_slack_message("Unable to process subscription notification. No active invoice found for #{resource_class} ID #{resource_id}.")
       return
+    elsif !!invoice.locked
+      send_slack_message("Received notification for in-process invoice #{invoice.id}. Skipping processing", ::Service::SlackConnector.treasurer_channel)
+      return
     end
 
     if (notification.kind === ::Braintree::WebhookNotification::Kind::SubscriptionChargedSuccessfully)
@@ -180,6 +183,7 @@ No automated actions have been taken at this time.")
   end
 
   def self.process_success(invoice, transaction)
+    send_slack_message("#{invoice.subscription_id ? "Recurring" : "One-time"} payment from #{invoice.member.fullname} successful. Processing invoice...")
     begin
       # Don't need to pass gateway or payment method since payment has already been made
       invoice.submit_for_settlement(nil, nil, transaction.id)
@@ -190,8 +194,6 @@ No automated actions have been taken at this time.")
       send_slack_message("Unable to process recurring payment for invoice ID #{invoice.id}. Error: #{err.message}")
       return
     end
-
-    send_slack_message("#{invoice.subscription_id ? "Recurring" : "One-time"} payment from #{invoice.member.fullname} successful. Processing invoice...")
 
     BillingMailer.receipt(invoice.member.email, transaction.id.as_json, invoice.id.as_json).deliver_later
   end

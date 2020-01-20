@@ -102,7 +102,7 @@ class Member
 
   def update_permissions(permissions_collection)
     permissions_collection.each_pair do |name, enabled|
-      permission = permissions.detect { |p| p.name == name.to_sym}
+      permission = permissions.detect { |p| p.name.to_sym == name.to_sym}
       if permission
         permission.update!(enabled: enabled)
       else

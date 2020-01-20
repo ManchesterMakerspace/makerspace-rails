@@ -84,6 +84,20 @@ RSpec.describe BraintreeService::Notification, type: :model do
       expect(invoice.transaction_id).to eq(transaction.id)
     end
 
+    it "Skips settlement if invoice locked" do 
+      invoice.lock
+      create(:card, member: member)
+      init_member_expiration = member.pretty_time
+      allow(transaction).to receive(:line_items).and_return([])
+      expect(BraintreeService::Notification).to receive(:send_slack_message).with(/in-process invoice/i, "treasurer")
+
+      BraintreeService::Notification.process_subscription(successful_charge_notification)
+      member.reload
+      invoice.reload
+      expect(invoice.settled).to be_falsy
+      expect(member.pretty_time.to_i).to eq(init_member_expiration.to_i)
+    end
+
     it "Reports error if no subscription is found" do
       allow(successful_charge_notification).to receive_message_chain(:subscription).and_return(nil)
       expect(BraintreeService::Notification).to receive(:send_slack_message).with(/malformed subscription/i)
@@ -101,6 +115,7 @@ RSpec.describe BraintreeService::Notification, type: :model do
       allow(Invoice).to receive(:active_invoice_for_resource).and_return(invoice)
       allow(invoice).to receive(:submit_for_settlement).and_raise(Error::NotFound)
       allow(successful_charge_notification).to receive_message_chain(:subscription, :transactions, :first).and_return(transaction)
+      allow(BraintreeService::Notification).to receive(:send_slack_message).with(/processing invoice/i)
       expect(BraintreeService::Notification).to receive(:send_slack_message).with(/unknown resource/i)
       BraintreeService::Notification.process_subscription(successful_charge_notification)
     end
@@ -109,6 +124,7 @@ RSpec.describe BraintreeService::Notification, type: :model do
       allow(Invoice).to receive(:active_invoice_for_resource).and_return(invoice)
       allow(invoice).to receive(:submit_for_settlement).and_raise(Error::UnprocessableEntity, "Some error")
       allow(successful_charge_notification).to receive_message_chain(:subscription, :transactions, :first).and_return(transaction)
+      allow(BraintreeService::Notification).to receive(:send_slack_message).with(/processing invoice/i)
       expect(BraintreeService::Notification).to receive(:send_slack_message).with(/some error/i)
       BraintreeService::Notification.process_subscription(successful_charge_notification)
     end
