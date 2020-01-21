@@ -7,6 +7,8 @@ task :publish do
   rails_repo_url = "https://#{ENV["USERNAME"]}:#{ENV["PASSPHRASE"]}@github.com/ManchesterMakerspace/makerspace-rails.git"
   rails_git = clone_repo(rails_repo_url, rails_repo_dir)
 
+  changed_swagger = swagger_changed?(rails_git)
+  
   # Tag rails repo
   next_rails_tag = tag_repo(rails_git)
 
@@ -14,7 +16,6 @@ task :publish do
   if next_rails_tag
 
     # Get relative path to updated swagger
-    changed_swagger = swagger_changed?(rails_git)
     if changed_swagger
       swagger_path = File.expand_path(changed_swagger)
       puts "Swagger changed. Updating TS Client."
@@ -45,10 +46,14 @@ end
 def swagger_changed?(git)
   swagger_changed = false
 
-  swagg_diff = git.diff().find { |d| /^(swagger\/)/.match(d.path) }
+  last_commit = git.log.first
+  last_tag = git.describe(last_commit.sha, { tags: true })
+  last_tag = last_tag.split("-")[0] unless last_tag.nil?
+
+  swagg_diff = git.diff("HEAD", last_tag).find { |d| /^(swagger\/)/.match(d.path) }
 
   if swagg_diff
-    swagger_changed = true
+    swagger_changed = swagg_diff.path
   end
 
   return swagger_changed
