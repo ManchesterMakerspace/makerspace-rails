@@ -9,7 +9,7 @@ module InvoiceableResource
     def reverse_operation(operation, invoice)
       result = self.try(operation, invoice.quantity * -1)
     end
-    
+
     def renew=(num_months)
       now_in_ms = (Time.now.strftime('%s').to_i * 1000)
       current_expiration = self.get_expiration
@@ -41,7 +41,9 @@ module InvoiceableResource
 
     def get_renewal_reversal_slack_message
       time = self.pretty_time.strftime("%m/%d/%Y")
-      "Recent payment was unsuccessful. Any renewals or activations as a result of that payment have been reversed. Now expiring #{time}."
+      member = self.class.name == "Member" ? self : self.member
+      from = member.nil? ? "" : " from #{member.fullname}"
+      "Recent payment#{from} was unsuccessful. Any renewals or activations as a result of that payment have been reversed. Now expiring #{time}."
     end
 
     protected
