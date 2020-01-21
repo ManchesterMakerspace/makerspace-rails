@@ -72,6 +72,9 @@ class BraintreeService::Transaction < Braintree::Transaction
     })
 
     BillingMailer.receipt(invoice.member.email, transaction.id, invoice.id.to_s).deliver_later
+    if invoice.plan_id
+      send_slack_message("New subscription from #{invoice.member.fullname} received for #{invoice.name}")
+    end
     send_slack_message("Payment from #{invoice.member.fullname} of $#{invoice.amount} received for #{invoice.name}")
     normalize(gateway, transaction)
   end

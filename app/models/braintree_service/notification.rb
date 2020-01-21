@@ -64,11 +64,19 @@ class BraintreeService::Notification
     last_transaction = notification.subscription.transactions.first
 
     invoice = Invoice.active_invoice_for_resource(resource_id)
+    related_resource = Invoice::OPERATION_RESOURCES[resource_class].find(resource_id);
+
     if invoice.nil?
-      send_slack_message("Unable to process subscription notification. No active invoice found for #{resource_class} ID #{resource_id}.")
-      return
+      identifier = related_resource.nil? ? "#{resource_class} ID #{resource_id}" : related_resource.fullname
+      if !related_resource.nil? && related_resource.get_expiration.nil? && resource_class === "member"
+        send_slack_message("Received subscription notification for #{identifier}. No active invoice found; skipping processing. If member just signed up, no further action required.")
+        return
+      else
+        send_slack_message("Unable to process subscription notification. No active invoice found for #{identifier}.")
+        return
+      end
     elsif !!invoice.locked
-      send_slack_message("Received notification for in-process invoice #{invoice.id}. Skipping processing", ::Service::SlackConnector.treasurer_channel)
+      send_slack_message("Received subscription notification for in-process invoice #{invoice.id}. Skipping processing", ::Service::SlackConnector.treasurer_channel)
       return
     end
 
@@ -101,7 +109,7 @@ No automated actions have been taken at this time.")
     send_slack_message("Your recurring payment for #{invoice.name} was unsuccessful. Please <#{Rails.configuration.action_mailer.default_url_options[:host]}/#{invoice.member.id}/settings|review your payment settings> or contact an administrator for assistance.", slack_member.slack_id) unless slack_member.nil?
     send_slack_message("Recurring payment from #{invoice.member.fullname} failed with status: #{last_transaction.status}. #{member_notified}")
   end
-  
+
   def self.process_subscription_cancellation(invoice)
     Invoice.process_cancellation(invoice.subscription_id)
   end
@@ -132,10 +140,10 @@ No automated actions have been taken at this time.")
   def self.process_transaction(notification)
     last_transaction = notification.transaction
     processed_invoice = Invoice.find_by(transaction_id: last_transaction.id)
-    
+
     if processed_invoice.nil?
       send_slack_message("Unable to process transaction notification. No invoice found matching transaction ID #{last_transaction.id}.")
-      return 
+      return
     end
 
     slack_member = SlackUser.find_by(member_id: processed_invoice.member.id)
@@ -143,7 +151,7 @@ No automated actions have been taken at this time.")
     if notification.kind === Braintree::WebhookNotification::Kind::TransactionSettled
       if (processed_invoice.settled)
         send_slack_message("Pending transaction from #{processed_invoice.member.fullname} successful. No further action needed", ::Service::SlackConnector.treasurer_channel)
-      else 
+      else
         self.process_success(processed_invoice, last_transaction)
       end
     elsif notification.kind === Braintree::WebhookNotification::Kind::TransactionSettlementDeclined

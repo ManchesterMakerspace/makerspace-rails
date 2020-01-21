@@ -38,7 +38,7 @@ class Member
 
   search_in :email, :lastname
   search_in :firstname, index: :_firstname_keywords
-  
+
   validates :firstname, presence: true
   validates :lastname, presence: true
   validates :email, uniqueness: true

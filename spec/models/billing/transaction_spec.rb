@@ -102,7 +102,7 @@ RSpec.describe BraintreeService::Transaction, type: :model do
 
           allow(BillingMailer).to receive_message_chain(:receipt, :deliver_later)
           expect(BillingMailer).to receive(:receipt).with(invoice.member.email, fake_transaction.id, invoice.id)
-          expect(BraintreeService::Transaction).to receive(:send_slack_message).with(/received for #{invoice.name}/i)
+          expect(BraintreeService::Transaction).to receive(:send_slack_message).with(/received for #{invoice.name}/i).twice
           BraintreeService::Transaction.submit_invoice_for_settlement(gateway, invoice)
         end
 
