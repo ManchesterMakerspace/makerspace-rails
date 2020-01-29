@@ -17,7 +17,7 @@ gem 'mongoid_search'
 gem 'paypal-sdk-rest'
 gem "braintree"
 gem "slack-ruby-client"
-gem 'google-api-client', require: ['google/apis/drive_v3']
+gem 'google-api-client', require: ['google/apis/drive_v3', 'google/apis/sheets_v4']
 gem 'mini_magick'
 
 gem 'rest-client'
