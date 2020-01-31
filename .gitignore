@@ -18,7 +18,7 @@ dump/*.png
 config.json
 old-config.json
 
-/public
+/public/assets
 /public-coverage
 
 config/initializers/secret_token.rb
