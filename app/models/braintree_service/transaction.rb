@@ -37,6 +37,7 @@ class BraintreeService::Transaction < Braintree::Transaction
     normalize(gateway, transaction)
   end
 
+  # TODO: This should be split between subscription and transaction models
   def self.submit_invoice_for_settlement(gateway, invoice)
      if invoice.plan_id
       subscription = ::BraintreeService::Subscription.create(gateway, invoice)

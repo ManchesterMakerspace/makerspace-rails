@@ -33,11 +33,25 @@ class BraintreeService::Notification
 
   def self.get_details_for_notification(notification)
     if subscription_notifications.include?(notification.kind)
+      if notification.subscription.nil?
+        send_slack_message("Received malformed subscription notification. Do not know how to process.")
+        return
+      end
+
+      resource_class, resource_id = ::BraintreeService::Subscription.read_id(notification.subscription.id)
+      
       {
         subscription_id: notification.subscription.id,
         transaction_id: notification.subscription.transactions.first.id,
+        resource_class: resource_class,
+        resource_id: resource_id
       }
     elsif dispute_notifications.include?(notification.kind)
+      if notification.dispute.nil?
+        send_slack_message("Received malformed dispute notification. Do not know how to process.")
+        return
+      end
+
       {
         dispute_status: notification.dispute.status,
         reason: notification.dispute.reason,
@@ -45,21 +59,22 @@ class BraintreeService::Notification
 
       }
     elsif transaction_notifications.include?(notification.kind)
+      if notification.transaction.nil?
+        send_slack_message("Received malformed transaction notification. Do not know how to process.")
+        return
+      end
+
       {
         transaction_id: notification.transaction.id,
         status: notification.transaction.status
       }
     else
-      notification
+      send_slack_message("Received unknown notification #{notification.kind}")
+      nil
     end
   end
 
   def self.process_subscription(notification)
-    if notification.subscription.nil?
-      send_slack_message("Received malformed subscription notification. Do not know how to process.")
-      return
-    end
-
     resource_class, resource_id = ::BraintreeService::Subscription.read_id(notification.subscription.id)
     last_transaction = notification.subscription.transactions.first
 
@@ -68,8 +83,13 @@ class BraintreeService::Notification
 
     if invoice.nil?
       identifier = related_resource.nil? ? "#{resource_class} ID #{resource_id}" : related_resource.fullname
-      if !related_resource.nil? && related_resource.get_expiration.nil? && resource_class === "member"
-        send_slack_message("Received subscription notification for #{identifier}. No active invoice found; skipping processing. If member just signed up, no further action required.")
+
+      if !related_resource.nil? && 
+         (
+          prior_sub_notification_for_resource(related_resource).nil? || prior_sub_notification_for_resource(related_resource).empty?
+         )
+        
+        send_slack_message("Received subscription notification for #{identifier}. No active invoice found; skipping processing. If member just signed up, no further action required.", ::Service::SlackConnector.treasurer_channel)
         return
       else
         send_slack_message("Unable to process subscription notification. No active invoice found for #{identifier}.")
@@ -116,11 +136,6 @@ No automated actions have been taken at this time.")
 
   def self.process_dispute(notification)
     disputed_transaction = notification.dispute.transaction
-
-    if disputed_transaction.nil?
-      send_slack_message("Received malformed dispute notification. Do not know how to process.")
-      return
-    end
 
     associated_invoice = Invoice.find_by(transaction_id: disputed_transaction.id)
     if associated_invoice.nil?
@@ -204,5 +219,9 @@ No automated actions have been taken at this time.")
     end
 
     BillingMailer.receipt(invoice.member.email, transaction.id.as_json, invoice.id.as_json).deliver_later
+  end
+
+  def self.prior_sub_notification_for_resource(resource)
+    BraintreeService::Notification.where(payload: /#{resource.id}/)
   end
 end
