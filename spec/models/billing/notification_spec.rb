@@ -39,7 +39,6 @@ RSpec.describe BraintreeService::Notification, type: :model do
     end
 
     it "processes subscription payment" do
-      # expect(BraintreeService::Notification).to receive(:process_subscription).with(successful_charge_notification)
       expect(BraintreeService::Notification).to receive(:process_subscription_charge_success).with(invoice, transaction)
       BraintreeService::Notification.process(successful_charge_notification)
     end
@@ -47,14 +46,12 @@ RSpec.describe BraintreeService::Notification, type: :model do
     it "processes subscription payment failure" do
       failure = double(kind: ::Braintree::WebhookNotification::Kind::SubscriptionChargedUnsuccessfully, subscription: subscription, timestamp: Time.now)
       allow(failure).to receive_message_chain(:subscription, :transactions, :first).and_return(transaction)
-      # expect(BraintreeService::Notification).to receive(:process_subscription).with(failure)
       expect(BraintreeService::Notification).to receive(:process_subscription_charge_failure).with(invoice, transaction)
       BraintreeService::Notification.process(failure)
     end
 
     it "processes subscription cancellation" do
       cancellation = double(kind: ::Braintree::WebhookNotification::Kind::SubscriptionCanceled, subscription: subscription, timestamp: Time.now)
-      # expect(BraintreeService::Notification).to receive(:process_subscription).with(cancellation)
       expect(BraintreeService::Notification).to receive(:process_subscription_cancellation).with(invoice)
       BraintreeService::Notification.process(cancellation)
     end
@@ -101,13 +98,13 @@ RSpec.describe BraintreeService::Notification, type: :model do
     it "Reports error if no subscription is found" do
       allow(successful_charge_notification).to receive_message_chain(:subscription).and_return(nil)
       expect(BraintreeService::Notification).to receive(:send_slack_message).with(/malformed subscription/i)
-      BraintreeService::Notification.process_subscription(successful_charge_notification)
+      BraintreeService::Notification.get_details_for_notification(successful_charge_notification)
     end
 
     it "reports error if no invoice is found" do
       allow(successful_charge_notification).to receive_message_chain(:subscription, :transactions, :first).and_return(transaction)
       allow(Invoice).to receive(:active_invoice_for_resource).and_return(nil)
-      expect(BraintreeService::Notification).to receive(:send_slack_message).with(/no active invoice/i)
+      expect(BraintreeService::Notification).to receive(:send_slack_message).with(/no active invoice/i, "treasurer")
       BraintreeService::Notification.process_subscription(successful_charge_notification)
     end
 
@@ -148,9 +145,9 @@ RSpec.describe BraintreeService::Notification, type: :model do
     end
 
     it "Reports error if no transaction is found" do
-      allow(notification).to receive_message_chain(:dispute, :transaction).and_return(nil)
+      allow(notification).to receive(:dispute).and_return(nil)
       expect(BraintreeService::Notification).to receive(:send_slack_message).with(/malformed dispute/i)
-      BraintreeService::Notification.process_dispute(notification)
+      BraintreeService::Notification.get_details_for_notification(notification)
     end
 
     it "reports error if no invoice is found" do
