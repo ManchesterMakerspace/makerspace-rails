@@ -143,6 +143,9 @@ class Invoice
     next_invoice.refunded = false
     next_invoice.refund_requested = nil
     next_invoice.transaction_id = nil
+    next_invoice.locked = false
+    next_invoice.dispute_settled = false
+    next_invoice.dispute_requested = nil
     next_invoice.due_date = self.due_date + self.quantity.months
     next_invoice.save!
   end
