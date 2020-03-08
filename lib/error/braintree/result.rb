@@ -9,8 +9,8 @@ module Error::Braintree
         if result.transaction && result.transaction.status === Braintree::Transaction::Status::GatewayRejected
           error = ErrorStruct.new(:transaction_rejected, 400, "Gateway rejected transaction")
         else
-          if result.errors && result.errors.size
-            error = result.errors.map { |e| e.message }.join("\n")
+          if result.errors
+            error = result.errors.first
           elsif result.error
             error = result.error
           end
