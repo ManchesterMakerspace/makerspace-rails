@@ -3378,6 +3378,39 @@
         }
       }
     },
+    "/client_error_handler": {
+      "post": {
+        "summary": "Sends a slack message",
+        "tags": [
+          "ClientErrorHandler"
+        ],
+        "operationId": "message",
+        "parameters": [
+          {
+            "name": "messageDetails",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "notification": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Message sent"
+          }
+        }
+      }
+    },
     "/documents/{id}": {
       "get": {
         "summary": "Get a document",
