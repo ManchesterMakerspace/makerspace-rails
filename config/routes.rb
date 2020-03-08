@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   root to: "application#application"
   post '/ipnlistener', to: 'paypal#notify'
+
   namespace :billing do
     post '/braintree_listener', to: 'braintree#webhooks'
   end
@@ -18,6 +19,7 @@ Rails.application.routes.draw do
        post '/send_registration', to: 'registrations#new'
     end
     resources :invoice_options, only: [:index]
+    resources :client_error_handler, only: [:create]
 
     authenticate :member do
       resources :members, only: [:show, :index, :update] do
