@@ -74,6 +74,7 @@ class PaypalController < ApplicationController
         msg += (@payment.status == 'Completed') ? completed_message : failed_message
         @messages.push(msg)
     when 'send_money'
+    when 'web_accept'
         msg = "Custom payment - "
         msg += (@payment.status == 'Completed') ? completed_message : failed_message
         @messages.push(msg)
@@ -81,6 +82,29 @@ class PaypalController < ApplicationController
       send_slack_message(
         "Paypal registration from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}",
         ::Service::SlackConnector.treasurer_channel
+      )
+    when 'merch_pymt'
+      # Recurring payment
+      send_slack_message(
+        "Recurring payment received from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}. If received Braintree notification, no action necessary.",
+        ::Service::SlackConnector.treasurer_channel
+      )
+    when 'mp_cancel'
+      # Check both ID params to try and automate cancelation
+      maybe_sub_id = params[:recurring_payment_id] || params[:mp_id]
+      if maybe_sub_id
+        matching_invoice = Invoice.find_by(subscription_id: maybe_sub_id)
+        unless matching_invoice.nil?
+          Invoice.process_cancellation(maybe_sub_id)
+          return
+        end
+      end
+
+      # Couldn't parse or find subscription for this notfication
+      # Needs to be cancelled manually
+      send_slack_message(
+        "Subscription cancelation received from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}. 
+         Unable to determine related subscription. Payments have stopped but subscription must be cancelled manually to sync Makerspace software. <#{base_url}/billing|Search and cancel subscriptions>",
       )
     else
         @messages.push("Unknown transaction type (#{@payment.txn_type}) from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}.  Details: $#{@payment.amount} for #{@payment.product}. Status: #{@payment.status}")
