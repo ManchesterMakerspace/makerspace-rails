@@ -131,6 +131,10 @@ No automated actions have been taken at this time.")
   end
 
   def self.process_subscription_cancellation(invoice)
+    if !!invoice.locked
+      send_slack_message("Received subscription cancelation notification for in-process invoice #{invoice.id}. Skipping processing", ::Service::SlackConnector.treasurer_channel)
+      return
+    end
     Invoice.process_cancellation(invoice.subscription_id)
   end
 

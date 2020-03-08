@@ -19,6 +19,8 @@ class BraintreeService::Subscription < Braintree::Subscription
   end
 
   def self.cancel(gateway, id)
+    invoice = Invoice.find_by(subscription_id: id, settled_at: nil, transaction_id: nil) # Find the active invoice for this subscription
+    invoice.lock() unless invoice.nil?
     result = gateway.subscription.cancel(id)
     raise Error::Braintree::Result.new(result) unless result.success?
     Invoice.process_cancellation(id)
