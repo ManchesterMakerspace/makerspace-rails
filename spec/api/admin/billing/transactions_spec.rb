@@ -16,7 +16,6 @@ describe 'Billing::Transactions API', type: :request do
       operationId "adminListTransaction"
       parameter name: :startDate, in: :query, type: :string, required: false
       parameter name: :endDate, in: :query, type: :string, required: false
-      parameter name: :search, in: :query, type: :string, required: false
       parameter name: :refund, in: :query, type: :boolean, required: false
       parameter name: :type, in: :query, type: :string, required: false
       parameter name: :transactionStatus, in: :query, type: :array, items: { type: :string }, required: false

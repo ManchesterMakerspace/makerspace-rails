@@ -17,8 +17,18 @@ class Admin::Billing::SubscriptionsController < Admin::BillingController
   private 
   def construct_query
     Proc.new do |search|
-      search_customers(subscription_query_params[:search], search) unless subscription_query_params[:search].nil?
-      by_customer(subscription_query_params[:customer_id], search) unless subscription_query_params[:customer_id].nil?
+      unless subscription_query_params[:search].nil?
+        members = Member.search(subscription_query_params[:search])
+        sub_ids = members.map(&:subscription_id).reject { |m| m.nil? }
+        search.ids.in(sub_ids) unless sub_ids.empty?
+      end
+
+      unless subscription_query_params[:customer_id].nil?
+        member = Member.find_by(customer_id: subscription_query_params[:customer_id])
+        if member && member.subscription_id
+          search.id.is(member.subscription_id)
+        end
+      end
 
       if (subscription_query_params[:end_date] && subscription_query_params[:start_date])
         search.created_at.between(subscription_query_params[:start_date], subscription_query_params[:end_date])

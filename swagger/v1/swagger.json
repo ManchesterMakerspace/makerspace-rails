@@ -1249,12 +1249,6 @@
             "required": false
           },
           {
-            "name": "search",
-            "in": "query",
-            "type": "string",
-            "required": false
-          },
-          {
             "name": "refund",
             "in": "query",
             "type": "boolean",

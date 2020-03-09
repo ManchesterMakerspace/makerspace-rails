@@ -95,14 +95,5 @@ module FastQuery
         search.is(param)
       )
     end
-
-    def search_customers(search_string, search)
-      members = Member.search(search_string)
-      search.customer_id.in(members.map(&:customer_id))
-    end
-
-    def by_customer(customer_id, search)
-      search.customer_id.is(customer_id)
-    end
   end
 end

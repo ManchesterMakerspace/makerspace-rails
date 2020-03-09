@@ -160,12 +160,18 @@ class Invoice
   end
 
   def self.process_cancellation(subscription_id)
-    invoice = Invoice.find_by(subscription_id: subscription_id, settled_at: nil, transaction_id: nil) # Find a related invoice in order to get notification details
+    invoice = find_invoice_by_subscription_id(subscription_id)
     unless invoice.nil? || invoice.locked # Only send cancellation notifications if the invoice exists and isn't already being cancelled
       # Destroy invoices for this subscription that are still outstanding
       Invoice.where(subscription_id: subscription_id, settled_at: nil, transaction_id: nil).destroy
       invoice.send_cancellation_notification # Can send notification after destorying because there is still `invoice` in memory
     end
+  end
+
+  def self.find_invoice_by_subscription_id(subscription_id)
+    invoice = Invoice.find_by(subscription_id: subscription_id, settled_at: nil, transaction_id: nil) # Find a related invoice in order to get notification details
+    invoice = Invoice.where(subscription_id: subscription_id).last if invoice.nil?
+    invoice
   end
 
   def self.resource(class_name, id)
