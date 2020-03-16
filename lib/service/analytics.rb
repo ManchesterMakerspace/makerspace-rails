@@ -62,7 +62,7 @@ module Service
       end
 
       def self.query_past_due
-        Invoice.where(:due_date.lt => Time.now, settled_at: nil, transaction_id: nil)
+        Invoice.where(:due_date.lt => Time.now, settled_at: nil, transaction_id: nil, :member_id.in => ::Service::Analytics::Members.query_total_members.pluck(:id))
       end
 
       def self.query_refunds_pending
