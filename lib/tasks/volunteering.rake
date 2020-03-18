@@ -30,6 +30,7 @@ namespace :volunteering do
         
         active_for_month.map do |member_id| 
           volunteer_spreadsheet.update_requirement_count(member_id) 
+          sleep(1)
         end
       ::Service::SlackConnector.send_slack_message("Volunteering requirements updated.", ::Service::SlackConnector.logs_channel)
     rescue => e
@@ -38,20 +39,21 @@ namespace :volunteering do
         raise e
       end
     end
+  end
 
-    desc "This task updates member eligibility for volunteer dates every day"
-    task :evaluate_eligibility => :environment do 
-      begin
-        volunteer_spreadsheet = ::Service::GoogleDrive::Volunteering.new
-        Member.pluck(:id).map do |member_id|
-          volunteer_spreadsheet.update_eligibility(member_id) 
-        end
-      ::Service::SlackConnector.send_slack_message("Volunteering eligibility updated.", ::Service::SlackConnector.logs_channel)
-      rescue => e
-        error = "#{e.message}\n#{e.backtrace.inspect}"
-        ::Service::SlackConnector.send_slack_message(error, ::Service::SlackConnector.logs_channel)
-        raise e
+  desc "This task updates member eligibility for volunteer dates every day"
+  task :evaluate_eligibility => :environment do 
+    begin
+      volunteer_spreadsheet = ::Service::GoogleDrive::Volunteering.new
+      Member.pluck(:id).map do |member_id|
+        volunteer_spreadsheet.update_eligibility(member_id) 
+        sleep(1)
       end
+    ::Service::SlackConnector.send_slack_message("Volunteering eligibility updated.", ::Service::SlackConnector.logs_channel)
+    rescue => e
+      error = "#{e.message}\n#{e.backtrace.inspect}"
+      ::Service::SlackConnector.send_slack_message(error, ::Service::SlackConnector.logs_channel)
+      raise e
     end
   end
 end

@@ -92,7 +92,9 @@ module Service
           member.id, 
           member.fullname, 
           member.startDate.strftime("%m-%d-%Y"), 
-          *(Array.new(first_possible_date_index - DATES_START_INDEX) { |i| "x" })
+          nil,
+          '=COUNTIFS($F245:$Z245, "?*", $F245:$Z245, "<>-", $F245:$Z245, "<>N/A")',
+          *(Array.new(first_possible_date_index - DATES_START_INDEX) { |i| "N/A" })
         ]
 
         values_range = ::Google::Apis::SheetsV4::ValueRange.new(values: [new_row])
@@ -130,13 +132,14 @@ module Service
 
       # Search ID column and return full member row
       def get_row_by_member_id(member_id)
+        member_id_str = member_id_as_str(member_id)
         @member_ids ||= @drive.get_spreadsheet_values(ENV["VOLUNTEER_SPREADSHEET"], get_column(ID_INDEX)).values.flatten
-        member_index = @member_ids.find_index { |id| id == member_id }
+        member_index = @member_ids.find_index { |id| id == member_id_str }
         if member_index.nil? # If member doesnt exist for some reason, add them to the bottom and search again
-          add_to_spreadsheet(member_id)
-          @member_ids.push(member_id)
+          add_to_spreadsheet(member_id_str)
+          @member_ids.push(member_id_str)
           sleep 1
-          return get_row_by_member_id(member_id)
+          return get_row_by_member_id(member_id_str)
         end
 
         return {
@@ -144,6 +147,10 @@ module Service
           row_range: get_row(member_index),
           row: @drive.get_spreadsheet_values(ENV["VOLUNTEER_SPREADSHEET"], get_row(member_index)).values.flatten
         }
+      end
+
+      def member_id_as_str(member_id)
+        member_id.kind_of?(String) ? member_id : member_id.as_json
       end
 
       def get_headers
