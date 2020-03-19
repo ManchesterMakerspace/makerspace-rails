@@ -126,8 +126,9 @@ No automated actions have been taken at this time.")
   def self.process_subscription_charge_failure(invoice, last_transaction)
     slack_member = SlackUser.find_by(member_id: invoice.member.id)
     member_notified = slack_member ? "The member has been notified via Slack as well." : "Unable to notify member via Slack. Reach out to member to resolve."
-    send_slack_message("Your recurring payment for #{invoice.name} was unsuccessful. Please <#{Rails.configuration.action_mailer.default_url_options[:host]}/#{invoice.member.id}/settings|review your payment settings> or contact an administrator for assistance.", slack_member.slack_id) unless slack_member.nil?
+    send_slack_message("Your recurring payment for #{invoice.name} was unsuccessful. Error status: #{last_transaction.status}. Please <#{Rails.configuration.action_mailer.default_url_options[:host]}/#{invoice.member.id}/settings|review your payment settings> or contact an administrator for assistance.", slack_member.slack_id) unless slack_member.nil?
     send_slack_message("Recurring payment from #{invoice.member.fullname} failed with status: #{last_transaction.status}. #{member_notified}")
+    BillingMailer.failed_payment(processed_invoice.member.email, processed_invoice.id, last_transaction.status)
   end
 
   def self.process_subscription_cancellation(invoice)
@@ -151,8 +152,14 @@ No automated actions have been taken at this time.")
     Braintree transaction ID #{disputed_transaction.id} |  <#{Rails.configuration.action_mailer.default_url_options[:host]}/billing/transactions/#{associated_invoice.transaction_id}|Disputed Invoice>")
     if notification.kind === ::Braintree::WebhookNotification::Kind::DisputeOpened
       associated_invoice.set_dispute_requested
+      BillingMailer.dispute_requested(associated_invoice.member.email, associated_invoice.id)
     else
       associated_invoice.set_disputed
+      if notification.kind === ::Braintree::WebhookNotification::Kind::DisputeWon 
+        BillingMailer.dispute_won(associated_invoice.member.email, associated_invoice.id)
+      elsif notification.kind === ::Braintree::WebhookNotification::Kind::DisputeLost
+        BillingMailer.dispute_lost(associated_invoice.member.email, associated_invoice.id)
+      end
     end
   end
 
@@ -176,8 +183,9 @@ No automated actions have been taken at this time.")
     elsif notification.kind === Braintree::WebhookNotification::Kind::TransactionSettlementDeclined
       processed_invoice.reverse_settlement
       member_notified = slack_member ? "The member has been notified via Slack as well." : "Unable to notify member via Slack. Reach out to member to resolve."
-      send_slack_message("Your payment for #{processed_invoice.name} was unsuccessful. Please <#{Rails.configuration.action_mailer.default_url_options[:host]}/#{processed_invoice.member.id}/settings|review your payment settings> or contact an administrator for assistance.", slack_member.slack_id) unless slack_member.nil?
+      send_slack_message("Your payment for #{processed_invoice.name} was unsuccessful. Error status: #{last_transaction.status}. Please <#{Rails.configuration.action_mailer.default_url_options[:host]}/#{processed_invoice.member.id}/settings|review your payment settings> or contact an administrator for assistance.", slack_member.slack_id) unless slack_member.nil?
       send_slack_message("Recent transaction from #{processed_invoice.member.fullname} for #{processed_invoice.name} failed with status: #{last_transaction.status}. #{member_notified}")
+      BillingMailer.failed_payment(processed_invoice.member.email, processed_invoice.id, last_transaction.status)
     end
   end
 

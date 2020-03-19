@@ -28,7 +28,8 @@ class PaypalController < ApplicationController
       payer_email: params["payer_email"],
       address: "Not Provided",
       txn_id: params["txn_id"],
-      txn_type: params["txn_type"]
+      txn_type: params["txn_type"],
+      plan_id: params[:recurring_payment_id] || params[:mp_id]
     )
 
     if(@payment.product == '')
@@ -48,6 +49,11 @@ class PaypalController < ApplicationController
   end
 
   def configure_messages
+    # Check both ID params to try and automate cancelation
+    if @payment.plan_id
+      matching_invoice = Invoice.find_by(subscription_id: @payment.plan_id)
+    end
+
     @messages = [];
     base_url = ActionMailer::Base.default_url_options[:host]
     if @payment.member
@@ -83,21 +89,16 @@ class PaypalController < ApplicationController
         "Paypal registration from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}",
         ::Service::SlackConnector.treasurer_channel
       )
-    when 'merch_pymt'
+    when 'merch_pmt'
       # Recurring payment
       send_slack_message(
         "Recurring payment received from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}. If received Braintree notification, no action necessary.",
         ::Service::SlackConnector.treasurer_channel
       )
     when 'mp_cancel'
-      # Check both ID params to try and automate cancelation
-      maybe_sub_id = params[:recurring_payment_id] || params[:mp_id]
-      if maybe_sub_id
-        matching_invoice = Invoice.find_by(subscription_id: maybe_sub_id)
-        unless matching_invoice.nil?
-          Invoice.process_cancellation(maybe_sub_id)
-          return
-        end
+      unless matching_invoice.nil?
+        Invoice.process_cancellation(@payment.plan_id)
+        return
       end
 
       # Couldn't parse or find subscription for this notfication
@@ -106,6 +107,21 @@ class PaypalController < ApplicationController
         "Subscription cancelation received from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}. 
          Unable to determine related subscription. Payments have stopped but subscription must be cancelled manually to sync Makerspace software. <#{base_url}/billing|Search and cancel subscriptions>",
       )
+    when 'recurring_payment_suspended_due_to_max_failed_payment'
+      send_slack_message(
+        "Subscription for #{@payment.firstname} #{@payment.lastname} reached max failed attempts and has been suspended. Subscription can be retried in the Braintree control panel, or member may select a new membership/rental option"
+      )
+
+      if matching_invoice
+        slack_user = SlackUser.find_by(member_id: matching_invoice.member.id)
+        unless slack_user.nil?
+          send_slack_message(
+            "Subscription for #{matching_invoice.name} reached max failed attempts and has been suspended. Please review your payment options and contact an administrator to enable.", 
+            ::Service::SlackConnector.safe_channel(slack_user.slack_id)
+          ) 
+          Invoice.process_cancellation(matching_invoice.plan_id, true)
+        end
+      end
     else
         @messages.push("Unknown transaction type (#{@payment.txn_type}) from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}.  Details: $#{@payment.amount} for #{@payment.product}. Status: #{@payment.status}")
     end

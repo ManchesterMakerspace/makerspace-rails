@@ -1,0 +1,18 @@
+<% type = @invoice.resource_class %>
+<% isMembership = type == "member" %>
+<% friendly_type = isMembership ? 'membership' : 'rental' %>
+
+<div style="width: 100%">
+  <h3> Disputed <%= friendly_type %> payment to Manchester Makerspace</h3>
+  <div>
+    <p>
+      We have received your request to dispute the recent payment for <%= @invoice.name %>. Our payment processor, Braintree will review this dispute
+      and make a determination. Please await further details as they complete their investigation.
+    </p>
+    <br/>
+
+    <p>Lastly, if you have any other questions, please reply to this email or email <a href="mailto:contact@manchestermakerspace.org?subject=Re:<%=message.subject%>" target="_top">contact@manchestermakerspace.org</a>. Hope to see you at the space soon!</p>
+    <br>
+    <p>--The Manchester Makerspace Team</p>
+  </div>
+</div>
