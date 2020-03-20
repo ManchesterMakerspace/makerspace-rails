@@ -1,5 +1,4 @@
-<% type = @invoice.resource_class %>
-<% isMembership = type == "member" %>
+<% isMembership = @type == "member" %>
 <% friendly_type = isMembership ? 'membership' : 'rental' %>
 
 <div style="width: 100%">
@@ -12,10 +11,8 @@
         Your key fob will continue working until the end of your current membership term.
       <% end %>
     <p>
-    <br/>
     <p>To sign up again or review previous transactions, <%= link_to 'view your account', @url, id: "profile-link"%></p>
-    <br/>
-    <p>Lastly, if you have any other questions, please reply to this email or email <a href="mailto:contact@manchestermakerspace.org?subject=Re:<%=message.subject%>" target="_top">contact@manchestermakerspace.org</a>. Hope to see you at the space soon!</p>
+    <p>Lastly, if you have any other questions, please reply to this email or email <a href="mailto:contact@manchestermakerspace.org?subject=Re:<%=message.subject%>" target="_top">contact@manchestermakerspace.org</a>.</p>
     <br>
     <p>--The Manchester Makerspace Team</p>
   </div>
