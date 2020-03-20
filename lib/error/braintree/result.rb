@@ -8,12 +8,10 @@ module Error::Braintree
       unless result.nil?
         if result.transaction && result.transaction.status === Braintree::Transaction::Status::GatewayRejected
           error = ErrorStruct.new(:transaction_rejected, 400, "Gateway rejected transaction")
+        elsif result.verification
+          error = ErrorStruct.new(:validation_failed, 400, result.verification.status)
         else
-          if result.errors
-            error = result.errors.first
-          elsif result.error
-            error = result.error
-          end
+          error = ErrorStruct.new(:braintree_error, 400, result.message)
         end
       end
       super(error.attribute, error.code, error.message)

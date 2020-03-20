@@ -83,7 +83,7 @@
       </td>
       <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
         <% description = @payment_method.try(:card_type) ? "#{@payment_method.card_type} ending in #{@payment_method.last_4}" : "Paypal account #{@payment_method.payer_email}" %>
-        <img style="float: left; marginRight: 2em;" src=<%=@payment_method.image_url%> />
+        <img style="float: left; margin-right: 1em;" src=<%=@payment_method.image_url%> />
         <span style="line-height: 2.5em;"><%=description%></span>
       </td>
     </tr>

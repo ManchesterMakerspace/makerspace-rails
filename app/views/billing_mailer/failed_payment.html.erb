@@ -12,13 +12,11 @@
         Your key fob will continue working until the end of your current membership term.
       <% end %>
     <p>
-    <br/>
     <p>Please view your payment settings or contact an administrator for assistance, <%= link_to 'view your account', @url + "/settings", id: "profile-link"%></p>
       <% unless @invoice.plan_id.nil? %>
         The initial recurring subscription payment will automatically retry after 2 days and then 5 days. Failures after this timeframe will need administrator support to reactivate.
       <% end %>
-    <br/>
-    <p>Lastly, if you have any other questions, please reply to this email or email <a href="mailto:contact@manchestermakerspace.org?subject=Re:<%=message.subject%>" target="_top">contact@manchestermakerspace.org</a>. Hope to see you at the space soon!</p>
+    <p>Lastly, if you have any other questions, please reply to this email or email <a href="mailto:contact@manchestermakerspace.org?subject=Re:<%=message.subject%>" target="_top">contact@manchestermakerspace.org</a>.</p>
     <br>
     <p>--The Manchester Makerspace Team</p>
   </div>
