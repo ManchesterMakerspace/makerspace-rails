@@ -54,6 +54,6 @@ class Admin::MembersController < AdminController
     @member.reset_password_token = hashed_token
     @member.reset_password_sent_at = Time.now.utc
     @member.save!
-    MemberMailer.welcome_email_manual_register(@member, raw_token).deliver_now
+    MemberMailer.welcome_email_manual_register(@member.email, raw_token).deliver_now
   end
 end

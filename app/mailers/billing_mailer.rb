@@ -49,6 +49,32 @@ class BillingMailer < ApplicationMailer
     send_mail(email, "Canceled Manchester Makerspace Subscription")
   end
 
+  def failed_payment(email, invoice_id, error_status)
+    @error_status = error_status
+    @member = Member.find_by(email: email)
+    @invoice = Invoice.find(invoice_id)
+    get_profile_url()
+    send_mail(email, "Failed payment to Manchester Makerspace")
+  end
+
+  def dispute_requested(email, invoice_id)
+    @member = Member.find_by(email: email)
+    @invoice = Invoice.find(invoice_id)
+    send_mail(email, "Dispute opened for payment to Manchester Makerspace")
+  end
+
+  def dispute_won(email, invoice_id)
+    @member = Member.find_by(email: email)
+    @invoice = Invoice.find(invoice_id)
+    send_mail(email, "Dispute won for payment to Manchester Makerspace")
+  end
+
+  def dispute_lost(email, invoice_id)
+    @member = Member.find_by(email: email)
+    @invoice = Invoice.find(invoice_id)
+    send_mail(email, "Dispute lost for payment to Manchester Makerspace")
+  end
+
   private
   def send_mail(email, subject)
     mail to: email, subject: subject

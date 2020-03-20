@@ -159,12 +159,12 @@ class Invoice
     BillingMailer.canceled_subscription(self.member.email, self.id.to_s).deliver_later
   end
 
-  def self.process_cancellation(subscription_id)
+  def self.process_cancellation(subscription_id, skip_notification=false)
     invoice = find_invoice_by_subscription_id(subscription_id)
     unless invoice.nil? || invoice.locked # Only send cancellation notifications if the invoice exists and isn't already being cancelled
       # Destroy invoices for this subscription that are still outstanding
       Invoice.where(subscription_id: subscription_id, settled_at: nil, transaction_id: nil).destroy
-      invoice.send_cancellation_notification # Can send notification after destorying because there is still `invoice` in memory
+      !skip_notification && invoice.send_cancellation_notification # Can send notification after destorying because there is still `invoice` in memory
     end
   end
 

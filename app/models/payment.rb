@@ -16,6 +16,7 @@ class Payment
   field :address
   field :txn_id
   field :txn_type
+  field :plan_id
   field :test, type: Boolean
 
   validates :txn_id, uniqueness: true, :allow_blank => true, :allow_nil => true
