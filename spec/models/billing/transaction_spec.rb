@@ -116,6 +116,7 @@ RSpec.describe BraintreeService::Transaction, type: :model do
           result_transaction = BraintreeService::Transaction.submit_invoice_for_settlement(gateway, invoice)
           member.reload
           expect(member.subscription_id).to eq("foobar")
+          expect(member.subscription).to eq(true)
         end
       end
 

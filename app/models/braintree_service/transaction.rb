@@ -42,11 +42,12 @@ class BraintreeService::Transaction < Braintree::Transaction
      if invoice.plan_id
       subscription = ::BraintreeService::Subscription.create(gateway, invoice)
       transaction = subscription.transactions.first
-      invoice.resource.update!({ subscription_id: subscription.id })
+      update_hash = { subscription_id: subscription.id }
       # Required due to renewal reminders service
-      if invoice.resource_class == "member"
-        invoice.resource.update!({ subscription: true })
+      if Invoice::OPERATION_RESOURCES[invoice.resource_class].method_defined? :subscription
+        update_hash[:subscription] = true
       end
+      invoice.resource.update!(update_hash)
       BillingMailer.new_subscription(invoice.member.email, subscription.id, invoice.id.to_s).deliver_later
     else
       result = gateway.transaction.sale(
