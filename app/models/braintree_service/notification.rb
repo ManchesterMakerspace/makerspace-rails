@@ -79,7 +79,7 @@ class BraintreeService::Notification
     last_transaction = notification.subscription.transactions.first
 
     invoice = Invoice.active_invoice_for_resource(resource_id)
-    related_resource = Invoice::OPERATION_RESOURCES[resource_class].find(resource_id);
+    related_resource = Invoice.resource(resource_class, resource_id)
 
     if invoice.nil?
       identifier = related_resource.nil? ? "#{resource_class} ID #{resource_id}" : related_resource.fullname
@@ -90,13 +90,13 @@ class BraintreeService::Notification
          )
         
         send_slack_message("Received subscription notification for #{identifier}. No active invoice found; skipping processing. If member just signed up, no further action required.", ::Service::SlackConnector.treasurer_channel)
-        return
       elsif (notification.kind === ::Braintree::WebhookNotification::Kind::SubscriptionCanceled)
-        send_slack_message("Received cancelation notification for canceled subscription to resource ID #{resource_id}", ::Service::SlackConnector.treasurer_channel)
+        send_slack_message("Received cancelation notification for canceled subscription for #{identifier}", ::Service::SlackConnector.treasurer_channel)
       else
         send_slack_message("Unable to process subscription notification. No active invoice found for #{identifier}.")
-        return
       end
+      
+      return
     elsif !!invoice.locked
       send_slack_message("Received subscription notification for in-process invoice #{invoice.id}. Skipping processing", ::Service::SlackConnector.treasurer_channel)
       return
