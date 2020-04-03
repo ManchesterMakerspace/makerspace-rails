@@ -79,8 +79,7 @@ class PaypalController < ApplicationController
         msg = "Standard payment - "
         msg += (@payment.status == 'Completed') ? completed_message : failed_message
         @messages.push(msg)
-    when 'send_money'
-    when 'web_accept'
+    when 'web_accept', 'send_money'
         msg = "Custom payment - "
         msg += (@payment.status == 'Completed') ? completed_message : failed_message
         @messages.push(msg)
@@ -104,7 +103,7 @@ class PaypalController < ApplicationController
       # Couldn't parse or find subscription for this notfication
       # Needs to be cancelled manually
       send_slack_message(
-        "Subscription cancelation received from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}. 
+        "Subscription cancelation received from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}.
          Unable to determine related subscription. Payments have stopped but subscription must be cancelled manually to sync Makerspace software. <#{base_url}/billing|Search and cancel subscriptions>",
       )
     when 'recurring_payment_suspended_due_to_max_failed_payment'
@@ -116,9 +115,9 @@ class PaypalController < ApplicationController
         slack_user = SlackUser.find_by(member_id: matching_invoice.member.id)
         unless slack_user.nil?
           send_slack_message(
-            "Subscription for #{matching_invoice.name} reached max failed attempts and has been suspended. Please review your payment options and contact an administrator to enable.", 
+            "Subscription for #{matching_invoice.name} reached max failed attempts and has been suspended. Please review your payment options and contact an administrator to enable.",
             ::Service::SlackConnector.safe_channel(slack_user.slack_id)
-          ) 
+          )
           Invoice.process_cancellation(matching_invoice.plan_id, true)
         end
       end
