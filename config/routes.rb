@@ -18,7 +18,7 @@ Rails.application.routes.draw do
        post "members", to: "registrations#create"
        post '/send_registration', to: 'registrations#new'
     end
-    resources :invoice_options, only: [:index]
+    resources :invoice_options, only: [:index, :show]
     resources :client_error_handler, only: [:create]
 
     authenticate :member do

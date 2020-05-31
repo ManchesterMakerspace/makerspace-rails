@@ -21,6 +21,7 @@ class InvoiceOption
   field :discount_id, type: String
 
   field :disabled, type: Boolean, default: false
+  field :is_promotion, type: Boolean, default: false
 
   search_in :name, :description
 

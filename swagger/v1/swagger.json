@@ -306,6 +306,9 @@
         },
         "disabled": {
           "type": "boolean"
+        },
+        "isPromotion": {
+          "type": "boolean"
         }
       }
     },
@@ -343,6 +346,9 @@
         },
         "operation": {
           "type": "string"
+        },
+        "isPromotion": {
+          "type": "boolean"
         }
       }
     },
@@ -3667,6 +3673,45 @@
               "required": [
                 "invoiceOptions"
               ]
+            }
+          }
+        }
+      }
+    },
+    "/invoice_options/{id}": {
+      "get": {
+        "summary": "Gets an Invoice Option",
+        "tags": [
+          "InvoiceOptions"
+        ],
+        "operationId": "getInvoiceOption",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "invoice option found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "invoiceOption": {
+                  "$ref": "#/definitions/InvoiceOption"
+                }
+              },
+              "required": [
+                "invoiceOption"
+              ]
+            }
+          },
+          "404": {
+            "description": "invoice option not found",
+            "schema": {
+              "$ref": "#/definitions/error"
             }
           }
         }

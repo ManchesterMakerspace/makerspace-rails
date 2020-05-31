@@ -26,4 +26,32 @@ describe 'InvoiceOptions API', type: :request do
       end
     end
   end
+
+  path '/invoice_options/{id}' do 
+    get 'Gets an Invoice Option' do 
+      tags 'InvoiceOptions'
+      operationId "getInvoiceOption"
+      parameter name: :id, in: :path, type: :string
+
+      response '200', 'invoice option found' do
+        let(:id) { create(:invoice_option).id }
+
+        schema type: :object,
+          properties: {
+            invoiceOption: {
+              '$ref' => '#/definitions/InvoiceOption'
+            }
+          },
+          required: [ 'invoiceOption' ]
+
+        run_test!
+      end
+
+      response '404', 'invoice option not found' do
+        schema '$ref' => '#/definitions/error'
+        let(:id) { 'invalid' }
+        run_test!
+      end
+    end
+  end
 end

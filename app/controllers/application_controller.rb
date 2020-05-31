@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   after_action :set_csrf_cookie_for_ng
   before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :filter_requests
 
   def application
     render "layouts/application"
@@ -27,5 +28,11 @@ class ApplicationController < ActionController::Base
 
   def is_admin?
     current_member.try(:role) == 'admin'
+  end
+
+  def filter_requests
+    if params[:format] && (/html|json/ =~ params[:format]).nil?
+      raise Error::NotFound.new
+    end
   end
 end
