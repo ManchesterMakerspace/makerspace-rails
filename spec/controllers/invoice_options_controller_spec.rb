@@ -64,6 +64,18 @@ RSpec.describe InvoiceOptionsController, type: :controller do
     end
   end
 
+  describe "GET show" do
+    it "Renders correct invoice option as json" do
+      first_io = create(:invoice_option, plan_id: "foo")
+      get :show, params: {id: first_io.to_param}, format: :json
+
+      parsed_response = JSON.parse(response.body)
+      expect(response).to have_http_status(200)
+      expect(response.content_type).to eq "application/json"
+      expect(parsed_response['invoiceOption']['id']).to eq(first_io.id.as_json)
+    end
+  end
+
   describe "Admin request" do 
     login_admin
 

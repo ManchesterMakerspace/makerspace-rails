@@ -164,6 +164,7 @@ RSpec.configure do |config|
             quantity: { type: :number },
             discountId: { type: :string, 'x-nullable': true },
             disabled: { type: :boolean },
+            isPromotion: { type: :boolean },
           }
         },
         InvoiceOption: {
@@ -178,7 +179,8 @@ RSpec.configure do |config|
             quantity: { type: :number },
             discountId: { type: :string, 'x-nullable': true },
             disabled: { type: :boolean },
-            operation: { type: :string }
+            operation: { type: :string },
+            isPromotion: { type: :boolean },
           }
         },
 
