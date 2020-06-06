@@ -17,18 +17,19 @@ task :member_review => :environment do
         ::Service::SlackConnector.send_slack_messages(messages, ::Service::SlackConnector.members_relations_channel)
       end
 
-      def notify_member(notification, slack_user)
+      def notify_member(notification, slack_user, contract_type)
         base_url = ActionMailer::Base.default_url_options[:host]
         channel = ::Service::SlackConnector.safe_channel(slack_user.slack_id)
         messages = [notification, "<#{base_url}/members/#{slack_user.member_id}|Please login to complete the document>"]
         ::Service::SlackConnector.send_slack_messages(messages, channel)
+        ::MemmberMailer.request_document(contract_type, slack_user.member_id).deliver_now
       end
 
       def notify_missing_contracts(missing_contracts, contract_type)
         notfiy_management("Members who need to sign #{contract_type}s", missing_contracts)
         slack_users = SlackUser.in(member_id: missing_contracts.map(&:id))
         slack_users.each { |slack_user| notify_member(
-          "Hi #{slack_user.real_name}, our records indicate we're missing a #{contract_type} from you.", slack_user) }
+          "Hi #{slack_user.real_name}, our records indicate we're missing a #{contract_type} from you.", slack_user, contract_type) }
       end
 
       notfiy_management("Members who registered but have not started membership", sign_up_only) if sign_up_only.length != 0

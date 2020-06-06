@@ -35,4 +35,12 @@ class MemberMailer < ApplicationMailer
     @doc_name = document_name.titleize
     mail to: member.email, subject: "Manchester Makerspace - Signed #{@doc_name}"
   end
+
+  def request_document(document_type, member_id)
+    @member = Member.find(member_id)
+    @document_type = document_type
+    @url = url_for(action: :application, controller: 'application')
+    @url += "members/#{member_id}"
+    mail to: @member.email, subject: "Action Required - Manchester Makerspace"
+  end
 end
