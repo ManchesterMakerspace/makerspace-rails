@@ -56,7 +56,7 @@ class MembersController < AuthenticationController
     end
 
     def member_params
-      params.require(:member).permit(:firstname, :lastname, :email)
+      params.require(:member).permit(:firstname, :lastname, :email, :phone, address: [:street, :unit, :city, :state, :postal_code])
     end
 
     def search_params

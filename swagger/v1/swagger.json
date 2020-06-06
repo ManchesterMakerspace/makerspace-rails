@@ -382,6 +382,21 @@
         },
         "memberContractOnFile": {
           "type": "boolean"
+        },
+        "street": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "postalCode": {
+          "type": "string"
         }
       }
     },
@@ -445,6 +460,21 @@
         "notes": {
           "type": "string",
           "x-nullable": true
+        },
+        "street": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "postalCode": {
+          "type": "string"
         }
       }
     },

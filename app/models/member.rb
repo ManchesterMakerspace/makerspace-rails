@@ -15,6 +15,13 @@ class Member
   field :cardID # TODO: I think this can be removed since its an assoc now. Doorboto checks card collection directly
   field :firstname
   field :lastname
+  field :phone
+  field :address_street
+  field :address_unit
+  field :address_city
+  field :address_state
+  field :address_postal_code
+
   field :status,                         default: "activeMember" # activeMember, nonMember, revoked, inactive
   field :expirationTime,  type: Integer  #pre-calcualted time of expiration
   field :startDate, default: Time.now
@@ -80,6 +87,18 @@ class Member
         self.expirationTime = self.group.expiry
         self.save
       end
+    end
+  end
+
+  def address=(address_hash)
+    unless address_hash.nil?
+      self.update_attributes({
+        address_street: address_hash[:street] || self.address_street,
+        address_unit: address_hash[:unit] || self.address_unit,
+        address_city: address_hash[:city] || self.address_city,
+        address_state: address_hash[:state] || self.address_state,
+        address_postal_code: address_hash[:postal_code] || self.address_postal_code,
+      })
     end
   end
 

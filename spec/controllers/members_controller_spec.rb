@@ -53,6 +53,30 @@ RSpec.describe MembersController, type: :controller do
       expect(parsed_response['member']['firstname']).to eq("foo")
     end
 
+    it "Updates member's address properly" do 
+      member_params = {
+        phone: "5559021",
+        address: {
+          street: "12 Main St.",
+          unit: "4",
+          city: "Roswell",
+          state: "NM",
+          postal_code: "00666"
+        }
+      }
+
+      put :update, params: { id: current_user.id, member: member_params }, format: :json
+      expect(response).to have_http_status(200)
+      expect(response.content_type).to eq "application/json"
+      parsed_response = JSON.parse(response.body)
+      expect(parsed_response['member']['phone']).to eq(member_params[:phone])
+      expect(parsed_response['member']['address']['street']).to eq(member_params[:address][:street])
+      expect(parsed_response['member']['address']['unit']).to eq(member_params[:address][:unit])
+      expect(parsed_response['member']['address']['city']).to eq(member_params[:address][:city])
+      expect(parsed_response['member']['address']['state']).to eq(member_params[:address][:state])
+      expect(parsed_response['member']['address']['postalCode']).to eq(member_params[:address][:postal_code])
+    end
+
     it "raises forbidden if not updating current member" do
       member = create(:member)
       put :update, params: { id: member.id, member: member_params }, format: :json

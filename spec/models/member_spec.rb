@@ -90,6 +90,26 @@ RSpec.describe Member, type: :model do
       end
     end
 
+    describe "address_setter" do 
+      it "unpacks and saves address hash as attributes" do 
+        member = create(:member)
+        address_hash = {
+          street: "foo",
+          unit: "1",
+          city: "bar",
+          state: "NH",
+          postal_code: "90210"
+        }
+        member.address = address_hash
+        member.reload
+        expect(member.address_street).to eq(address_hash[:street])
+        expect(member.address_unit).to eq(address_hash[:unit])
+        expect(member.address_city).to eq(address_hash[:city])
+        expect(member.address_state).to eq(address_hash[:state])
+        expect(member.address_postal_code).to eq(address_hash[:postal_code])
+      end
+    end
+
     # TODO subscription helpers
 
     describe "permissions" do
