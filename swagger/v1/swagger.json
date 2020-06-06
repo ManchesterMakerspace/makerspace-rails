@@ -383,20 +383,29 @@
         "memberContractOnFile": {
           "type": "boolean"
         },
-        "street": {
+        "phone": {
           "type": "string"
         },
-        "unit": {
-          "type": "string"
-        },
-        "city": {
-          "type": "string"
-        },
-        "state": {
-          "type": "string"
-        },
-        "postalCode": {
-          "type": "string"
+        "address": {
+          "type": "object",
+          "properties": {
+            "street": {
+              "type": "string"
+            },
+            "unit": {
+              "type": "string",
+              "x-nullable": true
+            },
+            "city": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string"
+            },
+            "postalCode": {
+              "type": "string"
+            }
+          }
         }
       }
     },
@@ -461,20 +470,34 @@
           "type": "string",
           "x-nullable": true
         },
-        "street": {
-          "type": "string"
+        "phone": {
+          "type": "string",
+          "x-nullable": true
         },
-        "unit": {
-          "type": "string"
-        },
-        "city": {
-          "type": "string"
-        },
-        "state": {
-          "type": "string"
-        },
-        "postalCode": {
-          "type": "string"
+        "address": {
+          "type": "object",
+          "properties": {
+            "street": {
+              "type": "string",
+              "x-nullable": true
+            },
+            "unit": {
+              "type": "string",
+              "x-nullable": true
+            },
+            "city": {
+              "type": "string",
+              "x-nullable": true
+            },
+            "state": {
+              "type": "string",
+              "x-nullable": true
+            },
+            "postalCode": {
+              "type": "string",
+              "x-nullable": true
+            }
+          }
         }
       }
     },
@@ -2504,6 +2527,36 @@
                       "type": "string",
                       "x-nullable": true
                     },
+                    "address": {
+                      "type": "object",
+                      "x-nullable": true,
+                      "properties": {
+                        "street": {
+                          "type": "string",
+                          "x-nullable": true
+                        },
+                        "unit": {
+                          "type": "string",
+                          "x-nullable": true
+                        },
+                        "city": {
+                          "type": "string",
+                          "x-nullable": true
+                        },
+                        "state": {
+                          "type": "string",
+                          "x-nullable": true
+                        },
+                        "postalCode": {
+                          "type": "string",
+                          "x-nullable": true
+                        }
+                      }
+                    },
+                    "phone": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
                     "status": {
                       "type": "string",
                       "enum": [
@@ -2527,6 +2580,10 @@
                       "x-nullable": true
                     },
                     "memberContractOnFile": {
+                      "type": "boolean",
+                      "x-nullable": true
+                    },
+                    "subscription": {
                       "type": "boolean",
                       "x-nullable": true
                     }
@@ -4066,6 +4123,35 @@
                     },
                     "lastname": {
                       "type": "string"
+                    },
+                    "phone": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "address": {
+                      "type": "object",
+                      "properties": {
+                        "street": {
+                          "type": "string",
+                          "x-nullable": true
+                        },
+                        "unit": {
+                          "type": "string",
+                          "x-nullable": true
+                        },
+                        "city": {
+                          "type": "string",
+                          "x-nullable": true
+                        },
+                        "state": {
+                          "type": "string",
+                          "x-nullable": true
+                        },
+                        "postalCode": {
+                          "type": "string",
+                          "x-nullable": true
+                        }
+                      }
                     }
                   }
                 }
@@ -4179,6 +4265,36 @@
                     "signature": {
                       "type": "string",
                       "x-nullable": true
+                    },
+                    "phone": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "address": {
+                      "type": "object",
+                      "x-nullable": true,
+                      "properties": {
+                        "street": {
+                          "type": "string",
+                          "x-nullable": true
+                        },
+                        "unit": {
+                          "type": "string",
+                          "x-nullable": true
+                        },
+                        "city": {
+                          "type": "string",
+                          "x-nullable": true
+                        },
+                        "state": {
+                          "type": "string",
+                          "x-nullable": true
+                        },
+                        "postalCode": {
+                          "type": "string",
+                          "x-nullable": true
+                        }
+                      }
                     }
                   }
                 }

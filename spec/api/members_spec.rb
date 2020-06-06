@@ -83,7 +83,19 @@ describe 'Members API', type: :request do
               firstname: { type: :string, 'x-nullable': true },
               lastname: { type: :string, 'x-nullable': true },
               email: { type: :string, 'x-nullable': true },
-              signature: { type: :string, 'x-nullable': true }
+              signature: { type: :string, 'x-nullable': true },
+              phone: { type: :string, 'x-nullable': true },
+              address: {
+                type: :object,
+                'x-nullable': true,
+                properties: {
+                  street: { type: :string, 'x-nullable': true },
+                  unit: { type: :string,  'x-nullable': true },
+                  city: { type: :string, 'x-nullable': true },
+                  state: { type: :string, 'x-nullable': true },
+                  postalCode: { type: :string, 'x-nullable': true },
+                }
+              }
             }
           }
         }

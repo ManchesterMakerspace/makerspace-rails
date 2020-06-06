@@ -156,6 +156,17 @@ describe 'Registrations API', type: :request do
               },
               lastname: {
                 type: :string
+              },
+              phone: { type: :string, 'x-nullable': true },
+              address: {
+                type: :object,
+                properties: {
+                  street: { type: :string, 'x-nullable': true },
+                  unit: { type: :string, 'x-nullable': true },
+                  city: { type: :string, 'x-nullable': true },
+                  state: { type: :string, 'x-nullable': true },
+                  postalCode: { type: :string, 'x-nullable': true },
+                }
               }
             }
           }
