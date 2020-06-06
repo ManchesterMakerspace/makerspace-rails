@@ -193,6 +193,11 @@ RSpec.configure do |config|
             status: { type: :string, enum: ["activeMember", "inactive", "nonMember", "revoked"] },
             role: { type: :string, enum: ["admin", "member"] },
             memberContractOnFile: { type: :boolean },
+            street: { type: :string },
+            unit: { type: :string },
+            city: { type: :string },
+            state: { type: :string },
+            postalCode: { type: :string },
           }
         },
         Member: {
@@ -212,6 +217,11 @@ RSpec.configure do |config|
             customerId: { type: :string, 'x-nullable': true },
             earnedMembershipId: { type: :string, 'x-nullable': true },
             notes: { type: :string, 'x-nullable': true },
+            street: { type: :string },
+            unit: { type: :string },
+            city: { type: :string },
+            state: { type: :string },
+            postalCode: { type: :string },
           }
         },
 
