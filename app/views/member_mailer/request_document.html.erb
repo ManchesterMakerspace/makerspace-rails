@@ -1,0 +1,14 @@
+<div>
+  <h3>Action Required for Manchester Makerspace Membership</h3>
+</div>
+
+<div>
+  <p>Hi <%=@member.fullname%>! </p>
+  <p>
+    Our records incidate we're missing a signed <%=@document_type%> from you. 
+    <%= link_to 'Please take a moment to login and e-sign the document by following this link.', @url, id: "profile-link"%>
+  </p>
+  <p>If you have any questions, please reply to this email or email <a href="mailto:contact@manchestermakerspace.org?subject=Re:%20Document%20Request%20<%= @member.fullname %>" target="_top">contact@manchestermakerspace.org</a>.</p>
+  <br>
+  <p>--The Manchester Makerspace Team</p>
+</div>
