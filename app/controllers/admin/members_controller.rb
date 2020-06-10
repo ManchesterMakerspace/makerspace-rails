@@ -20,7 +20,7 @@ class Admin::MembersController < AdminController
   private
   def member_params
     params.require(:member).permit(:firstname, :lastname, :role, :email, :status, :expiration_time, :renew, :member_contract_on_file, :notes,
-      :phone, address: [:street, :unit, :city, :state, :postal_code])
+      :phone, :subscription, address: [:street, :unit, :city, :state, :postal_code])
   end
 
   def get_camel_case_params

@@ -193,11 +193,17 @@ RSpec.configure do |config|
             status: { type: :string, enum: ["activeMember", "inactive", "nonMember", "revoked"] },
             role: { type: :string, enum: ["admin", "member"] },
             memberContractOnFile: { type: :boolean },
-            street: { type: :string },
-            unit: { type: :string },
-            city: { type: :string },
-            state: { type: :string },
-            postalCode: { type: :string },
+            phone: { type: :string },
+            address: {
+              type: :object,
+              properties: {
+                street: { type: :string },
+                unit: { type: :string,  'x-nullable': true },
+                city: { type: :string },
+                state: { type: :string },
+                postalCode: { type: :string },
+              }
+            }
           }
         },
         Member: {
@@ -217,11 +223,17 @@ RSpec.configure do |config|
             customerId: { type: :string, 'x-nullable': true },
             earnedMembershipId: { type: :string, 'x-nullable': true },
             notes: { type: :string, 'x-nullable': true },
-            street: { type: :string },
-            unit: { type: :string },
-            city: { type: :string },
-            state: { type: :string },
-            postalCode: { type: :string },
+            phone: { type: :string, 'x-nullable': true },
+            address: {
+              type: :object,
+              properties: {
+                street: { type: :string, 'x-nullable': true },
+                unit: { type: :string, 'x-nullable': true },
+                city: { type: :string, 'x-nullable': true },
+                state: { type: :string, 'x-nullable': true },
+                postalCode: { type: :string, 'x-nullable': true },
+              }
+            }
           }
         },
 

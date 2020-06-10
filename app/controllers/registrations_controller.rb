@@ -27,6 +27,7 @@ class RegistrationsController < ApplicationController
 
   private
   def member_params
-    params.require(:member).permit(:firstname, :lastname, :email, :password)
+    params.require(:member).permit(:firstname, :lastname, :email, :password,
+      :phone, address: [:street, :unit, :city, :state, :postal_code])
   end
 end

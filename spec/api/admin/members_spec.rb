@@ -84,10 +84,23 @@ describe 'Admin::Members API', type: :request do
               firstname: { type: :string, 'x-nullable': true },
               lastname: { type: :string, 'x-nullable': true },
               email: { type: :string, 'x-nullable': true },
+              address: { 
+                type: :object, 
+                'x-nullable': true ,
+                properties: {
+                  street: { type: :string, 'x-nullable': true },
+                  unit: { type: :string,  'x-nullable': true },
+                  city: { type: :string, 'x-nullable': true },
+                  state: { type: :string, 'x-nullable': true },
+                  postalCode: { type: :string, 'x-nullable': true },
+                }
+              },
+              phone: { type: :string, 'x-nullable': true },
               status: { type: :string, enum: ["activeMember", "inactive", "nonMember", "revoked"], 'x-nullable': true },
               role: { type: :string, enum: ["admin", "member"], 'x-nullable': true },
               renew: { type: :number, 'x-nullable': true },
               memberContractOnFile: { type: :boolean, 'x-nullable': true },
+              subscription: { type: :boolean, 'x-nullable': true },
             }
           }
         }
