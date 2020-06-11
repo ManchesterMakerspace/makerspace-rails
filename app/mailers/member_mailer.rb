@@ -43,4 +43,11 @@ class MemberMailer < ApplicationMailer
     @url += "members/#{member_id}"
     mail to: @member.email, subject: "Action Required - Manchester Makerspace"
   end
+
+  def contract_updated(member_id)
+    @member = Member.find(member_id)
+    @url = url_for(action: :application, controller: 'application')
+    @url += "members/#{member_id}"
+    mail to: @member.email, subject: "Manchester Makerspace Membership Updates"
+  end
 end

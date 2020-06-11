@@ -1,0 +1,15 @@
+<div>
+  <h3>Manchester Makerspace Membership Updates</h3>
+</div>
+
+<div>
+  <p>Hi <%=@member.fullname%>! </p>
+  <p>
+    We've recently made changes to the Membership Contract, an updated version of which is attached to this email. You may also view the current contract at any time by
+    <%= link_to 'logging in to your profile.', @url, id: "profile-link"%> The amended contract terms will take effect seven days after the date of this email. 
+    No action is required from you at this time.
+  </p>
+  <p>If you have any questions, please reply to this email or email <a href="mailto:contact@manchestermakerspace.org?subject=Re:%20Contract%20Updates%20<%= @member.fullname %>" target="_top">contact@manchestermakerspace.org</a>.</p>
+  <br>
+  <p>--The Manchester Makerspace Team</p>
+</div>
