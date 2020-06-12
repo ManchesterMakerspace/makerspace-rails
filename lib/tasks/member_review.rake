@@ -22,7 +22,7 @@ task :member_review => :environment do
         channel = ::Service::SlackConnector.safe_channel(slack_user.slack_id)
         messages = [notification, "<#{base_url}/members/#{slack_user.member_id}|Please login to complete the document>"]
         ::Service::SlackConnector.send_slack_messages(messages, channel)
-        ::MemmberMailer.request_document(contract_type, slack_user.member_id).deliver_now
+        ::MemberMailer.request_document(contract_type, slack_user.member_id).deliver_now
       end
 
       def notify_missing_contracts(missing_contracts, contract_type)

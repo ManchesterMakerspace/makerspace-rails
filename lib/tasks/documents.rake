@@ -25,4 +25,10 @@ namespace :documents do
       file.unlink()
     end
   end
+
+  task :send_update_notice => :environment do 
+    members = ::Service::Analytics::Members.query_total_members.each do |member|
+      ::MemmberMailer.contract_updated(member.id).deliver_now
+    end
+  end
 end
