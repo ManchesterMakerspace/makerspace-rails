@@ -96,7 +96,7 @@ RSpec.describe Billing::TransactionsController, type: :controller do
       post :create, params: { transaction: { payment_method_id: "123", invoice_id: "foo" } }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(404)
-      expect(parsed_response['message']).to match(/resource not found/i)
+      expect(parsed_response['message']).to match(/document not found/i)
     end
 
     it "renders error if no invoice option exists" do 
@@ -104,7 +104,7 @@ RSpec.describe Billing::TransactionsController, type: :controller do
       post :create, params: { transaction: { payment_method_id: "123", invoice_option_id: "missing" } }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(404)
-      expect(parsed_response['message']).to match(/resource not found/i)
+      expect(parsed_response['message']).to match(/document not found/i)
     end
 
     it "renders error if no discount exists" do 
@@ -113,7 +113,7 @@ RSpec.describe Billing::TransactionsController, type: :controller do
       allow(BraintreeService::Discount).to receive(:get_discounts).and_return([])
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(404)
-      expect(parsed_response['message']).to match(/resource not found/i)
+      expect(parsed_response['message']).to match(/document not found/i)
     end
 
     it "renders error about no customer" do 
@@ -240,7 +240,7 @@ RSpec.describe Billing::TransactionsController, type: :controller do
 
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(404)
-      expect(parsed_response['message']).to match(/resource not found/i)
+      expect(parsed_response['message']).to match(/document not found/i)
     end
 
     it "renders error if invoice doesnt belong to current member" do 
@@ -251,7 +251,7 @@ RSpec.describe Billing::TransactionsController, type: :controller do
 
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(404)
-      expect(parsed_response['message']).to match(/resource not found/i)
+      expect(parsed_response['message']).to match(/document not found/i)
     end
 
     it "renders error about no customer" do 
