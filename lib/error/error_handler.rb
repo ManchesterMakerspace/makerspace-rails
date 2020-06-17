@@ -11,7 +11,7 @@ module Error
             message = "Unhandled Error: #{e.message}"
             send_slack_message(message, ::Service::SlackConnector.logs_channel)
             respond(:interal_server_error, 500, "Internal Server Error")
-          else 
+          else
             raise e
           end
         end
@@ -24,8 +24,8 @@ module Error
           respond(:unprocessable_entity, 422, e.summary || "Internal Server Error")
         end
         rescue_from ::Mongoid::Errors::DocumentNotFound do |e|
-          slack_alert(:not_found, 404, "Resource not found")
-          respond(:not_found, 404, "Resource not found")
+          slack_alert(:not_found, 404, e.problem || "Resource not found")
+          respond(:not_found, 404,  e.problem || "Resource not found")
         end
         rescue_from ::ActionController::InvalidAuthenticityToken do |e|
           respond(:unauthorized, 401, "Unauthorized")

@@ -131,7 +131,7 @@ RSpec.describe Admin::InvoicesController, type: :controller do
 
         post :create, params: {invoice_option: { member_id: "foo", id: invoice_option.id }}, format: :json
         expect(response).to have_http_status(404)
-        expect(JSON.parse(response.body)['message']).to match(/resource not found/i)
+        expect(JSON.parse(response.body)['message']).to match(/document not found/i)
 
         post :create, params: {invoice_option: { id: invoice_option.id, }}, format: :json
         expect(response).to have_http_status(422)
@@ -139,7 +139,7 @@ RSpec.describe Admin::InvoicesController, type: :controller do
 
         post :create, params: {invoice_option: { id: "foo", member_id: member.id }}, format: :json
         expect(response).to have_http_status(404)
-        expect(JSON.parse(response.body)['message']).to match(/resource not found/i)
+        expect(JSON.parse(response.body)['message']).to match(/document not found/i)
       end
     end
   end
