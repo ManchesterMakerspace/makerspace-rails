@@ -33,14 +33,14 @@ RSpec.describe Billing::ReceiptsController, type: :controller do
       get :show, params: {id: invoice.to_param}, format: :html
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(404)
-      expect(parsed_response['message']).to match(/resource not found/i)
+      expect(parsed_response['message']).to match(/document not found/i)
     end
 
     it "raises not found if invoice doens't exist" do
       get :show, params: {id: "invalid" }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(404)
-      expect(parsed_response['message']).to match(/resource not found/i)
+      expect(parsed_response['message']).to match(/document not found/i)
     end
 
     it "raises not found if invoice has no transaction" do 

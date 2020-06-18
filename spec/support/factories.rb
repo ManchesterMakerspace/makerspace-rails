@@ -18,6 +18,11 @@ FactoryBot.define do
     encrypted_password { BCrypt::Password.create('password') }
     memberContractOnFile { true }
     status { 'activeMember' }
+    phone { "992001234" }
+    address_street { "12 Main St" }
+    address_city { "Boston" }
+    address_state { "MA" }
+    address_postal_code { "90210" }
 
     trait :expired do
       after(:build) do |member|
@@ -52,7 +57,7 @@ FactoryBot.define do
   end
 
   factory :member_with_card, parent: :member do
-    association :access_card, factory: :card 
+    association :access_card, factory: :card
   end
 
   factory :earned_member, parent: :member do
@@ -216,9 +221,9 @@ FactoryBot.define do
     end
   end
 
-  factory :settled_invoice, parent: :invoice do 
+  factory :settled_invoice, parent: :invoice do
     settled_at { Time.now }
-  end 
+  end
 
   factory :invoice_option do
     name { "Some invoice" }
@@ -290,7 +295,7 @@ FactoryBot.define do
       last_4: 1234,
       token: "g7291",
     })}
-    
+
   end
 
   factory :refunded_transaction, parent: :transaction do
@@ -359,7 +364,7 @@ FactoryBot.define do
     initialize_with { new(attributes) }
   end
 
-  factory :dispute, class: ::BraintreeService::Dispute do 
+  factory :dispute, class: ::BraintreeService::Dispute do
     amount_disputed { "60" }
     amount { "60" }
     amount_won { "0" }
@@ -367,13 +372,13 @@ FactoryBot.define do
     initialize_with { new(attributes) }
   end
 
-  factory :notification, class: ::BraintreeService::Notification do 
+  factory :notification, class: ::BraintreeService::Notification do
     kind { Braintree::WebhookNotification::Kind::SubscriptionChargedSuccessfully }
     timestamp { Time.now }
     payload { JSON.generate(build(:subscription)) }
   end
 
-  factory :dispute_notification, parent: :notification do 
+  factory :dispute_notification, parent: :notification do
     kind { Braintree::WebhookNotification::Kind::DisputeOpened }
     payload { JSON.generate(build(:dispute)) }
   end
