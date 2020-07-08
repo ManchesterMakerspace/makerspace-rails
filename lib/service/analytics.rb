@@ -2,35 +2,39 @@ module Service
   module Analytics
     module Members
       def self.query_no_expiration
-        Member.in(expirationTime: ["", nil])
+        query_active_members.in(expirationTime: ["", nil])
       end
 
       def self.query_no_member_contract
-        Member.where(:expirationTime.gte => (Time.now.to_i * 1000), memberContractOnFile: false)
+        query_active_members.where(:expirationTime.gte => (Time.now.to_i * 1000), memberContractOnFile: false)
       end
 
       def self.query_no_fobs
-        Member.not_in(id: Card.pluck(:member_id))
+        query_active_members.not_in(id: Card.pluck(:member_id))
       end
 
       def self.query_total_members
-        Member.where(:expirationTime.gte => (Time.now.to_i * 1000))
+        query_active_members.where(:expirationTime.gte => (Time.now.to_i * 1000))
       end
 
       def self.query_new_members(timeframe = 1.month)
-        Member.where(:startDate.gte => (Time.now - timeframe))
+        query_active_members.where(:startDate.gte => (Time.now - timeframe))
       end
 
       def self.query_expiring_members
-        Member.where(:expirationTime.gte => (Time.now.to_i * 1000), :expirationTime.lte => ((Time.now + 2.weeks).to_i * 1000))
+        query_active_members.where(:expirationTime.gte => (Time.now.to_i * 1000), :expirationTime.lte => ((Time.now + 2.weeks).to_i * 1000))
       end
 
       def self.query_subscribed_members
-        Member.where(:expirationTime.gte => (Time.now.to_i * 1000),
+        query_active_members.where(:expirationTime.gte => (Time.now.to_i * 1000),
           :$or => [
             { :subscription_id.nin => [nil, ""] },
             {  subscription: true }
           ])
+      end
+
+      def self.query_active_members
+        Member.where(status: "activeMember")
       end
     end
 
