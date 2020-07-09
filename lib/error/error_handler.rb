@@ -58,9 +58,14 @@ module Error
       else
         error_type = "Unknown"
       end
-      user = self.try(:current_member) ? "User #{current_member.fullname}" : ""
-      message = "#{error_type} Error: #{user} \n * status: #{_status} \n * error: #{_error} \n * message: #{_message}"
-      send_slack_message(message, ::Service::SlackConnector.logs_channel)
+      user = self.try(:current_member) ? "User #{current_member.fullname}" : "Not authenticated"
+
+      # Dont send slack messages for unauthenticated 404s. We receive these from web crawlers 
+      # and malicious users. They only serve to clog logs.
+      unless !user && _status == 404
+        message = "*#{error_type} Error* \n- user: #{user} \n- status: #{_status} \n- error: #{_error} \n- message: #{_message}"
+        send_slack_message(message, ::Service::SlackConnector.logs_channel)
+      end
     end
   end
 end
