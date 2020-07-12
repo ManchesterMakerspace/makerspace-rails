@@ -122,7 +122,7 @@ class Invoice
 
     # Build recurring invoice if applicable
     unless self.plan_id.nil?
-      build_next_invoice
+      build_next_invoice(gateway)
     end
 
     transaction
@@ -136,7 +136,7 @@ class Invoice
     execute_invoice_operation
   end
 
-  def build_next_invoice
+  def build_next_invoice(gateway=nil)
     next_invoice = self.clone
     next_invoice.created_at = Time.now
     next_invoice.settled_at = nil
@@ -147,6 +147,13 @@ class Invoice
     next_invoice.dispute_settled = false
     next_invoice.dispute_requested = nil
     next_invoice.due_date = self.due_date + self.quantity.months
+
+    if next_invoice.subscription_id && gateway
+      subscription = ::BraintreeService::Subscription.get_subscription(gateway, next_invoice.subscription_id)
+      # Amount is plan amount minus discounts that are active (active being never expire or has billing cycles left)
+      next_invoice.amount = subscription.price - subscription.discounts.select { |d| d.never_expires? || (d.number_of_billing_cycles || 0) > (d.quantity || 0) }.map { |d| d.amount }.inject(0, :+)
+    end
+
     next_invoice.save!
   end
 
