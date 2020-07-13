@@ -62,7 +62,7 @@ module Error
 
       # Dont send slack messages for unauthenticated 404s. We receive these from web crawlers 
       # and malicious users. They only serve to clog logs.
-      unless !user && _status == 404
+      unless !user && _status.to_i == 404
         message = "*#{error_type} Error* \n- user: #{user} \n- status: #{_status} \n- error: #{_error} \n- message: #{_message}"
         send_slack_message(message, ::Service::SlackConnector.logs_channel)
       end
