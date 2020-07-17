@@ -102,9 +102,9 @@ class BraintreeService::Notification
       return
     end
 
-    if (notification.kind === ::Braintree::WebhookNotification::Kind::SubscriptionChargedSuccessfully)
+    if (last_transaction && notification.kind === ::Braintree::WebhookNotification::Kind::SubscriptionChargedSuccessfully)
       process_subscription_charge_success(invoice, last_transaction)
-    elsif (notification.kind === ::Braintree::WebhookNotification::Kind::SubscriptionChargedUnsuccessfully)
+    elsif (last_transaction && notification.kind === ::Braintree::WebhookNotification::Kind::SubscriptionChargedUnsuccessfully)
       process_subscription_charge_failure(invoice, last_transaction)
     elsif (notification.kind === ::Braintree::WebhookNotification::Kind::SubscriptionCanceled)
       process_subscription_cancellation(invoice)
@@ -112,6 +112,7 @@ class BraintreeService::Notification
       send_slack_message("Received the following notification from Braintree regarding #{invoice.member.fullname}'s subscription':
 Type: #{notification.kind}.
 Payload: #{notification.as_json}.
+Most Recent Transaction (if any): #{last_transaction && last_transaction.as_json}.
 No automated actions have been taken at this time.")
     end
   end
