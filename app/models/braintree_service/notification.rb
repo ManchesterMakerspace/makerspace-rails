@@ -42,7 +42,7 @@ class BraintreeService::Notification
 
       {
         subscription_id: notification.subscription.id,
-        transaction_id: notification.subscription.transactions.first.id,
+        transaction_id: notification.subscription.transactions.first ? notification.subscription.transactions.first.id : nil,
         resource_class: resource_class,
         resource_id: resource_id
       }
@@ -55,7 +55,7 @@ class BraintreeService::Notification
       {
         dispute_status: notification.dispute.status,
         reason: notification.dispute.reason,
-        transaction_id: notification.dispute.transaction.id,
+        transaction_id: notification.dispute.transaction ? notification.dispute.transaction.id : nil,
 
       }
     elsif transaction_notifications.include?(notification.kind)
