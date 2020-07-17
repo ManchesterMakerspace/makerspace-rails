@@ -8,8 +8,8 @@ module Error
       clazz.class_eval do
         rescue_from StandardError do |e|
           if Rails.env.production?
-            message = "Unhandled Error: #{e.message}"
-            send_slack_message(message, ::Service::SlackConnector.logs_channel)
+            message = "Unhandled Error: #{e.backtrace}"
+            slack_alert(:interal_server_error, 500, message)
             respond(:interal_server_error, 500, "Internal Server Error")
           else
             raise e

@@ -37,7 +37,7 @@ class InvoiceOption
 
   def build_invoice(member_id, due_date, resource_id, discount = nil)
     amount = self.amount
-    amount = amount - discount.amount unless discount.nil?
+    amount = amount - discount.amount.to_f unless discount.nil?
     invoice_args = {
       name: self.name,
       description: self.description,
