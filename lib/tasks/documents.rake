@@ -19,7 +19,7 @@ namespace :documents do
       drive.export_file(template[:file_id], 'text/html', download_dest: file.path)
       document = File.read(file.path)
       # Replace encoded <>
-      new_contents = document.gsub(/(&lt;)/, "<").gsub(/(&gt;)/, ">")
+      new_contents = document.gsub(/(&lt;)/, "<").gsub(/(&gt;)/, ">").gsub(/(&ldquo;)/, "\"").gsub(/(&rdquo;)/, "\"")
       File.open(template[:template_location], "w") { |file| file.puts new_contents }
       file.close()
       file.unlink()
@@ -28,7 +28,7 @@ namespace :documents do
 
   task :send_update_notice => :environment do 
     members = ::Service::Analytics::Members.query_total_members.each do |member|
-      ::MemmberMailer.contract_updated(member.id).deliver_now
+      ::MemberMailer.contract_updated(member.id).deliver_now
     end
   end
 end
