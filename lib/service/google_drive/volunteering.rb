@@ -98,7 +98,7 @@ module Service
         ]
 
         values_range = ::Google::Apis::SheetsV4::ValueRange.new(values: [new_row])
-        @drive.append_spreadsheet_value(ENV["VOLUNTEER_SPREADSHEET"], ["A1:AAA1"], values_range, value_input_option: "RAW")  do |result, err|
+        @drive.append_spreadsheet_value(ENV["VOLUNTEER_SPREADSHEET"], ["A1:AAA1"], values_range, value_input_option: "USER_ENTERED")  do |result, err|
           raise Error::Google::Upload.new(err) unless err.nil?
         end
       end
