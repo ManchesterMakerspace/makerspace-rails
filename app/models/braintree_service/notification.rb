@@ -82,7 +82,15 @@ class BraintreeService::Notification
     related_resource = Invoice.resource(resource_class, resource_id)
 
     if invoice.nil?
-      identifier = related_resource.nil? ? "#{resource_class} ID #{resource_id}" : related_resource.fullname
+      identifier = "#{resource_class} ID #{resource_id}"
+
+      unless related_resource.nil?
+        if related_resource.class.name == "Member"
+          identifier = "Membership for #{related_resource.fullname}"
+        else
+          identifier = "Rental for #{related_resource.number} belonging to #{related_resource.member.fullname}"
+        end
+      end
 
       if !related_resource.nil? &&
          (
