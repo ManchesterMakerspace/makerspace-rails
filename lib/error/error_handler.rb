@@ -8,7 +8,7 @@ module Error
       clazz.class_eval do
         rescue_from StandardError do |e|
           if Rails.env.production?
-            message = "Unhandled Error: #{e.backtrace}"
+            message = "Unhandled Error: #{e.message} #{e.backtrace}"
             slack_alert(:interal_server_error, 500, message)
             respond(:interal_server_error, 500, "Internal Server Error")
           else
@@ -60,9 +60,9 @@ module Error
       end
       user = self.try(:current_member) ? "User #{current_member.fullname}" : "Not authenticated"
 
-      # Dont send slack messages for unauthenticated 404s. We receive these from web crawlers 
+      # Dont send slack messages for unauthenticated 404s. We receive these from web crawlers
       # and malicious users. They only serve to clog logs.
-      unless !user && _status.to_i == 404
+      unless !self.try(:current_member) && _status.to_i == 404
         message = "*#{error_type} Error* \n- user: #{user} \n- status: #{_status} \n- error: #{_error} \n- message: #{_message}"
         send_slack_message(message, ::Service::SlackConnector.logs_channel)
       end

@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   after_action :set_csrf_cookie_for_ng
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :filter_requests
+  before_action :allow_only_html_requests, only: [:application]
 
   def application
     render "layouts/application"
@@ -17,6 +18,12 @@ class ApplicationController < ActionController::Base
   end
 
   protected
+  def allow_only_html_requests
+    if params[:format] && params[:format] != "html"
+      render :file => Rails.public_path.join("404.html")
+    end
+  end
+
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up, keys: [:firstname, :lastname])
   end
