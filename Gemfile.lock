@@ -165,7 +165,7 @@ GEM
       mini_portile2 (~> 2.4.0)
     orm_adapter (0.5.0)
     os (1.0.0)
-    paypal-sdk-rest (1.7.3)
+    paypal-sdk-rest (1.7.4)
       multi_json (~> 1.0)
       xml-simple
     public_suffix (3.0.3)
@@ -316,7 +316,7 @@ DEPENDENCIES
   mongoid (~> 7.0.2)
   mongoid-rspec
   mongoid_search
-  paypal-sdk-rest
+  paypal-sdk-rest (~> 1.7.4)
   puma (~> 3.12)
   rack-cors
   rails (~> 5.2.2)
