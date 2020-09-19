@@ -14,7 +14,7 @@ gem 'bcrypt'
 gem 'mongoid', '~> 7.0.2'
 gem 'mongoid_search'
 #Paypal IPN
-gem 'paypal-sdk-rest'
+gem 'paypal-sdk-rest', '~> 1.7.4'
 gem "braintree"
 gem "slack-ruby-client"
 gem 'google-api-client', require: ['google/apis/drive_v3', 'google/apis/sheets_v4']
@@ -53,4 +53,4 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # Frontend
-gem "makerspace-react-rails", "0.17.4"
+gem "makerspace-react-rails", "0.17.5"
