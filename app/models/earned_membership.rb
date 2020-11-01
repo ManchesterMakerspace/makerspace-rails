@@ -33,7 +33,7 @@ class EarnedMembership
   end
 
   def self.search(searchTerms, criteria = Mongoid::Criteria.new(EarnedMembership))
-    criteria.full_text_search(searchTerms).sort_by(&:relevance).reverse
+    criteria.full_text_search(searchTerms)
   end
 
   private

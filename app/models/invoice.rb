@@ -209,7 +209,7 @@ class Invoice
   end
 
   def self.search(searchTerms, criteria = Mongoid::Criteria.new(Invoice))
-    criteria.full_text_search(searchTerms).sort_by(&:relevance).reverse
+    criteria.full_text_search(searchTerms)
   end
 
   private
