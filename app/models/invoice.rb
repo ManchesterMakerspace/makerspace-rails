@@ -74,7 +74,7 @@ class Invoice
   def settled=(value)
     if value
       self.settled_at ||= Time.now
-    else 
+    else
       self.settled_at = nil
     end
   end
@@ -117,7 +117,9 @@ class Invoice
       self.payment_method_id = payment_method_id
       transaction = ::BraintreeService::Transaction.submit_invoice_for_settlement(gateway, self)
     end
-    self.transaction_id ||= transaction_id
+    if (self.transaction_id.nil?)
+      self.update!({ transaction_id: transaction ? transaction.id : transaction_id })
+    end
     settle_invoice
 
     # Build recurring invoice if applicable
@@ -207,7 +209,7 @@ class Invoice
   end
 
   def self.search(searchTerms, criteria = Mongoid::Criteria.new(Invoice))
-    criteria.full_text_search(searchTerms).sort_by(&:relevance).reverse
+    criteria.full_text_search(searchTerms)
   end
 
   private
@@ -226,6 +228,8 @@ class Invoice
       resource.send_renewal_slack_message()
       self.settled = true
       self.save!
+    else
+      send_slack_message("Delaying processing of invoice #{self.id}... Is member missing a key?")
     end
   end
 

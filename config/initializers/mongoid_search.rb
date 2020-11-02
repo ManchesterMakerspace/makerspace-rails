@@ -6,7 +6,7 @@ Mongoid::Search.setup do |config|
   config.allow_empty_search = false
 
   ## If true, will search with relevance information
-  config.relevant_search = true
+  config.relevant_search = false
 
   ## Stem keywords
   config.stem_keywords = false

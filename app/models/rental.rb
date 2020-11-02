@@ -27,7 +27,7 @@ class Rental
   end
 
   def self.search(searchTerms, criteria = Mongoid::Criteria.new(Rental))
-    criteria.full_text_search(searchTerms).sort_by(&:relevance).reverse
+    criteria.full_text_search(searchTerms)
   end
 
   protected
