@@ -71,8 +71,8 @@ class Member
 
   # Searches by firstname if cant find anything else
   def self.search(searchTerms, criteria = Mongoid::Criteria.new(Member))
-    members1 = criteria.full_text_search(searchTerms).sort_by(&:relevance).reverse
-    members2 = criteria.full_text_search(searchTerms, index: :_firstname_keywords).sort_by(&:relevance).reverse
+    members1 = criteria.full_text_search(searchTerms)
+    members2 = criteria.full_text_search(searchTerms, index: :_firstname_keywords)
     return members1 | members2
   end
 

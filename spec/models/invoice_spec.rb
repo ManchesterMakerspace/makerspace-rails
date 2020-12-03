@@ -116,7 +116,7 @@ RSpec.describe Invoice, type: :model do
         expect(invoice.settled_at).to be < timestamp_after
       end
 
-      it "can be reset" do 
+      it "can be reset" do
         timestamp_before = Time.now
         invoice = create(:invoice)
         invoice.settled = true
@@ -135,9 +135,10 @@ RSpec.describe Invoice, type: :model do
       describe "submit for settlement" do
         let(:gateway) { double } # Create a fake gateway
         let(:transaction) { build(:transaction) }
+        let(:first_transaction) { build(:transaction) }
         let(:success_result) { double(success?: true) }
         let(:error_result) { double(success?: false) }
-        let(:invoice) { create(:invoice) }
+        let(:invoice) { create(:invoice, member: member) }
 
         it "Will create a new transaction if payment method ID provided" do
           allow(BraintreeService::Transaction).to receive(:submit_invoice_for_settlement).with(gateway, invoice).and_return(transaction)
@@ -147,6 +148,7 @@ RSpec.describe Invoice, type: :model do
           result = invoice.submit_for_settlement(gateway, "1234")
           expect(result).to be(transaction)
           expect(invoice.payment_method_id).to eq("1234")
+          expect(invoice.transaction_id).to eq(transaction.id)
         end
 
         it "Will not create a new transaction if transaction ID provided" do
@@ -166,6 +168,17 @@ RSpec.describe Invoice, type: :model do
 
         it "Cannot process both payment method and transaction IDs" do
           expect { invoice.submit_for_settlement(gateway, "foo", "bar") }.to raise_error(Error::UnprocessableEntity)
+        end
+
+        it "Will build another invoice even if the first doesnt settle fully" do
+          plan_invoice = create(:invoice, plan_id: "567")
+          existing_invoice = create(:invoice, member: member, transaction_id: first_transaction.id)
+          expect(plan_invoice).to receive(:settle_invoice)
+          expect(plan_invoice).to receive(:build_next_invoice)
+          result = plan_invoice.submit_for_settlement(gateway, nil, transaction.id)
+
+          expect(plan_invoice.transaction_id).to eq(transaction.id)
+          expect(result).to be(nil)
         end
       end
 

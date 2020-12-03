@@ -32,7 +32,7 @@ class InvoiceOption
   validates_uniqueness_of :plan_id, unless: -> { plan_id.nil? }
 
   def self.search(searchTerms, criteria = Mongoid::Criteria.new(InvoiceOption))
-    criteria.full_text_search(searchTerms).sort_by(&:relevance).reverse
+    criteria.full_text_search(searchTerms)
   end
 
   def build_invoice(member_id, due_date, resource_id, discount = nil)
