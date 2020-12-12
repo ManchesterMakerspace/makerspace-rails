@@ -16,7 +16,11 @@ require 'dotenv'
 if (ENV["RAILS_ENV"] == 'production')
   Dotenv.load('production.env')
 elsif (ENV["RAILS_ENV"] == 'development')
-  Dotenv.load('development.env')
+  if (ENV["TEST_MAIL"])
+    Dotenv.load('test.env')
+  else 
+    Dotenv.load('development.env')
+  end
 else
   Dotenv.load('test.env')
 end
