@@ -126,4 +126,17 @@ s
       payment_method
     )
   end
+
+  def new_invoice
+    member = Member.last || FactoryBot.create(:member)
+    invoice = member.invoices.last || FactoryBot.create(:invoice,
+            resource_id: member.id,
+            resource_class: "member",
+            member: member)
+
+    BillingMailer._new_invoice(
+      member,
+      invoice,
+    )
+  end
 end

@@ -248,6 +248,20 @@ RSpec.describe Invoice, type: :model do
 
 
   context "private methods" do
+    let(:rental) { create(:rental) }
+
+    it "sends an email when non-plan invoice created" do 
+      allow_any_instance_of(Invoice).to receive(:send_rental_email)
+      expect_any_instance_of(Invoice).to receive(:send_rental_email)
+      create(:invoice, resource_class: "member", plan_id: nil)
+    end 
+
+    it "sends an email when a new rental subscription is craeted" do 
+      allow_any_instance_of(Invoice).to receive(:send_rental_email)
+      expect_any_instance_of(Invoice).to receive(:send_rental_email)
+      create(:invoice, resource_id: rental.id, resource_class: "rental", subscription_id: nil)
+    end
+
     it "normalizes due date to time zone if set with string" do
       time = Time.now.midnight
       time_as_string = time.strftime("%Y-%m-%d")

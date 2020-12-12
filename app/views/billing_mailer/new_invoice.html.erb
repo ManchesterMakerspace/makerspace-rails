@@ -1,0 +1,11 @@
+<% type = @invoice.resource_class %>
+<% isMembership = type == "member" %>
+<% friendly_type = isMembership ? 'Membership' : 'Rental' %>
+
+<div style="width: 100%">
+  <h3><%= friendly_type %> dues require your attention</h3>
+  <div>
+    <p>Hi <%=@member.fullname%>!</p>
+    <p>New dues for your account require your attention. <%= link_to 'View your account to pay outstanding dues.', @url, id: "profile-link"%></p>
+  </div>
+</div>
