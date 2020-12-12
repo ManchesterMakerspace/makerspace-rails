@@ -24,6 +24,7 @@ RSpec.describe Payment, type: :model do
       member = create(:member, firstname: "New", lastname: 'Member')
       incorrect_member = create(:member, firstname: "Wrong", lastname: 'User', email: 'wrong_email@gmail.com')
       email_member = create(:member, firstname: "Test", lastname: 'Tester', email: 'test@gmail.com')
+      sleep(5.seconds)
       name_payment = create(:payment, lastname: 'Member')
       email_payment = create(:payment, payer_email: 'test@gmail.com')
       name_payment.reload
@@ -31,8 +32,10 @@ RSpec.describe Payment, type: :model do
       expect(name_payment.member).to eq(member)
       expect(email_payment.member).to eq(email_member)
     end
+    
     it "Properly sets subscription based on subscription_status" do
       member = create(:member, firstname: "Test", lastname: 'Member')
+      sleep(5.seconds)
 
       rental_payment = create(:payment, :rental_sub, lastname: 'Member')
       rental_payment.reload

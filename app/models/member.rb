@@ -71,9 +71,56 @@ class Member
 
   # Searches by firstname if cant find anything else
   def self.search(searchTerms, criteria = Mongoid::Criteria.new(Member))
-    members1 = criteria.full_text_search(searchTerms)
-    members2 = criteria.full_text_search(searchTerms, index: :_firstname_keywords)
-    return members1 | members2
+    # Check if email format, then search email first
+    # Otherwise, build lastname, firstname, email
+    if !!(searchTerms =~ URI::MailTo::EMAIL_REGEXP)
+      results = Member.collection.aggregate([ 
+        { 
+          :$search => { 
+            text: { 
+              query: searchTerms, 
+              path: "email" 
+            } 
+          } 
+        },
+        {
+          :$sort => {
+            score: { :$meta => "textScore" }
+          }
+        },
+        {
+          :$project => {
+            _id: 1,
+          }
+        }
+      ]) 
+    else
+      results = Member.collection.aggregate([ 
+        { 
+          :$search => { 
+            text: { 
+              query: searchTerms, 
+              path: ["lastname", "firstname", "email"],
+              fuzzy: {} # Empty object enables fuzzy searching
+            } 
+          }, 
+        },
+        {
+          :$sort => {
+            score: { :$meta => "textScore" }
+          }
+        },
+        {
+          :$project => {
+            _id: 1,
+          }
+        }
+      ])
+    end
+
+    # collection.aggregate returns base BSON::Documents. Need to map to their class for downstream handlers
+    # Fetching exact members or saving will not work
+    results.collect { |m| Member.find(m[:_id]) }
   end
 
   def fullname

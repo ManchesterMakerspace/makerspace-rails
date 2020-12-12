@@ -21,6 +21,10 @@ RSpec.describe PaypalController, type: :controller do
 
   describe "POST #notify" do
     context "with valid params" do
+      before(:each) do
+        member
+        sleep(5.seconds)
+      end 
       it "creates a new Paypal" do
         expect {
           post :notify, params: valid_attributes, format: :json
