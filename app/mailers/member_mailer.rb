@@ -25,7 +25,7 @@ class MemberMailer < ApplicationMailer
   # Sent when a new member finishes self registering
   def member_registered(member_id)
     @member = Member.find(member_id)
-    mail to: @member.email, cc: "contact@manchestermakerspace.org", subject: 'Thank you for registering'
+    mail to: @member.email, cc: "contact@manchestermakerspace.org", subject: "Thank you for registering #{@member.fullname}"
   end
 
   # Send copy of signed docs to member
