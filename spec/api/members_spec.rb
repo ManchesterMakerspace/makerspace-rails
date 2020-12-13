@@ -19,7 +19,7 @@ describe 'Members API', type: :request do
         properties: {
           members: {
             type: :array,
-            items: { '$ref' => '#/definitions/Member' }
+            items: { '$ref' => '#/definitions/MemberSummary' }
           }
         },
         required: [ 'members' ]
