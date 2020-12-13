@@ -19,7 +19,6 @@ class BillingMailer < ApplicationMailer
     @subscription = subscription
     @payment_method = payment_method
     @invoice = invoice
-    get_profile_url()
     send_mail(member.email, "Subscription to Manchester Makerspace", __method__.to_s)
   end
 
@@ -37,7 +36,6 @@ class BillingMailer < ApplicationMailer
     @transaction = transaction
     @invoice = invoice
     @member = member
-    get_profile_url()
     send_mail(member.email, "Receipt from Manchester Makerspace", __method__.to_s)
   end
 
@@ -55,7 +53,6 @@ class BillingMailer < ApplicationMailer
     @subscription = subscription
     @payment_method = payment_method
     @member = member
-    get_profile_url()
     send_mail(member.email, "Refund Approved for transaction #{@transaction.id}", __method__.to_s)
   end
 
@@ -73,7 +70,6 @@ class BillingMailer < ApplicationMailer
     @subscription = subscription
     @payment_method = payment_method
     @member = member
-    get_profile_url()
     send_mail(member.email, "Refund Requested for transaction #{@transaction.id}", __method__.to_s)
   end
 
@@ -85,7 +81,6 @@ class BillingMailer < ApplicationMailer
   def _canceled_subscription(member, invoice_resource_class)
     @member = member
     @type = invoice_resource_class
-    get_profile_url()
     send_mail(member.email, "Canceled Manchester Makerspace Subscription", __method__.to_s)
   end
 
@@ -99,7 +94,6 @@ class BillingMailer < ApplicationMailer
     @error_status = error_status
     @member = member
     @invoice = invoice
-    get_profile_url()
     send_mail(member.email, "Failed payment to Manchester Makerspace", __method__.to_s)
   end
 
@@ -139,14 +133,29 @@ class BillingMailer < ApplicationMailer
     send_mail(member.email, "Dispute lost for payment to Manchester Makerspace", __method__.to_s)
   end
 
+  def new_invoice(email, invoice_id)
+    member = Member.find_by(email: email)
+    invoice = Invoice.find(invoice_id)
+    _dispute_lost(member, invoice)
+  end
+
+  def _new_invoice(member, invoice)
+    @member = member
+    @invoice = invoice
+    send_mail(member.email, "Makerspace dues require your attention", __method__.to_s)
+  end
+
   private
   def send_mail(email, subject, calling_method)
+    get_profile_url()
     mail to: email, subject: subject, template_name: calling_method.delete_prefix("_")
   end
 
   def get_profile_url()
-    @url = url_for(action: :application, controller: :application)
-    @url += "members/#{@member.id}"
+    unless @member.nil? 
+      @url = url_for(action: :application, controller: :application)
+      @url += "members/#{@member.id}"
+    end
   end
 
   def get_details_from_transaction(transaction)
