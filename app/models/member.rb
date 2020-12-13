@@ -117,10 +117,10 @@ class Member
         }
       ])
     end
-
     # collection.aggregate returns base BSON::Documents. Need to map to their class for downstream handlers
     # Fetching exact members or saving will not work
-    results.collect { |m| Member.find(m[:_id]) }
+    members = Member.where(id: { :$in => results.collect { |m| m[:_id] }})
+    results.collect { |m| members.select { |member| member.id == m[:_id] } }
   end
 
   def fullname

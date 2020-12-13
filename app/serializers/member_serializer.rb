@@ -1,20 +1,11 @@
-class MemberSerializer < ActiveModel::Serializer
-  attributes :id,
-             :firstname,
-             :lastname,
-             :phone,
-             :expirationTime,
-             :email,
-             :status,
-             :role,
-             :card_id,
+class MemberSerializer < MemberSummarySerializer
+  attributes :card_id,
              :memberContractOnFile,
              :subscription,
              :subscription_id,
              :earned_membership_id,
              :customer_id,
-             :notes,
-             :address,
+             :address
 
   def card_id
     active_card = object.access_cards.to_a.find { |card| card.is_active? }
