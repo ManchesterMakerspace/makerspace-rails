@@ -236,7 +236,20 @@ RSpec.configure do |config|
             }
           }
         },
-
+        MemberSummary: {
+          type: :object,
+          properties: {
+            id: { type: :string },
+            firstname: { type: :string },
+            lastname: { type: :string },
+            email: { type: :string },
+            status: { type: :string, enum: ["activeMember", "inactive", "nonMember", "revoked"] },
+            role: { type: :string, enum: ["admin", "member"] },
+            expirationTime: { type: :number, 'x-nullable': true },
+            memberContractOnFile: { type: :boolean },
+            notes: { type: :string, 'x-nullable': true },
+          }
+        },
         PayPalAccount: {
           type: :object,
           properties: {
