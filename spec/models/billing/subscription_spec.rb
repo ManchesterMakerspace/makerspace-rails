@@ -41,6 +41,34 @@ RSpec.describe BraintreeService::Subscription, type: :model do
         expect(result).to eq(success_result)
       end
 
+      it "removes a member's subscription" do 
+        member = create(:member, subscription_id: "foo", subscription: true)
+        member_invoice = create(:invoice, subscription_id: member.subscription_id, resource_id: member.id)
+
+        allow(gateway).to receive_message_chain(:subscription, cancel: success_result) # Setup method calls to gateway
+        expect(gateway.subscription).to receive(:cancel).with("foo").and_return(success_result)
+        result = BraintreeService::Subscription.cancel(gateway, "foo")
+        expect(result).to eq(success_result)
+        expect(member_invoice.resource.subscription).to be(false)
+        expect(member_invoice.resource.subscription_id).to be(nil)
+        member.reload 
+        expect(member.subscription).to be(false)
+        expect(member.subscription_id).to be(nil)
+      end
+
+      it "removes a rental's subscription" do 
+        rental = create(:rental, subscription_id: "bar")
+        rental_invoice = create(:invoice, subscription_id: rental.subscription_id, resource_id: rental.id, resource_class: "rental")
+
+        allow(gateway).to receive_message_chain(:subscription, cancel: success_result) # Setup method calls to gateway
+        expect(gateway.subscription).to receive(:cancel).with("bar").and_return(success_result)
+        result = BraintreeService::Subscription.cancel(gateway, "bar")
+        expect(result).to eq(success_result)
+        expect(rental_invoice.resource.subscription_id).to be(nil)
+        rental.reload
+        expect(rental.subscription_id).to be(nil)
+      end
+
       it "raises error if failed result" do
         allow(gateway).to receive_message_chain(:subscription, cancel: error_result) # Setup method calls to gateway
         expect(gateway.subscription).to receive(:cancel).with("foo").and_return(error_result)
