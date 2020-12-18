@@ -50,12 +50,13 @@ class Invoice
   validates_numericality_of :quantity, greater_than: 0
   validates :resource_id, presence: true
   validates :due_date, presence: true
-  validate :one_active_invoice_per_resource, on: :create
+  validate :one_active_invoice_per_resource, on: :create, if: Proc.new { (resource_class != "rental") }
   validate :resource_exists
 
   belongs_to :member
 
   before_save :set_due_date
+  after_create :send_rental_email, if: Proc.new { (resource_class == "rental" && subscription_id.nil?) || plan_id.nil? }
 
   attr_accessor :found_resource, :payment_method_id
 
@@ -215,6 +216,10 @@ class Invoice
   private
   def set_due_date
     self.due_date = Time.parse(self.due_date).in_time_zone('Eastern Time (US & Canada)') if self.due_date.kind_of?(String)
+  end
+
+  def send_rental_email
+    BillingMailer.new_invoice(self.member.email, self.id)
   end
 
   def execute_invoice_operation

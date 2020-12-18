@@ -10,7 +10,7 @@
             Transaction Date
           </td>
           <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
-            <%=@transaction.created_at.kind_of?(String) ? @transaction.created_at : @transaction.created_at.strftime("%m/%d/%Y")%>
+            <%=::Util.date_as_string(@transaction.created_at)%>
           </td>
         </tr>
         <!-- status -->
@@ -63,7 +63,7 @@
           Billing Period Start Date
         </td>
         <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
-          <%=Date.parse(@subscription.billing_period_start_date).strftime("%m/%d/%Y")%>
+          <%=::Util.date_as_string(@subscription.billing_period_start_date)%>
         </td>
       </tr>
       <!-- next payment -->
@@ -72,7 +72,7 @@
           Billing Period End Date
         </td>
         <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
-          <%=Date.parse(@subscription.billing_period_end_date).strftime("%m/%d/%Y")%>
+          <%=::Util.date_as_string(@subscription.billing_period_end_date)%>
         </td>
       </tr>
     <% end %>
@@ -82,7 +82,10 @@
         Payment Method
       </td>
       <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
-        <% description = @payment_method.try(:card_type) ? "#{@payment_method.card_type} ending in #{@payment_method.last_4}" : "Paypal account #{@payment_method.payer_email}" %>
+        <% 
+          description = @payment_method.try(:card_type) ? "#{@payment_method.card_type} ending in #{@payment_method.last_4}" : 
+            "Paypal account #{@payment_method.try(:payer_email) || @payment_method.try(:email)}" 
+        %>
         <img style="float: left; margin-right: 1em;" src=<%=@payment_method.image_url%> />
         <span style="line-height: 2.5em;"><%=description%></span>
       </td>

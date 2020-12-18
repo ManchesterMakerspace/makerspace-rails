@@ -64,6 +64,12 @@ module Error
       # and malicious users. They only serve to clog logs.
       unless !self.try(:current_member) && _status.to_i == 404
         message = "*#{error_type} Error* \n- user: #{user} \n- status: #{_status} \n- error: #{_error} \n- message: #{_message}"
+        
+        # @channel on server errors
+        if _status.to_i >= 500 
+          message = "<!channel> " + message
+        end
+
         send_slack_message(message, ::Service::SlackConnector.logs_channel)
       end
     end

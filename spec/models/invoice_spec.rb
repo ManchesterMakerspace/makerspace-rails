@@ -64,7 +64,7 @@ RSpec.describe Invoice, type: :model do
       expect(other_2_invoice).to_not be_valid
     end
 
-    describe "validates one active invoice per resource" do
+    describe "validates one active member invoice" do
       it "validates one per member" do
         first_invoice = build(:invoice, member: member, resource_id: member.id, resource_class: "member")
         expect(first_invoice).to be_valid
@@ -73,12 +73,12 @@ RSpec.describe Invoice, type: :model do
         expect(second_invoice).to_not be_valid
       end
 
-      it "validates one per rental" do
+      it "does not restrict to one per rental" do
         first_invoice = build(:invoice, member: member, resource_id: rental.id, resource_class: "rental")
         expect(first_invoice).to be_valid
         first_invoice.save
         second_invoice = build(:invoice, member: member, resource_id: rental.id, resource_class: "rental")
-        expect(second_invoice).to_not be_valid
+        expect(second_invoice).to be_valid
       end
     end
 
@@ -248,6 +248,20 @@ RSpec.describe Invoice, type: :model do
 
 
   context "private methods" do
+    let(:rental) { create(:rental) }
+
+    it "sends an email when non-plan invoice created" do 
+      allow_any_instance_of(Invoice).to receive(:send_rental_email)
+      expect_any_instance_of(Invoice).to receive(:send_rental_email)
+      create(:invoice, resource_class: "member", plan_id: nil)
+    end 
+
+    it "sends an email when a new rental subscription is craeted" do 
+      allow_any_instance_of(Invoice).to receive(:send_rental_email)
+      expect_any_instance_of(Invoice).to receive(:send_rental_email)
+      create(:invoice, resource_id: rental.id, resource_class: "rental", subscription_id: nil)
+    end
+
     it "normalizes due date to time zone if set with string" do
       time = Time.now.midnight
       time_as_string = time.strftime("%Y-%m-%d")

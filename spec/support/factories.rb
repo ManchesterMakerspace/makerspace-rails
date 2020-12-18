@@ -281,10 +281,10 @@ FactoryBot.define do
 
   factory :subscription_transaction, parent: :transaction do
     recurring { true }
-    subscription {{
-      billing_period_end_date: Time.now + 1.month.to_s,
+    subscription {({
+      billing_period_end_date: (Time.now + 1.month).to_s,
       billing_period_start_date: Time.now.to_s,
-    }}
+    })}
     subscription_id { generate(:uid) }
     payment_instrument_type { :credit_card }
     credit_card {({
@@ -316,6 +316,8 @@ FactoryBot.define do
     failure_count { 0 }
     days_past_due { 0 }
     billing_day_of_month { "10" }
+    billing_period_end_date { Time.now + 1.month }
+    billing_period_start_date { Time.now }
     payment_method_token { "g7291" }
 
     initialize_with { new(braintree_gateway, attributes) }
