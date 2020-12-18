@@ -128,7 +128,7 @@ GEM
       nokogiri (>= 1.5.9)
     mail (2.7.1)
       mini_mime (>= 0.1.1)
-    makerspace-react-rails (0.17.5)
+    makerspace-react-rails (0.17.7)
     marcel (0.3.3)
       mimemagic (~> 0.3.2)
     memoist (0.16.0)
@@ -309,7 +309,7 @@ DEPENDENCIES
   factory_bot_rails
   git
   google-api-client
-  makerspace-react-rails (= 0.17.5)
+  makerspace-react-rails (= 0.17.7)
   mini_magick
   mongoid (~> 7.0.2)
   mongoid-rspec
