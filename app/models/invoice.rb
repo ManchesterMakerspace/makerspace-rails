@@ -50,7 +50,7 @@ class Invoice
   validates_numericality_of :quantity, greater_than: 0
   validates :resource_id, presence: true
   validates :due_date, presence: true
-  validate :one_active_invoice_per_resource, on: :create
+  validate :one_active_invoice_per_resource, on: :create, if: Proc.new { (resource_class != "rental") }
   validate :resource_exists
 
   belongs_to :member
