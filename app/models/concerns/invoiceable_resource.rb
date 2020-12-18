@@ -46,6 +46,12 @@ module InvoiceableResource
       "Recent payment#{from} was unsuccessful. Any renewals or activations as a result of that payment have been reversed. Now expiring #{time}."
     end
 
+    def cancel_subscription
+      self.try(:subscription=, false)
+      self.try(:subscription_id=, nil)
+      self.save
+    end
+
     protected
     def update_expiration(new_expiration)
       self.update_attributes!(self.expiration_attr => expiration_as_ms(new_expiration))
