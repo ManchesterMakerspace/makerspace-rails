@@ -64,7 +64,7 @@ RSpec.describe Invoice, type: :model do
       expect(other_2_invoice).to_not be_valid
     end
 
-    describe "validates one active invoice per resource" do
+    describe "validates one active member invoice" do
       it "validates one per member" do
         first_invoice = build(:invoice, member: member, resource_id: member.id, resource_class: "member")
         expect(first_invoice).to be_valid
@@ -73,12 +73,12 @@ RSpec.describe Invoice, type: :model do
         expect(second_invoice).to_not be_valid
       end
 
-      it "validates one per rental" do
+      it "does not restrict to one per rental" do
         first_invoice = build(:invoice, member: member, resource_id: rental.id, resource_class: "rental")
         expect(first_invoice).to be_valid
         first_invoice.save
         second_invoice = build(:invoice, member: member, resource_id: rental.id, resource_class: "rental")
-        expect(second_invoice).to_not be_valid
+        expect(second_invoice).to be_valid
       end
     end
 
