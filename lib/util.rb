@@ -8,8 +8,7 @@ module Util
   end
 
   def self.date_as_string(maybe_date)
-    string_date = maybe_date.kind_of?(String) ? maybe_date : maybe_date.strftime("%m/%d/%Y")
-    Date.parse(string_date).strftime("%m/%d/%Y")
+    maybe_date.kind_of?(String) ? Date.parse(maybe_date).strftime("%m/%d/%Y") : maybe_date.strftime("%m/%d/%Y") 
   end
 
   def date_as_string(maybe_date)

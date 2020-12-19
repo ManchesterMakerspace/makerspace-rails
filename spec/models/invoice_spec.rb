@@ -96,6 +96,13 @@ RSpec.describe Invoice, type: :model do
     let(:member) { create(:member) }
     let(:rental) { create(:rental) }
 
+    it "parses resource name correctly" do 
+      member_invoice = create(:invoice, member: member)
+      rental_invoice = create(:invoice, member: member, resource_id: rental.id, resource_class: "rental")
+      expect(member_invoice.resource_name).to eq(member.fullname)
+      expect(rental_invoice.resource_name).to eq(rental.number)
+    end
+
     describe "settlement" do
       it "has getter and setter methods for settled" do
         invoice = create(:invoice)
