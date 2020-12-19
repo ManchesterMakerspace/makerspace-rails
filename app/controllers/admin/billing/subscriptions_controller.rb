@@ -18,8 +18,14 @@ class Admin::Billing::SubscriptionsController < Admin::BillingController
   def construct_query
     Proc.new do |search|
       unless subscription_query_params[:search].nil?
-        members = Member.search(subscription_query_params[:search])
-        sub_ids = members.map(&:subscription_id).reject { |m| m.nil? }
+        resources = Member.where(subscription_id: subscription_query_params[:search])
+        if resources.count == 0
+          resources ||= Rental.where(subscription_id: subscription_query_params[:search])
+        end
+        if resources.count == 0
+          resources ||= Member.search(subscription_query_params[:search])
+        end
+        sub_ids = resources.map(&:subscription_id).reject { |m| m.nil? }
         search.ids.in(sub_ids) unless sub_ids.empty?
       end
 

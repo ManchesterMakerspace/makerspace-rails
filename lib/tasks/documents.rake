@@ -16,6 +16,9 @@ namespace :documents do
     # Download as HTML
     Service::GoogleDrive.get_templates().each do |template_name, template|
       file = Tempfile.new()
+      if (template[:file_id].nil?) 
+        raise StandardError.new("Missing file ENV for #{template[:template_location].basename.to_s}")
+      end
       drive.export_file(template[:file_id], 'text/html', download_dest: file.path)
       document = File.read(file.path)
       # Replace encoded <>
