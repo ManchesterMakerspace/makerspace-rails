@@ -55,11 +55,13 @@ module FastQuery
     end
 
     def query_array_by_name(param, db_name)
-      query_is_array(
-        param,
-        { db_name.in => param },
-        { db_name => param }
-      )
+      unless param.empty?
+        query_is_array(
+          param,
+          { db_name.in => param },
+          { db_name => param }
+        )
+      end
     end
 
     def query_bool_by_name(param, db_name)
@@ -84,11 +86,13 @@ module FastQuery
 
     private
     def query_array(param, search)
-      query_is_array(
-        param,
-        search.in(param),
-        search.is(param)
-      )
+      unless param.empty? || param.all? { |p| p.empty?  } 
+        query_is_array(
+          param,
+          search.in(param),
+          search.is(param)
+        )
+      end
     end
   end
 end

@@ -23,6 +23,7 @@ class RentalsController < AuthenticationController
       if encoded_signature
         document = upload_document("rental_agreement", @member, { rental: @rental }, encoded_signature)
         @rental.update_attributes!(contract_on_file: true)
+        @rental.reload
         MemberMailer.send_document("rental_agreement", @member.id.as_json, document).deliver_later
       end
     rescue Error::Google::Upload => err
