@@ -198,7 +198,7 @@ class Invoice
       rental: "number"
     }
     option = options[self.resource_class.to_sym]
-    self.try(option.to_sym)
+    self.resource.try(option.to_sym)
   end
 
   def generate_subscription_id
@@ -219,7 +219,7 @@ class Invoice
   end
 
   def send_rental_email
-    BillingMailer.new_invoice(self.member.email, self.id)
+    BillingMailer.new_invoice(self.member.email, self.id.as_json).deliver_later
   end
 
   def execute_invoice_operation
