@@ -9,7 +9,7 @@ class BillingMailer < ApplicationMailer
     gateway = connect_gateway
     member = Member.find_by(email: email)
     subscription = BraintreeService::Subscription.get_subscription(gateway, subscription_id)
-    payment_method = ::BraintreeService::PaymentMethod.find_payment_method_for_customer(gateway, @subscription.payment_method_token, @member.customer_id)
+    payment_method = ::BraintreeService::PaymentMethod.find_payment_method_for_customer(gateway, subscription.payment_method_token, member.customer_id)
     invoice = Invoice.find(invoice_id)
     _new_subscription(member, subscription, invoice, payment_method)
   end
@@ -159,7 +159,7 @@ class BillingMailer < ApplicationMailer
   end
 
   def get_details_from_transaction(transaction)
-    subscription = transaction.subscription_details unless @transaction.subscription_id.nil?
+    subscription = transaction.subscription_details unless transaction.subscription_id.nil?
     payment_method = transaction.payment_method
     [subscription, payment_method]
   end
