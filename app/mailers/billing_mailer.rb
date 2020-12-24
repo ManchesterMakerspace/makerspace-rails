@@ -136,7 +136,7 @@ class BillingMailer < ApplicationMailer
   def new_invoice(email, invoice_id)
     member = Member.find_by(email: email)
     invoice = Invoice.find(invoice_id)
-    _dispute_lost(member, invoice)
+    _new_invoice(member, invoice)
   end
 
   def _new_invoice(member, invoice)

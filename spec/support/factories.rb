@@ -324,7 +324,7 @@ FactoryBot.define do
   end
 
   factory :plan, class: ::BraintreeService::Plan do
-    id { generate(:uid) }
+    id { "#{generate(:uid)}_membership" }
     name { "A Billing Plan" }
     description { "A billing plan to charge custoemrs" }
     price { "65.00" }
