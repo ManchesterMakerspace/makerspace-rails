@@ -48,7 +48,7 @@ class InvoiceOption
       resource_class: self.resource_class,
       quantity: self.quantity,
       discount_id: discount ? discount.id : nil,
-      plan_id: self.plan_id,
+      plan_id: (self.plan_id.nil? || self.plan_id.empty?) ? nil : self.plan_id,
       operation: self.operation,
     }
     Invoice.create!(invoice_args)

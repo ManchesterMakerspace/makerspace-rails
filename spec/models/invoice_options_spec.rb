@@ -90,6 +90,23 @@ RSpec.describe InvoiceOption, type: :model do
         rental_invoice = rental_io.build_invoice(member.id, one_mo, rental.id)
         expect(rental_invoice).to be_persisted
       end
+
+      it "will not build with empty plan ID" do 
+        weird_invoice_option = build(:invoice_option, resource_class: "member", plan_id: "")
+        one_mo = Time.now + 1.month
+        invoice = weird_invoice_option.build_invoice(member.id, one_mo, member.id)
+        expect(invoice).to be_persisted
+        expect(invoice.name).to eq(invoice_option.name)
+        expect(invoice.amount).to eq(invoice_option.amount)
+        expect(invoice.description).to eq(invoice_option.description)
+        expect(invoice.resource_class).to eq(invoice_option.resource_class)
+        expect(invoice.quantity).to eq(invoice_option.quantity)
+        expect(invoice.plan_id).to eq(nil)
+        expect(invoice.operation).to eq(invoice_option.operation)
+        expect(invoice.due_date).to eq(one_mo)
+        expect(invoice.member).to eq(member)
+        expect(invoice.resource).to eq(member)
+      end
     end
   end
 end
