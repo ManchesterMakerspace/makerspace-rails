@@ -155,7 +155,7 @@ class Member
   # to verify ownership
   def find_subscribed_resource(id)
     resource = self if self.subscription_id && self.subscription_id == id
-    resource = self.rentals.detect { |r| r.subscription_id == id }  unless resource || self.rentals.nil?
+    resource ||= self.rentals.detect { |r| r.subscription_id == id }  unless self.rentals.nil?
     resource
   end
 

@@ -30,11 +30,11 @@ class Rental
     criteria.full_text_search(searchTerms)
   end
 
-  protected
   def remove_subscription
     self.update_attributes!({ subscription_id: nil })
   end
 
+  protected
   def expiration_attr
     :expiration
   end
