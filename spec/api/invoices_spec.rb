@@ -14,9 +14,9 @@ describe 'Invoices API', type: :request do
       parameter name: :refunded, in: :query, type: :boolean, required: false
       parameter name: :refundRequested, in: :query, type: :boolean, required: false
 
-      parameter name: :planId, in: :query, type: :array, items: { type: :string }, required: false
-      parameter name: :resourceId, in: :query, type: :array, items: { type: :string }, required: false
-      parameter name: :resourceClass, in: :query, type: :array, items: { type: :string }, required: false
+      parameter name: :planId, in: :query, schema: { type: :array, items: { type: :string } }, required: false
+      parameter name: :resourceId, in: :query, schema: { type: :array, items: { type: :string } }, required: false
+      parameter name: :resourceClass, in: :query, schema: { type: :array, items: { type: :string } }, required: false
 
       response '200', 'invoices found' do
         let(:member) { create(:member) }
@@ -27,7 +27,7 @@ describe 'Invoices API', type: :request do
         properties: {
           invoices: {
             type: :array,
-            items: { '$ref' => '#/definitions/Invoice' }
+            items: { '$ref' => '#/components/schemas/Invoice' }
           }
         },
         required: [ 'invoices' ]
@@ -36,7 +36,7 @@ describe 'Invoices API', type: :request do
       end
 
       response '401', 'User not authenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         run_test!
       end
     end
@@ -45,6 +45,23 @@ describe 'Invoices API', type: :request do
       tags 'Invoices'
       operationId 'createInvoice'
       parameter name: :createInvoiceDetails, in: :body, schema: {
+        title: :createInvoiceDetails,
+        type: :object,
+        properties: {
+          invoiceOption: {
+            type: :object,
+            properties: {
+              id: { type: :string },
+              discountId: { type: :string, 'x-nullable': true }
+            },
+            required: [:id]
+          }
+        },
+        required: [:invoiceOption]
+      }, required: true
+
+      request_body_json schema: {
+        title: :createInvoiceDetails,
         type: :object,
         properties: {
           invoiceOption: {
@@ -65,7 +82,7 @@ describe 'Invoices API', type: :request do
         schema type: :object,
         properties: {
           invoice: {
-            '$ref' => '#/definitions/Invoice'
+            '$ref' => '#/components/schemas/Invoice'
           }
         },
         required: [ 'invoice' ]
@@ -76,21 +93,21 @@ describe 'Invoices API', type: :request do
       end
 
       response '401', 'User not authenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:createInvoiceDetails) {{ invoiceOption: { id: create(:invoice_option).id } }}
         run_test!
       end
 
       response '422', 'parameter missing' do
         before { sign_in create(:member) }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:createInvoiceDetails)  {{ invoiceOption: { discountId: 'some_discount' } }}
         run_test!
       end
 
       response '404', 'invoice option not found' do
         before { sign_in create(:member) }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:createInvoiceDetails) {{ invoiceOption: { id: 'invalid' } }}
         run_test!
       end

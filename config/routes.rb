@@ -1,8 +1,8 @@
 Rails.application.routes.draw do
 
   unless Rails.env.production?
-    mount Rswag::Ui::Engine => '/api-docs'
-    mount Rswag::Api::Engine => '/api-docs'
+    mount OpenApi::Rswag::Ui::Engine => '/api-docs'
+    mount OpenApi::Rswag::Api::Engine => '/api-docs'
   end
 
   root to: "application#application"

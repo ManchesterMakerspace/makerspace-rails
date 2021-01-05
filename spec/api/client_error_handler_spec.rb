@@ -7,6 +7,22 @@ describe 'ClientErrorHandler API', type: :request do
       operationId 'message'
 
       parameter name: :messageDetails, in: :body, schema: {
+        title: :messageDetails,
+        type: :object,
+        properties: {
+          notification: {
+            type: :object,
+            properties: {
+              message: {
+                type: :string
+              }
+            }
+          }
+        }
+      }
+
+      request_body_json schema: {
+        title: :messageDetails,
         type: :object,
         properties: {
           notification: {

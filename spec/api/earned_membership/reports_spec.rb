@@ -17,7 +17,7 @@ describe 'Reports API', type: :request do
         properties: {
           reports: {
             type: :array,
-            items: { '$ref' => '#/definitions/Report' }
+            items: { '$ref' => '#/components/schemas/Report' }
           }
         },
         required: [ 'reports' ]
@@ -28,13 +28,13 @@ describe 'Reports API', type: :request do
 
       response '403', 'Forbidden not an earned member' do
         before { sign_in create(:member) }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { create(:earned_membership).id }
         run_test!
       end
 
       response '401', "Unauthorized" do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { create(:earned_membership).id }
         run_test!
       end
@@ -45,10 +45,21 @@ describe 'Reports API', type: :request do
       operationId 'createEarnedMembershipReport'
       parameter name: :id, :in => :path, :type => :string
       parameter name: :createEarnedMembershipReportDetails, in: :body, schema: {
+        title: :createEarnedMembershipReportDetails, 
         type: :object,
         properties: {
           report: {
-            '$ref' => '#/definitions/NewReport'
+            '$ref' => '#/components/schemas/NewReport'
+          }
+        }
+      }, required: true
+
+      request_body_json schema: {
+        title: :createEarnedMembershipReportDetails, 
+        type: :object,
+        properties: {
+          report: {
+            '$ref' => '#/components/schemas/NewReport'
           }
         }
       }, required: true
@@ -59,7 +70,7 @@ describe 'Reports API', type: :request do
         schema type: :object,
         properties: {
           report: {
-            '$ref' => '#/definitions/Report'
+            '$ref' => '#/components/schemas/Report'
           }
         },
         required: [ 'report' ]
@@ -89,7 +100,7 @@ describe 'Reports API', type: :request do
 
       response '403', 'unauthorized' do
         before { sign_in create(:member) }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
 
         let(:createEarnedMembershipReportDetails) { {
           report: {

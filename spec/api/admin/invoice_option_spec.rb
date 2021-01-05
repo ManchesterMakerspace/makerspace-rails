@@ -8,10 +8,20 @@ describe 'Admin::InvoiceOptions API', type: :request do
     post 'Creates an invoice option' do
       tags 'InvoiceOptions'
       operationId "adminCreateInvoiceOption"
+
       parameter name: :createInvoiceOptionDetails, in: :body, schema: {
+        title: :createInvoiceOptionDetails,
         type: :object,
         properties: {
-          invoiceOption: { '$ref' => '#/definitions/NewInvoiceOption'   }
+          invoiceOption: { '$ref' => '#/components/schemas/NewInvoiceOption'   }
+        }
+      }, required: true
+
+      request_body_json schema: {
+        title: :createInvoiceOptionDetails,
+        type: :object,
+        properties: {
+          invoiceOption: { '$ref' => '#/components/schemas/NewInvoiceOption'   }
         }
       }, required: true
 
@@ -20,7 +30,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
 
         schema type: :object,
         properties: {
-          invoiceOption: { '$ref' => '#/definitions/InvoiceOption' },
+          invoiceOption: { '$ref' => '#/components/schemas/InvoiceOption' },
         },
         required: [ 'invoiceOption' ]
 
@@ -40,7 +50,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
 
       response '403', 'User unauthorized' do
         before { sign_in basic }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:createInvoiceOptionDetails) {{
           invoiceOption: {
             name: "something",
@@ -55,7 +65,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
       end
 
       response '401', 'User unauthenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:createInvoiceOptionDetails) {{
           invoiceOption: {
             name: "something",
@@ -78,9 +88,18 @@ describe 'Admin::InvoiceOptions API', type: :request do
       parameter name: :id, in: :path, type: :string
 
       parameter name: :updateInvoiceOptionDetails, in: :body, schema: {
+        title: :updateInvoiceOptionDetails, 
         type: :object,
         properties: {
-          invoiceOption: { '$ref' => '#/definitions/InvoiceOption'   }
+          invoiceOption: { '$ref' => '#/components/schemas/InvoiceOption'   }
+        }
+      }, required: true
+
+      request_body_json schema: {
+        title: :updateInvoiceOptionDetails, 
+        type: :object,
+        properties: {
+          invoiceOption: { '$ref' => '#/components/schemas/InvoiceOption'   }
         }
       }, required: true
 
@@ -89,7 +108,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
 
         schema type: :object,
         properties: {
-          invoiceOption: { '$ref' => '#/definitions/InvoiceOption' },
+          invoiceOption: { '$ref' => '#/components/schemas/InvoiceOption' },
         },
         required: [ 'invoiceOption' ]
 
@@ -109,7 +128,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
 
       response '403', 'User unauthorized' do
         before { sign_in basic }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:updateInvoiceOptionDetails) {{
           invoiceOption: {
             name: "something",
@@ -125,7 +144,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
       end
 
       response '401', 'User unauthenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:updateInvoiceOptionDetails) {{
           invoiceOption: {
             name: "something",
@@ -142,7 +161,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
 
       response '404', 'Invoice option not found' do
         before { sign_in admin }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:updateInvoiceOptionDetails) {{
           invoiceOption: {
             name: "something",
@@ -171,20 +190,20 @@ describe 'Admin::InvoiceOptions API', type: :request do
 
       response '403', 'User unauthorized' do
         before { sign_in basic }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { create(:invoice_option).id }
         run_test!
       end
 
       response '401', 'User unauthenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { create(:invoice_option).id }
         run_test!
       end
 
       response '404', 'Invoice Option not found' do
         before { sign_in admin }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { 'invalid' }
         run_test!
       end

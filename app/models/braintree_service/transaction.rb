@@ -3,7 +3,7 @@ class BraintreeService::Transaction < Braintree::Transaction
   extend Service::SlackConnector
   include ActiveModel::Serializers::JSON
 
-  attr_accessor :invoice
+  attr_writer :invoice
 
   def self.new(gateway, args)
     super(gateway, args)
@@ -88,6 +88,10 @@ class BraintreeService::Transaction < Braintree::Transaction
 
   def pretty_status
     status.titleize
+  end
+
+  def invoice 
+    invoice ||= Invoice.find_by({ transaction_id: id })
   end
 
   private

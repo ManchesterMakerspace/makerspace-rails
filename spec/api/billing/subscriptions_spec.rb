@@ -31,7 +31,7 @@ describe 'Billing::Subscriptions API', type: :request do
         schema type: :object,
         properties: {
           subscription: {
-            '$ref' => '#/definitions/Subscription'
+            '$ref' => '#/components/schemas/Subscription'
           }
         },
         required: [ 'subscription' ]
@@ -41,21 +41,21 @@ describe 'Billing::Subscriptions API', type: :request do
       end
 
       response '401', 'User not authenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { subscription.id }
         run_test!
       end
 
       response '403', 'User not authorized' do
         before { sign_in non_customer }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { subscription.id }
         run_test!
       end
 
       response '404', 'Subscription not for user' do
         before { sign_in customer }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { subscription.id }
         run_test!
       end
@@ -66,6 +66,22 @@ describe 'Billing::Subscriptions API', type: :request do
       operationId "updateSubscription"
       parameter name: :id, in: :path, type: :string
       parameter name: :updateSubscriptionDetails, in: :body, schema: {
+        title: :updateSubscriptionDetails,
+        type: :object,
+        properties: {
+          subscription: {
+            type: :object,
+            properties: {
+              paymentMethodToken: { type: :string }
+            },
+            required: [:paymentMethodToken]
+          }
+        },
+        required: [:subscription]
+      }, required: true
+
+      request_body_json schema: {
+        title: :updateSubscriptionDetails,
         type: :object,
         properties: {
           subscription: {
@@ -88,7 +104,7 @@ describe 'Billing::Subscriptions API', type: :request do
         schema type: :object,
         properties: {
           subscription: {
-            '$ref' => '#/definitions/Subscription'
+            '$ref' => '#/components/schemas/Subscription'
           }
         },
         required: [ 'subscription' ]
@@ -99,7 +115,7 @@ describe 'Billing::Subscriptions API', type: :request do
       end
 
       response '401', 'User not authenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { subscription.id }
         let(:updateSubscriptionDetails) {{ subscription: { payment_method_token: "54321" } }}
         run_test!
@@ -107,7 +123,7 @@ describe 'Billing::Subscriptions API', type: :request do
 
       response '403', 'User not authorized' do
         before { sign_in non_customer }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { subscription.id }
         let(:updateSubscriptionDetails) {{ subscription: { payment_method_token: "54321" } }}
         run_test!
@@ -115,7 +131,7 @@ describe 'Billing::Subscriptions API', type: :request do
 
       response '404', 'Subscription not for user' do
         before { sign_in customer }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { subscription.id }
         let(:updateSubscriptionDetails) {{ subscription: { payment_method_token: "54321" } }}
         run_test!
@@ -140,21 +156,21 @@ describe 'Billing::Subscriptions API', type: :request do
       end
 
       response '401', 'User not authenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { subscription.id }
         run_test!
       end
 
       response '403', 'User not authorized' do
         before { sign_in non_customer }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { subscription.id }
         run_test!
       end
 
       response '404', 'Subscription not for user' do
         before { sign_in customer }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { subscription.id }
         run_test!
       end

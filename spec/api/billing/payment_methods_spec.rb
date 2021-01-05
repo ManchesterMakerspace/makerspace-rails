@@ -34,7 +34,7 @@ describe 'Billing::PaymentMethods API', type: :request do
       end
 
       response '401', 'User not authenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         run_test!
       end
     end
@@ -58,7 +58,7 @@ describe 'Billing::PaymentMethods API', type: :request do
           paymentMethods: {
             type: :array,
             # TODO this can  also be paypal
-            items: { '$ref' => '#/definitions/CreditCard' }
+            items: { '$ref' => '#/components/schemas/CreditCard' }
           }
         },
         required: [ 'paymentMethods' ]
@@ -67,7 +67,7 @@ describe 'Billing::PaymentMethods API', type: :request do
       end
 
       response '401', 'User not authenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         run_test!
       end
     end
@@ -76,18 +76,35 @@ describe 'Billing::PaymentMethods API', type: :request do
       tags 'PaymentMethods'
       operationId "createPaymentMethod"
       parameter name: :createPaymentMethodDetails, in: :body, schema: {
+        title: :createPaymentMethodDetails,
         type: :object,
         properties: {
-          payment_method: {
+          paymentMethod: {
             type: :object,
             properties: {
-              payment_method_nonce: { type: :string },
-              make_default: { type: :boolean }
+              paymentMethodNonce: { type: :string },
+              makeDefault: { type: :boolean }
             },
-            required: [:payment_method_nonce]
+            required: [:paymentMethodNonce]
           }
         },
-        required: [:payment_method]
+        required: [:paymentMethod]
+      }, required: true
+
+      request_body_json schema: {
+        title: :createPaymentMethodDetails,
+        type: :object,
+        properties: {
+          paymentMethod: {
+            type: :object,
+            properties: {
+              paymentMethodNonce: { type: :string },
+              makeDefault: { type: :boolean }
+            },
+            required: [:paymentMethodNonce]
+          }
+        },
+        required: [:paymentMethod]
       }, required: true
 
       response '200', 'payment_method created' do
@@ -101,7 +118,7 @@ describe 'Billing::PaymentMethods API', type: :request do
         schema type: :object,
         properties: {
           paymentMethod: {
-            '$ref' => '#/definitions/CreditCard'
+            '$ref' => '#/components/schemas/CreditCard'
           }
         },
         required: [ 'paymentMethod' ]
@@ -112,14 +129,14 @@ describe 'Billing::PaymentMethods API', type: :request do
       end
 
       response '401', 'User not authenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:createPaymentMethodDetails) {{ payment_method: { paymentMethodNonce: "1234" } }}
         run_test!
       end
 
       response '422', 'parameter missing' do
         before { sign_in customer }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:createPaymentMethodDetails) {{ payment_method: { makeDefault: true } }}
         run_test!
       end
@@ -142,7 +159,7 @@ describe 'Billing::PaymentMethods API', type: :request do
         schema type: :object,
         properties: {
           paymentMethod: {
-            '$ref' => '#/definitions/CreditCard'
+            '$ref' => '#/components/schemas/CreditCard'
           }
         },
         required: [ 'paymentMethod' ]
@@ -152,14 +169,14 @@ describe 'Billing::PaymentMethods API', type: :request do
       end
 
       response '401', 'User not authenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { payment_method.token }
         run_test!
       end
 
       response '403', 'User not authorized' do
         before { sign_in non_customer }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { payment_method.token }
         run_test!
       end
@@ -183,14 +200,14 @@ describe 'Billing::PaymentMethods API', type: :request do
       end
 
       response '401', 'User not authenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { payment_method.token }
         run_test!
       end
 
       response '403', 'User not authorized' do
         before { sign_in non_customer }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { payment_method.token }
         run_test!
       end

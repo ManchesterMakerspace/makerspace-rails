@@ -17,7 +17,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
         properties: {
           earnedMemberships: {
             type: :array,
-            items: { '$ref' => '#/definitions/EarnedMembership' }
+            items: { '$ref' => '#/components/schemas/EarnedMembership' }
           }
         },
         required: [ 'earnedMemberships' ]
@@ -27,12 +27,12 @@ describe 'Admin::EarnedMemberships API', type: :request do
 
       response '403', 'User unauthorized' do
         before { sign_in basic }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         run_test!
       end
 
       response '401', 'User unauthenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         run_test!
       end
     end
@@ -41,9 +41,18 @@ describe 'Admin::EarnedMemberships API', type: :request do
       tags 'EarnedMemberships'
       operationId "adminCreateEarnedMembership"
       parameter name: :createEarnedMembershipDetails, in: :body, schema: {
+        title: :createEarnedMembershipDetails, 
         type: :object,
         properties: {
-          earnedMembership: { '$ref' => '#/definitions/NewEarnedMembership' },
+          earnedMembership: { '$ref' => '#/components/schemas/NewEarnedMembership' },
+        }
+      }, required: true
+
+      request_body_json schema: {
+        title: :createEarnedMembershipDetails, 
+        type: :object,
+        properties: {
+          earnedMembership: { '$ref' => '#/components/schemas/NewEarnedMembership' },
         }
       }, required: true
 
@@ -52,7 +61,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
 
         schema type: :object,
         properties: {
-          earnedMembership: { '$ref' => '#/definitions/EarnedMembership' },
+          earnedMembership: { '$ref' => '#/components/schemas/EarnedMembership' },
         },
         required: [ 'earnedMembership' ]
 
@@ -68,7 +77,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
 
       response '403', 'User unauthorized' do
         before { sign_in basic }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:createEarnedMembershipDetails) {{
           earnedMembership: {
             memberId: basic.id,
@@ -79,7 +88,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
       end
 
       response '401', 'User unauthenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:createEarnedMembershipDetails) {{
           earnedMembership: {
             memberId: basic.id,
@@ -102,7 +111,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
 
         schema type: :object,
           properties: {
-            earnedMembership: { '$ref' => '#/definitions/EarnedMembership' },
+            earnedMembership: { '$ref' => '#/components/schemas/EarnedMembership' },
           },
           required: [ 'earnedMembership' ]
 
@@ -112,20 +121,20 @@ describe 'Admin::EarnedMemberships API', type: :request do
 
       response '403', 'User unauthorized' do
         before { sign_in basic }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { create(:earned_membership).id }
         run_test!
       end
 
       response '401', 'User unauthenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { create(:earned_membership).id }
         run_test!
       end
 
       response '404', 'EarnedMembership not found' do
         before { sign_in admin }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { 'invalid' }
         run_test!
       end
@@ -137,9 +146,18 @@ describe 'Admin::EarnedMemberships API', type: :request do
       parameter name: :id, in: :path, type: :string
 
       parameter name: :updateEarnedMembershipDetails, in: :body, schema: {
+        title: :updateEarnedMembershipDetails,
         type: :object,
         properties: {
-          earnedMembership: { '$ref' => '#/definitions/EarnedMembership' },
+          earnedMembership: { '$ref' => '#/components/schemas/EarnedMembership' },
+        }
+      }, required: true
+
+      request_body_json schema: {
+        title: :updateEarnedMembershipDetails,
+        type: :object,
+        properties: {
+          earnedMembership: { '$ref' => '#/components/schemas/EarnedMembership' },
         }
       }, required: true
 
@@ -148,7 +166,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
 
         schema type: :object,
         properties: {
-          earnedMembership: { '$ref' => '#/definitions/EarnedMembership' },
+          earnedMembership: { '$ref' => '#/components/schemas/EarnedMembership' },
         },
         required: [ 'earnedMembership' ]
 
@@ -164,7 +182,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
 
       response '403', 'User unauthorized' do
         before { sign_in basic }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:updateEarnedMembershipDetails) {{
           earnedMembership: {
             memberId: basic.id,
@@ -176,7 +194,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
       end
 
       response '401', 'User unauthenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:updateEarnedMembershipDetails) {{
           earnedMembership: {
             memberId: basic.id,
@@ -189,7 +207,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
 
       response '404', 'EarnedMembership not found' do
         before { sign_in admin }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:updateEarnedMembershipDetails) {{
           earnedMembership: {
             memberId: basic.id,

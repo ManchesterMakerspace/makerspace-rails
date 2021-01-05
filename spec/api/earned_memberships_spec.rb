@@ -13,7 +13,7 @@ describe 'EarnedMemberships API', type: :request do
         schema type: :object,
           properties: {
             earnedMembership: {
-              '$ref' => '#/definitions/EarnedMembership'
+              '$ref' => '#/components/schemas/EarnedMembership'
             }
           },
           required: [ 'earnedMembership' ]
@@ -24,14 +24,14 @@ describe 'EarnedMemberships API', type: :request do
 
       response '404', 'earned membership not found' do
         before { sign_in create(:earned_member) }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { 'invalid' }
         run_test!
       end
 
       response '403', 'Forbidden access to different membership' do 
         before { sign_in create(:earned_member) }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
 
         let(:non_em) { create(:earned_membership) }
         let(:id) { non_em.id }
@@ -39,7 +39,7 @@ describe 'EarnedMemberships API', type: :request do
       end
 
       response '401', "Unauthorized" do 
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { create(:earned_membership).id }
         run_test!
       end

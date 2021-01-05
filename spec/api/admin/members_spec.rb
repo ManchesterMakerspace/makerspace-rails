@@ -10,9 +10,18 @@ describe 'Admin::Members API', type: :request do
       tags 'Members'
       operationId "adminCreateMember"
       parameter name: :createMemberDetails, in: :body, schema: {
+        title: :createMemberDetails, 
         type: :object,
         properties: {
-          member: { '$ref' => '#/definitions/NewMember'   }
+          member: { '$ref' => '#/components/schemas/NewMember'   }
+        }
+      }, required: true
+
+      request_body_json schema: {
+        title: :createMemberDetails, 
+        type: :object,
+        properties: {
+          member: { '$ref' => '#/components/schemas/NewMember'   }
         }
       }, required: true
 
@@ -21,7 +30,7 @@ describe 'Admin::Members API', type: :request do
 
         schema type: :object,
         properties: {
-          member: { '$ref' => '#/definitions/Member' },
+          member: { '$ref' => '#/components/schemas/Member' },
         },
         required: [ 'member' ]
 
@@ -40,7 +49,7 @@ describe 'Admin::Members API', type: :request do
 
       response '403', 'User unauthorized' do
         before { sign_in basic }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:createMemberDetails) {{
           member: {
             firstname: "first",
@@ -54,7 +63,7 @@ describe 'Admin::Members API', type: :request do
       end
 
       response '401', 'User unauthenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:createMemberDetails) {{
           member: {
             firstname: "first",
@@ -74,8 +83,40 @@ describe 'Admin::Members API', type: :request do
       tags 'Members'
       operationId "adminUpdateMember"
       parameter name: :id, in: :path, type: :string
-
       parameter name: :updateMemberDetails, in: :body, schema: {
+        title: :updateMemberDetails, 
+        type: :object,
+        properties: {
+          member: {
+            type: :object,
+            properties: {
+              firstname: { type: :string, 'x-nullable': true },
+              lastname: { type: :string, 'x-nullable': true },
+              email: { type: :string, 'x-nullable': true },
+              address: { 
+                type: :object, 
+                'x-nullable': true ,
+                properties: {
+                  street: { type: :string, 'x-nullable': true },
+                  unit: { type: :string,  'x-nullable': true },
+                  city: { type: :string, 'x-nullable': true },
+                  state: { type: :string, 'x-nullable': true },
+                  postalCode: { type: :string, 'x-nullable': true },
+                }
+              },
+              phone: { type: :string, 'x-nullable': true },
+              status: { type: :string, enum: ["activeMember", "inactive", "nonMember", "revoked"], 'x-nullable': true },
+              role: { type: :string, enum: ["admin", "member"], 'x-nullable': true },
+              renew: { type: :number, 'x-nullable': true },
+              memberContractOnFile: { type: :boolean, 'x-nullable': true },
+              subscription: { type: :boolean, 'x-nullable': true },
+            }
+          }
+        }
+      }, required: true
+
+      request_body_json schema: {
+        title: :updateMemberDetails, 
         type: :object,
         properties: {
           member: {
@@ -111,7 +152,7 @@ describe 'Admin::Members API', type: :request do
 
         schema type: :object,
         properties: {
-          member: { '$ref' => '#/definitions/Member' },
+          member: { '$ref' => '#/components/schemas/Member' },
         },
         required: [ 'member' ]
 
@@ -130,7 +171,7 @@ describe 'Admin::Members API', type: :request do
 
       response '403', 'User unauthorized' do
         before { sign_in basic }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:updateMemberDetails) {{
           member: {
             firstname: "first",
@@ -145,7 +186,7 @@ describe 'Admin::Members API', type: :request do
       end
 
       response '401', 'User unauthenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:updateMemberDetails) {{
           member: {
             firstname: "first",
@@ -161,7 +202,7 @@ describe 'Admin::Members API', type: :request do
 
       response '404', 'Member not found' do
         before { sign_in admin }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:updateMemberDetails) {{
           member: {
             firstname: "first",

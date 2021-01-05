@@ -16,7 +16,7 @@ describe 'Rentals API', type: :request do
         properties: {
           rentals: { 
             type: :array,
-            items: { '$ref' => '#/definitions/Rental' }
+            items: { '$ref' => '#/components/schemas/Rental' }
           }
         },
         required: [ 'rentals' ]
@@ -41,7 +41,7 @@ describe 'Rentals API', type: :request do
         schema type: :object,
           properties: {
             rental: {
-              '$ref' => '#/definitions/Rental'
+              '$ref' => '#/components/schemas/Rental'
             }
           },
           required: [ 'rental' ]
@@ -51,13 +51,13 @@ describe 'Rentals API', type: :request do
 
       response '404', 'rental not found' do
         before { sign_in create(:member) }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { 'invalid' }
         run_test!
       end
 
       response '401', 'User not authenciated' do 
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { create(:rental).id }
         run_test!
       end
@@ -68,6 +68,20 @@ describe 'Rentals API', type: :request do
       operationId "updateRental"
       parameter name: :id, in: :path, type: :string
       parameter name: :updateRentalDetails, in: :body, schema: {
+        title: :updateRentalDetails,
+        type: :object,
+        properties: {
+          rental: {
+            type: :object,
+            properties: {
+              signature: { type: :string, 'x-nullable': true }
+            }
+          }
+        }
+      }, required: true
+
+      request_body_json schema: {
+        title: :updateRentalDetails,
         type: :object,
         properties: {
           rental: {
@@ -90,7 +104,7 @@ describe 'Rentals API', type: :request do
         schema type: :object,
           properties: {
             rental: {
-              '$ref' => '#/definitions/Rental'
+              '$ref' => '#/components/schemas/Rental'
             }
           },
           required: [ 'rental' ]
@@ -105,21 +119,21 @@ describe 'Rentals API', type: :request do
         let(:rental) { create(:rental, member: other_user) }
         before { sign_in current_member }
 
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
 
         let(:id) { rental.id }
         run_test!
       end
 
       response '401', 'User not authenciated or authorized' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { create(:rental).id }
         run_test!
       end
 
       response '404', 'Rental not found' do
         before { sign_in create(:member) }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
 
         let(:id) { 'invalid' }
         run_test!

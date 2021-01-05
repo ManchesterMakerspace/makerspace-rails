@@ -21,8 +21,8 @@ describe 'Billing::Subscriptions API', type: :request do
       parameter name: :startDate, in: :query, type: :string, required: false
       parameter name: :endDate, in: :query, type: :string, required: false
       parameter name: :search, in: :query, type: :string, required: false
-      parameter name: :planId, in: :query, type: :array, items: { type: :string }, required: false
-      parameter name: :subscriptionStatus, in: :query, type: :array, items: { type: :string }, required: false
+      parameter name: :planId, in: :query, schema: { type: :array, items: { type: :string } }, required: false
+      parameter name: :subscriptionStatus, in: :query, schema: { type: :array, items: { type: :string } }, required: false
       parameter name: :customerId, in: :query, type: :string, required: false
 
       response '200', 'subscription found' do 
@@ -35,7 +35,7 @@ describe 'Billing::Subscriptions API', type: :request do
         properties: {
           subscriptions: {
             type: :array,
-            items: { '$ref' => '#/definitions/Subscription' }
+            items: { '$ref' => '#/components/schemas/Subscription' }
           }
         },
         required: [ 'subscriptions' ]
@@ -44,13 +44,13 @@ describe 'Billing::Subscriptions API', type: :request do
       end
 
       response '401', 'User not authenticated' do 
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         run_test!
       end
 
       response '403', 'User not authorized' do 
         before { sign_in basic }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         run_test!
       end
     end
@@ -76,14 +76,14 @@ describe 'Billing::Subscriptions API', type: :request do
       end
 
       response '401', 'User not authenticated' do 
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { subscription.id }
         run_test!
       end
 
       response '403', 'User not authorized' do 
         before { sign_in basic }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { subscription.id }
         run_test!
       end

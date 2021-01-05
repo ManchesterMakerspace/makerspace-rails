@@ -261,14 +261,18 @@ FactoryBot.define do
   end
 
   factory :paypal_transaction, parent: :transaction do
-    payment_instrument_type { :paypal_account }
+    payment_instrument_type { "paypal" }
     paypal {({
-      payer_email: "foo@test_makerspace.com"
+      image_url: "http://foobar",
+      payer_email: "foo@test_makerspace.com",
+      token: "g7291",
+      payer_first_name: "foo",
+      payer_last_name: "bar"
     })}
   end
 
   factory :credit_card_transaction, parent: :transaction do
-    payment_instrument_type { :credit_card }
+    payment_instrument_type { "credit_card" }
     credit_card {({
       card_type: ::Braintree::CreditCard::CardType::Visa,
       expiration_month: 10,
@@ -276,6 +280,8 @@ FactoryBot.define do
       expiration_date: 25,
       last_4: 1234,
       token: "g7291",
+      debit: false,
+      image_url: "http://foobar"
     })}
   end
 

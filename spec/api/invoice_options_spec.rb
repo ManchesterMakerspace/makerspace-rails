@@ -9,14 +9,14 @@ describe 'InvoiceOptions API', type: :request do
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
       parameter name: :subscriptionOnly, in: :query, type: :boolean, required: false
-      parameter name: :types, in: :query, type: :array, items: { type: :string }, required: false
+      parameter name: :types, in: :query, schema: { type: :array, items: { type: :string } }, required: false
 
       response '200', 'invoice_options found' do 
         schema type: :object,
         properties: {
           invoiceOptions: { 
             type: :array,
-            items: { '$ref' => '#/definitions/InvoiceOption' }
+            items: { '$ref' => '#/components/schemas/InvoiceOption' }
           }
         },
         required: [ 'invoiceOptions' ]
@@ -39,7 +39,7 @@ describe 'InvoiceOptions API', type: :request do
         schema type: :object,
           properties: {
             invoiceOption: {
-              '$ref' => '#/definitions/InvoiceOption'
+              '$ref' => '#/components/schemas/InvoiceOption'
             }
           },
           required: [ 'invoiceOption' ]
@@ -48,7 +48,7 @@ describe 'InvoiceOptions API', type: :request do
       end
 
       response '404', 'invoice option not found' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { 'invalid' }
         run_test!
       end
