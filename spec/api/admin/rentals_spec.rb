@@ -17,14 +17,8 @@ describe 'Admin::Rentals API', type: :request do
 
       response '200', 'rentals found' do
         before { sign_in admin }
-        schema type: :object,
-        properties: {
-          rentals: {
-            type: :array,
+        schema type: :array,
             items: { '$ref' => '#/components/schemas/Rental' }
-          }
-        },
-        required: [ 'rentals' ]
 
         run_test!
       end
@@ -63,11 +57,7 @@ describe 'Admin::Rentals API', type: :request do
       response '200', 'rental created' do
         before { sign_in admin }
 
-        schema type: :object,
-        properties: {
-          rental: { '$ref' => '#/components/schemas/Rental' },
-        },
-        required: [ 'rental' ]
+        schema '$ref' => '#/components/schemas/Rental'
 
         let(:createRentalDetails) {{
           rental: {
@@ -133,11 +123,7 @@ describe 'Admin::Rentals API', type: :request do
       response '200', 'rental updated' do
         before { sign_in admin }
 
-        schema type: :object,
-        properties: {
-          rental: { '$ref' => '#/components/schemas/Rental' },
-        },
-        required: [ 'rental' ]
+        schema '$ref' => '#/components/schemas/Rental'
 
         let(:updateRentalDetails) {{
           rental: {

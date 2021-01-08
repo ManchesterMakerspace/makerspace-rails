@@ -13,14 +13,8 @@ describe 'Admin::EarnedMemberships API', type: :request do
 
       response '200', 'earned memberships found' do
         before { sign_in admin }
-        schema type: :object,
-        properties: {
-          earnedMemberships: {
-            type: :array,
+        schema type: :array,
             items: { '$ref' => '#/components/schemas/EarnedMembership' }
-          }
-        },
-        required: [ 'earnedMemberships' ]
 
         run_test!
       end
@@ -59,11 +53,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
       response '200', 'earned membership created' do
         before { sign_in admin }
 
-        schema type: :object,
-        properties: {
-          earnedMembership: { '$ref' => '#/components/schemas/EarnedMembership' },
-        },
-        required: [ 'earnedMembership' ]
+        schema '$ref' => '#/components/schemas/EarnedMembership'
 
         let(:createEarnedMembershipDetails) {{
           earnedMembership: {
@@ -109,11 +99,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
       response '200', 'earned membership found' do
         before { sign_in admin }
 
-        schema type: :object,
-          properties: {
-            earnedMembership: { '$ref' => '#/components/schemas/EarnedMembership' },
-          },
-          required: [ 'earnedMembership' ]
+        schema '$ref' => '#/components/schemas/EarnedMembership'
 
         let(:id) { create(:earned_membership).id }
         run_test!
@@ -164,11 +150,7 @@ describe 'Admin::EarnedMemberships API', type: :request do
       response '200', 'earned membership updated' do
         before { sign_in admin }
 
-        schema type: :object,
-        properties: {
-          earnedMembership: { '$ref' => '#/components/schemas/EarnedMembership' },
-        },
-        required: [ 'earnedMembership' ]
+        schema '$ref' => '#/components/schemas/EarnedMembership'
 
         let(:updateEarnedMembershipDetails) {{
           earnedMembership: {

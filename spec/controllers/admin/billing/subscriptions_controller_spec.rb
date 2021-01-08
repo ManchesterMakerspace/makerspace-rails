@@ -72,7 +72,7 @@ RSpec.describe Admin::Billing::SubscriptionsController, type: :controller do
       get :index, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(parsed_response['subscriptions'].first['id']).to eq(canceled_subscription.id.to_s)
+      expect(parsed_response.first['id']).to eq(canceled_subscription.id.to_s)
     end
   end
 

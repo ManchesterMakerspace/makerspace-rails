@@ -91,7 +91,7 @@ class BraintreeService::Transaction < Braintree::Transaction
   end
 
   def invoice 
-    invoice ||= Invoice.find_by({ transaction_id: id })
+    Invoice.find_by({ transaction_id: id })
   end
 
   private
@@ -100,7 +100,6 @@ class BraintreeService::Transaction < Braintree::Transaction
 
     # Search by refunded ID if it's a refund transaction
     transaction_id = norm_transaction.refunded_transaction_id || norm_transaction.id
-    norm_transaction.invoice = invoice ||= Invoice.find_by(transaction_id: transaction_id)
     norm_transaction
   end
 end

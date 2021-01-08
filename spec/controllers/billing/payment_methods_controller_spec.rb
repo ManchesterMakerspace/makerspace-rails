@@ -81,7 +81,7 @@ RSpec.describe Billing::PaymentMethodsController, type: :controller do
       get :index, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(parsed_response['paymentMethods'].first['id']).to eq(payment_method.token)
+      expect(parsed_response.first['id']).to eq(payment_method.token)
     end
 
     it "renders an empty list if current member is not a customer" do 
@@ -90,7 +90,7 @@ RSpec.describe Billing::PaymentMethodsController, type: :controller do
       get :index, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(parsed_response['paymentMethods']).to eq([])
+      expect(parsed_response).to eq([])
     end
   end
 
@@ -104,7 +104,7 @@ RSpec.describe Billing::PaymentMethodsController, type: :controller do
       get :show, params: {id: token}, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(parsed_response['paymentMethod']['id']).to eq(payment_method.token)
+      expect(parsed_response['id']).to eq(payment_method.token)
     end
 
     it "raises error if no customer" do
@@ -126,7 +126,7 @@ RSpec.describe Billing::PaymentMethodsController, type: :controller do
       post :create, params: { payment_method: valid_params }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(parsed_response['paymentMethod']['id']).to eq(payment_method.token)
+      expect(parsed_response['id']).to eq(payment_method.token)
     end
 
     it "creates a customer with new payment method if not already a customer" do 
@@ -144,7 +144,7 @@ RSpec.describe Billing::PaymentMethodsController, type: :controller do
       post :create, params: { payment_method: valid_params }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(parsed_response['paymentMethod']['id']).to eq(payment_method.token)
+      expect(parsed_response['id']).to eq(payment_method.token)
 
       non_customer.reload
       expect(non_customer.customer_id).to eq("new_customer")

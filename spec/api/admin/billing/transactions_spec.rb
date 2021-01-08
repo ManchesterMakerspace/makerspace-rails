@@ -36,14 +36,8 @@ describe 'Billing::Transactions API', type: :request do
           allow(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, anything).and_return(transactions)
         end
 
-        schema type: :object,
-        properties: {
-          transactions: { 
-            type: :array,
+        schema type: :array,
             items: { '$ref' => '#/components/schemas/Transaction' }
-          }
-        },
-        required: [ 'transactions' ]
 
         run_test!
       end
@@ -76,11 +70,7 @@ describe 'Billing::Transactions API', type: :request do
           allow(BraintreeService::Transaction).to receive(:get_transaction).with(gateway, transaction.id).and_return(transaction)
         end
 
-        schema type: :object,
-        properties: {
-          transaction: {'$ref' => '#/components/schemas/Transaction'}
-        },
-        required: [ 'transaction' ]
+        schema '$ref' => '#/components/schemas/Transaction'
         let(:id) { transaction.id }
 
         run_test!

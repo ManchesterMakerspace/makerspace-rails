@@ -16,9 +16,9 @@ RSpec.describe InvoiceOptionsController, type: :controller do
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
-      expect(parsed_response['invoiceOptions'].first['id']).to eq(first_io.id.to_s)
-      expect(parsed_response['invoiceOptions'].last['id']).to eq(second_io.id.to_s)
-      expect(parsed_response['invoiceOptions'].count).to eq(2)
+      expect(parsed_response.first['id']).to eq(first_io.id.to_s)
+      expect(parsed_response.last['id']).to eq(second_io.id.to_s)
+      expect(parsed_response.count).to eq(2)
     end
 
     it "limits to only subscription options when requested" do 
@@ -31,8 +31,8 @@ RSpec.describe InvoiceOptionsController, type: :controller do
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
-      expect(parsed_response['invoiceOptions'].first['id']).to eq(first_io.id.to_s)
-      expect(parsed_response['invoiceOptions'].count).to eq(1)
+      expect(parsed_response.first['id']).to eq(first_io.id.to_s)
+      expect(parsed_response.count).to eq(1)
     end
 
     describe "limits to type when requested" do 
@@ -45,8 +45,8 @@ RSpec.describe InvoiceOptionsController, type: :controller do
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
         parsed_response = JSON.parse(response.body)
-        expect(parsed_response['invoiceOptions'].first['id']).to eq(second_io.id.to_s)
-        expect(parsed_response['invoiceOptions'].count).to eq(1)
+        expect(parsed_response.first['id']).to eq(second_io.id.to_s)
+        expect(parsed_response.count).to eq(1)
       end
 
       it "selects rental types" do 
@@ -58,8 +58,8 @@ RSpec.describe InvoiceOptionsController, type: :controller do
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
         parsed_response = JSON.parse(response.body)
-        expect(parsed_response['invoiceOptions'].first['id']).to eq(first_io.id.to_s)
-        expect(parsed_response['invoiceOptions'].count).to eq(1)
+        expect(parsed_response.first['id']).to eq(first_io.id.to_s)
+        expect(parsed_response.count).to eq(1)
       end
     end
   end
@@ -72,7 +72,7 @@ RSpec.describe InvoiceOptionsController, type: :controller do
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
-      expect(parsed_response['invoiceOption']['id']).to eq(first_io.id.as_json)
+      expect(parsed_response['id']).to eq(first_io.id.as_json)
     end
   end
 
@@ -90,10 +90,10 @@ RSpec.describe InvoiceOptionsController, type: :controller do
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
         parsed_response = JSON.parse(response.body)
-        expect(parsed_response['invoiceOptions'].first['id']).to eq(disabled_io.id.to_s)
-        expect(parsed_response['invoiceOptions'].last['id']).to eq(second_io.id.to_s)
-        expect(parsed_response['invoiceOptions'][1]['id']).to eq(first_io.id.to_s)
-        expect(parsed_response['invoiceOptions'].count).to eq(3)
+        expect(parsed_response.first['id']).to eq(disabled_io.id.to_s)
+        expect(parsed_response.last['id']).to eq(second_io.id.to_s)
+        expect(parsed_response[1]['id']).to eq(first_io.id.to_s)
+        expect(parsed_response.count).to eq(3)
       end
     end
   end

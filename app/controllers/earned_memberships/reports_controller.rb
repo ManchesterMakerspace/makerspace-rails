@@ -4,7 +4,7 @@ class EarnedMemberships::ReportsController < AuthenticationController
 
   def index
     @reports = EarnedMembership::Report.where(earned_membership_id: current_member.earned_membership.id)
-    return render_with_total_items(query_resource(@reports), { each_serializer: EarnedMembership::ReportSerializer, root: "reports" })
+    return render_with_total_items(query_resource(@reports), { each_serializer: EarnedMembership::ReportSerializer, adapter: :attributes })
   end
 
   def create
@@ -12,7 +12,7 @@ class EarnedMemberships::ReportsController < AuthenticationController
     @report = EarnedMembership::Report.new(report_params)
     @report.save!
     @messages.push("#{@report.earned_membership.member.fullname} just submitted a report.")
-    render json: @report, serializer: EarnedMembership::ReportSerializer, root: "report" and return
+    render json: @report, serializer: EarnedMembership::ReportSerializer, adapter: :attributes and return
   end
 
   private

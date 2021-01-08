@@ -28,13 +28,8 @@ describe 'Billing::Subscriptions API', type: :request do
           allow(BraintreeService::Subscription).to receive(:get_subscription).with(gateway, subscription.id).and_return(subscription)
         end
 
-        schema type: :object,
-        properties: {
-          subscription: {
-            '$ref' => '#/components/schemas/Subscription'
-          }
-        },
-        required: [ 'subscription' ]
+        schema '$ref' => '#/components/schemas/Subscription'
+
         let(:id) { subscription.id }
 
         run_test!
@@ -101,13 +96,8 @@ describe 'Billing::Subscriptions API', type: :request do
           allow(BraintreeService::Subscription).to receive(:update).and_return(subscription)
         end
 
-        schema type: :object,
-        properties: {
-          subscription: {
-            '$ref' => '#/components/schemas/Subscription'
-          }
-        },
-        required: [ 'subscription' ]
+        schema '$ref' => '#/components/schemas/Subscription'
+
         let(:id) { subscription.id }
         let(:updateSubscriptionDetails) {{ subscription: { payment_method_token: "54321" } }}
 

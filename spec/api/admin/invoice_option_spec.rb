@@ -28,11 +28,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
       response '200', 'invoice option created' do
         before { sign_in admin }
 
-        schema type: :object,
-        properties: {
-          invoiceOption: { '$ref' => '#/components/schemas/InvoiceOption' },
-        },
-        required: [ 'invoiceOption' ]
+        schema '$ref' => '#/components/schemas/InvoiceOption'
 
         let(:createInvoiceOptionDetails) {{
           invoiceOption: {
@@ -106,11 +102,7 @@ describe 'Admin::InvoiceOptions API', type: :request do
       response '200', 'invoice option updated' do
         before { sign_in admin }
 
-        schema type: :object,
-        properties: {
-          invoiceOption: { '$ref' => '#/components/schemas/InvoiceOption' },
-        },
-        required: [ 'invoiceOption' ]
+        schema '$ref' => '#/components/schemas/InvoiceOption'
 
         let(:updateInvoiceOptionDetails) {{
           invoiceOption: {

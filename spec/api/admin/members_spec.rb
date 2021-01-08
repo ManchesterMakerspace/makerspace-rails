@@ -28,11 +28,7 @@ describe 'Admin::Members API', type: :request do
       response '200', 'member created' do
         before { sign_in admin }
 
-        schema type: :object,
-        properties: {
-          member: { '$ref' => '#/components/schemas/Member' },
-        },
-        required: [ 'member' ]
+        schema '$ref' => '#/components/schemas/Member'
 
         let(:createMemberDetails) {{
           member: {
@@ -150,11 +146,7 @@ describe 'Admin::Members API', type: :request do
       response '200', 'member updated' do
         before { sign_in admin }
 
-        schema type: :object,
-        properties: {
-          member: { '$ref' => '#/components/schemas/Member' },
-        },
-        required: [ 'member' ]
+        schema '$ref' => '#/components/schemas/Member'
 
         let(:updateMemberDetails) {{
           member: {

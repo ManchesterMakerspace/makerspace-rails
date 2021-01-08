@@ -50,7 +50,7 @@ RSpec.describe Admin::MembersController, type: :controller do
           parsed_response = JSON.parse(response.body)
           expect(response).to have_http_status(200)
           expect(response.content_type).to eq "application/json"
-          expect(parsed_response['member']['id']).to eq(Member.last.id.as_json)
+          expect(parsed_response['id']).to eq(Member.last.id.as_json)
         end
 
         it "sends an email for the created member to reset password" do
@@ -116,7 +116,7 @@ RSpec.describe Admin::MembersController, type: :controller do
           parsed_response = JSON.parse(response.body)
           expect(response).to have_http_status(200)
           expect(response.content_type).to eq "application/json"
-          expect(parsed_response['member']['id']).to eq(member.id.as_json)
+          expect(parsed_response['id']).to eq(member.id.as_json)
         end
 
         it "Sends a slack notification" do

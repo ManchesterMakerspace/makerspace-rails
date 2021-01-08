@@ -47,7 +47,7 @@ class InvoicesController < AuthenticationController
     invoices = @queries.length > 0 ? invoices.where(@queries.reduce(&:merge)) : invoices
     invoices = query_resource(invoices) # Query with the usual sorting, paging and searching
 
-    return render_with_total_items(invoices, { each_serializer: InvoiceSerializer, root: "invoices" })
+    return render_with_total_items(invoices, { each_serializer: InvoiceSerializer, adapter: :attributes })
   end
 
   def create
@@ -60,7 +60,7 @@ class InvoicesController < AuthenticationController
     end
 
     @invoice = invoice_option.build_invoice(current_member.id, Time.now, current_member.id, invoice_discount)
-    render json: @invoice and return
+    render json: @invoice, adapter: :attributes and return
   end
 
 

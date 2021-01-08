@@ -19,11 +19,11 @@ class MembersController < AuthenticationController
       end
       @members = query_resource(search)
 
-      return render_with_total_items(@members, { each_serializer: MemberSummarySerializer, root: "members" })
+      return render_with_total_items(@members, { each_serializer: MemberSummarySerializer, adapter: :attributes })
     end
 
     def show
-      render json: @member and return
+      render json: @member, adapter: :attributes and return
     end
 
     def update
@@ -43,7 +43,7 @@ class MembersController < AuthenticationController
         @member.update_attributes!(member_params)
       end
 
-      render json: @member and return
+      render json: @member, adapter: :attributes and return
     end
 
     private

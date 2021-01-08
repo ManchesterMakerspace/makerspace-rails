@@ -14,7 +14,7 @@ RSpec.describe Admin::EarnedMembershipsController, type: :controller do
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
-        expect(parsed_response['earnedMembership']['id']).to eq(EarnedMembership.last.id.as_json)
+        expect(parsed_response['id']).to eq(EarnedMembership.last.id.as_json)
       end
 
       it "Raises 404 if no matching membership found" do
@@ -29,7 +29,7 @@ RSpec.describe Admin::EarnedMembershipsController, type: :controller do
         get :index, format: :json
         expect(response).to have_http_status(200)
         parsed_response = JSON.parse(response.body)
-        expect(parsed_response["earnedMemberships"].count).to eq(EarnedMembership.count)
+        expect(parsed_response.count).to eq(EarnedMembership.count)
       end
     end
 
@@ -61,7 +61,7 @@ RSpec.describe Admin::EarnedMembershipsController, type: :controller do
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
-        expect(parsed_response["earnedMembership"]["id"]).to eq(EarnedMembership.last.id.as_json)
+        expect(parsed_response["id"]).to eq(EarnedMembership.last.id.as_json)
       end
     end
 
@@ -82,7 +82,7 @@ RSpec.describe Admin::EarnedMembershipsController, type: :controller do
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
-        expect(parsed_response["earnedMembership"]["memberName"]).to eq(diff_member.fullname)
+        expect(parsed_response["memberName"]).to eq(diff_member.fullname)
       end
 
       it "Deletes requirements missing from params" do
@@ -98,7 +98,7 @@ RSpec.describe Admin::EarnedMembershipsController, type: :controller do
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
-        expect(parsed_response["earnedMembership"]["requirements"].count).to eq(1)
+        expect(parsed_response["requirements"].count).to eq(1)
       end
     end
   end

@@ -27,6 +27,10 @@ RSpec.configure do |config|
         uid: { type: :string },
       }
     },
+    RejectionCard: {
+      type: :object,
+      properties: { uid: { type: :string } }
+    },
 
     CreditCard: {
       type: :object,

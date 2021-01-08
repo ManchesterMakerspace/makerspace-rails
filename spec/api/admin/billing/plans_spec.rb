@@ -26,14 +26,8 @@ describe 'Plans API', type: :request do
       response '200', 'billing plans found' do 
         before { sign_in admin }
 
-        schema type: :object,
-        properties: {
-          plans: { 
-            type: :array,
+        schema type: :array,
             items: { '$ref' => '#/components/schemas/Plan' }
-          }
-        },
-        required: [ 'plans' ]
 
         run_test!
       end
@@ -63,14 +57,8 @@ describe 'Plans API', type: :request do
 
       response '200', 'billing plan discounts found' do 
         before { sign_in admin }
-        schema type: :object,
-          properties: {
-            discounts: { 
-              type: :array,
+        schema type: :array,
               items: { '$ref' => '#/components/schemas/Discount' }
-            }
-          },
-          required: [ 'discounts' ]
 
         run_test!
       end

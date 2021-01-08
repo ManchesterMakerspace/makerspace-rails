@@ -122,6 +122,17 @@
           "uid"
         ]
       },
+      "RejectionCard": {
+        "type": "object",
+        "properties": {
+          "uid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "uid"
+        ]
+      },
       "CreditCard": {
         "type": "object",
         "properties": {
@@ -1279,60 +1290,44 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "analytics": {
-                      "type": "object",
-                      "properties": {
-                        "totalMembers": {
-                          "type": "number"
-                        },
-                        "newMembers": {
-                          "type": "number"
-                        },
-                        "subscribedMembers": {
-                          "type": "number"
-                        },
-                        "pastDueInvoices": {
-                          "type": "number"
-                        },
-                        "refundsPending": {
-                          "type": "number"
-                        }
-                      }
+                    "totalMembers": {
+                      "type": "number"
+                    },
+                    "newMembers": {
+                      "type": "number"
+                    },
+                    "subscribedMembers": {
+                      "type": "number"
+                    },
+                    "pastDueInvoices": {
+                      "type": "number"
+                    },
+                    "refundsPending": {
+                      "type": "number"
                     }
-                  },
-                  "required": [
-                    "analytics"
-                  ]
+                  }
                 }
               },
               "text/html": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "analytics": {
-                      "type": "object",
-                      "properties": {
-                        "totalMembers": {
-                          "type": "number"
-                        },
-                        "newMembers": {
-                          "type": "number"
-                        },
-                        "subscribedMembers": {
-                          "type": "number"
-                        },
-                        "pastDueInvoices": {
-                          "type": "number"
-                        },
-                        "refundsPending": {
-                          "type": "number"
-                        }
-                      }
+                    "totalMembers": {
+                      "type": "number"
+                    },
+                    "newMembers": {
+                      "type": "number"
+                    },
+                    "subscribedMembers": {
+                      "type": "number"
+                    },
+                    "pastDueInvoices": {
+                      "type": "number"
+                    },
+                    "refundsPending": {
+                      "type": "number"
                     }
-                  },
-                  "required": [
-                    "analytics"
-                  ]
+                  }
                 }
               }
             }
@@ -1390,34 +1385,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "plans": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Plan"
-                      }
-                    }
-                  },
-                  "required": [
-                    "plans"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Plan"
+                  }
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "plans": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Plan"
-                      }
-                    }
-                  },
-                  "required": [
-                    "plans"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Plan"
+                  }
                 }
               }
             }
@@ -1513,34 +1492,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "discounts": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Discount"
-                      }
-                    }
-                  },
-                  "required": [
-                    "discounts"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Discount"
+                  }
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "discounts": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Discount"
-                      }
-                    }
-                  },
-                  "required": [
-                    "discounts"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Discount"
+                  }
                 }
               }
             }
@@ -1708,34 +1671,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "subscriptions": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Subscription"
-                      }
-                    }
-                  },
-                  "required": [
-                    "subscriptions"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Subscription"
+                  }
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "subscriptions": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Subscription"
-                      }
-                    }
-                  },
-                  "required": [
-                    "subscriptions"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Subscription"
+                  }
                 }
               }
             }
@@ -1895,34 +1842,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "transactions": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Transaction"
-                      }
-                    }
-                  },
-                  "required": [
-                    "transactions"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  }
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "transactions": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Transaction"
-                      }
-                    }
-                  },
-                  "required": [
-                    "transactions"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  }
                 }
               }
             }
@@ -1983,28 +1914,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "transaction": {
-                      "$ref": "#/components/schemas/Transaction"
-                    }
-                  },
-                  "required": [
-                    "transaction"
-                  ]
+                  "$ref": "#/components/schemas/Transaction"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "transaction": {
-                      "$ref": "#/components/schemas/Transaction"
-                    }
-                  },
-                  "required": [
-                    "transaction"
-                  ]
+                  "$ref": "#/components/schemas/Transaction"
                 }
               }
             }
@@ -2109,38 +2024,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "card": {
-                      "type": "object",
-                      "properties": {
-                        "uid": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  },
-                  "required": [
-                    "card"
-                  ]
+                  "$ref": "#/components/schemas/RejectionCard"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "card": {
-                      "type": "object",
-                      "properties": {
-                        "uid": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  },
-                  "required": [
-                    "card"
-                  ]
+                  "$ref": "#/components/schemas/RejectionCard"
                 }
               }
             }
@@ -2201,34 +2090,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "cards": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Card"
-                      }
-                    }
-                  },
-                  "required": [
-                    "cards"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Card"
+                  }
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "cards": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Card"
-                      }
-                    }
-                  },
-                  "required": [
-                    "cards"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Card"
+                  }
                 }
               }
             }
@@ -2286,6 +2159,9 @@
           "Cards"
         ],
         "operationId": "adminCreateCard",
+        "parameters": [
+
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -2320,28 +2196,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "card": {
-                      "$ref": "#/components/schemas/Card"
-                    }
-                  },
-                  "required": [
-                    "card"
-                  ]
+                  "$ref": "#/components/schemas/Card"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "card": {
-                      "$ref": "#/components/schemas/Card"
-                    }
-                  },
-                  "required": [
-                    "card"
-                  ]
+                  "$ref": "#/components/schemas/Card"
                 }
               }
             }
@@ -2459,28 +2319,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "card": {
-                      "$ref": "#/components/schemas/Card"
-                    }
-                  },
-                  "required": [
-                    "card"
-                  ]
+                  "$ref": "#/components/schemas/Card"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "card": {
-                      "$ref": "#/components/schemas/Card"
-                    }
-                  },
-                  "required": [
-                    "card"
-                  ]
+                  "$ref": "#/components/schemas/Card"
                 }
               }
             }
@@ -2580,34 +2424,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "reports": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Report"
-                      }
-                    }
-                  },
-                  "required": [
-                    "reports"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Report"
+                  }
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "reports": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Report"
-                      }
-                    }
-                  },
-                  "required": [
-                    "reports"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Report"
+                  }
                 }
               }
             }
@@ -2699,34 +2527,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "earnedMemberships": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/EarnedMembership"
-                      }
-                    }
-                  },
-                  "required": [
-                    "earnedMemberships"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EarnedMembership"
+                  }
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "earnedMemberships": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/EarnedMembership"
-                      }
-                    }
-                  },
-                  "required": [
-                    "earnedMemberships"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EarnedMembership"
+                  }
                 }
               }
             }
@@ -2769,6 +2581,9 @@
           "EarnedMemberships"
         ],
         "operationId": "adminCreateEarnedMembership",
+        "parameters": [
+
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -2791,28 +2606,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "earnedMembership": {
-                      "$ref": "#/components/schemas/EarnedMembership"
-                    }
-                  },
-                  "required": [
-                    "earnedMembership"
-                  ]
+                  "$ref": "#/components/schemas/EarnedMembership"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "earnedMembership": {
-                      "$ref": "#/components/schemas/EarnedMembership"
-                    }
-                  },
-                  "required": [
-                    "earnedMembership"
-                  ]
+                  "$ref": "#/components/schemas/EarnedMembership"
                 }
               }
             }
@@ -2873,28 +2672,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "earnedMembership": {
-                      "$ref": "#/components/schemas/EarnedMembership"
-                    }
-                  },
-                  "required": [
-                    "earnedMembership"
-                  ]
+                  "$ref": "#/components/schemas/EarnedMembership"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "earnedMembership": {
-                      "$ref": "#/components/schemas/EarnedMembership"
-                    }
-                  },
-                  "required": [
-                    "earnedMembership"
-                  ]
+                  "$ref": "#/components/schemas/EarnedMembership"
                 }
               }
             }
@@ -2984,28 +2767,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "earnedMembership": {
-                      "$ref": "#/components/schemas/EarnedMembership"
-                    }
-                  },
-                  "required": [
-                    "earnedMembership"
-                  ]
+                  "$ref": "#/components/schemas/EarnedMembership"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "earnedMembership": {
-                      "$ref": "#/components/schemas/EarnedMembership"
-                    }
-                  },
-                  "required": [
-                    "earnedMembership"
-                  ]
+                  "$ref": "#/components/schemas/EarnedMembership"
                 }
               }
             }
@@ -3065,6 +2832,9 @@
           "InvoiceOptions"
         ],
         "operationId": "adminCreateInvoiceOption",
+        "parameters": [
+
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -3087,28 +2857,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "invoiceOption": {
-                      "$ref": "#/components/schemas/InvoiceOption"
-                    }
-                  },
-                  "required": [
-                    "invoiceOption"
-                  ]
+                  "$ref": "#/components/schemas/InvoiceOption"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "invoiceOption": {
-                      "$ref": "#/components/schemas/InvoiceOption"
-                    }
-                  },
-                  "required": [
-                    "invoiceOption"
-                  ]
+                  "$ref": "#/components/schemas/InvoiceOption"
                 }
               }
             }
@@ -3185,28 +2939,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "invoiceOption": {
-                      "$ref": "#/components/schemas/InvoiceOption"
-                    }
-                  },
-                  "required": [
-                    "invoiceOption"
-                  ]
+                  "$ref": "#/components/schemas/InvoiceOption"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "invoiceOption": {
-                      "$ref": "#/components/schemas/InvoiceOption"
-                    }
-                  },
-                  "required": [
-                    "invoiceOption"
-                  ]
+                  "$ref": "#/components/schemas/InvoiceOption"
                 }
               }
             }
@@ -3451,34 +3189,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "invoices": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Invoice"
-                      }
-                    }
-                  },
-                  "required": [
-                    "invoices"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Invoice"
+                  }
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "invoices": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Invoice"
-                      }
-                    }
-                  },
-                  "required": [
-                    "invoices"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Invoice"
+                  }
                 }
               }
             }
@@ -3521,6 +3243,9 @@
           "Invoices"
         ],
         "operationId": "adminCreateInvoices",
+        "parameters": [
+
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -3558,28 +3283,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "invoice": {
-                      "$ref": "#/components/schemas/Invoice"
-                    }
-                  },
-                  "required": [
-                    "invoice"
-                  ]
+                  "$ref": "#/components/schemas/Invoice"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "invoice": {
-                      "$ref": "#/components/schemas/Invoice"
-                    }
-                  },
-                  "required": [
-                    "invoice"
-                  ]
+                  "$ref": "#/components/schemas/Invoice"
                 }
               }
             }
@@ -3686,28 +3395,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "invoice": {
-                      "$ref": "#/components/schemas/Invoice"
-                    }
-                  },
-                  "required": [
-                    "invoice"
-                  ]
+                  "$ref": "#/components/schemas/Invoice"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "invoice": {
-                      "$ref": "#/components/schemas/Invoice"
-                    }
-                  },
-                  "required": [
-                    "invoice"
-                  ]
+                  "$ref": "#/components/schemas/Invoice"
                 }
               }
             }
@@ -3836,6 +3529,9 @@
           "Members"
         ],
         "operationId": "adminCreateMember",
+        "parameters": [
+
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -3858,28 +3554,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "member": {
-                      "$ref": "#/components/schemas/Member"
-                    }
-                  },
-                  "required": [
-                    "member"
-                  ]
+                  "$ref": "#/components/schemas/Member"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "member": {
-                      "$ref": "#/components/schemas/Member"
-                    }
-                  },
-                  "required": [
-                    "member"
-                  ]
+                  "$ref": "#/components/schemas/Member"
                 }
               }
             }
@@ -4030,28 +3710,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "member": {
-                      "$ref": "#/components/schemas/Member"
-                    }
-                  },
-                  "required": [
-                    "member"
-                  ]
+                  "$ref": "#/components/schemas/Member"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "member": {
-                      "$ref": "#/components/schemas/Member"
-                    }
-                  },
-                  "required": [
-                    "member"
-                  ]
+                  "$ref": "#/components/schemas/Member"
                 }
               }
             }
@@ -4159,34 +3823,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "rentals": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Rental"
-                      }
-                    }
-                  },
-                  "required": [
-                    "rentals"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Rental"
+                  }
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "rentals": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Rental"
-                      }
-                    }
-                  },
-                  "required": [
-                    "rentals"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Rental"
+                  }
                 }
               }
             }
@@ -4229,6 +3877,9 @@
           "Rentals"
         ],
         "operationId": "adminCreateRental",
+        "parameters": [
+
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -4251,28 +3902,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "rental": {
-                      "$ref": "#/components/schemas/Rental"
-                    }
-                  },
-                  "required": [
-                    "rental"
-                  ]
+                  "$ref": "#/components/schemas/Rental"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "rental": {
-                      "$ref": "#/components/schemas/Rental"
-                    }
-                  },
-                  "required": [
-                    "rental"
-                  ]
+                  "$ref": "#/components/schemas/Rental"
                 }
               }
             }
@@ -4349,28 +3984,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "rental": {
-                      "$ref": "#/components/schemas/Rental"
-                    }
-                  },
-                  "required": [
-                    "rental"
-                  ]
+                  "$ref": "#/components/schemas/Rental"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "rental": {
-                      "$ref": "#/components/schemas/Rental"
-                    }
-                  },
-                  "required": [
-                    "rental"
-                  ]
+                  "$ref": "#/components/schemas/Rental"
                 }
               }
             }
@@ -4562,34 +4181,32 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "paymentMethods": {
-                      "type": "array",
-                      "items": {
+                  "type": "array",
+                  "items": {
+                    "anyOf": [
+                      {
                         "$ref": "#/components/schemas/CreditCard"
+                      },
+                      {
+                        "$ref": "#/components/schemas/PayPalAccount"
                       }
-                    }
-                  },
-                  "required": [
-                    "paymentMethods"
-                  ]
+                    ]
+                  }
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "paymentMethods": {
-                      "type": "array",
-                      "items": {
+                  "type": "array",
+                  "items": {
+                    "anyOf": [
+                      {
                         "$ref": "#/components/schemas/CreditCard"
+                      },
+                      {
+                        "$ref": "#/components/schemas/PayPalAccount"
                       }
-                    }
-                  },
-                  "required": [
-                    "paymentMethods"
-                  ]
+                    ]
+                  }
                 }
               }
             }
@@ -4617,6 +4234,9 @@
           "PaymentMethods"
         ],
         "operationId": "createPaymentMethod",
+        "parameters": [
+
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -4625,23 +4245,23 @@
                 "title": "createPaymentMethodDetails",
                 "type": "object",
                 "properties": {
-                  "payment_method": {
+                  "paymentMethod": {
                     "type": "object",
                     "properties": {
-                      "payment_method_nonce": {
+                      "paymentMethodNonce": {
                         "type": "string"
                       },
-                      "make_default": {
+                      "makeDefault": {
                         "type": "boolean"
                       }
                     },
                     "required": [
-                      "payment_method_nonce"
+                      "paymentMethodNonce"
                     ]
                   }
                 },
                 "required": [
-                  "payment_method"
+                  "paymentMethod"
                 ]
               }
             }
@@ -4653,28 +4273,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "paymentMethod": {
-                      "$ref": "#/components/schemas/CreditCard"
-                    }
-                  },
-                  "required": [
-                    "paymentMethod"
-                  ]
+                  "$ref": "#/components/schemas/CreditCard"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "paymentMethod": {
-                      "$ref": "#/components/schemas/CreditCard"
-                    }
-                  },
-                  "required": [
-                    "paymentMethod"
-                  ]
+                  "$ref": "#/components/schemas/CreditCard"
                 }
               }
             }
@@ -4735,28 +4339,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "paymentMethod": {
-                      "$ref": "#/components/schemas/CreditCard"
-                    }
-                  },
-                  "required": [
-                    "paymentMethod"
-                  ]
+                  "$ref": "#/components/schemas/CreditCard"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "paymentMethod": {
-                      "$ref": "#/components/schemas/CreditCard"
-                    }
-                  },
-                  "required": [
-                    "paymentMethod"
-                  ]
+                  "$ref": "#/components/schemas/CreditCard"
                 }
               }
             }
@@ -4932,28 +4520,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "subscription": {
-                      "$ref": "#/components/schemas/Subscription"
-                    }
-                  },
-                  "required": [
-                    "subscription"
-                  ]
+                  "$ref": "#/components/schemas/Subscription"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "subscription": {
-                      "$ref": "#/components/schemas/Subscription"
-                    }
-                  },
-                  "required": [
-                    "subscription"
-                  ]
+                  "$ref": "#/components/schemas/Subscription"
                 }
               }
             }
@@ -5054,28 +4626,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "subscription": {
-                      "$ref": "#/components/schemas/Subscription"
-                    }
-                  },
-                  "required": [
-                    "subscription"
-                  ]
+                  "$ref": "#/components/schemas/Subscription"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "subscription": {
-                      "$ref": "#/components/schemas/Subscription"
-                    }
-                  },
-                  "required": [
-                    "subscription"
-                  ]
+                  "$ref": "#/components/schemas/Subscription"
                 }
               }
             }
@@ -5266,34 +4822,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "transactions": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Transaction"
-                      }
-                    }
-                  },
-                  "required": [
-                    "transactions"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  }
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "transactions": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Transaction"
-                      }
-                    }
-                  },
-                  "required": [
-                    "transactions"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  }
                 }
               }
             }
@@ -5336,6 +4876,9 @@
           "Transactions"
         ],
         "operationId": "createTransaction",
+        "parameters": [
+
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -5378,28 +4921,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "transaction": {
-                      "$ref": "#/components/schemas/Transaction"
-                    }
-                  },
-                  "required": [
-                    "transaction"
-                  ]
+                  "$ref": "#/components/schemas/Transaction"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "transaction": {
-                      "$ref": "#/components/schemas/Transaction"
-                    }
-                  },
-                  "required": [
-                    "transaction"
-                  ]
+                  "$ref": "#/components/schemas/Transaction"
                 }
               }
             }
@@ -5545,6 +5072,9 @@
           "ClientErrorHandler"
         ],
         "operationId": "message",
+        "parameters": [
+
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -5676,34 +5206,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "reports": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Report"
-                      }
-                    }
-                  },
-                  "required": [
-                    "reports"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Report"
+                  }
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "reports": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Report"
-                      }
-                    }
-                  },
-                  "required": [
-                    "reports"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Report"
+                  }
                 }
               }
             }
@@ -5778,28 +5292,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "report": {
-                      "$ref": "#/components/schemas/Report"
-                    }
-                  },
-                  "required": [
-                    "report"
-                  ]
+                  "$ref": "#/components/schemas/Report"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "report": {
-                      "$ref": "#/components/schemas/Report"
-                    }
-                  },
-                  "required": [
-                    "report"
-                  ]
+                  "$ref": "#/components/schemas/Report"
                 }
               }
             }
@@ -5845,28 +5343,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "earnedMembership": {
-                      "$ref": "#/components/schemas/EarnedMembership"
-                    }
-                  },
-                  "required": [
-                    "earnedMembership"
-                  ]
+                  "$ref": "#/components/schemas/EarnedMembership"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "earnedMembership": {
-                      "$ref": "#/components/schemas/EarnedMembership"
-                    }
-                  },
-                  "required": [
-                    "earnedMembership"
-                  ]
+                  "$ref": "#/components/schemas/EarnedMembership"
                 }
               }
             }
@@ -5977,34 +5459,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "invoiceOptions": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/InvoiceOption"
-                      }
-                    }
-                  },
-                  "required": [
-                    "invoiceOptions"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvoiceOption"
+                  }
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "invoiceOptions": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/InvoiceOption"
-                      }
-                    }
-                  },
-                  "required": [
-                    "invoiceOptions"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvoiceOption"
+                  }
                 }
               }
             }
@@ -6035,28 +5501,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "invoiceOption": {
-                      "$ref": "#/components/schemas/InvoiceOption"
-                    }
-                  },
-                  "required": [
-                    "invoiceOption"
-                  ]
+                  "$ref": "#/components/schemas/InvoiceOption"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "invoiceOption": {
-                      "$ref": "#/components/schemas/InvoiceOption"
-                    }
-                  },
-                  "required": [
-                    "invoiceOption"
-                  ]
+                  "$ref": "#/components/schemas/InvoiceOption"
                 }
               }
             }
@@ -6183,34 +5633,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "invoices": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Invoice"
-                      }
-                    }
-                  },
-                  "required": [
-                    "invoices"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Invoice"
+                  }
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "invoices": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Invoice"
-                      }
-                    }
-                  },
-                  "required": [
-                    "invoices"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Invoice"
+                  }
                 }
               }
             }
@@ -6238,6 +5672,9 @@
           "Invoices"
         ],
         "operationId": "createInvoice",
+        "parameters": [
+
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -6275,28 +5712,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "invoice": {
-                      "$ref": "#/components/schemas/Invoice"
-                    }
-                  },
-                  "required": [
-                    "invoice"
-                  ]
+                  "$ref": "#/components/schemas/Invoice"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "invoice": {
-                      "$ref": "#/components/schemas/Invoice"
-                    }
-                  },
-                  "required": [
-                    "invoice"
-                  ]
+                  "$ref": "#/components/schemas/Invoice"
                 }
               }
             }
@@ -6372,28 +5793,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "permissions": {
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "permissions"
-                  ]
+                  "type": "object"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "permissions": {
-                      "type": "object"
-                    }
-                  },
-                  "required": [
-                    "permissions"
-                  ]
+                  "type": "object"
                 }
               }
             }
@@ -6501,34 +5906,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "members": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/MemberSummary"
-                      }
-                    }
-                  },
-                  "required": [
-                    "members"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MemberSummary"
+                  }
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "members": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/MemberSummary"
-                      }
-                    }
-                  },
-                  "required": [
-                    "members"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MemberSummary"
+                  }
                 }
               }
             }
@@ -6556,6 +5945,9 @@
           "Authentication"
         ],
         "operationId": "registerMember",
+        "parameters": [
+
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -6621,28 +6013,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "member": {
-                      "$ref": "#/components/schemas/Member"
-                    }
-                  },
-                  "required": [
-                    "member"
-                  ]
+                  "$ref": "#/components/schemas/Member"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "member": {
-                      "$ref": "#/components/schemas/Member"
-                    }
-                  },
-                  "required": [
-                    "member"
-                  ]
+                  "$ref": "#/components/schemas/Member"
                 }
               }
             }
@@ -6688,28 +6064,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "member": {
-                      "$ref": "#/components/schemas/Member"
-                    }
-                  },
-                  "required": [
-                    "member"
-                  ]
+                  "$ref": "#/components/schemas/Member"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "member": {
-                      "$ref": "#/components/schemas/Member"
-                    }
-                  },
-                  "required": [
-                    "member"
-                  ]
+                  "$ref": "#/components/schemas/Member"
                 }
               }
             }
@@ -6832,28 +6192,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "member": {
-                      "$ref": "#/components/schemas/Member"
-                    }
-                  },
-                  "required": [
-                    "member"
-                  ]
+                  "$ref": "#/components/schemas/Member"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "member": {
-                      "$ref": "#/components/schemas/Member"
-                    }
-                  },
-                  "required": [
-                    "member"
-                  ]
+                  "$ref": "#/components/schemas/Member"
                 }
               }
             }
@@ -6913,6 +6257,9 @@
           "Authentication"
         ],
         "operationId": "signIn",
+        "parameters": [
+
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -6938,33 +6285,17 @@
           }
         },
         "responses": {
-          "201": {
+          "200": {
             "description": "User signed in",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "member": {
-                      "$ref": "#/components/schemas/Member"
-                    }
-                  },
-                  "required": [
-                    "member"
-                  ]
+                  "$ref": "#/components/schemas/Member"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "member": {
-                      "$ref": "#/components/schemas/Member"
-                    }
-                  },
-                  "required": [
-                    "member"
-                  ]
+                  "$ref": "#/components/schemas/Member"
                 }
               }
             }
@@ -7010,6 +6341,9 @@
           "Password"
         ],
         "operationId": "requestPasswordReset",
+        "parameters": [
+
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -7060,6 +6394,9 @@
           "Password"
         ],
         "operationId": "resetPassword",
+        "parameters": [
+
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -7115,6 +6452,9 @@
           "Authentication"
         ],
         "operationId": "sendRegistrationEmail",
+        "parameters": [
+
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -7194,34 +6534,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "rentals": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Rental"
-                      }
-                    }
-                  },
-                  "required": [
-                    "rentals"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Rental"
+                  }
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "rentals": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Rental"
-                      }
-                    }
-                  },
-                  "required": [
-                    "rentals"
-                  ]
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Rental"
+                  }
                 }
               }
             }
@@ -7252,28 +6576,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "rental": {
-                      "$ref": "#/components/schemas/Rental"
-                    }
-                  },
-                  "required": [
-                    "rental"
-                  ]
+                  "$ref": "#/components/schemas/Rental"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "rental": {
-                      "$ref": "#/components/schemas/Rental"
-                    }
-                  },
-                  "required": [
-                    "rental"
-                  ]
+                  "$ref": "#/components/schemas/Rental"
                 }
               }
             }
@@ -7354,28 +6662,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "rental": {
-                      "$ref": "#/components/schemas/Rental"
-                    }
-                  },
-                  "required": [
-                    "rental"
-                  ]
+                  "$ref": "#/components/schemas/Rental"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "rental": {
-                      "$ref": "#/components/schemas/Rental"
-                    }
-                  },
-                  "required": [
-                    "rental"
-                  ]
+                  "$ref": "#/components/schemas/Rental"
                 }
               }
             }

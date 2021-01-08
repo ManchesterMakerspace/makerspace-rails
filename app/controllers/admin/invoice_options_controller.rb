@@ -5,12 +5,12 @@ class Admin::InvoiceOptionsController < AdminController
    def create
     invoice_option = InvoiceOption.new(invoice_params)
     invoice_option.save!
-    render json: invoice_option, each_serializer: InvoiceOptionSerializer, root: "invoice_option" and return
+    render json: invoice_option, each_serializer: InvoiceOptionSerializer, adapter: :attributes and return
   end
 
   def update
     @invoice_option.update_attributes!(invoice_params)
-    render json: @invoice_option and return
+    render json: @invoice_option, adapter: :attributes and return
   end
 
   def destroy

@@ -68,7 +68,7 @@ RSpec.describe Admin::CardsController, type: :controller do
           parsed_response = JSON.parse(response.body)
           expect(response).to have_http_status(200)
           expect(response.content_type).to eq "application/json"
-          expect(parsed_response['card']['id']).to eq(Card.last.id.as_json)
+          expect(parsed_response['id']).to eq(Card.last.id.as_json)
         end
 
         it "invalidates existing cards if member already has one" do
@@ -91,7 +91,7 @@ RSpec.describe Admin::CardsController, type: :controller do
           parsed_response = JSON.parse(response.body)
           expect(response).to have_http_status(200)
           expect(response.content_type).to eq "application/json"
-          expect(parsed_response['card']['id']).to eq(Card.last.id.as_json)
+          expect(parsed_response['id']).to eq(Card.last.id.as_json)
           expect(Card.last.id.as_json).not_to eq(card.id)
         end
       end
@@ -170,7 +170,7 @@ RSpec.describe Admin::CardsController, type: :controller do
           parsed_response = JSON.parse(response.body)
           expect(response).to have_http_status(200)
           expect(response.content_type).to eq "application/json"
-          expect(parsed_response['card']['id']).to eq(Card.last.id.to_s)
+          expect(parsed_response['id']).to eq(Card.last.id.to_s)
         end
       end
     end

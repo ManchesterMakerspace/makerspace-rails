@@ -30,7 +30,7 @@ RSpec.describe RentalsController, type: :controller do
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
-      expect(parsed_response['rentals'].first['id']).to eq(Rental.last.id.to_s)
+      expect(parsed_response.first['id']).to eq(Rental.last.id.to_s)
     end
   end
 
@@ -48,7 +48,7 @@ RSpec.describe RentalsController, type: :controller do
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
-      expect(parsed_response['rental']['id']).to eq(Rental.last.id.to_s)
+      expect(parsed_response['id']).to eq(Rental.last.id.to_s)
     end
   end
 
@@ -64,8 +64,8 @@ RSpec.describe RentalsController, type: :controller do
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
-      expect(parsed_response['rental']['id']).to eq(rental.id.as_json)
-      expect(parsed_response['rental']['contractOnFile']).to eq(true)
+      expect(parsed_response['id']).to eq(rental.id.as_json)
+      expect(parsed_response['contractOnFile']).to eq(true)
     end
 
     it "raises forbidden if not updating own rental" do

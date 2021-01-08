@@ -13,19 +13,13 @@ describe 'Analytics API', type: :request do
         before { sign_in admin }
 
         schema type: :object,
-        properties: {
-          analytics: {
-            type: :object,
-            properties: {
-              totalMembers: { type: :number },
-              newMembers: { type: :number },
-              subscribedMembers: { type: :number },
-              pastDueInvoices: { type: :number },
-              refundsPending: { type: :number },
-            }
+          properties: {
+            totalMembers: { type: :number },
+            newMembers: { type: :number },
+            subscribedMembers: { type: :number },
+            pastDueInvoices: { type: :number },
+            refundsPending: { type: :number },
           }
-        },
-        required: [ 'analytics' ]
 
         let(:rentals) { create_list(:rental) }
         let(:members) { create_list(:member) }

@@ -50,14 +50,8 @@ describe 'Registrations API', type: :request do
         }
       }
 
-      response '201', 'User signed in' do
-        schema type: :object,
-          properties: {
-            member: {
-              '$ref' => '#/components/schemas/Member'
-            }
-          },
-          required: [ 'member' ]
+      response '200', 'User signed in' do
+        schema '$ref' => '#/components/schemas/Member'
 
           let(:signInDetails) {{ member: { email: auth_member.email, password: "password" } }}
         run_test!
@@ -265,13 +259,7 @@ describe 'Registrations API', type: :request do
 
       response '200', 'Member registered' do
 
-        schema type: :object,
-          properties: {
-            member: {
-              '$ref' => '#/components/schemas/Member'
-            }
-          },
-          required: [ 'member' ]
+        schema '$ref' => '#/components/schemas/Member'
 
         let(:registerMemberDetails) {{ member: { firstname: "First", lastname: "Last", email: "first@last.com", password: "password" } }}
         run_test!

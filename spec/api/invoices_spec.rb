@@ -23,14 +23,8 @@ describe 'Invoices API', type: :request do
         let(:invoices) { create_list(:invoice, member: member) }
         before { sign_in member }
 
-        schema type: :object,
-        properties: {
-          invoices: {
-            type: :array,
+        schema type: :array,
             items: { '$ref' => '#/components/schemas/Invoice' }
-          }
-        },
-        required: [ 'invoices' ]
 
         run_test!
       end
@@ -79,13 +73,7 @@ describe 'Invoices API', type: :request do
       response '200', 'invoice created' do
         before { sign_in create(:member) }
 
-        schema type: :object,
-        properties: {
-          invoice: {
-            '$ref' => '#/components/schemas/Invoice'
-          }
-        },
-        required: [ 'invoice' ]
+        schema '$ref' => '#/components/schemas/Invoice'
 
         let(:createInvoiceDetails) {{ invoiceOption: { id: create(:invoice_option).id } }}
 

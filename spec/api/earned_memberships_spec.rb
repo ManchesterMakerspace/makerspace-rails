@@ -10,13 +10,7 @@ describe 'EarnedMemberships API', type: :request do
       response '200', 'earned membership found' do
         let(:em) { create(:earned_membership) }
         before { sign_in create(:earned_member, earned_membership: em) }
-        schema type: :object,
-          properties: {
-            earnedMembership: {
-              '$ref' => '#/components/schemas/EarnedMembership'
-            }
-          },
-          required: [ 'earnedMembership' ]
+        schema '$ref' => '#/components/schemas/EarnedMembership'
 
         let(:id) { em.id }
         run_test!

@@ -12,14 +12,8 @@ describe 'Rentals API', type: :request do
       response '200', 'rentals found' do 
         before { sign_in create(:member) }
 
-        schema type: :object,
-        properties: {
-          rentals: { 
-            type: :array,
+        schema type: :array,
             items: { '$ref' => '#/components/schemas/Rental' }
-          }
-        },
-        required: [ 'rentals' ]
 
         let(:rentals) { create_list(:rental) }
         run_test!
@@ -38,13 +32,7 @@ describe 'Rentals API', type: :request do
         before { sign_in current_member }
         let(:id) { create(:rental, member: current_member).id }
 
-        schema type: :object,
-          properties: {
-            rental: {
-              '$ref' => '#/components/schemas/Rental'
-            }
-          },
-          required: [ 'rental' ]
+        schema '$ref' => '#/components/schemas/Rental'
 
         run_test!
       end
@@ -101,13 +89,7 @@ describe 'Rentals API', type: :request do
         let(:rental) { create(:rental, member: current_member) }
         before { sign_in current_member }
 
-        schema type: :object,
-          properties: {
-            rental: {
-              '$ref' => '#/components/schemas/Rental'
-            }
-          },
-          required: [ 'rental' ]
+        schema '$ref' => '#/components/schemas/Rental'
 
         let(:id) { rental.id }
         run_test!

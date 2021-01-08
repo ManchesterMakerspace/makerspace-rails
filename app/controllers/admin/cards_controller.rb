@@ -4,7 +4,7 @@ class Admin::CardsController < AdminController
     @card = Card.new()
     reject = RejectionCard.where({holder: nil, timeOf: {'$gt' => (Date.today - 1.day)}}).last
     @card.uid = reject.uid if !!reject
-    render json: @card and return
+    render json: @card, adapter: :attributes and return
   end
 
   def create
@@ -18,7 +18,7 @@ class Admin::CardsController < AdminController
     @card.save!
     rejection_card = RejectionCard.find_by(uid: @card.uid)
     rejection_card.update_attributes!(holder: @card.holder) unless rejection_card.nil?
-    render json: @card and return
+    render json: @card, adapter: :attributes and return
   end
 
   def index
@@ -26,14 +26,14 @@ class Admin::CardsController < AdminController
     member = Member.find(card_query_params[:member_id])
     raise ::Mongoid::Errors::DocumentNotFound.new(Member, { id: card_query_params[:member_id] }) if member.nil?
     @cards = Card.where(member: member)
-    render json: @cards and return
+    render json: @cards, adapter: :attributes and return
   end
 
   def update
     @card = Card.find(params[:id])
     raise ::Mongoid::Errors::DocumentNotFound.new(Card, { id: params[:id] }) if @card.nil?
     @card.update_attributes!(card_params)
-    render json: @card and return
+    render json: @card, adapter: :attributes and return
   end
 
   private

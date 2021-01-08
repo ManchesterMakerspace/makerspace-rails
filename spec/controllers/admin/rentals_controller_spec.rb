@@ -31,7 +31,7 @@ RSpec.describe Admin::RentalsController, type: :controller do
       get :index, format: :json
       expect(response).to have_http_status(200)
       parsed_response = JSON.parse(response.body)
-      expect(parsed_response["rentals"].count).to eq(Rental.count)
+      expect(parsed_response.count).to eq(Rental.count)
     end
 
     it "Can filter by member" do 
@@ -45,7 +45,7 @@ RSpec.describe Admin::RentalsController, type: :controller do
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
-      expect(parsed_response['rentals'].first['id']).to eq(rental2.id.to_s)
+      expect(parsed_response.first['id']).to eq(rental2.id.to_s)
     end
   end
 
@@ -69,7 +69,7 @@ RSpec.describe Admin::RentalsController, type: :controller do
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
-        expect(parsed_response['rental']['id']).to eq(Rental.last.id.to_s)
+        expect(parsed_response['id']).to eq(Rental.last.id.to_s)
       end
     end
 
@@ -109,7 +109,7 @@ RSpec.describe Admin::RentalsController, type: :controller do
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
-        expect(parsed_response['rental']['id']).to eq(rental.id.as_json)
+        expect(parsed_response['id']).to eq(rental.id.as_json)
       end
 
       it "Sends a slack notificsation" do

@@ -6,7 +6,7 @@ class Admin::MembersController < AdminController
     @member.save!
     @member.reload
     send_set_password_email
-    render json: @member and return
+    render json: @member, adapter: :attributes and return
   end
 
   def update
@@ -14,7 +14,7 @@ class Admin::MembersController < AdminController
     @member.update!(get_camel_case_params)
     notify_renewal(date)
     @member.reload
-    render json: @member and return
+    render json: @member, adapter: :attributes and return
   end
 
   private

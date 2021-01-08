@@ -26,14 +26,8 @@ describe 'Admin::Invoices API', type: :request do
 
       response '200', 'invoices found' do
         before { sign_in admin }
-        schema type: :object,
-        properties: {
-          invoices: {
-            type: :array,
+        schema type: :array,
             items: { '$ref' => '#/components/schemas/Invoice' }
-          }
-        },
-        required: [ 'invoices' ]
 
         run_test!
       end
@@ -88,11 +82,7 @@ describe 'Admin::Invoices API', type: :request do
       response '200', 'invoice created' do
         before { sign_in admin }
 
-        schema type: :object,
-        properties: {
-          invoice: { '$ref' => '#/components/schemas/Invoice' },
-        },
-        required: [ 'invoice' ]
+        schema '$ref' => '#/components/schemas/Invoice'
 
         let(:createInvoiceDetails) {{
           invoiceOption: {
@@ -195,11 +185,7 @@ describe 'Admin::Invoices API', type: :request do
       response '200', 'invoice updated' do
         before { sign_in admin }
 
-        schema type: :object,
-        properties: {
-          invoice: { '$ref' => '#/components/schemas/Invoice' },
-        },
-        required: [ 'invoice' ]
+        schema '$ref' => '#/components/schemas/Invoice'
 
         let(:updateInvoiceDetails) {{
           invoice: {

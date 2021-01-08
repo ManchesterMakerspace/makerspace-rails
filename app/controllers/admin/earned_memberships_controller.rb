@@ -4,17 +4,17 @@ class Admin::EarnedMembershipsController < AdminController
 
   def index
     memberships = EarnedMembership.all
-    return render_with_total_items(query_resource(memberships), { each_serializer: EarnedMembershipSerializer, root: "earned_memberships" })
+    return render_with_total_items(query_resource(memberships), { each_serializer: EarnedMembershipSerializer, adapter: :attributes })
   end
 
   def show
-    render json: @membership and return
+    render json: @membership, adapter: :attributes and return
   end
 
   def create
     @membership = EarnedMembership.new(earned_membership_params)
     @membership.save!
-    render json: @membership and return
+    render json: @membership, adapter: :attributes and return
   end
 
   def update
@@ -25,7 +25,7 @@ class Admin::EarnedMembershipsController < AdminController
     end
     @membership.update!(earned_membership_params)
     @membership.reload
-    render json: @membership and return
+    render json: @membership, adapter: :attributes and return
   end
 
   private

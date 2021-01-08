@@ -10,7 +10,7 @@ RSpec.describe MembersController, type: :controller do
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
-      expect(parsed_response['members'].last['id']).to eq(Member.last.id.as_json)
+      expect(parsed_response.last['id']).to eq(Member.last.id.as_json)
     end
   end
 
@@ -23,7 +23,7 @@ RSpec.describe MembersController, type: :controller do
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
-      expect(parsed_response['member']['id']).to eq(Member.last.id.as_json)
+      expect(parsed_response['id']).to eq(Member.last.id.as_json)
     end
 
     it "raises not found if member doens't exist" do
@@ -49,8 +49,8 @@ RSpec.describe MembersController, type: :controller do
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
-      expect(parsed_response['member']['id']).to eq(current_user.id.as_json)
-      expect(parsed_response['member']['firstname']).to eq("foo")
+      expect(parsed_response['id']).to eq(current_user.id.as_json)
+      expect(parsed_response['firstname']).to eq("foo")
     end
 
     it "Updates member's address properly" do 
@@ -69,12 +69,12 @@ RSpec.describe MembersController, type: :controller do
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
-      expect(parsed_response['member']['phone']).to eq(member_params[:phone])
-      expect(parsed_response['member']['address']['street']).to eq(member_params[:address][:street])
-      expect(parsed_response['member']['address']['unit']).to eq(member_params[:address][:unit])
-      expect(parsed_response['member']['address']['city']).to eq(member_params[:address][:city])
-      expect(parsed_response['member']['address']['state']).to eq(member_params[:address][:state])
-      expect(parsed_response['member']['address']['postalCode']).to eq(member_params[:address][:postal_code])
+      expect(parsed_response['phone']).to eq(member_params[:phone])
+      expect(parsed_response['address']['street']).to eq(member_params[:address][:street])
+      expect(parsed_response['address']['unit']).to eq(member_params[:address][:unit])
+      expect(parsed_response['address']['city']).to eq(member_params[:address][:city])
+      expect(parsed_response['address']['state']).to eq(member_params[:address][:state])
+      expect(parsed_response['address']['postalCode']).to eq(member_params[:address][:postal_code])
     end
 
     it "raises forbidden if not updating current member" do

@@ -15,14 +15,8 @@ describe 'Admin::EarnedMembership::Report API', type: :request do
 
       response '200', 'reports found' do
         before { sign_in admin }
-        schema type: :object,
-        properties: {
-          reports: {
-            type: :array,
+        schema type: :array,
             items: { '$ref' => '#/components/schemas/Report' }
-          }
-        },
-        required: [ 'reports' ]
 
         let(:id) { create(:earned_membership).id }
         run_test!

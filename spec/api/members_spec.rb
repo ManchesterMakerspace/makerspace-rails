@@ -15,14 +15,8 @@ describe 'Members API', type: :request do
         let(:members) { create_list(:member) }
         before { sign_in create(:member) }
 
-        schema type: :object,
-        properties: {
-          members: {
-            type: :array,
+        schema type: :array,
             items: { '$ref' => '#/components/schemas/MemberSummary' }
-          }
-        },
-        required: [ 'members' ]
 
         run_test!
       end
@@ -45,13 +39,7 @@ describe 'Members API', type: :request do
         before { sign_in create(:member) }
         let(:id) { create(:member).id }
 
-        schema type: :object,
-          properties: {
-            member: {
-              '$ref' => '#/components/schemas/Member'
-            }
-          },
-          required: [ 'member' ]
+        schema '$ref' => '#/components/schemas/Member'
 
         run_test!
       end
@@ -137,13 +125,7 @@ describe 'Members API', type: :request do
         let(:current_member) { create(:member) }
         before { sign_in current_member }
 
-        schema type: :object,
-          properties: {
-            member: {
-              '$ref' => '#/components/schemas/Member'
-            }
-          },
-          required: [ 'member' ]
+        schema '$ref' => '#/components/schemas/Member'
 
         let(:id) { current_member.id }
         run_test!

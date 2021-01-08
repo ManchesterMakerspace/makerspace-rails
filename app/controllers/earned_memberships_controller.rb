@@ -4,7 +4,7 @@ class EarnedMembershipsController < AuthenticationController
   before_action :authenticate_member!
 
   def show
-    render json: @membership and return
+    render json: @membership, adapter: :attributes and return
   end
 
   private

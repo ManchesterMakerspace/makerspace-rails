@@ -13,14 +13,8 @@ describe 'Reports API', type: :request do
       response '200', 'reports found' do
         let(:em) { create(:earned_membership) }
         before { sign_in create(:earned_member, earned_membership: em) }
-        schema type: :object,
-        properties: {
-          reports: {
-            type: :array,
+        schema type: :array,
             items: { '$ref' => '#/components/schemas/Report' }
-          }
-        },
-        required: [ 'reports' ]
 
         let(:id) { em.id }
         run_test!
@@ -67,13 +61,7 @@ describe 'Reports API', type: :request do
       response '200', 'report created' do
         let(:em) { create(:earned_membership) }
         before { sign_in create(:earned_member, earned_membership: em) }
-        schema type: :object,
-        properties: {
-          report: {
-            '$ref' => '#/components/schemas/Report'
-          }
-        },
-        required: [ 'report' ]
+        schema '$ref' => '#/components/schemas/Report'
 
         let(:createEarnedMembershipReportDetails) { {
           report: {

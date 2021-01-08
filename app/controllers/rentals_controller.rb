@@ -5,11 +5,11 @@ class RentalsController < AuthenticationController
 
   def index
     @rentals = Rental.where(member_id: current_member.id)
-    return render_with_total_items(query_resource(@rentals), { each_serializer: RentalSerializer, root: "rentals" })
+    return render_with_total_items(query_resource(@rentals), { each_serializer: RentalSerializer, adapter: :attributes })
   end
 
   def show
-    render json: @rental and return
+    render json: @rental, adapter: :attributes and return
   end
 
   def update
@@ -30,7 +30,7 @@ class RentalsController < AuthenticationController
       @messages.push("Error uploading #{@member.fullname}'s rental agreement signature'. Error: #{err}")
     end
 
-    render json: @rental and return
+    render json: @rental, adapter: :attributes and return
   end
 
   private

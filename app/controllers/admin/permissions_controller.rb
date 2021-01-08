@@ -3,13 +3,13 @@ class Admin::PermissionsController < AdminController
 
   def index
     permissions = Permission.list_permissions
-    render json: permissions and return
+    render json: permissions, adapter: :attributes and return
   end
 
   def update
     @member.update_permissions(update_params)
     @member.reload
-    render json: @member and return
+    render json: @member, adapter: :attributes and return
   end
 
   private
@@ -22,3 +22,5 @@ class Admin::PermissionsController < AdminController
     raise ::Mongoid::Errors::DocumentNotFound.new(Member, { id: params[:id] }) if @member.nil?
   end
 end
+
+# TODO: IS THIS NOT USED??

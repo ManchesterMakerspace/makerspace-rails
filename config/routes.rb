@@ -13,7 +13,7 @@ Rails.application.routes.draw do
   end
 
   scope :api, defaults: { format: :json } do
-    devise_for :members, skip: [:registrations]
+    devise_for :members, skip: [:registrations], controllers: { sessions: "sessions" }
     devise_scope :member do
        post "members", to: "registrations#create"
        post '/send_registration', to: 'registrations#new'

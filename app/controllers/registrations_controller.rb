@@ -22,7 +22,7 @@ class RegistrationsController < ApplicationController
     @member.reload
     sign_in(@member)
     MemberMailer.member_registered(@member.id.to_s).deliver_later
-    render json: @member and return
+    render json: @member, adapter: :attributes and return
   end
 
   private

@@ -53,15 +53,13 @@ describe 'Billing::PaymentMethods API', type: :request do
           allow(BraintreeService::PaymentMethod).to receive(:get_payment_methods_for_customer).with(gateway, "foo").and_return(payment_methodss)
         end
 
-        schema type: :object,
-        properties: {
-          paymentMethods: {
-            type: :array,
-            # TODO this can  also be paypal
-            items: { '$ref' => '#/components/schemas/CreditCard' }
-          }
-        },
-        required: [ 'paymentMethods' ]
+        schema type: :array,
+        items: {
+            anyOf: [
+            { '$ref' => '#/components/schemas/CreditCard' },
+            { '$ref' => '#/components/schemas/PayPalAccount' }
+          ]
+        }
 
         run_test!
       end
@@ -115,13 +113,7 @@ describe 'Billing::PaymentMethods API', type: :request do
           allow(success_result).to receive(:payment_method).and_return(payment_method)
         end
 
-        schema type: :object,
-        properties: {
-          paymentMethod: {
-            '$ref' => '#/components/schemas/CreditCard'
-          }
-        },
-        required: [ 'paymentMethod' ]
+        schema '$ref' => '#/components/schemas/CreditCard'
 
         let(:createPaymentMethodDetails) {{ payment_method: { paymentMethodNonce: "1234" } }}
 
@@ -156,13 +148,7 @@ describe 'Billing::PaymentMethods API', type: :request do
       response '200', 'Payment method deleted' do
         before { sign_in customer }
 
-        schema type: :object,
-        properties: {
-          paymentMethod: {
-            '$ref' => '#/components/schemas/CreditCard'
-          }
-        },
-        required: [ 'paymentMethod' ]
+        schema '$ref' => '#/components/schemas/CreditCard'
 
         let(:id) { payment_method.token }
         run_test!

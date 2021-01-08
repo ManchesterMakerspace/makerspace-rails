@@ -39,7 +39,7 @@ RSpec.describe Admin::InvoicesController, type: :controller do
       get :index, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(parsed_response['invoices'].length).to eq(2)
+      expect(parsed_response.length).to eq(2)
     end
 
     it "filters invoices by rentals" do 
@@ -49,7 +49,7 @@ RSpec.describe Admin::InvoicesController, type: :controller do
       get :index, params: { resourceClass: ["rental"] }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(parsed_response['invoices'].first['id']).to eq(rental_invoice.id.to_s)
+      expect(parsed_response.first['id']).to eq(rental_invoice.id.to_s)
     end
 
     it "filters invoices by members" do 
@@ -59,7 +59,7 @@ RSpec.describe Admin::InvoicesController, type: :controller do
       get :index, params: { resourceClass: ["member"] }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(parsed_response['invoices'].first['id']).to eq(member_invoice.id.to_s)
+      expect(parsed_response.first['id']).to eq(member_invoice.id.to_s)
     end
 
     it "can filter out settled invoices" do 
@@ -68,7 +68,7 @@ RSpec.describe Admin::InvoicesController, type: :controller do
       get :index, params: { settled: true }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(parsed_response['invoices'].length).to eq(1)
+      expect(parsed_response.length).to eq(1)
     end
 
     it "can filter by member" do 
@@ -79,7 +79,7 @@ RSpec.describe Admin::InvoicesController, type: :controller do
       get :index, params: { resourceId: [new_memb.id] }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(parsed_response['invoices'].first['id']).to eq(invoice2.id.to_s)
+      expect(parsed_response.first['id']).to eq(invoice2.id.to_s)
     end
 
     it "can filter by rental" do 
@@ -90,7 +90,7 @@ RSpec.describe Admin::InvoicesController, type: :controller do
       get :index, params: { resourceId: [rental.id] }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(parsed_response['invoices'].first['id']).to eq(invoice2.id.to_s)
+      expect(parsed_response.first['id']).to eq(invoice2.id.to_s)
     end
   end
 
@@ -112,7 +112,7 @@ RSpec.describe Admin::InvoicesController, type: :controller do
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
-        expect(parsed_response['invoice']['id']).to eq(Invoice.last.id.to_s)
+        expect(parsed_response['id']).to eq(Invoice.last.id.to_s)
       end
     end
 
@@ -164,7 +164,7 @@ RSpec.describe Admin::InvoicesController, type: :controller do
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
-        expect(parsed_response['invoice']['id']).to eq(invoice.id.as_json)
+        expect(parsed_response['id']).to eq(invoice.id.as_json)
       end
     end
 

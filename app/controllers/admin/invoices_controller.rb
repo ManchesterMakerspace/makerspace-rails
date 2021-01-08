@@ -27,7 +27,7 @@ class Admin::InvoicesController < AdminController
     invoices = @queries.length > 0 ? Invoice.where(@queries.reduce(&:merge)) : Invoice.all
     invoices = query_resource(invoices) # Query with the usual sorting, paging and searching
 
-    return render_with_total_items(invoices, { each_serializer: InvoiceSerializer, root: "invoices" })
+    return render_with_total_items(invoices, { each_serializer: InvoiceSerializer, adapter: :attributes })
   end
 
   def create
@@ -49,7 +49,7 @@ class Admin::InvoicesController < AdminController
       invoice.save!
     end
 
-    render json: invoice and return
+    render json: invoice, adapter: :attributes and return
   end
 
   def update
@@ -58,7 +58,7 @@ class Admin::InvoicesController < AdminController
     else
       @invoice.update_attributes!(invoice_params)
     end
-    render json: @invoice and return
+    render json: @invoice, adapter: :attributes and return
   end
 
   def destroy

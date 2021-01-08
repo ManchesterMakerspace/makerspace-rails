@@ -72,7 +72,7 @@ RSpec.describe Billing::SubscriptionsController, type: :controller do
       get :show, params: { id: "foobar" }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(parsed_response['subscription']['id']).to eq("foobar")
+      expect(parsed_response['id']).to eq("foobar")
     end
 
     it "Raises error if subscription is not for customer" do
@@ -112,7 +112,7 @@ RSpec.describe Billing::SubscriptionsController, type: :controller do
       put :update, params: { id: "foobar", subscription: valid_params }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(parsed_response['subscription']['id']).to eq(subscription.id)
+      expect(parsed_response['id']).to eq(subscription.id)
     end
 
     it "Raises error if subscription is not for customer" do

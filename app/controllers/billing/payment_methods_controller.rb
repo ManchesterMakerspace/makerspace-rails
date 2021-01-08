@@ -38,7 +38,7 @@ class Billing::PaymentMethodsController < BillingController
     raise Error::Braintree::Result.new(result) unless result.success?
     payment_method = result.try(:payment_method) ? result.payment_method : result.customer.payment_methods.first
 
-    render json: payment_method, serializer: BraintreeService::PaymentMethodSerializer, root: "payment_method", status: 200 and return
+    render json: payment_method, serializer: BraintreeService::PaymentMethodSerializer, adapter: :attributes, status: 200 and return
   end
 
   def index
@@ -47,7 +47,7 @@ class Billing::PaymentMethodsController < BillingController
     else
       payment_methods = ::BraintreeService::PaymentMethod.get_payment_methods_for_customer(@gateway, current_member.customer_id)
     end
-    render json: payment_methods, each_serializer: BraintreeService::PaymentMethodSerializer, status: 200, root: :payment_methods and return
+    render json: payment_methods, each_serializer: BraintreeService::PaymentMethodSerializer, status: 200, adapter: :attributes and return
   end
 
   def show 
@@ -55,7 +55,7 @@ class Billing::PaymentMethodsController < BillingController
     raise Error::Braintree::MissingCustomer.new unless current_member.customer_id
     # Only allowed to modify own payment methods
     payment_method = ::BraintreeService::PaymentMethod.find_payment_method_for_customer(@gateway, payment_method_token, current_member.customer_id)
-    render json: payment_method, serializer: BraintreeService::PaymentMethodSerializer, root: "payment_method", status: 200 and return
+    render json: payment_method, serializer: BraintreeService::PaymentMethodSerializer, adapter: :attributes, status: 200 and return
   end
 
   def destroy

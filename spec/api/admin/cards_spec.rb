@@ -14,14 +14,7 @@ describe 'Admin::AccessCards API', type: :request do
           create(:rejection_card, timeOf: Time.now)
         end
 
-        schema type: :object,
-        properties: {
-          card: { 
-            type: :object,
-            properties: { uid: { type: :string } }
-          },
-        },
-        required: [ 'card' ]
+        schema '$ref' => '#/components/schemas/RejectionCard'
 
         run_test!
       end
@@ -47,14 +40,8 @@ describe 'Admin::AccessCards API', type: :request do
 
       response '200', 'cards found' do 
         before { sign_in admin }
-        schema type: :object,
-        properties: {
-          cards: { 
-            type: :array,
+        schema type: :array,
             items: { '$ref' => '#/components/schemas/Card' }
-          }
-        },
-        required: [ 'cards' ]
 
         let(:memberId) { basic.id }
 
@@ -119,11 +106,7 @@ describe 'Admin::AccessCards API', type: :request do
       response '200', 'access card created' do 
         before { sign_in admin }
 
-        schema type: :object,
-        properties: {
-          card: { '$ref' => '#/components/schemas/Card' },
-        },
-        required: [ 'card' ]
+        schema '$ref' => '#/components/schemas/Card'
 
         let(:createAccessCardDetails) {{
           card: {
@@ -222,11 +205,7 @@ describe 'Admin::AccessCards API', type: :request do
       response '200', 'card updated' do 
         before { sign_in admin }
 
-        schema type: :object,
-        properties: {
-          card: { '$ref' => '#/components/schemas/Card' },
-        },
-        required: [ 'card' ]
+        schema '$ref' => '#/components/schemas/Card'
 
         let(:updateAccessCardDetails) {{
           card: {

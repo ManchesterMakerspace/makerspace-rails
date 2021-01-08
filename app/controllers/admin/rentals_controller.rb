@@ -4,13 +4,13 @@ class Admin::RentalsController < AdminController
 
   def index
     rentals = search_params[:member_id] ? Rental.where(member_id: search_params[:member_id]) : Rental.all
-    return render_with_total_items(query_resource(rentals), { each_serializer: RentalSerializer, root: "rentals" })
+    return render_with_total_items(query_resource(rentals), { each_serializer: RentalSerializer, adapter: :attributes })
   end
 
   def create
     @rental = Rental.new(rental_params)
     @rental.save!
-    render json: @rental and return
+    render json: @rental, adapter: :attributes and return
   end
 
   def update
@@ -18,7 +18,7 @@ class Admin::RentalsController < AdminController
     @rental.update_attributes!(rental_params)
     notify_renewal(initial_date)
     @rental.reload
-    render json: @rental and return
+    render json: @rental, adapter: :attributes and return
   end
 
   def destroy

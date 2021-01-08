@@ -31,14 +31,8 @@ describe 'Billing::Subscriptions API', type: :request do
           allow(BraintreeService::Subscription).to receive(:get_subscriptions).with(gateway, anything).and_return(subscriptions)
         end
 
-        schema type: :object,
-        properties: {
-          subscriptions: {
-            type: :array,
+        schema type: :array,
             items: { '$ref' => '#/components/schemas/Subscription' }
-          }
-        },
-        required: [ 'subscriptions' ]
 
         run_test!
       end

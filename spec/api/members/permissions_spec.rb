@@ -12,13 +12,7 @@ describe 'Permissions API', type: :request do
         before { sign_in auth_member }
         let(:id) { auth_member.id }
 
-        schema type: :object,
-          properties: {
-            permissions: {
-              type: :object
-            }
-          },
-          required: [ 'permissions' ]
+        schema type: :object
 
         run_test!
       end
