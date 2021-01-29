@@ -64,30 +64,18 @@ describe 'Billing::Subscriptions API', type: :request do
         title: :updateSubscriptionDetails,
         type: :object,
         properties: {
-          subscription: {
-            type: :object,
-            properties: {
-              paymentMethodToken: { type: :string }
-            },
-            required: [:paymentMethodToken]
-          }
+          paymentMethodToken: { type: :string }
         },
-        required: [:subscription]
+        required: [:paymentMethodToken]
       }, required: true
 
       request_body_json schema: {
         title: :updateSubscriptionDetails,
         type: :object,
         properties: {
-          subscription: {
-            type: :object,
-            properties: {
-              paymentMethodToken: { type: :string }
-            },
-            required: [:paymentMethodToken]
-          }
+          paymentMethodToken: { type: :string }
         },
-        required: [:subscription]
+        required: [:paymentMethodToken]
       }, required: true
 
       response '200', 'subscription updated' do
@@ -99,7 +87,7 @@ describe 'Billing::Subscriptions API', type: :request do
         schema '$ref' => '#/components/schemas/Subscription'
 
         let(:id) { subscription.id }
-        let(:updateSubscriptionDetails) {{ subscription: { payment_method_token: "54321" } }}
+        let(:updateSubscriptionDetails) {{ payment_method_token: "54321" }}
 
         run_test!
       end
@@ -107,7 +95,7 @@ describe 'Billing::Subscriptions API', type: :request do
       response '401', 'User not authenticated' do
         schema '$ref' => '#/components/schemas/error'
         let(:id) { subscription.id }
-        let(:updateSubscriptionDetails) {{ subscription: { payment_method_token: "54321" } }}
+        let(:updateSubscriptionDetails) {{ payment_method_token: "54321" }}
         run_test!
       end
 
@@ -115,7 +103,7 @@ describe 'Billing::Subscriptions API', type: :request do
         before { sign_in non_customer }
         schema '$ref' => '#/components/schemas/error'
         let(:id) { subscription.id }
-        let(:updateSubscriptionDetails) {{ subscription: { payment_method_token: "54321" } }}
+        let(:updateSubscriptionDetails) {{ payment_method_token: "54321" }}
         run_test!
       end
 
@@ -123,7 +111,7 @@ describe 'Billing::Subscriptions API', type: :request do
         before { sign_in customer }
         schema '$ref' => '#/components/schemas/error'
         let(:id) { subscription.id }
-        let(:updateSubscriptionDetails) {{ subscription: { payment_method_token: "54321" } }}
+        let(:updateSubscriptionDetails) {{ payment_method_token: "54321" }}
         run_test!
       end
     end

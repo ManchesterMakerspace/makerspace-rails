@@ -73,34 +73,24 @@ describe 'Billing::Transactions API', type: :request do
         title: :createTransactionDetails, 
         type: :object,
         properties: {
-          transaction: {
-            type: :object,
-            properties: {
-              invoiceId: { type: :string, 'x-nullable': true },
-              invoiceOptionId: { type: :string, 'x-nullable': true },
-              discountId: { type: :string, 'x-nullable': true },
-              paymentMethodId: { type: :string }
-            }
-          }
+          invoiceId: { type: :string, 'x-nullable': true },
+          invoiceOptionId: { type: :string, 'x-nullable': true },
+          discountId: { type: :string, 'x-nullable': true },
+          paymentMethodId: { type: :string }
         },
-        required: [:transaction]
+        required: [:paymentMethodId]
       }, required: true
       
       request_body_json schema: {
         title: :createTransactionDetails, 
         type: :object,
         properties: {
-          transaction: {
-            type: :object,
-            properties: {
-              invoiceId: { type: :string, 'x-nullable': true },
-              invoiceOptionId: { type: :string, 'x-nullable': true },
-              discountId: { type: :string, 'x-nullable': true },
-              paymentMethodId: { type: :string }
-            }
-          }
+          invoiceId: { type: :string, 'x-nullable': true },
+          invoiceOptionId: { type: :string, 'x-nullable': true },
+          discountId: { type: :string, 'x-nullable': true },
+          paymentMethodId: { type: :string }
         },
-        required: [:transaction]
+        required: [:paymentMethodId]
       }, required: true
 
       response '200', 'transaction created' do
@@ -111,7 +101,7 @@ describe 'Billing::Transactions API', type: :request do
         schema '$ref' => '#/components/schemas/Transaction'
 
         let(:createTransactionDetails) {{
-          transaction: { invoiceId: invoice.id, paymentMethodId: "1234" }
+          invoiceId: invoice.id, paymentMethodId: "1234"
         }}
 
         run_test!
@@ -120,7 +110,7 @@ describe 'Billing::Transactions API', type: :request do
       response '401', 'User not authenticated' do
         schema '$ref' => '#/components/schemas/error'
         let(:createTransactionDetails) {{
-          transaction: { invoiceId: "1234" , paymentMethodId: "1234" }
+          invoiceId: "1234" , paymentMethodId: "1234" 
         }}
         run_test!
       end
@@ -129,7 +119,7 @@ describe 'Billing::Transactions API', type: :request do
         before { sign_in non_customer }
         schema '$ref' => '#/components/schemas/error'
         let(:createTransactionDetails) {{
-          transaction: { invoiceId: "1234" , paymentMethodId: "1234" }
+          invoiceId: "1234" , paymentMethodId: "1234"
         }}
         run_test!
       end
@@ -138,7 +128,7 @@ describe 'Billing::Transactions API', type: :request do
         before { sign_in customer }
         schema '$ref' => '#/components/schemas/error'
         let(:createTransactionDetails)  {{
-          transaction: { invoiceId: 'some invoice' }
+          invoiceId: 'some invoice'
         }}
         run_test!
       end
@@ -147,7 +137,7 @@ describe 'Billing::Transactions API', type: :request do
         before { sign_in customer }
         schema '$ref' => '#/components/schemas/error'
         let(:createTransactionDetails)  {{
-          transaction: { invoiceOptionId: invoice_option.id }
+          invoiceOptionId: invoice_option.id
         }}
         run_test!
       end
@@ -158,7 +148,7 @@ describe 'Billing::Transactions API', type: :request do
           allow(Invoice).to receive(:find).and_return(nil)
         }
         schema '$ref' => '#/components/schemas/error'
-        let(:createTransactionDetails) {{ transaction: { invoiceId: 'invalid', paymentMethodId: "1234" } }}
+        let(:createTransactionDetails) {{ invoiceId: 'invalid', paymentMethodId: "1234" }}
         run_test!
       end
 
@@ -168,7 +158,7 @@ describe 'Billing::Transactions API', type: :request do
           allow(Invoice).to receive(:find).and_return(nil)
         }
         schema '$ref' => '#/components/schemas/error'
-        let(:createTransactionDetails) {{ transaction: { invoiceOptionId: 'invalid', paymentMethodId: "1234" } }}
+        let(:createTransactionDetails) {{ invoiceOptionId: 'invalid', paymentMethodId: "1234" }}
         run_test!
       end
     end

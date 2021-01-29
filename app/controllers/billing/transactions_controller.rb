@@ -10,7 +10,6 @@ class Billing::TransactionsController < BillingController
         raise ActionController::ParameterMissing.new(:invoice_id)
       end
       
-      raise ActionController::ParameterMissing.new(:payment_method_id) if transaction_params[:payment_method_id].nil?
       verify_payment_method
 
       if transaction_params[:invoice_id]
@@ -73,7 +72,8 @@ class Billing::TransactionsController < BillingController
     end
 
     def transaction_params
-      params.require(:transaction).permit(:payment_method_id, :invoice_id, :invoice_option_id, :discount_id)
+      params.require(:payment_method_id)
+      params.permit(:payment_method_id, :invoice_id, :invoice_option_id, :discount_id)
     end
 
     def construct_query

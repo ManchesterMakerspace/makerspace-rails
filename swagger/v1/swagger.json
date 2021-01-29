@@ -513,7 +513,8 @@
             "type": "string"
           },
           "isPromotion": {
-            "type": "boolean"
+            "type": "boolean",
+            "x-nullable": true
           }
         },
         "required": [
@@ -524,8 +525,7 @@
           "resourceClass",
           "quantity",
           "disabled",
-          "operation",
-          "isPromotion"
+          "operation"
         ]
       },
       "NewMember": {
@@ -1016,7 +1016,8 @@
             "type": "string"
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "x-nullable": true
           },
           "memberId": {
             "type": "string"
@@ -1030,7 +1031,6 @@
         },
         "required": [
           "number",
-          "description",
           "memberId",
           "expiration",
           "contractOnFile"
@@ -2171,20 +2171,16 @@
                 "name": "createAccessCardDetails",
                 "type": "object",
                 "properties": {
-                  "card": {
-                    "type": "object",
-                    "properties": {
-                      "memberId": {
-                        "type": "string"
-                      },
-                      "uid": {
-                        "type": "string"
-                      }
-                    }
+                  "memberId": {
+                    "type": "string"
+                  },
+                  "uid": {
+                    "type": "string"
                   }
                 },
                 "required": [
-                  "card"
+                  "memberId",
+                  "uid"
                 ]
               }
             }
@@ -2294,21 +2290,13 @@
                 "title": "updateAccessCardDetails",
                 "type": "object",
                 "properties": {
-                  "card": {
-                    "type": "object",
-                    "properties": {
-                      "memberId": {
-                        "type": "string"
-                      },
-                      "uid": {
-                        "type": "string"
-                      },
-                      "cardLocation": {
-                        "type": "string"
-                      }
-                    }
+                  "cardLocation": {
+                    "type": "string"
                   }
-                }
+                },
+                "required": [
+                  "cardLocation"
+                ]
               }
             }
           }
@@ -2590,12 +2578,7 @@
             "application/json": {
               "schema": {
                 "title": "createEarnedMembershipDetails",
-                "type": "object",
-                "properties": {
-                  "earnedMembership": {
-                    "$ref": "#/components/schemas/NewEarnedMembership"
-                  }
-                }
+                "$ref": "#/components/schemas/NewEarnedMembership"
               }
             }
           }
@@ -2751,12 +2734,7 @@
             "application/json": {
               "schema": {
                 "title": "updateEarnedMembershipDetails",
-                "type": "object",
-                "properties": {
-                  "earnedMembership": {
-                    "$ref": "#/components/schemas/EarnedMembership"
-                  }
-                }
+                "$ref": "#/components/schemas/EarnedMembership"
               }
             }
           }
@@ -2841,12 +2819,7 @@
             "application/json": {
               "schema": {
                 "title": "createInvoiceOptionDetails",
-                "type": "object",
-                "properties": {
-                  "invoiceOption": {
-                    "$ref": "#/components/schemas/NewInvoiceOption"
-                  }
-                }
+                "$ref": "#/components/schemas/NewInvoiceOption"
               }
             }
           }
@@ -2923,12 +2896,7 @@
             "application/json": {
               "schema": {
                 "title": "updateInvoiceOptionDetails",
-                "type": "object",
-                "properties": {
-                  "invoiceOption": {
-                    "$ref": "#/components/schemas/InvoiceOption"
-                  }
-                }
+                "$ref": "#/components/schemas/InvoiceOption"
               }
             }
           }
@@ -3254,25 +3222,25 @@
                 "title": "createInvoiceDetails",
                 "type": "object",
                 "properties": {
-                  "invoiceOption": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "discountId": {
-                        "type": "string",
-                        "x-nullable": true
-                      },
-                      "memberId": {
-                        "type": "string"
-                      },
-                      "resourceId": {
-                        "type": "string"
-                      }
-                    }
+                  "id": {
+                    "type": "string"
+                  },
+                  "memberId": {
+                    "type": "string"
+                  },
+                  "resourceId": {
+                    "type": "string"
+                  },
+                  "discountId": {
+                    "type": "string",
+                    "x-nullable": true
                   }
-                }
+                },
+                "required": [
+                  "id",
+                  "memberId",
+                  "resourceId"
+                ]
               }
             }
           }
@@ -3381,8 +3349,8 @@
                 "title": "updateInvoiceDetails",
                 "type": "object",
                 "properties": {
-                  "invoice": {
-                    "$ref": "#/components/schemas/Invoice"
+                  "settled": {
+                    "type": "boolean"
                   }
                 }
               }
@@ -3538,12 +3506,7 @@
             "application/json": {
               "schema": {
                 "title": "createMemberDetails",
-                "type": "object",
-                "properties": {
-                  "member": {
-                    "$ref": "#/components/schemas/NewMember"
-                  }
-                }
+                "$ref": "#/components/schemas/NewMember"
               }
             }
           }
@@ -3622,82 +3585,77 @@
                 "title": "updateMemberDetails",
                 "type": "object",
                 "properties": {
-                  "member": {
+                  "firstname": {
+                    "type": "string",
+                    "x-nullable": true
+                  },
+                  "lastname": {
+                    "type": "string",
+                    "x-nullable": true
+                  },
+                  "email": {
+                    "type": "string",
+                    "x-nullable": true
+                  },
+                  "address": {
                     "type": "object",
+                    "x-nullable": true,
                     "properties": {
-                      "firstname": {
+                      "street": {
                         "type": "string",
                         "x-nullable": true
                       },
-                      "lastname": {
+                      "unit": {
                         "type": "string",
                         "x-nullable": true
                       },
-                      "email": {
+                      "city": {
                         "type": "string",
                         "x-nullable": true
                       },
-                      "address": {
-                        "type": "object",
-                        "x-nullable": true,
-                        "properties": {
-                          "street": {
-                            "type": "string",
-                            "x-nullable": true
-                          },
-                          "unit": {
-                            "type": "string",
-                            "x-nullable": true
-                          },
-                          "city": {
-                            "type": "string",
-                            "x-nullable": true
-                          },
-                          "state": {
-                            "type": "string",
-                            "x-nullable": true
-                          },
-                          "postalCode": {
-                            "type": "string",
-                            "x-nullable": true
-                          }
-                        }
-                      },
-                      "phone": {
+                      "state": {
                         "type": "string",
                         "x-nullable": true
                       },
-                      "status": {
+                      "postalCode": {
                         "type": "string",
-                        "enum": [
-                          "activeMember",
-                          "inactive",
-                          "nonMember",
-                          "revoked"
-                        ],
-                        "x-nullable": true
-                      },
-                      "role": {
-                        "type": "string",
-                        "enum": [
-                          "admin",
-                          "member"
-                        ],
-                        "x-nullable": true
-                      },
-                      "renew": {
-                        "type": "number",
-                        "x-nullable": true
-                      },
-                      "memberContractOnFile": {
-                        "type": "boolean",
-                        "x-nullable": true
-                      },
-                      "subscription": {
-                        "type": "boolean",
                         "x-nullable": true
                       }
                     }
+                  },
+                  "phone": {
+                    "type": "string",
+                    "x-nullable": true
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "activeMember",
+                      "inactive",
+                      "nonMember",
+                      "revoked"
+                    ],
+                    "x-nullable": true
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "admin",
+                      "member"
+                    ],
+                    "x-nullable": true
+                  },
+                  "renew": {
+                    "type": "number",
+                    "x-nullable": true
+                  },
+                  "memberContractOnFile": {
+                    "type": "boolean",
+                    "x-nullable": true
+                  },
+                  "subscription": {
+                    "type": "boolean",
+                    "x-nullable": true
                   }
                 }
               }
@@ -3886,12 +3844,7 @@
             "application/json": {
               "schema": {
                 "title": "createRentalDetails",
-                "type": "object",
-                "properties": {
-                  "rental": {
-                    "$ref": "#/components/schemas/NewRental"
-                  }
-                }
+                "$ref": "#/components/schemas/NewRental"
               }
             }
           }
@@ -3968,12 +3921,7 @@
             "application/json": {
               "schema": {
                 "title": "updateRentalDetails",
-                "type": "object",
-                "properties": {
-                  "rental": {
-                    "$ref": "#/components/schemas/Rental"
-                  }
-                }
+                "$ref": "#/components/schemas/Rental"
               }
             }
           }
@@ -4245,23 +4193,15 @@
                 "title": "createPaymentMethodDetails",
                 "type": "object",
                 "properties": {
-                  "paymentMethod": {
-                    "type": "object",
-                    "properties": {
-                      "paymentMethodNonce": {
-                        "type": "string"
-                      },
-                      "makeDefault": {
-                        "type": "boolean"
-                      }
-                    },
-                    "required": [
-                      "paymentMethodNonce"
-                    ]
+                  "paymentMethodNonce": {
+                    "type": "string"
+                  },
+                  "makeDefault": {
+                    "type": "boolean"
                   }
                 },
                 "required": [
-                  "paymentMethod"
+                  "paymentMethodNonce"
                 ]
               }
             }
@@ -4601,20 +4541,12 @@
                 "title": "updateSubscriptionDetails",
                 "type": "object",
                 "properties": {
-                  "subscription": {
-                    "type": "object",
-                    "properties": {
-                      "paymentMethodToken": {
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "paymentMethodToken"
-                    ]
+                  "paymentMethodToken": {
+                    "type": "string"
                   }
                 },
                 "required": [
-                  "subscription"
+                  "paymentMethodToken"
                 ]
               }
             }
@@ -4887,29 +4819,24 @@
                 "title": "createTransactionDetails",
                 "type": "object",
                 "properties": {
-                  "transaction": {
-                    "type": "object",
-                    "properties": {
-                      "invoiceId": {
-                        "type": "string",
-                        "x-nullable": true
-                      },
-                      "invoiceOptionId": {
-                        "type": "string",
-                        "x-nullable": true
-                      },
-                      "discountId": {
-                        "type": "string",
-                        "x-nullable": true
-                      },
-                      "paymentMethodId": {
-                        "type": "string"
-                      }
-                    }
+                  "invoiceId": {
+                    "type": "string",
+                    "x-nullable": true
+                  },
+                  "invoiceOptionId": {
+                    "type": "string",
+                    "x-nullable": true
+                  },
+                  "discountId": {
+                    "type": "string",
+                    "x-nullable": true
+                  },
+                  "paymentMethodId": {
+                    "type": "string"
                   }
                 },
                 "required": [
-                  "transaction"
+                  "paymentMethodId"
                 ]
               }
             }
@@ -5083,15 +5010,13 @@
                 "title": "messageDetails",
                 "type": "object",
                 "properties": {
-                  "notification": {
-                    "type": "object",
-                    "properties": {
-                      "message": {
-                        "type": "string"
-                      }
-                    }
+                  "message": {
+                    "type": "string"
                   }
-                }
+                },
+                "required": [
+                  "message"
+                ]
               }
             }
           }
@@ -5276,12 +5201,7 @@
             "application/json": {
               "schema": {
                 "title": "createEarnedMembershipReportDetails",
-                "type": "object",
-                "properties": {
-                  "report": {
-                    "$ref": "#/components/schemas/NewReport"
-                  }
-                }
+                "$ref": "#/components/schemas/NewReport"
               }
             }
           }
@@ -5683,24 +5603,16 @@
                 "title": "createInvoiceDetails",
                 "type": "object",
                 "properties": {
-                  "invoiceOption": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "discountId": {
-                        "type": "string",
-                        "x-nullable": true
-                      }
-                    },
-                    "required": [
-                      "id"
-                    ]
+                  "id": {
+                    "type": "string"
+                  },
+                  "discountId": {
+                    "type": "string",
+                    "x-nullable": true
                   }
                 },
                 "required": [
-                  "invoiceOption"
+                  "id"
                 ]
               }
             }
@@ -5956,53 +5868,54 @@
                 "title": "registerMemberDetails",
                 "type": "object",
                 "properties": {
-                  "member": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "firstname": {
+                    "type": "string"
+                  },
+                  "lastname": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "x-nullable": true
+                  },
+                  "address": {
                     "type": "object",
                     "properties": {
-                      "email": {
-                        "type": "string"
-                      },
-                      "password": {
-                        "type": "string"
-                      },
-                      "firstname": {
-                        "type": "string"
-                      },
-                      "lastname": {
-                        "type": "string"
-                      },
-                      "phone": {
+                      "street": {
                         "type": "string",
                         "x-nullable": true
                       },
-                      "address": {
-                        "type": "object",
-                        "properties": {
-                          "street": {
-                            "type": "string",
-                            "x-nullable": true
-                          },
-                          "unit": {
-                            "type": "string",
-                            "x-nullable": true
-                          },
-                          "city": {
-                            "type": "string",
-                            "x-nullable": true
-                          },
-                          "state": {
-                            "type": "string",
-                            "x-nullable": true
-                          },
-                          "postalCode": {
-                            "type": "string",
-                            "x-nullable": true
-                          }
-                        }
+                      "unit": {
+                        "type": "string",
+                        "x-nullable": true
+                      },
+                      "city": {
+                        "type": "string",
+                        "x-nullable": true
+                      },
+                      "state": {
+                        "type": "string",
+                        "x-nullable": true
+                      },
+                      "postalCode": {
+                        "type": "string",
+                        "x-nullable": true
                       }
                     }
                   }
-                }
+                },
+                "required": [
+                  "email",
+                  "password",
+                  "firstname",
+                  "lastname"
+                ]
               }
             }
           }
@@ -6128,9 +6041,8 @@
             "application/json": {
               "schema": {
                 "title": "updateMemberDetails",
-                "type": "object",
-                "properties": {
-                  "member": {
+                "anyOf": [
+                  {
                     "type": "object",
                     "properties": {
                       "firstname": {
@@ -6142,10 +6054,6 @@
                         "x-nullable": true
                       },
                       "email": {
-                        "type": "string",
-                        "x-nullable": true
-                      },
-                      "signature": {
                         "type": "string",
                         "x-nullable": true
                       },
@@ -6180,15 +6088,24 @@
                         }
                       }
                     }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "signature": {
+                        "type": "string",
+                        "x-nullable": true
+                      }
+                    }
                   }
-                }
+                ]
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "member updated",
+            "description": "Signature upload",
             "content": {
               "application/json": {
                 "schema": {
@@ -6466,7 +6383,10 @@
                   "email": {
                     "type": "string"
                   }
-                }
+                },
+                "required": [
+                  "email"
+                ]
               }
             }
           }
@@ -6642,16 +6562,14 @@
                 "title": "updateRentalDetails",
                 "type": "object",
                 "properties": {
-                  "rental": {
-                    "type": "object",
-                    "properties": {
-                      "signature": {
-                        "type": "string",
-                        "x-nullable": true
-                      }
-                    }
+                  "signature": {
+                    "type": "string",
+                    "x-nullable": true
                   }
-                }
+                },
+                "required": [
+                  "signature"
+                ]
               }
             }
           }

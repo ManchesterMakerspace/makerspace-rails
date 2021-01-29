@@ -123,7 +123,7 @@ RSpec.describe Billing::PaymentMethodsController, type: :controller do
       expect(success_result).to receive(:try).with(:payment_method).and_return(true)
       expect(success_result).to receive(:payment_method).and_return(payment_method)
 
-      post :create, params: { payment_method: valid_params }, format: :json
+      post :create, params: valid_params, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
       expect(parsed_response['id']).to eq(payment_method.token)
@@ -141,7 +141,7 @@ RSpec.describe Billing::PaymentMethodsController, type: :controller do
       allow(success_result).to receive(:payment_method).and_return(false)
       allow(success_result).to receive_message_chain(:customer, :payment_methods, first: payment_method)
 
-      post :create, params: { payment_method: valid_params }, format: :json
+      post :create, params: valid_params, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
       expect(parsed_response['id']).to eq(payment_method.token)
@@ -151,7 +151,7 @@ RSpec.describe Billing::PaymentMethodsController, type: :controller do
     end
 
     it "renders error if no nonce is provided" do 
-      post :create, params: { payment_method: { make_default: true} }, format: :json
+      post :create, params: { make_default: true }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(422)
       expect(parsed_response['message']).to match(/payment_method_nonce/i)
@@ -162,7 +162,7 @@ RSpec.describe Billing::PaymentMethodsController, type: :controller do
       expect(gateway).to receive_message_chain(:payment_method, create: failed_result)
       allow(Error::Braintree::Result).to receive(:new).with(failed_result).and_return(Error::Braintree::Result.new) # Bypass error instantiation
       
-      post :create, params: { payment_method: valid_params }, format: :json
+      post :create, params: valid_params, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(503)
       expect(parsed_response['message']).to match(/service unavailable/i)

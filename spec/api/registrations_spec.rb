@@ -191,84 +191,76 @@ describe 'Registrations API', type: :request do
         title: :registerMemberDetails,
         type: :object,
         properties: {
-          member: {
+          email: {
+            type: :string
+          },
+          password: {
+            type: :string
+          },
+          firstname: {
+            type: :string
+          },
+          lastname: {
+            type: :string
+          },
+          phone: { type: :string, 'x-nullable': true },
+          address: {
             type: :object,
             properties: {
-              email: {
-                type: :string
-              },
-              password: {
-                type: :string
-              },
-              firstname: {
-                type: :string
-              },
-              lastname: {
-                type: :string
-              },
-              phone: { type: :string, 'x-nullable': true },
-              address: {
-                type: :object,
-                properties: {
-                  street: { type: :string, 'x-nullable': true },
-                  unit: { type: :string, 'x-nullable': true },
-                  city: { type: :string, 'x-nullable': true },
-                  state: { type: :string, 'x-nullable': true },
-                  postalCode: { type: :string, 'x-nullable': true },
-                }
-              }
+              street: { type: :string, 'x-nullable': true },
+              unit: { type: :string, 'x-nullable': true },
+              city: { type: :string, 'x-nullable': true },
+              state: { type: :string, 'x-nullable': true },
+              postalCode: { type: :string, 'x-nullable': true },
             }
           }
-        }
+        },
+        required: [:email, :password, :firstname, :lastname]
       }, required: true
 
       request_body_json schema: {
         title: :registerMemberDetails,
         type: :object,
         properties: {
-          member: {
+          email: {
+            type: :string
+          },
+          password: {
+            type: :string
+          },
+          firstname: {
+            type: :string
+          },
+          lastname: {
+            type: :string
+          },
+          phone: { type: :string, 'x-nullable': true },
+          address: {
             type: :object,
             properties: {
-              email: {
-                type: :string
-              },
-              password: {
-                type: :string
-              },
-              firstname: {
-                type: :string
-              },
-              lastname: {
-                type: :string
-              },
-              phone: { type: :string, 'x-nullable': true },
-              address: {
-                type: :object,
-                properties: {
-                  street: { type: :string, 'x-nullable': true },
-                  unit: { type: :string, 'x-nullable': true },
-                  city: { type: :string, 'x-nullable': true },
-                  state: { type: :string, 'x-nullable': true },
-                  postalCode: { type: :string, 'x-nullable': true },
-                }
-              }
+              street: { type: :string, 'x-nullable': true },
+              unit: { type: :string, 'x-nullable': true },
+              city: { type: :string, 'x-nullable': true },
+              state: { type: :string, 'x-nullable': true },
+              postalCode: { type: :string, 'x-nullable': true },
             }
           }
-        }
+        },
+        required: [:email, :password, :firstname, :lastname]
       }, required: true
 
       response '200', 'Member registered' do
 
         schema '$ref' => '#/components/schemas/Member'
 
-        let(:registerMemberDetails) {{ member: { firstname: "First", lastname: "Last", email: "first@last.com", password: "password" } }}
+        let(:registerMemberDetails) {{ firstname: "First", lastname: "Last", email: "first@last.com", password: "password" }}
         run_test!
       end
 
       response '422', 'Email already exists' do
         before { create(:member, email: "foo@foo.com")}
         schema '$ref' => '#/components/schemas/error'
-        let(:registerMemberDetails) {{ member: { firstname: "First", lastname: "Last", email: "foo@foo.com", password: "password" } }}
+        let(:registerMemberDetails) {{ firstname: "First", lastname: "Last", email: "foo@foo.com", password: "password" }}
         run_test!
       end
     end
@@ -285,7 +277,8 @@ describe 'Registrations API', type: :request do
           email: {
             type: :string
           },
-        }
+        },
+        required: [:email]
       }, required: true
 
       request_body_json schema: {
@@ -295,7 +288,8 @@ describe 'Registrations API', type: :request do
           email: {
             type: :string
           },
-        }
+        },
+        required: [:email]
       }, required: true
 
       response '204', 'Registration email sent' do

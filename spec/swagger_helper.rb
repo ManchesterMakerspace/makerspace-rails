@@ -162,14 +162,14 @@ RSpec.configure do |config|
       type: :object,
       properties: {
         name: { type: :string },
-        description: { type: :string },
         amount: { type: :string },
-        planId: { type: :string, 'x-nullable': true },
         resourceClass: { '$ref' => '#/components/schemas/InvoiceableResource' },
         quantity: { type: :number },
+        description: { type: :string, 'x-nullable': true },
+        planId: { type: :string, 'x-nullable': true },
         discountId: { type: :string, 'x-nullable': true },
-        disabled: { type: :boolean },
-        isPromotion: { type: :boolean },
+        disabled: { type: :boolean, 'x-nullable': true },
+        isPromotion: { type: :boolean, 'x-nullable': true },
       }
     },
     InvoiceOption: {
@@ -185,7 +185,7 @@ RSpec.configure do |config|
         discountId: { type: :string, 'x-nullable': true },
         disabled: { type: :boolean },
         operation: { type: :string },
-        isPromotion: { type: :boolean },
+        isPromotion: { type: :boolean, 'x-nullable': true  },
       }
     },
 
@@ -195,9 +195,9 @@ RSpec.configure do |config|
         firstname: { type: :string },
         lastname: { type: :string },
         email: { type: :string },
-        status: { '$ref': '#/components/schemas/MemberStatus' },
-        role: { '$ref': '#/components/schemas/MemberRole' },
-        memberContractOnFile: { type: :boolean },
+        status: { '$ref': '#/components/schemas/MemberStatus', 'x-nullable': true },
+        role: { '$ref': '#/components/schemas/MemberRole', 'x-nullable': true },
+        memberContractOnFile: { type: :boolean, 'x-nullable': true },
         phone: { type: :string },
         address: {
           type: :object,
@@ -386,10 +386,10 @@ RSpec.configure do |config|
       type: :object,
       properties: {
         number: { type: :string },
-        description: { type: :string },
         memberId: { type: :string },
-        expiration: { type: :number },
-        contractOnFile: { type: :boolean }
+        description: { type: :string, 'x-nullable': true },
+        expiration: { type: :number, 'x-nullable': true  },
+        contractOnFile: { type: :boolean, 'x-nullable': true  }
       }
     },
     Rental: {

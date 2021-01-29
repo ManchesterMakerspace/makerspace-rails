@@ -11,18 +11,12 @@ describe 'Admin::InvoiceOptions API', type: :request do
 
       parameter name: :createInvoiceOptionDetails, in: :body, schema: {
         title: :createInvoiceOptionDetails,
-        type: :object,
-        properties: {
-          invoiceOption: { '$ref' => '#/components/schemas/NewInvoiceOption'   }
-        }
+        '$ref' => '#/components/schemas/NewInvoiceOption'  
       }, required: true
 
       request_body_json schema: {
         title: :createInvoiceOptionDetails,
-        type: :object,
-        properties: {
-          invoiceOption: { '$ref' => '#/components/schemas/NewInvoiceOption'   }
-        }
+        '$ref' => '#/components/schemas/NewInvoiceOption'  
       }, required: true
 
       response '200', 'invoice option created' do
@@ -31,14 +25,12 @@ describe 'Admin::InvoiceOptions API', type: :request do
         schema '$ref' => '#/components/schemas/InvoiceOption'
 
         let(:createInvoiceOptionDetails) {{
-          invoiceOption: {
-            name: "something",
-            description: "some description",
-            resourceClass: "member",
-            amount: "65",
-            planId: "8765",
-            quantity: "2"
-          }
+          name: "something",
+          description: "some description",
+          resourceClass: "member",
+          amount: "65",
+          planId: "8765",
+          quantity: "2"
         }}
 
         run_test!
@@ -48,14 +40,12 @@ describe 'Admin::InvoiceOptions API', type: :request do
         before { sign_in basic }
         schema '$ref' => '#/components/schemas/error'
         let(:createInvoiceOptionDetails) {{
-          invoiceOption: {
-            name: "something",
-            description: "some description",
-            resourceClass: "member",
-            amount: "65",
-            planId: "8765",
-            quantity: "2"
-          }
+          name: "something",
+          description: "some description",
+          resourceClass: "member",
+          amount: "65",
+          planId: "8765",
+          quantity: "2"
         }}
         run_test!
       end
@@ -63,14 +53,12 @@ describe 'Admin::InvoiceOptions API', type: :request do
       response '401', 'User unauthenticated' do
         schema '$ref' => '#/components/schemas/error'
         let(:createInvoiceOptionDetails) {{
-          invoiceOption: {
-            name: "something",
-            description: "some description",
-            resourceClass: "member",
-            amount: "65",
-            planId: "8765",
-            quantity: "2"
-          }
+          name: "something",
+          description: "some description",
+          resourceClass: "member",
+          amount: "65",
+          planId: "8765",
+          quantity: "2"
         }}
         run_test!
       end
@@ -85,18 +73,12 @@ describe 'Admin::InvoiceOptions API', type: :request do
 
       parameter name: :updateInvoiceOptionDetails, in: :body, schema: {
         title: :updateInvoiceOptionDetails, 
-        type: :object,
-        properties: {
-          invoiceOption: { '$ref' => '#/components/schemas/InvoiceOption'   }
-        }
+        '$ref' => '#/components/schemas/InvoiceOption' 
       }, required: true
 
       request_body_json schema: {
         title: :updateInvoiceOptionDetails, 
-        type: :object,
-        properties: {
-          invoiceOption: { '$ref' => '#/components/schemas/InvoiceOption'   }
-        }
+        '$ref' => '#/components/schemas/InvoiceOption' 
       }, required: true
 
       response '200', 'invoice option updated' do
@@ -105,14 +87,12 @@ describe 'Admin::InvoiceOptions API', type: :request do
         schema '$ref' => '#/components/schemas/InvoiceOption'
 
         let(:updateInvoiceOptionDetails) {{
-          invoiceOption: {
-            name: "something",
-            description: "some description",
-            resourceClass: "member",
-            amount: "65",
-            planId: "8765",
-            quantity: "2"
-          }
+          name: "something",
+          description: "some description",
+          resourceClass: "member",
+          amount: "65",
+          planId: "8765",
+          quantity: "2"
         }}
         let(:id) { create(:invoice_option).id }
         run_test!
@@ -122,14 +102,12 @@ describe 'Admin::InvoiceOptions API', type: :request do
         before { sign_in basic }
         schema '$ref' => '#/components/schemas/error'
         let(:updateInvoiceOptionDetails) {{
-          invoiceOption: {
-            name: "something",
-            description: "some description",
-            resourceClass: "member",
-            amount: "65",
-            planId: "8765",
-            quantity: "2"
-          }
+          name: "something",
+          description: "some description",
+          resourceClass: "member",
+          amount: "65",
+          planId: "8765",
+          quantity: "2"
         }}
         let(:id) { create(:invoice_option).id }
         run_test!
@@ -138,14 +116,12 @@ describe 'Admin::InvoiceOptions API', type: :request do
       response '401', 'User unauthenticated' do
         schema '$ref' => '#/components/schemas/error'
         let(:updateInvoiceOptionDetails) {{
-          invoiceOption: {
-            name: "something",
-            description: "some description",
-            resourceClass: "member",
-            amount: "65",
-            planId: "8765",
-            quantity: "2"
-          }
+          name: "something",
+          description: "some description",
+          resourceClass: "member",
+          amount: "65",
+          planId: "8765",
+          quantity: "2"
         }}
         let(:id) { create(:invoice_option).id }
         run_test!
@@ -155,14 +131,12 @@ describe 'Admin::InvoiceOptions API', type: :request do
         before { sign_in admin }
         schema '$ref' => '#/components/schemas/error'
         let(:updateInvoiceOptionDetails) {{
-          invoiceOption: {
-            name: "something",
-            description: "some description",
-            resourceClass: "member",
-            amount: "65",
-            planId: "8765",
-            quantity: "2"
-          }
+          name: "something",
+          description: "some description",
+          resourceClass: "member",
+          amount: "65",
+          planId: "8765",
+          quantity: "2"
         }}
         let(:id) { 'invalid' }
         run_test!

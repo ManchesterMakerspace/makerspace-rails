@@ -12,6 +12,7 @@ class DocumentsController < AuthenticationController
   end
 
   def resource_params
+    params.require(:id)
     params.permit(:resource_id, :id)
   end
 

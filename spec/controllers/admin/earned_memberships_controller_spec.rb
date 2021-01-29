@@ -39,7 +39,7 @@ RSpec.describe Admin::EarnedMembershipsController, type: :controller do
         membership_params = {
           member_id: member.id
         }
-        post :create, params: { earned_membership: membership_params }, format: :json
+        post :create, params: membership_params, format: :json
         expect(response).to have_http_status(422)
       end
 
@@ -47,7 +47,7 @@ RSpec.describe Admin::EarnedMembershipsController, type: :controller do
         membership_params = {
           requirements: requirements
         }
-        post :create, params: { earned_membership: membership_params }, format: :json
+        post :create, params: membership_params, format: :json
         expect(response).to have_http_status(422)
       end
 
@@ -57,7 +57,7 @@ RSpec.describe Admin::EarnedMembershipsController, type: :controller do
           member_id: member.id,
           requirements: requirements.map { |r| r.as_json }
         }
-        post :create, params: { earned_membership: membership_params }, format: :json
+        post :create, params: membership_params, format: :json
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
@@ -74,31 +74,105 @@ RSpec.describe Admin::EarnedMembershipsController, type: :controller do
       it "Renders updated membership" do
         member = create(:member)
         diff_member = create(:member)
-        init_membership = create(:earned_membership, member: member)
+        requirement_1 = create(:requirement, name: "foo")
+        requirement_2 = create(:requirement, name: "bar")
+
+        init_membership = create(:earned_membership_no_requirements, member: member, requirements: [requirement_1, requirement_2])
+        requirement_1.name = "fizz"
+        requirement_2.name = "buzz"
+
+        requirements_json = ActiveModelSerializers::SerializableResource.new(
+          [requirement_1, requirement_2], 
+          each_serializer: EarnedMembership::RequirementSerializer,
+          adapter: :attributes
+        ).as_json
+
         membership_params = {
-          member_id: diff_member.id,
+          requirements: requirements_json,
+          id: init_membership.id
         }
-        put :update, params: { id: init_membership.id, earned_membership: membership_params }, format: :json
+        put :update, params: membership_params, format: :json
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
-        expect(parsed_response["memberName"]).to eq(diff_member.fullname)
+        expect(parsed_response["requirements"].length).to eq(2)
+        expect(parsed_response["requirements"].first["name"]).to eq("fizz")
+        expect(parsed_response["requirements"].last["name"]).to eq("buzz")
+      end
+
+      it "Adds new requirements" do 
+        member = create(:member)
+        diff_member = create(:member)
+        requirement_2 = create(:requirement, name: "bar")
+        requirement_1 = build(:requirement, name: "foo", id: nil)
+
+        init_membership = create(:earned_membership_no_requirements, member: member, requirements: [requirement_2])
+        requirements_json = ActiveModelSerializers::SerializableResource.new(
+          [requirement_1, requirement_2], 
+          each_serializer: EarnedMembership::RequirementSerializer,
+          adapter: :attributes
+        ).as_json
+
+        membership_params = {
+          requirements: requirements_json,
+          id: init_membership.id
+        }
+        put :update, params: membership_params, format: :json
+        parsed_response = JSON.parse(response.body)
+        expect(response).to have_http_status(200)
+        expect(response.content_type).to eq "application/json"
+        expect(parsed_response["requirements"].length).to eq(2)
+        expect(parsed_response["requirements"].first["name"]).to eq("bar")
+        expect(parsed_response["requirements"].last["name"]).to eq("foo")
       end
 
       it "Deletes requirements missing from params" do
         member = create(:member)
-        requirement_1 = create(:requirement)
-        requirement_2 = create(:requirement)
-        init_membership = create(:earned_membership_no_requirements, member: member, requirements: [requirement_1, requirement_2])
-        expect(init_membership.requirements.count).to eq(2)
-        update_params = {
-          requirements: [requirement_1].as_json
+        diff_member = create(:member)
+        requirement_1 = create(:requirement, name: "foo")
+        requirement_2 = create(:requirement, name: "bar")
+        requirement_3 = create(:requirement, name: "fizz")
+        requirement_4 = create(:requirement, name: "buzz")
+
+        init_membership = create(:earned_membership_no_requirements, member: member, requirements: [
+          requirement_1,
+          requirement_2,
+          requirement_3,
+          requirement_4,
+        ])
+        requirements_json = ActiveModelSerializers::SerializableResource.new(
+          [requirement_1, requirement_2], 
+          each_serializer: EarnedMembership::RequirementSerializer,
+          adapter: :attributes
+        ).as_json
+
+        membership_params = {
+          requirements: requirements_json,
+          id: init_membership.id
         }
-        put :update, params: { id: init_membership.id, earned_membership: update_params }, format: :json
+        put :update, params: membership_params, format: :json
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
-        expect(parsed_response["requirements"].count).to eq(1)
+        expect(parsed_response["requirements"].length).to eq(2)
+        expect(parsed_response["requirements"].first["name"]).to eq("foo")
+        expect(parsed_response["requirements"].last["name"]).to eq("bar")
+      end
+
+      it "Raises a 404 error if a requirement does not exist" do 
+        requirement_2 = build(:requirement, name: "bar")
+        init_membership = create(:earned_membership)
+        requirements_json = ActiveModelSerializers::SerializableResource.new(
+          [requirement_2], 
+          each_serializer: EarnedMembership::RequirementSerializer,
+          adapter: :attributes
+        ).as_json
+        membership_params = {
+          requirements: requirements_json,
+          id: init_membership.id
+        }
+        put :update, params: membership_params, format: :json
+        expect(response).to have_http_status(404)
       end
     end
   end

@@ -40,18 +40,12 @@ describe 'Admin::Rentals API', type: :request do
       operationId "adminCreateRental"
       parameter name: :createRentalDetails, in: :body, schema: {
         title: :createRentalDetails,
-        type: :object,
-        properties: {
-          rental: { '$ref' => '#/components/schemas/NewRental'   }
-        }
+        '$ref' => '#/components/schemas/NewRental' 
       }, required: true
       
       request_body_json schema: {
         title: :createRentalDetails,
-        type: :object,
-        properties: {
-          rental: { '$ref' => '#/components/schemas/NewRental'   }
-        }
+        '$ref' => '#/components/schemas/NewRental' 
       }, required: true
 
       response '200', 'rental created' do
@@ -60,12 +54,10 @@ describe 'Admin::Rentals API', type: :request do
         schema '$ref' => '#/components/schemas/Rental'
 
         let(:createRentalDetails) {{
-          rental: {
-            number: "something",
-            description: "some description",
-            expiration: (Time.now + 1.month).to_i * 1000,
-            memberId: basic.id
-          }
+          number: "something",
+          description: "some description",
+          expiration: (Time.now + 1.month).to_i * 1000,
+          memberId: basic.id
         }}
 
         run_test!
@@ -75,11 +67,9 @@ describe 'Admin::Rentals API', type: :request do
         before { sign_in basic }
         schema '$ref' => '#/components/schemas/error'
         let(:createRentalDetails) {{
-          rental: {
-            number: "something",
-            description: "some description",
-            expiration: (Time.now + 1.month).to_i * 1000
-          }
+          number: "something",
+          description: "some description",
+          expiration: (Time.now + 1.month).to_i * 1000
         }}
         run_test!
       end
@@ -87,11 +77,9 @@ describe 'Admin::Rentals API', type: :request do
       response '401', 'User unauthenticated' do
         schema '$ref' => '#/components/schemas/error'
         let(:createRentalDetails) {{
-          rental: {
-            number: "something",
-            description: "some description",
-            expiration: (Time.now + 1.month).to_i * 1000
-          }
+          number: "something",
+          description: "some description",
+          expiration: (Time.now + 1.month).to_i * 1000
         }}
         run_test!
       end
@@ -106,18 +94,12 @@ describe 'Admin::Rentals API', type: :request do
 
       parameter name: :updateRentalDetails, in: :body, schema: {
         title: :updateRentalDetails, 
-        type: :object,
-        properties: {
-          rental: { '$ref' => '#/components/schemas/Rental'   }
-        }
+        '$ref' => '#/components/schemas/Rental'
       }, required: true
 
       request_body_json schema: {
         title: :updateRentalDetails, 
-        type: :object,
-        properties: {
-          rental: { '$ref' => '#/components/schemas/Rental'   }
-        }
+        '$ref' => '#/components/schemas/Rental'
       }, required: true
 
       response '200', 'rental updated' do
@@ -126,11 +108,9 @@ describe 'Admin::Rentals API', type: :request do
         schema '$ref' => '#/components/schemas/Rental'
 
         let(:updateRentalDetails) {{
-          rental: {
-            number: "something",
-            description: "some description",
-            expiration: (Time.now + 1.month).to_i * 1000
-          }
+          number: "something",
+          description: "some description",
+          expiration: (Time.now + 1.month).to_i * 1000
         }}
         let(:id) { create(:rental, member: basic).id }
         run_test!
@@ -140,11 +120,9 @@ describe 'Admin::Rentals API', type: :request do
         before { sign_in basic }
         schema '$ref' => '#/components/schemas/error'
         let(:updateRentalDetails) {{
-          rental: {
-            number: "something",
-            description: "some description",
-            expiration: (Time.now + 1.month).to_i * 1000
-          }
+          number: "something",
+          description: "some description",
+          expiration: (Time.now + 1.month).to_i * 1000
         }}
         let(:id) { create(:rental).id }
         run_test!
@@ -153,11 +131,9 @@ describe 'Admin::Rentals API', type: :request do
       response '401', 'User unauthenticated' do
         schema '$ref' => '#/components/schemas/error'
         let(:updateRentalDetails) {{
-          rental: {
-            number: "something",
-            description: "some description",
-            expiration: (Time.now + 1.month).to_i * 1000
-          }
+          number: "something",
+          description: "some description",
+          expiration: (Time.now + 1.month).to_i * 1000
         }}
         let(:id) { create(:rental).id }
         run_test!
@@ -167,11 +143,9 @@ describe 'Admin::Rentals API', type: :request do
         before { sign_in admin }
         schema '$ref' => '#/components/schemas/error'
         let(:updateRentalDetails) {{
-          rental: {
-            number: "something",
-            description: "some description",
-            expiration: (Time.now + 1.month).to_i * 1000
-          }
+          number: "something",
+          description: "some description",
+          expiration: (Time.now + 1.month).to_i * 1000
         }}
         let(:id) { 'invalid' }
         run_test!

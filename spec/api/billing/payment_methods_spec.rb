@@ -77,32 +77,20 @@ describe 'Billing::PaymentMethods API', type: :request do
         title: :createPaymentMethodDetails,
         type: :object,
         properties: {
-          paymentMethod: {
-            type: :object,
-            properties: {
-              paymentMethodNonce: { type: :string },
-              makeDefault: { type: :boolean }
-            },
-            required: [:paymentMethodNonce]
-          }
+          paymentMethodNonce: { type: :string },
+          makeDefault: { type: :boolean }
         },
-        required: [:paymentMethod]
+        required: [:paymentMethodNonce]
       }, required: true
 
       request_body_json schema: {
         title: :createPaymentMethodDetails,
         type: :object,
         properties: {
-          paymentMethod: {
-            type: :object,
-            properties: {
-              paymentMethodNonce: { type: :string },
-              makeDefault: { type: :boolean }
-            },
-            required: [:paymentMethodNonce]
-          }
+          paymentMethodNonce: { type: :string },
+          makeDefault: { type: :boolean }
         },
-        required: [:paymentMethod]
+        required: [:paymentMethodNonce]
       }, required: true
 
       response '200', 'payment_method created' do
@@ -115,21 +103,21 @@ describe 'Billing::PaymentMethods API', type: :request do
 
         schema '$ref' => '#/components/schemas/CreditCard'
 
-        let(:createPaymentMethodDetails) {{ payment_method: { paymentMethodNonce: "1234" } }}
+        let(:createPaymentMethodDetails) {{ paymentMethodNonce: "1234" }}
 
         run_test!
       end
 
       response '401', 'User not authenticated' do
         schema '$ref' => '#/components/schemas/error'
-        let(:createPaymentMethodDetails) {{ payment_method: { paymentMethodNonce: "1234" } }}
+        let(:createPaymentMethodDetails) {{ paymentMethodNonce: "1234" }}
         run_test!
       end
 
       response '422', 'parameter missing' do
         before { sign_in customer }
         schema '$ref' => '#/components/schemas/error'
-        let(:createPaymentMethodDetails) {{ payment_method: { makeDefault: true } }}
+        let(:createPaymentMethodDetails) {{ makeDefault: true }}
         run_test!
       end
     end

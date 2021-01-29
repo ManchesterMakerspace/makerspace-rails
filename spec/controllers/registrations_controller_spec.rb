@@ -37,18 +37,18 @@ RSpec.describe RegistrationsController, type: :controller do
     context "with valid params" do
       it "creates a new Member" do
         expect {
-          post :create, params: {member: valid_attributes}, format: :json
+          post :create, params: valid_attributes, format: :json
         }.to change(Member, :count).by(1)
       end
 
       it "assigns a newly created member as @member" do
-        post :create, params: {member: valid_attributes}, format: :json
+        post :create, params: valid_attributes, format: :json
         expect(assigns(:member)).to be_a(Member)
         expect(assigns(:member)).to be_persisted
       end
 
       it "renders json of the created member" do
-        post :create, params: {member: valid_attributes}, format: :json
+        post :create, params: valid_attributes, format: :json
 
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
@@ -59,7 +59,7 @@ RSpec.describe RegistrationsController, type: :controller do
       it "sends registration notification to us" do
         allow(MemberMailer).to receive_message_chain(:member_registered, :deliver_later)
         expect(MemberMailer).to receive_message_chain(:member_registered, :deliver_later)
-        post :create, params: {member: valid_attributes}, format: :json
+        post :create, params: valid_attributes, format: :json
       end
     end
 

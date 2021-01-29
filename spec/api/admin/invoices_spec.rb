@@ -51,32 +51,24 @@ describe 'Admin::Invoices API', type: :request do
         title: :createInvoiceDetails, 
         type: :object,
         properties: {
-          invoiceOption: {
-            type: :object,
-            properties: {
-              id: { type: :string },
-              discountId: { type: :string, 'x-nullable': true },
-              memberId: { type: :string },
-              resourceId: { type: :string },
-            }
-          }
-        }
+          id: { type: :string },
+          memberId: { type: :string },
+          resourceId: { type: :string },
+          discountId: { type: :string, 'x-nullable': true },
+        },
+        required: [:id, :memberId, :resourceId]
       }, required: true
       
       request_body_json schema: {
         title: :createInvoiceDetails, 
         type: :object,
         properties: {
-          invoiceOption: {
-            type: :object,
-            properties: {
-              id: { type: :string },
-              discountId: { type: :string, 'x-nullable': true },
-              memberId: { type: :string },
-              resourceId: { type: :string },
-            }
-          }
-        }
+          id: { type: :string },
+          memberId: { type: :string },
+          resourceId: { type: :string },
+          discountId: { type: :string, 'x-nullable': true },
+        },
+        required: [:id, :memberId, :resourceId]
       }, required: true
 
       response '200', 'invoice created' do
@@ -85,11 +77,9 @@ describe 'Admin::Invoices API', type: :request do
         schema '$ref' => '#/components/schemas/Invoice'
 
         let(:createInvoiceDetails) {{
-          invoiceOption: {
-            id: invoice_option.id,
-            memberId: basic.id,
-            resourceId: basic.id,
-          }
+          id: invoice_option.id,
+          memberId: basic.id,
+          resourceId: basic.id,
         }}
 
         run_test!
@@ -99,11 +89,9 @@ describe 'Admin::Invoices API', type: :request do
         before { sign_in basic }
         schema '$ref' => '#/components/schemas/error'
         let(:createInvoiceDetails) {{
-          invoiceOption: {
-            id: invoice_option.id,
-            memberId: basic.id,
-            resourceId: basic.id,
-          }
+          id: invoice_option.id,
+          memberId: basic.id,
+          resourceId: basic.id,
         }}
         run_test!
       end
@@ -111,11 +99,9 @@ describe 'Admin::Invoices API', type: :request do
       response '401', 'User unauthenticated' do
         schema '$ref' => '#/components/schemas/error'
         let(:createInvoiceDetails) {{
-          invoiceOption: {
-            id: invoice_option.id,
-            memberId: basic.id,
-            resourceId: basic.id,
-          }
+          id: invoice_option.id,
+          memberId: basic.id,
+          resourceId: basic.id,
         }}
         run_test!
       end
@@ -124,10 +110,8 @@ describe 'Admin::Invoices API', type: :request do
         before { sign_in admin }
         schema '$ref' => '#/components/schemas/error'
         let(:createInvoiceDetails) {{
-          invoiceOption: {
-            memberId: basic.id,
-            resourceId: basic.id,
-          }
+          memberId: basic.id,
+          resourceId: basic.id,
         }}
         run_test!
       end
@@ -136,11 +120,9 @@ describe 'Admin::Invoices API', type: :request do
         before { sign_in admin }
         schema '$ref' => '#/components/schemas/error'
         let(:createInvoiceDetails) {{
-          invoiceOption: {
-            id: invoice_option.id,
-            memberId: "invalid",
-            resourceId: basic.id,
-          }
+          id: invoice_option.id,
+          memberId: "invalid",
+          resourceId: basic.id,
         }}
         run_test!
       end
@@ -149,11 +131,9 @@ describe 'Admin::Invoices API', type: :request do
         before { sign_in admin }
         schema '$ref' => '#/components/schemas/error'
         let(:createInvoiceDetails) {{
-          invoiceOption: {
-            id: "invalid",
-            memberId: basic.id,
-            resourceId: basic.id,
-          }
+          id: "invalid",
+          memberId: basic.id,
+          resourceId: basic.id,
         }}
         run_test!
       end
@@ -170,7 +150,7 @@ describe 'Admin::Invoices API', type: :request do
         title: :updateInvoiceDetails,
         type: :object,
         properties: {
-          invoice: { '$ref' => '#/components/schemas/Invoice'   }
+          settled: { type: :boolean }
         }
       }, required: true
 
@@ -178,7 +158,7 @@ describe 'Admin::Invoices API', type: :request do
         title: :updateInvoiceDetails,
         type: :object,
         properties: {
-          invoice: { '$ref' => '#/components/schemas/Invoice'   }
+          settled: { type: :boolean }
         }
       }, required: true
 
@@ -188,14 +168,7 @@ describe 'Admin::Invoices API', type: :request do
         schema '$ref' => '#/components/schemas/Invoice'
 
         let(:updateInvoiceDetails) {{
-          invoice: {
-            description: "some description",
-            resourceClass: "member",
-            resourceId: basic.id,
-            memberId: basic.id,
-            amount: "65",
-            quantity: "2"
-          }
+          settled: true
         }}
         let(:id) { create(:invoice).id }
         run_test!
@@ -205,14 +178,7 @@ describe 'Admin::Invoices API', type: :request do
         before { sign_in basic }
         schema '$ref' => '#/components/schemas/error'
         let(:updateInvoiceDetails) {{
-          invoice: {
-            description: "some description",
-            resourceClass: "member",
-            resourceId: basic.id,
-            memberId: basic.id,
-            amount: "65",
-            quantity: "2"
-          }
+          settled: true
         }}
         let(:id) { create(:invoice).id }
         run_test!
@@ -221,14 +187,7 @@ describe 'Admin::Invoices API', type: :request do
       response '401', 'User unauthenticated' do
         schema '$ref' => '#/components/schemas/error'
         let(:updateInvoiceDetails) {{
-          invoice: {
-            description: "some description",
-            resourceClass: "member",
-            resourceId: basic.id,
-            memberId: basic.id,
-            amount: "65",
-            quantity: "2"
-          }
+          settled: true
         }}
         let(:id) { create(:invoice).id }
         run_test!
@@ -238,14 +197,7 @@ describe 'Admin::Invoices API', type: :request do
         before { sign_in admin }
         schema '$ref' => '#/components/schemas/error'
         let(:updateInvoiceDetails) {{
-          invoice: {
-            description: "some description",
-            resourceClass: "member",
-            resourceId: basic.id,
-            memberId: basic.id,
-            amount: "65",
-            quantity: "2"
-          }
+          settled: true
         }}
         let(:id) { 'invalid' }
         run_test!

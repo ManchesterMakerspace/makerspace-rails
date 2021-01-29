@@ -58,12 +58,12 @@ RSpec.describe Admin::CardsController, type: :controller do
       context "with valid params" do
         it "creates a new Card if member doesn't have one" do
           expect {
-            post :create, params: {"card" => valid_attributes}, format: :json
+            post :create, params: valid_attributes, format: :json
           }.to change(Card, :count).by(1)
         end
 
         it "renders json of the created card" do
-          post :create, params: {"card" => valid_attributes}, format: :json
+            post :create, params: valid_attributes, format: :json
 
           parsed_response = JSON.parse(response.body)
           expect(response).to have_http_status(200)
@@ -75,7 +75,7 @@ RSpec.describe Admin::CardsController, type: :controller do
           first_card = Card.create! valid_attributes
           second_card = Card.create! second_member_card
           expect {
-            post :create, params: {"card" => duplicate_member_card}, format: :json
+            post :create, params: duplicate_member_card, format: :json
           }.to change(Card, :count)
           first_card.reload
           second_card.reload
@@ -85,7 +85,7 @@ RSpec.describe Admin::CardsController, type: :controller do
 
         it "duplicate cards for a members returns status 200" do
           card = Card.create! valid_attributes
-          post :create, params: {"card" => duplicate_member_card}, format: :json
+          post :create, params: duplicate_member_card, format: :json
           card.reload
 
           parsed_response = JSON.parse(response.body)
@@ -109,23 +109,23 @@ RSpec.describe Admin::CardsController, type: :controller do
         }
         it "does not create new card without uid" do
           expect {
-            post :create, params: {"card" => missing_uid_attributes}, format: :json
+            post :create, params: missing_uid_attributes, format: :json
           }.not_to change(Card, :count)
         end
 
         it "does not create new card without member" do
           expect {
-            post :create, params: {"card" => missing_member_attributes}, format: :json
+            post :create, params: missing_member_attributes, format: :json
           }.not_to change(Card, :count)
         end
 
-        it "invalid cards return status 500" do
-          post :create, params: {"card" => missing_uid_attributes}, format: :json
+        it "invalid cards return status 422" do
+          post :create, params: missing_uid_attributes, format: :json
           parsed_response = JSON.parse(response.body)
           expect(response).to have_http_status(422)
-          expect(parsed_response['message']).to match(/Uid/)
+          expect(parsed_response['message']).to match(/uid/i)
 
-          post :create, params: {"card" => missing_member_attributes}, format: :json
+          post :create, params: missing_member_attributes, format: :json
           expect(response).to have_http_status(422)
         end
       end
@@ -152,21 +152,21 @@ RSpec.describe Admin::CardsController, type: :controller do
 
         it "updates the requested card to lost" do
           card = Card.create! valid_attributes
-          put :update, params: {id: card.to_param, card: valid_lost_attributes}, format: :json
+          put :update, params: valid_lost_attributes.merge({id: card.to_param}), format: :json
           card.reload
           expect(card.validity).to eq('lost')
         end
 
         it "updates the requested card to stolen" do
           card = Card.create! valid_attributes
-          put :update, params: {id: card.to_param, card: valid_stolen_attributes}, format: :json
+          put :update, params: valid_stolen_attributes.merge({id: card.to_param}), format: :json
           card.reload
           expect(card.validity).to eq('stolen')
         end
 
         it "renders json of the updated card" do
           card = Card.create! valid_attributes
-          put :update, params: {id: card.to_param, card: valid_stolen_attributes}, format: :json
+          put :update, params: valid_stolen_attributes.merge({id: card.to_param}), format: :json
           parsed_response = JSON.parse(response.body)
           expect(response).to have_http_status(200)
           expect(response.content_type).to eq "application/json"

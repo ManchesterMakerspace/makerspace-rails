@@ -64,15 +64,13 @@ describe 'Members API', type: :request do
       parameter name: :id, in: :path, type: :string
       parameter name: :updateMemberDetails, in: :body, schema: {
         title: :updateMemberDetails,
-        type: :object,
-        properties: {
-          member: {
+        anyOf: [
+          {
             type: :object,
             properties: {
               firstname: { type: :string, 'x-nullable': true },
               lastname: { type: :string, 'x-nullable': true },
               email: { type: :string, 'x-nullable': true },
-              signature: { type: :string, 'x-nullable': true },
               phone: { type: :string, 'x-nullable': true },
               address: {
                 type: :object,
@@ -86,21 +84,25 @@ describe 'Members API', type: :request do
                 }
               }
             }
+          },
+          {
+            type: :object,
+            properties: {
+              signature: { type: :string, 'x-nullable': true },
+            }
           }
-        }
+        ]
       }, required: true
 
       request_body_json schema: {
         title: :updateMemberDetails,
-        type: :object,
-        properties: {
-          member: {
+        anyOf: [
+          {
             type: :object,
             properties: {
               firstname: { type: :string, 'x-nullable': true },
               lastname: { type: :string, 'x-nullable': true },
               email: { type: :string, 'x-nullable': true },
-              signature: { type: :string, 'x-nullable': true },
               phone: { type: :string, 'x-nullable': true },
               address: {
                 type: :object,
@@ -114,8 +116,14 @@ describe 'Members API', type: :request do
                 }
               }
             }
+          },
+          {
+            type: :object,
+            properties: {
+              signature: { type: :string, 'x-nullable': true },
+            }
           }
-        }
+        ]
       }, required: true
 
       # Update object
@@ -124,6 +132,18 @@ describe 'Members API', type: :request do
       response '200', 'member updated' do
         let(:current_member) { create(:member) }
         before { sign_in current_member }
+
+        schema '$ref' => '#/components/schemas/Member'
+
+        let(:id) { current_member.id }
+        run_test!
+      end
+
+      response '200', 'Signature upload' do
+        let(:current_member) { create(:member) }
+        before { sign_in current_member }
+
+        let(:updateMemberDetails) {{ signature: "foobar.png" }}
 
         schema '$ref' => '#/components/schemas/Member'
 

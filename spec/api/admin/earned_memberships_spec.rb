@@ -36,18 +36,12 @@ describe 'Admin::EarnedMemberships API', type: :request do
       operationId "adminCreateEarnedMembership"
       parameter name: :createEarnedMembershipDetails, in: :body, schema: {
         title: :createEarnedMembershipDetails, 
-        type: :object,
-        properties: {
-          earnedMembership: { '$ref' => '#/components/schemas/NewEarnedMembership' },
-        }
+        '$ref' => '#/components/schemas/NewEarnedMembership'
       }, required: true
 
       request_body_json schema: {
         title: :createEarnedMembershipDetails, 
-        type: :object,
-        properties: {
-          earnedMembership: { '$ref' => '#/components/schemas/NewEarnedMembership' },
-        }
+        '$ref' => '#/components/schemas/NewEarnedMembership'
       }, required: true
 
       response '200', 'earned membership created' do
@@ -56,10 +50,8 @@ describe 'Admin::EarnedMemberships API', type: :request do
         schema '$ref' => '#/components/schemas/EarnedMembership'
 
         let(:createEarnedMembershipDetails) {{
-          earnedMembership: {
-            memberId: basic.id,
-            requirements: create_list(:requirement, 2)
-          }
+          memberId: basic.id,
+          requirements: create_list(:requirement, 2)
         }}
 
         run_test!
@@ -69,10 +61,8 @@ describe 'Admin::EarnedMemberships API', type: :request do
         before { sign_in basic }
         schema '$ref' => '#/components/schemas/error'
         let(:createEarnedMembershipDetails) {{
-          earnedMembership: {
-            memberId: basic.id,
-            requirements: create_list(:requirement, 2)
-          }
+          memberId: basic.id,
+          requirements: create_list(:requirement, 2)
         }}
         run_test!
       end
@@ -80,10 +70,8 @@ describe 'Admin::EarnedMemberships API', type: :request do
       response '401', 'User unauthenticated' do
         schema '$ref' => '#/components/schemas/error'
         let(:createEarnedMembershipDetails) {{
-          earnedMembership: {
-            memberId: basic.id,
-            requirements: create_list(:requirement, 2)
-          }
+          memberId: basic.id,
+          requirements: create_list(:requirement, 2)
         }}
         run_test!
       end
@@ -133,18 +121,12 @@ describe 'Admin::EarnedMemberships API', type: :request do
 
       parameter name: :updateEarnedMembershipDetails, in: :body, schema: {
         title: :updateEarnedMembershipDetails,
-        type: :object,
-        properties: {
-          earnedMembership: { '$ref' => '#/components/schemas/EarnedMembership' },
-        }
+        '$ref' => '#/components/schemas/EarnedMembership'
       }, required: true
 
       request_body_json schema: {
         title: :updateEarnedMembershipDetails,
-        type: :object,
-        properties: {
-          earnedMembership: { '$ref' => '#/components/schemas/EarnedMembership' },
-        }
+        '$ref' => '#/components/schemas/EarnedMembership'
       }, required: true
 
       response '200', 'earned membership updated' do
@@ -153,10 +135,8 @@ describe 'Admin::EarnedMemberships API', type: :request do
         schema '$ref' => '#/components/schemas/EarnedMembership'
 
         let(:updateEarnedMembershipDetails) {{
-          earnedMembership: {
-            memberId: basic.id,
-            requirements: create_list(:requirement, 2)
-          }
+          memberId: basic.id,
+          requirements: create_list(:requirement, 2)
         }}
         let(:id) { create(:earned_membership).id }
         run_test!
@@ -166,10 +146,8 @@ describe 'Admin::EarnedMemberships API', type: :request do
         before { sign_in basic }
         schema '$ref' => '#/components/schemas/error'
         let(:updateEarnedMembershipDetails) {{
-          earnedMembership: {
-            memberId: basic.id,
-            requirements: create_list(:requirement, 2)
-          }
+          memberId: basic.id,
+          requirements: create_list(:requirement, 2)
         }}
         let(:id) { create(:earned_membership).id }
         run_test!
@@ -178,10 +156,8 @@ describe 'Admin::EarnedMemberships API', type: :request do
       response '401', 'User unauthenticated' do
         schema '$ref' => '#/components/schemas/error'
         let(:updateEarnedMembershipDetails) {{
-          earnedMembership: {
-            memberId: basic.id,
-            requirements: create_list(:requirement, 2)
-          }
+          memberId: basic.id,
+          requirements: create_list(:requirement, 2)
         }}
         let(:id) { create(:earned_membership).id }
         run_test!
@@ -191,10 +167,8 @@ describe 'Admin::EarnedMemberships API', type: :request do
         before { sign_in admin }
         schema '$ref' => '#/components/schemas/error'
         let(:updateEarnedMembershipDetails) {{
-          earnedMembership: {
-            memberId: basic.id,
-            requirements: create_list(:requirement, 2)
-          }
+          memberId: basic.id,
+          requirements: create_list(:requirement, 2)
         }}
         let(:id) { 'invalid' }
         run_test!

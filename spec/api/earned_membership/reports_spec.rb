@@ -40,22 +40,12 @@ describe 'Reports API', type: :request do
       parameter name: :id, :in => :path, :type => :string
       parameter name: :createEarnedMembershipReportDetails, in: :body, schema: {
         title: :createEarnedMembershipReportDetails, 
-        type: :object,
-        properties: {
-          report: {
-            '$ref' => '#/components/schemas/NewReport'
-          }
-        }
+        '$ref' => '#/components/schemas/NewReport'
       }, required: true
 
       request_body_json schema: {
         title: :createEarnedMembershipReportDetails, 
-        type: :object,
-        properties: {
-          report: {
-            '$ref' => '#/components/schemas/NewReport'
-          }
-        }
+        '$ref' => '#/components/schemas/NewReport'
       }, required: true
 
       response '200', 'report created' do
@@ -64,21 +54,19 @@ describe 'Reports API', type: :request do
         schema '$ref' => '#/components/schemas/Report'
 
         let(:createEarnedMembershipReportDetails) { {
-          report: {
-            earnedMembershipId: em.id,
-            reportRequirements: [
-              {
-                requirementId: create(:requirement).id,
-                reportedCount: 1,
-                memberIds: [],
-              },
-              {
-                requirementId: create(:requirement).id,
-                reportedCount: 1,
-                memberIds: [],
-              }
-            ]
-          }
+          earnedMembershipId: em.id,
+          reportRequirements: [
+            {
+              requirementId: create(:requirement).id,
+              reportedCount: 1,
+              memberIds: [],
+            },
+            {
+              requirementId: create(:requirement).id,
+              reportedCount: 1,
+              memberIds: [],
+            }
+          ]
         } }
 
         let(:id) { em.id }
@@ -91,19 +79,17 @@ describe 'Reports API', type: :request do
         schema '$ref' => '#/components/schemas/error'
 
         let(:createEarnedMembershipReportDetails) { {
-          report: {
-            earnedMembershipId: "foo",
-            reportRequirements: [
-              {
-                requirementId: "req 1",
-                reportedCount: 1,
-              },
-              {
-                requirementId: "req 2",
-                reportedCount: 1,
-              }
-            ]
-          }
+          earnedMembershipId: "foo",
+          reportRequirements: [
+            {
+              requirementId: "req 1",
+              reportedCount: 1,
+            },
+            {
+              requirementId: "req 2",
+              reportedCount: 1,
+            }
+          ]
         } }
         let(:id) { create(:earned_membership).id }
         run_test!

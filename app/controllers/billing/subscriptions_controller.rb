@@ -23,7 +23,8 @@ class Billing::SubscriptionsController < BillingController
 
   private
   def subscription_params
-    params.require(:subscription).permit(:payment_method_token)
+    params.require(:payment_method_token)
+    params.permit(:payment_method_token)
   end
 
   def verify_own_subscription

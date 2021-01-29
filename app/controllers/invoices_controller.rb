@@ -51,7 +51,6 @@ class InvoicesController < AuthenticationController
   end
 
   def create
-    raise ActionController::ParameterMissing.new(:id) if invoice_option_params[:id].nil?
     invoice_option = InvoiceOption.find(invoice_option_params[:id])
     raise ::Mongoid::Errors::DocumentNotFound.new(InvoiceOption, { id: invoice_option_params[:id] }) if invoice_option.nil?
     if (invoice_option_params[:discount_id])
@@ -66,7 +65,8 @@ class InvoicesController < AuthenticationController
 
   private
   def invoice_option_params
-    params.require(:invoice_option).permit(:id, :discount_id)
+    params.require(:id)
+    params.permit(:id, :discount_id)
   end
 
   def invoice_query_params

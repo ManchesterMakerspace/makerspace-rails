@@ -76,15 +76,10 @@ describe 'Admin::AccessCards API', type: :request do
         title: :createAccessCardDetails,
         type: :object,
         properties: {
-          card: { 
-            type: :object,
-            properties: {
-              memberId: { type: :string },
-              uid: { type: :string },
-            }
-          }
+          memberId: { type: :string },
+          uid: { type: :string },
         },
-        required: [:card]
+        required: [:memberId, :uid]
       }, required: true
 
       request_body_json schema: {
@@ -92,15 +87,10 @@ describe 'Admin::AccessCards API', type: :request do
         name: :createAccessCardDetails,
         type: :object,
         properties: {
-          card: { 
-            type: :object,
-            properties: {
-              memberId: { type: :string },
-              uid: { type: :string },
-            }
-          }
+          memberId: { type: :string },
+          uid: { type: :string },
         },
-        required: [:card]
+        required: [:memberId, :uid]
       }, required: true
 
       response '200', 'access card created' do 
@@ -109,10 +99,8 @@ describe 'Admin::AccessCards API', type: :request do
         schema '$ref' => '#/components/schemas/Card'
 
         let(:createAccessCardDetails) {{
-          card: {
-            memberId: basic.id,
-            uid: "12ggh34"
-          }
+          memberId: basic.id,
+          uid: "12ggh34"
         }}
 
         run_test!
@@ -122,10 +110,8 @@ describe 'Admin::AccessCards API', type: :request do
         before { sign_in basic }
         schema '$ref' => '#/components/schemas/error'
         let(:createAccessCardDetails) {{
-          card: {
-            memberId: basic.id,
-            uid: "12ggh34"
-          }
+          memberId: basic.id,
+          uid: "12ggh34"
         }}
         run_test!
       end
@@ -133,10 +119,8 @@ describe 'Admin::AccessCards API', type: :request do
       response '401', 'User unauthenticated' do 
         schema '$ref' => '#/components/schemas/error'
         let(:createAccessCardDetails) {{
-          card: {
-            memberId: basic.id,
-            uid: "12ggh34"
-          }
+          memberId: basic.id,
+          uid: "12ggh34"
         }}
         run_test!
       end
@@ -145,9 +129,7 @@ describe 'Admin::AccessCards API', type: :request do
         before { sign_in admin }
         schema '$ref' => '#/components/schemas/error'
         let(:createAccessCardDetails) {{
-          card: {
-            uid: "12ggh34"
-          }
+          uid: "12ggh34"
         }}
         run_test!
       end
@@ -156,10 +138,8 @@ describe 'Admin::AccessCards API', type: :request do
         before { sign_in admin }
         schema '$ref' => '#/components/schemas/error'
         let(:createAccessCardDetails) {{
-          card: {
-            memberId: 'invalid',
-            uid: "12ggh34"
-          }
+          memberId: 'invalid',
+          uid: "12ggh34"
         }}
         run_test!
       end
@@ -176,30 +156,18 @@ describe 'Admin::AccessCards API', type: :request do
         title: :updateAccessCardDetails,
         type: :object,
         properties: {
-          card: { 
-            type: :object,
-            properties: {
-              memberId: { type: :string },
-              uid: { type: :string },
-              cardLocation: { type: :string }
-            }
-          }
-        }
+          cardLocation: { type: :string }
+        },
+        required: [:cardLocation]
       }, required: true
 
       request_body_json schema: {
         title: :updateAccessCardDetails,
         type: :object,
         properties: {
-          card: { 
-            type: :object,
-            properties: {
-              memberId: { type: :string },
-              uid: { type: :string },
-              cardLocation: { type: :string }
-            }
-          }
-        }
+          cardLocation: { type: :string }
+        },
+        required: [:cardLocation]
       }, required: true
 
       response '200', 'card updated' do 
@@ -208,9 +176,7 @@ describe 'Admin::AccessCards API', type: :request do
         schema '$ref' => '#/components/schemas/Card'
 
         let(:updateAccessCardDetails) {{
-          card: {
-            cardLocation: "lost"
-          }
+          cardLocation: "lost"
         }}
         let(:id) { create(:card, member: basic).id }
         run_test!
@@ -220,9 +186,7 @@ describe 'Admin::AccessCards API', type: :request do
         before { sign_in basic }
         schema '$ref' => '#/components/schemas/error'
         let(:updateAccessCardDetails) {{
-          card: {
-            cardLocation: "lost"
-          }
+          cardLocation: "lost"
         }}
         let(:id) { create(:card).id }
         run_test!
@@ -231,9 +195,7 @@ describe 'Admin::AccessCards API', type: :request do
       response '401', 'User unauthenticated' do 
         schema '$ref' => '#/components/schemas/error'
         let(:updateAccessCardDetails) {{
-          card: {
-            cardLocation: "lost"
-          }
+          cardLocation: "lost"
         }}
         let(:id) { create(:card).id }
         run_test!
@@ -243,9 +205,7 @@ describe 'Admin::AccessCards API', type: :request do
         before { sign_in admin }
         schema '$ref' => '#/components/schemas/error'
         let(:updateAccessCardDetails) {{
-          card: {
-            cardLocation: "lost"
-          }
+          cardLocation: "lost"
         }}
         let(:id) { 'card' }
         run_test!

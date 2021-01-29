@@ -62,21 +62,21 @@ RSpec.describe Billing::TransactionsController, type: :controller do
 
   describe "POST #create" do
     it "renders error if no payment method" do 
-      post :create, params: { transaction: { invoice_id: invoice.id } }, format: :json
+      post :create, params: { invoice_id: invoice.id }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(422)
       expect(parsed_response['message']).to match(/payment_method_id/i)
     end
 
     it "renders error if no invoice or invoice option ID" do 
-      post :create, params: { transaction: { payment_method_id: "123" } }, format: :json
+      post :create, params: { payment_method_id: "123" }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(422)
       expect(parsed_response['message']).to match(/invoice_id/i)
     end
 
     it "renders error if invoice and invoice option ID" do 
-      post :create, params: { transaction: { payment_method_id: "123", invoice_id: invoice.id, invoice_option_id: invoice_option.id } }, format: :json
+      post :create, params: { payment_method_id: "123", invoice_id: invoice.id, invoice_option_id: invoice_option.id }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(422)
       expect(parsed_response['message']).to match(/invoice and invoice option/i)
@@ -85,7 +85,7 @@ RSpec.describe Billing::TransactionsController, type: :controller do
     it "verifies the payment method belongs to customer" do 
       allow(BraintreeService::PaymentMethod).to receive(:find_payment_method_for_customer).with(gateway, "foo", member.customer_id).and_raise(Error::Braintree::CustomerMismatch)
       expect(BraintreeService::PaymentMethod).to receive(:find_payment_method_for_customer).with(gateway, "foo", member.customer_id).and_raise(Error::Braintree::CustomerMismatch)
-      post :create, params: { transaction: valid_params }, format: :json
+      post :create, params: valid_params, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(403)
       expect(parsed_response['message']).to match(/customer/i)
@@ -93,7 +93,7 @@ RSpec.describe Billing::TransactionsController, type: :controller do
 
     it "renders error if no invoice exists" do 
       allow(BraintreeService::PaymentMethod).to receive(:find_payment_method_for_customer).with(gateway, "123", member.customer_id)
-      post :create, params: { transaction: { payment_method_id: "123", invoice_id: "foo" } }, format: :json
+      post :create, params: { payment_method_id: "123", invoice_id: "foo" }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(404)
       expect(parsed_response['message']).to match(/document not found/i)
@@ -101,7 +101,7 @@ RSpec.describe Billing::TransactionsController, type: :controller do
 
     it "renders error if no invoice option exists" do 
       allow(BraintreeService::PaymentMethod).to receive(:find_payment_method_for_customer).with(gateway, "123", member.customer_id)
-      post :create, params: { transaction: { payment_method_id: "123", invoice_option_id: "missing" } }, format: :json
+      post :create, params: { payment_method_id: "123", invoice_option_id: "missing" }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(404)
       expect(parsed_response['message']).to match(/document not found/i)
@@ -109,7 +109,7 @@ RSpec.describe Billing::TransactionsController, type: :controller do
 
     it "renders error if no discount exists" do 
       allow(BraintreeService::PaymentMethod).to receive(:find_payment_method_for_customer).with(gateway, "123", member.customer_id)
-      post :create, params: { transaction: { payment_method_id: "123", invoice_option_id: "444", discount_id: "missing" } }, format: :json
+      post :create, params: { payment_method_id: "123", invoice_option_id: "444", discount_id: "missing" }, format: :json
       allow(BraintreeService::Discount).to receive(:get_discounts).and_return([])
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(404)
@@ -118,7 +118,7 @@ RSpec.describe Billing::TransactionsController, type: :controller do
 
     it "renders error about no customer" do 
       sign_in non_customer
-      post :create, params: { transaction: valid_params }, format: :json
+      post :create, params: valid_params, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(403)
       expect(parsed_response['message']).to match(/customer/i)
@@ -127,7 +127,7 @@ RSpec.describe Billing::TransactionsController, type: :controller do
     it "renders error if using a rental invoice option" do 
       allow(BraintreeService::PaymentMethod).to receive(:find_payment_method_for_customer).and_return(payment_method)
       rental_io = create(:invoice_option, resource_class: "rental")
-      post :create, params: { transaction: { payment_method_id: "123", invoice_option_id: rental_io.id } }, format: :json
+      post :create, params: { payment_method_id: "123", invoice_option_id: rental_io.id }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(422)
       expect(parsed_response['message']).to match(/rental invoice option/i)
@@ -141,7 +141,7 @@ RSpec.describe Billing::TransactionsController, type: :controller do
       allow(invoice_option).to receive(:build_invoice).with(member.id, anything, member.id, discount).and_return(invoice)
       allow(invoice).to receive(:submit_for_settlement).with(gateway, "foo").and_return(transaction)
 
-      post :create, params: { transaction: { payment_method_id: "foo", invoice_option_id: invoice_option.id, discount_id: discount.id } }, format: :json
+      post :create, params: { payment_method_id: "foo", invoice_option_id: invoice_option.id, discount_id: discount.id }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
       expect(parsed_response['id']).to eq(transaction.id)
@@ -155,7 +155,7 @@ RSpec.describe Billing::TransactionsController, type: :controller do
       allow(invoice).to receive(:unlock)
       allow(invoice).to receive(:submit_for_settlement).with(gateway, "foo").and_return(transaction)
 
-      post :create, params: { transaction: { payment_method_id: "foo", invoice_option_id: invoice_option.id } }, format: :json
+      post :create, params: { payment_method_id: "foo", invoice_option_id: invoice_option.id }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
       expect(parsed_response['id']).to eq(transaction.id)
@@ -168,7 +168,7 @@ RSpec.describe Billing::TransactionsController, type: :controller do
       allow(invoice).to receive(:submit_for_settlement).with(gateway, "foo").and_return(transaction)
       allow(Invoice).to receive(:find).with(invoice.id).and_return(invoice) # Mock this return so that it returns a double instead
 
-      post :create, params: { transaction: valid_params }, format: :json
+      post :create, params: valid_params, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
       expect(parsed_response['id']).to eq(transaction.id)
@@ -181,7 +181,7 @@ RSpec.describe Billing::TransactionsController, type: :controller do
       allow(invoice).to receive(:submit_for_settlement).with(gateway, "foo").and_raise(Error::NotFound)
 
       expect(invoice).to receive(:unlock)
-      post :create, params: { transaction: valid_params }, format: :json
+      post :create, params: valid_params, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(404)
       invoice.reload

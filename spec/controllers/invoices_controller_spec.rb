@@ -34,7 +34,7 @@ RSpec.describe InvoicesController, type: :controller do
   describe "POST #create" do
     let(:io) { create(:invoice_option) }
     it "Can create an invoice from an existing invoice option" do 
-      post :create, params: { invoice_option: { id: io.id } }
+      post :create, params: { id: io.id }
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
@@ -45,7 +45,7 @@ RSpec.describe InvoicesController, type: :controller do
 
     it  "Can create an invoice with an associated discount" do 
       discount = ::BraintreeService::Discount.standard_membership_discount
-      post :create, params: { invoice_option: { id: io.id, discount_id: discount.id } }
+      post :create, params: { id: io.id, discount_id: discount.id }
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)

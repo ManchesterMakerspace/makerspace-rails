@@ -11,6 +11,7 @@ RSpec.describe Admin::InvoicesController, type: :controller do
     { 
       description: "new invoice",
       amount: 65.0,
+      quantity: 1,
       resource_id: member.id,
       resource_class: "member",
       member_id: member.id,
@@ -98,16 +99,16 @@ RSpec.describe Admin::InvoicesController, type: :controller do
     context "with valid params" do
       it "creates a new invoice" do
         expect {
-          post :create, params: {invoice: valid_invoice_attributes}, format: :json
+          post :create, params: valid_invoice_attributes, format: :json
         }.to change(Invoice, :count).by(1)
 
         expect {
-          post :create, params: {invoice_option: valid_invoice_option_attributes}, format: :json
+          post :create, params: valid_invoice_option_attributes, format: :json
         }.to change(Invoice, :count).by(1)
       end
 
       it "renders json of the created invoice" do
-        post :create, params: {invoice: valid_invoice_attributes}, format: :json
+        post :create, params: valid_invoice_attributes, format: :json
 
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
@@ -118,26 +119,30 @@ RSpec.describe Admin::InvoicesController, type: :controller do
 
     context "with invalid params" do
       it "raises validation error with invalid params" do
-        post :create, params: {invoice: ({quantity: -1}).merge(valid_invoice_attributes)}, format: :json
+        post :create, params: valid_invoice_attributes.merge({ quantity: -1 }), format: :json
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(422)
         expect(parsed_response['message']).to match(/quantity/i)
       end
 
       it "validates invoice option id and member id exist and point to real documents" do 
-        post :create, params: {invoice_option: { member_id: member.id, }}, format: :json
+        post :create, params: { member_id: member.id, }, format: :json
         expect(response).to have_http_status(422)
-        expect(JSON.parse(response.body)['message']).to match(/ id/i)
+        expect(JSON.parse(response.body)['message']).to match(/amount/i)
 
-        post :create, params: {invoice_option: { member_id: "foo", id: invoice_option.id }}, format: :json
+        post :create, params: { member_id: "foo", id: invoice_option.id }, format: :json
+        expect(response).to have_http_status(422)
+        expect(JSON.parse(response.body)['message']).to match(/resource_id/i)
+
+        post :create, params: { member_id: "foo", id: invoice_option.id, resource_id: "foobar", resource_class: "member" }, format: :json
         expect(response).to have_http_status(404)
         expect(JSON.parse(response.body)['message']).to match(/document not found/i)
 
-        post :create, params: {invoice_option: { id: invoice_option.id, }}, format: :json
+        post :create, params: { id: invoice_option.id, }, format: :json
         expect(response).to have_http_status(422)
         expect(JSON.parse(response.body)['message']).to match(/ member_id/i)
 
-        post :create, params: {invoice_option: { id: "foo", member_id: member.id }}, format: :json
+        post :create, params: { id: "foo", member_id: member.id, resource_id: member.id, resource_class: "member" }, format: :json
         expect(response).to have_http_status(404)
         expect(JSON.parse(response.body)['message']).to match(/document not found/i)
       end
@@ -153,13 +158,13 @@ RSpec.describe Admin::InvoicesController, type: :controller do
       }
       let(:invoice) { create(:invoice, due_date: Time.now) }
       it "updates the requested invoice" do
-        put :update, params: {id: invoice.to_param, invoice: new_attributes}, format: :json
+        put :update, params: new_attributes.merge({ id: invoice.to_param }), format: :json
         invoice.reload
         expect(invoice.due_date).to eq(Time.parse(new_attributes[:due_date].to_s))
       end
 
       it "renders json of the invoice" do
-        put :update, params: {id: invoice.to_param, invoice: new_attributes}, format: :json
+        put :update, params: new_attributes.merge({ id: invoice.to_param }), format: :json
 
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
@@ -171,12 +176,12 @@ RSpec.describe Admin::InvoicesController, type: :controller do
     context "with invalid params" do
       let(:invoice) { create(:invoice, due_date: Time.now) }
       it "raises not found if invoice doens't exist" do
-        put :update, params: {id: "foo" }, format: :json
+        put :update, params: { id: "foo" }, format: :json
         expect(response).to have_http_status(404)
       end
 
       it "doesn't update invoice with invalid params" do 
-        put :update, params: {id: invoice.to_param, invoice: {quantity: -1}}, format: :json
+        put :update, params: {quantity: -1}.merge({ id: invoice.to_param }), format: :json
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(422)
         expect(parsed_response['message']).to match(/quantity/i)

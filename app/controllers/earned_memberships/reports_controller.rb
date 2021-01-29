@@ -17,8 +17,10 @@ class EarnedMemberships::ReportsController < AuthenticationController
 
   private
   def report_params
-    params[:report][:report_requirements_attributes] = params[:report].delete(:report_requirements) if params[:report][:report_requirements]
-    params.require(:report).permit(:earned_membership_id, report_requirements_attributes: [
+    params.require([:earned_membership_id, :report_requirements])
+
+    params[:report_requirements_attributes] = params[:report_requirements]
+    params.permit(:earned_membership_id, report_requirements_attributes: [
       :requirement_id, :reported_count, member_ids: []
     ])
   end

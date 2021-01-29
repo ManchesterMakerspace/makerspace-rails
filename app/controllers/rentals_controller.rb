@@ -16,7 +16,6 @@ class RentalsController < AuthenticationController
     # Non admins can only update themselves
     @member = @rental.member
     raise Error::Forbidden.new unless @member.id == current_member.id
-    raise ActionController::ParameterMissing.new(:signature) if update_params[:signature].nil?
 
     begin
       encoded_signature = update_params[:signature].split(",")[1]
@@ -40,6 +39,7 @@ class RentalsController < AuthenticationController
   end
 
   def update_params
-    params.require(:rental).permit(:signature)
+    params.require(:signature)
+    params.permit(:signature)
   end
 end

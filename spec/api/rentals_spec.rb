@@ -59,30 +59,22 @@ describe 'Rentals API', type: :request do
         title: :updateRentalDetails,
         type: :object,
         properties: {
-          rental: {
-            type: :object,
-            properties: {
-              signature: { type: :string, 'x-nullable': true }
-            }
-          }
-        }
+          signature: { type: :string, 'x-nullable': true }
+        },
+        required: [:signature]
       }, required: true
 
       request_body_json schema: {
         title: :updateRentalDetails,
         type: :object,
         properties: {
-          rental: {
-            type: :object,
-            properties: {
-              signature: { type: :string, 'x-nullable': true }
-            }
-          }
-        }
+          signature: { type: :string, 'x-nullable': true }
+        },
+        required: [:signature]
       }, required: true
 
       # Update object
-      let(:updateRentalDetails) {{ rental: { signature: "foobar" } }}
+      let(:updateRentalDetails) {{ signature: "foobar" }}
 
       response '200', 'rental updated' do
         let(:current_member) { create(:member) }

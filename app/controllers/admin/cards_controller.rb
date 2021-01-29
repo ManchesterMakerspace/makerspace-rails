@@ -8,8 +8,7 @@ class Admin::CardsController < AdminController
   end
 
   def create
-    raise ::ActionController::ParameterMissing.new(:member_id) unless card_params[:member_id]
-    @card = Card.new(card_params)
+    @card = Card.new(create_card_params)
     raise Error::NotFound.new() unless @card.member
 
     cards = @card.member.access_cards.select { |c| (c.validity != 'lost') && (c.validity != 'stolen') && (c != @card)}
@@ -22,7 +21,6 @@ class Admin::CardsController < AdminController
   end
 
   def index
-    raise ::ActionController::ParameterMissing.new(:member_id) unless card_query_params[:member_id]
     member = Member.find(card_query_params[:member_id])
     raise ::Mongoid::Errors::DocumentNotFound.new(Member, { id: card_query_params[:member_id] }) if member.nil?
     @cards = Card.where(member: member)
@@ -32,16 +30,23 @@ class Admin::CardsController < AdminController
   def update
     @card = Card.find(params[:id])
     raise ::Mongoid::Errors::DocumentNotFound.new(Card, { id: params[:id] }) if @card.nil?
-    @card.update_attributes!(card_params)
+    @card.update_attributes!(update_card_params)
     render json: @card, adapter: :attributes and return
   end
 
   private
-  def card_params
-    params.require(:card).permit(:member_id, :uid, :card_location)
+  def create_card_params
+    params.require([:member_id, :uid])
+    params.permit(:member_id, :uid)
+  end
+
+  def update_card_params
+    params.require(:card_location)
+    params.permit(:card_location)
   end
 
   def card_query_params
+    params.require(:member_id)
     params.permit(:member_id)
   end
 end

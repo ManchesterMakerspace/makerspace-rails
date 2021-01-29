@@ -9,9 +9,6 @@ class Billing::PaymentMethodsController < BillingController
   def create
     payment_method_nonce = payment_method_params[:payment_method_nonce]
 
-    # Make sure params are valid
-    raise ::ActionController::ParameterMissing.new(:payment_method_nonce) if payment_method_nonce.nil? || payment_method_nonce.empty?
-
     # Create a member w/ this payment method if not a customer yet
     if current_member.customer_id.nil?
       result = @gateway.customer.create(
@@ -70,7 +67,8 @@ class Billing::PaymentMethodsController < BillingController
 
   private
   def payment_method_params
-    params.require(:payment_method).permit(:payment_method_nonce, :make_default)
+    params.require(:payment_method_nonce)
+    params.permit(:payment_method_nonce, :make_default)
   end
 
   def generate_client_token

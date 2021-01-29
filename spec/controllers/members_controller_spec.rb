@@ -45,7 +45,7 @@ RSpec.describe MembersController, type: :controller do
       member_params = {
         firstname: "foo"
       }
-      put :update, params: { id: current_user.id, member: member_params }, format: :json
+      put :update, params: member_params.merge({ id: current_user.id }), format: :json
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
@@ -65,7 +65,7 @@ RSpec.describe MembersController, type: :controller do
         }
       }
 
-      put :update, params: { id: current_user.id, member: member_params }, format: :json
+      put :update, params: member_params.merge({ id: current_user.id }), format: :json
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)

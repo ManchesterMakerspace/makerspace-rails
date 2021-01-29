@@ -42,32 +42,20 @@ describe 'Invoices API', type: :request do
         title: :createInvoiceDetails,
         type: :object,
         properties: {
-          invoiceOption: {
-            type: :object,
-            properties: {
-              id: { type: :string },
-              discountId: { type: :string, 'x-nullable': true }
-            },
-            required: [:id]
-          }
+          id: { type: :string },
+          discountId: { type: :string, 'x-nullable': true }
         },
-        required: [:invoiceOption]
+        required: [:id]
       }, required: true
 
       request_body_json schema: {
         title: :createInvoiceDetails,
         type: :object,
         properties: {
-          invoiceOption: {
-            type: :object,
-            properties: {
-              id: { type: :string },
-              discountId: { type: :string, 'x-nullable': true }
-            },
-            required: [:id]
-          }
+          id: { type: :string },
+          discountId: { type: :string, 'x-nullable': true }
         },
-        required: [:invoiceOption]
+        required: [:id]
       }, required: true
 
       response '200', 'invoice created' do
@@ -75,28 +63,28 @@ describe 'Invoices API', type: :request do
 
         schema '$ref' => '#/components/schemas/Invoice'
 
-        let(:createInvoiceDetails) {{ invoiceOption: { id: create(:invoice_option).id } }}
+        let(:createInvoiceDetails) {{ id: create(:invoice_option).id }}
 
         run_test!
       end
 
       response '401', 'User not authenticated' do
         schema '$ref' => '#/components/schemas/error'
-        let(:createInvoiceDetails) {{ invoiceOption: { id: create(:invoice_option).id } }}
+        let(:createInvoiceDetails) {{ id: create(:invoice_option).id }}
         run_test!
       end
 
       response '422', 'parameter missing' do
         before { sign_in create(:member) }
         schema '$ref' => '#/components/schemas/error'
-        let(:createInvoiceDetails)  {{ invoiceOption: { discountId: 'some_discount' } }}
+        let(:createInvoiceDetails)  {{ discountId: 'some_discount' }}
         run_test!
       end
 
       response '404', 'invoice option not found' do
         before { sign_in create(:member) }
         schema '$ref' => '#/components/schemas/error'
-        let(:createInvoiceDetails) {{ invoiceOption: { id: 'invalid' } }}
+        let(:createInvoiceDetails) {{ id: 'invalid' }}
         run_test!
       end
     end
