@@ -19,7 +19,7 @@ class Admin::MembersController < AdminController
 
   private
   def create_member_params
-    params.require([:firstname, :lastname, :email, :address])
+    params.require([:firstname, :lastname, :email])
     params.permit(:firstname, :lastname, :role, :email, :status, :member_contract_on_file, :phone, :notes, address: [:street, :city, :state, :postal_code])
   end
 
