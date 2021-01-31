@@ -10,7 +10,6 @@ class Billing::TransactionsController < BillingController
         raise ActionController::ParameterMissing.new(:invoice_id)
       end
       
-      raise ActionController::ParameterMissing.new(:payment_method_id) if transaction_params[:payment_method_id].nil?
       verify_payment_method
 
       if transaction_params[:invoice_id]
@@ -40,7 +39,7 @@ class Billing::TransactionsController < BillingController
         raise
       end
 
-      render json: transaction, serializer: BraintreeService::TransactionSerializer, root: "transaction", status: 200 and return
+      render json: transaction, serializer: BraintreeService::TransactionSerializer, adapter: :attributes, status: 200 and return
     end
 
     def index
@@ -48,7 +47,7 @@ class Billing::TransactionsController < BillingController
       # Transactions & Invoices are stored on different servers so we need to pull both in
       transactions = ::BraintreeService::Transaction.get_transactions(@gateway, construct_query)
 
-      return render_with_total_items(transactions, { each_serializer: BraintreeService::TransactionSerializer, root: "transactions" })
+      return render_with_total_items(transactions, { each_serializer: BraintreeService::TransactionSerializer, adapter: :attributes })
     end
 
     def destroy
@@ -73,7 +72,8 @@ class Billing::TransactionsController < BillingController
     end
 
     def transaction_params
-      params.require(:transaction).permit(:payment_method_id, :invoice_id, :invoice_option_id, :discount_id)
+      params.require(:payment_method_id)
+      params.permit(:payment_method_id, :invoice_id, :invoice_option_id, :discount_id)
     end
 
     def construct_query

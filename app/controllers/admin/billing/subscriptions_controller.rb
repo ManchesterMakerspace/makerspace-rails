@@ -1,7 +1,7 @@
 class Admin::Billing::SubscriptionsController < Admin::BillingController
   def index
     subs = ::BraintreeService::Subscription.get_subscriptions(@gateway, construct_query)
-    return render_with_total_items(subs, { :each_serializer => BraintreeService::SubscriptionSerializer, root: "subscriptions" })
+    return render_with_total_items(subs, { :each_serializer => BraintreeService::SubscriptionSerializer, adapter: :attributes })
   end
 
   def destroy

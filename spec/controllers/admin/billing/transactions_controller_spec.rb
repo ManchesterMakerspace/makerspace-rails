@@ -24,8 +24,8 @@ RSpec.describe Admin::Billing::TransactionsController, type: :controller do
   end
 
   describe "GET #index" do 
-    let(:related_invoice) { create(:invoice) }
-    let(:transaction) { build(:transaction, invoice: related_invoice) }
+    let(:transaction) { build(:transaction) }
+    let(:related_invoice) { create(:invoice, transaction_id: transaction.id) }
     it "renders a list of transactions" do 
       related_invoice # call to initialize
       allow(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, anything).and_return([transaction])
@@ -34,8 +34,8 @@ RSpec.describe Admin::Billing::TransactionsController, type: :controller do
       get :index, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(parsed_response['transactions'].first['id']).to eq(transaction.id)
-      expect(parsed_response['transactions'].first['invoice']['id']).to eq(related_invoice.id.to_s)
+      expect(parsed_response.first['id']).to eq(transaction.id)
+      expect(parsed_response.first['invoice']['id']).to eq(related_invoice.id.to_s)
     end
   end
 
@@ -47,7 +47,7 @@ RSpec.describe Admin::Billing::TransactionsController, type: :controller do
       get :show, params: { id: "foo" }, format: :json 
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(parsed_response['transaction']['id']).to eq(transaction.id)
+      expect(parsed_response['id']).to eq(transaction.id)
     end
   end
 

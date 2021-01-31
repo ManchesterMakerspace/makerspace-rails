@@ -20,7 +20,7 @@ RSpec.describe EarnedMemberships::ReportsController, type: :controller do
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
         parsed_response = JSON.parse(response.body)
-        expect(parsed_response['reports'].first['id']).to eq(EarnedMembership::Report.last.id.as_json)
+        expect(parsed_response.first['id']).to eq(EarnedMembership::Report.last.id.as_json)
       end
     end
 
@@ -78,7 +78,7 @@ RSpec.describe EarnedMemberships::ReportsController, type: :controller do
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq "application/json"
         parsed_response = JSON.parse(response.body)
-        expect(parsed_response['report']['id']).to eq(EarnedMembership::Report.last.id.as_json)
+        expect(parsed_response['id']).to eq(EarnedMembership::Report.last.id.as_json)
       end
 
       it "Renews member if they have fallen behind reporting" do 

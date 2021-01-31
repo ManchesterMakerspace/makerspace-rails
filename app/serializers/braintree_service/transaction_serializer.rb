@@ -16,10 +16,9 @@ class BraintreeService::TransactionSerializer < ActiveModel::Serializer
              :amount,
              :member_id,
              :member_name,
-             :credit_card_details,
-             :paypal_details
+             :payment_method_details
 
-  has_one :invoice
+  has_one :invoice, each_serializer: InvoiceSerializer
 
   def amount
     object.amount.truncate.to_s + '.' + sprintf('%02d', (BigDecimal(object.amount.to_s).frac * 100).truncate)
@@ -43,30 +42,12 @@ class BraintreeService::TransactionSerializer < ActiveModel::Serializer
     object.invoice && object.invoice.member.fullname
   end
 
-  def credit_card_details
+  def payment_method_details
     payment_attr = object.payment_instrument_type
     if payment_attr == "credit_card"
-      details_hash = object.credit_card_details
-      details = {
-        cardType: details_hash.card_type,
-        expirationMonth: details_hash.expiration_month,
-        expirationYear: details_hash.expiration_year,
-        expirationDate: details_hash.expiration_date,
-        last4: details_hash.last_4,
-        imageUrl: details_hash.image_url
-      }
-    end
-    details
-  end
-
-  def paypal_details
-    payment_attr = object.payment_instrument_type
-    if payment_attr == "paypal"
-      details_hash = object.paypal_details
-      details = {
-        email: details_hash.payer_email,
-        imageUrl: details_hash.image_url
-      }
+      details = object.credit_card_details
+    elsif payment_attr == "paypal"
+      details = object.paypal_details
     end
     details
   end

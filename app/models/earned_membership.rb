@@ -12,7 +12,7 @@ class EarnedMembership
 
   search_in member: %i[firstname lastname email], requirements: :name
 
-  accepts_nested_attributes_for :requirements, reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :requirements, reject_if: :reject_requirements, allow_destroy: true
 
   validates :member, presence: true
   validate :one_to_one
@@ -72,5 +72,23 @@ class EarnedMembership
     if get_shortest_term_end_time && get_shortest_term_end_time > (self.member.get_expiration || 0)
       renew_member
     end
+  end
+
+  def reject_requirements(attributes)
+    exists = attributes['id'].present?
+
+    # Sanitize null, empty IDs and raise errors for any invalid
+    if exists
+      related_requirement = Requirement.find(attributes['id'])
+      if related_requirement.nil?
+        raise ::Mongoid::Errors::DocumentNotFound.new(Requirement, { id: attributes['id'] })
+      end
+    else
+      attributes.delete('id')
+    end
+
+    empty = attributes.except('id').values.all?(&:blank?)
+    attributes.merge!({:_destroy => 1}) if exists and empty # destroy empty requirement
+    return (!exists and empty) # reject empty attributes
   end
 end

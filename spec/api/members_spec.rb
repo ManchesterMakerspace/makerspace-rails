@@ -15,20 +15,14 @@ describe 'Members API', type: :request do
         let(:members) { create_list(:member) }
         before { sign_in create(:member) }
 
-        schema type: :object,
-        properties: {
-          members: {
-            type: :array,
-            items: { '$ref' => '#/definitions/MemberSummary' }
-          }
-        },
-        required: [ 'members' ]
+        schema type: :array,
+            items: { '$ref' => '#/components/schemas/MemberSummary' }
 
         run_test!
       end
 
       response '401', 'User not authenciated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { create(:member).id }
         run_test!
       end
@@ -45,26 +39,20 @@ describe 'Members API', type: :request do
         before { sign_in create(:member) }
         let(:id) { create(:member).id }
 
-        schema type: :object,
-          properties: {
-            member: {
-              '$ref' => '#/definitions/Member'
-            }
-          },
-          required: [ 'member' ]
+        schema '$ref' => '#/components/schemas/Member'
 
         run_test!
       end
 
       response '404', 'Member not found' do
         before { sign_in create(:member) }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { 'invalid' }
         run_test!
       end
 
       response '401', 'User not authenciated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { create(:member).id }
         run_test!
       end
@@ -75,15 +63,14 @@ describe 'Members API', type: :request do
       operationId "updateMember"
       parameter name: :id, in: :path, type: :string
       parameter name: :updateMemberDetails, in: :body, schema: {
-        type: :object,
-        properties: {
-          member: {
+        title: :updateMemberDetails,
+        anyOf: [
+          {
             type: :object,
             properties: {
               firstname: { type: :string, 'x-nullable': true },
               lastname: { type: :string, 'x-nullable': true },
               email: { type: :string, 'x-nullable': true },
-              signature: { type: :string, 'x-nullable': true },
               phone: { type: :string, 'x-nullable': true },
               address: {
                 type: :object,
@@ -97,8 +84,46 @@ describe 'Members API', type: :request do
                 }
               }
             }
+          },
+          {
+            type: :object,
+            properties: {
+              signature: { type: :string, 'x-nullable': true },
+            }
           }
-        }
+        ]
+      }, required: true
+
+      request_body_json schema: {
+        title: :updateMemberDetails,
+        anyOf: [
+          {
+            type: :object,
+            properties: {
+              firstname: { type: :string, 'x-nullable': true },
+              lastname: { type: :string, 'x-nullable': true },
+              email: { type: :string, 'x-nullable': true },
+              phone: { type: :string, 'x-nullable': true },
+              address: {
+                type: :object,
+                'x-nullable': true,
+                properties: {
+                  street: { type: :string, 'x-nullable': true },
+                  unit: { type: :string,  'x-nullable': true },
+                  city: { type: :string, 'x-nullable': true },
+                  state: { type: :string, 'x-nullable': true },
+                  postalCode: { type: :string, 'x-nullable': true },
+                }
+              }
+            }
+          },
+          {
+            type: :object,
+            properties: {
+              signature: { type: :string, 'x-nullable': true },
+            }
+          }
+        ]
       }, required: true
 
       # Update object
@@ -108,13 +133,19 @@ describe 'Members API', type: :request do
         let(:current_member) { create(:member) }
         before { sign_in current_member }
 
-        schema type: :object,
-          properties: {
-            member: {
-              '$ref' => '#/definitions/Member'
-            }
-          },
-          required: [ 'member' ]
+        schema '$ref' => '#/components/schemas/Member'
+
+        let(:id) { current_member.id }
+        run_test!
+      end
+
+      response '200', 'Signature upload' do
+        let(:current_member) { create(:member) }
+        before { sign_in current_member }
+
+        let(:updateMemberDetails) {{ signature: "foobar.png" }}
+
+        schema '$ref' => '#/components/schemas/Member'
 
         let(:id) { current_member.id }
         run_test!
@@ -124,7 +155,7 @@ describe 'Members API', type: :request do
         let(:current_member) { create(:member) }
         before { sign_in current_member }
 
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
 
         let(:other_user) { create(:member) }
         let(:id) { other_user.id }
@@ -132,14 +163,14 @@ describe 'Members API', type: :request do
       end
 
       response '401', 'User not authenciated or authorized' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { create(:member).id }
         run_test!
       end
 
       response '404', 'member not found' do
         before { sign_in create(:member) }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
 
         let(:id) { 'invalid' }
         run_test!

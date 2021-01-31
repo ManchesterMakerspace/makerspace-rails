@@ -4,8 +4,7 @@ class RegistrationsController < ApplicationController
   respond_to :json
 
   def new
-    email = params[:email]
-    raise ::ActionController::ParameterMissing.new(:email) if email.nil?
+    email = new_member_params[:email]
     member = Member.find_by(email: email)
     if member
       error = "Cannot send registration to #{email}. Account already exists"
@@ -22,12 +21,18 @@ class RegistrationsController < ApplicationController
     @member.reload
     sign_in(@member)
     MemberMailer.member_registered(@member.id.to_s).deliver_later
-    render json: @member and return
+    render json: @member, adapter: :attributes and return
   end
 
   private
+  def new_member_params
+    params.require(:email)
+    params.permit(:email)
+  end 
+
   def member_params
-    params.require(:member).permit(:firstname, :lastname, :email, :password,
+    params.require([:firstname, :lastname, :email, :password])
+    params.permit(:firstname, :lastname, :email, :password,
       :phone, address: [:street, :unit, :city, :state, :postal_code])
   end
 end

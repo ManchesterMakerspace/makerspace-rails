@@ -3,7 +3,7 @@ class Billing::SubscriptionsController < BillingController
 
   def show
     subscription = ::BraintreeService::Subscription.get_subscription(@gateway, params[:id])
-    render json: subscription, serializer: BraintreeService::SubscriptionSerializer, root: "subscription" and return
+    render json: subscription, serializer: BraintreeService::SubscriptionSerializer, adapter: :attributes and return
   end
 
   def update
@@ -12,7 +12,7 @@ class Billing::SubscriptionsController < BillingController
       payment_method_token: subscription_params[:payment_method_token]
     }
     subscription = ::BraintreeService::Subscription.update(@gateway, subscription_update)
-    render json: subscription, serializer: BraintreeService::SubscriptionSerializer, root: "subscription" and return
+    render json: subscription, serializer: BraintreeService::SubscriptionSerializer, adapter: :attributes and return
   end
 
   def destroy
@@ -23,7 +23,8 @@ class Billing::SubscriptionsController < BillingController
 
   private
   def subscription_params
-    params.require(:subscription).permit(:payment_method_token)
+    params.require(:payment_method_token)
+    params.permit(:payment_method_token)
   end
 
   def verify_own_subscription

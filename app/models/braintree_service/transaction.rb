@@ -3,7 +3,7 @@ class BraintreeService::Transaction < Braintree::Transaction
   extend Service::SlackConnector
   include ActiveModel::Serializers::JSON
 
-  attr_accessor :invoice
+  attr_writer :invoice
 
   def self.new(gateway, args)
     super(gateway, args)
@@ -90,13 +90,16 @@ class BraintreeService::Transaction < Braintree::Transaction
     status.titleize
   end
 
+  def invoice 
+    Invoice.find_by({ transaction_id: id })
+  end
+
   private
   def self.normalize(gateway, transaction)
     norm_transaction = self.new(gateway, instance_to_hash(transaction))
 
     # Search by refunded ID if it's a refund transaction
     transaction_id = norm_transaction.refunded_transaction_id || norm_transaction.id
-    norm_transaction.invoice = invoice ||= Invoice.find_by(transaction_id: transaction_id)
     norm_transaction
   end
 end

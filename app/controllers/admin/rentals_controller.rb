@@ -4,21 +4,21 @@ class Admin::RentalsController < AdminController
 
   def index
     rentals = search_params[:member_id] ? Rental.where(member_id: search_params[:member_id]) : Rental.all
-    return render_with_total_items(query_resource(rentals), { each_serializer: RentalSerializer, root: "rentals" })
+    return render_with_total_items(query_resource(rentals), { each_serializer: RentalSerializer, adapter: :attributes })
   end
 
   def create
-    @rental = Rental.new(rental_params)
+    @rental = Rental.new(create_rental_params)
     @rental.save!
-    render json: @rental and return
+    render json: @rental, adapter: :attributes and return
   end
 
   def update
     initial_date = @rental.get_expiration
-    @rental.update_attributes!(rental_params)
+    @rental.update_attributes!(update_rental_params)
     notify_renewal(initial_date)
     @rental.reload
-    render json: @rental and return
+    render json: @rental, adapter: :attributes and return
   end
 
   def destroy
@@ -27,8 +27,13 @@ class Admin::RentalsController < AdminController
   end
 
   private
-  def rental_params
-    params.require(:rental).permit(:number, :member_id, :expiration, :description, :renew, :contract_on_file, :notes)
+  def create_rental_params
+    params.require([:number, :member_id])
+    params.permit(:number, :member_id, :expiration, :description, :contract_on_file, :notes)
+  end
+
+  def update_rental_params
+    params.permit(:number, :member_id, :expiration, :description, :renew, :contract_on_file, :notes)
   end
 
   def search_params

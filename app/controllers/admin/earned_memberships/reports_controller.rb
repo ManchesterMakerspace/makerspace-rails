@@ -4,7 +4,7 @@ class Admin::EarnedMemberships::ReportsController < AdminController
 
   def index
     @reports = @membership.reports
-    return render_with_total_items(query_resource(@reports), { each_serializer: EarnedMembership::ReportSerializer, root: "reports" })
+    return render_with_total_items(query_resource(@reports), { each_serializer: EarnedMembership::ReportSerializer, adapter: :attributes })
   end
 
   private

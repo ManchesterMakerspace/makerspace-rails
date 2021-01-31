@@ -22,8 +22,8 @@ gem 'mini_magick'
 
 gem 'rest-client'
 gem 'git'
-gem 'rswag-api'
-gem 'rswag-ui'
+gem 'open_api-rswag-api'
+gem 'open_api-rswag-ui'
 
 # PDF generation
 gem 'wicked_pdf'
@@ -41,6 +41,7 @@ group :test do
   gem 'database_cleaner'
   gem 'rails-controller-testing'
   gem 'simplecov'
+  gem 'open_api-rswag-specs'
 end
 
 group :development, :test do

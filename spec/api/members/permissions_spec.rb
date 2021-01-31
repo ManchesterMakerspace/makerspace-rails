@@ -12,33 +12,27 @@ describe 'Permissions API', type: :request do
         before { sign_in auth_member }
         let(:id) { auth_member.id }
 
-        schema type: :object,
-          properties: {
-            permissions: {
-              type: :object
-            }
-          },
-          required: [ 'permissions' ]
+        schema type: :object
 
         run_test!
       end
 
       response '404', 'Member not found' do
         before { sign_in create(:member) }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { 'invalid' }
         run_test!
       end
 
       response '403', 'Member not authorized' do
         before { sign_in create(:member) }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { create(:member).id }
         run_test!
       end
 
       response '401', 'User not authenciated' do 
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { create(:member).id }
         run_test!
       end

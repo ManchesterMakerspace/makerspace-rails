@@ -9,9 +9,6 @@ class Billing::PaymentMethodsController < BillingController
   def create
     payment_method_nonce = payment_method_params[:payment_method_nonce]
 
-    # Make sure params are valid
-    raise ::ActionController::ParameterMissing.new(:payment_method_nonce) if payment_method_nonce.nil? || payment_method_nonce.empty?
-
     # Create a member w/ this payment method if not a customer yet
     if current_member.customer_id.nil?
       result = @gateway.customer.create(
@@ -38,7 +35,7 @@ class Billing::PaymentMethodsController < BillingController
     raise Error::Braintree::Result.new(result) unless result.success?
     payment_method = result.try(:payment_method) ? result.payment_method : result.customer.payment_methods.first
 
-    render json: payment_method, serializer: BraintreeService::PaymentMethodSerializer, root: "payment_method", status: 200 and return
+    render json: payment_method, serializer: BraintreeService::PaymentMethodSerializer, adapter: :attributes, status: 200 and return
   end
 
   def index
@@ -47,7 +44,7 @@ class Billing::PaymentMethodsController < BillingController
     else
       payment_methods = ::BraintreeService::PaymentMethod.get_payment_methods_for_customer(@gateway, current_member.customer_id)
     end
-    render json: payment_methods, each_serializer: BraintreeService::PaymentMethodSerializer, status: 200, root: :payment_methods and return
+    render json: payment_methods, each_serializer: BraintreeService::PaymentMethodSerializer, status: 200, adapter: :attributes and return
   end
 
   def show 
@@ -55,7 +52,7 @@ class Billing::PaymentMethodsController < BillingController
     raise Error::Braintree::MissingCustomer.new unless current_member.customer_id
     # Only allowed to modify own payment methods
     payment_method = ::BraintreeService::PaymentMethod.find_payment_method_for_customer(@gateway, payment_method_token, current_member.customer_id)
-    render json: payment_method, serializer: BraintreeService::PaymentMethodSerializer, root: "payment_method", status: 200 and return
+    render json: payment_method, serializer: BraintreeService::PaymentMethodSerializer, adapter: :attributes, status: 200 and return
   end
 
   def destroy
@@ -70,7 +67,8 @@ class Billing::PaymentMethodsController < BillingController
 
   private
   def payment_method_params
-    params.require(:payment_method).permit(:payment_method_nonce, :make_default)
+    params.require(:payment_method_nonce)
+    params.permit(:payment_method_nonce, :make_default)
   end
 
   def generate_client_token
