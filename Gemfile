@@ -54,4 +54,4 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # Frontend
-gem "makerspace-react-rails", "0.18.3"
+gem "makerspace-react-rails", "1.0.2"

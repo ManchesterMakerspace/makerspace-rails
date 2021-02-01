@@ -3,6 +3,10 @@ language: ruby
 rvm:
   - 2.6.6
 
+before_install:
+  - nvm install 14
+  - nvm use 14
+
 install:
   - bundle install
 
@@ -18,9 +22,9 @@ jobs:
       script: bundle install --without development:test --path vendor/bundle --binstubs vendor/bundle/bin -j4 --deployment && RAILS_ENV=production bundle exec rake assets:precompile
     - stage: unit-test
       script: bundle exec rspec
-    # - stage: integration-test
-      # script: bundle exec rake integration
-      # after_failure: bundle exec rake upload_screenshots
+    - stage: integration-test
+      script: bundle exec rake integration
+      after_failure: bundle exec rake upload_screenshots
     - stage: deploy
       script: rake publish
       if: branch = master AND type = push
