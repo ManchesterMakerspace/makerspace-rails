@@ -173,6 +173,7 @@ class Invoice
     invoice = find_invoice_by_subscription_id(subscription_id)
     unless invoice.nil? || invoice.locked # Only send cancellation notifications if the invoice exists and isn't already being cancelled
       # Destroy invoices for this subscription that are still outstanding
+      invoice.resource.remove_subscription() unless invoice.resource.nil?
       Invoice.where(subscription_id: subscription_id, settled_at: nil, transaction_id: nil).destroy
       !skip_notification && invoice.send_cancellation_notification # Can send notification after destorying because there is still `invoice` in memory
     end

@@ -25,6 +25,15 @@ class SeedData
         lastname: "Member#{n}"
       )
     end
+    5.times do |n|
+      create(:member,
+        email: "paypal_member#{n}@test.com",
+        firstname: "PayPal",
+        lastname: "Member#{n}",
+        subscription: true,
+        expirationTime: (Time.now + n.months).to_i * 1000
+      )
+    end
   end
 
   def create_expired_members
