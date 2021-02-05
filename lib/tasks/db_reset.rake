@@ -41,6 +41,30 @@ namespace :db do
     end
     rejection_card = FactoryBot.create(:rejection_card, uid: "#{new_uid}")
   end
+
+  task :braintree_webhook, [:member_email] => :environment do |t, args|
+    if args[:member_email] then 
+      member = Member.find_by(email: args[:member_email])
+      invoice = Invoice.active_invoice_for_resource(member.id)
+      sample_notification = ::Service::BraintreeGateway.connect_gateway.webhook_testing.sample_notification(
+        Braintree::WebhookNotification::Kind::SubscriptionCanceled,
+        invoice.subscription_id
+      )
+
+      session = ActionDispatch::Integration::Session.new(Rails.application)
+      session.post "/billing/braintree_listener", { params: sample_notification }
+    end
+  end
+
+  task :paypal_webhook, [:member_email] => :environment do |t, args|
+    if args[:member_email] then 
+      session = ActionDispatch::Integration::Session.new(Rails.application)
+      session.post "/ipnlistener", { params: { 
+        "payer_email" => args[:member_email],
+        "txn_type": "subscr_cancel"
+        } }
+    end
+  end
 end
 
 def cancel_subscriptions(gateway)

@@ -27,7 +27,7 @@ describe 'Documents API', type: :request do
 
       response '404', 'Document not found' do
         before { sign_in customer }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
 
         let(:id) { "invalid" }
         run_test!

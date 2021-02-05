@@ -22,8 +22,8 @@ gem 'mini_magick'
 
 gem 'rest-client'
 gem 'git'
-gem 'rswag-api'
-gem 'rswag-ui'
+gem 'open_api-rswag-api'
+gem 'open_api-rswag-ui'
 
 # PDF generation
 gem 'wicked_pdf'
@@ -41,6 +41,7 @@ group :test do
   gem 'database_cleaner'
   gem 'rails-controller-testing'
   gem 'simplecov'
+  gem 'open_api-rswag-specs'
 end
 
 group :development, :test do
@@ -53,4 +54,4 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # Frontend
-gem "makerspace-react-rails", "0.18.3"
+gem "makerspace-react-rails", "1.0.6"

@@ -47,11 +47,10 @@ class InvoicesController < AuthenticationController
     invoices = @queries.length > 0 ? invoices.where(@queries.reduce(&:merge)) : invoices
     invoices = query_resource(invoices) # Query with the usual sorting, paging and searching
 
-    return render_with_total_items(invoices, { each_serializer: InvoiceSerializer, root: "invoices" })
+    return render_with_total_items(invoices, { each_serializer: InvoiceSerializer, adapter: :attributes })
   end
 
   def create
-    raise ActionController::ParameterMissing.new(:id) if invoice_option_params[:id].nil?
     invoice_option = InvoiceOption.find(invoice_option_params[:id])
     raise ::Mongoid::Errors::DocumentNotFound.new(InvoiceOption, { id: invoice_option_params[:id] }) if invoice_option.nil?
     if (invoice_option_params[:discount_id])
@@ -60,13 +59,14 @@ class InvoicesController < AuthenticationController
     end
 
     @invoice = invoice_option.build_invoice(current_member.id, Time.now, current_member.id, invoice_discount)
-    render json: @invoice and return
+    render json: @invoice, adapter: :attributes and return
   end
 
 
   private
   def invoice_option_params
-    params.require(:invoice_option).permit(:id, :discount_id)
+    params.require(:id)
+    params.permit(:id, :discount_id)
   end
 
   def invoice_query_params

@@ -36,7 +36,7 @@ describe 'Billing::Receipts API', type: :request do
 
       response '404', 'Invoice not found' do
         before { sign_in admin }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
 
         let(:id) { "invalid" }
         run_test!
@@ -44,14 +44,14 @@ describe 'Billing::Receipts API', type: :request do
 
       response '403', 'User unauthorized' do 
         before { sign_in customer }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { invoice.id }
         run_test!
       end
 
       response '404', 'Transaction not found' do
         before { sign_in admin }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { create(:invoice).id }
         run_test!
       end

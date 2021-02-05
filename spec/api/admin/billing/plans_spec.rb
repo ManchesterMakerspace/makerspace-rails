@@ -21,31 +21,25 @@ describe 'Plans API', type: :request do
       parameter name: :pageNum, in: :query, type: :number, required: false
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
-      parameter name: :types, in: :query, type: :array, items: { type: :string }, required: false
+      parameter name: :types, in: :query, schema: { type: :array, items: { type: :string } }, required: false
 
       response '200', 'billing plans found' do 
         before { sign_in admin }
 
-        schema type: :object,
-        properties: {
-          plans: { 
-            type: :array,
-            items: { '$ref' => '#/definitions/Plan' }
-          }
-        },
-        required: [ 'plans' ]
+        schema type: :array,
+            items: { '$ref' => '#/components/schemas/Plan' }
 
         run_test!
       end
 
       response '403', 'User unauthorized' do 
         before { sign_in basic }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         run_test!
       end
 
       response '401', 'User unauthenticated' do 
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         run_test!
       end
     end
@@ -59,30 +53,24 @@ describe 'Plans API', type: :request do
       parameter name: :orderBy, in: :query, type: :string, required: false
       parameter name: :order, in: :query, type: :string, required: false
       parameter name: :subscriptionOnly, in: :query, type: :boolean, required: false
-      parameter name: :types, in: :query, type: :array, items: { type: :string }, required: false
+      parameter name: :types, in: :query, schema: { type: :array, items: { type: :string } }, required: false
 
       response '200', 'billing plan discounts found' do 
         before { sign_in admin }
-        schema type: :object,
-          properties: {
-            discounts: { 
-              type: :array,
-              items: { '$ref' => '#/definitions/Discount' }
-            }
-          },
-          required: [ 'discounts' ]
+        schema type: :array,
+              items: { '$ref' => '#/components/schemas/Discount' }
 
         run_test!
       end
 
       response '403', 'User unauthorized' do 
         before { sign_in basic }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         run_test!
       end
 
       response '401', 'User unauthenticated' do 
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         run_test!
       end
     end

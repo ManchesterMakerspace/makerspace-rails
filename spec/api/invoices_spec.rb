@@ -14,29 +14,23 @@ describe 'Invoices API', type: :request do
       parameter name: :refunded, in: :query, type: :boolean, required: false
       parameter name: :refundRequested, in: :query, type: :boolean, required: false
 
-      parameter name: :planId, in: :query, type: :array, items: { type: :string }, required: false
-      parameter name: :resourceId, in: :query, type: :array, items: { type: :string }, required: false
-      parameter name: :resourceClass, in: :query, type: :array, items: { type: :string }, required: false
+      parameter name: :planId, in: :query, schema: { type: :array, items: { type: :string } }, required: false
+      parameter name: :resourceId, in: :query, schema: { type: :array, items: { type: :string } }, required: false
+      parameter name: :resourceClass, in: :query, schema: { type: :array, items: { type: :string } }, required: false
 
       response '200', 'invoices found' do
         let(:member) { create(:member) }
         let(:invoices) { create_list(:invoice, member: member) }
         before { sign_in member }
 
-        schema type: :object,
-        properties: {
-          invoices: {
-            type: :array,
-            items: { '$ref' => '#/definitions/Invoice' }
-          }
-        },
-        required: [ 'invoices' ]
+        schema type: :array,
+            items: { '$ref' => '#/components/schemas/Invoice' }
 
         run_test!
       end
 
       response '401', 'User not authenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         run_test!
       end
     end
@@ -45,53 +39,52 @@ describe 'Invoices API', type: :request do
       tags 'Invoices'
       operationId 'createInvoice'
       parameter name: :createInvoiceDetails, in: :body, schema: {
+        title: :createInvoiceDetails,
         type: :object,
         properties: {
-          invoiceOption: {
-            type: :object,
-            properties: {
-              id: { type: :string },
-              discountId: { type: :string, 'x-nullable': true }
-            },
-            required: [:id]
-          }
+          id: { type: :string },
+          discountId: { type: :string, 'x-nullable': true }
         },
-        required: [:invoiceOption]
+        required: [:id]
+      }, required: true
+
+      request_body_json schema: {
+        title: :createInvoiceDetails,
+        type: :object,
+        properties: {
+          id: { type: :string },
+          discountId: { type: :string, 'x-nullable': true }
+        },
+        required: [:id]
       }, required: true
 
       response '200', 'invoice created' do
         before { sign_in create(:member) }
 
-        schema type: :object,
-        properties: {
-          invoice: {
-            '$ref' => '#/definitions/Invoice'
-          }
-        },
-        required: [ 'invoice' ]
+        schema '$ref' => '#/components/schemas/Invoice'
 
-        let(:createInvoiceDetails) {{ invoiceOption: { id: create(:invoice_option).id } }}
+        let(:createInvoiceDetails) {{ id: create(:invoice_option).id }}
 
         run_test!
       end
 
       response '401', 'User not authenticated' do
-        schema '$ref' => '#/definitions/error'
-        let(:createInvoiceDetails) {{ invoiceOption: { id: create(:invoice_option).id } }}
+        schema '$ref' => '#/components/schemas/error'
+        let(:createInvoiceDetails) {{ id: create(:invoice_option).id }}
         run_test!
       end
 
       response '422', 'parameter missing' do
         before { sign_in create(:member) }
-        schema '$ref' => '#/definitions/error'
-        let(:createInvoiceDetails)  {{ invoiceOption: { discountId: 'some_discount' } }}
+        schema '$ref' => '#/components/schemas/error'
+        let(:createInvoiceDetails)  {{ discountId: 'some_discount' }}
         run_test!
       end
 
       response '404', 'invoice option not found' do
         before { sign_in create(:member) }
-        schema '$ref' => '#/definitions/error'
-        let(:createInvoiceDetails) {{ invoiceOption: { id: 'invalid' } }}
+        schema '$ref' => '#/components/schemas/error'
+        let(:createInvoiceDetails) {{ id: 'invalid' }}
         run_test!
       end
     end

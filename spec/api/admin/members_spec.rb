@@ -10,28 +10,31 @@ describe 'Admin::Members API', type: :request do
       tags 'Members'
       operationId "adminCreateMember"
       parameter name: :createMemberDetails, in: :body, schema: {
-        type: :object,
-        properties: {
-          member: { '$ref' => '#/definitions/NewMember'   }
-        }
+        title: :createMemberDetails, 
+        '$ref' => '#/components/schemas/NewMember'
+      }, required: true
+
+      request_body_json schema: {
+        title: :createMemberDetails, 
+        '$ref' => '#/components/schemas/NewMember'
       }, required: true
 
       response '200', 'member created' do
         before { sign_in admin }
 
-        schema type: :object,
-        properties: {
-          member: { '$ref' => '#/definitions/Member' },
-        },
-        required: [ 'member' ]
+        schema '$ref' => '#/components/schemas/Member'
 
         let(:createMemberDetails) {{
-          member: {
-            firstname: "first",
-            lastname: "last",
-            email: "foo@foo.com",
-            expirationTime: Time.now.to_i * 1000,
-            memberContractOnFile: true
+          firstname: "first",
+          lastname: "last",
+          email: "foo@foo.com",
+          memberContractOnFile: true,
+          phone: "867-5309",
+          address: {
+            street: "123 Foo St",
+            city: "Roswell",
+            state: "NM",
+            postal_code: "who knows"
           }
         }}
 
@@ -40,28 +43,36 @@ describe 'Admin::Members API', type: :request do
 
       response '403', 'User unauthorized' do
         before { sign_in basic }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:createMemberDetails) {{
-          member: {
-            firstname: "first",
-            lastname: "last",
-            email: "foo@foo.com",
-            expirationTime: Time.now.to_i * 1000,
-            memberContractOnFile: true
+          firstname: "first",
+          lastname: "last",
+          email: "foo@foo.com",
+          memberContractOnFile: true,
+          phone: "867-5309",
+          address: {
+            street: "123 Foo St",
+            city: "Roswell",
+            state: "NM",
+            postal_code: "who knows"
           }
         }}
         run_test!
       end
 
       response '401', 'User unauthenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:createMemberDetails) {{
-          member: {
-            firstname: "first",
-            lastname: "last",
-            email: "foo@foo.com",
-            expirationTime: Time.now.to_i * 1000,
-            memberContractOnFile: true
+          firstname: "first",
+          lastname: "last",
+          email: "foo@foo.com",
+          phone: "867-5309",
+          memberContractOnFile: true,
+          address: {
+            street: "123 Foo St",
+            city: "Roswell",
+            state: "NM",
+            postal_code: "who knows"
           }
         }}
         run_test!
@@ -74,55 +85,71 @@ describe 'Admin::Members API', type: :request do
       tags 'Members'
       operationId "adminUpdateMember"
       parameter name: :id, in: :path, type: :string
-
       parameter name: :updateMemberDetails, in: :body, schema: {
+        title: :updateMemberDetails, 
         type: :object,
         properties: {
-          member: {
-            type: :object,
+          firstname: { type: :string, 'x-nullable': true },
+          lastname: { type: :string, 'x-nullable': true },
+          email: { type: :string, 'x-nullable': true },
+          address: { 
+            type: :object, 
+            'x-nullable': true ,
             properties: {
-              firstname: { type: :string, 'x-nullable': true },
-              lastname: { type: :string, 'x-nullable': true },
-              email: { type: :string, 'x-nullable': true },
-              address: { 
-                type: :object, 
-                'x-nullable': true ,
-                properties: {
-                  street: { type: :string, 'x-nullable': true },
-                  unit: { type: :string,  'x-nullable': true },
-                  city: { type: :string, 'x-nullable': true },
-                  state: { type: :string, 'x-nullable': true },
-                  postalCode: { type: :string, 'x-nullable': true },
-                }
-              },
-              phone: { type: :string, 'x-nullable': true },
-              status: { type: :string, enum: ["activeMember", "inactive", "nonMember", "revoked"], 'x-nullable': true },
-              role: { type: :string, enum: ["admin", "member"], 'x-nullable': true },
-              renew: { type: :number, 'x-nullable': true },
-              memberContractOnFile: { type: :boolean, 'x-nullable': true },
-              subscription: { type: :boolean, 'x-nullable': true },
+              street: { type: :string, 'x-nullable': true },
+              unit: { type: :string,  'x-nullable': true },
+              city: { type: :string, 'x-nullable': true },
+              state: { type: :string, 'x-nullable': true },
+              postalCode: { type: :string, 'x-nullable': true },
             }
-          }
+          },
+          phone: { type: :string, 'x-nullable': true },
+          status: { type: :string, enum: ["activeMember", "inactive", "nonMember", "revoked"], 'x-nullable': true },
+          role: { type: :string, enum: ["admin", "member"], 'x-nullable': true },
+          renew: { type: :number, 'x-nullable': true },
+          memberContractOnFile: { type: :boolean, 'x-nullable': true },
+          subscription: { type: :boolean, 'x-nullable': true },
+        }
+      }, required: true
+
+      request_body_json schema: {
+        title: :updateMemberDetails, 
+        type: :object,
+        properties: {
+          firstname: { type: :string, 'x-nullable': true },
+          lastname: { type: :string, 'x-nullable': true },
+          email: { type: :string, 'x-nullable': true },
+          address: { 
+            type: :object, 
+            'x-nullable': true ,
+            properties: {
+              street: { type: :string, 'x-nullable': true },
+              unit: { type: :string,  'x-nullable': true },
+              city: { type: :string, 'x-nullable': true },
+              state: { type: :string, 'x-nullable': true },
+              postalCode: { type: :string, 'x-nullable': true },
+            }
+          },
+          phone: { type: :string, 'x-nullable': true },
+          status: { type: :string, enum: ["activeMember", "inactive", "nonMember", "revoked"], 'x-nullable': true },
+          role: { type: :string, enum: ["admin", "member"], 'x-nullable': true },
+          renew: { type: :number, 'x-nullable': true },
+          memberContractOnFile: { type: :boolean, 'x-nullable': true },
+          subscription: { type: :boolean, 'x-nullable': true },
         }
       }, required: true
 
       response '200', 'member updated' do
         before { sign_in admin }
 
-        schema type: :object,
-        properties: {
-          member: { '$ref' => '#/definitions/Member' },
-        },
-        required: [ 'member' ]
+        schema '$ref' => '#/components/schemas/Member'
 
         let(:updateMemberDetails) {{
-          member: {
-            firstname: "first",
-            lastname: "last",
-            email: "foo@foo.com",
-            expirationTime: Time.now.to_i * 1000,
-            memberContractOnFile: true
-          }
+          firstname: "first",
+          lastname: "last",
+          email: "foo@foo.com",
+          expirationTime: Time.now.to_i * 1000,
+          memberContractOnFile: true
         }}
         let(:id) { create(:member).id }
         run_test!
@@ -130,30 +157,26 @@ describe 'Admin::Members API', type: :request do
 
       response '403', 'User unauthorized' do
         before { sign_in basic }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:updateMemberDetails) {{
-          member: {
-            firstname: "first",
-            lastname: "last",
-            email: "foo@foo.com",
-            expirationTime: Time.now.to_i * 1000,
-            memberContractOnFile: true
-          }
+          firstname: "first",
+          lastname: "last",
+          email: "foo@foo.com",
+          expirationTime: Time.now.to_i * 1000,
+          memberContractOnFile: true
         }}
         let(:id) { create(:member).id }
         run_test!
       end
 
       response '401', 'User unauthenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:updateMemberDetails) {{
-          member: {
-            firstname: "first",
-            lastname: "last",
-            email: "foo@foo.com",
-            expirationTime: Time.now.to_i * 1000,
-            memberContractOnFile: true
-          }
+          firstname: "first",
+          lastname: "last",
+          email: "foo@foo.com",
+          expirationTime: Time.now.to_i * 1000,
+          memberContractOnFile: true
         }}
         let(:id) { create(:member).id }
         run_test!
@@ -161,15 +184,13 @@ describe 'Admin::Members API', type: :request do
 
       response '404', 'Member not found' do
         before { sign_in admin }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:updateMemberDetails) {{
-          member: {
-            firstname: "first",
-            lastname: "last",
-            email: "foo@foo.com",
-            expirationTime: Time.now.to_i * 1000,
-            memberContractOnFile: true
-          }
+          firstname: "first",
+          lastname: "last",
+          email: "foo@foo.com",
+          expirationTime: Time.now.to_i * 1000,
+          memberContractOnFile: true
         }}
         let(:id) { 'invalid' }
         run_test!

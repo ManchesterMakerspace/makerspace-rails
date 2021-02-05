@@ -2,33 +2,38 @@ class Admin::MembersController < AdminController
   before_action :set_member, only: [:update]
 
   def create
-    @member = Member.new(get_camel_case_params)
+    @member = Member.new(get_camel_case_params(create_member_params()))
     @member.save!
     @member.reload
     send_set_password_email
-    render json: @member and return
+    render json: @member, adapter: :attributes and return
   end
 
   def update
     date = @member.expirationTime
-    @member.update!(get_camel_case_params)
+    @member.update!(get_camel_case_params(update_member_params()))
     notify_renewal(date)
     @member.reload
-    render json: @member and return
+    render json: @member, adapter: :attributes and return
   end
 
   private
-  def member_params
-    params.require(:member).permit(:firstname, :lastname, :role, :email, :status, :expiration_time, :renew, :member_contract_on_file, :notes,
+  def create_member_params
+    params.require([:firstname, :lastname, :email])
+    params.permit(:firstname, :lastname, :role, :email, :status, :member_contract_on_file, :phone, :notes, address: [:street, :city, :state, :postal_code])
+  end
+
+  def update_member_params
+    params.permit(:firstname, :lastname, :role, :email, :status, :expiration_time, :renew, :member_contract_on_file, :notes,
       :phone, :subscription, address: [:street, :unit, :city, :state, :postal_code])
   end
 
-  def get_camel_case_params
+  def get_camel_case_params(member_params)
     camel_case_props = {
       expiration_time: :expirationTime,
       member_contract_on_file: :memberContractOnFile,
     }
-    params = member_params()
+    params = member_params
     camel_case_props.each do | key, value|
       params[value] = params.delete(key) unless params[key].nil?
     end

@@ -5,18 +5,17 @@ class RentalsController < AuthenticationController
 
   def index
     @rentals = Rental.where(member_id: current_member.id)
-    return render_with_total_items(query_resource(@rentals), { each_serializer: RentalSerializer, root: "rentals" })
+    return render_with_total_items(query_resource(@rentals), { each_serializer: RentalSerializer, adapter: :attributes })
   end
 
   def show
-    render json: @rental and return
+    render json: @rental, adapter: :attributes and return
   end
 
   def update
     # Non admins can only update themselves
     @member = @rental.member
     raise Error::Forbidden.new unless @member.id == current_member.id
-    raise ActionController::ParameterMissing.new(:signature) if update_params[:signature].nil?
 
     begin
       encoded_signature = update_params[:signature].split(",")[1]
@@ -30,7 +29,7 @@ class RentalsController < AuthenticationController
       @messages.push("Error uploading #{@member.fullname}'s rental agreement signature'. Error: #{err}")
     end
 
-    render json: @rental and return
+    render json: @rental, adapter: :attributes and return
   end
 
   private
@@ -40,6 +39,7 @@ class RentalsController < AuthenticationController
   end
 
   def update_params
-    params.require(:rental).permit(:signature)
+    params.require(:signature)
+    params.permit(:signature)
   end
 end

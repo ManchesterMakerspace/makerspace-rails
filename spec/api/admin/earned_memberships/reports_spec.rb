@@ -15,14 +15,8 @@ describe 'Admin::EarnedMembership::Report API', type: :request do
 
       response '200', 'reports found' do
         before { sign_in admin }
-        schema type: :object,
-        properties: {
-          reports: {
-            type: :array,
-            items: { '$ref' => '#/definitions/Report' }
-          }
-        },
-        required: [ 'reports' ]
+        schema type: :array,
+            items: { '$ref' => '#/components/schemas/Report' }
 
         let(:id) { create(:earned_membership).id }
         run_test!
@@ -30,20 +24,20 @@ describe 'Admin::EarnedMembership::Report API', type: :request do
 
       response '403', 'User unauthorized' do
         before { sign_in basic }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { create(:earned_membership).id }
         run_test!
       end
 
       response '401', 'User unauthenticated' do
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { create(:earned_membership).id }
         run_test!
       end
 
       response '404', 'Earned membership not found' do
         before { sign_in admin }
-        schema '$ref' => '#/definitions/error'
+        schema '$ref' => '#/components/schemas/error'
         let(:id) { 'invalid' }
         run_test!
       end

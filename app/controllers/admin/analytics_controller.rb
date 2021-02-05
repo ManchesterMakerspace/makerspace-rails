@@ -9,6 +9,6 @@ class Admin::AnalyticsController < AdminController
       refunds_pending: Service::Analytics::Invoices.query_refunds_pending().count,
     }
 
-    render :json => { :analytics => analytics.deep_transform_keys! { |key| key.to_s.camelize(:lower) } } and return
+    render :json => analytics.deep_transform_keys! { |key| key.to_s.camelize(:lower) } and return
   end
 end

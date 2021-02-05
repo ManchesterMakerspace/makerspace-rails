@@ -14,11 +14,13 @@ class InvoiceSerializer < ApplicationSerializer
              :resource_id,
              :quantity,
              :discount_id,
+             :member_id,
              :member_name,
              :refunded,
              :refund_requested,
-             :member,
-             :rental,
+             :resource
+
+  has_one :member, serializer: MemberSerializer
 
   def member_id
     object.member && object.member.id
@@ -32,17 +34,11 @@ class InvoiceSerializer < ApplicationSerializer
     object.member && object.member.fullname
   end
 
-  def member
+  def resource
     if object.resource_class == "member"
-      resource = object.resource
+      MemberSerializer.new(object.resource)
+    elsif object.resource_class == "rental"
+      RentalSerializer.new(object.resource)
     end
-    resource
-  end
-
-  def rental
-    if object.resource_class == "rental"
-      resource = object.resource
-    end
-    resource
   end
 end

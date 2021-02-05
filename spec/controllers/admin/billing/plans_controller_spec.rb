@@ -32,7 +32,7 @@ RSpec.describe Admin::Billing::PlansController, type: :controller do
       get :index, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(parsed_response['plans'].first['id']).to eq(membership_plan.id.to_s)
+      expect(parsed_response.first['id']).to eq(membership_plan.id.to_s)
     end
 
     it "filters plans by type" do 
@@ -45,7 +45,7 @@ RSpec.describe Admin::Billing::PlansController, type: :controller do
       get :index, params: { types: ["rental"] }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(parsed_response['plans'].first['id']).to eq(rental_plan.id.to_s)
+      expect(parsed_response.first['id']).to eq(rental_plan.id.to_s)
     end
   end
 
@@ -57,7 +57,7 @@ RSpec.describe Admin::Billing::PlansController, type: :controller do
       get :discounts, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(parsed_response['discounts'].first['id']).to eq(discount.id)
+      expect(parsed_response.first['id']).to eq(discount.id)
     end
   end
 end

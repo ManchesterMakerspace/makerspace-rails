@@ -23,7 +23,7 @@ RSpec.describe InvoicesController, type: :controller do
       expect(response.content_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
       
-      response_ids = parsed_response['invoices'].collect { |i| i['id'] }
+      response_ids = parsed_response.collect { |i| i['id'] }
 
       expect(response_ids).to include(invoices.first.id.to_s)
       expect(response_ids).to include(invoices.last.id.to_s)
@@ -34,24 +34,24 @@ RSpec.describe InvoicesController, type: :controller do
   describe "POST #create" do
     let(:io) { create(:invoice_option) }
     it "Can create an invoice from an existing invoice option" do 
-      post :create, params: { invoice_option: { id: io.id } }
+      post :create, params: { id: io.id }
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
 
-      expect(parsed_response['invoice']['amount']).to eq(number_to_currency(io.amount))
-      expect(parsed_response['invoice']['discountId']).to eq(nil)
+      expect(parsed_response['amount']).to eq(number_to_currency(io.amount))
+      expect(parsed_response['discountId']).to eq(nil)
     end
 
     it  "Can create an invoice with an associated discount" do 
       discount = ::BraintreeService::Discount.standard_membership_discount
-      post :create, params: { invoice_option: { id: io.id, discount_id: discount.id } }
+      post :create, params: { id: io.id, discount_id: discount.id }
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
 
-      expect(parsed_response['invoice']['amount']).to eq(number_to_currency(io.amount - discount.amount))
-      expect(parsed_response['invoice']['discountId']).to eq(discount.id.to_s)
+      expect(parsed_response['amount']).to eq(number_to_currency(io.amount - discount.amount))
+      expect(parsed_response['discountId']).to eq(discount.id.to_s)
     end
   end
 end

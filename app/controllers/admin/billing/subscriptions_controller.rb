@@ -1,7 +1,7 @@
 class Admin::Billing::SubscriptionsController < Admin::BillingController
   def index
     subs = ::BraintreeService::Subscription.get_subscriptions(@gateway, construct_query)
-    return render_with_total_items(subs, { :each_serializer => BraintreeService::SubscriptionSerializer, root: "subscriptions" })
+    return render_with_total_items(subs, { :each_serializer => BraintreeService::SubscriptionSerializer, adapter: :attributes })
   end
 
   def destroy
@@ -9,8 +9,6 @@ class Admin::Billing::SubscriptionsController < Admin::BillingController
     result = ::BraintreeService::Subscription.cancel(@gateway, params[:id])
     raise Error::Braintree::Result.new(result) unless result.success?
 
-    # Verify resource exists and call update on that resource
-    subscription.resource.remove_subscription() unless subscription.resource.nil?
     render json: {}, status: 204 and return
   end
 

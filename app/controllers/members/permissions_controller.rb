@@ -2,7 +2,7 @@ class Members::PermissionsController < AuthenticationController
   before_action :find_member
 
   def index
-    render json: { permissions: @member.get_permissions } and return
+    render json: @member.get_permissions, adapter: :attributes and return
   end
 
   private

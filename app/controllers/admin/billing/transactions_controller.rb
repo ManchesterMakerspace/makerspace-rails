@@ -1,12 +1,12 @@
 class Admin::Billing::TransactionsController < Admin::BillingController
   def index
     transactions = ::BraintreeService::Transaction.get_transactions(@gateway, construct_query)
-    return render_with_total_items(transactions, { each_serializer: BraintreeService::TransactionSerializer, root: "transactions" })
+    return render_with_total_items(transactions, { each_serializer: BraintreeService::TransactionSerializer, adapter: :attributes })
   end
 
   def show
     transaction = ::BraintreeService::Transaction.get_transaction(@gateway, params[:id])
-    render json: transaction, serializer: BraintreeService::TransactionSerializer, root: "transaction" and return
+    render json: transaction, serializer: BraintreeService::TransactionSerializer, adapter: :attributes and return
   end
 
   def destroy
