@@ -25,7 +25,6 @@ class BraintreeService::Subscription < Braintree::Subscription
     raise Error::Braintree::Result.new(result) unless result.success?
     invoice.unlock() unless invoice.nil?
     Invoice.process_cancellation(id)
-    invoice.resource.cancel_subscription() unless invoice.nil?
     result
   end
 

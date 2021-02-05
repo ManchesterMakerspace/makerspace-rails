@@ -4,5 +4,5 @@ class RejectionCard
   field :uid #Member's CardID as string
   field :holder, type: String #Member's name
   field :validity, type: String
-  field :timeOf, type: Date
+  field :timeOf, type: DateTime
 end

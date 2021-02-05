@@ -7,7 +7,7 @@ RSpec.describe RejectionCard, type: :model do
 
     it { is_expected.to have_field(:uid) }
     it { is_expected.to have_fields(:holder, :validity).of_type(String) }
-    it { is_expected.to have_field(:timeOf).of_type(Date) }
+    it { is_expected.to have_field(:timeOf).of_type(DateTime) }
   end
 
   it "has a valid factory" do

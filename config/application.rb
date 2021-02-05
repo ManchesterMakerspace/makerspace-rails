@@ -14,21 +14,21 @@ require "rails/test_unit/railtie"
 
 require 'dotenv'
 if (ENV["RAILS_ENV"] == 'production')
-  Dotenv.load('production.env')
+    Dotenv.load("#{__dir__}/../production.env")
 elsif (ENV["RAILS_ENV"] == 'development')
   if (ENV["TEST_MAIL"])
-    Dotenv.load('test.env')
+    Dotenv.load("#{__dir__}/../test.env")
   else 
-    Dotenv.load('development.env')
+    Dotenv.load("#{__dir__}/../development.env")
   end
 else
-  Dotenv.load('test.env')
+  Dotenv.load("#{__dir__}/../test.env")
 end
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
-Mongoid.load!('config/mongoid.yml')
+Mongoid.load!("#{__dir__}/mongoid.yml")
 
 module MemberInterface
   class Application < Rails::Application
