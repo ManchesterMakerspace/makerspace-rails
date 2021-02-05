@@ -4,7 +4,7 @@ class Admin::AnalyticsController < AdminController
     analytics = {
       total_members: Service::Analytics::Members.query_total_members().count,
       new_members: Service::Analytics::Members.query_new_members().count,
-      subscribed_members: Service::Analytics::Members.query_subscribed_members().count,
+      subscribed_members: Service::Analytics::Members.query_braintree_members().count,
       past_due_invoices: Service::Analytics::Invoices.query_past_due().count,
       refunds_pending: Service::Analytics::Invoices.query_refunds_pending().count,
     }
