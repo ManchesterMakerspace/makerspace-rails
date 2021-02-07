@@ -12,9 +12,24 @@ task :invoice_review => :environment do
       refunds_pending = Service::Analytics::Invoices.query_refunds_pending()
       pending_settlement = Service::Analytics::Invoices.query_settlement_pending()
 
-      def build_member_url(member)
+      def build_member_url(member_id)
         base_url = ActionMailer::Base.default_url_options[:host]
+        member = Member.find(member_id)
         "<#{base_url}/members/#{member.id}|#{member.fullname}>"
+      end
+
+      def build_member_list(invoice_list)
+        uniq_members = invoice_list.distinct(:member_id)
+        uniq_members.map do |member_id|
+          invoice_count = invoice_list.where(member_id: member_id).size
+          url = build_member_url(member_id)
+
+          if invoice_count > 1
+            url += " (#{invoice_count})"
+          end
+
+          url
+        end
       end
 
       def reduce_amt(invoices)
@@ -29,15 +44,15 @@ task :invoice_review => :environment do
       ]
 
       if past_due.length > 0
-        messages.concat(["Members with past due invoices:"]).concat(past_due.map { |invoice| build_member_url(invoice.member) })
+        messages.concat(["Members with past due invoices:"]).concat(build_member_list(past_due))
       end
 
       if pending_settlement.length > 0
-        messages.concat(["Members with invoices paid but not settled:"]).concat(pending_settlement.map { |invoice| build_member_url(invoice.member) })
+        messages.concat(["Members with invoices paid but not settled:"]).concat(build_member_list(pending_settlement))
       end
 
       if refunds_pending.length > 0
-        messages.concat(["Members who need response to their refund requests:"]).concat(refunds_pending.map { |invoice| build_member_url(invoice.member) })
+        messages.concat(["Members who need response to their refund requests:"]).concat(build_member_list(refunds_pending))
       end
 
       ::Service::SlackConnector.send_slack_messages(messages, channel)
