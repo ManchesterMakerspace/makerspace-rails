@@ -4,7 +4,7 @@ module Util
   end
 
   def self.is_prod?
-    Rails.env.production? && ENV['BT_ENV'].to_sym == :production
+    Rails.env.production? && ENV['BT_ENV'] && ENV['BT_ENV'].to_sym == :production
   end
 
   def self.date_as_string(maybe_date)

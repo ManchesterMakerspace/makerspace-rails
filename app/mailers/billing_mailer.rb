@@ -3,8 +3,6 @@ class BillingMailer < ApplicationMailer
 
   attr_accessor :email, :resource
 
-  default from: 'contact@manchestermakerspace.org'
-
   def new_subscription(email, subscription_id, invoice_id)
     gateway = connect_gateway
     member = Member.find_by(email: email)

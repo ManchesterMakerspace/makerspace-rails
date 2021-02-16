@@ -20,12 +20,13 @@ class Admin::MembersController < AdminController
   private
   def create_member_params
     params.require([:firstname, :lastname, :email])
-    params.permit(:firstname, :lastname, :role, :email, :status, :member_contract_on_file, :phone, :notes, address: [:street, :city, :state, :postal_code])
+    params.permit(:firstname, :lastname, :role, :email, :status, 
+      :silence_emails, :member_contract_on_file, :phone, :notes, address: [:street, :city, :state, :postal_code])
   end
 
   def update_member_params
     params.permit(:firstname, :lastname, :role, :email, :status, :expiration_time, :renew, :member_contract_on_file, :notes,
-      :phone, :subscription, address: [:street, :unit, :city, :state, :postal_code])
+      :silence_emails, :phone, :subscription, address: [:street, :unit, :city, :state, :postal_code])
   end
 
   def get_camel_case_params(member_params)
