@@ -109,6 +109,7 @@ describe 'Admin::Members API', type: :request do
           renew: { type: :number, 'x-nullable': true },
           memberContractOnFile: { type: :boolean, 'x-nullable': true },
           subscription: { type: :boolean, 'x-nullable': true },
+          silenceEmails: { type: :string, 'x-nullable': true },
         }
       }, required: true
 
