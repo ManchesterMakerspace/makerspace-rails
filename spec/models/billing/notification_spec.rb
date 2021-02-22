@@ -71,7 +71,7 @@ RSpec.describe BraintreeService::Notification, type: :model do
       create(:card, member: member)
       init_member_expiration = member.pretty_time
       allow(transaction).to receive(:line_items).and_return([])
-      expect(BraintreeService::Notification).to receive(:send_slack_message).with(/recurring payment/i)
+      expect(BraintreeService::Notification).to receive(:enque_message).with(/recurring payment/i)
 
       BraintreeService::Notification.process_subscription(successful_charge_notification)
       member.reload
@@ -86,7 +86,7 @@ RSpec.describe BraintreeService::Notification, type: :model do
       create(:card, member: member)
       init_member_expiration = member.pretty_time
       allow(transaction).to receive(:line_items).and_return([])
-      expect(BraintreeService::Notification).to receive(:send_slack_message).with(/in-process invoice/i, "treasurer")
+      expect(BraintreeService::Notification).to receive(:enque_message).with(/in-process invoice/i, "treasurer")
 
       BraintreeService::Notification.process_subscription(successful_charge_notification)
       member.reload
@@ -97,14 +97,14 @@ RSpec.describe BraintreeService::Notification, type: :model do
 
     it "Reports error if no subscription is found" do
       allow(successful_charge_notification).to receive_message_chain(:subscription).and_return(nil)
-      expect(BraintreeService::Notification).to receive(:send_slack_message).with(/malformed subscription/i)
+      expect(BraintreeService::Notification).to receive(:enque_message).with(/malformed subscription/i)
       BraintreeService::Notification.get_details_for_notification(successful_charge_notification)
     end
 
     it "reports error if no invoice is found" do
       allow(successful_charge_notification).to receive_message_chain(:subscription, :transactions, :first).and_return(transaction)
       allow(Invoice).to receive(:active_invoice_for_resource).and_return(nil)
-      expect(BraintreeService::Notification).to receive(:send_slack_message).with(/no active invoice/i, "treasurer")
+      expect(BraintreeService::Notification).to receive(:enque_message).with(/no active invoice/i, "treasurer")
       BraintreeService::Notification.process_subscription(successful_charge_notification)
     end
 
@@ -112,8 +112,8 @@ RSpec.describe BraintreeService::Notification, type: :model do
       allow(Invoice).to receive(:active_invoice_for_resource).and_return(invoice)
       allow(invoice).to receive(:submit_for_settlement).and_raise(Error::NotFound)
       allow(successful_charge_notification).to receive_message_chain(:subscription, :transactions, :first).and_return(transaction)
-      allow(BraintreeService::Notification).to receive(:send_slack_message).with(/processing invoice/i)
-      expect(BraintreeService::Notification).to receive(:send_slack_message).with(/unknown resource/i)
+      allow(BraintreeService::Notification).to receive(:enque_message).with(/processing invoice/i)
+      expect(BraintreeService::Notification).to receive(:enque_message).with(/unknown resource/i)
       BraintreeService::Notification.process_subscription(successful_charge_notification)
     end
 
@@ -121,8 +121,8 @@ RSpec.describe BraintreeService::Notification, type: :model do
       allow(Invoice).to receive(:active_invoice_for_resource).and_return(invoice)
       allow(invoice).to receive(:submit_for_settlement).and_raise(Error::UnprocessableEntity, "Some error")
       allow(successful_charge_notification).to receive_message_chain(:subscription, :transactions, :first).and_return(transaction)
-      allow(BraintreeService::Notification).to receive(:send_slack_message).with(/processing invoice/i)
-      expect(BraintreeService::Notification).to receive(:send_slack_message).with(/some error/i)
+      allow(BraintreeService::Notification).to receive(:enque_message).with(/processing invoice/i)
+      expect(BraintreeService::Notification).to receive(:enque_message).with(/some error/i)
       BraintreeService::Notification.process_subscription(successful_charge_notification)
     end
   end
@@ -137,7 +137,7 @@ RSpec.describe BraintreeService::Notification, type: :model do
       invoice # Call to initialize
       allow(notification).to receive_message_chain(:dispute, :transaction).and_return(transaction)
       allow(transaction).to receive(:line_items).and_return([])
-      expect(BraintreeService::Notification).to receive(:send_slack_message).with(/received dispute/i)
+      expect(BraintreeService::Notification).to receive(:enque_message).with(/received dispute/i)
 
       BraintreeService::Notification.process_dispute(notification)
       invoice.reload
@@ -146,14 +146,14 @@ RSpec.describe BraintreeService::Notification, type: :model do
 
     it "Reports error if no transaction is found" do
       allow(notification).to receive(:dispute).and_return(nil)
-      expect(BraintreeService::Notification).to receive(:send_slack_message).with(/malformed dispute/i)
+      expect(BraintreeService::Notification).to receive(:enque_message).with(/malformed dispute/i)
       BraintreeService::Notification.get_details_for_notification(notification)
     end
 
     it "reports error if no invoice is found" do
       allow(notification).to receive_message_chain(:dispute, :transaction).and_return(transaction)
       allow(Invoice).to receive(:active_invoice_for_resource).and_return(nil)
-      expect(BraintreeService::Notification).to receive(:send_slack_message).with(/cannot find related invoice/i)
+      expect(BraintreeService::Notification).to receive(:enque_message).with(/cannot find related invoice/i)
       BraintreeService::Notification.process_dispute(notification)
     end
   end
@@ -170,7 +170,7 @@ RSpec.describe BraintreeService::Notification, type: :model do
       new_member.reload
       init_member_expiration = new_member.pretty_time
       allow(pd_transaction).to receive(:line_items).and_return([])
-      expect(BraintreeService::Notification).to receive(:send_slack_message).with(/failed with status/i)
+      expect(BraintreeService::Notification).to receive(:enque_message).with(/failed with status/i)
 
       BraintreeService::Notification.process_transaction(failed_transaction_notification)
       new_member.reload
@@ -182,7 +182,7 @@ RSpec.describe BraintreeService::Notification, type: :model do
 
     it "reports error if no invoice is found" do
       allow(Invoice).to receive(:active_invoice_for_resource).and_return(nil)
-      expect(BraintreeService::Notification).to receive(:send_slack_message).with(/no invoice found/i)
+      expect(BraintreeService::Notification).to receive(:enque_message).with(/no invoice found/i)
       BraintreeService::Notification.process_transaction(failed_transaction_notification)
     end
 
@@ -192,7 +192,7 @@ RSpec.describe BraintreeService::Notification, type: :model do
       settled_invoice = create(:invoice, member: new_member, transaction_id: transaction.id) 
       init_member_expiration = new_member.pretty_time
       allow(transaction).to receive(:line_items).and_return([])
-      expect(BraintreeService::Notification).to receive(:send_slack_message).with(/one-time payment/i)
+      expect(BraintreeService::Notification).to receive(:enque_message).with(/one-time payment/i)
 
       BraintreeService::Notification.process_transaction(success_transaction_notification)
       new_member.reload

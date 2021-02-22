@@ -7,6 +7,10 @@ gem 'puma', '~> 3.12'
 gem 'active_model_serializers'
 gem 'dotenv-rails'
 
+# Redis Cache and Event Bus
+gem 'redis'
+gem 'redis-rails'
+
 #authentication
 gem 'devise'
 gem 'bcrypt'

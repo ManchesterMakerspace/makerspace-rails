@@ -98,7 +98,7 @@ class Invoice
   def request_refund
     set_refund_requested
     base_url = ActionMailer::Base.default_url_options[:host]
-    send_slack_message("#{member.fullname} has requested a refund of #{amount} for #{name || description} from #{settled_at}. <#{base_url}/billing/transactions/#{transaction_id}|Process refund>")
+    enque_message("#{member.fullname} has requested a refund of #{amount} for #{name || description} from #{settled_at}. <#{base_url}/billing/transactions/#{transaction_id}|Process refund>")
     BillingMailer.refund_requested(member.email, transaction_id, id.as_json).deliver_later
   end
 
@@ -164,8 +164,8 @@ class Invoice
     slack_user = SlackUser.find_by(member_id: self.member_id)
     type = self.resource_class == "member" ? "membership" : "rental"
     message = "#{self.member.fullname}'s #{type} subscription#{type == "rental" ? " for #{self.resource.number}" : ""} has been canceled."
-    send_slack_message(message, ::Service::SlackConnector.safe_channel(slack_user.slack_id)) unless slack_user.nil?
-    send_slack_message(message, ::Service::SlackConnector.members_relations_channel)
+    enque_message(message, slack_user.slack_id) unless slack_user.nil?
+    enque_message(message, ::Service::SlackConnector.members_relations_channel)
     BillingMailer.canceled_subscription(self.member.email, self.resource_class).deliver_later
   end
 
@@ -235,7 +235,7 @@ class Invoice
       self.settled = true
       self.save!
     else
-      send_slack_message("Delaying processing of invoice #{self.id}... Is member missing a key?")
+      enque_message("Delaying processing of invoice #{self.id}... Is member missing a key?")
     end
   end
 

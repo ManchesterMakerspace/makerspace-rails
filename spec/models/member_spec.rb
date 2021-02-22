@@ -171,7 +171,7 @@ RSpec.describe Member, type: :model do
 
         other_member = build(:member)
         expect(other_member).to receive(:invite_gdrive).with(other_member.email).and_raise(Error::Google::Upload)
-        expect(other_member).to receive(:send_slack_message).with(/sharing/)
+        expect(other_member).to receive(:enque_message).with(/sharing/)
         other_member.save
       end
     end

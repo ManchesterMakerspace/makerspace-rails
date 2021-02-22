@@ -1,6 +1,6 @@
 class ClientErrorHandlerController < ApplicationController
   def create 
-    send_slack_message("Client Error: #{client_params[:message]}", ::Service::SlackConnector.logs_channel)
+    enque_message("Client Error: #{client_params[:message]}", ::Service::SlackConnector.logs_channel)
     render json: {}, status: 204 and return
   end
 

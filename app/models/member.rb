@@ -192,15 +192,15 @@ class Member
   # Emit to Member & Management channels on renewal
   def send_renewal_slack_message(current_user=nil)
     slack_user = SlackUser.find_by(member_id: id)
-    send_slack_message(get_renewal_slack_message, ::Service::SlackConnector.safe_channel(slack_user.slack_id)) unless slack_user.nil?
-    send_slack_message(get_renewal_slack_message(current_user), ::Service::SlackConnector.members_relations_channel)
+    enque_message(get_renewal_slack_message, slack_user.slack_id) unless slack_user.nil?
+    enque_message(get_renewal_slack_message(current_user), ::Service::SlackConnector.members_relations_channel)
   end
 
   # Emit to Member & Management channels on renewal reversals
   def send_renewal_reversal_slack_message
     slack_user = SlackUser.find_by(member_id: id)
-    send_slack_message(get_renewal_reversal_slack_message, ::Service::SlackConnector.safe_channel(slack_user.slack_id)) unless slack_user.nil?
-    send_slack_message(get_renewal_reversal_slack_message, ::Service::SlackConnector.members_relations_channel)
+    enque_message(get_renewal_reversal_slack_message, slack_user.slack_id) unless slack_user.nil?
+    enque_message(get_renewal_reversal_slack_message, ::Service::SlackConnector.members_relations_channel)
   end
 
   protected
@@ -250,7 +250,7 @@ class Member
       slack_user = SlackUser.find_by(member_id: id)
       send_slack_invite() if slack_user.nil?
       send_google_invite()
-      send_slack_message("Re-invited #{self.fullname} to #{slack_user.nil? ? "Slack and ": ""}Google with new email: #{self.email}")
+      enque_message("Re-invited #{self.fullname} to #{slack_user.nil? ? "Slack and ": ""}Google with new email: #{self.email}")
     end
   end
 
@@ -262,7 +262,7 @@ class Member
     begin
       invite_gdrive(self.email)
     rescue Error::Google::Upload => err
-      send_slack_message("Error sharing Member Resources folder with #{self.fullname}. Error: #{err}")
+      enque_message("Error sharing Member Resources folder with #{self.fullname}. Error: #{err}")
     end
   end
 
