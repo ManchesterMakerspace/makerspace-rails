@@ -59,7 +59,7 @@ class MembersController < AuthenticationController
     end
 
     def member_params
-      params.permit(:firstname, :lastname, :email, :phone, address: [:street, :unit, :city, :state, :postal_code])
+      params.permit(:firstname, :lastname, :email, :phone, :silence_emails, address: [:street, :unit, :city, :state, :postal_code])
     end
 
     def search_params

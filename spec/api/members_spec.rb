@@ -72,6 +72,7 @@ describe 'Members API', type: :request do
               lastname: { type: :string, 'x-nullable': true },
               email: { type: :string, 'x-nullable': true },
               phone: { type: :string, 'x-nullable': true },
+              silenceEmails: { type: :string, 'x-nullable': true },
               address: {
                 type: :object,
                 'x-nullable': true,

@@ -11,5 +11,5 @@ task :backup => :environment do
     slack_message = "Error backing up database: #{error}"
   end
 
-  ::Service::SlackConnector.send_slack_messages([slack_message], ::Service::SlackConnector.logs_channel)
+  ::Service::SlackConnector.send_slack_message(slack_message, ::Service::SlackConnector.logs_channel)
 end

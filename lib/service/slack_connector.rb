@@ -23,6 +23,20 @@ module Service
       )
     end
 
+    def send_complex_message(blocks, channel = ::Service::SlackConnector.members_relations_channel)
+      ::Service::SlackConnector.send_complex_message(blocks, channel)
+    end
+
+    def self.send_complex_message(blocks, channel = ::Service::SlackConnector.members_relations_channel)
+      client.chat_postMessage(
+        channel: safe_channel(channel),
+        blocks: blocks,
+        as_user: false,
+        username: 'Management Bot',
+        icon_emoji: ':ghost:'
+      )
+    end
+
     def invite_to_slack()
       # Call with self since this is the instance method
       ::Service::SlackConnector.invite_to_slack(self)

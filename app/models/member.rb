@@ -41,6 +41,7 @@ class Member
   field :customer_id, type: String # Braintree customer relation
   field :subscription_id, type: String # Braintree relation
 
+  field :silence_emails, type: Boolean # Stop all slack and email notifications to user
   field :notes, type: String
 
   search_in :email, :lastname

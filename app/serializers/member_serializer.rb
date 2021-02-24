@@ -7,6 +7,7 @@ class MemberSerializer < MemberSummarySerializer
              :customer_id,
              :address,
              :phone,
+             :silence_emails
 
   def card_id
     active_card = object.access_cards.to_a.find { |card| card.is_active? }

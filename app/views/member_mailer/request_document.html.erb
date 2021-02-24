@@ -6,6 +6,9 @@
   <p>Hi <%=@member.fullname%>! </p>
   <p>
     Our records incidate we're missing a signed <%=@document_type%> from you. 
-    <%= link_to 'Please take a moment to login and e-sign the document by following this link.', @url, id: "profile-link"%>
+    <%= link_to 'Please take a moment to login and e-sign the document by following this link.', 
+        "#{url_for(action: :application, controller: 'application')}/members/#{@member.id}", 
+        id: "profile-link"
+    %>
   </p>
 </div>
