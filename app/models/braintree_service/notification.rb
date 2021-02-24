@@ -105,7 +105,7 @@ class BraintreeService::Notification
       end
 
       return
-    elsif !!invoice.locked
+    elsif InvoiceHelper.get_lifecycle(invoice.id) == InvoiceHelper::LIFECYCLES[:InProgress]
       enque_message("Received subscription notification for in-process invoice #{invoice.id}. Skipping processing", ::Service::SlackConnector.treasurer_channel)
       return
     end
@@ -143,11 +143,11 @@ No automated actions have been taken at this time.")
   end
 
   def self.process_subscription_cancellation(invoice)
-    if !!invoice.locked
+    if InvoiceHelper.get_lifecycle(invoice.id) == InvoiceHelper::LIFECYCLES[:Cancelling]
       enque_message("Received subscription cancelation notification for in-process invoice #{invoice.id}. Skipping processing", ::Service::SlackConnector.treasurer_channel)
       return
     end
-    Invoice.process_cancellation(invoice.subscription_id)
+    Invoice.process_cancellation(invoice.id)
   end
 
   def self.process_dispute(notification)

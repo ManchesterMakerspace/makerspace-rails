@@ -75,8 +75,9 @@ RSpec.describe PaypalController, type: :controller do
         expect {
           post :notify, params: valid_attributes, format: :json
         }.to have_enqueued_job
-        all_messages = Redis.current.keys().map { |key| JSON.load(Redis.current.get(key))["message"] }
-        expect(all_messages).to include("Txn is already taken")
+        messages = Redis.current.mget(*Redis.current.keys)
+        sorted_messages = messages.sort_by { |payload| Time.parse(JSON.load(payload)["timestamp"]) }
+        expect(JSON.load(sorted_messages.last)["message"]).to eql("Txn is already taken")
       end
     end
   end

@@ -35,6 +35,9 @@ RSpec.describe BraintreeService::Subscription, type: :model do
 
     describe "#cancel" do
       it "cancels a subscription" do
+        member = create(:member, subscription_id: "foo", subscription: true)
+        member_invoice = create(:invoice, subscription_id: member.subscription_id, resource_id: member.id)
+
         allow(gateway).to receive_message_chain(:subscription, cancel: success_result) # Setup method calls to gateway
         expect(gateway.subscription).to receive(:cancel).with("foo").and_return(success_result)
         result = BraintreeService::Subscription.cancel(gateway, "foo")
@@ -70,6 +73,9 @@ RSpec.describe BraintreeService::Subscription, type: :model do
       end
 
       it "raises error if failed result" do
+        member = create(:member, subscription_id: "foo", subscription: true)
+        member_invoice = create(:invoice, subscription_id: member.subscription_id, resource_id: member.id)
+
         allow(gateway).to receive_message_chain(:subscription, cancel: error_result) # Setup method calls to gateway
         expect(gateway.subscription).to receive(:cancel).with("foo").and_return(error_result)
         allow(Error::Braintree::Result).to receive(:new).with(error_result).and_return(Error::Braintree::Result.new) # Bypass error instantiation

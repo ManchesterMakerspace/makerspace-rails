@@ -95,7 +95,7 @@ class PaypalController < ApplicationController
       )
     when 'mp_cancel'
       unless matching_invoice.nil?
-        Invoice.process_cancellation(@payment.plan_id)
+        Invoice.process_cancellation(matching_invoice.id)
         return
       end
 
@@ -117,7 +117,7 @@ class PaypalController < ApplicationController
             "Subscription for #{matching_invoice.name} reached max failed attempts and has been suspended. Please review your payment options and contact an administrator to enable.",
             slack_user.slack_id
           )
-          Invoice.process_cancellation(matching_invoice.plan_id, true)
+          Invoice.process_cancellation(matching_invoice.id, true)
         end
       end
     else
