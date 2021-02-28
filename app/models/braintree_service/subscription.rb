@@ -21,10 +21,15 @@ class BraintreeService::Subscription < Braintree::Subscription
   def self.cancel(gateway, id)
     invoice = Invoice.find_by(subscription_id: id)
     unless invoice.nil?
+      SubscriptionHelper.update_lifecycle(
+        id, 
+        SubscriptionHelper::LIFECYCLES[:Cancelled]
+      )
       result = InvoiceHelper.cancel_workflow(
         invoice.id,
         Proc.new { gateway.subscription.cancel(id) }
       )
+      raise ::Error::Braintree::Result.new(result) unless result.success?
       Invoice.process_cancellation(invoice.id)
       result
     end
@@ -57,6 +62,10 @@ class BraintreeService::Subscription < Braintree::Subscription
       }
     end
     result = gateway.subscription.create(subscription_hash)
+    SubscriptionHelper.update_lifecycle(
+      result.subscription.id, 
+      result.success? ? SubscriptionHelper::LIFECYCLES[:Created] : SubscriptionHelper::LIFECYCLES[:Failed]
+    )
     raise ::Error::Braintree::Result.new(result) unless result.success?
     normalize_subscription(gateway, result.subscription)
   end

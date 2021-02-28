@@ -25,7 +25,7 @@ class Invoice
   field :refund_requested, type: Time
   field :dispute_requested, type: Time
   field :dispute_settled, type: Boolean
-  field :locked, type: Boolean, default: false # Lock an invoice to prevent braintree notification race condition
+  field :locked, type: Boolean, default: false # Deprecated. Lock an invoice to prevent braintree notification race condition
 
   ## Admin/Operation Information
   # How many operations to perform (eg, num of months renewed)
@@ -59,14 +59,6 @@ class Invoice
   after_create :send_rental_email, if: Proc.new { (resource_class == "rental" && subscription_id.nil?) || plan_id.nil? }
 
   attr_accessor :found_resource, :payment_method_id
-
-  def lock
-    self.update!({ locked: true })
-  end
-
-  def unlock
-    self.update!({ locked: false })
-  end
 
   def settled
     !!self.settled_at
@@ -146,7 +138,6 @@ class Invoice
     next_invoice.refunded = false
     next_invoice.refund_requested = nil
     next_invoice.transaction_id = nil
-    next_invoice.locked = false
     next_invoice.dispute_settled = false
     next_invoice.dispute_requested = nil
     next_invoice.due_date = self.due_date + self.quantity.months

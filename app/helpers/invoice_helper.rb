@@ -16,7 +16,7 @@ module InvoiceHelper
         transaction = callback.call
         update_lifecycle(invoice_id, LIFECYCLES[:Success])
         transaction
-      # Catch any errors, unlock invoice and then rethrow
+      # Catch any errors, update cache and then rethrow
       rescue StandardError => e
         update_lifecycle(invoice_id, LIFECYCLES[:Failed])
         raise
