@@ -15,11 +15,11 @@ class BraintreeService::Transaction < Braintree::Transaction
     transaction = normalize(gateway, result.transaction)
     invoice = transaction.invoice
     if invoice.nil?
-      send_slack_message("Err: Refunded transaction #{transaction.id} without related invoice. Investigation required")
+      enque_message("Err: Refunded transaction #{transaction.id} without related invoice. Investigation required")
     else
       invoice.update!({ refunded: true })
       BillingMailer.refund(invoice.member.email, transaction_id, invoice.id.to_s).deliver_later
-      send_slack_message("#{invoice.member.fullname}'s refund of #{invoice.amount} for #{invoice.name} from #{invoice.settled_at} completed.")
+      enque_message("#{invoice.member.fullname}'s refund of #{invoice.amount} for #{invoice.name} from #{invoice.settled_at} completed.")
     end
 
     transaction
@@ -75,9 +75,9 @@ class BraintreeService::Transaction < Braintree::Transaction
 
     BillingMailer.receipt(invoice.member.email, transaction.id, invoice.id.to_s).deliver_later
     if invoice.plan_id
-      send_slack_message("New subscription from #{invoice.member.fullname} received for #{invoice.name}")
+      enque_message("New subscription from #{invoice.member.fullname} received for #{invoice.name}")
     end
-    send_slack_message("Payment from #{invoice.member.fullname} of $#{invoice.amount} received for #{invoice.name}")
+    enque_message("Payment from #{invoice.member.fullname} of $#{invoice.amount} received for #{invoice.name}")
     normalize(gateway, transaction)
   end
 

@@ -81,9 +81,7 @@ task :member_review => :environment do
       end
 
       def notify_member(messages, slack_user)
-        return
-        channel = ::Service::SlackConnector.safe_channel(slack_user.slack_id)
-        ::Service::SlackConnector.send_slack_message(messages, channel)
+        ::Service::SlackConnector.send_slack_message(messages, slack_user.slack_id)
       end
 
       # Construct Messages

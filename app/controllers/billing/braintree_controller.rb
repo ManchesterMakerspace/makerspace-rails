@@ -5,7 +5,7 @@ class Billing::BraintreeController < ApplicationController
 
   def webhooks
     if @notification.kind == ::Braintree::WebhookNotification::Kind::Check
-      @messages.push("Braintree Webhook test notification succeeded!")
+      enque_message("Braintree Webhook test notification succeeded!")
     else
       ::BraintreeService::Notification.process(@notification)
     end

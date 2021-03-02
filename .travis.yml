@@ -13,6 +13,7 @@ install:
 
 services:
   - docker
+  - redis-server
 
 addons:
   chrome: stable

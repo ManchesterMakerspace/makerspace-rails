@@ -26,7 +26,7 @@ class RentalsController < AuthenticationController
         MemberMailer.send_document("rental_agreement", @member.id.as_json, document).deliver_later
       end
     rescue Error::Google::Upload => err
-      @messages.push("Error uploading #{@member.fullname}'s rental agreement signature'. Error: #{err}")
+      enque_message("Error uploading #{@member.fullname}'s rental agreement signature'. Error: #{err}")
     end
 
     render json: @rental, adapter: :attributes and return

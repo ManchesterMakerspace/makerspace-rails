@@ -2,6 +2,7 @@ class ApplicationController < ActionController::Base
   include ApplicationHelper
   include ::Error::ErrorHandler
   include SlackService
+  include SetCurrentRequestDetails
 
   protect_from_forgery with: :exception
   after_action :set_csrf_cookie_for_ng

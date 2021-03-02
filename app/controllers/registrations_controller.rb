@@ -8,7 +8,7 @@ class RegistrationsController < ApplicationController
     member = Member.find_by(email: email)
     if member
       error = "Cannot send registration to #{email}. Account already exists"
-      @messages.push(error)
+      enque_message(error)
       raise ::Error::AccountExists
     end
     MemberMailer.welcome_email(email).deliver_later

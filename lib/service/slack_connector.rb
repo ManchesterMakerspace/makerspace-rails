@@ -1,5 +1,33 @@
 module Service
   module SlackConnector
+    def enque_message(
+        message, 
+        channel = ::Service::SlackConnector.members_relations_channel,
+        uniquifier = ::Service::SlackConnector.request_caller_id(caller_locations(1,1)[0].label)
+      )
+      ::Service::SlackConnector.enque_message(message, channel, uniquifier)
+    end
+
+    def self.enque_message(
+        message, 
+        channel = members_relations_channel,
+        uniquifier = request_caller_id(caller_locations(1,1)[0].label)
+      )
+      Redis.current.set(uniquifier, {
+        message: message,
+        channel: channel,
+        timestamp: Time.now
+      }.to_json)
+    end
+
+    def get_enqueued_messages(uniquifier)
+      ::Service::SlackConnector.get_enqueued_messages(uniquifier)
+    end
+
+    def self.get_enqueued_messages(uniquifier)
+      related_keys = Redis.current.keys(uniquifier)
+      related_keys.reduce({}) { |msg_hash, key| msg_hash.merge({ key => Redis.current.get(key) }) }
+    end
 
     def send_slack_messages(messages, channel = ::Service::SlackConnector.members_relations_channel)
       ::Service::SlackConnector.send_slack_messages(messages, channel)
@@ -52,10 +80,6 @@ module Service
       end
     end
 
-    def self.safe_channel(channel)
-      ::Util.is_prod? ? channel : "test_channel"
-    end
-
     def self.treasurer_channel
       "treasurer"
     end
@@ -69,6 +93,10 @@ module Service
     end
 
     private
+    def self.safe_channel(channel)
+      ::Util.is_prod? ? channel : "test_channel"
+    end
+
     def self.client
       Slack::Web::Client.new(token: ENV['SLACK_ADMIN_TOKEN'])
     end
@@ -76,6 +104,10 @@ module Service
     def self.format_slack_messages(messages, channel)
       messages = messages.map { |m| "#{channel}| #{m}" } unless ::Util.is_prod?
       msg_string = messages.join(" \n ");
+    end
+
+    def self.request_caller_id(caller_method)
+      "#{Current.request_id}.#{caller_method}"
     end
   end
 end

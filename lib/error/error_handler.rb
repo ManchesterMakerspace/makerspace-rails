@@ -70,7 +70,7 @@ module Error
           message = "<!channel> " + message
         end
 
-        send_slack_message(message, ::Service::SlackConnector.logs_channel)
+        enque_message(message, ::Service::SlackConnector.logs_channel)
       end
     end
   end

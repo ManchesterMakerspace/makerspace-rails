@@ -8,7 +8,7 @@ class PaypalController < ApplicationController
       if ::PayPal::SDK::Core::API::IPN.valid?(request.raw_post)
           save_and_notify
       else
-        @messages.push("Invalid IPN received: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
+        enque_message("Invalid IPN received: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
       end
     else #dev & test
       save_and_notify
@@ -42,9 +42,9 @@ class PaypalController < ApplicationController
 
   def save_and_notify
     unless @payment.save
-      @messages.push("Error saving payment: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
-      @messages.push("Messages related to error: ")
-      @messages.concat(@payment.errors.full_messages)
+      enque_message("Error saving payment: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
+      enque_message("Messages related to error: ")
+      @payment.errors.full_messages.each { |msg| enque_message(msg) }
     end
   end
 
@@ -54,7 +54,6 @@ class PaypalController < ApplicationController
       matching_invoice = Invoice.find_by(subscription_id: @payment.plan_id)
     end
 
-    @messages = [];
     base_url = ActionMailer::Base.default_url_options[:host]
     if @payment.member
         completed_message = "Payment Completed: $#{@payment.amount} for #{@payment.product} from  #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email} - Member found: #{@payment.member.fullname}. <#{base_url}/members/#{@payment.member.id}|Renew Member>"
@@ -66,31 +65,31 @@ class PaypalController < ApplicationController
 
     case @payment.txn_type
     when 'subscr_signup'
-        @messages.push("New Subscription sign up from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
+        enque_message("New Subscription sign up from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
     when 'subscr_payment'
-        @messages.push("Subscription payment - " + completed_message)
+        enque_message("Subscription payment - " + completed_message)
     when 'subscr_eot' || 'subscr_cancel'
-        @messages.push("#{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email} has canceled their subscription")
+        enque_message("#{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email} has canceled their subscription")
     when 'subscr_failed'
-        @messages.push("Failed subscription payment - " + failed_message)
+        enque_message("Failed subscription payment - " + failed_message)
     when 'subscr_cancel'
-        @messages.push("#{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email} has canceled their subscription")
+        enque_message("#{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email} has canceled their subscription")
     when 'cart'
         msg = "Standard payment - "
         msg += (@payment.status == 'Completed') ? completed_message : failed_message
-        @messages.push(msg)
+        enque_message(msg)
     when 'web_accept', 'send_money'
         msg = "Custom payment - "
         msg += (@payment.status == 'Completed') ? completed_message : failed_message
-        @messages.push(msg)
+        enque_message(msg)
     when 'mp_signup'
-      send_slack_message(
+      enque_message(
         "Paypal registration from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}",
         ::Service::SlackConnector.treasurer_channel
       )
     when 'merch_pmt'
       # Recurring payment
-      send_slack_message(
+      enque_message(
         "Recurring payment received from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}. If received Braintree notification, no action necessary.",
         ::Service::SlackConnector.treasurer_channel
       )
@@ -102,27 +101,27 @@ class PaypalController < ApplicationController
 
       # Couldn't parse or find subscription for this notfication
       # Needs to be cancelled manually
-      send_slack_message(
+      enque_message(
         "Subscription cancelation received from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}.
          Unable to determine related subscription. Payments have stopped but subscription must be cancelled manually to sync Makerspace software. <#{base_url}/billing|Search and cancel subscriptions>",
       )
     when 'recurring_payment_suspended_due_to_max_failed_payment'
-      send_slack_message(
+      enque_message(
         "Subscription for #{@payment.firstname} #{@payment.lastname} reached max failed attempts and has been suspended. Subscription can be retried in the Braintree control panel, or member may select a new membership/rental option"
       )
 
       if matching_invoice
         slack_user = SlackUser.find_by(member_id: matching_invoice.member.id)
         unless slack_user.nil?
-          send_slack_message(
+          enque_message(
             "Subscription for #{matching_invoice.name} reached max failed attempts and has been suspended. Please review your payment options and contact an administrator to enable.",
-            ::Service::SlackConnector.safe_channel(slack_user.slack_id)
+            slack_user.slack_id
           )
           Invoice.process_cancellation(matching_invoice.plan_id, true)
         end
       end
     else
-        @messages.push("Unknown transaction type (#{@payment.txn_type}) from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}.  Details: $#{@payment.amount} for #{@payment.product}. Status: #{@payment.status}")
+        enque_message("Unknown transaction type (#{@payment.txn_type}) from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}.  Details: $#{@payment.amount} for #{@payment.product}. Status: #{@payment.status}")
     end
   end
 end
