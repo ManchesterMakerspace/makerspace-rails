@@ -81,8 +81,8 @@ RSpec.describe BraintreeService::Notification, type: :model do
       expect(invoice.transaction_id).to eq(transaction.id)
     end
 
-    it "Skips settlement if invoice locked" do 
-      invoice.lock
+    it "Skips settlement if invoice is already in progress" do 
+      InvoiceHelper.update_lifecycle(invoice.id, InvoiceHelper::LIFECYCLES[:InProgress])
       create(:card, member: member)
       init_member_expiration = member.pretty_time
       allow(transaction).to receive(:line_items).and_return([])

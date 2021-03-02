@@ -27,17 +27,10 @@ class Billing::TransactionsController < BillingController
         invoice = invoice_option.build_invoice(current_member.id, Time.now, current_member.id, invoice_discount)
       end
 
-      # Lock invoice so any notifications from settlement dont duplicate settlement operations
-      begin
-        invoice.lock
-        # Handling actual payment & related error handling is abstracted from this controller
-        transaction = invoice.submit_for_settlement(@gateway, transaction_params[:payment_method_id])
-        invoice.unlock
-      # Catch any errors, unlock invoice and then rethrow
-      rescue StandardError => e
-        invoice.unlock 
-        raise
-      end
+      transaction = InvoiceHelper.pay_workflow(
+        invoice.id,
+        Proc.new { invoice.submit_for_settlement(@gateway, transaction_params[:payment_method_id]) }
+      )
 
       render json: transaction, serializer: BraintreeService::TransactionSerializer, adapter: :attributes, status: 200 and return
     end

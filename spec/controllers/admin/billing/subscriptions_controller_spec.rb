@@ -96,9 +96,7 @@ RSpec.describe Admin::Billing::SubscriptionsController, type: :controller do
     it "raises error if cancellation failed" do 
       allow(::BraintreeService::Subscription).to receive(:get_subscription).with(gateway, "foobar").and_return(subscription)
       expect(::BraintreeService::Subscription).to receive(:get_subscription).with(gateway, "foobar").and_return(subscription)
-      allow(::BraintreeService::Subscription).to receive(:cancel).with(gateway, "foobar").and_return(failed_result)
-      expect(::BraintreeService::Subscription).to receive(:cancel).with(gateway, "foobar").and_return(failed_result)
-      allow(Error::Braintree::Result).to receive(:new).with(failed_result).and_return(Error::Braintree::Result.new) # Bypass error instantiation
+      allow(::BraintreeService::Subscription).to receive(:cancel).with(gateway, "foobar").and_raise(::Error::Braintree::Result.new)
       
       delete :destroy, params: { id: "foobar" }, format: :json
       parsed_response = JSON.parse(response.body)

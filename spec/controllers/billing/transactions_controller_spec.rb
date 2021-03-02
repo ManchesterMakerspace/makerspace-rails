@@ -151,8 +151,6 @@ RSpec.describe Billing::TransactionsController, type: :controller do
       allow(BraintreeService::PaymentMethod).to receive(:find_payment_method_for_customer).and_return(payment_method)
       allow(InvoiceOption).to receive(:find).with(invoice_option.id).and_return(invoice_option) # Mock this return so that it returns a double instead
       allow(invoice_option).to receive(:build_invoice).with(member.id, anything, member.id, nil).and_return(invoice)
-      allow(invoice).to receive(:lock)
-      allow(invoice).to receive(:unlock)
       allow(invoice).to receive(:submit_for_settlement).with(gateway, "foo").and_return(transaction)
 
       post :create, params: { payment_method_id: "foo", invoice_option_id: invoice_option.id }, format: :json
@@ -163,8 +161,6 @@ RSpec.describe Billing::TransactionsController, type: :controller do
 
     it "settles the invoice" do 
       allow(BraintreeService::PaymentMethod).to receive(:find_payment_method_for_customer).and_return(payment_method)
-      allow(invoice).to receive(:lock)
-      allow(invoice).to receive(:unlock)
       allow(invoice).to receive(:submit_for_settlement).with(gateway, "foo").and_return(transaction)
       allow(Invoice).to receive(:find).with(invoice.id).and_return(invoice) # Mock this return so that it returns a double instead
 
@@ -174,18 +170,15 @@ RSpec.describe Billing::TransactionsController, type: :controller do
       expect(parsed_response['id']).to eq(transaction.id)
     end
 
-    it "unlocks invoice if error occurs during settlement" do 
+    it "Sets invoice to failed if error occurs during settlement" do 
       allow(BraintreeService::PaymentMethod).to receive(:find_payment_method_for_customer).and_return(payment_method)
       allow(Invoice).to receive(:find).with(invoice.id).and_return(invoice) # Mock this return so that it returns a double instead
-      allow(invoice).to receive(:lock)
       allow(invoice).to receive(:submit_for_settlement).with(gateway, "foo").and_raise(Error::NotFound)
 
-      expect(invoice).to receive(:unlock)
       post :create, params: valid_params, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(404)
-      invoice.reload
-      expect(invoice.locked).to be_falsy
+      expect(Redis.current.get(invoice.id)).to eql(InvoiceHelper::LIFECYCLES[:Failed])
     end
   end
 

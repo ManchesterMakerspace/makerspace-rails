@@ -6,9 +6,7 @@ class Admin::Billing::SubscriptionsController < Admin::BillingController
 
   def destroy
     subscription = ::BraintreeService::Subscription.get_subscription(@gateway, params[:id])
-    result = ::BraintreeService::Subscription.cancel(@gateway, params[:id])
-    raise Error::Braintree::Result.new(result) unless result.success?
-
+    ::BraintreeService::Subscription.cancel(@gateway, params[:id])
     render json: {}, status: 204 and return
   end
 
