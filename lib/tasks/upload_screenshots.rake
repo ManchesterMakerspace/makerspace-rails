@@ -14,6 +14,6 @@ task :upload_screenshots => :environment do
     google.create_file(file_meta,
                       fields: 'id',
                       upload_source: screenshot,
-                      content_type: screenshot.end_width?(".png") ? 'image/png' : 'text/plain')
+                      content_type: screenshot.end_with?(".png") ? 'image/png' : 'text/plain')
   end
 end
