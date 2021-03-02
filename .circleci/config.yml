@@ -1,0 +1,46 @@
+version: 2.1
+orbs:
+  ruby: circleci/ruby@0.1.2 
+
+jobs:
+  build:
+    docker:
+      - image: circleci/ruby:2.6.6-stretch-node-browsers
+    executor: ruby/default
+    steps:
+      - checkout
+      - run:
+          name: Which bundler?
+          command: bundle -v
+      - ruby/bundle-install
+      - run: 
+          name: UT
+          command: bundle exec rspec
+      - run:
+          name: E2E
+          command: bundle exec rake integration
+      - run:
+          name: Upload test screenshots
+          command: bundle exec rake upload_screenshots
+  publish:
+    docker:
+      - image: circleci/ruby:2.6.6-stretch-node-browsers
+    executor: ruby/default
+    steps:
+      - checkout
+      - run:
+          name: Which bundler?
+          command: bundle -v
+      - ruby/bundle-install
+      - run:
+          name: Publish
+          command: bundle exec rake publish
+
+workflows:
+  workflow:
+    jobs:
+      - build
+      - publish:
+          filters:
+            branches:
+              only: master
