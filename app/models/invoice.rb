@@ -3,6 +3,7 @@ class Invoice
   include Mongoid::Search
   include ActiveModel::Serializers::JSON
   include Service::SlackConnector
+  include Publishable
 
   OPERATION_RESOURCES = {
     "member" => Member,
