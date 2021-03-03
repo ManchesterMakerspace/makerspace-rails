@@ -99,29 +99,41 @@ task :member_review => :environment do
       end
 
       def notify_no_purchase_message
-        send_report(
-          @no_purchase_members,
-          "People who created an account but did not purchase membership",
-          Proc.new do |slack_user| 
-            notify_member(
-              "Hi #{slack_user.real_name}, we noticed you signed up but never purchased a membership. Is there anything we can help you with? Please come to the next open house #{ENV["OPEN_HOUSE_SCHEDULE"]} to meet the members and see the Makerspace.",
-              slack_user
-            ) 
-          end
+        # Report requires the paypal_transfer whitelist to be globally enabled
+        if !!DefaultPermission.find_by(
+          name: DefaultPermission::WHITELISTS[:ping_no_purchase], 
+          enabled: true
         )
+          send_report(
+            @no_purchase_members,
+            "People who created an account but did not purchase membership",
+            Proc.new do |slack_user| 
+              notify_member(
+                "Hi #{slack_user.real_name}, we noticed you signed up but never purchased a membership. Is there anything we can help you with? Please come to the next open house #{ENV["OPEN_HOUSE_SCHEDULE"]} to meet the members and see the Makerspace.",
+                slack_user
+              ) 
+            end
+          )
+        end
       end
 
       def notify_paypal_message
-        send_report(
-          @paypal_members,
-          "Members who are still on PayPal billing",
-          Proc.new do |slack_user| 
-            notify_member(
-              "Hi #{slack_user.real_name}, it seems your membership is still tied to a PayPal account. Please help us finish moving memberships to our new payment provider by viewing your profile. You will not encounter any additional charges by moving your membership.",
-              slack_user
-            ) 
-          end
+        # Report requires the paypal_transfer whitelist to be globally enabled
+        if !!DefaultPermission.find_by(
+          name: DefaultPermission::WHITELISTS[:paypal_transfer], 
+          enabled: true
         )
+          send_report(
+            @paypal_members,
+            "Members who are still on PayPal billing",
+            Proc.new do |slack_user| 
+              notify_member(
+                "Hi #{slack_user.real_name}, it seems your membership is still tied to a PayPal account. Please help us finish moving memberships to our new payment provider by viewing your profile. You will not encounter any additional charges by moving your membership.",
+                slack_user
+              ) 
+            end
+          )
+        end
       end
 
       def notify_missing_contracts(missing_contracts, contract_type)
@@ -143,11 +155,10 @@ task :member_review => :environment do
       notify_no_purchase_message() if @no_purchase_members.length != 0
       notify_missing_contracts(@no_member_contract, "Member Contract") if @no_member_contract.length != 0
       notify_missing_contracts(@no_rental_contract, "Rental Agreement") if @no_rental_contract.length != 0
-      # TODO: Enable this when there is a self-serve transition service
-      # notify_paypal_message() if @paypal_members.length != 0
+      notify_paypal_message() if @paypal_members.length != 0
 
       # Send management their report
-      ::Service::SlackConnector.send_complex_message(@management_messages, ::Service::SlackConnector.members_relations_channel)
+      ::Service::SlackConnector.send_slack_message(@management_messages, ::Service::SlackConnector.members_relations_channel)
     rescue => e
       error = "#{e.message}\n#{e.backtrace.inspect}"
       ::Service::SlackConnector.send_slack_message(error, ::Service::SlackConnector.logs_channel)
