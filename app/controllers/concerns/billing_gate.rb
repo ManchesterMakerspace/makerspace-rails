@@ -6,6 +6,7 @@ module BillingGate
   end
 
   def verify_billing_permission
-    raise Error::Forbidden.new unless current_member.is_allowed?(:billing)
+    raise Error::Forbidden.new unless current_member.is_allowed?(
+      DefaultPermission::WHITELISTS[:billing])
   end
 end

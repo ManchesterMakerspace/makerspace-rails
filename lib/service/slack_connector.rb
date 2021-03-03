@@ -42,27 +42,24 @@ module Service
     end
 
     def self.send_slack_message(message, channel = ::Service::SlackConnector.members_relations_channel)
-      client.chat_postMessage(
-        channel: safe_channel(channel),
-        text: message,
-        as_user: false,
-        username: 'Management Bot',
-        icon_emoji: ':ghost:'
-      )
-    end
-
-    def send_complex_message(blocks, channel = ::Service::SlackConnector.members_relations_channel)
-      ::Service::SlackConnector.send_complex_message(blocks, channel)
-    end
-
-    def self.send_complex_message(blocks, channel = ::Service::SlackConnector.members_relations_channel)
-      client.chat_postMessage(
-        channel: safe_channel(channel),
-        blocks: blocks,
-        as_user: false,
-        username: 'Management Bot',
-        icon_emoji: ':ghost:'
-      )
+      send_as_msg = message.kind_of?(String)
+      if send_as_msg
+        client.chat_postMessage(
+          channel: safe_channel(channel),
+          text: message,
+          as_user: false,
+          username: 'Management Bot',
+          icon_emoji: ':ghost:'
+        )
+      else 
+        client.chat_postMessage(
+          channel: safe_channel(channel),
+          blocks: message,
+          as_user: false,
+          username: 'Management Bot',
+          icon_emoji: ':ghost:'
+        )
+      end
     end
 
     def invite_to_slack(email, lastname, firstname)
