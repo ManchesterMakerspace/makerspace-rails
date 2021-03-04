@@ -43,8 +43,7 @@ class PaypalController < ApplicationController
   def save_and_notify
     unless @payment.save
       enque_message("Error saving payment: $#{@payment.amount} for #{@payment.product} from #{@payment.firstname} #{@payment.lastname} ~ email: #{@payment.payer_email}")
-      enque_message("Messages related to error: ")
-      @payment.errors.full_messages.each { |msg| enque_message(msg) }
+      enque_message("Messages related to error: #{@payment.errors.full_messages.join("\n")}")
     end
   end
 
