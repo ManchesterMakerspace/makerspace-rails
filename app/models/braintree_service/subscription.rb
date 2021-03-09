@@ -62,11 +62,11 @@ class BraintreeService::Subscription < Braintree::Subscription
       }
     end
     result = gateway.subscription.create(subscription_hash)
+    raise ::Error::Braintree::Result.new(result) unless result.success?
     SubscriptionHelper.update_lifecycle(
       result.subscription.id, 
-      result.success? ? SubscriptionHelper::LIFECYCLES[:Created] : SubscriptionHelper::LIFECYCLES[:Failed]
+      SubscriptionHelper::LIFECYCLES[:Created]
     )
-    raise ::Error::Braintree::Result.new(result) unless result.success?
     normalize_subscription(gateway, result.subscription)
   end
 
