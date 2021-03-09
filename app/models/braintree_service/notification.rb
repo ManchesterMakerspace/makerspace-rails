@@ -75,25 +75,26 @@ class BraintreeService::Notification
   end
 
   def self.process_subscription(notification)
-    resource_class, resource_id = ::BraintreeService::Subscription.read_id(notification.subscription.id)
+    subscription_id = notification.subscription.id
+    resource_class, resource_id = ::BraintreeService::Subscription.read_id(subscription_id)
     last_transaction = notification.subscription.transactions.first
 
     invoice = Invoice.active_invoice_for_resource(resource_id)
     related_resource = Invoice.resource(resource_class, resource_id)
 
-    subscription_cache = SubscriptionHelper.get_subscription_cache(notification.subscription.id)
+    subscription_cache = SubscriptionHelper.get_subscription_cache(subscription_id)
     if subscription_cache
       if (
         subscription_cache == SubscriptionHelper::LIFECYCLES[:Created] &&
         notification.kind == ::Braintree::WebhookNotification::Kind::SubscriptionChargedSuccessfully
       )
-        enque_message("Duplicate SubscriptionChargedSuccessfully notification for invoice ID #{invoice.id}. Skipping processing", ::Service::SlackConnector.treasurer_channel)
+        enque_message("Duplicate SubscriptionChargedSuccessfully notification for subscription ID #{subscription_id}. Skipping processing", ::Service::SlackConnector.treasurer_channel)
         return
       elsif (
         subscription_cache == SubscriptionHelper::LIFECYCLES[:Cancelled] &&
         notification.kind == ::Braintree::WebhookNotification::Kind::SubscriptionCanceled
       )
-        enque_message("Duplicate SubscriptionCanceled notification for invoice ID #{invoice.id}. Skipping processing", ::Service::SlackConnector.treasurer_channel)
+        enque_message("Duplicate SubscriptionCanceled notification for subscription ID #{subscription_id}. Skipping processing", ::Service::SlackConnector.treasurer_channel)
         return
       end
     end

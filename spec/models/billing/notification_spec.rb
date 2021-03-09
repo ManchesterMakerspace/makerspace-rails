@@ -29,6 +29,7 @@ RSpec.describe BraintreeService::Notification, type: :model do
 
   describe "#process" do
     before(:each) do
+      allow(successful_charge_notification).to receive_message_chain(:subscription, :id).and_return(subscription.id)
       allow(successful_charge_notification).to receive_message_chain(:subscription, :transactions, :first).and_return(transaction)
     end
 
@@ -45,6 +46,7 @@ RSpec.describe BraintreeService::Notification, type: :model do
 
     it "processes subscription payment failure" do
       failure = double(kind: ::Braintree::WebhookNotification::Kind::SubscriptionChargedUnsuccessfully, subscription: subscription, timestamp: Time.now)
+      allow(failure).to receive_message_chain(:subscription, :id).and_return(subscription.id)
       allow(failure).to receive_message_chain(:subscription, :transactions, :first).and_return(transaction)
       expect(BraintreeService::Notification).to receive(:process_subscription_charge_failure).with(invoice, transaction)
       BraintreeService::Notification.process(failure)
