@@ -37,7 +37,7 @@ RSpec.describe "Braintree Notification Handling", :type => :request do
         invoice_opt = create(:invoice_option, name: "One Month", amount: 65.0, id: "one-month", plan_id: "monthly_membership_subscription")
         SubscriptionHelper.update_lifecycle(subscription.id, SubscriptionHelper::LIFECYCLES[:Created])
         expect(BraintreeService::Notification).to receive(:enque_message).with(
-          "Duplicate SubscriptionChargedSuccessfully notification for invoice ID #{invoice.id}. Skipping processing",
+          "Duplicate SubscriptionChargedSuccessfully notification for subscription ID #{subscription.id}. Skipping processing",
           "treasurer"
         )
 
@@ -54,7 +54,7 @@ RSpec.describe "Braintree Notification Handling", :type => :request do
       invoice_opt = create(:invoice_option, name: "One Month", amount: 65.0, id: "one-month", plan_id: "monthly_membership_subscription")
       SubscriptionHelper.update_lifecycle(subscription.id, SubscriptionHelper::LIFECYCLES[:Cancelled])
       expect(BraintreeService::Notification).to receive(:enque_message).with(
-        "Duplicate SubscriptionCanceled notification for invoice ID #{invoice.id}. Skipping processing",
+        "Duplicate SubscriptionCanceled notification for subscription ID #{subscription.id}. Skipping processing",
         "treasurer"
       )
 
