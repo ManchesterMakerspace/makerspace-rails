@@ -4,6 +4,7 @@ class Rental
   include InvoiceableResource
   include Service::SlackConnector
   include ActiveModel::Serializers::JSON
+  include Publishable
 
   belongs_to :member
 
@@ -16,7 +17,7 @@ class Rental
 
   search_in :number, member: %i[firstname lastname email]
 
-  before_destroy :delete_subscription
+  after_destroy :publish_destroy
   validates :number, presence: true, uniqueness: true
 
   # Emit to Member & Management channels on renwal
@@ -43,9 +44,7 @@ class Rental
     "#{self.member ? "#{self.member.fullname}'s rental of " : ""} Locker/Plot # #{self.number}"
   end
 
-  def delete_subscription
-    if subscription_id
-      ::BraintreeService::Subscription.cancel(::Service::BraintreeGateway.connect_gateway(), subscription_id)
-    end
+  def publish_destroy
+    publish(:destroy)
   end
 end

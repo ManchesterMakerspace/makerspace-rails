@@ -23,9 +23,9 @@ module MemberSubscriber
       subscription_id = event[:model].subscription_id
       if subscription_id
         begin 
-          ::BraintreeService::Subscription.cancel(::Service::BraintreeGateway.connect_gateway(), subscription_id)
+          ::BraintreeService::Subscription.cancel(connect_gateway(), subscription_id)
         rescue => err
-          enque_message("Error cancelling #{event[:mode].fullname}'s membership_subscription. Err: #{err}")
+          enque_message("Error cancelling #{event[:model].fullname}'s membership_subscription. Err: #{err}")
         end
       end
 
