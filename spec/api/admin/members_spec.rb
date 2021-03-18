@@ -10,12 +10,12 @@ describe 'Admin::Members API', type: :request do
       tags 'Members'
       operationId "adminCreateMember"
       parameter name: :createMemberDetails, in: :body, schema: {
-        title: :createMemberDetails, 
+        title: :createMemberDetails,
         '$ref' => '#/components/schemas/NewMember'
       }, required: true
 
       request_body_json schema: {
-        title: :createMemberDetails, 
+        title: :createMemberDetails,
         '$ref' => '#/components/schemas/NewMember'
       }, required: true
 
@@ -86,58 +86,13 @@ describe 'Admin::Members API', type: :request do
       operationId "adminUpdateMember"
       parameter name: :id, in: :path, type: :string
       parameter name: :updateMemberDetails, in: :body, schema: {
-        title: :updateMemberDetails, 
-        type: :object,
-        properties: {
-          firstname: { type: :string, 'x-nullable': true },
-          lastname: { type: :string, 'x-nullable': true },
-          email: { type: :string, 'x-nullable': true },
-          address: { 
-            type: :object, 
-            'x-nullable': true ,
-            properties: {
-              street: { type: :string, 'x-nullable': true },
-              unit: { type: :string,  'x-nullable': true },
-              city: { type: :string, 'x-nullable': true },
-              state: { type: :string, 'x-nullable': true },
-              postalCode: { type: :string, 'x-nullable': true },
-            }
-          },
-          phone: { type: :string, 'x-nullable': true },
-          status: { type: :string, enum: ["activeMember", "inactive", "nonMember", "revoked"], 'x-nullable': true },
-          role: { type: :string, enum: ["admin", "member"], 'x-nullable': true },
-          renew: { type: :number, 'x-nullable': true },
-          memberContractOnFile: { type: :boolean, 'x-nullable': true },
-          subscription: { type: :boolean, 'x-nullable': true },
-          silenceEmails: { type: :string, 'x-nullable': true },
-        }
+        title: :updateMemberDetails,
+        '$ref' => '#/components/schemas/AdminUpdateMemberDetails'
       }, required: true
 
       request_body_json schema: {
-        title: :updateMemberDetails, 
-        type: :object,
-        properties: {
-          firstname: { type: :string, 'x-nullable': true },
-          lastname: { type: :string, 'x-nullable': true },
-          email: { type: :string, 'x-nullable': true },
-          address: { 
-            type: :object, 
-            'x-nullable': true ,
-            properties: {
-              street: { type: :string, 'x-nullable': true },
-              unit: { type: :string,  'x-nullable': true },
-              city: { type: :string, 'x-nullable': true },
-              state: { type: :string, 'x-nullable': true },
-              postalCode: { type: :string, 'x-nullable': true },
-            }
-          },
-          phone: { type: :string, 'x-nullable': true },
-          status: { type: :string, enum: ["activeMember", "inactive", "nonMember", "revoked"], 'x-nullable': true },
-          role: { type: :string, enum: ["admin", "member"], 'x-nullable': true },
-          renew: { type: :number, 'x-nullable': true },
-          memberContractOnFile: { type: :boolean, 'x-nullable': true },
-          subscription: { type: :boolean, 'x-nullable': true },
-        }
+        title: :updateMemberDetails,
+        '$ref' => '#/components/schemas/AdminUpdateMemberDetails'
       }, required: true
 
       response '200', 'member updated' do

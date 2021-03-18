@@ -524,111 +524,26 @@
           "disabled"
         ]
       },
-      "NewMember": {
+      "BaseMember": {
         "type": "object",
         "properties": {
           "firstname": {
-            "type": "string"
+            "type": "string",
+            "x-nullable": true
           },
           "lastname": {
-            "type": "string"
+            "type": "string",
+            "x-nullable": true
           },
           "email": {
-            "type": "string"
-          },
-          "status": {
-            "$ref": "#/components/schemas/MemberStatus",
-            "x-nullable": true
-          },
-          "role": {
-            "$ref": "#/components/schemas/MemberRole",
-            "x-nullable": true
-          },
-          "memberContractOnFile": {
-            "type": "boolean",
+            "type": "string",
             "x-nullable": true
           },
           "phone": {
-            "type": "string"
+            "type": "string",
+            "x-nullable": true
           },
           "silenceEmails": {
-            "type": "boolean",
-            "x-nullable": true
-          },
-          "address": {
-            "type": "object",
-            "properties": {
-              "street": {
-                "type": "string"
-              },
-              "unit": {
-                "type": "string",
-                "x-nullable": true
-              },
-              "city": {
-                "type": "string"
-              },
-              "state": {
-                "type": "string"
-              },
-              "postalCode": {
-                "type": "string"
-              }
-            }
-          }
-        },
-        "required": [
-          "firstname",
-          "lastname",
-          "email",
-          "phone",
-          "address"
-        ]
-      },
-      "Member": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "firstname": {
-            "type": "string"
-          },
-          "lastname": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "status": {
-            "$ref": "#/components/schemas/MemberStatus"
-          },
-          "role": {
-            "$ref": "#/components/schemas/MemberRole"
-          },
-          "expirationTime": {
-            "type": "number",
-            "x-nullable": true
-          },
-          "memberContractOnFile": {
-            "type": "boolean"
-          },
-          "cardId": {
-            "type": "string",
-            "x-nullable": true
-          },
-          "subscriptionId": {
-            "type": "string",
-            "x-nullable": true
-          },
-          "subscription": {
-            "type": "boolean"
-          },
-          "customerId": {
-            "type": "string",
-            "x-nullable": true
-          },
-          "earnedMembershipId": {
             "type": "string",
             "x-nullable": true
           },
@@ -636,16 +551,9 @@
             "type": "string",
             "x-nullable": true
           },
-          "phone": {
-            "type": "string",
-            "x-nullable": true
-          },
-          "silenceEmails": {
-            "type": "boolean",
-            "x-nullable": true
-          },
           "address": {
             "type": "object",
+            "x-nullable": true,
             "properties": {
               "street": {
                 "type": "string",
@@ -671,15 +579,102 @@
           }
         },
         "required": [
-          "id",
-          "firstname",
-          "lastname",
-          "email",
-          "status",
-          "role",
-          "memberContractOnFile",
-          "subscription",
-          "address"
+
+        ]
+      },
+      "NewMember": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseMember"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "status": {
+                "$ref": "#/components/schemas/MemberStatus",
+                "x-nullable": true
+              },
+              "role": {
+                "$ref": "#/components/schemas/MemberRole",
+                "x-nullable": true
+              },
+              "memberContractOnFile": {
+                "type": "boolean",
+                "x-nullable": true
+              }
+            }
+          }
+        ],
+        "required": [
+
+        ]
+      },
+      "Member": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NewMember"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "cardId": {
+                "type": "string",
+                "x-nullable": true
+              },
+              "subscriptionId": {
+                "type": "string",
+                "x-nullable": true
+              },
+              "subscription": {
+                "type": "boolean"
+              },
+              "customerId": {
+                "type": "string",
+                "x-nullable": true
+              },
+              "earnedMembershipId": {
+                "type": "string",
+                "x-nullable": true
+              },
+              "expirationTime": {
+                "type": "number",
+                "x-nullable": true
+              }
+            }
+          }
+        ],
+        "required": [
+
+        ]
+      },
+      "AdminUpdateMemberDetails": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseMember"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "renew": {
+                "type": "number",
+                "x-nullable": true
+              },
+              "subscription": {
+                "type": "boolean",
+                "x-nullable": true
+              },
+              "expirationTime": {
+                "type": "number",
+                "x-nullable": true
+              }
+            }
+          }
+        ],
+        "required": [
+
         ]
       },
       "MemberSummary": {
@@ -3587,81 +3582,7 @@
             "application/json": {
               "schema": {
                 "title": "updateMemberDetails",
-                "type": "object",
-                "properties": {
-                  "firstname": {
-                    "type": "string",
-                    "x-nullable": true
-                  },
-                  "lastname": {
-                    "type": "string",
-                    "x-nullable": true
-                  },
-                  "email": {
-                    "type": "string",
-                    "x-nullable": true
-                  },
-                  "address": {
-                    "type": "object",
-                    "x-nullable": true,
-                    "properties": {
-                      "street": {
-                        "type": "string",
-                        "x-nullable": true
-                      },
-                      "unit": {
-                        "type": "string",
-                        "x-nullable": true
-                      },
-                      "city": {
-                        "type": "string",
-                        "x-nullable": true
-                      },
-                      "state": {
-                        "type": "string",
-                        "x-nullable": true
-                      },
-                      "postalCode": {
-                        "type": "string",
-                        "x-nullable": true
-                      }
-                    }
-                  },
-                  "phone": {
-                    "type": "string",
-                    "x-nullable": true
-                  },
-                  "status": {
-                    "type": "string",
-                    "enum": [
-                      "activeMember",
-                      "inactive",
-                      "nonMember",
-                      "revoked"
-                    ],
-                    "x-nullable": true
-                  },
-                  "role": {
-                    "type": "string",
-                    "enum": [
-                      "admin",
-                      "member"
-                    ],
-                    "x-nullable": true
-                  },
-                  "renew": {
-                    "type": "number",
-                    "x-nullable": true
-                  },
-                  "memberContractOnFile": {
-                    "type": "boolean",
-                    "x-nullable": true
-                  },
-                  "subscription": {
-                    "type": "boolean",
-                    "x-nullable": true
-                  }
-                }
+                "$ref": "#/components/schemas/AdminUpdateMemberDetails"
               }
             }
           }
@@ -6045,53 +5966,9 @@
             "application/json": {
               "schema": {
                 "title": "updateMemberDetails",
-                "anyOf": [
+                "allOf": [
                   {
-                    "type": "object",
-                    "properties": {
-                      "firstname": {
-                        "type": "string",
-                        "x-nullable": true
-                      },
-                      "lastname": {
-                        "type": "string",
-                        "x-nullable": true
-                      },
-                      "email": {
-                        "type": "string",
-                        "x-nullable": true
-                      },
-                      "phone": {
-                        "type": "string",
-                        "x-nullable": true
-                      },
-                      "address": {
-                        "type": "object",
-                        "x-nullable": true,
-                        "properties": {
-                          "street": {
-                            "type": "string",
-                            "x-nullable": true
-                          },
-                          "unit": {
-                            "type": "string",
-                            "x-nullable": true
-                          },
-                          "city": {
-                            "type": "string",
-                            "x-nullable": true
-                          },
-                          "state": {
-                            "type": "string",
-                            "x-nullable": true
-                          },
-                          "postalCode": {
-                            "type": "string",
-                            "x-nullable": true
-                          }
-                        }
-                      }
-                    }
+                    "$ref": "#/components/schemas/BaseMember"
                   },
                   {
                     "type": "object",
