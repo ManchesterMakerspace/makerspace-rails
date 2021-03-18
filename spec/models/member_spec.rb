@@ -14,6 +14,7 @@ RSpec.describe Member, type: :model do
     it { is_expected.to have_field(:expirationTime).of_type(Integer) }
     it { is_expected.to have_field(:role).with_default_value_of('member') }
     it { is_expected.to have_field(:memberContractOnFile).of_type(Mongoid::Boolean) }
+    it { is_expected.to have_field(:silence_emails).of_type(Mongoid::Boolean) }
     it { is_expected.to have_field(:subscription).of_type(Mongoid::Boolean).with_default_value_of(false) }
     it { is_expected.to have_fields(:email, :encrypted_password).of_type(String).with_default_value_of("") }
     it { is_expected.to have_field(:reset_password_token).of_type(String) }
@@ -157,25 +158,20 @@ RSpec.describe Member, type: :model do
 
   context "Callbacks" do
     describe "on create" do
-      it "sends a slack invite" do
+      it "schedules a slack and google drive invite" do
         member = build(:member)
-        expect(member).to receive(:invite_to_slack)
-        member.save
-      end
-
-      it "sends a google drive invite" do
-        member = build(:member)
-        expect(member).to receive(:invite_gdrive).with(member.email)
-        member.save
-
-        other_member = build(:member)
-        expect(other_member).to receive(:invite_gdrive).with(other_member.email).and_raise(Error::Google::Upload)
-        expect(other_member).to receive(:send_slack_message).with(/sharing/)
-        other_member.save
+        expect_any_instance_of(Service::GoogleDrive).to receive(:invite_gdrive).with(member.email)
+        expect_any_instance_of(Service::SlackConnector).to receive(:invite_to_slack).with(
+          member.email, 
+          member.lastname,
+          member.firstname, 
+        )
+        member.save!
       end
     end
 
     describe "on update" do
+      let(:gateway) { double }
       let(:member) { create(:member) }
       let(:expired_member) { create(:member, :expired) }
       let(:expired_card) { create(:card, member: expired_member) }
@@ -189,13 +185,43 @@ RSpec.describe Member, type: :model do
       end
 
       it "Doesn't reinvite for normal changes" do
-        expect(member).not_to receive(:send_google_invite)
+        # Mock this publish so Slack tracking only applies to update and not create
+        allow(member).to receive(:publish_create)
+        expect_any_instance_of(Service::GoogleDrive).not_to receive(:invite_gdrive)
+        expect_any_instance_of(Service::SlackConnector).not_to receive(:invite_to_slack)
         member.update!({ firstname: "foo_changed" })
       end
 
       it "Reinvites to services if email changes" do
-        expect(member).to receive(:send_google_invite)
-        member.update!({ email: "foo_changed@test.com" })
+        # Mock this publish so Slack tracking only applies to update and not create
+        allow(member).to receive(:publish_create)
+        new_email = "foo_changed@test.com"
+        expect_any_instance_of(Service::GoogleDrive).to receive(:invite_gdrive).with(new_email)
+        expect_any_instance_of(Service::SlackConnector).to receive(:invite_to_slack).with(
+          new_email, 
+          member.lastname,
+          member.firstname, 
+        )
+        member.update!({ email: new_email })
+      end
+
+      it "Updates billing if a customer" do 
+        customer = create(:member, customer_id: "foo")
+        allow_any_instance_of(Service::BraintreeGateway).to receive(:connect_gateway).and_return(gateway)
+        mock_customer_chain = double 
+        expect(gateway).to receive(:customer).and_return(mock_customer_chain)
+        expect(mock_customer_chain).to receive(:update).with(
+          "foo", 
+          first_name: "foo_changed", 
+          last_name: customer.lastname
+        )
+        customer.update!({ firstname: "foo_changed" })
+      end
+
+      it "Doesn't update billing if not a customer" do 
+        allow_any_instance_of(Service::BraintreeGateway).to receive(:connect_gateway).and_return(gateway)
+        expect(gateway).not_to receive(:customer)
+        member.update!({ firstname: "foo_changed" })
       end
     end
 

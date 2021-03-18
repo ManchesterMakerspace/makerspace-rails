@@ -4,6 +4,7 @@ class Rental
   include InvoiceableResource
   include Service::SlackConnector
   include ActiveModel::Serializers::JSON
+  include Publishable
 
   belongs_to :member
 
@@ -16,14 +17,14 @@ class Rental
 
   search_in :number, member: %i[firstname lastname email]
 
-  before_destroy :delete_subscription
+  after_destroy :publish_destroy
   validates :number, presence: true, uniqueness: true
 
   # Emit to Member & Management channels on renwal
   def send_renewal_slack_message(current_user=nil)
     slack_user = SlackUser.find_by(member_id: member_id)
-    send_slack_message(get_renewal_slack_message, ::Service::SlackConnector.safe_channel(slack_user.slack_id)) unless slack_user.nil?
-    send_slack_message(get_renewal_slack_message(current_user), ::Service::SlackConnector.members_relations_channel)
+    enque_message(get_renewal_slack_message, slack_user.slack_id) unless slack_user.nil?
+    enque_message(get_renewal_slack_message(current_user), ::Service::SlackConnector.members_relations_channel)
   end
 
   def self.search(searchTerms, criteria = Mongoid::Criteria.new(Rental))
@@ -43,9 +44,7 @@ class Rental
     "#{self.member ? "#{self.member.fullname}'s rental of " : ""} Locker/Plot # #{self.number}"
   end
 
-  def delete_subscription
-    if subscription_id
-      ::BraintreeService::Subscription.cancel(::Service::BraintreeGateway.connect_gateway(), subscription_id)
-    end
+  def publish_destroy
+    publish(:destroy)
   end
 end

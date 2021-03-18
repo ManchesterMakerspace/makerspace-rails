@@ -1,6 +1,13 @@
 class DefaultPermission
   include Mongoid::Document
 
+  WHITELISTS = {
+    earned_membership: :earned_membership,
+    billing: :billing,
+    paypal_transfer: :paypal_transfer,
+    ping_no_purchase: :ping_no_purchase,
+  }
+
   field :name, type: Symbol
   field :enabled, type: Boolean, default: false
 

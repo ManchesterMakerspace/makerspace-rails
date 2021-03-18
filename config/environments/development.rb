@@ -13,29 +13,34 @@ Rails.application.configure do
   # Show full error reports.
   config.consider_all_requests_local = true
 
-  # Enable/disable caching. By default caching is disabled.
-  if Rails.root.join('tmp/caching-dev.txt').exist?
-    config.action_controller.perform_caching = true
+  config.cache_store = :redis_store, {
+    expires_in: 1.hour,
+    namespace: 'cache',
+    redis: { host: ENV['REDIS_URL'], port: ENV['REDIS_PORT'], db: ENV['REDIS_DB'] }
+  }
 
-    config.cache_store = :memory_store
-    config.public_file_server.headers = {
-      'Cache-Control' => 'public, max-age=172800'
-    }
-  else
-    config.action_controller.perform_caching = false
+  # # Enable/disable caching. By default caching is disabled.
+  # if Rails.root.join('tmp/caching-dev.txt').exist?
+  #   config.action_controller.perform_caching = true
 
-    config.cache_store = :null_store
-  end
+  #   config.cache_store = :memory_store
+  #   config.public_file_server.headers = {
+  #     'Cache-Control' => 'public, max-age=172800'
+  #   }
+  # else
+  #   config.action_controller.perform_caching = false
+
+  #   config.cache_store = :null_store
+  # end
 
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.default_url_options = { host: "http://#{ENV["APP_DOMAIN"] || "localhost"}", port: ENV["PORT"] || 3002 }
   config.action_mailer.perform_caching = false
-  config.action_mailer.perform_deliveries = true
   config.action_controller.asset_host = "#{config.action_mailer.default_url_options[:host]}:#{config.action_mailer.default_url_options[:port]}"
   config.action_mailer.asset_host = config.action_controller.asset_host
-  
 
   if ENV['MAILTRAP_API_TOKEN']
+    config.action_mailer.perform_deliveries = true
     response = RestClient::Resource.new("https://mailtrap.io/api/v1/inboxes.json?api_token=#{ENV['MAILTRAP_API_TOKEN']}").get
     inbox = JSON.parse(response)[0]
     config.action_mailer.delivery_method = :smtp
@@ -68,4 +73,6 @@ Rails.application.configure do
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+
+  
 end

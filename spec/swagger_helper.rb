@@ -198,6 +198,7 @@ RSpec.configure do |config|
         role: { '$ref': '#/components/schemas/MemberRole', 'x-nullable': true },
         memberContractOnFile: { type: :boolean, 'x-nullable': true },
         phone: { type: :string },
+        silenceEmails: { type: :boolean, 'x-nullable': true },
         address: {
           type: :object,
           properties: {
@@ -228,6 +229,7 @@ RSpec.configure do |config|
         earnedMembershipId: { type: :string, 'x-nullable': true },
         notes: { type: :string, 'x-nullable': true },
         phone: { type: :string, 'x-nullable': true },
+        silenceEmails: { type: :boolean, 'x-nullable': true },
         address: {
           type: :object,
           properties: {

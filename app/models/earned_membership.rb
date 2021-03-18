@@ -59,7 +59,7 @@ class EarnedMembership
   def renew_member
     self.member.update(expirationTime: get_shortest_term_end_time)
     time = self.member.pretty_time.strftime("%m/%d/%Y")
-    send_slack_message("#{self.member.fullname} earned membership extended to #{time}")
+    enque_message("#{self.member.fullname} earned membership extended to #{time}")
   end
 
   def requirements_exist

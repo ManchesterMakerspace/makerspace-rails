@@ -6,7 +6,7 @@ task :upload_screenshots => :environment do
     refresh_token: ENV['GOOGLE_TOKEN'],
     scope: ["https://www.googleapis.com/auth/drive"]
   })
-  Dir.glob("#{Rails.root}/tmp/screenshots/*.png") do |screenshot|
+  Dir.glob("#{Rails.root}/**/screenshots/*") do |screenshot|
     file_meta = {
       name: screenshot,
       parents: ["1im4l-Ub3qEOd-ZPwBQTx7_KUkObNSPPw"]
@@ -14,17 +14,6 @@ task :upload_screenshots => :environment do
     google.create_file(file_meta,
                       fields: 'id',
                       upload_source: screenshot,
-                      content_type: 'image/png')
-  end
-
-  Dir.glob("#{Rails.root}/tmp/makerspace-react/tmp/screenshots/*.png") do |screenshot|
-    file_meta = {
-      name: screenshot,
-      parents: ["1im4l-Ub3qEOd-ZPwBQTx7_KUkObNSPPw"]
-    }
-    google.create_file(file_meta,
-                      fields: 'id',
-                      upload_source: screenshot,
-                      content_type: 'image/png')
+                      content_type: screenshot.end_with?(".png") ? 'image/png' : 'text/plain')
   end
 end

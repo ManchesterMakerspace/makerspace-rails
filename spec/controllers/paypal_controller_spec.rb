@@ -23,6 +23,7 @@ RSpec.describe PaypalController, type: :controller do
     context "with valid params" do
       before(:each) do
         member
+        Redis.current.flushall
         sleep(5.seconds)
       end 
       it "creates a new Paypal" do
@@ -37,17 +38,9 @@ RSpec.describe PaypalController, type: :controller do
         expect(assigns(:payment)).to be_persisted
       end
 
-      it "assigns an array of messages for Slack" do
-        post :notify, params: valid_attributes, format: :json
-        expect(assigns(:messages)).to be_a(Array)
-        expect(assigns(:messages).first).to include("Payment Completed:")
-        expect(assigns(:messages).first).to include("Member found:")
-      end
-
       it "Sends a notification to Slack" do
-        expect_any_instance_of(PaypalController).to receive(:send_slack_messages)
+        expect(SlackMessagesJob).to receive(:perform_later)
         post :notify, params: valid_attributes, format: :json
-        expect(assigns(:messages)).to be_a(Array)
       end
 
       it "Attributes the correct member to the payment" do
@@ -77,9 +70,14 @@ RSpec.describe PaypalController, type: :controller do
       end
 
       it "Notifies of duplicate txn_ids" do
+        ActiveJob::Base.queue_adapter = :test
         post :notify, params: valid_attributes, format: :json
-        post :notify, params: valid_attributes, format: :json
-        expect(assigns(:messages).last).to include("Txn is already taken")
+        expect {
+          post :notify, params: valid_attributes, format: :json
+        }.to have_enqueued_job
+        messages = Redis.current.mget(*Redis.current.keys)
+        sorted_messages = messages.sort_by { |payload| Time.parse(JSON.load(payload)["timestamp"]) }
+        expect(JSON.load(sorted_messages.last)["message"]).to include("Txn is already taken")
       end
     end
   end

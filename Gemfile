@@ -7,6 +7,10 @@ gem 'puma', '~> 3.12'
 gem 'active_model_serializers'
 gem 'dotenv-rails'
 
+# Redis Cache and Event Bus
+gem 'redis'
+gem 'redis-rails'
+
 #authentication
 gem 'devise'
 gem 'bcrypt'
@@ -54,4 +58,4 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # Frontend
-gem "makerspace-react-rails", "1.0.6"
+gem "makerspace-react-rails", "1.0.8"

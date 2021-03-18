@@ -551,6 +551,10 @@
           "phone": {
             "type": "string"
           },
+          "silenceEmails": {
+            "type": "boolean",
+            "x-nullable": true
+          },
           "address": {
             "type": "object",
             "properties": {
@@ -634,6 +638,10 @@
           },
           "phone": {
             "type": "string",
+            "x-nullable": true
+          },
+          "silenceEmails": {
+            "type": "boolean",
             "x-nullable": true
           },
           "address": {

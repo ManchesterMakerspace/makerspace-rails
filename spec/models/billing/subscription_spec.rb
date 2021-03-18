@@ -35,6 +35,9 @@ RSpec.describe BraintreeService::Subscription, type: :model do
 
     describe "#cancel" do
       it "cancels a subscription" do
+        member = create(:member, subscription_id: "foo", subscription: true)
+        member_invoice = create(:invoice, subscription_id: member.subscription_id, resource_id: member.id)
+
         allow(gateway).to receive_message_chain(:subscription, cancel: success_result) # Setup method calls to gateway
         expect(gateway.subscription).to receive(:cancel).with("foo").and_return(success_result)
         result = BraintreeService::Subscription.cancel(gateway, "foo")
@@ -70,6 +73,9 @@ RSpec.describe BraintreeService::Subscription, type: :model do
       end
 
       it "raises error if failed result" do
+        member = create(:member, subscription_id: "foo", subscription: true)
+        member_invoice = create(:invoice, subscription_id: member.subscription_id, resource_id: member.id)
+
         allow(gateway).to receive_message_chain(:subscription, cancel: error_result) # Setup method calls to gateway
         expect(gateway.subscription).to receive(:cancel).with("foo").and_return(error_result)
         allow(Error::Braintree::Result).to receive(:new).with(error_result).and_return(Error::Braintree::Result.new) # Bypass error instantiation
@@ -79,6 +85,10 @@ RSpec.describe BraintreeService::Subscription, type: :model do
     end
 
     describe "#create" do
+      after(:each) do 
+        Redis.current.flushall
+      end
+
       it "creates a subscription" do
         invoice = build(:invoice, payment_method_id: "foo", plan_id: "bar")
         # Freeze subscription ID generated from this invoice
@@ -133,6 +143,8 @@ RSpec.describe BraintreeService::Subscription, type: :model do
 
         allow(gateway).to receive_message_chain(:subscription, create: error_result) # Setup method calls to gateway
         expect(gateway.subscription).to receive(:create).with(subscription_hash).and_return(error_result)
+        allow(error_result).to receive(:success).and_return(false)
+        allow(error_result).to receive_message_chain(:subscription, :id).and_return(id)
         allow(Error::Braintree::Result).to receive(:new).with(error_result).and_return(Error::Braintree::Result.new) # Bypass error instantiation
 
         expect{ BraintreeService::Subscription.create(gateway, invoice) }.to raise_error(Error::Braintree::Result)
@@ -146,6 +158,49 @@ RSpec.describe BraintreeService::Subscription, type: :model do
         expect{ BraintreeService::Subscription.create(gateway, member_invoice) }.to raise_error(Error::UnprocessableEntity)
         expect{ BraintreeService::Subscription.create(gateway, rental_invoice) }.to raise_error(Error::UnprocessableEntity)
       end
+
+      it "Reports succcess status to Redis cache" do 
+        invoice = build(:invoice, payment_method_id: "foo", plan_id: "bar")
+        # Freeze subscription ID generated from this invoice
+        id = invoice.generate_subscription_id
+        allow(invoice).to receive(:generate_subscription_id).and_return(id)
+        fake_subscription = build(:subscription, id: id)
+        subscription_hash = {
+          payment_method_token: "foo",
+          plan_id: "bar",
+          id: id
+        }
+        allow(gateway).to receive_message_chain(:subscription, create: success_result) # Setup method calls to gateway
+        allow(success_result).to receive(:subscription).and_return(fake_subscription)
+        allow(success_result).to receive_message_chain(:subscription_id, :id).and_return(id)
+        allow(success_result).to receive(:succcess?).and_return(true)
+        allow(BraintreeService::Subscription).to receive(:normalize_subscription).with(gateway, fake_subscription).and_return(fake_subscription)
+        expect(gateway.subscription).to receive(:create).with(subscription_hash).and_return(success_result)
+        result = BraintreeService::Subscription.create(gateway, invoice)
+      end
+
+      # TODO: Failed subscription has no subscription ID so therefore cannot set a Failed state
+      # it "Reports failed status to Redis cache" do 
+      #   invoice = build(:invoice, payment_method_id: "foo", plan_id: "bar", discount_id: "discount")
+      #   # Freeze subscription ID generated from this invoice
+      #   id = invoice.generate_subscription_id
+      #   allow(invoice).to receive(:generate_subscription_id).and_return(id)
+      #   fake_subscription = build(:subscription, id: id)
+      #   subscription_hash = {
+      #     payment_method_token: "foo",
+      #     plan_id: "bar",
+      #     id: id,
+      #     discounts: { add: [{ inherited_from_id: "discount" }] }
+      #   }
+
+      #   allow(gateway).to receive_message_chain(:subscription, create: error_result) # Setup method calls to gateway
+      #   expect(gateway.subscription).to receive(:create).with(subscription_hash).and_return(error_result)
+      #   allow(error_result).to receive(:success?).and_return(false)
+      #   allow(error_result).to receive_message_chain(:subscription, :id).and_return(id)
+      #   allow(Error::Braintree::Result).to receive(:new).with(error_result).and_return(Error::Braintree::Result.new) # Bypass error instantiation
+      #   expect{ BraintreeService::Subscription.create(gateway, invoice) }.to raise_error(Error::Braintree::Result)
+      #   expect(Redis.current.get(id)).to eql(SubscriptionHelper::LIFECYCLES[:Failed])
+      # end
     end
 
     describe "#update" do

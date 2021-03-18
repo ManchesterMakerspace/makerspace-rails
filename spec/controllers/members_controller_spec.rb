@@ -77,6 +77,14 @@ RSpec.describe MembersController, type: :controller do
       expect(parsed_response['address']['postalCode']).to eq(member_params[:address][:postal_code])
     end
 
+    it "Updates member's notification settings" do 
+      put :update, params: { id: current_user.id, silenceEmails: true }, format: :json 
+      expect(response).to have_http_status(200)
+      expect(response.content_type).to eq "application/json"
+      parsed_response = JSON.parse(response.body)
+      expect(parsed_response['silenceEmails']).to be_truthy
+    end
+
     it "raises forbidden if not updating current member" do
       member = create(:member)
       put :update, params: { id: member.id, member: member_params }, format: :json

@@ -3,6 +3,7 @@ class Invoice
   include Mongoid::Search
   include ActiveModel::Serializers::JSON
   include Service::SlackConnector
+  include Publishable
 
   OPERATION_RESOURCES = {
     "member" => Member,
@@ -25,7 +26,7 @@ class Invoice
   field :refund_requested, type: Time
   field :dispute_requested, type: Time
   field :dispute_settled, type: Boolean
-  field :locked, type: Boolean, default: false # Lock an invoice to prevent braintree notification race condition
+  field :locked, type: Boolean, default: false # Deprecated. Lock an invoice to prevent braintree notification race condition
 
   ## Admin/Operation Information
   # How many operations to perform (eg, num of months renewed)
@@ -60,14 +61,6 @@ class Invoice
 
   attr_accessor :found_resource, :payment_method_id
 
-  def lock
-    self.update!({ locked: true })
-  end
-
-  def unlock
-    self.update!({ locked: false })
-  end
-
   def settled
     !!self.settled_at
   end
@@ -98,7 +91,7 @@ class Invoice
   def request_refund
     set_refund_requested
     base_url = ActionMailer::Base.default_url_options[:host]
-    send_slack_message("#{member.fullname} has requested a refund of #{amount} for #{name || description} from #{settled_at}. <#{base_url}/billing/transactions/#{transaction_id}|Process refund>")
+    enque_message("#{member.fullname} has requested a refund of #{amount} for #{name || description} from #{settled_at}. <#{base_url}/billing/transactions/#{transaction_id}|Process refund>")
     BillingMailer.refund_requested(member.email, transaction_id, id.as_json).deliver_later
   end
 
@@ -146,7 +139,6 @@ class Invoice
     next_invoice.refunded = false
     next_invoice.refund_requested = nil
     next_invoice.transaction_id = nil
-    next_invoice.locked = false
     next_invoice.dispute_settled = false
     next_invoice.dispute_requested = nil
     next_invoice.due_date = self.due_date + self.quantity.months
@@ -164,25 +156,17 @@ class Invoice
     slack_user = SlackUser.find_by(member_id: self.member_id)
     type = self.resource_class == "member" ? "membership" : "rental"
     message = "#{self.member.fullname}'s #{type} subscription#{type == "rental" ? " for #{self.resource.number}" : ""} has been canceled."
-    send_slack_message(message, ::Service::SlackConnector.safe_channel(slack_user.slack_id)) unless slack_user.nil?
-    send_slack_message(message, ::Service::SlackConnector.members_relations_channel)
+    enque_message(message, slack_user.slack_id) unless slack_user.nil?
+    enque_message(message, ::Service::SlackConnector.members_relations_channel)
     BillingMailer.canceled_subscription(self.member.email, self.resource_class).deliver_later
   end
 
-  def self.process_cancellation(subscription_id, skip_notification=false)
-    invoice = find_invoice_by_subscription_id(subscription_id)
-    unless invoice.nil? || invoice.locked # Only send cancellation notifications if the invoice exists and isn't already being cancelled
-      # Destroy invoices for this subscription that are still outstanding
-      invoice.resource.remove_subscription() unless invoice.resource.nil?
-      Invoice.where(subscription_id: subscription_id, settled_at: nil, transaction_id: nil).destroy
-      !skip_notification && invoice.send_cancellation_notification # Can send notification after destorying because there is still `invoice` in memory
-    end
-  end
-
-  def self.find_invoice_by_subscription_id(subscription_id)
-    invoice = Invoice.find_by(subscription_id: subscription_id, settled_at: nil, transaction_id: nil) # Find a related invoice in order to get notification details
-    invoice = Invoice.where(subscription_id: subscription_id).last if invoice.nil?
-    invoice
+  def self.process_cancellation(invoice_id, skip_notification=false)
+    invoice = Invoice.find(invoice_id)
+    # Destroy invoices for this subscription that are still outstanding
+    invoice.resource.remove_subscription() unless invoice.resource.nil?
+    Invoice.where(subscription_id: invoice.subscription_id, settled_at: nil, transaction_id: nil).destroy unless invoice.subscription_id.nil?
+    !skip_notification && invoice.send_cancellation_notification # Can send notification after destorying because there is still `invoice` in memory
   end
 
   def self.resource(class_name, id)
@@ -235,7 +219,7 @@ class Invoice
       self.settled = true
       self.save!
     else
-      send_slack_message("Delaying processing of invoice #{self.id}... Is member missing a key?")
+      enque_message("Delaying processing of invoice #{self.id}... Is member missing a key?")
     end
   end
 

@@ -3,9 +3,8 @@ class Member
   include Mongoid::Search
   include ActiveModel::Serializers::JSON
   include InvoiceableResource
-  include Service::BraintreeGateway
-  include Service::GoogleDrive
   include Service::SlackConnector
+  include Publishable
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -41,6 +40,7 @@ class Member
   field :customer_id, type: String # Braintree customer relation
   field :subscription_id, type: String # Braintree relation
 
+  field :silence_emails, type: Boolean # Stop all slack and email notifications to user
   field :notes, type: String
 
   search_in :email, :lastname
@@ -54,12 +54,9 @@ class Member
   validates_inclusion_of :role, in: ["admin", "member"]
 
   after_initialize :verify_group_expiry
-  before_save :update_braintree_customer_info
-  # Make sure email is actually spelled differently
-  before_update :reinvite_to_services
-  after_update :update_card
-  after_create :apply_default_permissions, :send_slack_invite, :send_google_invite
-  before_destroy :delete_subscription, :delete_rentals
+  after_create :apply_default_permissions, :publish_create
+  after_update :update_card, :publish_update
+  after_destroy :publish_destroy
 
   has_many :permissions, class_name: 'Permission', dependent: :destroy, :autosave => true
   has_many :rentals, class_name: 'Rental'
@@ -191,30 +188,20 @@ class Member
   # Emit to Member & Management channels on renewal
   def send_renewal_slack_message(current_user=nil)
     slack_user = SlackUser.find_by(member_id: id)
-    send_slack_message(get_renewal_slack_message, ::Service::SlackConnector.safe_channel(slack_user.slack_id)) unless slack_user.nil?
-    send_slack_message(get_renewal_slack_message(current_user), ::Service::SlackConnector.members_relations_channel)
+    enque_message(get_renewal_slack_message, slack_user.slack_id) unless slack_user.nil?
+    enque_message(get_renewal_slack_message(current_user), ::Service::SlackConnector.members_relations_channel)
   end
 
   # Emit to Member & Management channels on renewal reversals
   def send_renewal_reversal_slack_message
     slack_user = SlackUser.find_by(member_id: id)
-    send_slack_message(get_renewal_reversal_slack_message, ::Service::SlackConnector.safe_channel(slack_user.slack_id)) unless slack_user.nil?
-    send_slack_message(get_renewal_reversal_slack_message, ::Service::SlackConnector.members_relations_channel)
+    enque_message(get_renewal_reversal_slack_message, slack_user.slack_id) unless slack_user.nil?
+    enque_message(get_renewal_reversal_slack_message, ::Service::SlackConnector.members_relations_channel)
   end
 
   protected
   def base_slack_message
     self.fullname
-  end
-
-  def find_braintree_customer
-    connect_gateway.customer.find(self.customer_id) unless self.customer_id.nil?
-  end
-
-  def update_braintree_customer_info
-    if self.customer_id && self.changed.any? { |attr| [:firstname, :lastname].include?(attr) }
-      connect_gateway.customer.update(self.customer_id, firstname: self.firstname, lastname: self.lastname)
-    end
   end
 
   def expiration_attr
@@ -243,42 +230,22 @@ class Member
     false
   end
 
-  def reinvite_to_services
-    stored_mem = Member.find(id)
-    if (!stored_mem || !stored_mem.email || stored_mem.email.downcase != self.email.downcase)
-      slack_user = SlackUser.find_by(member_id: id)
-      send_slack_invite() if slack_user.nil?
-      send_google_invite()
-      send_slack_message("Re-invited #{self.fullname} to #{slack_user.nil? ? "Slack and ": ""}Google with new email: #{self.email}")
-    end
+  def publish_create
+    # Invite to Slack, Google
+    publish(:create)
   end
 
-  def send_slack_invite
-    invite_to_slack()
+  def publish_update
+    # Invite to Slack, Google if email changed. 
+    publish(:email_changed) if changed.any? { |attr| attr.to_sym == :email }
+    publish(:billing_info_changed) if changed.any? { |attr| [:firstname, :lastname].include?(attr.to_sym) }
   end
 
-  def send_google_invite
-    begin
-      invite_gdrive(self.email)
-    rescue Error::Google::Upload => err
-      send_slack_message("Error sharing Member Resources folder with #{self.fullname}. Error: #{err}")
-    end
+  def publish_destroy
+    publish(:destroy)
   end
 
   def apply_default_permissions
     update_permissions(DefaultPermission.list_as_hash)
-  end
-
-  def delete_subscription
-    if subscription_id
-      ::BraintreeService::Subscription.cancel(::Service::BraintreeGateway.connect_gateway(), subscription_id)
-    end
-  end
-
-  def delete_rentals
-    if rentals.length
-      success = rentals.map { |rental| rental.destroy }
-      success.all? { |s| !!s }
-    end
   end
 end

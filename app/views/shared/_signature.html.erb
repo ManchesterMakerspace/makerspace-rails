@@ -30,7 +30,7 @@
 <strong>Helpful Links:</strong>
 <div>
   <% if (@url) %>
-    <%= link_to 'My Account', @url, id: "profile-link"%> | 
+    <%= link_to 'My Account', url_for(action: :application, controller: 'application'), id: "profile-link"%> | 
   <% end %>
   <a href="http://manchestermakerspace.slack.com/">Team Slack</a> |
   <a href="http://wiki.manchestermakerspace.org/">Wiki</a>

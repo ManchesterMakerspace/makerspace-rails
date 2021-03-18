@@ -39,7 +39,7 @@ class MembersController < AuthenticationController
             MemberMailer.send_document("member_contract", @member.id.as_json, document).deliver_later
           end
         rescue Error::Google::Upload => err
-          @messages.push("Error uploading #{@member.fullname}'s member contract signature'. Error: #{err}")
+          enque_message("Error uploading #{@member.fullname}'s member contract signature'. Error: #{err}")
         end
       else
         @member.update_attributes!(member_params)
@@ -59,7 +59,7 @@ class MembersController < AuthenticationController
     end
 
     def member_params
-      params.permit(:firstname, :lastname, :email, :phone, address: [:street, :unit, :city, :state, :postal_code])
+      params.permit(:firstname, :lastname, :email, :phone, :silence_emails, address: [:street, :unit, :city, :state, :postal_code])
     end
 
     def search_params

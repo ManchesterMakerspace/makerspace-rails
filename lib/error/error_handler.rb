@@ -31,9 +31,11 @@ module Error
           respond(:unauthorized, 401, "Unauthorized")
         end
         rescue_from ::ActionController::ParameterMissing do |e|
+          slack_alert(:unprocessable_entity, 422, e.message)
           respond(:unprocessable_entity, 422, e.message)
         end
         rescue_from ::Braintree::NotFoundError do |e|
+          slack_alert(:not_found, 404, "Braintree resource not found")
           respond(:not_found, 404, "Braintree resource not found")
         end
         rescue_from CustomError do |e|
@@ -65,12 +67,17 @@ module Error
       unless !self.try(:current_member) && _status.to_i == 404
         message = "*#{error_type} Error* \n- user: #{user} \n- status: #{_status} \n- error: #{_error} \n- message: #{_message}"
         
+        if Current.request_id 
+          message += "\n URL: #{Current.method} #{Current.url} \n #{Current.params}"
+        end
+
         # @channel on server errors
         if _status.to_i >= 500 
           message = "<!channel> " + message
         end
 
-        send_slack_message(message, ::Service::SlackConnector.logs_channel)
+        enque_message(message, ::Service::SlackConnector.logs_channel)
+        SlackMessagesJob.perform_later(Current.request_id)
       end
     end
   end
