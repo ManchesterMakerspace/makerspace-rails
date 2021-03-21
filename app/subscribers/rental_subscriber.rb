@@ -1,5 +1,6 @@
 module RentalSubscriber
-    extend Service::BraintreeGateway
+  extend Service::SlackConnector
+  extend Service::BraintreeGateway
     extend self
   
     def subscribe
