@@ -1,4 +1,4 @@
 <div>
-<p>No longer wish to receive emails from Manchester Makerspace? <a href="#{
-    url_for(action: :application, controller: 'application')}/unsubscribe">Unsubscribe</a></p>
+<p>No longer wish to receive emails from Manchester Makerspace? <a href="<%="#{
+    url_for(action: :application, controller: 'application')}/unsubscribe?email=#{@member.email}"%>">Unsubscribe</a></p>
 </div>

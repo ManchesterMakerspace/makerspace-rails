@@ -112,7 +112,7 @@ RSpec.configure do |config|
     passwordError: {
       type: :object,
       properties: {
-        errors: { 
+        errors: {
           type: :object,
           properties: {
             email: {
@@ -188,59 +188,70 @@ RSpec.configure do |config|
       }
     },
 
-    NewMember: {
+    BaseMember: {
       type: :object,
       properties: {
-        firstname: { type: :string },
-        lastname: { type: :string },
-        email: { type: :string },
-        status: { '$ref': '#/components/schemas/MemberStatus', 'x-nullable': true },
-        role: { '$ref': '#/components/schemas/MemberRole', 'x-nullable': true },
-        memberContractOnFile: { type: :boolean, 'x-nullable': true },
-        phone: { type: :string },
-        silenceEmails: { type: :boolean, 'x-nullable': true },
-        address: {
-          type: :object,
-          properties: {
-            street: { type: :string },
-            unit: { type: :string,  'x-nullable': true },
-            city: { type: :string },
-            state: { type: :string },
-            postalCode: { type: :string },
-          }
-        }
-      }
-    },
-    Member: {
-      type: :object,
-      properties: {
-        id: { type: :string },
-        firstname: { type: :string },
-        lastname: { type: :string },
-        email: { type: :string },
-        status: { '$ref': '#/components/schemas/MemberStatus' },
-        role: { '$ref': '#/components/schemas/MemberRole' },
-        expirationTime: { type: :number, 'x-nullable': true },
-        memberContractOnFile: { type: :boolean },
-        cardId: { type: :string, 'x-nullable': true },
-        subscriptionId: { type: :string, 'x-nullable': true },
-        subscription: { type: :boolean },
-        customerId: { type: :string, 'x-nullable': true },
-        earnedMembershipId: { type: :string, 'x-nullable': true },
-        notes: { type: :string, 'x-nullable': true },
+        firstname: { type: :string, 'x-nullable': true },
+        lastname: { type: :string, 'x-nullable': true },
+        email: { type: :string, 'x-nullable': true },
         phone: { type: :string, 'x-nullable': true },
-        silenceEmails: { type: :boolean, 'x-nullable': true },
+        silenceEmails: { type: :string, 'x-nullable': true },
+        notes: { type: :string, 'x-nullable': true },
         address: {
           type: :object,
+          'x-nullable': true,
           properties: {
             street: { type: :string, 'x-nullable': true },
-            unit: { type: :string, 'x-nullable': true },
+            unit: { type: :string,  'x-nullable': true },
             city: { type: :string, 'x-nullable': true },
             state: { type: :string, 'x-nullable': true },
             postalCode: { type: :string, 'x-nullable': true },
           }
         }
       }
+    },
+    NewMember: {
+      allOf: [
+        { '$ref' => '#/components/schemas/BaseMember' },
+        {
+          type: :object,
+          properties: {
+            status: { '$ref': '#/components/schemas/MemberStatus', 'x-nullable': true },
+            role: { '$ref': '#/components/schemas/MemberRole', 'x-nullable': true },
+            memberContractOnFile: { type: :boolean, 'x-nullable': true },
+          }
+        }
+      ]
+    },
+    Member: {
+      allOf: [
+        { '$ref' => '#/components/schemas/NewMember' },
+        {
+          type: :object,
+          properties: {
+            id: { type: :string },
+            cardId: { type: :string, 'x-nullable': true },
+            subscriptionId: { type: :string, 'x-nullable': true },
+            subscription: { type: :boolean },
+            customerId: { type: :string, 'x-nullable': true },
+            earnedMembershipId: { type: :string, 'x-nullable': true },
+            expirationTime: { type: :number, 'x-nullable': true },
+          }
+        }
+      ]
+    },
+    AdminUpdateMemberDetails: {
+      allOf: [
+        { '$ref' => '#/components/schemas/BaseMember' },
+        {
+          type: :object,
+          properties: {
+            renew: { type: :number, 'x-nullable': true },
+            subscription: { type: :boolean, 'x-nullable': true },
+            expirationTime: { type: :number, 'x-nullable': true },
+          }
+        }
+      ]
     },
     MemberSummary: {
       type: :object,
@@ -277,7 +288,7 @@ RSpec.configure do |config|
       properties: {
         id: { type: :string },
         name: { type: :string },
-        type: { 
+        type: {
           type: :string,
           enum: ["membership", "rental"]
         },
@@ -413,7 +424,7 @@ RSpec.configure do |config|
       properties: {
         id: { type: :string },
         planId: { type: :string },
-        status: { 
+        status: {
           type: :string,
           enum: [
             "Active",
@@ -447,7 +458,7 @@ RSpec.configure do |config|
         discountAmount: { type: :string },
         discounts: { type: :array, items: { '$ref' => '#/components/schemas/Discount' } },
         gatewayRejectionReason: { type: :string, 'x-nullable': true },
-        status: { 
+        status: {
           type: :string,
           enum: [
             "authorization_expired",
@@ -489,9 +500,9 @@ RSpec.configure do |config|
         }
       }
     },
-  }.map do |key, model| 
+  }.map do |key, model|
     if !model[:required]
-      model[:required] = model[:properties].map { |k, prop| k if prop[:'x-nullable'].nil? }.compact
+      model[:required] = (model[:properties] || []).map { |k, prop| k if prop[:'x-nullable'].nil? }.compact
     end
     [key, model]
   end.to_h
@@ -514,7 +525,7 @@ RSpec.configure do |config|
             enum: ["activeMember", "inactive", "nonMember", "revoked"]
           },
           MemberRole: {
-            type: :string, 
+            type: :string,
             enum: ["admin", "member"],
           },
           PayPalAccountSummary: {

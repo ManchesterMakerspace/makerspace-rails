@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  ruby: circleci/ruby@0.1.2 
+  ruby: circleci/ruby@0.1.2
 
 jobs:
   build:
@@ -14,7 +14,7 @@ jobs:
           name: Which bundler?
           command: bundle -v
       - ruby/bundle-install
-      - run: 
+      - run:
           name: UT
           command: bundle exec rspec
       - run:
@@ -35,7 +35,11 @@ jobs:
       - ruby/bundle-install
       - run:
           name: Publish
-          command: bundle exec rake publish
+          command: |
+            git config --global -l
+            git config --global user.email circleci@circleci
+            git config --global user.name CircleCI
+            bundle exec rake publish
 
 workflows:
   workflow:
