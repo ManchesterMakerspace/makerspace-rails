@@ -1,8 +1,10 @@
 desc "This task is called by the Heroku scheduler add-on and backs up the Mongo DB to local dump."
 task :backup => :environment do
+  dump_dir = "dump"
   begin
+    Dir.mkdir(dump_dir) unless File.exists?(dump_dir)
     file_name = "makerauthBackup_#{Time.now.strftime('%m-%d-%Y')}.archive"
-    sh("mongodump --uri #{ENV['MLAB_URI']} --archive=dump/#{file_name}")
+    sh("mongodump --uri #{ENV['MLAB_URI']} --archive=#{dump_dir}/#{file_name}")
     Service::GoogleDrive.upload_backup(file_name)
     slack_message = "Daily backup complete."
 
