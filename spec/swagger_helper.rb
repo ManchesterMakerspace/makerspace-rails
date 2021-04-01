@@ -195,7 +195,7 @@ RSpec.configure do |config|
         lastname: { type: :string, 'x-nullable': true },
         email: { type: :string, 'x-nullable': true },
         phone: { type: :string, 'x-nullable': true },
-        silenceEmails: { type: :string, 'x-nullable': true },
+        silenceEmails: { type: :boolean, 'x-nullable': true },
         notes: { type: :string, 'x-nullable': true },
         address: {
           type: :object,

@@ -38,13 +38,13 @@ module Service
       end
 
       def self.query_paypal_members(base = query_total_members)
-        base.where(subscription: true, :subscription_id.nin => [nil, ""])
+        base.where(subscription: true, :subscription_id => nil)
       end
 
       def self.query_braintree_members(base = query_total_members) # Controller
         base.where(
           :$or => [
-            { :subscription_id.nin => [nil, ""] },
+            { :subscription_id.ne => nil },
             {  subscription: true }
           ])
       end
@@ -105,11 +105,11 @@ module Service
       end
 
       def self.query_unsubscribed_rentals(base = query_total_rentals)
-        base.where(:subscription_id.in => [nil, ""])
+        base.where(:subscription_id => nil)
       end
 
       def self.query_subscribed_rentals(base = query_total_rentals) #not used
-        base.where(:subscription_id.nin => [nil, ""])
+        base.where(:subscription_id.ne => nil)
       end
 
       def self.query_total_rentals(base = Mongoid::Criteria.new(Rental))
