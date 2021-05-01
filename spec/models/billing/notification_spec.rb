@@ -88,7 +88,7 @@ RSpec.describe BraintreeService::Notification, type: :model do
       create(:card, member: member)
       init_member_expiration = member.pretty_time
       allow(transaction).to receive(:line_items).and_return([])
-      expect(BraintreeService::Notification).to receive(:enque_message).with(/in-process invoice/i, "treasurer")
+      expect(BraintreeService::Notification).to receive(:enque_message).with(/in-progress invoice/i, "treasurer")
 
       BraintreeService::Notification.process_subscription(successful_charge_notification)
       member.reload

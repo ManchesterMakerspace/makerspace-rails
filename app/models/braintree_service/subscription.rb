@@ -21,10 +21,6 @@ class BraintreeService::Subscription < Braintree::Subscription
   def self.cancel(gateway, id)
     invoice = Invoice.find_by(subscription_id: id)
     unless invoice.nil?
-      SubscriptionHelper.update_lifecycle(
-        id, 
-        SubscriptionHelper::LIFECYCLES[:Cancelled]
-      )
       result = InvoiceHelper.cancel_workflow(
         invoice.id,
         Proc.new { gateway.subscription.cancel(id) }
@@ -61,17 +57,16 @@ class BraintreeService::Subscription < Braintree::Subscription
         add: [{ inherited_from_id: invoice.discount_id }]
       }
     end
-    result = gateway.subscription.create(subscription_hash)
-    raise ::Error::Braintree::Result.new(result) unless result.success?
-    SubscriptionHelper.update_lifecycle(
-      result.subscription.id, 
-      SubscriptionHelper::LIFECYCLES[:Created]
+    result = InvoiceHelper.pay_workflow(
+      invoice.id,
+      Proc.new { gateway.subscription.create(subscription_hash) }
     )
+    raise ::Error::Braintree::Result.new(result) unless result.success?
     normalize_subscription(gateway, result.subscription)
   end
 
   def self.read_id(id)
-    resource_class, resource_id, hash = id.split("_")
+    resource_class, resource_id, invoice_id = id.split("_")
     [resource_class, resource_id]
   end
 

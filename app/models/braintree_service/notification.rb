@@ -82,23 +82,6 @@ class BraintreeService::Notification
     invoice = Invoice.active_invoice_for_resource(resource_id)
     related_resource = Invoice.resource(resource_class, resource_id)
 
-    subscription_cache = SubscriptionHelper.get_subscription_cache(subscription_id)
-    if subscription_cache
-      if (
-        subscription_cache == SubscriptionHelper::LIFECYCLES[:Created] &&
-        notification.kind == ::Braintree::WebhookNotification::Kind::SubscriptionChargedSuccessfully
-      )
-        enque_message("Duplicate SubscriptionChargedSuccessfully notification for subscription ID #{subscription_id}. Skipping processing", ::Service::SlackConnector.treasurer_channel)
-        return
-      elsif (
-        subscription_cache == SubscriptionHelper::LIFECYCLES[:Cancelled] &&
-        notification.kind == ::Braintree::WebhookNotification::Kind::SubscriptionCanceled
-      )
-        enque_message("Duplicate SubscriptionCanceled notification for subscription ID #{subscription_id}. Skipping processing", ::Service::SlackConnector.treasurer_channel)
-        return
-      end
-    end
-
     if invoice.nil?
       identifier = "#{resource_class} ID #{resource_id}"
 
@@ -123,9 +106,6 @@ class BraintreeService::Notification
       end
 
       return
-    elsif InvoiceHelper.get_lifecycle(invoice.id) == InvoiceHelper::LIFECYCLES[:InProgress]
-      enque_message("Received subscription notification for in-process invoice #{invoice.id}. Skipping processing", ::Service::SlackConnector.treasurer_channel)
-      return
     end
 
     if (last_transaction && notification.kind === ::Braintree::WebhookNotification::Kind::SubscriptionChargedSuccessfully)
@@ -144,9 +124,20 @@ No automated actions have been taken at this time.")
   end
 
   def self.process_subscription_charge_success(invoice, last_transaction)
+    if InvoiceHelper.get_lifecycle(invoice.id) == InvoiceHelper::LIFECYCLES[:InProgress]
+      enque_message("Duplicate SubscriptionChargedSuccessfully notification for in-progress invoice #{invoice.id}. Skipping processing", ::Service::SlackConnector.treasurer_channel)
+      return
+    elsif InvoiceHelper.get_lifecycle(invoice.id) == InvoiceHelper::LIFECYCLES[:Success]
+      enque_message("Duplicate SubscriptionChargedSuccessfully notification for successful invoice #{invoice.id}. Skipping processing", ::Service::SlackConnector.treasurer_channel)
+      return
+    end
+    
     dupe_invoice = Invoice.find_by(transaction_id: last_transaction.id, :id.ne => invoice.id)
     if dupe_invoice.nil?
-      self.process_success(invoice, last_transaction)
+      InvoiceHelper.pay_workflow(
+        invoice.id,
+        Proc.new { process_success(invoice, last_transaction) }
+      )
     else
       enque_message("Received duplicate notification regarding #{invoice.name} for #{invoice.member.fullname}. TID: #{last_transaction.id}", ::Service::SlackConnector.treasurer_channel)
     end
@@ -162,7 +153,10 @@ No automated actions have been taken at this time.")
 
   def self.process_subscription_cancellation(invoice)
     if InvoiceHelper.get_lifecycle(invoice.id) == InvoiceHelper::LIFECYCLES[:Cancelling]
-      enque_message("Received subscription cancelation notification for in-process invoice #{invoice.id}. Skipping processing", ::Service::SlackConnector.treasurer_channel)
+      enque_message("Duplicate SubscriptionCanceled notification for in-progress cancellation invoice #{invoice.id}. Skipping processing", ::Service::SlackConnector.treasurer_channel)
+      return
+    elsif InvoiceHelper.get_lifecycle(invoice.id) == InvoiceHelper::LIFECYCLES[:Cancelled]
+      enque_message("Duplicate SubscriptionCanceled notification for cancelled invoice #{invoice.id}. Skipping processing", ::Service::SlackConnector.treasurer_channel)
       return
     end
     Invoice.process_cancellation(invoice.id)
