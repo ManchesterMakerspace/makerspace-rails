@@ -178,7 +178,7 @@ RSpec.describe Billing::TransactionsController, type: :controller do
       post :create, params: valid_params, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(404)
-      expect(Redis.current.get(invoice.id)).to eql(InvoiceHelper::LIFECYCLES[:Failed])
+      expect(InvoiceHelper.get_lifecycle(invoice.id)).to eql(InvoiceHelper::LIFECYCLES[:Failed])
     end
   end
 
