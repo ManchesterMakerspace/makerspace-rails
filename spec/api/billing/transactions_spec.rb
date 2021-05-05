@@ -73,9 +73,9 @@ describe 'Billing::Transactions API', type: :request do
         title: :createTransactionDetails, 
         type: :object,
         properties: {
-          invoiceId: { type: :string, 'x-nullable': true },
-          invoiceOptionId: { type: :string, 'x-nullable': true },
-          discountId: { type: :string, 'x-nullable': true },
+          invoiceId: { type: :string },
+          invoiceOptionId: { type: :string },
+          discountId: { type: :string },
           paymentMethodId: { type: :string }
         },
         required: [:paymentMethodId]
@@ -85,9 +85,9 @@ describe 'Billing::Transactions API', type: :request do
         title: :createTransactionDetails, 
         type: :object,
         properties: {
-          invoiceId: { type: :string, 'x-nullable': true },
-          invoiceOptionId: { type: :string, 'x-nullable': true },
-          discountId: { type: :string, 'x-nullable': true },
+          invoiceId: { type: :string },
+          invoiceOptionId: { type: :string },
+          discountId: { type: :string },
           paymentMethodId: { type: :string }
         },
         required: [:paymentMethodId]

@@ -25,11 +25,13 @@ RSpec.configure do |config|
           enum: ["activeMember", "expired", "inactive", "lost", "nonMember", "revoked", "stolen"]
         },
         uid: { type: :string },
-      }
+      },
+      required: [:id, :holder, :expiry, :validity, :uid]
     },
     RejectionCard: {
       type: :object,
-      properties: { uid: { type: :string } }
+      properties: { uid: { type: :string } },
+      required: [:uid]
     },
 
     CreditCard: {
@@ -37,7 +39,7 @@ RSpec.configure do |config|
       properties: {
         id: { type: :string },
         isDefault: { type: :boolean },
-        paymentType: { type: :string, 'x-nullable': true },
+        paymentType: { type: :string },
         customerId: { type: :string },
         imageUrl: { type: :string },
         subscriptions: {
@@ -50,7 +52,20 @@ RSpec.configure do |config|
         expirationDate: { type: :string },
         last4: { type: :number  },
         debit: { type: :boolean },
-      }
+      },
+      required: [
+        :id,
+        :isDefault,
+        :customerId,
+        :imageUrl,
+        :subscriptions,
+        :cardType,
+        :expirationMonth,
+        :expirationYear,
+        :expirationDate,
+        :last4,
+        :debit
+      ]
     },
 
     Discount: {
@@ -60,7 +75,8 @@ RSpec.configure do |config|
         name: { type: :string },
         description: { type: :string },
         amount: { type: :string }
-      }
+      },
+      required: [:id, :name, :description, :amount]
     },
 
     Dispute: {
@@ -73,7 +89,16 @@ RSpec.configure do |config|
         amountDisputed: { type: :number },
         status: { type: :string },
         transaction: { '$ref' => '#/components/schemas/Transaction' }
-      }
+      },
+      required: [
+        :id,
+        :kind,
+        :reason,
+        :createdAt,
+        :amountDisputed,
+        :status,
+        :transaction
+      ]
     },
 
     NewEarnedMembership: {
@@ -83,22 +108,30 @@ RSpec.configure do |config|
         requirements: {
           type: :array,
           items: { '$ref' => '#/components/schemas/NewRequirement' }
-        }
-      }
+        },
+      },
+      required: [:memberId, :requirements]
     },
     EarnedMembership: {
-      type: :object,
-      properties: {
-        id: { type: :string },
-        memberId: { type: :string },
-        memberName: { type: :string },
-        memberStatus: { '$ref': '#/components/schemas/MemberStatus' },
-        memberExpiration: { type: :number },
-        requirements: {
-          type: :array,
-          items: { '$ref' => '#/components/schemas/Requirement' }
+      allOf: [
+        { '$ref' => '#/components/schemas/NewEarnedMembership' },
+        {
+          type: :object,
+          properties: {
+            id: { type: :string },
+            memberName: { type: :string },
+            memberStatus: { '$ref': '#/components/schemas/MemberStatus' },
+            memberExpiration: { type: :number },
+            requirements: {
+              type: :array,
+              items: { '$ref' => '#/components/schemas/Requirement' }
+            },
+          },
+          required: [
+            :id, :memberName, :memberStatus, :memberExpiration, :requirements
+          ]
         }
-      }
+      ]
     },
 
     error: {
@@ -107,7 +140,8 @@ RSpec.configure do |config|
         message: { type: :string },
         status: { type: :number, 'x-nullable': true },
         error: { type: :string, 'x-nullable': true },
-      }
+      },
+      required: [:message]
     },
     passwordError: {
       type: :object,
@@ -121,10 +155,31 @@ RSpec.configure do |config|
                 type: :string
               }
             }
-          }
+          },
+          required: [:email]
         }
-      }
+      },
+      required: [:errors]
     },
+    passwordResetError: {
+      type: :object,
+      properties: {
+        errors: {
+          type: :object,
+          properties: {
+            reset_password_token: {
+              type: :array,
+              items: {
+                type: :string
+              }
+            }
+          },
+          required: [:reset_password_token]
+        }
+      },
+      required: [:errors]
+    },
+
 
     Invoice: {
       type: :object,
@@ -155,7 +210,24 @@ RSpec.configure do |config|
             { '$ref' => '#/components/schemas/Rental' }
           ]
         }
-      }
+      },
+      required: [
+        :id,
+        :name,
+        :description,
+        :settled,
+        :pastDue,
+        :createdAt,
+        :dueDate,
+        :amount,
+        :resourceClass,
+        :resourceId,
+        :quantity,
+        :memberName,
+        :memberId,
+        :refunded,
+        :resource
+      ]
     },
 
     NewInvoiceOption:  {
@@ -170,45 +242,48 @@ RSpec.configure do |config|
         discountId: { type: :string, 'x-nullable': true },
         disabled: { type: :boolean, 'x-nullable': true },
         isPromotion: { type: :boolean, 'x-nullable': true },
-      }
+      },
+      required: [
+        :name,
+        :amount,
+        :resourceClass,
+        :quantity
+      ]
     },
+
     InvoiceOption: {
-      type: :object,
-      properties: {
-        id: { type: :string },
-        name: { type: :string },
-        description: { type: :string },
-        amount: { type: :string },
-        planId: { type: :string, 'x-nullable': true },
-        resourceClass: { '$ref' => '#/components/schemas/InvoiceableResource' },
-        quantity: { type: :number },
-        discountId: { type: :string, 'x-nullable': true },
-        disabled: { type: :boolean },
-        isPromotion: { type: :boolean, 'x-nullable': true  },
-      }
+      allOf: [
+        { '$ref' => '#/components/schemas/NewInvoiceOption' },
+        {
+          type: :object,
+          properties: {
+            id: { type: :string },
+          },
+          required: [
+            :id,
+          ]
+        }
+      ]
     },
 
     BaseMember: {
       type: :object,
       properties: {
-        firstname: { type: :string, 'x-nullable': true },
-        lastname: { type: :string, 'x-nullable': true },
-        email: { type: :string, 'x-nullable': true },
-        phone: { type: :string, 'x-nullable': true },
+        firstname: { type: :string },
+        lastname: { type: :string },
+        email: { type: :string },
+        status: { '$ref': '#/components/schemas/MemberStatus' },
+        role: { '$ref': '#/components/schemas/MemberRole' },
+        expirationTime: { type: :number, 'x-nullable': true },
+        memberContractOnFile: { type: :boolean },
         silenceEmails: { type: :boolean, 'x-nullable': true },
         notes: { type: :string, 'x-nullable': true },
-        address: {
-          type: :object,
-          'x-nullable': true,
-          properties: {
-            street: { type: :string, 'x-nullable': true },
-            unit: { type: :string,  'x-nullable': true },
-            city: { type: :string, 'x-nullable': true },
-            state: { type: :string, 'x-nullable': true },
-            postalCode: { type: :string, 'x-nullable': true },
-          }
-        }
-      }
+      },
+      required: [
+        :firstname, 
+        :lastname, 
+        :email, 
+      ]
     },
     NewMember: {
       allOf: [
@@ -216,10 +291,19 @@ RSpec.configure do |config|
         {
           type: :object,
           properties: {
-            status: { '$ref': '#/components/schemas/MemberStatus', 'x-nullable': true },
-            role: { '$ref': '#/components/schemas/MemberRole', 'x-nullable': true },
-            memberContractOnFile: { type: :boolean, 'x-nullable': true },
-          }
+            phone: { type: :string, 'x-nullable': true },
+            address: {
+              type: :object,
+              'x-nullable': true,
+              properties: {
+                street: { type: :string, 'x-nullable': true },
+                unit: { type: :string,  'x-nullable': true },
+                city: { type: :string, 'x-nullable': true },
+                state: { type: :string, 'x-nullable': true },
+                postalCode: { type: :string, 'x-nullable': true },
+              }
+            }
+          },
         }
       ]
     },
@@ -235,37 +319,52 @@ RSpec.configure do |config|
             subscription: { type: :boolean },
             customerId: { type: :string, 'x-nullable': true },
             earnedMembershipId: { type: :string, 'x-nullable': true },
-            expirationTime: { type: :number, 'x-nullable': true },
-          }
+          },
+          required: [:id, :expirationTime]
         }
       ]
     },
     AdminUpdateMemberDetails: {
-      allOf: [
-        { '$ref' => '#/components/schemas/BaseMember' },
-        {
-          type: :object,
-          properties: {
-            renew: { type: :number, 'x-nullable': true },
-            subscription: { type: :boolean, 'x-nullable': true },
-            expirationTime: { type: :number, 'x-nullable': true },
-          }
-        }
-      ]
-    },
-    MemberSummary: {
+      # TODO: This should use oneOf for renew/member partial
       type: :object,
       properties: {
-        id: { type: :string },
+        renew: { type: :number, 'x-nullable': true },
+        subscription: { type: :boolean, 'x-nullable': true },
         firstname: { type: :string },
         lastname: { type: :string },
         email: { type: :string },
         status: { '$ref': '#/components/schemas/MemberStatus' },
         role: { '$ref': '#/components/schemas/MemberRole' },
-        expirationTime: { type: :number, 'x-nullable': true },
+        expirationTime: { type: :number },
         memberContractOnFile: { type: :boolean },
-        notes: { type: :string, 'x-nullable': true },
+        notes: { type: :string },
+        silenceEmails: { type: :boolean },
+        phone: { type: :string },
+        address: {
+          type: :object,
+          properties: {
+            street: { type: :string },
+            unit: { type: :string },
+            city: { type: :string },
+            state: { type: :string },
+            postalCode: { type: :string },
+          }
+        },
       }
+    },
+    MemberSummary: {
+      allOf: [
+        { '$ref' => '#/components/schemas/BaseMember' },
+        {
+          type: :object,
+          properties: {
+            id: { type: :string },
+          },
+          required: [
+            :id
+          ]
+        }
+      ]
     },
     PayPalAccount: {
       type: :object,
@@ -280,7 +379,15 @@ RSpec.configure do |config|
           items: { '$ref' => '#/components/schemas/Subscription' }
         },
         email: { type: :string },
-      }
+      },
+      required: [
+        :id,
+        :default,
+        :customerId,
+        :imageUrl,
+        :subscriptions,
+        :email
+      ]
     },
 
     Plan: {
@@ -304,10 +411,20 @@ RSpec.configure do |config|
               name: { type: :string },
               description: { type: :string },
               amount: { type: :string },
-            }
+            },
+            required: [:id, :name, :description, :amount]
           }
         }
-      }
+      },
+      required: [
+        :id,
+        :name,
+        :type,
+        :description,
+        :amount,
+        :billingFrequency,
+        :discounts
+      ]
     },
 
     NewRequirement: {
@@ -318,24 +435,40 @@ RSpec.configure do |config|
         termLength: { type: :number },
         targetCount: { type: :number },
         strict: { type: :boolean },
-      }
+      },
+      required: [
+        :name,
+        :rolloverLimit,
+        :termLength,
+        :targetCount,
+        :strict
+      ]
     },
     Requirement: {
-      type: :object,
-      properties: {
-        id: { type: :string },
-        earnedMembershipId: { type: :string },
-        name: { type: :string },
-        rolloverLimit: { type: :number },
-        termLength: { type: :number },
-        targetCount: { type: :number },
-        strict: { type: :boolean },
-        currentCount: { type: :number },
-        termStartDate: { type: :string },
-        termEndDate: { type: :string },
-        termId: { type: :string },
-        satisfied: { type: :boolean }
-      }
+      allOf: [
+        { '$ref' => '#/components/schemas/NewRequirement' },
+        {
+          type: :object,
+          properties: {
+            id: { type: :string },
+            earnedMembershipId: { type: :string },
+            currentCount: { type: :number },
+            termStartDate: { type: :string },
+            termEndDate: { type: :string },
+            termId: { type: :string },
+            satisfied: { type: :boolean }
+          },
+          required: [
+            :id,
+            :earnedMembershipId,
+            :currentCount,
+            :termStartDate,
+            :termEndDate,
+            :termId,
+            :satisfied
+          ]
+        }
+      ]
     },
 
     NewReportRequirement: {
@@ -349,26 +482,37 @@ RSpec.configure do |config|
             type: :string
           }
         },
-      }
+      },
+      required: [
+        :requirementId,
+        :reportedCount,
+        :memberIds
+      ]
     },
+
     ReportRequirement: {
-      type: :object,
-      properties: {
-        id: { type: :string },
-        requirementId: { type: :string },
-        reportedCount: { type: :number },
-        appliedCount: { type: :number },
-        currentCount: { type: :number },
-        memberIds: {
-          type: :array,
-          items: {
-            type: :string
-          }
-        },
-        termStartDate: { type: :string },
-        termEndDate: { type: :string },
-        satisfied: { type: :boolean }
-      }
+      allOf: [
+        { '$ref' => '#/components/schemas/NewReportRequirement' },
+        {
+          type: :object,
+          properties: {
+            id: { type: :string },
+            appliedCount: { type: :number },
+            currentCount: { type: :number },
+            termStartDate: { type: :string },
+            termEndDate: { type: :string },
+            satisfied: { type: :boolean }
+          },
+          required: [
+            :id,
+            :appliedCount,
+            :currentCount,
+            :termStartDate,
+            :termEndDate,
+            :satisfied
+          ]
+        }
+      ]
     },
 
     NewReport: {
@@ -379,19 +523,25 @@ RSpec.configure do |config|
           type: :array,
           items: { '$ref' => '#/components/schemas/NewReportRequirement' }
         }
-      }
+      },
+      required: [:earnedMembershipId, :reportRequirements]
     },
     Report: {
-      type: :object,
-      properties: {
-        id: { type: :string },
-        date: { type: :string },
-        earnedMembershipId: { type: :string },
-        reportRequirements: {
-          type: :array,
-          items: { '$ref' => '#/components/schemas/ReportRequirement' }
+      allOf: [
+        { '$ref' => '#/components/schemas/NewReport' },
+        {
+          type: :object,
+          properties: {
+            id: { type: :string },
+            date: { type: :string },
+            reportRequirements: {
+              type: :array,
+              items: { '$ref' => '#/components/schemas/ReportRequirement' }
+            }
+          },
+          required: [:id, :date, :earnedMembershipId, :reportRequirements]
         }
-      }
+      ]
     },
 
     NewRental: {
@@ -401,22 +551,25 @@ RSpec.configure do |config|
         memberId: { type: :string },
         description: { type: :string, 'x-nullable': true },
         expiration: { type: :number, 'x-nullable': true  },
-        contractOnFile: { type: :boolean, 'x-nullable': true  }
-      }
-    },
-    Rental: {
-      type: :object,
-      properties: {
-        id: { type: :string },
-        number: { type: :string },
-        description: { type: :string },
-        memberName: { type: :string },
-        memberId: { type: :string },
-        expiration: { type: :number },
-        subscriptionId: { type: :string, 'x-nullable': true },
         contractOnFile: { type: :boolean },
         notes: { type: :string, 'x-nullable': true },
-      }
+      },
+      required: [:number, :memberId]
+    },
+
+    Rental: {
+      allOf: [
+        { '$ref' => '#/components/schemas/NewRental' },
+        {
+          type: :object,
+          properties: {
+            id: { type: :string },
+            memberName: { type: :string },
+            subscriptionId: { type: :string, 'x-nullable': true },
+          },
+          required: [:id, :memberName]
+        }
+      ]
     },
 
     Subscription: {
@@ -445,7 +598,23 @@ RSpec.configure do |config|
         resourceClass: { type: :string },
         resourceId: { type: :string },
         paymentMethodToken: { type: :string }
-      }
+      },
+      required: [
+        :id,
+        :planId,
+        :status,
+        :amount,
+        :failureCount,
+        :daysPastDue,
+        :billingDayOfMonth,
+        :firstBillingDate,
+        :nextBillingDate,
+        :memberId,
+        :memberName,
+        :resourceClass,
+        :resourceId,
+        :paymentMethodToken
+      ]
     },
 
 
@@ -498,14 +667,24 @@ RSpec.configure do |config|
             { '$ref' => '#/components/schemas/PayPalAccountSummary' }
           ]
         }
-      }
+      },
+      required: [
+        :createdAt,
+        :customerDetails,
+        :disputes,
+        :discountAmount,
+        :discounts,
+        :status,
+        :id,
+        :recurring,
+        :refundIds,
+        :amount,
+        :memberName,
+        :memberId,
+        :paymentMethodDetails
+      ]
     },
-  }.map do |key, model|
-    if !model[:required]
-      model[:required] = (model[:properties] || []).map { |k, prop| k if prop[:'x-nullable'].nil? }.compact
-    end
-    [key, model]
-  end.to_h
+  }
 
 
   config.swagger_docs = {

@@ -143,8 +143,7 @@
             "type": "boolean"
           },
           "paymentType": {
-            "type": "string",
-            "x-nullable": true
+            "type": "string"
           },
           "customerId": {
             "type": "string"
@@ -268,37 +267,40 @@
         ]
       },
       "EarnedMembership": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NewEarnedMembership"
           },
-          "memberId": {
-            "type": "string"
-          },
-          "memberName": {
-            "type": "string"
-          },
-          "memberStatus": {
-            "$ref": "#/components/schemas/MemberStatus"
-          },
-          "memberExpiration": {
-            "type": "number"
-          },
-          "requirements": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Requirement"
-            }
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "memberName": {
+                "type": "string"
+              },
+              "memberStatus": {
+                "$ref": "#/components/schemas/MemberStatus"
+              },
+              "memberExpiration": {
+                "type": "number"
+              },
+              "requirements": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Requirement"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "memberName",
+              "memberStatus",
+              "memberExpiration",
+              "requirements"
+            ]
           }
-        },
-        "required": [
-          "id",
-          "memberId",
-          "memberName",
-          "memberStatus",
-          "memberExpiration",
-          "requirements"
         ]
       },
       "error": {
@@ -332,7 +334,32 @@
                   "type": "string"
                 }
               }
-            }
+            },
+            "required": [
+              "email"
+            ]
+          }
+        },
+        "required": [
+          "errors"
+        ]
+      },
+      "passwordResetError": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "object",
+            "properties": {
+              "reset_password_token": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "reset_password_token"
+            ]
           }
         },
         "required": [
@@ -478,108 +505,61 @@
         ]
       },
       "InvoiceOption": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NewInvoiceOption"
           },
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "amount": {
-            "type": "string"
-          },
-          "planId": {
-            "type": "string",
-            "x-nullable": true
-          },
-          "resourceClass": {
-            "$ref": "#/components/schemas/InvoiceableResource"
-          },
-          "quantity": {
-            "type": "number"
-          },
-          "discountId": {
-            "type": "string",
-            "x-nullable": true
-          },
-          "disabled": {
-            "type": "boolean"
-          },
-          "isPromotion": {
-            "type": "boolean",
-            "x-nullable": true
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ]
           }
-        },
-        "required": [
-          "id",
-          "name",
-          "description",
-          "amount",
-          "resourceClass",
-          "quantity",
-          "disabled"
         ]
       },
       "BaseMember": {
         "type": "object",
         "properties": {
           "firstname": {
-            "type": "string",
-            "x-nullable": true
+            "type": "string"
           },
           "lastname": {
-            "type": "string",
-            "x-nullable": true
+            "type": "string"
           },
           "email": {
-            "type": "string",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/MemberStatus"
+          },
+          "role": {
+            "$ref": "#/components/schemas/MemberRole"
+          },
+          "expirationTime": {
+            "type": "number",
             "x-nullable": true
           },
-          "phone": {
-            "type": "string",
-            "x-nullable": true
+          "memberContractOnFile": {
+            "type": "boolean"
           },
           "silenceEmails": {
-            "type": "string",
+            "type": "boolean",
             "x-nullable": true
           },
           "notes": {
             "type": "string",
             "x-nullable": true
-          },
-          "address": {
-            "type": "object",
-            "x-nullable": true,
-            "properties": {
-              "street": {
-                "type": "string",
-                "x-nullable": true
-              },
-              "unit": {
-                "type": "string",
-                "x-nullable": true
-              },
-              "city": {
-                "type": "string",
-                "x-nullable": true
-              },
-              "state": {
-                "type": "string",
-                "x-nullable": true
-              },
-              "postalCode": {
-                "type": "string",
-                "x-nullable": true
-              }
-            }
           }
         },
         "required": [
-
+          "firstname",
+          "lastname",
+          "email"
         ]
       },
       "NewMember": {
@@ -590,23 +570,38 @@
           {
             "type": "object",
             "properties": {
-              "status": {
-                "$ref": "#/components/schemas/MemberStatus",
+              "phone": {
+                "type": "string",
                 "x-nullable": true
               },
-              "role": {
-                "$ref": "#/components/schemas/MemberRole",
-                "x-nullable": true
-              },
-              "memberContractOnFile": {
-                "type": "boolean",
-                "x-nullable": true
+              "address": {
+                "type": "object",
+                "x-nullable": true,
+                "properties": {
+                  "street": {
+                    "type": "string",
+                    "x-nullable": true
+                  },
+                  "unit": {
+                    "type": "string",
+                    "x-nullable": true
+                  },
+                  "city": {
+                    "type": "string",
+                    "x-nullable": true
+                  },
+                  "state": {
+                    "type": "string",
+                    "x-nullable": true
+                  },
+                  "postalCode": {
+                    "type": "string",
+                    "x-nullable": true
+                  }
+                }
               }
             }
           }
-        ],
-        "required": [
-
         ]
       },
       "Member": {
@@ -638,50 +633,25 @@
               "earnedMembershipId": {
                 "type": "string",
                 "x-nullable": true
-              },
-              "expirationTime": {
-                "type": "number",
-                "x-nullable": true
               }
-            }
+            },
+            "required": [
+              "id",
+              "expirationTime"
+            ]
           }
-        ],
-        "required": [
-
         ]
       },
       "AdminUpdateMemberDetails": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/BaseMember"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "renew": {
-                "type": "number",
-                "x-nullable": true
-              },
-              "subscription": {
-                "type": "boolean",
-                "x-nullable": true
-              },
-              "expirationTime": {
-                "type": "number",
-                "x-nullable": true
-              }
-            }
-          }
-        ],
-        "required": [
-
-        ]
-      },
-      "MemberSummary": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string"
+          "renew": {
+            "type": "number",
+            "x-nullable": true
+          },
+          "subscription": {
+            "type": "boolean",
+            "x-nullable": true
           },
           "firstname": {
             "type": "string"
@@ -699,25 +669,58 @@
             "$ref": "#/components/schemas/MemberRole"
           },
           "expirationTime": {
-            "type": "number",
-            "x-nullable": true
+            "type": "number"
           },
           "memberContractOnFile": {
             "type": "boolean"
           },
           "notes": {
-            "type": "string",
-            "x-nullable": true
+            "type": "string"
+          },
+          "silenceEmails": {
+            "type": "boolean"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "address": {
+            "type": "object",
+            "properties": {
+              "street": {
+                "type": "string"
+              },
+              "unit": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              },
+              "postalCode": {
+                "type": "string"
+              }
+            }
           }
-        },
-        "required": [
-          "id",
-          "firstname",
-          "lastname",
-          "email",
-          "status",
-          "role",
-          "memberContractOnFile"
+        }
+      },
+      "MemberSummary": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseMember"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          }
         ]
       },
       "PayPalAccount": {
@@ -800,7 +803,13 @@
                 "amount": {
                   "type": "string"
                 }
-              }
+              },
+              "required": [
+                "id",
+                "name",
+                "description",
+                "amount"
+              ]
             }
           }
         },
@@ -842,58 +851,45 @@
         ]
       },
       "Requirement": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NewRequirement"
           },
-          "earnedMembershipId": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "rolloverLimit": {
-            "type": "number"
-          },
-          "termLength": {
-            "type": "number"
-          },
-          "targetCount": {
-            "type": "number"
-          },
-          "strict": {
-            "type": "boolean"
-          },
-          "currentCount": {
-            "type": "number"
-          },
-          "termStartDate": {
-            "type": "string"
-          },
-          "termEndDate": {
-            "type": "string"
-          },
-          "termId": {
-            "type": "string"
-          },
-          "satisfied": {
-            "type": "boolean"
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "earnedMembershipId": {
+                "type": "string"
+              },
+              "currentCount": {
+                "type": "number"
+              },
+              "termStartDate": {
+                "type": "string"
+              },
+              "termEndDate": {
+                "type": "string"
+              },
+              "termId": {
+                "type": "string"
+              },
+              "satisfied": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "earnedMembershipId",
+              "currentCount",
+              "termStartDate",
+              "termEndDate",
+              "termId",
+              "satisfied"
+            ]
           }
-        },
-        "required": [
-          "id",
-          "earnedMembershipId",
-          "name",
-          "rolloverLimit",
-          "termLength",
-          "targetCount",
-          "strict",
-          "currentCount",
-          "termStartDate",
-          "termEndDate",
-          "termId",
-          "satisfied"
         ]
       },
       "NewReportRequirement": {
@@ -919,49 +915,41 @@
         ]
       },
       "ReportRequirement": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NewReportRequirement"
           },
-          "requirementId": {
-            "type": "string"
-          },
-          "reportedCount": {
-            "type": "number"
-          },
-          "appliedCount": {
-            "type": "number"
-          },
-          "currentCount": {
-            "type": "number"
-          },
-          "memberIds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "termStartDate": {
-            "type": "string"
-          },
-          "termEndDate": {
-            "type": "string"
-          },
-          "satisfied": {
-            "type": "boolean"
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "appliedCount": {
+                "type": "number"
+              },
+              "currentCount": {
+                "type": "number"
+              },
+              "termStartDate": {
+                "type": "string"
+              },
+              "termEndDate": {
+                "type": "string"
+              },
+              "satisfied": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "appliedCount",
+              "currentCount",
+              "termStartDate",
+              "termEndDate",
+              "satisfied"
+            ]
           }
-        },
-        "required": [
-          "id",
-          "requirementId",
-          "reportedCount",
-          "appliedCount",
-          "currentCount",
-          "memberIds",
-          "termStartDate",
-          "termEndDate",
-          "satisfied"
         ]
       },
       "NewReport": {
@@ -983,29 +971,33 @@
         ]
       },
       "Report": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NewReport"
           },
-          "date": {
-            "type": "string"
-          },
-          "earnedMembershipId": {
-            "type": "string"
-          },
-          "reportRequirements": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ReportRequirement"
-            }
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string"
+              },
+              "reportRequirements": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ReportRequirement"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "date",
+              "earnedMembershipId",
+              "reportRequirements"
+            ]
           }
-        },
-        "required": [
-          "id",
-          "date",
-          "earnedMembershipId",
-          "reportRequirements"
         ]
       },
       "NewRental": {
@@ -1026,7 +1018,10 @@
             "x-nullable": true
           },
           "contractOnFile": {
-            "type": "boolean",
+            "type": "boolean"
+          },
+          "notes": {
+            "type": "string",
             "x-nullable": true
           }
         },
@@ -1036,46 +1031,29 @@
         ]
       },
       "Rental": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NewRental"
           },
-          "number": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "memberName": {
-            "type": "string"
-          },
-          "memberId": {
-            "type": "string"
-          },
-          "expiration": {
-            "type": "number"
-          },
-          "subscriptionId": {
-            "type": "string",
-            "x-nullable": true
-          },
-          "contractOnFile": {
-            "type": "boolean"
-          },
-          "notes": {
-            "type": "string",
-            "x-nullable": true
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "memberName": {
+                "type": "string"
+              },
+              "subscriptionId": {
+                "type": "string",
+                "x-nullable": true
+              }
+            },
+            "required": [
+              "id",
+              "memberName"
+            ]
           }
-        },
-        "required": [
-          "id",
-          "number",
-          "description",
-          "memberName",
-          "memberId",
-          "expiration",
-          "contractOnFile"
         ]
       },
       "Subscription": {
@@ -1264,10 +1242,9 @@
           "id",
           "recurring",
           "refundIds",
-          "subscriptionDetails",
           "amount",
-          "memberId",
           "memberName",
+          "memberId",
           "paymentMethodDetails"
         ]
       }
@@ -3231,8 +3208,7 @@
                     "type": "string"
                   },
                   "discountId": {
-                    "type": "string",
-                    "x-nullable": true
+                    "type": "string"
                   }
                 },
                 "required": [
@@ -4745,16 +4721,13 @@
                 "type": "object",
                 "properties": {
                   "invoiceId": {
-                    "type": "string",
-                    "x-nullable": true
+                    "type": "string"
                   },
                   "invoiceOptionId": {
-                    "type": "string",
-                    "x-nullable": true
+                    "type": "string"
                   },
                   "discountId": {
-                    "type": "string",
-                    "x-nullable": true
+                    "type": "string"
                   },
                   "paymentMethodId": {
                     "type": "string"
@@ -5532,8 +5505,7 @@
                     "type": "string"
                   },
                   "discountId": {
-                    "type": "string",
-                    "x-nullable": true
+                    "type": "string"
                   }
                 },
                 "required": [
@@ -5806,31 +5778,25 @@
                     "type": "string"
                   },
                   "phone": {
-                    "type": "string",
-                    "x-nullable": true
+                    "type": "string"
                   },
                   "address": {
                     "type": "object",
                     "properties": {
                       "street": {
-                        "type": "string",
-                        "x-nullable": true
+                        "type": "string"
                       },
                       "unit": {
-                        "type": "string",
-                        "x-nullable": true
+                        "type": "string"
                       },
                       "city": {
-                        "type": "string",
-                        "x-nullable": true
+                        "type": "string"
                       },
                       "state": {
-                        "type": "string",
-                        "x-nullable": true
+                        "type": "string"
                       },
                       "postalCode": {
-                        "type": "string",
-                        "x-nullable": true
+                        "type": "string"
                       }
                     }
                   }
@@ -5966,20 +5932,49 @@
             "application/json": {
               "schema": {
                 "title": "updateMemberDetails",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/BaseMember"
+                "properties": {
+                  "firstname": {
+                    "type": "string"
                   },
-                  {
+                  "lastname": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "memberContractOnFile": {
+                    "type": "boolean"
+                  },
+                  "silenceEmails": {
+                    "type": "boolean"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "address": {
                     "type": "object",
                     "properties": {
-                      "signature": {
-                        "type": "string",
-                        "x-nullable": true
+                      "street": {
+                        "type": "string"
+                      },
+                      "unit": {
+                        "type": "string"
+                      },
+                      "city": {
+                        "type": "string"
+                      },
+                      "state": {
+                        "type": "string"
+                      },
+                      "postalCode": {
+                        "type": "string"
                       }
                     }
+                  },
+                  "signature": {
+                    "type": "string"
                   }
-                ]
+                }
               }
             }
           }
@@ -6230,12 +6225,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/passwordError"
+                  "$ref": "#/components/schemas/passwordResetError"
                 }
               },
               "text/html": {
                 "schema": {
-                  "$ref": "#/components/schemas/passwordError"
+                  "$ref": "#/components/schemas/passwordResetError"
                 }
               }
             }
@@ -6444,8 +6439,7 @@
                 "type": "object",
                 "properties": {
                   "signature": {
-                    "type": "string",
-                    "x-nullable": true
+                    "type": "string"
                   }
                 },
                 "required": [

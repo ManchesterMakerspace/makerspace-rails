@@ -59,7 +59,7 @@ describe 'Rentals API', type: :request do
         title: :updateRentalDetails,
         type: :object,
         properties: {
-          signature: { type: :string, 'x-nullable': true }
+          signature: { type: :string }
         },
         required: [:signature]
       }, required: true
@@ -68,7 +68,7 @@ describe 'Rentals API', type: :request do
         title: :updateRentalDetails,
         type: :object,
         properties: {
-          signature: { type: :string, 'x-nullable': true }
+          signature: { type: :string }
         },
         required: [:signature]
       }, required: true

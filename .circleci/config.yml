@@ -20,9 +20,8 @@ jobs:
       - run:
           name: E2E
           command: bundle exec rake integration
-      - run:
-          name: Upload test screenshots
-          command: bundle exec rake upload_screenshots
+      - store_artifacts:
+          path: ./tmp/makerspace-react/tmp/screenshots
   publish:
     docker:
       - image: circleci/ruby:2.6.6-stretch-node-browsers
