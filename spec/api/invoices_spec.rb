@@ -43,7 +43,7 @@ describe 'Invoices API', type: :request do
         type: :object,
         properties: {
           id: { type: :string },
-          discountId: { type: :string, 'x-nullable': true }
+          discountId: { type: :string }
         },
         required: [:id]
       }, required: true
@@ -53,7 +53,7 @@ describe 'Invoices API', type: :request do
         type: :object,
         properties: {
           id: { type: :string },
-          discountId: { type: :string, 'x-nullable': true }
+          discountId: { type: :string }
         },
         required: [:id]
       }, required: true

@@ -13,7 +13,8 @@ Rails.application.configure do
   config.eager_load = false
 
   if ENV["LOG_TESTS"]
-    config.logger = Logger.new(STDOUT)
+    # Allow setting the file path via this ENV
+    config.logger = Logger.new(ENV["LOG_TESTS"] == "true" ? STDOUT : ENV["LOG_TESTS"])
     config.level = 0
   end
 

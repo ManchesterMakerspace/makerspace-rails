@@ -64,28 +64,50 @@ describe 'Members API', type: :request do
       parameter name: :id, in: :path, type: :string
       parameter name: :updateMemberDetails, in: :body, schema: {
         title: :updateMemberDetails,
-        allOf: [
-          { '$ref' => '#/components/schemas/BaseMember' },
-          {
+        type: :object,
+        # TODO: This should use oneOf for signature/member partial
+        properties: {
+          firstname: { type: :string },
+          lastname: { type: :string },
+          email: { type: :string },
+          memberContractOnFile: { type: :boolean },
+          silenceEmails: { type: :boolean },
+          phone: { type: :string },
+          address: {
             type: :object,
             properties: {
-              signature: { type: :string, 'x-nullable': true },
+              street: { type: :string },
+              unit: { type: :string },
+              city: { type: :string },
+              state: { type: :string },
+              postalCode: { type: :string },
             }
-          }
-        ]
+          },
+          signature: { type: :string },
+        },
       }, required: true
 
       request_body_json schema: {
         title: :updateMemberDetails,
-        allOf: [
-          { '$ref' => '#/components/schemas/BaseMember' },
-          {
+        properties: {
+          firstname: { type: :string },
+          lastname: { type: :string },
+          email: { type: :string },
+          memberContractOnFile: { type: :boolean },
+          silenceEmails: { type: :boolean },
+          phone: { type: :string },
+          address: {
             type: :object,
             properties: {
-              signature: { type: :string, 'x-nullable': true },
+              street: { type: :string },
+              unit: { type: :string },
+              city: { type: :string },
+              state: { type: :string },
+              postalCode: { type: :string },
             }
-          }
-        ]
+          },
+          signature: { type: :string },
+        },
       }, required: true
 
       # Update object
