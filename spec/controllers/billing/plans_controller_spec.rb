@@ -1,11 +1,10 @@
 require 'rails_helper'
 
-RSpec.describe Admin::Billing::PlansController, type: :controller do
+RSpec.describe Billing::PlansController, type: :controller do
   let(:gateway) { double }
   let(:non_customer) { create(:member) }
   let(:membership_plan) { build(:plan, id: "membership_plan") }
   let(:rental_plan) { build(:plan, id: "rental_plan") }
-  let(:discount) { build(:discount, id: "foo") }
   let(:admin) { create(:member, :admin) }
 
   let(:valid_params) {
@@ -46,18 +45,6 @@ RSpec.describe Admin::Billing::PlansController, type: :controller do
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
       expect(parsed_response.first['id']).to eq(rental_plan.id.to_s)
-    end
-  end
-
-  describe "GET  #discounts" do 
-    it "fetches discounts" do 
-      allow(BraintreeService::Discount).to receive(:get_discounts).with(gateway).and_return([discount])
-      expect(BraintreeService::Discount).to receive(:get_discounts).with(gateway).and_return([discount])
-
-      get :discounts, format: :json
-      parsed_response = JSON.parse(response.body)
-      expect(response).to have_http_status(200)
-      expect(parsed_response.first['id']).to eq(discount.id)
     end
   end
 end
