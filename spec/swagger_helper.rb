@@ -241,7 +241,7 @@ RSpec.configure do |config|
         planId: { type: :string, 'x-nullable': true },
         discountId: { type: :string, 'x-nullable': true },
         disabled: { type: :boolean, 'x-nullable': true },
-        isPromotion: { type: :boolean, 'x-nullable': true },
+        promotionEndDate: { type: :string, 'x-nullable': true },
       },
       required: [
         :name,

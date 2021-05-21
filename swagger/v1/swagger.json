@@ -492,8 +492,8 @@
             "type": "boolean",
             "x-nullable": true
           },
-          "isPromotion": {
-            "type": "boolean",
+          "promotionEndDate": {
+            "type": "string",
             "x-nullable": true
           }
         },
@@ -1304,212 +1304,6 @@
                       "type": "number"
                     }
                   }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/admin/billing/plans": {
-      "get": {
-        "summary": "Gets a list of billing plans",
-        "tags": [
-          "Plans"
-        ],
-        "operationId": "adminListBillingPlans",
-        "parameters": [
-          {
-            "name": "pageNum",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "orderBy",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "order",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "types",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "required": false
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "billing plans found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plan"
-                  }
-                }
-              },
-              "text/html": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plan"
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "User unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/error"
-                }
-              },
-              "text/html": {
-                "schema": {
-                  "$ref": "#/components/schemas/error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "User unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/error"
-                }
-              },
-              "text/html": {
-                "schema": {
-                  "$ref": "#/components/schemas/error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/admin/billing/plans/discounts": {
-      "get": {
-        "summary": "Gets a list of billing plan discounts",
-        "tags": [
-          "Discounts"
-        ],
-        "operationId": "adminListBillingPlanDiscounts",
-        "parameters": [
-          {
-            "name": "pageNum",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "orderBy",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "order",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "subscriptionOnly",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "name": "types",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "required": false
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "billing plan discounts found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Discount"
-                  }
-                }
-              },
-              "text/html": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Discount"
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "User unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/error"
-                }
-              },
-              "text/html": {
-                "schema": {
-                  "$ref": "#/components/schemas/error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "User unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/error"
-                }
-              },
-              "text/html": {
-                "schema": {
-                  "$ref": "#/components/schemas/error"
                 }
               }
             }
@@ -3960,6 +3754,83 @@
         }
       }
     },
+    "/billing/discounts": {
+      "get": {
+        "summary": "Gets a list of discounts",
+        "tags": [
+          "Discounts"
+        ],
+        "operationId": "listBillingDiscounts",
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "subscriptionOnly",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "types",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "billing discounts found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Discount"
+                  }
+                }
+              },
+              "text/html": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Discount"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/billing/payment_methods/new": {
       "get": {
         "summary": "Initiate new payment method creation",
@@ -4270,6 +4141,75 @@
               "text/html": {
                 "schema": {
                   "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/billing/plans": {
+      "get": {
+        "summary": "Gets a list of billing plans",
+        "tags": [
+          "Plans"
+        ],
+        "operationId": "listBillingPlans",
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "types",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "billing plans found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Plan"
+                  }
+                }
+              },
+              "text/html": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Plan"
+                  }
                 }
               }
             }
