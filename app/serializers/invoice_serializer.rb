@@ -35,10 +35,12 @@ class InvoiceSerializer < ApplicationSerializer
   end
 
   def resource
-    if object.resource_class == "member"
-      MemberSerializer.new(object.resource)
-    elsif object.resource_class == "rental"
-      RentalSerializer.new(object.resource)
+    unless object.resource.nil?
+      if object.resource_class == "member"
+        MemberSerializer.new(object.resource)
+      elsif object.resource_class == "rental"
+        RentalSerializer.new(object.resource)
+      end
     end
   end
 end

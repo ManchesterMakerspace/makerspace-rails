@@ -1,5 +1,6 @@
 class Admin::InvoicesController < AdminController
   include FastQuery::MongoidQuery
+  include BraintreeGateway
   before_action :find_invoice, only: [:update, :destroy]
 
   def index

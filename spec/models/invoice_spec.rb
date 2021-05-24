@@ -65,12 +65,41 @@ RSpec.describe Invoice, type: :model do
     end
 
     describe "validates one active member invoice" do
-      it "validates one per member" do
-        first_invoice = build(:invoice, member: member, resource_id: member.id, resource_class: "member")
+      it "prevents users from creating duplicate membership" do
+        first_invoice = build(
+          :invoice, 
+          member: member, 
+          resource_id: member.id, 
+          resource_class: "member",
+          subscription_id: "foobar"
+        )
         expect(first_invoice).to be_valid
         first_invoice.save
-        second_invoice = build(:invoice, member: member, resource_id: member.id, resource_class: "member")
+        second_invoice = build(
+          :invoice, 
+          member: member, 
+          resource_id: member.id, 
+          resource_class: "member"
+        )
         expect(second_invoice).to_not be_valid
+      end
+
+      it "cleans up unused member invoices if non subscription" do 
+        first_invoice = create(
+          :invoice, 
+          member: member, 
+          resource_id: member.id, 
+          resource_class: "member",
+        )
+        second_invoice = create(
+          :invoice, 
+          member: member, 
+          resource_id: member.id, 
+          resource_class: "member"
+        )
+        expect(Invoice.where(resource_id: member.id).size).to eq(1)
+        expect(Invoice.find(first_invoice.id)).to be_nil
+        expect(Invoice.find(second_invoice.id)).to be_truthy
       end
 
       it "does not restrict to one per rental" do
@@ -82,13 +111,27 @@ RSpec.describe Invoice, type: :model do
       end
     end
 
-    it "validates resource exists" do
+    it "validates resource exists on create" do
       rental_invoice = build(:invoice, member: member, resource_id: rental.id, resource_class: "rental")
       member_invoice = build(:invoice, member: member, resource_id: member.id, resource_class: "member")
       mixed_invoice = build(:invoice, member: member, resource_id: rental.id, resource_class: "member")
       expect(rental_invoice).to be_valid
       expect(member_invoice).to be_valid
       expect(mixed_invoice).to_not be_valid
+      rental_invoice.save
+      member_invoice.save 
+      mixed_invoice.save 
+      expect(rental_invoice).to be_persisted
+      expect(member_invoice).to be_persisted
+      expect(mixed_invoice).to_not be_persisted
+    end
+
+    it "Does not validate resource on update" do 
+      rental_invoice = create(:invoice, member: member, resource_id: rental.id, resource_class: "rental")
+      rental.destroy
+      rental_invoice.update({ amount: 5.0 })
+      expect(rental_invoice).to be_valid
+      expect(rental_invoice.amount).to eq(5.0)
     end
   end
 
