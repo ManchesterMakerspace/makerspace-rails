@@ -1,21 +1,33 @@
-<div>
+<% 
+  has_no_membership = !!Service::Analytics::Members.query_no_membership().find(@member)
+  welcome_guide_url = "https://wiki.manchestermakerspace.org/en/FAQ"
+  purchase_membership_url = link_to('My Account', url_for(action: :application, controller: 'application'), id: "profile-link")
+%>
+
+<div style="text-align: center;">
   <h3>Welcome to Manchester Makerspace!</h3>
+  <img src="<%= image_url('WeldingSnail-Small.jpg') %>"
+    style="max-width: 640px;"/>
 </div>
 
 <div>
-  <p>We're so glad you've decided to join us!</p>
-  <p>
-    Thank you for signing up in our online portal. The next step will require you to come to the Makerspace for an orientation and get your 24/7 key. 
-    Don't worry, your membership does not start until you receive your key. Open house (Mondays 6-8pm) are generally the best days to get your key. If you
-    cannot make it during open house, please reach out to an admin by replying to this email or ask in <strong>#new-members</strong> after joining Slack.
+  <p>We're so glad you've decided to join us!
+    New to makerspaces? Take a moment to <a href="https://www.youtube.com/watch?v=J6gXWtlyFVM" target="_blank">watch our virtual tour.</a> Ready to get started?
   </p>
-  <p>
-    You will shortly receive an invite to our organization's Slack channel, if you have not been invited already. This is where we collaborate and schedule classes.
-    Each shop has a Resource Manager for conducting checkouts and maintaining the workshop. 
-    If there are any shops or equipment that you are particularly interested getting checked out on, please reach out to the respective Resource Manager for more details on checkouts. 
-    Each shop has their own Slack channel for this purpose.
-  </p>
-  <p>
-    Please take a moment to complete this short survey to help improve our sign up process. <a href="https://www.surveymonkey.com/r/JZZGVXX">Start survey</a>.
-  </p>
+  <div style="margin: 2em; text-align: center;">
+    <a 
+      href="<%=has_no_membership ? purchase_membership_url : welcome_guide_url%>" 
+      target="_blank"
+      style="
+padding: 1em;
+border-radius: 4px;
+text-decoration: none;
+background-color: #0000f4;
+color: white;
+font-weight: bold;
+"
+    >
+      <%=has_no_membership ? "Purchase a membership" : "Read the welcome guide" %>
+    </a>
+  </div>
 </div>

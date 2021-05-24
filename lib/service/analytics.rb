@@ -22,7 +22,7 @@ module Service
         base.where({ :id.in => ::Service::Analytics::Invoices.query_settlement_pending.pluck(:member_id).uniq })
       end
 
-      # Members that are in good standing, do not have an expiration date, and have no invoices pending settlement
+      # Members that are in good standing, do not have an expiration date, and have NO invoices pending settlement
       def self.query_no_membership(base = query_no_expiration)
         base.where({ :id.nin => ::Service::Analytics::Invoices.query_settlement_pending.pluck(:member_id).uniq })
       end
