@@ -51,8 +51,8 @@ class Invoice
   validates_numericality_of :quantity, greater_than: 0
   validates :resource_id, presence: true
   validates :due_date, presence: true
-  validate :one_active_invoice_per_resource, on: :create, if: Proc.new { (resource_class != "rental") }
-  validate :resource_exists
+  validate :clean_up_unused_invoice, on: :create, if: Proc.new { (resource_class == "member") }
+  validate :resource_exists, on: :create
 
   belongs_to :member
 
@@ -234,9 +234,19 @@ class Invoice
     self.save!
   end
 
-  def one_active_invoice_per_resource
-    active = self.class.active_invoice_for_resource(resource_id)
-    errors.add(:base, "Active invoices already exist for this resource") unless active.nil?
+  # Dont fail if trying to change initial membership selection
+  # Clean up the old invoices and process what customer wants
+  def clean_up_unused_invoice
+    active = Invoice.where(resource_id: resource_id, settled_at: nil, transaction_id: nil)
+
+    # Cannot clean up invoices that have a subscription
+    active_undeletable = active.where(:subscription_id.ne => nil)
+
+    if active_undeletable.empty?
+      active.destroy
+    else 
+      errors.add(:base, "Cannot create duplicate memberships for same user")
+    end
   end
 
   def resource_exists

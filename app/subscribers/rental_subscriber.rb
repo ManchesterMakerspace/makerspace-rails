@@ -6,6 +6,12 @@ module RentalSubscriber
     def subscribe
       Rental.subscribe(:destroy) do |event|
         subscription_id = event[:model].subscription_id
+
+        rental_invoice = Invoice.active_invoice_for_resource(event[:model].id)
+        unless rental_invoice.nil?
+          rental_invoice.destroy
+        end
+
         if subscription_id
           begin 
             ::BraintreeService::Subscription.cancel(connect_gateway(), subscription_id)
