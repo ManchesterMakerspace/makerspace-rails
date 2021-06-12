@@ -26,7 +26,7 @@ class Member
   field :startDate, default: Time.now
   field :groupName #potentially member is in a group/partner membership
   field :role,                          default: "member" #admin,officer,member
-  field :memberContractOnFile, type: Boolean, default: false
+  field :member_contract_signed_date, type: Date
   field :subscription,    type: Boolean,   default: false
   ## Database authenticatable
   field :email,              type: String, default: ""
@@ -137,13 +137,21 @@ class Member
 
   def address=(address_hash)
     unless address_hash.nil?
-      self.update_attributes({
+      self.update_attributes!({
         address_street: address_hash[:street] || self.address_street,
         address_unit: address_hash[:unit] || self.address_unit,
         address_city: address_hash[:city] || self.address_city,
         address_state: address_hash[:state] || self.address_state,
         address_postal_code: address_hash[:postal_code] || self.address_postal_code,
       })
+    end
+  end
+
+  def memberContractOnFile=(onFile)
+    if onFile && member_contract_signed_date.nil?
+      self.update_attributes!({ member_contract_signed_date: Date.today })
+    elsif !onFile
+      self.update_attributes!({ member_contract_signed_date: nil })
     end
   end
 

@@ -17,10 +17,15 @@ class InvoiceOptionSerializer < ApplicationSerializer
   end
 
   def is_promotion
-    !object.promotion_end_date.nil?
+    promotion_active
   end
 
   def disabled 
-    object.disabled || (!!object.promotion_end_date && object.promotion_end_date < DateTime.now)
+    object.disabled || (!!object.promotion_end_date && !promotion_active)
+  end
+
+  private
+  def promotion_active
+    (!!object.promotion_end_date && object.promotion_end_date > DateTime.now)
   end
 end

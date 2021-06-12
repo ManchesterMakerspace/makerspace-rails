@@ -495,6 +495,10 @@
           "promotionEndDate": {
             "type": "string",
             "x-nullable": true
+          },
+          "isPromotion": {
+            "type": "boolean",
+            "x-nullable": true
           }
         },
         "required": [
@@ -542,6 +546,10 @@
           },
           "expirationTime": {
             "type": "number",
+            "x-nullable": true
+          },
+          "memberContractSignedDate": {
+            "type": "string",
             "x-nullable": true
           },
           "memberContractOnFile": {
@@ -4882,6 +4890,14 @@
             "required": true,
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "saved",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
             }
           },
           {

@@ -1,6 +1,5 @@
 class MembersController < AuthenticationController
     include FastQuery::MongoidQuery
-    include ::Service::GoogleDrive
     before_action :set_member, only: [:show, :update]
 
     def index
@@ -33,7 +32,7 @@ class MembersController < AuthenticationController
       if signature_params[:signature]
         encoded_signature = signature_params[:signature].split(",")[1]
         DocumentUploadJob.perform_later(encoded_signature, "member_contract", @member.id.as_json)
-        @member.update_attributes!(memberContractOnFile: true)
+        @member.update_attributes!(member_contract_signed_date: Date.today)
       else
         @member.update_attributes!(member_params)
       end

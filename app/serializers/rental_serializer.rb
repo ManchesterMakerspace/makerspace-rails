@@ -7,9 +7,14 @@ class RentalSerializer < ActiveModel::Serializer
              :member_id,
              :subscription_id,
              :contract_on_file,
+             :contract_signed_date,
              :notes,
 
   def member_name
     object.member && "#{object.member.fullname}"
+  end
+
+  def contract_on_file
+    !object.contract_signed_date.nil?
   end
 end

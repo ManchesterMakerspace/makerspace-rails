@@ -1,9 +1,18 @@
 class DocumentsController < AuthenticationController
+  include ::Service::GoogleDrive
 
   def show
     template = resource_params[:id]
     raise ::Error::NotFound.new() unless allowed_documents.include?(template)
-    render template: "documents/#{template}", layout: false, locals: get_locals(template)
+
+    if resource_params[:saved]
+      resource = get_resource(template)
+      doc = ::Service::GoogleDrive.get_document(resource, template)
+      send_file(doc.path)
+    else
+      render template: "documents/#{template}", layout: false, locals: get_locals(template)
+    end
+
   end
 
   private
@@ -13,7 +22,18 @@ class DocumentsController < AuthenticationController
 
   def resource_params
     params.require(:id)
-    params.permit(:resource_id, :id)
+    params.permit(:resource_id, :id, :saved)
+  end
+
+  def get_resource(template)
+    case template 
+    when "member_contract"
+      current_member
+    when "rental_agreement"
+      rental = Rental.find(resource_params[:resource_id]) unless resource_params[:resource_id].nil?
+      raise ::Error::NotFound.new() if rental.nil?
+      rental
+    end
   end
 
   def get_locals(template)
@@ -23,8 +43,7 @@ class DocumentsController < AuthenticationController
     when "member_contract"
       { member: current_member, signature: nil }
     when "rental_agreement"
-      rental = Rental.find(resource_params[:resource_id]) unless resource_params[:resource_id].nil?
-      raise ::Error::NotFound.new() if rental.nil?
+      rental = get_resource(template)
       { member: current_member, rental: rental, signature: nil }
     end
   end

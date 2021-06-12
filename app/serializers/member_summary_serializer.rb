@@ -6,9 +6,11 @@ class MemberSummarySerializer < ActiveModel::Serializer
              :email,
              :status,
              :role,
-             :memberContractOnFile,
+             :member_contract_signed_date,
+             :member_contract_on_file,
              :notes,
 
-  def address
+  def member_contract_on_file
+    !object.member_contract_signed_date.nil?
   end
 end
