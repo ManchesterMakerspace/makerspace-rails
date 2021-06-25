@@ -1,6 +1,5 @@
 class RentalsController < AuthenticationController
     include FastQuery::MongoidQuery
-    include ::Service::GoogleDrive
     before_action :set_rental, only: [:show, :update]
 
   def index
@@ -20,7 +19,7 @@ class RentalsController < AuthenticationController
     encoded_signature = update_params[:signature].split(",")[1]
     if encoded_signature
       DocumentUploadJob.perform_later(encoded_signature, "rental_agreement", @rental.id.as_json)
-      @rental.update_attributes!(contract_on_file: true)
+      @rental.update_attributes!(contract_signed_date: Date.today)
     end
 
     render json: @rental, adapter: :attributes and return

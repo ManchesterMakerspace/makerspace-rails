@@ -12,16 +12,16 @@ Contact @lynch16 for variables for the Manchester Makerspace.
 $ rails s
 ```
 
-# Importing an archived db
-Note: Need to have the same name for source and target db for this to work.
+# Importing an archived db or Restoring production to development
+First dump production to a local backup folder
 ```
-mongorestore --host <host:port> -d <target_db> --username <name> --password <password>
+mongodump --uri "<uri for prod db>" -o ./dump
 ```
-If need to change db names, allegedly you can use --nsInclude but I haven't had success.  Instead, backup the db to a local folder, rename the db folder at <folder_path>/<source_db_name>, and then used the following:
+Then restore to development server
 ```
-mongorestore --db <target_db> -h <host:port> --username <name> --password <password> <folder_path>/<target_db_name>/
+mongorestore --uri "<uri for dev db>" dump/ --drop
+```
 
-```
 
 # Testing
 Rspec is used for unit testing the ruby backend.

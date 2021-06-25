@@ -242,6 +242,7 @@ RSpec.configure do |config|
         discountId: { type: :string, 'x-nullable': true },
         disabled: { type: :boolean, 'x-nullable': true },
         promotionEndDate: { type: :string, 'x-nullable': true },
+        isPromotion: { type: :boolean, 'x-nullable': true },
       },
       required: [
         :name,
@@ -275,6 +276,7 @@ RSpec.configure do |config|
         status: { '$ref': '#/components/schemas/MemberStatus' },
         role: { '$ref': '#/components/schemas/MemberRole' },
         expirationTime: { type: :number, 'x-nullable': true },
+        memberContractSignedDate: { type: :string, 'x-nullable': true },
         memberContractOnFile: { type: :boolean },
         silenceEmails: { type: :boolean, 'x-nullable': true },
         notes: { type: :string, 'x-nullable': true },

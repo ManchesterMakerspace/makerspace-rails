@@ -127,5 +127,33 @@ module Service
         raise Error::Google::Upload.new(err) unless err.nil?
       end
     end
+
+    def get_document(resource, document_name)
+      ::Service::GoogleDrive.get_document(resource, document_name)
+    end
+
+    def self.get_document(resource, document_name)
+      member_name = resource.kind_of?(Member) ? resource.fullname : resource.member.fullname
+      signed_date = resource.kind_of?(Member) ? resource.member_contract_signed_date : resource.contract_signed_date
+      
+      raise ::Error::NotFound.new() if signed_date.nil?
+
+      date_str = signed_date.strftime('%m-%d-%Y')
+
+      drive = load_gdrive
+      folder_id = get_templates()[document_name.to_sym][:folder_id]
+      doc_name = "#{member_name}_#{document_name}_#{date_str}"
+
+      doc = drive.list_files(
+        q: "'#{folder_id}' in parents and name = '#{doc_name}.pdf'",
+        fields: "files(id, web_content_link)",
+      )
+
+      first_match = doc.files[0]
+      raise ::Error::NotFound.new() if first_match.nil?
+      file = Tempfile.new([doc_name, ".pdf"], encoding: "ASCII-8BIT")
+
+      drive.get_file(first_match.id, download_dest: file)
+    end
   end
 end

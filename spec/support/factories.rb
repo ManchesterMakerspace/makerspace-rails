@@ -16,7 +16,7 @@ FactoryBot.define do
     expirationTime {generate(:expiry)}
     email {generate(:email)}
     encrypted_password { BCrypt::Password.create('password') }
-    memberContractOnFile { true }
+    member_contract_signed_date { Date.today }
     status { 'activeMember' }
     phone { "992001234" }
     address_street { "12 Main St" }

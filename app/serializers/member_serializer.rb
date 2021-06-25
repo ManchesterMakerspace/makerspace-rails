@@ -1,13 +1,14 @@
 class MemberSerializer < MemberSummarySerializer
   attributes :card_id,
-             :memberContractOnFile,
+             :member_contract_signed_date,
              :subscription,
              :subscription_id,
              :earned_membership_id,
              :customer_id,
              :address,
              :phone,
-             :silence_emails
+             :silence_emails,
+             :member_contract_on_file
 
   def card_id
     active_card = object.access_cards.to_a.find { |card| card.is_active? }

@@ -34,7 +34,7 @@ module Service
 
       # Members that need to sign a member contract
       def self.query_no_member_contract(base = query_total_members)
-        base.where(memberContractOnFile: false)
+        base.where(member_contract_signed_date: nil)
       end
 
       def self.query_paypal_members(base = query_total_members)

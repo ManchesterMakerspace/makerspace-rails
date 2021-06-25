@@ -1,5 +1,6 @@
 class DocumentUploadJob < ApplicationJob
   include Service::SlackConnector
+  include ::Service::GoogleDrive
   retry_on StandardError
 
   queue_as :slack
@@ -11,7 +12,7 @@ class DocumentUploadJob < ApplicationJob
       overloads = {}
 
       def onFail()
-        resource.update_attributes!(memberContractOnFile: false)
+        resource.update_attributes!(member_contract_signed_date: nil)
       end
 
     elsif document_type == "rental_agreement"
@@ -25,7 +26,7 @@ class DocumentUploadJob < ApplicationJob
     end
 
     begin
-      document = upload_document(document_type, member, overloads, encoded_signature)
+      document = upload_document(document_type, member, overloads, base64_signature)
       MemberMailer.send_document(document_type, member.id.as_json, document).deliver_later
     rescue Error::Google::Upload => err
       enque_message("Error uploading #{@member.fullname}'s #{document_type} signature'. Error: #{err}")
