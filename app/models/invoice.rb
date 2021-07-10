@@ -145,8 +145,7 @@ class Invoice
 
     if next_invoice.subscription_id && gateway
       subscription = ::BraintreeService::Subscription.get_subscription(gateway, next_invoice.subscription_id)
-      # Amount is plan amount minus discounts that are active (active being never expire or has billing cycles left)
-      next_invoice.amount = subscription.price - subscription.discounts.select { |d| d.never_expires? || (d.number_of_billing_cycles || 0) > (d.quantity || 0) }.map { |d| d.amount }.inject(0, :+)
+      next_invoice.amount = subscription.next_billing_period_amount
     end
 
     next_invoice.save!
@@ -213,7 +212,7 @@ class Invoice
     raise ::Error::UnprocessableEntity.new("Unable to process invoice. Invalid operation for invoice #{self.id}") if operation.nil?
 
     # Test a validation function if it exists
-    if !OPERATION_RESOURCES[self.resource_class].method_defined?(:delay_invoice_operation) || !self.resource.delay_invoice_operation(operation)
+    if !OPERATION_RESOURCES[self.resource_class].method_defined?(:delay_invoice_operation) || (!self.resource.nil? && !self.resource.delay_invoice_operation(operation))
       raise ::Error::UnprocessableEntity.new("Unable to process invoice. Operation failed for invoice #{self.id}") unless resource.execute_operation(operation, self)
       resource.send_renewal_slack_message()
       self.settled = true

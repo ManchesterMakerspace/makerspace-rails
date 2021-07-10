@@ -1175,7 +1175,7 @@
               "processor_declined",
               "settled",
               "settling",
-              "submmitted_for_settlement",
+              "submitted_for_settlement",
               "voided"
             ]
           },
@@ -5205,6 +5205,14 @@
             "required": false,
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "only_enabled",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
             }
           },
           {

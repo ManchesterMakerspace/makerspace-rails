@@ -30,7 +30,7 @@ namespace :volunteering do
         
         active_for_month.map do |member_id| 
           volunteer_spreadsheet.update_requirement_count(member_id) 
-          sleep(1)
+          sleep(10)
         end
       ::Service::SlackConnector.send_slack_message("Volunteering requirements updated.", ::Service::SlackConnector.logs_channel)
     rescue => e

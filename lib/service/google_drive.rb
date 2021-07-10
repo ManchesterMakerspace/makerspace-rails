@@ -135,9 +135,8 @@ module Service
     def self.get_document(resource, document_name)
       member_name = resource.kind_of?(Member) ? resource.fullname : resource.member.fullname
       signed_date = resource.kind_of?(Member) ? resource.member_contract_signed_date : resource.contract_signed_date
-      
       raise ::Error::NotFound.new() if signed_date.nil?
-
+      
       date_str = signed_date.strftime('%m-%d-%Y')
 
       drive = load_gdrive

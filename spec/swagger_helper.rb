@@ -642,7 +642,7 @@ RSpec.configure do |config|
             "processor_declined",
             "settled",
             "settling",
-            "submmitted_for_settlement",
+            "submitted_for_settlement",
             "voided"
           ]
         },
