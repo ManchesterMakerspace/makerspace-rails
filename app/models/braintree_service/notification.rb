@@ -87,7 +87,7 @@ class BraintreeService::Notification
 
       unless related_resource.nil?
         if related_resource.class.name == "Member"
-          identifier = "Membership for #{related_resource.fullname}"
+          identifier = "Membership for #{get_member_profile(related_resource)}"
         else
           identifier = "Rental for #{related_resource.number} belonging to #{related_resource.member.fullname}"
         end
@@ -147,7 +147,7 @@ No automated actions have been taken at this time.")
     slack_member = SlackUser.find_by(member_id: invoice.member.id)
     member_notified = slack_member ? "The member has been notified via Slack and email as well." : "Unable to notify member via Slack. Reach out to member to resolve."
     enque_message("Your recurring payment for #{invoice.name} was unsuccessful. Error status: #{last_transaction.status}. Please <#{Rails.configuration.action_mailer.default_url_options[:host]}/#{invoice.member.id}/settings|review your payment settings> or contact an administrator for assistance.", slack_member.slack_id) unless slack_member.nil?
-    enque_message("Recurring payment from #{invoice.member.fullname} failed with status: #{last_transaction.status}. #{member_notified}")
+    enque_message("Recurring payment from #{get_member_profile(invoice.member)} failed with status: #{last_transaction.status}. #{member_notified}")
     BillingMailer.failed_payment(invoice.member.email, invoice.id, last_transaction.status)
   end
 
@@ -171,7 +171,7 @@ No automated actions have been taken at this time.")
       return
     end
 
-    enque_message("Received dispute from #{associated_invoice.member.fullname} for #{associated_invoice.name} which was paid #{associated_invoice.settled_at}.
+    enque_message("Received dispute from #{get_member_profile(associated_invoice.member)} for #{associated_invoice.name} which was paid #{associated_invoice.settled_at}.
     Braintree transaction ID #{disputed_transaction.id} |  <#{Rails.configuration.action_mailer.default_url_options[:host]}/billing/transactions/#{associated_invoice.transaction_id}|Disputed Invoice>")
     if notification.kind === ::Braintree::WebhookNotification::Kind::DisputeOpened
       associated_invoice.set_dispute_requested
@@ -199,7 +199,7 @@ No automated actions have been taken at this time.")
 
     if notification.kind === Braintree::WebhookNotification::Kind::TransactionSettled
       if (processed_invoice.settled)
-        enque_message("Pending transaction from #{processed_invoice.member.fullname} successful. No further action needed", ::Service::SlackConnector.treasurer_channel)
+        enque_message("Pending transaction from #{get_member_profile(processed_invoice.member)} successful. No further action needed", ::Service::SlackConnector.treasurer_channel)
       else
         self.process_success(processed_invoice, last_transaction)
       end
@@ -207,7 +207,7 @@ No automated actions have been taken at this time.")
       processed_invoice.reverse_settlement
       member_notified = slack_member ? "The member has been notified via Slack and email as well." : "Unable to notify member via Slack. Reach out to member to resolve."
       enque_message("Your payment for #{processed_invoice.name} was unsuccessful. Error status: #{last_transaction.status}. Please <#{Rails.configuration.action_mailer.default_url_options[:host]}/#{processed_invoice.member.id}/settings|review your payment settings> or contact an administrator for assistance.", slack_member.slack_id) unless slack_member.nil?
-      enque_message("Recent transaction from #{processed_invoice.member.fullname} for #{processed_invoice.name} failed with status: #{last_transaction.status}. #{member_notified}")
+      enque_message("Recent transaction from #{get_member_profile(processed_invoice.member)} for #{processed_invoice.name} failed with status: #{last_transaction.status}. #{member_notified}")
       BillingMailer.failed_payment(processed_invoice.member.email, processed_invoice.id, last_transaction.status)
     end
   end
@@ -258,5 +258,10 @@ No automated actions have been taken at this time.")
 
   def self.prior_sub_notification_for_resource(resource)
     BraintreeService::Notification.where(payload: /#{resource.id}/)
+  end
+
+  def self.get_member_profile(member)
+    base_url = ActionMailer::Base.default_url_options[:host]
+    "<#{base_url}/members/#{member.id}|#{member.fullname}>"
   end
 end
