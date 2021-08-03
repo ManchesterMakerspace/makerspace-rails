@@ -7,13 +7,21 @@ task :time_update => :environment do
   rental_contract_folder = ::Service::GoogleDrive.get_folder_id(
     templates[:rental_agreement][:folder_id])
 
-  members = Member.all 
-  rentals = Rental.all 
+  members = Member.all.to_a
+  rentals = Rental.all.to_a
+
+  failed_member_updates = 0
+  success_member_updates = 0
+  failed_rental_updates = 0
+  success_rental_updates = 0
 
   member_contracts = drive.list_files(
     q: "'#{member_contract_folder}' in parents",
-    fields: "files(id, name)"
+    fields: "files(id, name)",
+    page_size: 1000
   )
+
+  puts "Found #{member_contracts.files.length} member contracts"
 
   member_contracts.files.each do |contract|
     member_name, date_ext = contract.name.split("_member_contract_")
@@ -21,23 +29,33 @@ task :time_update => :environment do
       date_str, ext = date_ext.split(".")
       date = Date.strptime(date_str, '%m-%d-%Y')
 
-      member = members.find { |m| m.fullname == member_name }
+      member = members.find { |m| m.fullname.downcase.strip == member_name.downcase.strip }
 
       unless member.nil? 
         member.memberContractOnFile = nil
         if member.member_contract_signed_date.nil? || member.member_contract_signed_date < date 
           member.member_contract_signed_date = date
-          puts "Updataing #{member.fullname} signed member contract date to #{date}"
+          puts "Updating #{member.fullname} signed member contract date to #{date}"
         end
         member.save!
+        success_member_updates += 1
+      else 
+        puts "No member found for #{member_name}"
+        failed_member_updates += 1
       end
+    else 
+      puts "Failed to extract date for #{contract.name}"
+      failed_member_updates += 1
     end
   end
 
   rental_contracts = drive.list_files(
     q: "'#{rental_contract_folder}' in parents",
-    fields: "files(id, name)"
+    fields: "files(id, name)",
+    page_size: 1000
   )
+
+  puts "Found #{rental_contracts.files.length} rental contracts"
 
   rental_contracts.files.each do |contract|
     member_name, date_ext = contract.name.split("_rental_agreement_")
@@ -45,21 +63,40 @@ task :time_update => :environment do
       date_str, ext = date_ext.split(".")
       date = Date.strptime(date_str, '%m-%d-%Y')
 
-      member = members.find { |m| m.fullname == member_name }
+      member = members.find { |m| m.fullname.downcase.strip == member_name.downcase.strip }
 
-      if member.rentals.length > 1
-        puts "#{member.fullname} has too many rentals to auto update"
-      else
-        rental = member.rentals.first
-        unless rental.nil?
-          rental.contract_on_file = nil 
-          if rental.contract_signed_date.nil? || rental.contract_signed_date < date 
-            rental.contract_signed_date = date
-            puts "Updataing #{member_name} signed rental contract date to #{date}"
+      unless member.nil? 
+        if member.rentals.length > 1
+          puts "#{member.fullname} has too many rentals to auto update"
+        else
+          rental = member.rentals.first
+          unless rental.nil?
+            rental.contract_on_file = nil 
+            if rental.contract_signed_date.nil? || rental.contract_signed_date < date 
+              rental.contract_signed_date = date
+              puts "Updating #{member_name} signed rental contract date to #{date}"
+            end
+            rental.save!
+            success_rental_updates += 1
+          else 
+            puts "No rental found for #{member_name}"
+            failed_rental_updates += 1
           end
-          rental.save!
         end
+      else 
+        puts "No member found for #{member_name}"
+        failed_rental_updates += 1
       end
+    else 
+      puts "Failed to extract date for #{contract.name}"
+      failed_rental_updates += 1
     end
   end
+
+  puts "Successful Member Updates: #{success_member_updates}"
+  puts "Failed Member Updates: #{failed_member_updates}"
+  puts "Total Members: #{members.length}"
+  puts "Successful Rental Updates: #{success_rental_updates}"
+  puts "Failed Rental Updates: #{failed_rental_updates}"
+  puts "Total Rentals: #{rentals.length}"
 end
