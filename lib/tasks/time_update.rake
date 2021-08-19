@@ -32,7 +32,10 @@ task :time_update => :environment do
       member = members.find { |m| m.fullname.downcase.strip == member_name.downcase.strip }
 
       unless member.nil? 
-        member.memberContractOnFile = nil
+        member.reload
+
+        member.remove_attribute(:memberContractOnFile)
+
         if member.member_contract_signed_date.nil? || member.member_contract_signed_date < date 
           member.member_contract_signed_date = date
           puts "Updating #{member.fullname} signed member contract date to #{date}"
@@ -66,12 +69,14 @@ task :time_update => :environment do
       member = members.find { |m| m.fullname.downcase.strip == member_name.downcase.strip }
 
       unless member.nil? 
+        member.reload
+
         if member.rentals.length > 1
           puts "#{member.fullname} has too many rentals to auto update"
         else
           rental = member.rentals.first
           unless rental.nil?
-            rental.contract_on_file = nil 
+            rental.remove_attribute(:contract_on_file)
             if rental.contract_signed_date.nil? || rental.contract_signed_date < date 
               rental.contract_signed_date = date
               puts "Updating #{member_name} signed rental contract date to #{date}"
