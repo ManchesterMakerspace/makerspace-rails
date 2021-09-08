@@ -16,7 +16,7 @@ FactoryBot.define do
     expirationTime {generate(:expiry)}
     email {generate(:email)}
     encrypted_password { BCrypt::Password.create('password') }
-    memberContractOnFile { true }
+    member_contract_signed_date { Date.today }
     status { 'activeMember' }
     phone { "992001234" }
     address_street { "12 Main St" }
@@ -313,6 +313,7 @@ FactoryBot.define do
     id { "member_1234" }
     status { ::Braintree::Subscription::Status::Active }
     price { "65.00" }
+    next_billing_period_amount { "65.00" }
     first_billing_date { Time.now }
     next_billing_date { Time.now + 1.month }
     transactions { [] }

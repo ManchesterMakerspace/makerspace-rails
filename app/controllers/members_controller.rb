@@ -1,6 +1,5 @@
 class MembersController < AuthenticationController
     include FastQuery::MongoidQuery
-    include ::Service::GoogleDrive
     before_action :set_member, only: [:show, :update]
 
     def index
@@ -31,16 +30,9 @@ class MembersController < AuthenticationController
       raise Error::Forbidden.new unless @member.id == current_member.id
 
       if signature_params[:signature]
-        begin
-          encoded_signature = signature_params[:signature].split(",")[1]
-          if encoded_signature
-            document = upload_document("member_contract", @member, {}, encoded_signature)
-            @member.update_attributes!(memberContractOnFile: true)
-            MemberMailer.send_document("member_contract", @member.id.as_json, document).deliver_later
-          end
-        rescue Error::Google::Upload => err
-          enque_message("Error uploading #{@member.fullname}'s member contract signature'. Error: #{err}")
-        end
+        encoded_signature = signature_params[:signature].split(",")[1]
+        DocumentUploadJob.perform_later(encoded_signature, "member_contract", @member.id.as_json)
+        @member.update_attributes!(member_contract_signed_date: Date.today)
       else
         @member.update_attributes!(member_params)
       end

@@ -47,7 +47,7 @@ GEM
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-    addressable (2.7.0)
+    addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
     arel (9.0.0)
     bcrypt (3.1.12)
@@ -128,7 +128,7 @@ GEM
       nokogiri (>= 1.5.9)
     mail (2.7.1)
       mini_mime (>= 0.1.1)
-    makerspace-react-rails (1.0.8)
+    makerspace-react-rails (1.2.10)
     marcel (1.0.0)
     memoist (0.16.0)
     method_source (1.0.0)
@@ -137,7 +137,7 @@ GEM
     mime-types-data (3.2018.0812)
     mini_magick (4.9.4)
     mini_mime (1.0.3)
-    mini_portile2 (2.5.0)
+    mini_portile2 (2.5.1)
     minitest (5.14.4)
     mongo (2.13.1)
       bson (>= 4.8.2, < 5.0.0)
@@ -161,7 +161,7 @@ GEM
     multipart-post (2.0.0)
     netrc (0.11.0)
     nio4r (2.5.7)
-    nokogiri (1.11.2)
+    nokogiri (1.11.5)
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
     open_api-rswag-api (0.1.0)
@@ -180,7 +180,8 @@ GEM
       multi_json (~> 1.0)
       xml-simple
     public_suffix (4.0.6)
-    puma (3.12.6)
+    puma (4.3.8)
+      nio4r (~> 2.0)
     racc (1.5.2)
     rack (2.2.3)
     rack-cors (1.0.5)
@@ -331,7 +332,7 @@ DEPENDENCIES
   factory_bot_rails
   git
   google-api-client
-  makerspace-react-rails (= 1.0.8)
+  makerspace-react-rails (= 1.2.10)
   mini_magick
   mongoid (~> 7.0.2)
   mongoid-rspec
@@ -340,7 +341,7 @@ DEPENDENCIES
   open_api-rswag-specs
   open_api-rswag-ui
   paypal-sdk-rest (~> 1.7.4)
-  puma (~> 3.12)
+  puma (~> 4.3)
   rack-cors
   rails (~> 5.2.2)
   rails-controller-testing

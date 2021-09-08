@@ -3,7 +3,7 @@ ruby '2.6.6'
 
 gem 'rails', '~> 5.2.2'
 gem 'rack-cors'
-gem 'puma', '~> 3.12'
+gem 'puma', '~> 4.3'
 gem 'active_model_serializers'
 gem 'dotenv-rails'
 
@@ -58,4 +58,4 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # Frontend
-gem "makerspace-react-rails", "1.0.8"
+gem "makerspace-react-rails", "1.2.10"

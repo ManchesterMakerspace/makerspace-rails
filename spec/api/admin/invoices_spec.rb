@@ -54,7 +54,7 @@ describe 'Admin::Invoices API', type: :request do
           id: { type: :string },
           memberId: { type: :string },
           resourceId: { type: :string },
-          discountId: { type: :string, 'x-nullable': true },
+          discountId: { type: :string },
         },
         required: [:id, :memberId, :resourceId]
       }, required: true
@@ -66,7 +66,7 @@ describe 'Admin::Invoices API', type: :request do
           id: { type: :string },
           memberId: { type: :string },
           resourceId: { type: :string },
-          discountId: { type: :string, 'x-nullable': true },
+          discountId: { type: :string },
         },
         required: [:id, :memberId, :resourceId]
       }, required: true

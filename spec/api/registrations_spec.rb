@@ -176,7 +176,7 @@ describe 'Registrations API', type: :request do
       end
 
       response '422', 'Invalid token' do
-        schema '$ref' => '#/components/schemas/passwordError'
+        schema '$ref' => '#/components/schemas/passwordResetError'
         let(:passwordResetDetails) {{ member: { resetPasswordToken: "basdfkjlalsdfj", password: "password" } }}
         run_test!
       end
@@ -203,15 +203,15 @@ describe 'Registrations API', type: :request do
           lastname: {
             type: :string
           },
-          phone: { type: :string, 'x-nullable': true },
+          phone: { type: :string },
           address: {
             type: :object,
             properties: {
-              street: { type: :string, 'x-nullable': true },
-              unit: { type: :string, 'x-nullable': true },
-              city: { type: :string, 'x-nullable': true },
-              state: { type: :string, 'x-nullable': true },
-              postalCode: { type: :string, 'x-nullable': true },
+              street: { type: :string },
+              unit: { type: :string },
+              city: { type: :string },
+              state: { type: :string },
+              postalCode: { type: :string },
             }
           }
         },
@@ -234,15 +234,15 @@ describe 'Registrations API', type: :request do
           lastname: {
             type: :string
           },
-          phone: { type: :string, 'x-nullable': true },
+          phone: { type: :string },
           address: {
             type: :object,
             properties: {
-              street: { type: :string, 'x-nullable': true },
-              unit: { type: :string, 'x-nullable': true },
-              city: { type: :string, 'x-nullable': true },
-              state: { type: :string, 'x-nullable': true },
-              postalCode: { type: :string, 'x-nullable': true },
+              street: { type: :string },
+              unit: { type: :string },
+              city: { type: :string },
+              state: { type: :string },
+              postalCode: { type: :string },
             }
           }
         },

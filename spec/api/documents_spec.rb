@@ -9,6 +9,7 @@ describe 'Documents API', type: :request do
       tags 'Documents'
       operationId 'getDocument'
       parameter name: :id, in: :path, type: :string
+      parameter name: :saved, in: :query, type: :boolean, required: false
       parameter name: :resourceId, in: :query, type: :string, required: false
       
       response '200', 'Document found' do 

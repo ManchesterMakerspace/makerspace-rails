@@ -1,6 +1,5 @@
 class RentalsController < AuthenticationController
     include FastQuery::MongoidQuery
-    include ::Service::GoogleDrive
     before_action :set_rental, only: [:show, :update]
 
   def index
@@ -17,16 +16,10 @@ class RentalsController < AuthenticationController
     @member = @rental.member
     raise Error::Forbidden.new unless @member.id == current_member.id
 
-    begin
-      encoded_signature = update_params[:signature].split(",")[1]
-      if encoded_signature
-        document = upload_document("rental_agreement", @member, { rental: @rental }, encoded_signature)
-        @rental.update_attributes!(contract_on_file: true)
-        @rental.reload
-        MemberMailer.send_document("rental_agreement", @member.id.as_json, document).deliver_later
-      end
-    rescue Error::Google::Upload => err
-      enque_message("Error uploading #{@member.fullname}'s rental agreement signature'. Error: #{err}")
+    encoded_signature = update_params[:signature].split(",")[1]
+    if encoded_signature
+      DocumentUploadJob.perform_later(encoded_signature, "rental_agreement", @rental.id.as_json)
+      @rental.update_attributes!(contract_signed_date: Date.today)
     end
 
     render json: @rental, adapter: :attributes and return

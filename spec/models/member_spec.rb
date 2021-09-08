@@ -13,7 +13,7 @@ RSpec.describe Member, type: :model do
     it { is_expected.to have_field(:status).with_default_value_of('activeMember') }
     it { is_expected.to have_field(:expirationTime).of_type(Integer) }
     it { is_expected.to have_field(:role).with_default_value_of('member') }
-    it { is_expected.to have_field(:memberContractOnFile).of_type(Mongoid::Boolean) }
+    it { is_expected.to have_field(:member_contract_signed_date).of_type(Date) }
     it { is_expected.to have_field(:silence_emails).of_type(Mongoid::Boolean) }
     it { is_expected.to have_field(:subscription).of_type(Mongoid::Boolean).with_default_value_of(false) }
     it { is_expected.to have_fields(:email, :encrypted_password).of_type(String).with_default_value_of("") }

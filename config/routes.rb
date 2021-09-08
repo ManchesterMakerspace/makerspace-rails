@@ -21,6 +21,11 @@ Rails.application.routes.draw do
     resources :invoice_options, only: [:index, :show]
     resources :client_error_handler, only: [:create]
 
+    namespace :billing do
+      resources :plans, only: [:index]
+      resources :discounts, only: [:index]
+    end
+
     authenticate :member do
       resources :members, only: [:show, :index, :update] do
         scope module: :members do
@@ -55,10 +60,6 @@ Rails.application.routes.draw do
         resources :analytics, only: [:index]
 
         namespace :billing do
-          resources :plans, only: [:index]
-          scope :plans do
-            get '/discounts', to: "plans#discounts"
-          end
           resources :subscriptions, only: [:index, :destroy]
           resources :transactions, only: [:show, :index, :destroy]
           resources :receipts, only: [:show], defaults: { format: :html }

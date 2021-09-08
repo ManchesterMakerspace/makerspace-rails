@@ -60,8 +60,28 @@ class Billing::PaymentMethodsController < BillingController
     raise Error::Braintree::MissingCustomer.new unless current_member.customer_id
     # Only allowed to modify own payment methods
     payment_method = ::BraintreeService::PaymentMethod.find_payment_method_for_customer(@gateway, payment_method_token, current_member.customer_id)
+
+    sub_ids = []
+
+    unless current_member.subscription_id.nil?
+      membership_sub = ::BraintreeService::Subscription.get_subscription(@gateway, current_member.subscription_id)
+      sub_ids.push(membership_sub.id) if membership_sub.payment_method_token == payment_method_token
+    end
+
+    current_member.rentals.each do |rental|
+      rental_sub = ::BraintreeService::Subscription.get_subscription(@gateway, rental.subscription_id) unless rental.subscription_id.nil?
+      sub_ids.push(rental_sub.id) if rental_sub.payment_method_token == payment_method_token
+    end
+    
     result = ::BraintreeService::PaymentMethod.delete_payment_method(@gateway, payment_method.token)
     raise Error::Braintree::Result.new(result) unless result.success?
+    
+    # Destroy the related invoices that were cancelled due to payment method being removed
+    sub_ids.each do |id|
+      invoice = Invoice.find_by(subscription_id: id)
+      Invoice.process_cancellation(invoice.id)
+    end
+
     render json: {}, status: 204 and return
   end
 

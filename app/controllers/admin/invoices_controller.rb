@@ -1,5 +1,6 @@
 class Admin::InvoicesController < AdminController
   include FastQuery::MongoidQuery
+  include BraintreeGateway
   before_action :find_invoice, only: [:update, :destroy]
 
   def index
@@ -7,12 +8,29 @@ class Admin::InvoicesController < AdminController
       key = k.to_sym
 
       if key === :settled
-        query = { "$or" => [
-          query_existance_by_name(invoice_query_params[:settled], :settled_at),
-          query_existance_by_name(invoice_query_params[:settled], :transaction_id)
-        ]}
+        query = query_to_bool(invoice_query_params[:settled],
+          {"$or" => [
+            { :settled_at.ne => nil },
+            { :transaction_id.ne => nil }
+          ]},
+          {"$and" => [
+            { settled_at: nil },
+            { transaction_id: nil }
+          ]},
+        )
       elsif key === :past_due
-        query = query_existance_by_name(invoice_query_params[:past_due], :due_date)
+        query = query_to_bool(invoice_query_params[:past_due],
+          {"$or" => [
+            { settled_at: nil },
+            { transaction_id: nil }
+          ], :due_date.lt => Time.now },
+          {"$or" => [
+            {"$and" => [
+              { :settled_at.ne => nil },
+              { :transaction_id.ne => nil }
+            ]},
+            :due_date.gte => Time.now] }
+        )
       elsif bool_params.include?(key)
         query = query_bool_by_name(invoice_query_params[key], key)
       elsif array_params.include?(key)

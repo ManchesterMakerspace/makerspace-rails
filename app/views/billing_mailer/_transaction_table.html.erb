@@ -40,9 +40,9 @@
         <%=friendly_type.titleize%> expiration
       </td>
       <td style="border-top: 1px solid black; border-right: 1px solid black; padding: 0.5em">
-        <% if @invoice.resource_class == "member" && @invoice.resource.get_expiration.nil? %>
+        <% if @invoice.resource_class == "member" && @invoice.resource.try(:get_expiration).nil? %>
           Membership expires <%= @invoice.quantity %> month(s) after receiving key fob.
-        <% else %>
+        <% elsif !@invoice.resource.nil? %>
           <%=@invoice.resource.pretty_time.strftime("%m/%d/%Y")%>
         <% end %>  
       </td>

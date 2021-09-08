@@ -14,9 +14,9 @@ class BraintreeService::SubscriptionSerializer < ActiveModel::Serializer
               :resource_id,
               :payment_method_token
 
-  # Convert BigDecimal price to currency
+  # Convert BigDecimal next_bill_amount to currency
   def amount
-    object.price.truncate.to_s + '.' + sprintf('%02d', (object.price.frac * 100).truncate)
+    object.next_billing_period_amount
   end
 
   def member_id
