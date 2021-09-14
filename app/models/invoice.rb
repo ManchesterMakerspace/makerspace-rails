@@ -154,7 +154,7 @@ class Invoice
   def send_cancellation_notification
     slack_user = SlackUser.find_by(member_id: self.member_id)
     type = self.resource_class == "member" ? "membership" : "rental"
-    message = "#{self.member.fullname}'s #{type} subscription#{type == "rental" ? " for #{self.resource.number}" : ""} has been canceled."
+    message = "#{self.member.fullname}'s #{type} subscription#{type == "rental" ? " for #{self.resource.try(:number) || self.name}" : ""} has been canceled."
     enque_message(message, slack_user.slack_id) unless slack_user.nil?
     enque_message(message, ::Service::SlackConnector.members_relations_channel)
     BillingMailer.canceled_subscription(self.member.email, self.resource_class).deliver_later
