@@ -11,8 +11,7 @@ capybara-*.html
 **.orig
 rerun.txt
 pickle-email-*.html
-dump/*.archive
-dump/*.png
+dump/
 *.log
 
 config.json

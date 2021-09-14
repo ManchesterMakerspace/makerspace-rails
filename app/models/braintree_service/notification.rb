@@ -101,6 +101,8 @@ class BraintreeService::Notification
         enque_message("Received subscription notification for #{identifier}. No active invoice found; skipping processing. If member just signed up, no further action required.", ::Service::SlackConnector.treasurer_channel)
       elsif (notification.kind === ::Braintree::WebhookNotification::Kind::SubscriptionCanceled)
         enque_message("Received cancelation notification for canceled subscription for #{identifier}", ::Service::SlackConnector.treasurer_channel)
+      elsif (notification.kind === ::Braintree::WebhookNotification::Kind::SubscriptionChargedUnsuccessfully)
+        enque_message("Received failed payment notification for canceled subscription for #{identifier}")
       else
         enque_message("Unable to process subscription notification: #{notification.kind.to_s}. No active invoice found for #{identifier}.")
       end

@@ -247,7 +247,9 @@ RSpec.describe Invoice, type: :model do
 
     describe "cancellation" do
       let(:member) { create(:member) }
+      let(:rental) { create(:rental, member: member) }
       let(:paid_invoice) { create(:invoice, member: member, subscription_id: "foo", settled_at: Time.now) }
+      let(:outstanding_rental_invoice) { create(:invoice, member: member, subscription_id: "rental", resource_class: "rental", resource_id: rental.id) }
       let(:outstanding_invoice) { create(:invoice, member: member, name: "outstanding", subscription_id: "foo") }
 
       describe "Cancel by subscription id" do
@@ -263,6 +265,14 @@ RSpec.describe Invoice, type: :model do
           expect(SlackUser).to receive(:find_by).with({ member_id: member.id }).and_return(SlackUser.new())
           expect(paid_invoice).to receive(:enque_message).twice
           paid_invoice.send_cancellation_notification
+        end
+
+        it "Gracefully handles deleted rentals" do 
+          outstanding_rental_invoice
+          rental.delete
+          expect(SlackUser).to receive(:find_by).with({ member_id: member.id }).and_return(SlackUser.new())
+          expect(outstanding_rental_invoice).to receive(:enque_message).twice
+          outstanding_rental_invoice.send_cancellation_notification
         end
       end
     end
