@@ -7,6 +7,13 @@ RSpec.describe Admin::Billing::TransactionsController, type: :controller do
   let(:payment_method) { build(:credit_card, customer_id: "bar") }
   let(:invoice) { create(:invoice, member: member) }
   let(:transaction) { build(:transaction) }
+  let(:discount_id) { generate(:uid) }
+  let(:discounted_transaction) { build(:transaction, discounts: [{
+    id: discount_id,
+    name: "10% Discount",
+    description: "A discount for 10%",
+    amount: "6.50",
+  }]) }
   let(:admin) { create(:member, :admin) }
   
   let(:valid_params) {
@@ -37,6 +44,18 @@ RSpec.describe Admin::Billing::TransactionsController, type: :controller do
       expect(parsed_response.first['id']).to eq(transaction.id)
       expect(parsed_response.first['invoice']['id']).to eq(related_invoice.id.to_s)
     end
+
+    it "filters transactions by discount IDs" do 
+      related_invoice # call to initialize
+      allow(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, anything).and_return([transaction, discounted_transaction])
+      expect(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, anything).and_return([transaction, discounted_transaction])
+      
+      get :index, params: { discountId: discount_id }, format: :json
+      expect(response).to have_http_status(200)
+      parsed_response = JSON.parse(response.body)
+      expect(parsed_response.first['id']).to eq(discounted_transaction.id)
+      expect(parsed_response.length).to eq(1)
+    end 
   end
 
   describe "GET #show" do 

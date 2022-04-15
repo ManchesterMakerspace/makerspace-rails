@@ -1606,6 +1606,17 @@
             "required": false
           },
           {
+            "name": "discountId",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "required": false
+          },
+          {
             "name": "customerId",
             "in": "query",
             "required": false,
