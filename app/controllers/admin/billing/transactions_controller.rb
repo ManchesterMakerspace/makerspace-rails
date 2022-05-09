@@ -49,7 +49,12 @@ class Admin::Billing::TransactionsController < Admin::BillingController
 
       search.type.is(transaction_query_params[:type]) unless transaction_query_params[:type].nil?
 
-      query_array(transaction_query_params[:transaction_status], search.status) unless transaction_query_params[:transaction_status].nil?
+
+      unless transaction_query_params[:transaction_status].nil?
+        statuses = transaction_query_params[:transaction_status].collect { |status| "Braintree::Transaction::Status::#{status.capitalize}".constantize}
+
+        query_array(statuses, search.status) 
+      end
     end
   end
 
