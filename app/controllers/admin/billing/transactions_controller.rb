@@ -4,7 +4,7 @@ class Admin::Billing::TransactionsController < Admin::BillingController
     
     if transaction_query_params[:discount_id]
       transactions = transactions.filter do |transaction|
-        transaction.discounts.find { |discount| discount.id === transaction_query_params[:discount_id] }
+        transaction.discounts.find { |discount| transaction_query_params[:discount_id].include?(discount.id) }
       end
     end
     
@@ -54,6 +54,6 @@ class Admin::Billing::TransactionsController < Admin::BillingController
   end
 
   def transaction_query_params
-    params.permit(:start_date, :end_date, :refund, :type, :customer_id, :discount_id, :transaction_status => [])
+    params.permit(:start_date, :end_date, :refund, :type, :customer_id, :discount_id => [], :transaction_status => [])
   end
 end

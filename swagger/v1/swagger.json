@@ -5219,7 +5219,7 @@
             }
           },
           {
-            "name": "only_enabled",
+            "name": "onlyEnabled",
             "in": "query",
             "required": false,
             "schema": {
