@@ -15,9 +15,9 @@ RSpec.describe Admin::Billing::TransactionsController, type: :controller do
     amount: "6.50",
   }]) }
   let(:admin) { create(:member, :admin) }
-  
+
   let(:valid_params) {
-    { 
+    {
       payment_method_id: "foo",
       invoice_id: invoice.id
     }
@@ -30,14 +30,14 @@ RSpec.describe Admin::Billing::TransactionsController, type: :controller do
     sign_in admin
   end
 
-  describe "GET #index" do 
+  describe "GET #index" do
     let(:transaction) { build(:transaction) }
     let(:related_invoice) { create(:invoice, transaction_id: transaction.id) }
-    it "renders a list of transactions" do 
+    it "renders a list of transactions" do
       related_invoice # call to initialize
       allow(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, anything).and_return([transaction])
       expect(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, anything).and_return([transaction])
-      
+
       get :index, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
@@ -45,33 +45,33 @@ RSpec.describe Admin::Billing::TransactionsController, type: :controller do
       expect(parsed_response.first['invoice']['id']).to eq(related_invoice.id.to_s)
     end
 
-    it "filters transactions by discount IDs" do 
+    it "filters transactions by discount IDs" do
       related_invoice # call to initialize
       allow(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, anything).and_return([transaction, discounted_transaction])
       expect(BraintreeService::Transaction).to receive(:get_transactions).with(gateway, anything).and_return([transaction, discounted_transaction])
-      
-      get :index, params: { discountId: discount_id }, format: :json
+
+      get :index, params: { discount_id: [discount_id] }, format: :json
       expect(response).to have_http_status(200)
       parsed_response = JSON.parse(response.body)
       expect(parsed_response.first['id']).to eq(discounted_transaction.id)
       expect(parsed_response.length).to eq(1)
-    end 
+    end
   end
 
-  describe "GET #show" do 
-    it "renders a transaction" do 
+  describe "GET #show" do
+    it "renders a transaction" do
       allow(BraintreeService::Transaction).to receive(:get_transaction).with(gateway, "foo").and_return(transaction)
       expect(BraintreeService::Transaction).to receive(:get_transaction).with(gateway, "foo").and_return(transaction)
-      
-      get :show, params: { id: "foo" }, format: :json 
+
+      get :show, params: { id: "foo" }, format: :json
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
       expect(parsed_response['id']).to eq(transaction.id)
     end
   end
 
-  describe "DELETE #destroy" do 
-    it "refunds the requested transaction" do 
+  describe "DELETE #destroy" do
+    it "refunds the requested transaction" do
       allow(::BraintreeService::Transaction).to receive(:refund).with(gateway, transaction.id)
       expect(::BraintreeService::Transaction).to receive(:refund).with(gateway, transaction.id)
       delete :destroy, params: { id: transaction.id }, format: :json

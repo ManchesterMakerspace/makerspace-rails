@@ -162,10 +162,13 @@ class Invoice
 
   def self.process_cancellation(invoice_id, skip_notification=false)
     invoice = Invoice.find(invoice_id)
-    # Destroy invoices for this subscription that are still outstanding
-    invoice.resource.remove_subscription() unless invoice.resource.nil?
-    Invoice.where(subscription_id: invoice.subscription_id, settled_at: nil, transaction_id: nil).destroy unless invoice.subscription_id.nil?
-    !skip_notification && invoice.send_cancellation_notification # Can send notification after destorying because there is still `invoice` in memory
+
+    unless invoice.nil?
+      # Destroy invoices for this subscription that are still outstanding
+      invoice.resource.remove_subscription() unless invoice.resource.nil?
+      Invoice.where(subscription_id: invoice.subscription_id, settled_at: nil, transaction_id: nil).destroy unless invoice.subscription_id.nil?
+      !skip_notification && invoice.send_cancellation_notification # Can send notification after destorying because there is still `invoice` in memory
+    end
   end
 
   def self.resource(class_name, id)
@@ -243,7 +246,7 @@ class Invoice
 
     if active_undeletable.empty?
       active.destroy
-    else 
+    else
       errors.add(:base, "Cannot create duplicate memberships for same user")
     end
   end
