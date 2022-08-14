@@ -1,6 +1,13 @@
 class Admin::Billing::TransactionsController < Admin::BillingController
   def index
     transactions = ::BraintreeService::Transaction.get_transactions(@gateway, construct_query)
+
+    if transaction_query_params[:discount_id]
+      transactions = transactions.filter do |transaction|
+        transaction.discounts.find { |discount| transaction_query_params[:discount_id].include?(discount.id) }
+      end
+    end
+
     return render_with_total_items(transactions, { each_serializer: BraintreeService::TransactionSerializer, adapter: :attributes })
   end
 
@@ -42,11 +49,16 @@ class Admin::Billing::TransactionsController < Admin::BillingController
 
       search.type.is(transaction_query_params[:type]) unless transaction_query_params[:type].nil?
 
-      query_array(transaction_query_params[:transaction_status], search.status) unless transaction_query_params[:transaction_status].nil?
+
+      unless transaction_query_params[:transaction_status].nil?
+        statuses = transaction_query_params[:transaction_status].collect { |status| "Braintree::Transaction::Status::#{status.capitalize}".constantize}
+
+        query_array(statuses, search.status)
+      end
     end
   end
 
   def transaction_query_params
-    params.permit(:start_date, :end_date, :refund, :type, :customer_id, :transaction_status => [])
+    params.permit(:start_date, :end_date, :refund, :type, :customer_id, :discount_id => [], :transaction_status => [])
   end
 end

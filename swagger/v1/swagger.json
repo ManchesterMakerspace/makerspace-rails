@@ -1606,6 +1606,17 @@
             "required": false
           },
           {
+            "name": "discountId",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "required": false
+          },
+          {
             "name": "customerId",
             "in": "query",
             "required": false,
@@ -5208,7 +5219,7 @@
             }
           },
           {
-            "name": "only_enabled",
+            "name": "onlyEnabled",
             "in": "query",
             "required": false,
             "schema": {
