@@ -30,3 +30,5 @@ jobs:
     - stage: deploy
       script: rake publish
       if: branch = master AND type = push
+    - store_artifacts:
+      path: ./tmp/makerspace-react/tmp/screenshots
