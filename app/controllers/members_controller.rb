@@ -5,6 +5,7 @@ class MembersController < AuthenticationController
     def index
       base_query = Member.includes(:access_cards).includes(:earned_membership)
       # Limit index to only current members unless authorized and requesting full records
+      raise ::Error::Forbidden.new unless is_admin?
       if !is_admin? || to_bool(search_params[:current_members])
         # Include unset or expired within grace period
         search = base_query.where({
