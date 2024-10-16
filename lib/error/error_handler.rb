@@ -9,8 +9,9 @@ module Error
         rescue_from StandardError do |e|
           if Rails.env.production?
             message = "Unhandled Error: #{e.message} #{e.backtrace}"
+            puts message
             slack_alert(:interal_server_error, 500, message)
-            respond(:interal_server_error, 500, "Internal Server Error")
+            respond(:interal_server_error, 500, "Internal Server Error: #{e.backtrace}")
           else
             raise e
           end
