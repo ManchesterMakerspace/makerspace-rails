@@ -1,0 +1,17 @@
+services:
+  web:
+    build: "."
+    environment:
+      PORT: 3000
+      MLAB_URI: "mongodb://db:27017"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ".:/app"
+  db:
+    image: "mongo"
+    volumes:
+      - "db:/data/db"
+volumes:
+  db:
+
