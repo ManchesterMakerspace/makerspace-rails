@@ -146,7 +146,7 @@ class BillingMailer < ApplicationMailer
   private
   def send_mail(email, subject, calling_method)
     get_profile_url()
-    mail to: email,  cc: "receipts@manchestermakerspace.org", subject: subject, template_name: calling_method.delete_prefix("_")
+    mail to: email,  cc: "receipts@manchestermakerspace.org", bcc: "renewals@manchestermakerspace.org", subject: subject, template_name: calling_method.delete_prefix("_")
   end
 
   def get_profile_url()
