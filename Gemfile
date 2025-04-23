@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.6.6'
+ruby '3.2.8'
 
 gem 'rails', '~> 5.2.2'
 gem 'rack-cors'
