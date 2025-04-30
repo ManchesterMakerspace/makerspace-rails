@@ -1,11 +1,12 @@
 source 'https://rubygems.org'
 ruby '2.6.9'
 
-gem 'rails', '~> 5.2.2'
+gem 'rails', '~> 6.0.6.1'
 gem 'rack-cors'
 gem 'puma', '~> 4.3'
-gem 'active_model_serializers'
+gem 'active_model_serializers', '~> 0.10.15'
 gem 'dotenv-rails'
+gem 'concurrent-ruby', '1.3.4'
 
 # Redis Cache and Event Bus
 gem 'redis'
