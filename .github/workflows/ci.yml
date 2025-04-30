@@ -1,0 +1,12 @@
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6.9
+          bundler-cache: true
+      - run: bundle exec rspec
+      - run: bundle exec rake integration
