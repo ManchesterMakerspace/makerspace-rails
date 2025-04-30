@@ -2,6 +2,9 @@ on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      db:
+        image: mongo
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
@@ -9,4 +12,6 @@ jobs:
           ruby-version: 2.6.9
           bundler-cache: true
       - run: bundle exec rspec
+        env:
+          MLAB_URI: mongodb://db:27017
       - run: bundle exec rake integration
