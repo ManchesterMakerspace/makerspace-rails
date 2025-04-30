@@ -87,29 +87,6 @@ describe 'Members API', type: :request do
         },
       }, required: true
 
-      request_body_json schema: {
-        title: :updateMemberDetails,
-        properties: {
-          firstname: { type: :string },
-          lastname: { type: :string },
-          email: { type: :string },
-          memberContractOnFile: { type: :boolean },
-          silenceEmails: { type: :boolean },
-          phone: { type: :string },
-          address: {
-            type: :object,
-            properties: {
-              street: { type: :string },
-              unit: { type: :string },
-              city: { type: :string },
-              state: { type: :string },
-              postalCode: { type: :string },
-            }
-          },
-          signature: { type: :string },
-        },
-      }, required: true
-
       # Update object
       let(:updateMemberDetails) {{ firstname: "new firstname", lastname: "new lastname", email: "foo@foo.com" }}
 

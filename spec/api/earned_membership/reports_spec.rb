@@ -43,11 +43,6 @@ describe 'Reports API', type: :request do
         '$ref' => '#/components/schemas/NewReport'
       }, required: true
 
-      request_body_json schema: {
-        title: :createEarnedMembershipReportDetails, 
-        '$ref' => '#/components/schemas/NewReport'
-      }, required: true
-
       response '200', 'report created' do
         let(:em) { create(:earned_membership) }
         before { sign_in create(:earned_member, earned_membership: em) }

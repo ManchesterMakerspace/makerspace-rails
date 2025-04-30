@@ -82,17 +82,6 @@ describe 'Admin::AccessCards API', type: :request do
         required: [:memberId, :uid]
       }, required: true
 
-      request_body_json schema: {
-        title: :createAccessCardDetails,
-        name: :createAccessCardDetails,
-        type: :object,
-        properties: {
-          memberId: { type: :string },
-          uid: { type: :string },
-        },
-        required: [:memberId, :uid]
-      }, required: true
-
       response '200', 'access card created' do 
         before { sign_in admin }
 
@@ -153,15 +142,6 @@ describe 'Admin::AccessCards API', type: :request do
       parameter name: :id, in: :path, type: :string
 
       parameter name: :updateAccessCardDetails, in: :body, schema: {
-        title: :updateAccessCardDetails,
-        type: :object,
-        properties: {
-          cardLocation: { type: :string }
-        },
-        required: [:cardLocation]
-      }, required: true
-
-      request_body_json schema: {
         title: :updateAccessCardDetails,
         type: :object,
         properties: {
