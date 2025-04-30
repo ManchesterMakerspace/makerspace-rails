@@ -20,4 +20,8 @@ jobs:
       - run: bundle exec rspec
         env:
           MLAB_URI: mongodb://localhost:27017
+          BT_ENV: sandbox
+          BT_MERCHANT_ID: ${{ secrets.BT_MERCHANT_ID }}
+          BT_PUBLIC_KEY: ${{ secrets.BT_PUBLIC_KEY }}
+          BT_PRIVATE_KEY: ${{ secrets.BT_PRIVATE_KEY }}
       - run: bundle exec rake integration
