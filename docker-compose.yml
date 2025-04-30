@@ -1,9 +1,13 @@
 services:
   web:
-    build: "."
+    build:
+      args:
+        ENVIRONMENT: development
+      context: .
     environment:
       PORT: 3000
       MLAB_URI: "mongodb://db:27017"
+      REDIS_URL: "redis://redis:6379/1"
     ports:
       - "3000:3000"
     volumes:
@@ -12,6 +16,7 @@ services:
     image: "mongo"
     volumes:
       - "db:/data/db"
+  redis:
+    image: "redis"
 volumes:
   db:
-
