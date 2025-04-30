@@ -28,7 +28,7 @@ RSpec.describe RentalsController, type: :controller do
       get :index, params: {}
 
       expect(response).to have_http_status(200)
-      expect(response.content_type).to eq "application/json"
+      expect(response.media_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
       expect(parsed_response.first['id']).to eq(Rental.last.id.to_s)
     end
@@ -46,7 +46,7 @@ RSpec.describe RentalsController, type: :controller do
       get :show, params: {id: rental.to_param}
 
       expect(response).to have_http_status(200)
-      expect(response.content_type).to eq "application/json"
+      expect(response.media_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
       expect(parsed_response['id']).to eq(Rental.last.id.to_s)
     end
@@ -62,7 +62,7 @@ RSpec.describe RentalsController, type: :controller do
     it "renders json of the updated rental" do
       put :update, params: { id: rental.id, signature: "foo,bar" }, format: :json
       expect(response).to have_http_status(200)
-      expect(response.content_type).to eq "application/json"
+      expect(response.media_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
       expect(parsed_response['id']).to eq(rental.id.as_json)
       expect(parsed_response['contractOnFile']).to eq(true)

@@ -67,7 +67,7 @@ RSpec.describe Admin::CardsController, type: :controller do
 
           parsed_response = JSON.parse(response.body)
           expect(response).to have_http_status(200)
-          expect(response.content_type).to eq "application/json"
+          expect(response.media_type).to eq "application/json"
           expect(parsed_response['id']).to eq(Card.last.id.as_json)
         end
 
@@ -90,7 +90,7 @@ RSpec.describe Admin::CardsController, type: :controller do
 
           parsed_response = JSON.parse(response.body)
           expect(response).to have_http_status(200)
-          expect(response.content_type).to eq "application/json"
+          expect(response.media_type).to eq "application/json"
           expect(parsed_response['id']).to eq(Card.last.id.as_json)
           expect(Card.last.id.as_json).not_to eq(card.id)
         end
@@ -169,7 +169,7 @@ RSpec.describe Admin::CardsController, type: :controller do
           put :update, params: valid_stolen_attributes.merge({id: card.to_param}), format: :json
           parsed_response = JSON.parse(response.body)
           expect(response).to have_http_status(200)
-          expect(response.content_type).to eq "application/json"
+          expect(response.media_type).to eq "application/json"
           expect(parsed_response['id']).to eq(Card.last.id.to_s)
         end
       end

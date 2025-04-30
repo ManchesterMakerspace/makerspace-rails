@@ -9,7 +9,7 @@ RSpec.describe MembersController, type: :controller do
 
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(response.content_type).to eq "application/json"
+      expect(response.media_type).to eq "application/json"
       expect(parsed_response.last['id']).to eq(Member.last.id.as_json)
     end
   end
@@ -22,7 +22,7 @@ RSpec.describe MembersController, type: :controller do
 
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(response.content_type).to eq "application/json"
+      expect(response.media_type).to eq "application/json"
       expect(parsed_response['id']).to eq(Member.last.id.as_json)
     end
 
@@ -47,7 +47,7 @@ RSpec.describe MembersController, type: :controller do
       }
       put :update, params: member_params.merge({ id: current_user.id }), format: :json
       expect(response).to have_http_status(200)
-      expect(response.content_type).to eq "application/json"
+      expect(response.media_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
       expect(parsed_response['id']).to eq(current_user.id.as_json)
       expect(parsed_response['firstname']).to eq("foo")
@@ -67,7 +67,7 @@ RSpec.describe MembersController, type: :controller do
 
       put :update, params: member_params.merge({ id: current_user.id }), format: :json
       expect(response).to have_http_status(200)
-      expect(response.content_type).to eq "application/json"
+      expect(response.media_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
       expect(parsed_response['phone']).to eq(member_params[:phone])
       expect(parsed_response['address']['street']).to eq(member_params[:address][:street])
@@ -80,7 +80,7 @@ RSpec.describe MembersController, type: :controller do
     it "Updates member's notification settings" do 
       put :update, params: { id: current_user.id, silenceEmails: true }, format: :json 
       expect(response).to have_http_status(200)
-      expect(response.content_type).to eq "application/json"
+      expect(response.media_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
       expect(parsed_response['silenceEmails']).to be_truthy
     end

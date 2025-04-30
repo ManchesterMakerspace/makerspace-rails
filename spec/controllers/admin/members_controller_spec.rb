@@ -44,7 +44,7 @@ RSpec.describe Admin::MembersController, type: :controller do
 
           parsed_response = JSON.parse(response.body)
           expect(response).to have_http_status(200)
-          expect(response.content_type).to eq "application/json"
+          expect(response.media_type).to eq "application/json"
           expect(parsed_response['id']).to eq(Member.last.id.as_json)
         end
 
@@ -105,7 +105,7 @@ RSpec.describe Admin::MembersController, type: :controller do
 
           parsed_response = JSON.parse(response.body)
           expect(response).to have_http_status(200)
-          expect(response.content_type).to eq "application/json"
+          expect(response.media_type).to eq "application/json"
           expect(parsed_response['id']).to eq(member.id.as_json)
         end
 
