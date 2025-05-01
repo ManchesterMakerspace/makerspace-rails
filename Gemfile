@@ -16,7 +16,7 @@ gem 'redis-rails'
 gem 'devise'
 gem 'bcrypt'
 #Use Mongo DB
-gem 'mongoid', '~> 7.0.2'
+gem 'mongoid', '~> 7.0.5'
 gem 'mongoid_search'
 #Paypal IPN
 gem 'paypal-sdk-rest', '~> 1.7.4'
@@ -31,7 +31,7 @@ gem 'open_api-rswag-api'
 gem 'open_api-rswag-ui'
 
 # PDF generation
-gem 'wicked_pdf'
+gem 'wicked_pdf', '~> 2.0.0'
 gem 'wkhtmltopdf-binary'
 
 group :development do
@@ -41,7 +41,7 @@ group :development do
 end
 
 group :test do
-  gem 'rspec-rails'
+  gem 'rspec-rails', '~> 4.0.0'
   gem 'mongoid-rspec'
   gem 'database_cleaner'
   gem 'rails-controller-testing'

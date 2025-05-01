@@ -34,12 +34,16 @@ registry:
 builder:
   arch: amd64
   context: .
+  args:
+    ENVIRONMENT: production
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
 env:
   clear:
     MLAB_URI: "mongodb://makerspace-rails-db:27017"
     REDIS_URI: "redis://makerspace-rails-redis:6379/1"
+  secret:
+    - SECRET_KEY_BASE
 
 accessories:
   db:
