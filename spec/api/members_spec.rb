@@ -13,7 +13,7 @@ describe 'Members API', type: :request do
 
       response '200', 'Members found' do
         let(:members) { create_list(:member) }
-        before { sign_in create(:member) }
+        before { sign_in create(:member, :admin) }
 
         schema type: :array,
             items: { '$ref' => '#/components/schemas/MemberSummary' }

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe MembersController, type: :controller do
   describe "GET #index" do
-    login_user
+    login_admin
     it "renders json of all members" do
       member = create(:member)
       get :index, params: {}, format: :json
