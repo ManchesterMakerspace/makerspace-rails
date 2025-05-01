@@ -4,7 +4,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       db:
-        image: mongo
+        image: mongodb/mongodb-atlas-local:latest
         ports:
           - 27017:27017
       redis:
