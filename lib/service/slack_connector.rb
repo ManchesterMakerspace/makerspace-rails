@@ -34,7 +34,7 @@ module Service
     end
 
     def self.send_slack_messages(messages, channel = ::Service::SlackConnector.members_relations_channel)
-      send_slack_message(format_slack_messages(messages, channel), channel) unless messages.nil? || messages.empty?
+      send_slack_message(format_slack_messages(messages, channel), channel) unless messages.nil? || messages.empty? || Rails.env.test?
     end
 
     def send_slack_message(message, channel = ::Service::SlackConnector.members_relations_channel)
@@ -42,6 +42,8 @@ module Service
     end
 
     def self.send_slack_message(message, channel = ::Service::SlackConnector.members_relations_channel)
+      return if Rails.env.test?
+
       send_as_msg = message.kind_of?(String)
       if send_as_msg
         client.chat_postMessage(
