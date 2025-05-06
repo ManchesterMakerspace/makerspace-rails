@@ -33,6 +33,6 @@ COPY . .
 COPY --from=ui /app/dist/makerspace-react.js ./app/assets/javascript/
 COPY --from=ui /app/dist/makerspace-react.css ./app/assets/stylesheets/
 
-RUN bundle exec rails assets:precompile
+# RUN bundle exec rails assets:precompile
 
 CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
