@@ -4,7 +4,7 @@ FROM node:16.20 AS ui
 
 WORKDIR /app
 
-COPY ui/package.json ui/yarn.lock .
+COPY ui/package.json ui/yarn.lock ./
 
 RUN yarn install
 
