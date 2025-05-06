@@ -39,7 +39,6 @@ test.env
 
 # if using bower-rails ignore default bower_components path bower.json files
 node_modules
-yarn.lock
 
 # Ignore pow environment settings
 .powenv
