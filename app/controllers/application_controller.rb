@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   include ApplicationHelper
-  include ::Error::ErrorHandler
+  # include ::Error::ErrorHandler
   include SlackService
   include SetCurrentRequestDetails
 
