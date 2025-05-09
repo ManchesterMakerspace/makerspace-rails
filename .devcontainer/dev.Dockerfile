@@ -13,4 +13,11 @@ RUN bundle install
 
 COPY . .
 
+WORKDIR /app/ui
+
+RUN npm install --global yarn && \
+    yarn install
+
+WORKDIR /app
+
 CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
