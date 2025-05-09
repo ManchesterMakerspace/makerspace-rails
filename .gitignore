@@ -20,6 +20,9 @@ old-config.json
 /public/assets
 /public-coverage
 
+/app/assets/builds/*
+!/app/assets/builds/.keep
+
 config/initializers/secret_token.rb
 
 # dotenv

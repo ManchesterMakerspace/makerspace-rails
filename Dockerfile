@@ -4,12 +4,15 @@ FROM node:16.20 AS ui
 
 WORKDIR /app
 
-COPY ui/package.json ui/yarn.lock ./
+COPY ui/package.json ui/yarn.lock ./ui/
 
+WORKDIR /app/ui
 RUN yarn install
+WORKDIR /app
 
-COPY ui/ .
+COPY . .
 
+WORKDIR /app/ui
 RUN yarn build
 
 # Build backend
@@ -29,8 +32,7 @@ ENV RAILS_ENV=$ENVIRONMENT
 
 COPY . .
 
-COPY --from=ui /app/dist/makerspace-react.js ./app/assets/javascript/
-COPY --from=ui /app/dist/makerspace-react.css ./app/assets/stylesheets/
+COPY --from=ui /app/app/assets/builds/* /app/app/assets/builds/
 
 # RUN bundle exec rails assets:precompile
 
