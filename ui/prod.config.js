@@ -14,7 +14,7 @@ module.exports = env => ({
   },
   entry: ["@babel/polyfill", "./src/app/main.tsx"],
   output: {
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "../app/assets/builds"),
     filename: "makerspace-react.js",
     publicPath: "/"
   },

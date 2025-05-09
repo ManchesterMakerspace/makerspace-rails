@@ -14,7 +14,6 @@ RUN yarn build
 
 # Build backend
 
-
 FROM ruby:2.6.9-bullseye
 
 WORKDIR /app
