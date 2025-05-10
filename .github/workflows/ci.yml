@@ -3,10 +3,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     services:
-      db:
-        image: mongodb/mongodb-atlas-local:latest
-        ports:
-          - 27017:27017
+      # db:
+      #   image: mongodb/mongodb-atlas-local:latest
+      #   ports:
+      #     - 27017:27017
       redis:
         image: redis
         ports:
@@ -25,7 +25,7 @@ jobs:
       - run: bundle exec rspec
         env:
           RAILS_ENV: test
-          MLAB_URI: mongodb://localhost:27017/?directConnection=true
+          MLAB_URI: ${{ secrets.DATABASE_URL }}
           BT_ENV: sandbox
           BT_MERCHANT_ID: ${{ secrets.BT_MERCHANT_ID }}
           BT_PUBLIC_KEY: ${{ secrets.BT_PUBLIC_KEY }}

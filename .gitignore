@@ -29,6 +29,7 @@ config/initializers/secret_token.rb
 development.env
 production.env
 test.env
+.env
 
 ## Environment normalization:
 /.bundle
