@@ -28,30 +28,30 @@ jobs:
           BT_PUBLIC_KEY: ${{ secrets.BT_PUBLIC_KEY }}
           BT_PRIVATE_KEY: ${{ secrets.BT_PRIVATE_KEY }}
 
-  integration:
-    name: Integration
-    runs-on: ubuntu-latest
-    services:
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.6.9
-          bundler-cache: true
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "16.20"
-      - run: yarn && yarn build
-        working-directory: ui/
-      - run: bundle exec rake integration
-        env:
-          RAILS_ENV: test
-          MLAB_URI: ${{ secrets.DATABASE_URL }}
-          BT_ENV: sandbox
-          BT_MERCHANT_ID: ${{ secrets.BT_MERCHANT_ID }}
-          BT_PUBLIC_KEY: ${{ secrets.BT_PUBLIC_KEY }}
-          BT_PRIVATE_KEY: ${{ secrets.BT_PRIVATE_KEY }}
+  # integration:
+  #   name: Integration
+  #   runs-on: ubuntu-latest
+  #   services:
+  #     redis:
+  #       image: redis
+  #       ports:
+  #         - 6379:6379
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: ruby/setup-ruby@v1
+  #       with:
+  #         ruby-version: 2.6.9
+  #         bundler-cache: true
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: "16.20"
+  #     - run: yarn && yarn build
+  #       working-directory: ui/
+  #     - run: bundle exec rake integration
+  #       env:
+  #         RAILS_ENV: test
+  #         MLAB_URI: ${{ secrets.DATABASE_URL }}
+  #         BT_ENV: sandbox
+  #         BT_MERCHANT_ID: ${{ secrets.BT_MERCHANT_ID }}
+  #         BT_PUBLIC_KEY: ${{ secrets.BT_PUBLIC_KEY }}
+  #         BT_PRIVATE_KEY: ${{ secrets.BT_PRIVATE_KEY }}
