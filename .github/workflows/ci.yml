@@ -1,4 +1,5 @@
 on: [push]
+name: CI
 jobs:
   rspec:
     name: RSpec
