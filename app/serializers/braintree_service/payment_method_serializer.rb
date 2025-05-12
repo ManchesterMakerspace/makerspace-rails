@@ -1,4 +1,6 @@
 class BraintreeService::PaymentMethodSerializer < ActiveModel::Serializer
+  type ""
+
   private
   def common_attributes
     [

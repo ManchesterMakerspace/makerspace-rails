@@ -14,7 +14,7 @@ RSpec.describe InvoiceOptionsController, type: :controller do
       get :index, params: {}
 
       expect(response).to have_http_status(200)
-      expect(response.content_type).to eq "application/json"
+      expect(response.media_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
       expect(parsed_response.first['id']).to eq(first_io.id.to_s)
       expect(parsed_response.last['id']).to eq(second_io.id.to_s)
@@ -29,7 +29,7 @@ RSpec.describe InvoiceOptionsController, type: :controller do
       get :index, params: { subscription_only: true }
 
       expect(response).to have_http_status(200)
-      expect(response.content_type).to eq "application/json"
+      expect(response.media_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
       expect(parsed_response.first['id']).to eq(first_io.id.to_s)
       expect(parsed_response.count).to eq(1)
@@ -43,7 +43,7 @@ RSpec.describe InvoiceOptionsController, type: :controller do
         get :index, params: { types: ["member"] }
   
         expect(response).to have_http_status(200)
-        expect(response.content_type).to eq "application/json"
+        expect(response.media_type).to eq "application/json"
         parsed_response = JSON.parse(response.body)
         expect(parsed_response.first['id']).to eq(second_io.id.to_s)
         expect(parsed_response.count).to eq(1)
@@ -56,7 +56,7 @@ RSpec.describe InvoiceOptionsController, type: :controller do
         get :index, params: { types: ["rental"] }
   
         expect(response).to have_http_status(200)
-        expect(response.content_type).to eq "application/json"
+        expect(response.media_type).to eq "application/json"
         parsed_response = JSON.parse(response.body)
         expect(parsed_response.first['id']).to eq(first_io.id.to_s)
         expect(parsed_response.count).to eq(1)
@@ -71,7 +71,7 @@ RSpec.describe InvoiceOptionsController, type: :controller do
 
       parsed_response = JSON.parse(response.body)
       expect(response).to have_http_status(200)
-      expect(response.content_type).to eq "application/json"
+      expect(response.media_type).to eq "application/json"
       expect(parsed_response['id']).to eq(first_io.id.as_json)
     end
   end
@@ -88,7 +88,7 @@ RSpec.describe InvoiceOptionsController, type: :controller do
         get :index, params: {}
 
         expect(response).to have_http_status(200)
-        expect(response.content_type).to eq "application/json"
+        expect(response.media_type).to eq "application/json"
         parsed_response = JSON.parse(response.body)
         expect(parsed_response.first['id']).to eq(disabled_io.id.to_s)
         expect(parsed_response.last['id']).to eq(second_io.id.to_s)

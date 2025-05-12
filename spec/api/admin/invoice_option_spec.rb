@@ -14,11 +14,6 @@ describe 'Admin::InvoiceOptions API', type: :request do
         '$ref' => '#/components/schemas/NewInvoiceOption'  
       }, required: true
 
-      request_body_json schema: {
-        title: :createInvoiceOptionDetails,
-        '$ref' => '#/components/schemas/NewInvoiceOption'  
-      }, required: true
-
       response '200', 'invoice option created' do
         before { sign_in admin }
 
@@ -72,11 +67,6 @@ describe 'Admin::InvoiceOptions API', type: :request do
       parameter name: :id, in: :path, type: :string
 
       parameter name: :updateInvoiceOptionDetails, in: :body, schema: {
-        title: :updateInvoiceOptionDetails, 
-        '$ref' => '#/components/schemas/InvoiceOption' 
-      }, required: true
-
-      request_body_json schema: {
         title: :updateInvoiceOptionDetails, 
         '$ref' => '#/components/schemas/InvoiceOption' 
       }, required: true

@@ -18,7 +18,7 @@ RSpec.describe EarnedMemberships::ReportsController, type: :controller do
         sign_in current_user
         get :index, format: :json
         expect(response).to have_http_status(200)
-        expect(response.content_type).to eq "application/json"
+        expect(response.media_type).to eq "application/json"
         parsed_response = JSON.parse(response.body)
         expect(parsed_response.first['id']).to eq(EarnedMembership::Report.last.id.as_json)
       end
@@ -76,7 +76,7 @@ RSpec.describe EarnedMemberships::ReportsController, type: :controller do
         }
         post :create, params: { report: report_params }, format: :json
         expect(response).to have_http_status(200)
-        expect(response.content_type).to eq "application/json"
+        expect(response.media_type).to eq "application/json"
         parsed_response = JSON.parse(response.body)
         expect(parsed_response['id']).to eq(EarnedMembership::Report.last.id.as_json)
       end

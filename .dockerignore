@@ -1,3 +1,5 @@
 public
 Makefile
 dump/
+tmp/
+node_modules/

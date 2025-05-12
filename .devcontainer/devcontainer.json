@@ -1,0 +1,6 @@
+{
+  "name": "makerspace-rails",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "web",
+  "workspaceFolder": "/app"
+}

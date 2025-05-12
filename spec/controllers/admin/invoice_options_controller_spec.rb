@@ -27,7 +27,7 @@ RSpec.describe Admin::InvoiceOptionsController, type: :controller do
 
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
-        expect(response.content_type).to eq "application/json"
+        expect(response.media_type).to eq "application/json"
         expect(parsed_response['id']).to eq(InvoiceOption.last.id.to_s)
       end
     end
@@ -56,7 +56,7 @@ RSpec.describe Admin::InvoiceOptionsController, type: :controller do
 
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
-        expect(response.content_type).to eq "application/json"
+        expect(response.media_type).to eq "application/json"
         expect(parsed_response['id']).to eq(invoice_option.id.to_s)
       end
     end

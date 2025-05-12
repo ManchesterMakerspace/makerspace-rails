@@ -43,11 +43,6 @@ describe 'Admin::Rentals API', type: :request do
         '$ref' => '#/components/schemas/NewRental' 
       }, required: true
       
-      request_body_json schema: {
-        title: :createRentalDetails,
-        '$ref' => '#/components/schemas/NewRental' 
-      }, required: true
-
       response '200', 'rental created' do
         before { sign_in admin }
 
@@ -93,11 +88,6 @@ describe 'Admin::Rentals API', type: :request do
       parameter name: :id, in: :path, type: :string
 
       parameter name: :updateRentalDetails, in: :body, schema: {
-        title: :updateRentalDetails, 
-        '$ref' => '#/components/schemas/Rental'
-      }, required: true
-
-      request_body_json schema: {
         title: :updateRentalDetails, 
         '$ref' => '#/components/schemas/Rental'
       }, required: true

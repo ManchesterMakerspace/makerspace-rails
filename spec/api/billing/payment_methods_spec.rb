@@ -83,16 +83,6 @@ describe 'Billing::PaymentMethods API', type: :request do
         required: [:paymentMethodNonce]
       }, required: true
 
-      request_body_json schema: {
-        title: :createPaymentMethodDetails,
-        type: :object,
-        properties: {
-          paymentMethodNonce: { type: :string },
-          makeDefault: { type: :boolean }
-        },
-        required: [:paymentMethodNonce]
-      }, required: true
-
       response '200', 'payment_method created' do
         before do
           sign_in customer

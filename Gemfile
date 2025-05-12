@@ -1,11 +1,12 @@
 source 'https://rubygems.org'
-ruby '2.6.6'
+ruby '2.6.9'
 
-gem 'rails', '~> 5.2.2'
+gem 'rails', '~> 6.0.6.1'
 gem 'rack-cors'
 gem 'puma', '~> 4.3'
-gem 'active_model_serializers'
+gem 'active_model_serializers', '~> 0.10.15'
 gem 'dotenv-rails'
+gem 'concurrent-ruby', '1.3.4'
 
 # Redis Cache and Event Bus
 gem 'redis'
@@ -15,7 +16,7 @@ gem 'redis-rails'
 gem 'devise'
 gem 'bcrypt'
 #Use Mongo DB
-gem 'mongoid', '~> 7.0.2'
+gem 'mongoid', '~> 7.0.5'
 gem 'mongoid_search'
 #Paypal IPN
 gem 'paypal-sdk-rest', '~> 1.7.4'
@@ -30,7 +31,7 @@ gem 'open_api-rswag-api'
 gem 'open_api-rswag-ui'
 
 # PDF generation
-gem 'wicked_pdf'
+gem 'wicked_pdf', '~> 2.0.0'
 gem 'wkhtmltopdf-binary'
 
 group :development do
@@ -40,7 +41,7 @@ group :development do
 end
 
 group :test do
-  gem 'rspec-rails'
+  gem 'rspec-rails', '~> 4.0.0'
   gem 'mongoid-rspec'
   gem 'database_cleaner'
   gem 'rails-controller-testing'
@@ -57,5 +58,4 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
-# Frontend
-gem "makerspace-react-rails", "1.3.3"
+gem "honeybadger", "~> 5.28"

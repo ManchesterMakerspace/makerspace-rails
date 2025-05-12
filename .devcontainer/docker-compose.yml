@@ -1,0 +1,22 @@
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: .devcontainer/dev.Dockerfile
+    environment:
+      PORT: 3000
+      MLAB_URI: "mongodb://db:27017/?directConnection=true"
+      REDIS_URL: "redis://redis:6379/1"
+    env_file: ../.env
+    ports:
+      - "3000:3000"
+    volumes:
+      - "..:/app"
+  db:
+    image: "mongodb/mongodb-atlas-local:latest"
+    # volumes:
+    #   - "db:/data/db"
+  redis:
+    image: "redis"
+volumes:
+  db:

@@ -22,7 +22,7 @@ RSpec.describe Billing::ReceiptsController, type: :controller do
       get :show, params: {id: invoice.to_param}, format: :html
 
       expect(response).to have_http_status(200)
-      expect(response.content_type).to eq "text/html"
+      expect(response.media_type).to eq "text/html"
     end
 
     it "raises not found if invoice is for different user" do 

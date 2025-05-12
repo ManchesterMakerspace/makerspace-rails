@@ -48,16 +48,6 @@ describe 'Invoices API', type: :request do
         required: [:id]
       }, required: true
 
-      request_body_json schema: {
-        title: :createInvoiceDetails,
-        type: :object,
-        properties: {
-          id: { type: :string },
-          discountId: { type: :string }
-        },
-        required: [:id]
-      }, required: true
-
       response '200', 'invoice created' do
         before { sign_in create(:member) }
 

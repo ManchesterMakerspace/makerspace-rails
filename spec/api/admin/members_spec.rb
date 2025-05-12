@@ -14,11 +14,6 @@ describe 'Admin::Members API', type: :request do
         '$ref' => '#/components/schemas/NewMember'
       }, required: true
 
-      request_body_json schema: {
-        title: :createMemberDetails,
-        '$ref' => '#/components/schemas/NewMember'
-      }, required: true
-
       response '200', 'member created' do
         before { sign_in admin }
 
@@ -86,11 +81,6 @@ describe 'Admin::Members API', type: :request do
       operationId "adminUpdateMember"
       parameter name: :id, in: :path, type: :string
       parameter name: :updateMemberDetails, in: :body, schema: {
-        title: :updateMemberDetails,
-        '$ref' => '#/components/schemas/AdminUpdateMemberDetails'
-      }, required: true
-
-      request_body_json schema: {
         title: :updateMemberDetails,
         '$ref' => '#/components/schemas/AdminUpdateMemberDetails'
       }, required: true

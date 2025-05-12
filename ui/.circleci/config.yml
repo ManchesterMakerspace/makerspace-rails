@@ -1,0 +1,57 @@
+version: 2.1
+orbs:
+  ruby: circleci/ruby@0.1.2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/ruby:2.6.6-stretch-node-browsers
+      - image: redis
+    executor: ruby/default
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: yarn install --ignore-platform && yarn build
+      - run:
+          name: UT
+          command: yarn test
+      - run:
+          name: FT
+          command: yarn ft
+      - run:
+          name: E2E
+          command: make integration
+      - store_artifacts:
+          path: ./tmp/screenshots
+  publish:
+    docker:
+      - image: circleci/ruby:2.6.6-stretch-node-browsers
+    executor: ruby/default
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: yarn install --immutable
+      - run:
+          name: deploy
+          command: |
+            git config --global -l
+            git config --global user.email circleci@circleci
+            git config --global user.name CircleCI
+            mkdir ~/.gem
+            cat .circleci/gem_credentials | sed -e "s/__RUBYGEMS_API_KEY__/${RUBYGEMS_API_KEY}/" > ~/.gem/credentials
+            chmod 0600 ~/.gem/credentials
+            make deploy
+            shred -u ~/.gem/credentials
+      - store_artifacts:
+          path: ./tmp/makerspace-react-rails
+
+workflows:
+  workflow:
+    jobs:
+      - build
+      - publish:
+          filters:
+            branches:
+              only: master

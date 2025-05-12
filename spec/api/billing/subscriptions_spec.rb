@@ -69,15 +69,6 @@ describe 'Billing::Subscriptions API', type: :request do
         required: [:paymentMethodToken]
       }, required: true
 
-      request_body_json schema: {
-        title: :updateSubscriptionDetails,
-        type: :object,
-        properties: {
-          paymentMethodToken: { type: :string }
-        },
-        required: [:paymentMethodToken]
-      }, required: true
-
       response '200', 'subscription updated' do
         before do
           sign_in sub_customer

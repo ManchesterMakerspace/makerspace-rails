@@ -1,0 +1,14 @@
+/node_modules
+/dist
+/tmp
+# dotenv
+development.env
+production.env
+test.env
+
+yarn-debug.log*
+.yarn-integrity
+yarn-error.log*
+.vscode
+
+allure-report

@@ -32,24 +32,6 @@ describe 'Registrations API', type: :request do
         }
       }
 
-      request_body_json schema: {
-        title: :signInDetails,
-        type: :object,
-        properties: {
-          member: {
-            type: :object,
-            properties: {
-              email: {
-                type: :string
-              },
-              password: {
-                type: :string
-              }
-            }
-          }
-        }
-      }
-
       response '200', 'User signed in' do
         schema '$ref' => '#/components/schemas/Member'
 
@@ -96,21 +78,6 @@ describe 'Registrations API', type: :request do
         }
       }, required: true
 
-      request_body_json schema: {
-        title: :passwordResetDetails, 
-        type: :object,
-        properties: {
-          member: {
-            type: :object,
-            properties: {
-              email: {
-                type: :string
-              },
-            }
-          }
-        }
-      }, required: true
-
       response '201', 'Instructions sent' do
         before { auth_member }
         let(:passwordResetDetails) {{ member: { email: auth_member.email } }}
@@ -128,24 +95,6 @@ describe 'Registrations API', type: :request do
       tags 'Password'
       operationId 'resetPassword'
       parameter name: :passwordResetDetails, in: :body, schema: {
-        title: :passwordResetDetails, 
-        type: :object,
-        properties: {
-          member: {
-            type: :object,
-            properties: {
-              resetPasswordToken: {
-                type: :string
-              },
-              password: {
-                type: :string
-              }
-            }
-          }
-        }
-      }, required: true
-
-      request_body_json schema: {
         title: :passwordResetDetails, 
         type: :object,
         properties: {
@@ -218,37 +167,6 @@ describe 'Registrations API', type: :request do
         required: [:email, :password, :firstname, :lastname]
       }, required: true
 
-      request_body_json schema: {
-        title: :registerMemberDetails,
-        type: :object,
-        properties: {
-          email: {
-            type: :string
-          },
-          password: {
-            type: :string
-          },
-          firstname: {
-            type: :string
-          },
-          lastname: {
-            type: :string
-          },
-          phone: { type: :string },
-          address: {
-            type: :object,
-            properties: {
-              street: { type: :string },
-              unit: { type: :string },
-              city: { type: :string },
-              state: { type: :string },
-              postalCode: { type: :string },
-            }
-          }
-        },
-        required: [:email, :password, :firstname, :lastname]
-      }, required: true
-
       response '200', 'Member registered' do
 
         schema '$ref' => '#/components/schemas/Member'
@@ -271,17 +189,6 @@ describe 'Registrations API', type: :request do
       tags 'Authentication'
       operationId 'sendRegistrationEmail'
       parameter name: :registrationEmailDetails, in: :body, schema: {
-        title: :registrationEmailDetails, 
-        type: :object,
-        properties: {
-          email: {
-            type: :string
-          },
-        },
-        required: [:email]
-      }, required: true
-
-      request_body_json schema: {
         title: :registrationEmailDetails, 
         type: :object,
         properties: {

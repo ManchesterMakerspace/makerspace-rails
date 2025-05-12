@@ -13,7 +13,7 @@ RSpec.describe Admin::EarnedMembershipsController, type: :controller do
 
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
-        expect(response.content_type).to eq "application/json"
+        expect(response.media_type).to eq "application/json"
         expect(parsed_response['id']).to eq(EarnedMembership.last.id.as_json)
       end
 
@@ -60,7 +60,7 @@ RSpec.describe Admin::EarnedMembershipsController, type: :controller do
         post :create, params: membership_params, format: :json
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
-        expect(response.content_type).to eq "application/json"
+        expect(response.media_type).to eq "application/json"
         expect(parsed_response["id"]).to eq(EarnedMembership.last.id.as_json)
       end
     end
@@ -94,7 +94,7 @@ RSpec.describe Admin::EarnedMembershipsController, type: :controller do
         put :update, params: membership_params, format: :json
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
-        expect(response.content_type).to eq "application/json"
+        expect(response.media_type).to eq "application/json"
         expect(parsed_response["requirements"].length).to eq(2)
         expect(parsed_response["requirements"].first["name"]).to eq("fizz")
         expect(parsed_response["requirements"].last["name"]).to eq("buzz")
@@ -120,7 +120,7 @@ RSpec.describe Admin::EarnedMembershipsController, type: :controller do
         put :update, params: membership_params, format: :json
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
-        expect(response.content_type).to eq "application/json"
+        expect(response.media_type).to eq "application/json"
         expect(parsed_response["requirements"].length).to eq(2)
         expect(parsed_response["requirements"].first["name"]).to eq("bar")
         expect(parsed_response["requirements"].last["name"]).to eq("foo")
@@ -153,7 +153,7 @@ RSpec.describe Admin::EarnedMembershipsController, type: :controller do
         put :update, params: membership_params, format: :json
         parsed_response = JSON.parse(response.body)
         expect(response).to have_http_status(200)
-        expect(response.content_type).to eq "application/json"
+        expect(response.media_type).to eq "application/json"
         expect(parsed_response["requirements"].length).to eq(2)
         expect(parsed_response["requirements"].first["name"]).to eq("foo")
         expect(parsed_response["requirements"].last["name"]).to eq("bar")

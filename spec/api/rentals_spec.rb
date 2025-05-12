@@ -64,15 +64,6 @@ describe 'Rentals API', type: :request do
         required: [:signature]
       }, required: true
 
-      request_body_json schema: {
-        title: :updateRentalDetails,
-        type: :object,
-        properties: {
-          signature: { type: :string }
-        },
-        required: [:signature]
-      }, required: true
-
       # Update object
       let(:updateRentalDetails) {{ signature: "foobar" }}
 

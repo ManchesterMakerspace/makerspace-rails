@@ -1,0 +1,27 @@
+language: ruby
+
+rvm:
+  - 2.6.6
+
+before_install:
+  - nvm install 14
+  - nvm use 14
+  - echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+
+addons:
+  chrome: stable
+
+install:
+  - "yarn && yarn build"
+
+jobs:
+  include:
+    - stage: UT
+      script: yarn test
+    - stage: FT
+      script: yarn ft
+    - stage: E2E
+      script: make integration
+    - stage: deploy
+      script: make deploy
+      if: branch = master AND type = push

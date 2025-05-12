@@ -12,6 +12,15 @@ Contact @lynch16 for variables for the Manchester Makerspace.
 $ rails s
 ```
 
+## With Docker
+
+1. Install [Docker](https://docs.docker.com/get-started/get-docker/)
+2. Run `docker compose up` in the repo directory. Will take several minutes on the first run.
+3. Visit http://localhost:3000
+4. **To stop the server:** `docker compose down`
+5. **To open a Rails console:** `docker compose exec web rails console`
+6. **To open a [Mongo console](https://www.mongodb.com/docs/mongodb-shell/):** `docker compose exec db mongosh admin`
+
 # Importing an archived db or Restoring production to development
 First dump production to a local backup folder
 ```

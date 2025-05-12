@@ -1,0 +1,155 @@
+
+.loading-logo {
+    position: relative;
+    margin: 1em !important;
+    width: 100%;
+    height: 200px;
+    text-align: center;
+  
+    & > svg {
+      position: absolute;
+      overflow: visible;
+      left: 0;
+      right: 0;
+      margin: auto;
+    }
+  }
+  
+  #loading-logo-outline > g {
+    transform-origin: center;
+    width: inherit;
+    height: inherit;
+    -webkit-animation-name: spin;
+    -webkit-animation-duration: 10000ms;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+    -moz-animation-name: spin;
+    -moz-animation-duration: 10000ms;
+    -moz-animation-iteration-count: infinite;
+    -moz-animation-timing-function: linear;
+    -ms-animation-name: spin;
+    -ms-animation-duration: 10000ms;
+    -ms-animation-iteration-count: infinite;
+    -ms-animation-timing-function: linear;
+    animation-name: spin;
+    animation-duration: 10000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+  }
+  
+  @keyframes spin {
+    from {
+      -webkit-transform: rotate(0deg); /* WebKit */
+      -moz-transform: rotate(0deg); /* Mozilla */
+      -o-transform: rotate(0deg); /* Opera */
+      -ms-transform: rotate(0deg); /* Internet Explorer */
+      transform: rotate(0deg); /* CSS3 */
+    }
+    to {
+      -webkit-transform: rotate(360deg); /* WebKit */
+      -moz-transform: rotate(360deg); /* Mozilla */
+      -o-transform: rotate(360deg); /* Opera */
+      -ms-transform: rotate(360deg); /* Internet Explorer */
+      transform: rotate(360deg); /* CSS3 */
+    }
+  }
+  
+  @-moz-keyframes spin {
+    from {
+      -webkit-transform: rotate(0deg); /* WebKit */
+      -moz-transform: rotate(0deg); /* Mozilla */
+      -o-transform: rotate(0deg); /* Opera */
+      -ms-transform: rotate(0deg); /* Internet Explorer */
+      transform: rotate(0deg); /* CSS3 */
+    }
+    to {
+      -webkit-transform: rotate(360deg); /* WebKit */
+      -moz-transform: rotate(360deg); /* Mozilla */
+      -o-transform: rotate(360deg); /* Opera */
+      -ms-transform: rotate(360deg); /* Internet Explorer */
+      transform: rotate(360deg); /* CSS3 */
+    }
+  }
+  
+  @-webkit-keyframes spin {
+    from {
+      -webkit-transform: rotate(0deg); /* WebKit */
+      -moz-transform: rotate(0deg); /* Mozilla */
+      -o-transform: rotate(0deg); /* Opera */
+      -ms-transform: rotate(0deg); /* Internet Explorer */
+      transform: rotate(0deg); /* CSS3 */
+    }
+    to {
+      -webkit-transform: rotate(360deg); /* WebKit */
+      -moz-transform: rotate(360deg); /* Mozilla */
+      -o-transform: rotate(360deg); /* Opera */
+      -ms-transform: rotate(360deg); /* Internet Explorer */
+      transform: rotate(360deg); /* CSS3 */
+    }
+  }
+  
+  @-o-keyframes spin {
+    from {
+      -webkit-transform: rotate(0deg); /* WebKit */
+      -moz-transform: rotate(0deg); /* Mozilla */
+      -o-transform: rotate(0deg); /* Opera */
+      -ms-transform: rotate(0deg); /* Internet Explorer */
+      transform: rotate(0deg); /* CSS3 */
+    }
+    to {
+      -webkit-transform: rotate(360deg); /* WebKit */
+      -moz-transform: rotate(360deg); /* Mozilla */
+      -o-transform: rotate(360deg); /* Opera */
+      -ms-transform: rotate(360deg); /* Internet Explorer */
+      transform: rotate(360deg); /* CSS3 */
+    }
+  }
+  
+  @-ms-keyframes spin {
+    from {
+      -webkit-transform: rotate(0deg); /* WebKit */
+      -moz-transform: rotate(0deg); /* Mozilla */
+      -o-transform: rotate(0deg); /* Opera */
+      -ms-transform: rotate(0deg); /* Internet Explorer */
+      transform: rotate(0deg); /* CSS3 */
+    }
+    to {
+      -webkit-transform: rotate(360deg); /* WebKit */
+      -moz-transform: rotate(360deg); /* Mozilla */
+      -o-transform: rotate(360deg); /* Opera */
+      -ms-transform: rotate(360deg); /* Internet Explorer */
+      transform: rotate(360deg); /* CSS3 */
+    }
+  }
+  
+  .loading-text {
+    animation: fadeIn linear 5s;
+    -webkit-animation: fadeIn linear 5s;
+    -moz-animation: fadeIn linear 5s;
+    -o-animation: fadeIn linear 5s;
+    -ms-animation: fadeIn linear 5s;
+  }
+  @keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
+  }
+  
+  @-moz-keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
+  }
+  
+  @-webkit-keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
+  }
+  
+  @-o-keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
+  }
+  
+  @-ms-keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
+  }
