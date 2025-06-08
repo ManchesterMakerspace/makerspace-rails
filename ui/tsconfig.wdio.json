@@ -1,0 +1,27 @@
+{
+  "extends": "./tsconfig.base",
+  "compilerOptions": {
+    "paths": {
+      "*": [
+        "*",
+        "src/*"
+      ],
+      "@pageObjects/*": ["../tests/pageObjects/*"],
+      "@constants/*": ["../tests/constants/*"],
+      "@helpers/*": ["../tests/functional/*"],
+      "@mockserver": ["../tests/functional/mockserver"],
+    },
+    "types": [
+      "node",
+      "@wdio/mocha-framework",
+      "webdriverio"
+    ],
+    "typeRoots": [
+      "node_modules/@types",
+      "tests/webdriverTypings"
+    ]
+  },
+  "include": [
+    "./tests/**/*.ts"
+  ]
+}

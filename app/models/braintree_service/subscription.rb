@@ -81,6 +81,10 @@ class BraintreeService::Subscription < Braintree::Subscription
 
   private
   def self.normalize_subscription(gateway, subscription)
+      if subscription.transactions.present?
+        subscription.transactions.first.disputes.push(Braintree::Dispute._new(date_opened: Date.today.to_s, received_date: Date.today.to_s))
+      end
+
       self.new(gateway, instance_to_hash(subscription))
   end
 

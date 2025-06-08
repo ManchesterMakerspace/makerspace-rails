@@ -1,3 +1,5 @@
+require "database_cleaner"
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV['RAILS_ENV'] ||= 'test'
 if ENV['RAILS_ENV'] == 'test' && ENV['LOG_COVERAGE'] then

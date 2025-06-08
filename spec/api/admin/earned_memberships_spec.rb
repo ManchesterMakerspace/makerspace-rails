@@ -39,11 +39,6 @@ describe 'Admin::EarnedMemberships API', type: :request do
         '$ref' => '#/components/schemas/NewEarnedMembership'
       }, required: true
 
-      request_body_json schema: {
-        title: :createEarnedMembershipDetails, 
-        '$ref' => '#/components/schemas/NewEarnedMembership'
-      }, required: true
-
       response '200', 'earned membership created' do
         before { sign_in admin }
 
@@ -120,11 +115,6 @@ describe 'Admin::EarnedMemberships API', type: :request do
       parameter name: :id, in: :path, type: :string
 
       parameter name: :updateEarnedMembershipDetails, in: :body, schema: {
-        title: :updateEarnedMembershipDetails,
-        '$ref' => '#/components/schemas/EarnedMembership'
-      }, required: true
-
-      request_body_json schema: {
         title: :updateEarnedMembershipDetails,
         '$ref' => '#/components/schemas/EarnedMembership'
       }, required: true

@@ -81,18 +81,6 @@ describe 'Billing::Transactions API', type: :request do
         required: [:paymentMethodId]
       }, required: true
       
-      request_body_json schema: {
-        title: :createTransactionDetails, 
-        type: :object,
-        properties: {
-          invoiceId: { type: :string },
-          invoiceOptionId: { type: :string },
-          discountId: { type: :string },
-          paymentMethodId: { type: :string }
-        },
-        required: [:paymentMethodId]
-      }, required: true
-
       response '200', 'transaction created' do
         before do
           sign_in customer

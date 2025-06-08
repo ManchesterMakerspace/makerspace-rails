@@ -20,7 +20,7 @@ RSpec.describe InvoicesController, type: :controller do
       get :index, params: { settled: false }
 
       expect(response).to have_http_status(200)
-      expect(response.content_type).to eq "application/json"
+      expect(response.media_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
       
       response_ids = parsed_response.collect { |i| i['id'] }
@@ -36,7 +36,7 @@ RSpec.describe InvoicesController, type: :controller do
     it "Can create an invoice from an existing invoice option" do 
       post :create, params: { id: io.id }
       expect(response).to have_http_status(200)
-      expect(response.content_type).to eq "application/json"
+      expect(response.media_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
 
       expect(parsed_response['amount']).to eq(number_to_currency(io.amount))
@@ -47,7 +47,7 @@ RSpec.describe InvoicesController, type: :controller do
       discount = ::BraintreeService::Discount.standard_membership_discount
       post :create, params: { id: io.id, discount_id: discount.id }
       expect(response).to have_http_status(200)
-      expect(response.content_type).to eq "application/json"
+      expect(response.media_type).to eq "application/json"
       parsed_response = JSON.parse(response.body)
 
       expect(parsed_response['amount']).to eq(number_to_currency(io.amount - discount.amount))

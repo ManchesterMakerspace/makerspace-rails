@@ -17,17 +17,6 @@ describe 'ClientErrorHandler API', type: :request do
         required: [:message]
       }
 
-      request_body_json schema: {
-        title: :messageDetails,
-        type: :object,
-        properties: {
-          message: {
-            type: :string
-          }
-        },
-        required: [:message]
-      }
-
       response '204', 'Message sent' do 
         let(:messageDetails) {{
           message: "Test message"

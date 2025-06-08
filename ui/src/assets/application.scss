@@ -1,0 +1,116 @@
+@import "../components/AppLoading/AppLoading.scss";
+@import "../pages/registration/MembershipOptions/MembershipOptions.scss";
+@import "../pages/registration/PaymentMethods/CreditCardForm.scss";
+
+@mixin flex {
+  -webkit-flex-grow: 1;
+  -moz-flex-grow: 1;
+  flex-grow: 1;
+}
+
+body {
+  margin: 0;
+}
+
+h6 > svg {
+  height: 60px;
+  width: 100%;
+}
+
+.error-message {
+  color: red;
+  height: 8px;
+  font-size: 0.8em;
+  line-height: 1em;
+  margin-top: 0.2em;
+}
+
+.table-wrapper {
+  position: relative;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  background-color: rgba(200, 200, 200, 0.5);
+  .spinner-container {
+    position: relative;
+    transform: translateY(calc(50% - 20px));
+    text-align: center;
+  }
+}
+
+.root {
+  @include flex;
+}
+.flex {
+  @include flex;
+}
+.menu-button {
+  margin-left: -12;
+  margin-right: 20;
+}
+
+#landing-page-graphic {
+  background: url("./FilledLaserableLogo.svg") no-repeat center;
+  background-size: contain;
+  height: 100%;
+}
+
+.hosted-field {
+  height: 32px;
+  margin-bottom: 1em;
+  display: block;
+  background-color: transparent;
+  color: rgba(0, 0, 0, .87);
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, .26);
+  outline: 0;
+  width: 100%;
+  font-size: 16px;
+  padding: 0;
+  box-shadow: none;
+  border-radius: 0;
+  position: relative;
+}
+
+.hosted-field--label {
+  transform: translateY(0.4em);
+  font-size: 1.125em;
+  line-height: 32px;
+  transition: all .15s ease-out;
+  display: block;
+  width: 100%;
+  font-weight: 400;
+  overflow: hidden;
+  margin-bottom: 0.5em;
+  &.label-float {
+    text-overflow: ellipsis;
+    color: #2196F3;
+    transition: all .15s ease-out
+  }
+  &.filled {
+    @extend .label-float;
+    color: rgba(0, 0, 0, .54);
+  }
+  &.invalid {
+    @extend .label-float;
+    color: #F44336;
+  }
+}
+
+.instruction-list li, .instruction-list div {
+  margin-bottom: .5em;
+}
+
+.preformatted {
+  white-space: pre-wrap;
+}
+

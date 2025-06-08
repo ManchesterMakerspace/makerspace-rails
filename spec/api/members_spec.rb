@@ -13,7 +13,7 @@ describe 'Members API', type: :request do
 
       response '200', 'Members found' do
         let(:members) { create_list(:member) }
-        before { sign_in create(:member) }
+        before { sign_in create(:member, :admin) }
 
         schema type: :array,
             items: { '$ref' => '#/components/schemas/MemberSummary' }
@@ -66,29 +66,6 @@ describe 'Members API', type: :request do
         title: :updateMemberDetails,
         type: :object,
         # TODO: This should use oneOf for signature/member partial
-        properties: {
-          firstname: { type: :string },
-          lastname: { type: :string },
-          email: { type: :string },
-          memberContractOnFile: { type: :boolean },
-          silenceEmails: { type: :boolean },
-          phone: { type: :string },
-          address: {
-            type: :object,
-            properties: {
-              street: { type: :string },
-              unit: { type: :string },
-              city: { type: :string },
-              state: { type: :string },
-              postalCode: { type: :string },
-            }
-          },
-          signature: { type: :string },
-        },
-      }, required: true
-
-      request_body_json schema: {
-        title: :updateMemberDetails,
         properties: {
           firstname: { type: :string },
           lastname: { type: :string },
