@@ -12,10 +12,7 @@ jobs:
       - checkout
       - run:
           name: Which bundler?
-          command: bundle -v
-      - run:
-          name: capture?
-          command:  sh -c "set"
+          command: bundle -v 
       - ruby/bundle-install
       - run:
           name: UT
