@@ -13,6 +13,9 @@ jobs:
       - run:
           name: Which bundler?
           command: bundle -v
+      - run:
+          name: capture?
+          command:  sh -c "set"
       - ruby/bundle-install
       - run:
           name: UT
