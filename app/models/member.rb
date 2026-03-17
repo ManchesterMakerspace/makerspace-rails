@@ -66,15 +66,16 @@ class Member
   has_one :group, class_name: "Group", inverse_of: :member
   has_one :earned_membership, class_name: 'EarnedMembership', dependent: :destroy
 
-  # Searches by firstname if cant find anything else
+  # Searches by firstname if cant find anything else 
   def self.search(searchTerms, criteria = Mongoid::Criteria.new(Member))
     # Check if email format, then search email first
     # Otherwise, build lastname, firstname, email
-    if !!(searchTerms =~ URI::MailTo::EMAIL_REGEXP)
+    is_email = !!(searchTerms =~ URI::MailTo::EMAIL_REGEXP)
+    if is_email
       pipeline = [ 
         { 
           :$search => { 
-            index: "kewords",
+            index: "Searcher",
             text: { 
               query: searchTerms, 
               path: "email" 
@@ -156,9 +157,14 @@ class Member
     # collection.aggregate returns base BSON::Documents. Need to map to their class for downstream handlers
     # Fetching exact members or saving will not work
     result_ids = results.collect { |r| r[:_id] }
-    members = Member.where(id: { :$in => result_ids })
-    members.sort_by{ |m| result_ids.to_a.index m.id}
+    members = criteria.where(id: { :$in => result_ids })
+    members = members.sort_by{ |m| result_ids.to_a.index m.id}
+    if members.empty? && is_email
+      members = criteria.where(email: searchTerms)
+    end
+    members
   end
+
 
   def fullname
     return "#{self.firstname} #{self.lastname}"
