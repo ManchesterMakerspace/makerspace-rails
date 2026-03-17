@@ -74,7 +74,7 @@ class Member
       pipeline = [ 
         { 
           :$search => { 
-            index: "Searcher",
+            index: "kewords",
             text: { 
               query: searchTerms, 
               path: "email" 
