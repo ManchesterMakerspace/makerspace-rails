@@ -75,7 +75,7 @@ class Member
       pipeline = [ 
         { 
           :$search => { 
-            index: "Searcher",
+            index: "firstname_1_lastname_1",
             text: { 
               query: searchTerms, 
               path: "email" 
@@ -115,7 +115,7 @@ class Member
       pipeline = [ 
         { 
           :$search => { 
-            index: "Searcher",
+            index: "firstname_1_lastname_1",
             text: { 
               query: searchTerms, 
               path: ["lastname", "firstname", "email"],
