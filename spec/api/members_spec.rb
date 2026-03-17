@@ -21,6 +21,11 @@ describe 'Members API', type: :request do
         run_test!
       end
 
+      response '403', 'Not permitted' do
+        # Non-admins cannot get the member list
+        run_test!
+      end
+
       response '401', 'User not authenciated' do
         schema '$ref' => '#/components/schemas/error'
         let(:id) { create(:member).id }
