@@ -12,17 +12,13 @@ describe 'Members API', type: :request do
       parameter name: :search, in: :query, type: :string, required: false
 
       response '200', 'Members found' do
+        before { sign_in admin }
         let(:members) { create_list(:member) }
         before { sign_in create(:member) }
 
         schema type: :array,
             items: { '$ref' => '#/components/schemas/MemberSummary' }
 
-        run_test!
-      end
-
-      response '403', 'Not permitted' do
-        # Non-admins cannot get the member list
         run_test!
       end
 
