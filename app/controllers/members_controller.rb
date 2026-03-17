@@ -5,18 +5,29 @@ class MembersController < AuthenticationController
     def index
       base_query = Member.includes(:access_cards).includes(:earned_membership)
       # Limit index to only current members unless authorized and requesting full records
-      raise ::Error::Forbidden.new unless is_admin?
+      #current_member.email
+      #raise ::Error::Forbidden.new unless is_admin?
       if !is_admin? || to_bool(search_params[:current_members])
         # Include unset or expired within grace period
-        search = base_query.where({
+        if !is_admin?
+          search = base_query.where({ email : current_member.email })
+        else
+           search = base_query.where({
           :$or => [
             { :expirationTime.gte => ((Time.now + 3.days).strftime('%s').to_i * 1000) },
             {  expirationTime: nil }
           ]
-        })
+           })
+        end
       else
-        search = Mongoid::Criteria.new(base_query)
+        if !is_admin?
+          search = base_query.where({ email : current_member.email })
+        else
+           search = Mongoid::Criteria.new(base_query)
+        end
       end
+      
+
       @members = query_resource(search)
 
       return render_with_total_items(@members, { each_serializer: MemberSummarySerializer, adapter: :attributes })
