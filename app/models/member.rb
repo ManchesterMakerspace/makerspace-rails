@@ -160,6 +160,9 @@ class Member
     if members.empty? && is_email
       members = criteria.where(email: searchTerms)
     end
+    if members.empty?
+      members = criteria.where(lastname: searchTerms)
+    end
     members
   end
 
