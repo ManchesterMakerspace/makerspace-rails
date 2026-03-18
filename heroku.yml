@@ -2,4 +2,4 @@ build:
   docker:
     web: Dockerfile
   config:
-    ENVIRONMENT: production
+    ENVIRONMENT: development
