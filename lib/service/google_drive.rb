@@ -52,7 +52,7 @@ module Service
             email_address: email_address,
             role: :reader)
         load_gdrive.create_permission(ENV['RESOURCES_FOLDER'], permission) do |result, err|
-          raise Error::Google::Share.new(err) unless err.nil?
+          #raise Error::Google::Share.new(err) unless err.nil?
         end
       end
     end

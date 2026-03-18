@@ -11,7 +11,7 @@ describe 'Members API', type: :request do
       parameter name: :currentMembers, in: :query, type: :boolean, required: false
       parameter name: :search, in: :query, type: :string, required: false
 
-      response '200', 'Members found' do
+      response '200', 'Members found' do 
         let(:members) { create_list(:member) }
         before { sign_in create(:member) }
 
