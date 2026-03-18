@@ -6,7 +6,7 @@ task :integration do
   gem_loc = `bundle show makerspace-react-rails`
   version = gem_loc.match(/\d+.\d+.\d+$/).to_a[0]
   react_repo_dir = File.expand_path("tmp/makerspace-react");
-  react_repo_url = "https://github.com/ManchesterMakerspace/makerspace-react.git"
+  react_repo_url = "https://github.com/Kv603/makerspace-react.git"
   if !File.directory?(react_repo_dir)
     react_git = Git.clone(react_repo_url, react_repo_dir, log: Logger.new("/dev/null")) # Silence logs to prevent cred leak
   else
